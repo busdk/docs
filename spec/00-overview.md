@@ -12,13 +12,13 @@ A visual identity is assumed to exist for produced documents and outputs, includ
 
 ## Navigation
 
-- `spec/01-design-goals.md`
-- `spec/02-architecture.md`
-- `spec/03-data-formats-and-storage.md`
-- `spec/04-cli-workflow.md`
-- `spec/05-integration-future-interfaces.md`
-- `spec/06-extensibility-model.md`
-- `spec/07-data-directory-layout.md`
-- `spec/08-example-workflow.md`
-- `spec/09-references.md`
+- [Design goals and requirements](01-design-goals.md)
+- [System architecture](02-architecture.md)
+- [Data format and storage](03-data-formats-and-storage.md)
+- [CLI tooling and workflow](04-cli-workflow.md)
+- [Integration and future interfaces](05-integration-future-interfaces.md)
+- [Extensibility model](06-extensibility-model.md)
+- [Data directory layout](07-data-directory-layout.md)
+- [Example end-to-end workflow](08-example-workflow.md)
+- [References and external foundations](09-references.md)
 
