@@ -1,15 +1,7 @@
 # BuSDK Design Spec: References and external foundations
 
-BuSDK’s modular CLI philosophy aligns with the Unix notion of composable tools and clear interfaces, where programs do one thing well and cooperate through simple formats. ([catb.org](https://www.catb.org/esr/writings/taoup/html/ch01s06.html?utm_source=chatgpt.com)) The sustainability rationale for storing records in widely supported, documented formats is consistent with guidance on sustainable electronic record formats and long-term accessibility. ([TransAccess](https://www.tagovcloud.com/2023/06/what-are-sustainable-formats-for-electronic-records-part-1/?utm_source=chatgpt.com)) The tabular schema contract is based on Frictionless Data Table Schema and may optionally employ a Frictionless Data Package manifest to bind repository datasets together. ([Frictionless Data](https://frictionlessdata.io/specs/table-schema/?utm_source=chatgpt.com)) The archival document preference for invoices is consistent with PDF/A’s long-term preservation purpose and conformance constraints. ([The Library of Congress](https://www.loc.gov/preservation/digital/formats/fdd/fdd000318.shtml?utm_source=chatgpt.com)) The tamper-evident audit model relies on Git’s content-addressed object model and parent-linked commit structure, and can be strengthened via shared head anchoring and governance workflows. ([Git](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects?utm_source=chatgpt.com)) Double-entry and accrual-based accounting expectations are grounded in standard bookkeeping practice; BuSDK’s enforcement model assumes balanced entries and supports receivables/payables workflows. ([docs.mypocketcfo.com](https://docs.mypocketcfo.com/article/131-accrual-based-accounting-method-and-its-double-entry-ledger-system?utm_source=chatgpt.com)) Optional AI augmentation for transaction classification and reconciliation is treated as a non-required module capability aligned with current industry positioning of AI bookkeeping tools. ([Uplinq](https://www.uplinq.com/post/how-ai-bookkeeping-is-revolutionizing-small-business-accounting?utm_source=chatgpt.com))
+This section is split into **single-concept** documents:
 
-## Link list (original numbered references)
-
-- **[1] Basics of the Unix Philosophy**: [catb.org](https://www.catb.org/esr/writings/taoup/html/ch01s06.html?utm_source=chatgpt.com)
-- **[2] What Are “Sustainable Formats” For Electronic Records ...**: [tagovcloud.com](https://www.tagovcloud.com/2023/06/what-are-sustainable-formats-for-electronic-records-part-1/?utm_source=chatgpt.com)
-- **[3] Table Schema | Data Package (v1)**: [frictionlessdata.io](https://frictionlessdata.io/specs/table-schema/?utm_source=chatgpt.com)
-- **[4] 10.2 Git Internals - Git Objects**: [git-scm.com](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects?utm_source=chatgpt.com)
-- **[5] Accrual-based accounting method and its double-entry ledger ...**: [docs.mypocketcfo.com](https://docs.mypocketcfo.com/article/131-accrual-based-accounting-method-and-its-double-entry-ledger-system?utm_source=chatgpt.com)
-- **[6] PDF/A Family, PDF for Long-term Preservation**: [loc.gov](https://www.loc.gov/preservation/digital/formats/fdd/fdd000318.shtml?utm_source=chatgpt.com)
-- **[7] AI Bookkeeping is Revolutionizing Small Business ...**: [uplinq.com](https://www.uplinq.com/post/how-ai-bookkeeping-is-revolutionizing-small-business-accounting?utm_source=chatgpt.com)
-- **[8] Data Package (v1)**: [specs.frictionlessdata.io](https://specs.frictionlessdata.io/data-package/?utm_source=chatgpt.com)
+- [References and external foundations (summary)](references/foundations-summary.md)
+- [Link list (original numbered references)](references/link-list.md)
 
