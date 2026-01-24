@@ -1,4 +1,4 @@
 # Initialize a new repository
 
-She begins by initializing a new repository. Running `busdk init` creates the directory structure, adds initial schema files, and performs `git init`. It may create a default chart of accounts template and commit the initial state with a message such as “Initialize BuSDK repository.”
+She begins by creating a dedicated Git repository for the bookkeeping year. The initial step is to scaffold the standard directory layout and schema files (manually or via module-provided init commands), then commit the baseline state. This repo becomes the single source of truth for the year: every dataset update and supporting document is tracked as a commit.
 
