@@ -1,6 +1,8 @@
 # BusDK Design Document
 
-Modular CLI-First Business Development Toolkit (CSV + Frictionless Data + Git)
+BusDK is a modular, Git-native, CLI-first toolkit for running a business, built on open, long-lived formats and transparent, auditable workflows. Workspaces live in Git repositories, business data is stored as UTF-8 CSV datasets validated with Frictionless Data Table Schemas (JSON), and the system favors deterministic workflows that work for both humans and AI agents. See [busdk.com](https://busdk.com/) for a high-level overview.
+
+Status: pre-release, under active development. Interfaces and schemas may still change.
 
 ## Accounting workflow
 
