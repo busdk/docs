@@ -1,10 +1,8 @@
-# BuSDK Design Document
+# BusDK Design Document
 
 Modular CLI-First Business Development Toolkit (CSV + Frictionless Data + Git)
 
-This design document has been split into topic-focused specs under `spec/`, with **one semantic topic per file**.
-
-## Accounting workflow (current planned modules)
+## Accounting workflow
 
 BusDK is designed for year-round bookkeeping in a dedicated Git repo: CSV datasets are validated by Frictionless Table Schemas and every data change is committed alongside its supporting evidence. The core dispatcher is [`bus`](https://github.com/busdk/bus) and the workflow below reflects the current set of planned modules in the BusDK org.
 
@@ -16,18 +14,18 @@ BusDK is designed for year-round bookkeeping in a dedicated Git repo: CSV datase
 - Close each period: validate with [`bus validate`](https://github.com/busdk/bus-validate), compute VAT with [`bus vat`](https://github.com/busdk/bus-vat), lock with [`bus period`](https://github.com/busdk/bus-period), and generate reports with [`bus reports`](https://github.com/busdk/bus-reports).
 - At year end, repeat the close flow, ensure assets and VAT are complete, and tag the final state.
 
-For the full narrative, see [`spec/workflow/accounting-workflow-overview.md`](https://github.com/busdk/docs/blob/main/spec/workflow/accounting-workflow-overview.md).
+For the full narrative, see [Accounting workflow overview](spec/workflow/accounting-workflow-overview).
 
 ## Spec index
 
-- **Overview**: [spec/00-overview.md](https://github.com/busdk/docs/blob/main/spec/00-overview.md)
-- **Design goals and requirements**: [spec/01-design-goals.md](https://github.com/busdk/docs/blob/main/spec/01-design-goals.md)
-- **System architecture**: [spec/02-architecture.md](https://github.com/busdk/docs/blob/main/spec/02-architecture.md)
-- **Data format and storage**: [spec/03-data-formats-and-storage.md](https://github.com/busdk/docs/blob/main/spec/03-data-formats-and-storage.md)
-- **CLI tooling and workflow**: [spec/04-cli-workflow.md](https://github.com/busdk/docs/blob/main/spec/04-cli-workflow.md)
-- **Integration and future interfaces**: [spec/05-integration-future-interfaces.md](https://github.com/busdk/docs/blob/main/spec/05-integration-future-interfaces.md)
-- **Extensibility model**: [spec/06-extensibility-model.md](https://github.com/busdk/docs/blob/main/spec/06-extensibility-model.md)
-- **Data directory layout**: [spec/07-data-directory-layout.md](https://github.com/busdk/docs/blob/main/spec/07-data-directory-layout.md)
-- **Example end-to-end workflow**: [spec/08-example-workflow.md](https://github.com/busdk/docs/blob/main/spec/08-example-workflow.md)
-- **References and external foundations**: [spec/09-references.md](https://github.com/busdk/docs/blob/main/spec/09-references.md)
+- [Overview](spec/00-overview)
+- [Design goals and requirements](spec/01-design-goals)
+- [System architecture](spec/02-architecture)
+- [Data formats and storage](spec/03-data-formats-and-storage)
+- [CLI tooling and workflow](spec/04-cli-workflow)
+- [Integration and future interfaces](spec/05-integration-future-interfaces)
+- [Extensibility model](spec/06-extensibility-model)
+- [Data directory layout](spec/07-data-directory-layout)
+- [Example end-to-end workflow](spec/08-example-workflow)
+- [References and external foundations](spec/09-references)
 
