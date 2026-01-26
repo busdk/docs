@@ -4,7 +4,7 @@ This is the intended, end-to-end bookkeeping flow for BusDK based on the current
 
 ## 1) Create the bookkeeping repository
 
-Start a new Git repo for the bookkeeping year. Install the core dispatcher `bus` and the BusDK module binaries you plan to use. Keep the `docs` spec repository nearby when deciding naming, schemas, and conventions. BuSDK does not execute any Git commands.
+Start a new Git repo for the bookkeeping year. Install the core dispatcher `bus` and the BusDK module binaries you plan to use. Keep the `docs` spec repository nearby when deciding naming, schemas, and conventions. BusDK does not execute any Git commands.
 
 ## 2) Define master data (start-of-year setup)
 

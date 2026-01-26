@@ -1,4 +1,4 @@
-# BuSDK Design Spec: Integration and future interfaces
+# BusDK Design Spec: Integration and future interfaces
 
 This section is split into **single-concept** documents:
 

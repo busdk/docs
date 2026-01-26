@@ -1,4 +1,4 @@
-# BuSDK Design Spec: Data directory layout
+# BusDK Design Spec: Data directory layout
 
 This section is split into **single-concept** documents:
 

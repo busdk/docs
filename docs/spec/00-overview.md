@@ -1,4 +1,4 @@
-# BuSDK Design Spec: Overview
+# BusDK Design Spec: Overview
 
 Modular CLI-First Accounting Toolkit (CSV + Frictionless Data + Git)
 
