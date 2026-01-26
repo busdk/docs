@@ -9,11 +9,11 @@ Status: pre-release, under active development. Interfaces and schemas may still 
 BusDK is designed for year-round bookkeeping in a dedicated Git repo: CSV datasets are validated by Frictionless Table Schemas and every data change is committed alongside its supporting evidence. The core dispatcher is [`bus`](https://github.com/busdk/bus) and the workflow below reflects the current set of planned modules in the BusDK org.
 
 - Set up a Git repository for the bookkeeping year and install `bus` plus the module binaries you will use.
-- Define master data: chart of accounts with [`bus accounts`](https://github.com/busdk/bus-accounts), counterparties with [`bus entities`](https://github.com/busdk/bus-entities), and periods with [`bus period`](https://github.com/busdk/bus-period).
-- Treat evidence as data: archive invoices, receipts, VAT exports, and bank files with [`bus attachments`](https://github.com/busdk/bus-attachments) and reference those IDs from other records.
-- Record activity: invoices with [`bus invoices`](https://github.com/busdk/bus-invoices), ledger postings with [`bus journal`](https://github.com/busdk/bus-journal), assets with [`bus assets`](https://github.com/busdk/bus-assets), and loans with [`bus loans`](https://github.com/busdk/bus-loans) as they occur.
-- Reconcile regularly: import bank feeds with [`bus bank`](https://github.com/busdk/bus-bank), match and reconcile with [`bus reconcile`](https://github.com/busdk/bus-reconcile), then fill gaps via [`bus invoices`](https://github.com/busdk/bus-invoices) or [`bus journal`](https://github.com/busdk/bus-journal).
-- Close each period: validate with [`bus validate`](https://github.com/busdk/bus-validate), compute VAT with [`bus vat`](https://github.com/busdk/bus-vat), lock with [`bus period`](https://github.com/busdk/bus-period), and generate reports with [`bus reports`](https://github.com/busdk/bus-reports).
+- Define master data: chart of accounts with [`bus accounts`](./modules/bus-accounts), counterparties with [`bus entities`](./modules/bus-entities), and periods with [`bus period`](./modules/bus-period).
+- Treat evidence as data: archive invoices, receipts, VAT exports, and bank files with [`bus attachments`](./modules/bus-attachments) and reference those IDs from other records.
+- Record activity: invoices with [`bus invoices`](./modules/bus-invoices), ledger postings with [`bus journal`](./modules/bus-journal), assets with [`bus assets`](./modules/bus-assets), and loans with [`bus loans`](./modules/bus-loans) as they occur.
+- Reconcile regularly: import bank feeds with [`bus bank`](./modules/bus-bank), match and reconcile with [`bus reconcile`](./modules/bus-reconcile), then fill gaps via [`bus invoices`](./modules/bus-invoices) or [`bus journal`](./modules/bus-journal).
+- Close each period: validate with [`bus validate`](./modules/bus-validate), compute VAT with [`bus vat`](./modules/bus-vat), lock with [`bus period`](./modules/bus-period), and generate reports with [`bus reports`](./modules/bus-reports).
 - At year end, repeat the close flow, ensure assets and VAT are complete, and tag the final state.
 
 The loan register supports portfolio reporting for applications and special situations like corporate restructuring, business reorganisation, debt adjustment, or debt restructuring.
