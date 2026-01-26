@@ -1,10 +1,10 @@
 # Accounting workflow overview (current planned modules)
 
-This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules. It assumes a dedicated Git repository is the single source of truth for the accounting year: CSV datasets and supporting evidence live side-by-side, and every change is committed.
+This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules. It assumes a dedicated Git repository is the single source of truth for the accounting year: CSV datasets and supporting evidence live side-by-side, and every change is committed using external Git tooling.
 
 ## 1) Create the bookkeeping repository
 
-Start a new Git repo for the bookkeeping year. Install the core dispatcher `bus` and the BusDK module binaries you plan to use. Keep the `docs` spec repository nearby when deciding naming, schemas, and conventions.
+Start a new Git repo for the bookkeeping year. Install the core dispatcher `bus` and the BusDK module binaries you plan to use. Keep the `docs` spec repository nearby when deciding naming, schemas, and conventions. BuSDK does not execute any Git commands.
 
 ## 2) Define master data (start-of-year setup)
 
@@ -37,8 +37,8 @@ At month end, run a repeatable close:
 - Lock the period with [`bus period`](https://github.com/busdk/bus-period).
 - Generate financial outputs (trial balance, general ledger, P&L, balance sheet) with [`bus reports`](https://github.com/busdk/bus-reports).
 
-Commit the data, evidence, and reports, and tag the period (for example, `2026-01-closed`).
+Commit the data, evidence, and reports with Git, and tag the period (for example, `2026-01-closed`).
 
 ## 7) Year-end close
 
-Repeat the close flow for the final period, ensure assets and VAT are complete, and run year-level reports with [`bus reports`](https://github.com/busdk/bus-reports). Commit and tag the final state (for example, `2026-closed`) to preserve a reproducible, audit-friendly year.
+Repeat the close flow for the final period, ensure assets and VAT are complete, and run year-level reports with [`bus reports`](https://github.com/busdk/bus-reports). Commit and tag the final state with Git (for example, `2026-closed`) to preserve a reproducible, audit-friendly year.
