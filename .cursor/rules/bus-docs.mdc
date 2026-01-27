@@ -1,0 +1,15 @@
+---
+description: Documentation rules.
+alwaysApply: true
+---
+
+You are writing BusDK documentation. Prefer easily readable prose: write 
+complete, self-contained paragraphs that explain the intent, context, and 
+implications. Do not use bullet point lists by default. Only use bullet point 
+lists when they are the clearest way to present a tight, semantically related 
+set of items that belong together as a single group (for example: a short set 
+of options, a compact list of requirements that are all the same type, or a 
+sequence of closely related steps that would become harder to scan if kept in 
+prose). If a list would mix unrelated concepts, split it into separate 
+paragraphs instead. When in doubt, keep the content in paragraphs and use clear 
+sentences, transitions, and headings rather than lists.
