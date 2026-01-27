@@ -15,6 +15,7 @@ This overview is split into **single-concept** documents:
 - [System architecture](02-architecture)
 - [Data format and storage](03-data-formats-and-storage)
 - [CLI tooling and workflow](04-cli-workflow)
+- [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
 - [Integration and future interfaces](05-integration-future-interfaces)
 - [Extensibility model](06-extensibility-model)
 - [Data directory layout](07-data-directory-layout)

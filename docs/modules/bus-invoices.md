@@ -22,6 +22,12 @@ It writes updated invoice CSVs and status changes, emits validation diagnostics
 for missing references or mismatched totals, and produces journal posting
 outputs when configured.
 
+## Finnish compliance responsibilities
+
+Bus Invoices MUST assign stable invoice identifiers and maintain deterministic invoice numbering, and it MUST capture voucher-relevant metadata (dates, counterparty, totals, VAT breakdown). It MUST link invoices to attachments and to any generated journal entries, and it MUST represent corrections as new records (credit notes or adjustment invoices), not overwrites.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It links to [`bus attachments`](./bus-attachments) for invoice

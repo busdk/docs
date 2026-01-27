@@ -6,3 +6,5 @@ This keeps schemas and data tightly coupled and avoids any dedicated
 repository root to bind resources and schemas into a standardized Frictionless
 Data Package.
 
+For Finnish compliance, schemas MUST declare primary and foreign keys for audit-trail references. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+

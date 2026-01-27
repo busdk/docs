@@ -21,6 +21,12 @@ beside their CSV datasets.
 It writes VAT summaries and export files for reporting and archiving, and emits
 diagnostics for VAT mismatches or missing mappings.
 
+## Finnish compliance responsibilities
+
+Bus VAT MUST compute VAT reports from journal and invoice data with traceable references. It MUST retain VAT code, rate, base, and tax amount in source data used for reporting, and it MUST output VAT summaries with links to underlying postings and vouchers.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It consumes data from [`bus invoices`](./bus-invoices),

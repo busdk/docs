@@ -2,6 +2,7 @@
 
 This section is split into **single-concept** documents:
 
+- [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
 - [Data directory layout (principles)](layout/layout-principles)
 - [Accounts area (chart of accounts and references)](layout/accounts-area)
 - [Journal area (general ledger transactions)](layout/journal-area)

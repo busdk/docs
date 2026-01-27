@@ -21,6 +21,12 @@ JSON Table Schema beside its CSV dataset.
 It writes metadata rows for new and updated documents and emits diagnostics for
 missing files or schema violations.
 
+## Finnish compliance responsibilities
+
+Bus Attachments MUST assign stable `attachment_id` values and store immutable metadata (filename, media type, hash). It MUST support links from vouchers, journal entries, invoices, and bank records to attachment metadata, and it MUST retain evidence references even when files are stored outside Git.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It links to records in [`bus invoices`](./bus-invoices),

@@ -21,6 +21,12 @@ Schemas stored beside their CSV datasets.
 It writes reconciliation CSVs and allocation details, and emits diagnostics for
 unmatched items or invalid allocations.
 
+## Finnish compliance responsibilities
+
+Bus Reconcile MUST link bank transactions to invoices or journal entries with stable reconciliation IDs, and it MUST preserve allocation history for partials, splits, and fees without overwriting prior state. It MUST provide audit-trail references from reconciled items back to vouchers and evidence.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It feeds status updates back to [`bus invoices`](./bus-invoices)

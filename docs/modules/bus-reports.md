@@ -21,6 +21,12 @@ Table Schemas stored beside their CSV datasets.
 It writes report outputs (text, CSV, or JSON) to stdout or files and emits
 diagnostics for integrity or balance issues.
 
+## Finnish compliance responsibilities
+
+Bus Reports MUST generate financial statement outputs that can be traced back to ledger postings, and it MUST include or reference the basis for report line items to demonstrate the audit trail. It SHOULD support KPA and PMA formats when the user’s entity size requires them.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It consumes data from [`bus journal`](./bus-journal),

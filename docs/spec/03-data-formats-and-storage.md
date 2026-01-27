@@ -2,6 +2,7 @@
 
 This section is split into **single-concept** documents:
 
+- [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
 - [CSV conventions](data/csv-conventions)
 - [Frictionless Table Schema as the contract](data/table-schema-contract)
 - [Data Package organization](data/data-package-organization)

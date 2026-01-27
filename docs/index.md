@@ -27,6 +27,7 @@ For the full narrative, see [Accounting workflow overview](spec/workflow/account
 - [System architecture](spec/02-architecture)
 - [Data formats and storage](spec/03-data-formats-and-storage)
 - [CLI tooling and workflow](spec/04-cli-workflow)
+- [Finnish bookkeeping and tax-audit compliance](spec/compliance/fi-bookkeeping-and-tax-audit)
 - [Integration and future interfaces](spec/05-integration-future-interfaces)
 - [Extensibility model](spec/06-extensibility-model)
 - [Data directory layout](spec/07-data-directory-layout)

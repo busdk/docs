@@ -21,6 +21,12 @@ uses JSON Table Schemas stored beside their CSV datasets.
 It writes new or updated journal entry rows and emits diagnostics for unbalanced
 or invalid entries.
 
+## Finnish compliance responsibilities
+
+Bus Journal MUST write append-only journal entries with stable `entry_id` and `transaction_id` values, and it MUST link every entry to a `voucher_id` while preserving references to source documents or attachments. It MUST provide deterministic ordering (`posting_date` + sequence) to satisfy chronological review, and it MUST support correction entries that reference the original entry rather than overwriting it.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It receives postings from [`bus invoices`](./bus-invoices),

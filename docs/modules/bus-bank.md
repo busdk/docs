@@ -23,6 +23,12 @@ It writes normalized bank transaction CSVs, produces journal postings for
 [`bus journal`](./bus-journal), and emits matching and
 reconciliation diagnostics.
 
+## Finnish compliance responsibilities
+
+Bus Bank MUST preserve source statement identifiers and transaction references from bank evidence. It MUST link each bank transaction to vouchers and resulting journal postings when reconciled, and it MUST retain original bank statement evidence via attachments metadata.
+
+See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+
 ## Integrations
 
 It feeds [`bus reconcile`](./bus-reconcile) with matched
