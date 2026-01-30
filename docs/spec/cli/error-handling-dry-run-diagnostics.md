@@ -6,3 +6,8 @@ For Finnish compliance, missing audit-trail references or retention-critical met
 
 `bus-loans` is intentionally minimal and omits Git-related helpers and the `--dry-run` preview; it writes data files only, leaving version control and previews to external tooling.
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Command structure and discoverability](./command-structure) · **Next:** [Interactive use and scripting parity](./interactive-and-scripting-parity)
+<!-- busdk-docs-nav end -->

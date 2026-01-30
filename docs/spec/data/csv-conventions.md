@@ -8,3 +8,8 @@ To satisfy Finnish audit-trail expectations, CSV datasets MUST be deterministic,
 
 Each dataset MUST include a stable primary identifier column (`*_id`) that never changes once written, and cross-dataset references MUST be explicit as foreign key columns (for example: `voucher_id`, `entry_id`, `attachment_id`, `bank_txn_id`). Row ordering MUST be reproducible using date + sequence columns so that independent tools can produce the same time-ordered view.
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Append-only updates and soft deletion](./append-only-and-soft-deletion) · **Next:** [Data Package organization](./data-package-organization)
+<!-- busdk-docs-nav end -->

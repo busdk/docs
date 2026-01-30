@@ -4,3 +4,8 @@ Consider Alice, a freelance consultant using BusDK to run bookkeeping in a dedic
 
 The full, module-level flow is summarized in `workflow/accounting-workflow-overview.md`, and the rest of this section walks through concrete examples of how the pieces fit together.
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Record a purchase as a journal transaction](./record-purchase-journal-transaction) · **Next:** [VAT reporting and payment](./vat-reporting-and-payment)
+<!-- busdk-docs-nav end -->

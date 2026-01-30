@@ -32,3 +32,9 @@ It posts to [`bus journal`](./bus-journal) and influences
 ## See also
 
 Repository: ./modules/bus-loans
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-assets](./bus-assets) · **Next:** [bus-bank](./bus-bank)
+<!-- busdk-docs-nav end -->

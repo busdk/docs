@@ -4,3 +4,8 @@ BusDK may optionally adopt a Frictionless Data Package (typically a `datapackage
 
 For Finnish compliance, a Data Package descriptor SHOULD be used as the manifest inside tax-audit export packs to make datasets and schemas self-describing. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [CSV conventions](./csv-conventions) · **Next:** [Scaling over decades](./scaling-over-decades)
+<!-- busdk-docs-nav end -->

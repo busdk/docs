@@ -29,3 +29,9 @@ It feeds valuation and posting inputs to
 ## See also
 
 Repository: ./modules/bus-inventory
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-payroll](./bus-payroll) · **Next:** [bus-validate](./bus-validate)
+<!-- busdk-docs-nav end -->

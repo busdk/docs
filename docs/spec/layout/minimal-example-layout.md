@@ -35,3 +35,8 @@ my-business-books/
     budgets.schema.json
 ```
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Data directory layout (principles)](./layout-principles) · **Next:** [Repository-level README expectations](./repository-readme-expectations)
+<!-- busdk-docs-nav end -->

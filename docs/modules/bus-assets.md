@@ -31,3 +31,9 @@ reporting.
 ## See also
 
 Repository: ./modules/bus-assets
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-journal](./bus-journal) · **Next:** [bus-loans](./bus-loans)
+<!-- busdk-docs-nav end -->

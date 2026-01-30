@@ -42,3 +42,9 @@ Commit the data, evidence, and reports with Git, and tag the period (for example
 ## 7) Year-end close
 
 Repeat the close flow for the final period, ensure assets and VAT are complete, and run year-level reports with [`bus reports`](./modules/bus-reports). Commit and tag the final state with Git (for example, `2026-closed`) to preserve a reproducible, audit-friendly year.
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [BusDK Design Spec: Example end-to-end workflow](../08-example-workflow) · **Next:** [AI-assisted classification (review before external commit)](./ai-assisted-classification-review)
+<!-- busdk-docs-nav end -->

@@ -9,3 +9,8 @@ This section is split into **single-concept** documents:
 - [Shared validation layer (schema + logical validation)](architecture/shared-validation-layer)
 - [Append-only discipline and security model](architecture/append-only-and-security)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Unix-style composability (micro-tools)](./design-goals/unix-composability) · **Next:** [Append-only discipline and security model](./architecture/append-only-and-security)
+<!-- busdk-docs-nav end -->

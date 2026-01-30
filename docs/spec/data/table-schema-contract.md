@@ -10,3 +10,8 @@ To satisfy Finnish audit-trail requirements, Table Schemas MUST formalize the id
 
 Primary keys MUST be declared for core datasets (journal, ledger, vouchers, invoices, bank, attachments), and foreign keys MUST be declared for all cross-dataset references (voucher → entries, entries → reports, invoices → attachments). Required fields MUST include the minimum voucher metadata and posting metadata needed for traceability (date, identifier, amount, VAT data when applicable).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Schema evolution and migration](./schema-evolution-and-migration) · **Next:** [BusDK Design Spec: CLI tooling and workflow](../04-cli-workflow)
+<!-- busdk-docs-nav end -->

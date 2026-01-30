@@ -37,3 +37,9 @@ It consumes data from [`bus invoices`](./bus-invoices),
 ## See also
 
 Repository: ./modules/bus-vat
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-validate](./bus-validate) · **Next:** [bus-reports](./bus-reports)
+<!-- busdk-docs-nav end -->

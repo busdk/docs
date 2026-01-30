@@ -41,3 +41,9 @@ It receives postings from [`bus invoices`](./bus-invoices),
 ## See also
 
 Repository: ./modules/bus-journal
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-invoices](./bus-invoices) · **Next:** [bus-assets](./bus-assets)
+<!-- busdk-docs-nav end -->

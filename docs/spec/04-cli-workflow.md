@@ -11,3 +11,8 @@ This section is split into **single-concept** documents:
 - [Extensible CLI surface and API parity](cli/api-parity)
 - [Error handling, dry-run, and diagnostics](cli/error-handling-dry-run-diagnostics)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Frictionless Table Schema as the contract](./data/table-schema-contract) · **Next:** [Extensible CLI surface and API parity](./cli/api-parity)
+<!-- busdk-docs-nav end -->

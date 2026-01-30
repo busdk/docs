@@ -28,3 +28,9 @@ checks and scripted validations.
 ## See also
 
 Repository: ./modules/bus-validate
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-inventory](./bus-inventory) · **Next:** [bus-vat](./bus-vat)
+<!-- busdk-docs-nav end -->

@@ -10,3 +10,8 @@ Travel               €800.00     €950.00     €-150.00
 
 This demonstrates that budgeting is fundamentally a controlled computation over structured CSV, and can be implemented as a small module while remaining integrated and repeatable.
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [AI-assisted classification (review before external commit)](./ai-assisted-classification-review) · **Next:** [Configure the chart of accounts](./configure-chart-of-accounts)
+<!-- busdk-docs-nav end -->

@@ -14,3 +14,8 @@ This section is split into **single-concept** documents:
 - [Extensibility as a first-class goal](design-goals/extensibility)
 - [AI-readiness (objective, not dependency)](design-goals/ai-readiness)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Visual identity and branding on outputs](./overview/visual-identity) · **Next:** [AI-readiness (objective, not dependency)](./design-goals/ai-readiness)
+<!-- busdk-docs-nav end -->

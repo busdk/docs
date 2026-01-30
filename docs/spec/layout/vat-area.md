@@ -4,3 +4,8 @@ An optional VAT area can hold VAT reference data and filed summaries. VAT report
 
 For Finnish compliance, VAT summaries MUST retain links to the postings and vouchers that produced each reported amount. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Schemas beside datasets (Table Schema JSON files)](./schemas-area) · **Next:** [BusDK Design Spec: Example end-to-end workflow](../08-example-workflow)
+<!-- busdk-docs-nav end -->

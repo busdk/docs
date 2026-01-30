@@ -4,3 +4,8 @@ BusDK organizes data in a transparent directory structure at the repository root
 
 For Finnish compliance, the layout MUST support audit-trail review and long-term readability, and it MUST be documented in the repository methods description. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Journal area (general ledger transactions)](./journal-area) · **Next:** [Minimal example layout](./minimal-example-layout)
+<!-- busdk-docs-nav end -->

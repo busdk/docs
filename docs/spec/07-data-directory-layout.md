@@ -14,3 +14,8 @@ This section is split into **single-concept** documents:
 - [Minimal example layout](layout/minimal-example-layout)
 - [Repository-level README expectations](layout/repository-readme-expectations)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Plug-in modules via new datasets](./extensibility/plugin-modules-via-datasets) · **Next:** [Accounts area (chart of accounts and references)](./layout/accounts-area)
+<!-- busdk-docs-nav end -->

@@ -4,3 +4,8 @@ In addition to mutating commands, BusDK provides read-only query and reporting c
 
 Reporting commands SHOULD support audit-trail exports and period-scoped output suitable for tax-audit packs. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Interactive use and scripting parity](./interactive-and-scripting-parity) · **Next:** [Validation and safety checks](./validation-and-safety-checks)
+<!-- busdk-docs-nav end -->

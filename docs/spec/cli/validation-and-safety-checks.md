@@ -4,3 +4,8 @@ Before any data mutation, the CLI performs schema validation and logical validat
 
 For Finnish compliance, validation MUST also enforce audit-trail invariants (stable IDs, required voucher references, deterministic ordering fields) and must prevent changes that would break a closed period or previously reported data. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Reporting and query commands](./reporting-and-queries) · **Next:** [Finnish Bookkeeping and Tax-Audit Compliance (BusDK)](../compliance/fi-bookkeeping-and-tax-audit)
+<!-- busdk-docs-nav end -->

@@ -36,3 +36,9 @@ and reporting modules, and connects bank data with ledger postings in
 ## See also
 
 Repository: ./modules/bus-reconcile
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-bank](./bus-bank) · **Next:** [bus-budget](./bus-budget)
+<!-- busdk-docs-nav end -->

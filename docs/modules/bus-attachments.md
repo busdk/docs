@@ -37,3 +37,9 @@ It links to records in [`bus invoices`](./bus-invoices),
 ## See also
 
 Repository: ./modules/bus-attachments
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-period](./bus-period) · **Next:** [bus-invoices](./bus-invoices)
+<!-- busdk-docs-nav end -->

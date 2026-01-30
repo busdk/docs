@@ -39,3 +39,9 @@ documents and feeds [`bus journal`](./bus-journal),
 ## See also
 
 Repository: ./modules/bus-invoices
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-attachments](./bus-attachments) · **Next:** [bus-journal](./bus-journal)
+<!-- busdk-docs-nav end -->

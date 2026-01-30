@@ -30,3 +30,9 @@ It is used by [`bus invoices`](./bus-invoices),
 ## See also
 
 Repository: ./modules/bus-entities
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-accounts](./bus-accounts) · **Next:** [bus-period](./bus-period)
+<!-- busdk-docs-nav end -->

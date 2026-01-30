@@ -38,3 +38,9 @@ affecting [`bus reports`](./bus-reports).
 ## See also
 
 Repository: ./modules/bus-bank
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-loans](./bus-loans) · **Next:** [bus-reconcile](./bus-reconcile)
+<!-- busdk-docs-nav end -->

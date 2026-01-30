@@ -9,3 +9,8 @@ CSV file and enforces uniqueness and valid types. Additional reference datasets
 such as `contacts.csv` or `entities.csv` may exist if customer and vendor
 identity tracking is needed beyond invoice free-text fields.
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [BusDK Design Spec: Data directory layout](../07-data-directory-layout) · **Next:** [Budgeting area](./budget-area)
+<!-- busdk-docs-nav end -->

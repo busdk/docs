@@ -8,3 +8,8 @@ Data Package.
 
 For Finnish compliance, schemas MUST declare primary and foreign keys for audit-trail references. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Repository-level README expectations](./repository-readme-expectations) · **Next:** [VAT area (reference data and filed summaries)](./vat-area)
+<!-- busdk-docs-nav end -->

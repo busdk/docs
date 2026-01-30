@@ -4,3 +4,8 @@ An optional `invoices/pdf/` area stores generated invoice PDFs named by invoice 
 
 When PDFs are stored outside Git, BusDK MUST still preserve attachment metadata and stable references so that vouchers and postings can be verified. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Budgeting area](./budget-area) · **Next:** [Invoices area (headers and lines)](./invoices-area)
+<!-- busdk-docs-nav end -->

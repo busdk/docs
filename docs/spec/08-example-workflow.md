@@ -17,3 +17,8 @@ This section is split into **single-concept** documents:
 - [Workflow takeaways (transparency, control, automation)](workflow/workflow-takeaways)
 - [Evolution over time (extending the model)](workflow/evolution-over-time)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [VAT area (reference data and filed summaries)](./layout/vat-area) · **Next:** [Accounting workflow overview (current planned modules)](./workflow/accounting-workflow-overview)
+<!-- busdk-docs-nav end -->

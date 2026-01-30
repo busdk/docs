@@ -10,3 +10,8 @@ is expected to append a new account row to `accounts.csv`, and the corresponding
 
 The default model is “one commit per high-level operation” to maximize audit clarity and align with append-only discipline. External workflows may also batch operations into a single commit when needed (for example, after a scripted import).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Extensible CLI surface and API parity](./api-parity) · **Next:** [Command structure and discoverability](./command-structure)
+<!-- busdk-docs-nav end -->

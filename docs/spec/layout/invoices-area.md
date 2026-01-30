@@ -4,3 +4,8 @@ The invoices area contains invoicing data. Sales and purchase invoices are separ
 
 For Finnish compliance, invoice headers and lines MUST carry identifiers and references that make the voucher trail verifiable. At minimum: unique invoice identifier, invoice number, invoice date, counterparty, totals, VAT breakdown, and links to attachments and voucher/posting references. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Invoice PDF storage](./invoice-pdf-storage) · **Next:** [Journal area (general ledger transactions)](./journal-area)
+<!-- busdk-docs-nav end -->

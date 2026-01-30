@@ -4,3 +4,8 @@ The journal area contains general ledger transactions. A `journal.csv` (or segme
 
 For Finnish compliance, journal entries MUST include stable identifiers and explicit voucher references so the audit trail is demonstrable. Minimum fields for traceability include: `entry_id`, `transaction_id`, `posting_date`, `account_id`, `amount`, `currency`, `voucher_id`, and a deterministic `entry_sequence` for chronological ordering. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Invoices area (headers and lines)](./invoices-area) · **Next:** [Data directory layout (principles)](./layout-principles)
+<!-- busdk-docs-nav end -->

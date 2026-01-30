@@ -31,3 +31,9 @@ It posts to [`bus journal`](./bus-journal) and contributes to
 ## See also
 
 Repository: ./modules/bus-payroll
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-budget](./bus-budget) · **Next:** [bus-inventory](./bus-inventory)
+<!-- busdk-docs-nav end -->

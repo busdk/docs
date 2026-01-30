@@ -9,3 +9,8 @@
 - **[7] AI Bookkeeping is Revolutionizing Small Business ...**: [uplinq.com](https://www.uplinq.com/post/how-ai-bookkeeping-is-revolutionizing-small-business-accounting?utm_source=chatgpt.com)
 - **[8] Data Package (v1)**: [specs.frictionlessdata.io](https://specs.frictionlessdata.io/data-package/?utm_source=chatgpt.com)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [References and external foundations (summary)](./foundations-summary) · **Next:** [bus-accounts](../../modules/bus-accounts)
+<!-- busdk-docs-nav end -->

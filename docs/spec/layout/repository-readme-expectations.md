@@ -4,3 +4,8 @@ The repository-level README is expected to document structure, workflows, and co
 
 For Finnish compliance, the repository MUST also include a methods description and a list of datasets/materials (luettelo kirjanpidoista ja aineistoista) that explains how the accounting is produced, how datasets relate, and how to access stored evidence. This documentation MUST be versioned within the workspace. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Minimal example layout](./minimal-example-layout) · **Next:** [Schemas beside datasets (Table Schema JSON files)](./schemas-area)
+<!-- busdk-docs-nav end -->

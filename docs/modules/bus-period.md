@@ -35,3 +35,9 @@ postings back to it, and is required before
 ## See also
 
 Repository: ./modules/bus-period
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-entities](./bus-entities) · **Next:** [bus-attachments](./bus-attachments)
+<!-- busdk-docs-nav end -->

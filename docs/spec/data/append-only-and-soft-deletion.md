@@ -4,3 +4,8 @@ For critical ledgers such as the journal, BusDK enforces that new transactions a
 
 After a period is closed or statutory reporting is produced, BusDK MUST prevent edits that would change previously reported content and must require correction entries instead. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [BusDK Design Spec: Data format and storage](../03-data-formats-and-storage) · **Next:** [CSV conventions](./csv-conventions)
+<!-- busdk-docs-nav end -->

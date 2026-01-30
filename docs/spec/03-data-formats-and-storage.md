@@ -10,3 +10,8 @@ This section is split into **single-concept** documents:
 - [Append-only updates and soft deletion](data/append-only-and-soft-deletion)
 - [Scaling over decades](data/scaling-over-decades)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Shared validation layer (schema + logical validation)](./architecture/shared-validation-layer) · **Next:** [Append-only updates and soft deletion](./data/append-only-and-soft-deletion)
+<!-- busdk-docs-nav end -->

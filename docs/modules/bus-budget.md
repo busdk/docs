@@ -31,3 +31,9 @@ accounts from [`bus accounts`](./bus-accounts), feeding
 ## See also
 
 Repository: ./modules/bus-budget
+
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [bus-reconcile](./bus-reconcile) · **Next:** [bus-payroll](./bus-payroll)
+<!-- busdk-docs-nav end -->

@@ -8,3 +8,8 @@ This section is split into **single-concept** documents:
 - [One-developer contributions and ecosystem](extensibility/one-developer-ecosystem)
 - [Governance of core schemas](extensibility/core-schema-governance)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [Future interfaces (APIs, dashboards, wrappers)](./integration/future-interfaces) · **Next:** [AI and external service integration](./extensibility/ai-and-external-services)
+<!-- busdk-docs-nav end -->

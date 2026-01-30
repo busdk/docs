@@ -22,3 +22,8 @@ This overview is split into **single-concept** documents:
 - [Example end-to-end workflow](08-example-workflow)
 - [References and external foundations](09-references)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** [BusDK Design Document](../index) · **Next:** [Purpose and scope](./overview/purpose-and-scope)
+<!-- busdk-docs-nav end -->

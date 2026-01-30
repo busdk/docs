@@ -34,3 +34,8 @@ For the full narrative, see [Accounting workflow overview](spec/workflow/account
 - [Example end-to-end workflow](spec/08-example-workflow)
 - [References and external foundations](spec/09-references)
 
+---
+
+<!-- busdk-docs-nav start -->
+**Prev:** — · **Next:** [BusDK Design Spec: Overview](./spec/00-overview)
+<!-- busdk-docs-nav end -->
