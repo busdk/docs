@@ -2,17 +2,16 @@
 
 This section is split into **single-concept** documents:
 
-- [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
-- [Data directory layout (principles)](layout/layout-principles)
 - [Accounts area (chart of accounts and references)](layout/accounts-area)
-- [Journal area (general ledger transactions)](layout/journal-area)
-- [Invoices area (headers and lines)](layout/invoices-area)
-- [Invoice PDF storage](layout/invoice-pdf-storage)
-- [VAT area (reference data and filed summaries)](layout/vat-area)
 - [Budgeting area](layout/budget-area)
-- [Schemas area (Table Schema JSON files)](layout/schemas-area)
+- [Invoice PDF storage](layout/invoice-pdf-storage)
+- [Invoices area (headers and lines)](layout/invoices-area)
+- [Journal area (general ledger transactions)](layout/journal-area)
+- [Data directory layout (principles)](layout/layout-principles)
 - [Minimal example layout](layout/minimal-example-layout)
 - [Repository-level README expectations](layout/repository-readme-expectations)
+- [Schemas beside datasets (Table Schema JSON files)](layout/schemas-area)
+- [VAT area (reference data and filed summaries)](layout/vat-area)
 
 ---
 
