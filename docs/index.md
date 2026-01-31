@@ -26,15 +26,15 @@ For the full narrative, see [Accounting workflow overview](spec/workflow/account
 
 - [Overview](spec/overview/)
 - [Design goals and requirements](spec/design-goals/)
-- [System architecture](spec/02-architecture)
-- [Data formats and storage](spec/03-data-formats-and-storage)
-- [CLI tooling and workflow](spec/04-cli-workflow)
+- [System architecture](spec/architecture/)
+- [Data formats and storage](spec/data/)
+- [CLI tooling and workflow](spec/cli/)
 - [Finnish bookkeeping and tax-audit compliance](spec/compliance/fi-bookkeeping-and-tax-audit)
-- [Integration and future interfaces](spec/05-integration-future-interfaces)
-- [Extensibility model](spec/06-extensibility-model)
-- [Data directory layout](spec/07-data-directory-layout)
-- [Example end-to-end workflow](spec/08-example-workflow)
-- [References and external foundations](spec/09-references)
+- [Integration and future interfaces](spec/integration/)
+- [Extensibility model](spec/extensibility/)
+- [Data directory layout](spec/layout/)
+- [Example end-to-end workflow](spec/workflow/)
+- [References and external foundations](spec/references/)
 
 ---
 
