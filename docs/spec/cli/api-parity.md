@@ -5,5 +5,5 @@ As new modules are added, they introduce new subcommands without breaking existi
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: CLI tooling and workflow](../04-cli-workflow) · **Index:** [BusDK Design Document](../../index) · **Next:** [Git commit conventions per operation (external Git)](./automated-git-commits)
+**Prev:** [BusDK Design Spec: CLI tooling and workflow](../cli/) · **Index:** [BusDK Design Document](../../index) · **Next:** [Git commit conventions per operation (external Git)](./automated-git-commits)
 <!-- busdk-docs-nav end -->

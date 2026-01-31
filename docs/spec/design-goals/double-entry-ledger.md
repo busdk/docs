@@ -21,7 +21,7 @@ The compliance requirements for Finnish audit trail, vouchers, and retention liv
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [CLI-first and human-friendly interfaces](./cli-first) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Extensibility as a first-class goal](./extensibility)
+**Prev:** [CLI-first and human-friendly interfaces](./cli-first) · **Index:** [BusDK Design Spec: Design goals and requirements](./) · **Next:** [Extensibility as a first-class goal](./extensibility)
 <!-- busdk-docs-nav end -->
 
 ## Sources

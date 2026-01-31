@@ -12,5 +12,5 @@
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [References and external foundations (summary)](./foundations-summary) · **Index:** [BusDK Design Spec: References and external foundations](../09-references) · **Next:** [bus-init](../../modules/bus-init)
+**Prev:** [References and external foundations (summary)](./foundations-summary) · **Index:** [BusDK Design Spec: References and external foundations](../references/) · **Next:** [bus-init](../../modules/bus-init)
 <!-- busdk-docs-nav end -->

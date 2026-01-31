@@ -30,5 +30,5 @@ BusDK is intended to grow into a broader suite of tools for running a business, 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Extensibility as a first-class goal](./extensibility) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth)
+**Prev:** [Extensibility as a first-class goal](./extensibility) · **Index:** [BusDK Design Spec: Design goals and requirements](./) · **Next:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth)
 <!-- busdk-docs-nav end -->

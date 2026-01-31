@@ -7,5 +7,5 @@ When Git is used, modules treat the repository data as the canonical source of t
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface) · **Index:** [BusDK Design Spec: System architecture](../02-architecture) · **Next:** [Independent modules (integration through shared datasets)](./independent-modules)
+**Prev:** [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface) · **Index:** [BusDK Design Spec: System architecture](../architecture/) · **Next:** [Independent modules (integration through shared datasets)](./independent-modules)
 <!-- busdk-docs-nav end -->

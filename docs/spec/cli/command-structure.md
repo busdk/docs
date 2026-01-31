@@ -5,5 +5,5 @@ BusDK is CLI-first. Commands are organized by module and generally follow a verb
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Git commit conventions per operation (external Git)](./automated-git-commits) · **Index:** [BusDK Design Spec: CLI tooling and workflow](../04-cli-workflow) · **Next:** [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
+**Prev:** [Git commit conventions per operation (external Git)](./automated-git-commits) · **Index:** [BusDK Design Spec: CLI tooling and workflow](../cli/) · **Next:** [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
 <!-- busdk-docs-nav end -->

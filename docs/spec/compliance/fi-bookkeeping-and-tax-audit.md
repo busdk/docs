@@ -69,7 +69,7 @@ Re-check Finlex and Verohallinto sources at least annually and whenever legislat
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Validation and safety checks](../cli/validation-and-safety-checks) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Integration and future interfaces](../05-integration-future-interfaces)
+**Prev:** [Validation and safety checks](../cli/validation-and-safety-checks) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Integration and future interfaces](../integration/)
 <!-- busdk-docs-nav end -->
 
 ## Sources (authoritative)

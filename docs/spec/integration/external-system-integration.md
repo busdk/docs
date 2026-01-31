@@ -5,5 +5,5 @@ External systems can integrate by exchanging CSV resources or by operating on th
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Integration and future interfaces](../05-integration-future-interfaces) · **Index:** [BusDK Design Document](../../index) · **Next:** [Future interfaces (APIs, dashboards, wrappers)](./future-interfaces)
+**Prev:** [BusDK Design Spec: Integration and future interfaces](../integration/) · **Index:** [BusDK Design Document](../../index) · **Next:** [Future interfaces (APIs, dashboards, wrappers)](./future-interfaces)
 <!-- busdk-docs-nav end -->

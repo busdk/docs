@@ -11,5 +11,5 @@ A particular packaging model for modules (separate executables, subcommands of a
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Plain-text CSV for longevity](./plaintext-csv-longevity)
+**Prev:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth) · **Index:** [BusDK Design Spec: Design goals and requirements](./) · **Next:** [Plain-text CSV for longevity](./plaintext-csv-longevity)
 <!-- busdk-docs-nav end -->

@@ -24,8 +24,8 @@ For the full narrative, see [Accounting workflow overview](spec/workflow/account
 
 ## Spec index
 
-- [Overview](spec/00-overview)
-- [Design goals and requirements](spec/01-design-goals)
+- [Overview](spec/overview/)
+- [Design goals and requirements](spec/design-goals/)
 - [System architecture](spec/02-architecture)
 - [Data formats and storage](spec/03-data-formats-and-storage)
 - [CLI tooling and workflow](spec/04-cli-workflow)
@@ -39,5 +39,5 @@ For the full narrative, see [Accounting workflow overview](spec/workflow/account
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** — · **Index:** [BusDK Design Document](./index) · **Next:** [BusDK Design Spec: Overview](./spec/00-overview)
+**Prev:** — · **Index:** [BusDK Design Document](./index) · **Next:** [BusDK Design Spec: Overview](./spec/overview/)
 <!-- busdk-docs-nav end -->

@@ -9,5 +9,5 @@ Frictionless Table Schema is an implementation choice, not the definition of the
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Plain-text CSV for longevity](./plaintext-csv-longevity) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Unix-style composability (micro-tools)](./unix-composability)
+**Prev:** [Plain-text CSV for longevity](./plaintext-csv-longevity) · **Index:** [BusDK Design Spec: Design goals and requirements](./) · **Next:** [Unix-style composability (micro-tools)](./unix-composability)
 <!-- busdk-docs-nav end -->

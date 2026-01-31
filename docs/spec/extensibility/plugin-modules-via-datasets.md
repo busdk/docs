@@ -5,5 +5,5 @@ BusDK supports adding modules by defining new datasets and schemas and implement
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [One-developer contributions and ecosystem](./one-developer-ecosystem) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Data directory layout](../07-data-directory-layout)
+**Prev:** [One-developer contributions and ecosystem](./one-developer-ecosystem) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Data directory layout](../layout/)
 <!-- busdk-docs-nav end -->

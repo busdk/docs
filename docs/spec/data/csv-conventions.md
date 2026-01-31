@@ -13,5 +13,5 @@ Each dataset MUST include a stable primary identifier column (`*_id`) that never
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Append-only updates and soft deletion](./append-only-and-soft-deletion) · **Index:** [BusDK Design Spec: Data format and storage](../03-data-formats-and-storage) · **Next:** [Data Package organization](./data-package-organization)
+**Prev:** [Append-only updates and soft deletion](./append-only-and-soft-deletion) · **Index:** [BusDK Design Spec: Data format and storage](../data/) · **Next:** [Data Package organization](./data-package-organization)
 <!-- busdk-docs-nav end -->
