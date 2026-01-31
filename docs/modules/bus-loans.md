@@ -4,6 +4,8 @@ Bus Loans maintains loan master data and event logs in CSV datasets, generates
 amortization schedules from contract terms, and produces journal posting
 suggestions for loan activity.
 
+The loan register also supports portfolio reporting for applications and special situations such as corporate restructuring, business reorganisation, debt adjustment, or debt restructuring.
+
 ## How to run
 
 Run `bus loans` … and use `--help` for available
