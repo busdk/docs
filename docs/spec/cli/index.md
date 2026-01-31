@@ -13,5 +13,9 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [VAT area (reference data and filed summaries)](../layout/vat-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [Extensible CLI surface and API parity](./api-parity)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../layout/vat-area">VAT area (reference data and filed summaries)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./api-parity">Extensible CLI surface and API parity</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

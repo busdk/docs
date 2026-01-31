@@ -22,5 +22,9 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** — · **Index:** [BusDK Design Document](./index) · **Next:** [BusDK Design Spec: Overview](./spec/overview/)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">—</span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./spec/overview/">BusDK Design Spec: Overview</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

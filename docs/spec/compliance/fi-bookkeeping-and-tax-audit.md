@@ -69,7 +69,11 @@ Re-check Finlex and Verohallinto sources at least annually and whenever legislat
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Plug-in modules via new datasets](../extensibility/plugin-modules-via-datasets) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: References and external foundations](../references/)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../extensibility/plugin-modules-via-datasets">Plug-in modules via new datasets</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../references/">BusDK Design Spec: References and external foundations</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->
 
 ### Sources (authoritative)

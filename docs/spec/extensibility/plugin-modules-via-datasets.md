@@ -5,5 +5,9 @@ BusDK supports adding modules by defining new datasets and schemas and implement
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [One-developer contributions and ecosystem](./one-developer-ecosystem) · **Index:** [BusDK Design Document](../../index) · **Next:** [Finnish Bookkeeping and Tax-Audit Compliance (BusDK)](../compliance/fi-bookkeeping-and-tax-audit)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./one-developer-ecosystem">One-developer contributions and ecosystem</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish Bookkeeping and Tax-Audit Compliance (BusDK)</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

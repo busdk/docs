@@ -41,5 +41,9 @@ Repository: ./modules/bus-vat
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-validate](./bus-validate) · **Index:** [Modules](./) · **Next:** [bus-reports](./bus-reports)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-validate">bus-validate</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

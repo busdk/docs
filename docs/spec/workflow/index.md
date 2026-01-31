@@ -20,5 +20,9 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Validation and safety checks](../cli/validation-and-safety-checks) · **Index:** [BusDK Design Document](../../index) · **Next:** [Accounting workflow overview (current planned modules)](./accounting-workflow-overview)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../cli/validation-and-safety-checks">Validation and safety checks</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./accounting-workflow-overview">Accounting workflow overview (current planned modules)</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

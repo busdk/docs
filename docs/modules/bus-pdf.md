@@ -35,5 +35,9 @@ Repository: ./modules/bus-pdf
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-invoices](./bus-invoices) · **Index:** [Modules](./) · **Next:** [bus-journal](./bus-journal)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-invoices">bus-invoices</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-journal">bus-journal</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

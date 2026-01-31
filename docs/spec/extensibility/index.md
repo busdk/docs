@@ -11,5 +11,9 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Future interfaces (APIs, dashboards, wrappers)](../integration/future-interfaces) · **Index:** [BusDK Design Document](../../index) · **Next:** [AI and external service integration](./ai-and-external-services)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../integration/future-interfaces">Future interfaces (APIs, dashboards, wrappers)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./ai-and-external-services">AI and external service integration</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

@@ -30,3 +30,30 @@
 .footer a {
   color: var(--busdk-muted);
 }
+
+.busdk-prev-next {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.busdk-prev-next-item {
+  display: block;
+}
+
+.busdk-prev-next-item a {
+  text-decoration: none;
+}
+
+.busdk-prev-next-item.busdk-prev {
+  text-align: left;
+}
+
+.busdk-prev-next-item.busdk-index {
+  text-align: center;
+}
+
+.busdk-prev-next-item.busdk-next {
+  text-align: right;
+}

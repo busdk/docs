@@ -39,5 +39,9 @@ Repository: ./modules/bus-period
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-entities](./bus-entities) · **Index:** [Modules](./) · **Next:** [bus-attachments](./bus-attachments)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-entities">bus-entities</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

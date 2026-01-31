@@ -5,5 +5,9 @@ She begins by creating a dedicated repository for the bookkeeping year. The init
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment) · **Index:** [BusDK Design Document](../../index) · **Next:** [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./import-bank-transactions-and-apply-payment">Import bank transactions and apply payments</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./invoice-ledger-impact">Invoice ledger impact (integration through journal entries)</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

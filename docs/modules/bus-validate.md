@@ -32,5 +32,9 @@ Repository: ./modules/bus-validate
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-inventory](./bus-inventory) · **Index:** [Modules](./) · **Next:** [bus-vat](./bus-vat)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-inventory">bus-inventory</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-vat">bus-vat</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

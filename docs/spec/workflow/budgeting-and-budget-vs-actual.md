@@ -13,5 +13,9 @@ This demonstrates that budgeting is fundamentally a controlled computation over 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [AI-assisted classification (review before external commit)](./ai-assisted-classification-review) · **Index:** [BusDK Design Document](../../index) · **Next:** [Configure the chart of accounts](./configure-chart-of-accounts)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ai-assisted-classification-review">AI-assisted classification (review before external commit)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./configure-chart-of-accounts">Configure the chart of accounts</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

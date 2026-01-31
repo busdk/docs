@@ -14,5 +14,9 @@ The command generates two ledger rows in `journal/journal_2026.csv`, linking the
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact) · **Index:** [BusDK Design Document](../../index) · **Next:** [Scenario introduction](./scenario-introduction)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./invoice-ledger-impact">Invoice ledger impact (integration through journal entries)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./scenario-introduction">Scenario introduction</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

@@ -12,5 +12,9 @@
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [References and external foundations (summary)](./foundations-summary) · **Index:** [BusDK Design Spec: References and external foundations](../references/) · **Next:** —
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./foundations-summary">References and external foundations (summary)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../references/">BusDK Design Spec: References and external foundations</a></span>
+  <span class="busdk-prev-next-item busdk-next">—</span>
+</p>
 <!-- busdk-docs-nav end -->

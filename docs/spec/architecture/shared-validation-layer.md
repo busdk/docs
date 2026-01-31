@@ -5,5 +5,9 @@ A shared validation layer is foundational. Each module relies on schema validati
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Independent modules (integration through shared datasets)](./independent-modules) · **Index:** [BusDK Design Spec: System architecture](../architecture/) · **Next:** [BusDK Design Spec: Data format and storage](../data/)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./independent-modules">Independent modules (integration through shared datasets)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../architecture/">BusDK Design Spec: System architecture</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../data/">BusDK Design Spec: Data format and storage</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

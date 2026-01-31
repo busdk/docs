@@ -38,5 +38,9 @@ my-business-books/
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Data directory layout (principles)](./layout-principles) · **Index:** [BusDK Design Document](../../index) · **Next:** [Repository-level README expectations](./repository-readme-expectations)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./layout-principles">Data directory layout (principles)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./repository-readme-expectations">Repository-level README expectations</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

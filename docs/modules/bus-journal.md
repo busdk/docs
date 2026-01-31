@@ -45,5 +45,9 @@ Repository: ./modules/bus-journal
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-pdf](./bus-pdf) · **Index:** [Modules](./) · **Next:** [bus-assets](./bus-assets)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-pdf">bus-pdf</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-assets">bus-assets</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

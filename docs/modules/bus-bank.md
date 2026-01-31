@@ -42,5 +42,9 @@ Repository: ./modules/bus-bank
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-loans](./bus-loans) · **Index:** [Modules](./) · **Next:** [bus-reconcile](./bus-reconcile)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-loans">bus-loans</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-reconcile">bus-reconcile</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

@@ -15,5 +15,9 @@ BusDK may also be offered as a commercial web application and API product. That 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Auditability through append-only changes](./append-only-auditability) · **Index:** [BusDK Design Spec: Design goals and requirements](./) · **Next:** [Double-entry ledger accounting](./double-entry-ledger)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./append-only-auditability">Auditability through append-only changes</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">BusDK Design Spec: Design goals and requirements</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./double-entry-ledger">Double-entry ledger accounting</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

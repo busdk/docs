@@ -7,5 +7,9 @@ For Finnish compliance, schemas MUST declare primary and foreign keys for audit-
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Repository-level README expectations](./repository-readme-expectations) · **Index:** [BusDK Design Document](../../index) · **Next:** [VAT area (reference data and filed summaries)](./vat-area)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./repository-readme-expectations">Repository-level README expectations</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./vat-area">VAT area (reference data and filed summaries)</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

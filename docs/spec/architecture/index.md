@@ -12,5 +12,9 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Unix-style composability (micro-tools)](../design-goals/unix-composability) · **Index:** [BusDK Design Document](../../index) · **Next:** [Append-only discipline and security model](./append-only-and-security)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../design-goals/unix-composability">Unix-style composability (micro-tools)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./append-only-and-security">Append-only discipline and security model</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

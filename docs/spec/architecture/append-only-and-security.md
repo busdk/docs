@@ -7,5 +7,9 @@ In single-user operation on a local machine, security is primarily OS-level cont
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: System architecture](../architecture/) · **Index:** [BusDK Design Spec: System architecture](../architecture/) · **Next:** [Architectural overview](./architectural-overview)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/">BusDK Design Spec: System architecture</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../architecture/">BusDK Design Spec: System architecture</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./architectural-overview">Architectural overview</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

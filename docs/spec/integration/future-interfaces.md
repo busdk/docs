@@ -5,5 +5,9 @@ Although CLI is the initial interface, the architecture is designed for future A
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [External system integration patterns](./external-system-integration) · **Index:** [BusDK Design Spec: Integration and future interfaces](../integration/) · **Next:** [BusDK Design Spec: Extensibility model](../extensibility/)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./external-system-integration">External system integration patterns</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../integration/">BusDK Design Spec: Integration and future interfaces</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../extensibility/">BusDK Design Spec: Extensibility model</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

@@ -33,5 +33,9 @@ Repository: ./modules/bus-filing_prh
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-filing](./bus-filing) · **Index:** [Modules](./) · **Next:** [bus-filing-vero](./bus-filing-vero)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing">bus-filing</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-vero">bus-filing-vero</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

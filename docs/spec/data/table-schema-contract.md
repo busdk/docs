@@ -13,5 +13,9 @@ Primary keys MUST be declared for core datasets (journal, ledger, vouchers, invo
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Schema evolution and migration](./schema-evolution-and-migration) · **Index:** [BusDK Design Spec: Data format and storage](../data/) · **Next:** [BusDK Design Spec: Data directory layout](../layout/)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./schema-evolution-and-migration">Schema evolution and migration</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../data/">BusDK Design Spec: Data format and storage</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../layout/">BusDK Design Spec: Data directory layout</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

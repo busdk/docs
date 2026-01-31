@@ -7,5 +7,9 @@ An AI assistant can read structured workspace datasets, run the same CLI workflo
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Extensibility model](../extensibility/) · **Index:** [BusDK Design Document](../../index) · **Next:** [Governance of core schemas](./core-schema-governance)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../extensibility/">BusDK Design Spec: Extensibility model</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./core-schema-governance">Governance of core schemas</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->

@@ -12,5 +12,9 @@ identity tracking is needed beyond invoice free-text fields.
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Data directory layout](../layout/) · **Index:** [BusDK Design Document](../../index) · **Next:** [Budgeting area](./budget-area)
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../layout/">BusDK Design Spec: Data directory layout</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./budget-area">Budgeting area</a> &rarr;</span>
+</p>
 <!-- busdk-docs-nav end -->
