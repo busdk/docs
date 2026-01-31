@@ -37,6 +37,17 @@
   border-radius: 0;
 }
 
+@media (prefers-color-scheme: dark) {
+  .markdown-body .highlight .na,
+  .markdown-body .highlight .nb,
+  .markdown-body .highlight .no,
+  .markdown-body .highlight .nt,
+  .markdown-body .highlight .nv,
+  .markdown-body .highlight .o {
+    color: var(--busdk-link);
+  }
+}
+
 .markdown-body pre code {
   background: transparent;
   color: inherit;
