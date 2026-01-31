@@ -20,6 +20,23 @@
   overflow: auto;
 }
 
+.markdown-body .highlight {
+  background: var(--busdk-code-bg);
+  border: 1px solid var(--busdk-border);
+  border-radius: 10px;
+}
+
+.markdown-body .highlight pre,
+.markdown-body .highlight code {
+  background: transparent;
+  color: var(--busdk-code-fg);
+}
+
+.markdown-body .highlight pre {
+  border: 0;
+  border-radius: 0;
+}
+
 .markdown-body pre code {
   background: transparent;
   color: inherit;
