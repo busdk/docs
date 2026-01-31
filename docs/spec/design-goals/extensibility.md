@@ -1,6 +1,10 @@
 # Extensibility as a first-class goal
 
-Extensibility is a first-class goal. The architecture must remain simple enough that a single developer can implement a new module over a weekend using common libraries. The data contracts (CSV + schemas) are the shared interface so that modules can be written in different programming languages and still interoperate. New business capabilities—inventory, payroll, specialized reports—should be addable by defining new datasets and tools without requiring a rewrite of the core.
+Extensibility is a first-class goal. The architecture must remain simple enough that a single developer can implement a new module over a weekend using common libraries, without rewriting or tightly coupling the core.
+
+BusDK modules interoperate through shared tabular datasets: rows plus a schema-defined contract. Today, the canonical storage is CSV files tracked in Git for auditability and longevity, but storage is an implementation detail. The core must expose a storage interface that can be backed by multiple implementations over time (for example, CSV-on-disk, SQL databases, or spreadsheet-style formats), so modules can remain unaware of whether they are reading and writing “CSV” versus “SQL” while still behaving deterministically.
+
+Schemas are expressed using [Frictionless Data Table Schema](https://frictionlessdata.io/specs/table-schema/) (JSON). BusDK follows the upstream specification as closely as possible; any BusDK-specific needs must be implemented as optional, namespaced extensions (for example, custom properties under a `busdk:*` key) that do not break compatibility with standard Table Schema tooling. In BusDK terms, the data contract is \((table, schema)\), not \((CSV, schema)\): CSV is the default representation today, not the definition of interoperability.
 
 ---
 
