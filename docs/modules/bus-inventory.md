@@ -33,5 +33,5 @@ Repository: ./modules/bus-inventory
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-payroll](./bus-payroll) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-validate](./bus-validate)
+**Prev:** [bus-payroll](./bus-payroll) · **Index:** [Modules](./) · **Next:** [bus-validate](./bus-validate)
 <!-- busdk-docs-nav end -->

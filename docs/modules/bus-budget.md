@@ -35,5 +35,5 @@ Repository: ./modules/bus-budget
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-reconcile](./bus-reconcile) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-payroll](./bus-payroll)
+**Prev:** [bus-reconcile](./bus-reconcile) · **Index:** [Modules](./) · **Next:** [bus-payroll](./bus-payroll)
 <!-- busdk-docs-nav end -->

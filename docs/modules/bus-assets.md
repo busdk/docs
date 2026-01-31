@@ -35,5 +35,5 @@ Repository: ./modules/bus-assets
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-journal](./bus-journal) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-loans](./bus-loans)
+**Prev:** [bus-journal](./bus-journal) · **Index:** [Modules](./) · **Next:** [bus-loans](./bus-loans)
 <!-- busdk-docs-nav end -->

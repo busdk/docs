@@ -38,5 +38,5 @@ Repository: ./modules/bus-accounts
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-init](./bus-init) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-entities](./bus-entities)
+**Prev:** [bus-init](./bus-init) · **Index:** [Modules](./) · **Next:** [bus-entities](./bus-entities)
 <!-- busdk-docs-nav end -->

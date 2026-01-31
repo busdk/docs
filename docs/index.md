@@ -8,6 +8,8 @@ Status: pre-release, under active development. Interfaces and schemas may still 
 
 BusDK is designed for year-round bookkeeping in a dedicated repository workspace. The preferred default is a Git repository where the workspace datasets are stored as UTF-8 CSV validated by Frictionless Table Schemas, and every data change is committed alongside its supporting evidence. The core dispatcher is [`bus`](https://github.com/busdk/bus) and the workflow below reflects the current set of planned modules in the BusDK org.
 
+The per-module reference pages are collected in the [Modules index](./modules/).
+
 - Set up a Git repository for the bookkeeping year and install `bus` plus the module binaries you will use.
 - Define master data: chart of accounts with [`bus accounts`](./modules/bus-accounts), counterparties with [`bus entities`](./modules/bus-entities), and periods with [`bus period`](./modules/bus-period).
 - Treat evidence as data: archive invoices, receipts, VAT exports, and bank files with [`bus attachments`](./modules/bus-attachments) and reference those IDs from other records.

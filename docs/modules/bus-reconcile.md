@@ -40,5 +40,5 @@ Repository: ./modules/bus-reconcile
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-bank](./bus-bank) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-budget](./bus-budget)
+**Prev:** [bus-bank](./bus-bank) · **Index:** [Modules](./) · **Next:** [bus-budget](./bus-budget)
 <!-- busdk-docs-nav end -->
