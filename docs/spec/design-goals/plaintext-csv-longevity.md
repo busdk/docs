@@ -1,6 +1,6 @@
 # Plain-text CSV for longevity
 
-BusDK treats business and accounting data as durable records that must remain accessible decades into the future. The core design constraint is that the canonical dataset should stay readable with common, general-purpose tooling and should not depend on proprietary application state or vendor-controlled file formats.
+BusDK treats business and accounting data as durable records that must remain accessible decades into the future. The core design constraint is that the canonical dataset should stay readable with common, general-purpose tooling and should not depend on proprietary application storage or vendor-controlled file formats.
 
 The preferred default representation is UTF-8 CSV paired with explicit schemas. CSV is plain text, ubiquitous across operating systems and languages, and straightforward to inspect, diff, and transform; it fits a longevity-oriented approach where a repository should remain intelligible even if BusDK itself is not available.
 
