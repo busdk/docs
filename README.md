@@ -12,3 +12,7 @@ For local preview, use Bundler with the GitHub Pages gem set. On macOS you typic
 bundle install
 bundle exec jekyll serve -s docs
 ```
+
+## GitHub Pages
+
+This site includes a custom not-found page in `docs/404.md`. It is built to `/404.html` via `permalink: /404.html` and links back to the documentation index using `{{ "/" | relative_url }}` so it remains correct with both a custom domain and a `baseurl`.
