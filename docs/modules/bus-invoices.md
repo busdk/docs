@@ -26,7 +26,7 @@ outputs when configured.
 
 Bus Invoices MUST assign stable invoice identifiers and maintain deterministic invoice numbering, and it MUST capture voucher-relevant metadata (dates, counterparty, totals, VAT breakdown). It MUST link invoices to attachments and to any generated journal entries, and it MUST represent corrections as new records (credit notes or adjustment invoices), not overwrites.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -40,7 +40,7 @@ documents and feeds [`bus journal`](./bus-journal),
 
 Repository: https://github.com/busdk/bus-invoices
 
-For invoice dataset layout and workflow details, see [Invoices area](../spec/layout/invoices-area) and [Create sales invoice](../spec/workflow/create-sales-invoice).
+For invoice dataset layout and workflow details, see [Invoices area](../layout/invoices-area) and [Create sales invoice](../workflow/create-sales-invoice).
 
 ---
 

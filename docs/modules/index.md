@@ -4,7 +4,7 @@ BusDK is organized as a set of independent modules that operate on workspace dat
 
 This section collects the module reference pages that describe what each module does, what data it reads and writes, and how it fits into the overall workflow.
 
-For the architectural rationale behind independent modules and the design goals that shape their boundaries, see [Independent modules](../spec/architecture/independent-modules) and [Modularity](../spec/design-goals/modularity).
+For the architectural rationale behind independent modules and the design goals that shape their boundaries, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating module-owned `init` commands and creating the chosen workspace layout.
 - [`bus accounts`](./bus-accounts): Maintains the chart of accounts as schema-validated CSV datasets used as shared reference data across the workspace.
@@ -32,7 +32,7 @@ For the architectural rationale behind independent modules and the design goals 
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../spec/workflow/year-end-close">Year-end close (closing entries)</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../workflow/year-end-close">Year-end close (closing entries)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-init">bus-init</a> &rarr;</span>
 </p>

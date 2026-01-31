@@ -34,7 +34,7 @@ outputs from [`bus vat`](./bus-vat) and reports from
 
 Repository: https://github.com/busdk/bus-filing-vero
 
-For VAT filing workflow and compliance context, see [VAT reporting and payment](../spec/workflow/vat-reporting-and-payment) and [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+For VAT filing workflow and compliance context, see [VAT reporting and payment](../workflow/vat-reporting-and-payment) and [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ---
 
@@ -42,6 +42,6 @@ For VAT filing workflow and compliance context, see [VAT reporting and payment](
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing-prh">bus-filing-prh</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="../spec/integration/">BusDK Design Spec: Integration and future interfaces</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../integration/">BusDK Design Spec: Integration and future interfaces</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

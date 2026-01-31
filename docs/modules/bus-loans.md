@@ -35,7 +35,7 @@ It posts to [`bus journal`](./bus-journal) and influences
 
 Repository: https://github.com/busdk/bus-loans
 
-For schema expectations and append-only audit trails, see [Table schema contract](../spec/data/table-schema-contract) and [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion).
+For schema expectations and append-only audit trails, see [Table schema contract](../data/table-schema-contract) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
 
 ---
 

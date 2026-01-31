@@ -31,7 +31,7 @@ It is used by [`bus invoices`](./bus-invoices),
 
 Repository: https://github.com/busdk/bus-entities
 
-For reference data organization and schema expectations, see [Data package organization](../spec/data/data-package-organization) and [Table schema contract](../spec/data/table-schema-contract).
+For reference data organization and schema expectations, see [Data package organization](../data/data-package-organization) and [Table schema contract](../data/table-schema-contract).
 
 ---
 

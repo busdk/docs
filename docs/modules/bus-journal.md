@@ -25,7 +25,7 @@ or invalid entries.
 
 Bus Journal MUST write append-only journal entries with stable `entry_id` and `transaction_id` values, and it MUST link every entry to a `voucher_id` while preserving references to source documents or attachments. It MUST provide deterministic ordering (`posting_date` + sequence) to satisfy chronological review, and it MUST support correction entries that reference the original entry rather than overwriting it.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -42,7 +42,7 @@ It receives postings from [`bus invoices`](./bus-invoices),
 
 Repository: https://github.com/busdk/bus-journal
 
-For ledger structure and append-only expectations, see [Journal area](../spec/layout/journal-area) and [Double-entry ledger](../spec/design-goals/double-entry-ledger).
+For ledger structure and append-only expectations, see [Journal area](../layout/journal-area) and [Double-entry ledger](../design-goals/double-entry-ledger).
 
 ---
 

@@ -32,7 +32,7 @@ render PDF documents from a prepared JSON render model.
 
 Repository: https://github.com/busdk/bus-pdf
 
-For PDF storage conventions and layout expectations, see [Invoice PDF storage](../spec/layout/invoice-pdf-storage) and [Layout principles](../spec/layout/layout-principles).
+For PDF storage conventions and layout expectations, see [Invoice PDF storage](../layout/invoice-pdf-storage) and [Layout principles](../layout/layout-principles).
 
 ---
 

@@ -30,7 +30,7 @@ from [`bus reports`](./bus-reports) and
 
 Repository: https://github.com/busdk/bus-filing-prh
 
-For compliance context and closing package expectations, see [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit) and [Year-end close (closing entries)](../spec/workflow/year-end-close).
+For compliance context and closing package expectations, see [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Year-end close (closing entries)](../workflow/year-end-close).
 
 ---
 

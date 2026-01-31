@@ -32,7 +32,7 @@ reporting.
 
 Repository: https://github.com/busdk/bus-assets
 
-For dataset invariants and audit trail expectations, see [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion) and [Append-only auditability](../spec/design-goals/append-only-auditability).
+For dataset invariants and audit trail expectations, see [Append-only and soft deletion](../data/append-only-and-soft-deletion) and [Append-only auditability](../design-goals/append-only-auditability).
 
 ---
 

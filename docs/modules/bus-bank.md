@@ -27,7 +27,7 @@ reconciliation diagnostics.
 
 Bus Bank MUST preserve source statement identifiers and transaction references from bank evidence. It MUST link each bank transaction to vouchers and resulting journal postings when reconciled, and it MUST retain original bank statement evidence via attachments metadata.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -39,7 +39,7 @@ affecting [`bus reports`](./bus-reports).
 
 Repository: https://github.com/busdk/bus-bank
 
-For bank import workflow context and CSV conventions, see [Import bank transactions and apply payment](../spec/workflow/import-bank-transactions-and-apply-payment) and [CSV conventions](../spec/data/csv-conventions).
+For bank import workflow context and CSV conventions, see [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment) and [CSV conventions](../data/csv-conventions).
 
 ---
 

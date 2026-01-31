@@ -32,7 +32,7 @@ accounts from [`bus accounts`](./bus-accounts), feeding
 
 Repository: https://github.com/busdk/bus-budget
 
-For budget dataset layout and variance workflow context, see [Budget area](../spec/layout/budget-area) and [Budgeting and budget vs actual](../spec/workflow/budgeting-and-budget-vs-actual).
+For budget dataset layout and variance workflow context, see [Budget area](../layout/budget-area) and [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual).
 
 ---
 

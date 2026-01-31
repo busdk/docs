@@ -48,12 +48,12 @@ Document the mismatch clearly (what the repo does today vs what the spec says),
 then implement the smallest, most deterministic change that preserves 
 auditable, agent-friendly BusDK workflows. At minimum, align with these specs 
 and link them from README.md where relevant: 
-https://docs.busdk.com/spec/03-data-formats-and-storage, 
-https://docs.busdk.com/spec/data/csv-conventions, 
-https://docs.busdk.com/spec/data/table-schema-contract, 
-https://docs.busdk.com/spec/04-cli-workflow, 
-https://docs.busdk.com/spec/cli/error-handling-dry-run-diagnostics, and 
-https://docs.busdk.com/spec/layout/repository-readme-expectations. If a 
+https://docs.busdk.com/data/, 
+https://docs.busdk.com/data/csv-conventions, 
+https://docs.busdk.com/data/table-schema-contract, 
+https://docs.busdk.com/cli/, 
+https://docs.busdk.com/cli/error-handling-dry-run-diagnostics, and 
+https://docs.busdk.com/layout/repository-readme-expectations. If a 
 module-specific spec page exists for this repository, follow it and link it 
 prominently in the README.
 

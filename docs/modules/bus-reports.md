@@ -25,7 +25,7 @@ diagnostics for integrity or balance issues.
 
 Bus Reports MUST generate financial statement outputs that can be traced back to ledger postings, and it MUST include or reference the basis for report line items to demonstrate the audit trail. It SHOULD support KPA and PMA formats when the user’s entity size requires them.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -39,7 +39,7 @@ workflows.
 
 Repository: https://github.com/busdk/bus-reports
 
-For reporting workflow context and data integrity expectations, see [Accounting workflow overview](../spec/workflow/accounting-workflow-overview) and [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion).
+For reporting workflow context and data integrity expectations, see [Accounting workflow overview](../workflow/accounting-workflow-overview) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
 
 ---
 

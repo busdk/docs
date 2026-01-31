@@ -24,7 +24,7 @@ for unbalanced or invalid period closures.
 
 Bus Period MUST lock closed periods and prevent edits that would break reported data. It MUST create opening and closing entries as append-only records with references, and it MUST support an annual close package containing period datasets, reports, and references.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -36,7 +36,7 @@ postings back to it, and is required before
 
 Repository: https://github.com/busdk/bus-period
 
-For period close workflow context, see [Year-end close (closing entries)](../spec/workflow/year-end-close) and [Accounting workflow overview](../spec/workflow/accounting-workflow-overview).
+For period close workflow context, see [Year-end close (closing entries)](../workflow/year-end-close) and [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
 ---
 

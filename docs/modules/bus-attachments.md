@@ -25,7 +25,7 @@ missing files or schema violations.
 
 Bus Attachments MUST assign stable `attachment_id` values and store immutable metadata (filename, media type, hash). It MUST support links from vouchers, journal entries, invoices, and bank records to attachment metadata, and it MUST retain evidence references even when files are stored outside Git.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -38,7 +38,7 @@ It links to records in [`bus invoices`](./bus-invoices),
 
 Repository: https://github.com/busdk/bus-attachments
 
-For attachment storage conventions and audit expectations, see [Invoice PDF storage](../spec/layout/invoice-pdf-storage) and [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion).
+For attachment storage conventions and audit expectations, see [Invoice PDF storage](../layout/invoice-pdf-storage) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
 
 ---
 

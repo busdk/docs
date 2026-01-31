@@ -25,7 +25,7 @@ unmatched items or invalid allocations.
 
 Bus Reconcile MUST link bank transactions to invoices or journal entries with stable reconciliation IDs, and it MUST preserve allocation history for partials, splits, and fees without overwriting prior records. It MUST provide audit-trail references from reconciled items back to vouchers and evidence.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -37,7 +37,7 @@ and reporting modules, and connects bank data with ledger postings in
 
 Repository: https://github.com/busdk/bus-reconcile
 
-For reconciliation workflow context, see [Import bank transactions and apply payment](../spec/workflow/import-bank-transactions-and-apply-payment) and [Accounting workflow overview](../spec/workflow/accounting-workflow-overview).
+For reconciliation workflow context, see [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment) and [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
 ---
 

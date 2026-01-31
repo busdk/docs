@@ -25,7 +25,7 @@ diagnostics for VAT mismatches or missing mappings.
 
 Bus VAT MUST compute VAT reports from journal and invoice data with traceable references. It MUST retain VAT code, rate, base, and tax amount in source data used for reporting, and it MUST output VAT summaries with links to underlying postings and vouchers.
 
-See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
 ### Integrations
 
@@ -38,7 +38,7 @@ It consumes data from [`bus invoices`](./bus-invoices),
 
 Repository: https://github.com/busdk/bus-vat
 
-For VAT dataset layout and reporting workflow context, see [VAT area](../spec/layout/vat-area) and [VAT reporting and payment](../spec/workflow/vat-reporting-and-payment).
+For VAT dataset layout and reporting workflow context, see [VAT area](../layout/vat-area) and [VAT reporting and payment](../workflow/vat-reporting-and-payment).
 
 ---
 
