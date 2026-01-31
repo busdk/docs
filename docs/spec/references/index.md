@@ -7,5 +7,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Year-end close (closing entries)](../workflow/year-end-close) · **Index:** [BusDK Design Document](../../index) · **Next:** [References and external foundations (summary)](./foundations-summary)
+**Prev:** [Finnish Bookkeeping and Tax-Audit Compliance (BusDK)](../compliance/fi-bookkeeping-and-tax-audit) · **Index:** [BusDK Design Document](../../index) · **Next:** [References and external foundations (summary)](./foundations-summary)
 <!-- busdk-docs-nav end -->

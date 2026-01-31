@@ -39,5 +39,5 @@ Repository: ./modules/bus-init
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Link list (original numbered references)](../spec/references/link-list) · **Index:** [Modules](./) · **Next:** [bus-accounts](./bus-accounts)
+**Prev:** [Modules](./) · **Index:** [Modules](./) · **Next:** [bus-accounts](./bus-accounts)
 <!-- busdk-docs-nav end -->

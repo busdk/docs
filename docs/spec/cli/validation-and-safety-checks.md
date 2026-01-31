@@ -7,5 +7,5 @@ For Finnish compliance, validation MUST also enforce audit-trail invariants (sta
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Reporting and query commands](./reporting-and-queries) · **Index:** [BusDK Design Document](../../index) · **Next:** [Finnish Bookkeeping and Tax-Audit Compliance (BusDK)](../compliance/fi-bookkeeping-and-tax-audit)
+**Prev:** [Reporting and query commands](./reporting-and-queries) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Example end-to-end workflow](../workflow/)
 <!-- busdk-docs-nav end -->

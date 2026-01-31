@@ -29,5 +29,5 @@ This section collects the module reference pages that describe what each module 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Document](../index) · **Index:** [Modules](./) · **Next:** [bus-init](./bus-init)
+**Prev:** [Year-end close (closing entries)](../spec/workflow/year-end-close) · **Index:** [Modules](./) · **Next:** [bus-init](./bus-init)
 <!-- busdk-docs-nav end -->

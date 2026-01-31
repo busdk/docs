@@ -7,5 +7,5 @@ For Finnish compliance, VAT summaries MUST retain links to the postings and vouc
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Schemas beside datasets (Table Schema JSON files)](./schemas-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Example end-to-end workflow](../workflow/)
+**Prev:** [Schemas beside datasets (Table Schema JSON files)](./schemas-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: CLI tooling and workflow](../cli/)
 <!-- busdk-docs-nav end -->

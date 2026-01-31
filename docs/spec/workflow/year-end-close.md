@@ -5,5 +5,5 @@ At year end, Alice closes the books. BusDK may provide a command such as `busdk 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Workflow takeaways (transparency, control, automation)](./workflow-takeaways) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: References and external foundations](../references/)
+**Prev:** [Workflow takeaways (transparency, control, automation)](./workflow-takeaways) · **Index:** [BusDK Design Document](../../index) · **Next:** [Modules](../../modules/)
 <!-- busdk-docs-nav end -->

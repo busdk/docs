@@ -13,5 +13,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Frictionless Table Schema as the contract](../data/table-schema-contract) · **Index:** [BusDK Design Document](../../index) · **Next:** [Extensible CLI surface and API parity](./api-parity)
+**Prev:** [VAT area (reference data and filed summaries)](../layout/vat-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [Extensible CLI surface and API parity](./api-parity)
 <!-- busdk-docs-nav end -->
