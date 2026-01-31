@@ -1,6 +1,8 @@
 # AI and external service integration
 
-AI integration is treated as an optional module layer. An AI assistant can read repository data to identify anomalies and can propose changes as commits or branches for human review using external Git tooling. This creates a reviewable workflow where the user remains in control and AI suggestions become auditable artifacts. Industry narratives emphasize that AI can accelerate bookkeeping by classifying and reconciling transactions quickly; BusDK’s structured data and Git-based review model is designed to enable this safely rather than implicitly trusting black-box automation. ([Uplinq](https://www.uplinq.com/post/how-ai-bookkeeping-is-revolutionizing-small-business-accounting?utm_source=chatgpt.com))
+AI integration is treated as an optional module layer. BusDK must remain fully functional without AI, and any AI-driven automation must operate through the same deterministic interfaces as human workflows.
+
+An AI assistant can read structured workspace datasets, run the same CLI workflows as a human, and propose changes as reviewable updates to the repository data. When Git is used for the canonical change history, those proposals naturally take the form of commits or branches created via external Git tooling. The safety property BusDK relies on is that proposed changes remain schema-validated, auditable, and human-reviewable before acceptance, consistent with [AI-readiness (objective, not dependency)](../design-goals/ai-readiness) and [Git as the canonical, append-only source of truth](../design-goals/git-as-source-of-truth).
 
 ---
 

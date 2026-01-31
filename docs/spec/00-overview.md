@@ -1,6 +1,6 @@
 # BusDK Design Spec: Overview
 
-Modular CLI-First Accounting Toolkit (CSV + Frictionless Data + Git)
+Modular CLI-first accounting toolkit (schema-driven datasets with reviewable change history)
 
 ## Purpose and scope
 

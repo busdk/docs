@@ -43,5 +43,5 @@ Repository: ./modules/bus-invoices
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-attachments](./bus-attachments) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-journal](./bus-journal)
+**Prev:** [bus-attachments](./bus-attachments) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-pdf](./bus-pdf)
 <!-- busdk-docs-nav end -->

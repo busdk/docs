@@ -1,16 +1,16 @@
 # Link list (original numbered references)
 
-- **[1] Basics of the Unix Philosophy**: [catb.org](https://www.catb.org/esr/writings/taoup/html/ch01s06.html?utm_source=chatgpt.com)
-- **[2] What Are “Sustainable Formats” For Electronic Records ...**: [tagovcloud.com](https://www.tagovcloud.com/2023/06/what-are-sustainable-formats-for-electronic-records-part-1/?utm_source=chatgpt.com)
-- **[3] Table Schema | Data Package (v1)**: [frictionlessdata.io](https://frictionlessdata.io/specs/table-schema/?utm_source=chatgpt.com)
-- **[4] 10.2 Git Internals - Git Objects**: [git-scm.com](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects?utm_source=chatgpt.com)
-- **[5] Accrual-based accounting method and its double-entry ledger ...**: [docs.mypocketcfo.com](https://docs.mypocketcfo.com/article/131-accrual-based-accounting-method-and-its-double-entry-ledger-system?utm_source=chatgpt.com)
+- **[1] Basics of the Unix Philosophy**: [The Art of Unix Programming](https://www.catb.org/esr/writings/taoup/html/ch01s06.html)
+- **[2] National Archives guidance on sustainable formats**: [archives.gov](https://www.archives.gov/records-mgmt/initiatives/sustainable-faq.html)
+- **[3] Frictionless Data Table Schema**: [frictionlessdata.io](https://frictionlessdata.io/specs/table-schema/)
+- **[4] Git Internals - Git Objects**: [git-scm.com](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
+- **[5] Kirjanpitolaki (KPL) 1336/1997**: [finlex.fi](https://finlex.fi/fi/laki/ajantasa/1997/19971336)
 - **[6] PDF/A Family, PDF for Long-term Preservation**: [loc.gov](https://www.loc.gov/preservation/digital/formats/fdd/fdd000318.shtml)
-- **[7] AI Bookkeeping is Revolutionizing Small Business ...**: [uplinq.com](https://www.uplinq.com/post/how-ai-bookkeeping-is-revolutionizing-small-business-accounting?utm_source=chatgpt.com)
-- **[8] Data Package (v1)**: [specs.frictionlessdata.io](https://specs.frictionlessdata.io/data-package/?utm_source=chatgpt.com)
+- **[7] KILA: Yleisohje kirjanpidon menetelmistä ja aineistoista (20.4.2021)**: [kirjanpitolautakunta.fi](https://kirjanpitolautakunta.fi/documents/8208007/11087193/final%2B2021-04-20%2BKILA-menetelmaohje%2B%281%29.pdf)
+- **[8] Frictionless Data Package**: [specs.frictionlessdata.io](https://specs.frictionlessdata.io/data-package/)
 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [References and external foundations (summary)](./foundations-summary) · **Index:** [BusDK Design Spec: References and external foundations](../09-references) · **Next:** [bus-accounts](../../modules/bus-accounts)
+**Prev:** [References and external foundations (summary)](./foundations-summary) · **Index:** [BusDK Design Spec: References and external foundations](../09-references) · **Next:** [bus-init](../../modules/bus-init)
 <!-- busdk-docs-nav end -->
