@@ -15,4 +15,4 @@ bundle exec jekyll serve -s docs
 
 ## GitHub Pages
 
-This site includes a custom not-found page in `docs/404.md`. It is built to `/404.html` via `permalink: /404.html` and links back to the documentation index using `{{ "/" | relative_url }}` so it remains correct with both a custom domain and a `baseurl`.
+This site includes a smart not-found page in `docs/404.md`. It is built to `/404.html` via `permalink: /404.html`, suggests the appropriate section index by matching the requested URL path, and uses `{{ "/" | relative_url }}` plus `site.baseurl` so it remains correct with both a custom domain and a `baseurl`. The page still works without JavaScript, falling back to the documentation index and a short list of section links.
