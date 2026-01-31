@@ -1,6 +1,6 @@
 ## VAT reporting and payment
 
-At the end of Q1 2026, Alice files VAT. She runs `busdk vat report --period 2026Q1`. The VAT module scans invoices and/or journal entries from Jan–Mar 2026, separates output VAT on sales from input VAT on purchases, and prints a summary such as:
+At the end of Q1 2026, Alice files VAT. She runs `bus vat report --period 2026Q1`. The VAT module scans invoices and/or journal entries from Jan–Mar 2026, separates output VAT on sales from input VAT on purchases, and prints a summary such as:
 
 ```text
 VAT Summary Q1 2026:

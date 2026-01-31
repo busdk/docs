@@ -3,7 +3,7 @@
 BusDK runs on top of a Git-managed repository, but it does not implement or run Git itself. The spec defines commit conventions per operation and expects users or external automation to apply them using their existing Git tooling. For example:
 
 ```bash
-busdk accounts add --code 3000 --name "Consulting Income" --type Income
+bus accounts add --code 3000 --name "Consulting Income" --type Income
 ```
 
 is expected to append a new account row to `accounts.csv`, and the corresponding Git commit (made externally) would use a message such as “Add account 3000 Consulting Income.”
