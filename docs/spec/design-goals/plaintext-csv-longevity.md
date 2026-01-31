@@ -1,6 +1,10 @@
 # Plain-text CSV for longevity
 
-The data format is deliberately plain-text and longevity-oriented. All business and accounting data is stored in CSV using UTF-8 text so that it remains accessible decades into the future without dependence on proprietary software. CSV is expected to remain readable and usable because it is ubiquitous, standardized in practice, and supported across tools and operating systems; guidance on “sustainable formats” emphasizes widespread support and self-describing characteristics as key factors in long-term accessibility. ([TransAccess](https://www.tagovcloud.com/2023/06/what-are-sustainable-formats-for-electronic-records-part-1/?utm_source=chatgpt.com)) BusDK therefore treats its dataset as a durable business record, not as the private internal state of a single application.
+BusDK treats business and accounting data as durable records that must remain accessible decades into the future. The core design constraint is that the canonical dataset should stay readable with common, general-purpose tooling and should not depend on proprietary application state or vendor-controlled file formats.
+
+The preferred default representation is UTF-8 CSV paired with explicit schemas. CSV is plain text, ubiquitous across operating systems and languages, and straightforward to inspect, diff, and transform; it fits a longevity-oriented approach where a repository should remain intelligible even if BusDK itself is not available.
+
+CSV is an implementation choice, not the definition of the goal. BusDK should be able to adopt other storage or serialization approaches over time as long as the system preserves long-term accessibility — in the sense of open documentation, broad tool support, and predictable export back to simple, tabular text formats — consistent with [National Archives guidance on selecting sustainable formats for electronic records](https://www.archives.gov/records-mgmt/initiatives/sustainable-faq.html).
 
 ---
 

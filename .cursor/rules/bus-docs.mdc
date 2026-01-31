@@ -14,6 +14,21 @@ prose). If a list would mix unrelated concepts, split it into separate
 paragraphs instead. When in doubt, keep the content in paragraphs and use clear 
 sentences, transitions, and headings rather than lists.
 
+Use BusDK-native wording. Prefer domain-accurate, concrete nouns that match the product’s framing (workspace, repository, datasets, schemas, tables, records, modules) instead of generic or academic abstractions (for example, “corpus”, “artifacts”, or “payload”). When a term could mean multiple things, pick the one that clarifies scope: whether you mean “the Git repository”, “the workspace datasets (CSV + schemas)”, or “the change history”.
+
+Prefer these terms when writing about storage and scope:
+- “the Git repository” or “the repository”: when you mean the concrete repo on disk (and often the unit of review and replication).
+- “the workspace data” or “the repository data”: when you mean all authoritative content in the workspace (datasets, schemas, and any attachments).
+- “the workspace datasets” or “the canonical dataset”: when you mean the tabular business/accounting data plus schemas as the primary system of record.
+- “dataset”, “table”, “record”, “row”: when you need to be precise about granularity.
+- “change history” or “revision history”: when you mean the append-only audit trail.
+
+Avoid these terms unless they are explicitly defined on the page:
+- “corpus”: replace with “dataset”, “workspace datasets”, “repository data”, or “record set”, depending on scope.
+- “state”: replace with “current dataset contents”, “current repository contents”, or “current revision”, depending on what is meant.
+
+When distinguishing goals from implementation details, use the pattern “X is an implementation choice, not the definition of the goal” and then restate the invariant in BusDK terms (for example, “the workspace datasets and their change history remain reviewable and exportable”).
+
 Use spaced em dashes when they function as punctuation between phrases or clauses. Write them with a space on both sides (for example, “like this — not like this”), and do not use an em dash to join parts of a single word. When a dash is part of the word (for example, “append-only”, “git-backed”), use a normal hyphen without surrounding spaces.
 
 When including source material, prefer links that are meaningful in context. If a sentence is grounded in a specific authority (law, guidance, standard), link that authority directly in the sentence with descriptive link text, rather than using numeric footnotes or citation markers. If multiple sources are relevant, link only the one or two that best support the point and keep the prose readable.
