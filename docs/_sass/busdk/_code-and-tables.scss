@@ -1,0 +1,53 @@
+// Code blocks, inline code, and tables.
+//
+// Aim: consistent contrast in both modes and predictable spacing without
+// changing content structure.
+
+.markdown-body code,
+.markdown-body tt {
+  background: var(--busdk-inline-code-bg);
+  color: var(--busdk-fg);
+  border-radius: 6px;
+  padding: 0.15em 0.35em;
+}
+
+.markdown-body pre {
+  background: var(--busdk-code-bg);
+  color: var(--busdk-code-fg);
+  border: 1px solid var(--busdk-border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  overflow: auto;
+}
+
+.markdown-body pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  border: 1px solid var(--busdk-border);
+  border-radius: 10px;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  border-color: var(--busdk-border);
+}
+
+.markdown-body table th {
+  background: var(--busdk-surface-1);
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background: var(--busdk-surface-2);
+}
+
+.markdown-body blockquote {
+  color: var(--busdk-muted);
+  border-left-color: var(--busdk-border);
+}

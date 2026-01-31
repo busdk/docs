@@ -1,0 +1,56 @@
+// BusDK brand tokens.
+//
+// If/when BusDK brand colors are formalized in this repository, update values here.
+// Downstream styling should map visible surfaces to these tokens rather than using
+// literal colors in selectors.
+
+:root {
+  color-scheme: light;
+
+  /*
+    BusDK brand placeholders:
+    - Accent/link is a teal family by default.
+    - Keep contrast high and surfaces quiet.
+  */
+  --busdk-bg: #ffffff;
+  --busdk-fg: #111827;
+  --busdk-muted: #4b5563;
+  --busdk-border: #e5e7eb;
+
+  --busdk-surface-1: #f9fafb;
+  --busdk-surface-2: #f3f4f6;
+
+  --busdk-accent: #0f766e;
+  --busdk-link: #0f766e;
+  --busdk-link-hover: #115e59;
+
+  --busdk-code-bg: #f6f8fa;
+  --busdk-code-fg: #111827;
+  --busdk-inline-code-bg: rgba(175, 184, 193, 0.25);
+
+  --busdk-selection-bg: rgba(15, 118, 110, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --busdk-bg: #0b0f14;
+    --busdk-fg: #e6edf3;
+    --busdk-muted: #9aa4b2;
+    --busdk-border: #263041;
+
+    --busdk-surface-1: #0f172a;
+    --busdk-surface-2: #111c2f;
+
+    --busdk-accent: #2dd4bf;
+    --busdk-link: #2dd4bf;
+    --busdk-link-hover: #5eead4;
+
+    --busdk-code-bg: #0f172a;
+    --busdk-code-fg: #e6edf3;
+    --busdk-inline-code-bg: rgba(255, 255, 255, 0.09);
+
+    --busdk-selection-bg: rgba(45, 212, 191, 0.22);
+  }
+}

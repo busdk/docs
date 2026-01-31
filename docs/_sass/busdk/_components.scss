@@ -1,0 +1,32 @@
+// Components (header/nav/footer) — keep structure intact, only restyle.
+
+// Primer theme uses a `.masthead` header with nav links.
+.masthead {
+  background: var(--busdk-bg);
+  border-bottom: 1px solid var(--busdk-border);
+}
+
+.masthead-title,
+.masthead-title a {
+  color: var(--busdk-fg);
+}
+
+.masthead a {
+  color: var(--busdk-link);
+}
+
+.masthead a:hover,
+.masthead a:focus-visible {
+  color: var(--busdk-link-hover);
+  text-decoration: underline;
+}
+
+.footer {
+  border-top: 1px solid var(--busdk-border);
+}
+
+.footer,
+.footer p,
+.footer a {
+  color: var(--busdk-muted);
+}
