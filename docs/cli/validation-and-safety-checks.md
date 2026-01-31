@@ -10,6 +10,6 @@ For Finnish compliance, validation MUST also enforce audit-trail invariants (sta
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./reporting-and-queries">Reporting and query commands</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="../workflow/">BusDK Design Spec: Example end-to-end workflow</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../workflow/index">BusDK Design Spec: Example end-to-end workflow</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

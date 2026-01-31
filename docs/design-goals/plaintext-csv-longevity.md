@@ -11,7 +11,7 @@ CSV is an implementation choice, not the definition of the goal. BusDK should be
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./modularity">Modularity as a first-class requirement</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./">BusDK Design Spec: Design goals and requirements</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Spec: Design goals and requirements</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./schema-contract">Schema-driven data contract (Frictionless Table Schema)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

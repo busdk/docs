@@ -7,7 +7,7 @@ BusDK assumes schemas will evolve as a business evolves. Schema changes are vers
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./scaling-over-decades">Scaling over decades</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../data/">BusDK Design Spec: Data format and storage</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../data/index">BusDK Design Spec: Data format and storage</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./table-schema-contract">Frictionless Table Schema as the contract</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

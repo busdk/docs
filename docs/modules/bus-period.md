@@ -43,7 +43,7 @@ For period close workflow context, see [Year-end close (closing entries)](../wor
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-entities">bus-entities</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./">Modules</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Modules</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

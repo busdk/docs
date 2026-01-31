@@ -13,7 +13,7 @@ is expected to append new ledger rows to the journal file and commit with a mess
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./architectural-overview">Architectural overview</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../architecture/">BusDK Design Spec: System architecture</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../architecture/index">BusDK Design Spec: System architecture</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./git-backed-data-store">Git-backed data repository (the data store)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

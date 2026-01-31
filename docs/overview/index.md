@@ -11,16 +11,16 @@ This overview is split into **single-concept** documents:
 
 ### Navigation
 
-- [Design goals and requirements](../design-goals/)
-- [System architecture](../architecture/)
-- [Data format and storage](../data/)
-- [CLI tooling and workflow](../cli/)
+- [Design goals and requirements](../design-goals/index)
+- [System architecture](../architecture/index)
+- [Data format and storage](../data/index)
+- [CLI tooling and workflow](../cli/index)
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
-- [Integration and future interfaces](../integration/)
-- [Extensibility model](../extensibility/)
-- [Data directory layout](../layout/)
-- [Example end-to-end workflow](../workflow/)
-- [References and external foundations](../references/)
+- [Integration and future interfaces](../integration/index)
+- [Extensibility model](../extensibility/index)
+- [Data directory layout](../layout/index)
+- [Example end-to-end workflow](../workflow/index)
+- [References and external foundations](../references/index)
 
 ---
 

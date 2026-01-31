@@ -10,8 +10,8 @@ This spec defines BusDK’s goals, system architecture, data formats and storage
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./">BusDK Design Spec: Overview</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./">BusDK Design Spec: Overview</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Overview</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Spec: Overview</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./visual-identity">Visual identity and branding on outputs</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

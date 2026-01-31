@@ -11,7 +11,7 @@ Pipes and stream processing are implementation choices, not the definition of th
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./schema-contract">Schema-driven data contract (Frictionless Table Schema)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./">BusDK Design Spec: Design goals and requirements</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="../architecture/">BusDK Design Spec: System architecture</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Spec: Design goals and requirements</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../architecture/index">BusDK Design Spec: System architecture</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

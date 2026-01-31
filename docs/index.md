@@ -2,22 +2,22 @@ BusDK is a modular, CLI-first toolkit for running a business, built on open, lon
 
 Status: pre-release, under active development. Interfaces and schemas may still change.
 
-BusDK’s accounting workflow and its end-to-end bookkeeping sequence are defined in the spec. Start with [Accounting workflow overview](workflow/accounting-workflow-overview) for the narrative flow, then use the section index below for thematic entries and the [Modules index](./modules/) for per-module reference details and CLI entry points.
+BusDK’s accounting workflow and its end-to-end bookkeeping sequence are defined in the spec. Start with [Accounting workflow overview](workflow/accounting-workflow-overview) for the narrative flow, then use the section index below for thematic entries and the [Modules index](./modules/index) for per-module reference details and CLI entry points.
 
 ### Spec index
 
-- [Overview](overview/)
-- [Design goals and requirements](design-goals/)
-- [System architecture](architecture/)
-- [Data formats and storage](data/)
-- [Data directory layout](layout/)
-- [CLI tooling and workflow](cli/)
-- [Example end-to-end workflow](workflow/)
-- [Modules](./modules/)
-- [Integration and future interfaces](integration/)
-- [Extensibility model](extensibility/)
+- [Overview](overview/index)
+- [Design goals and requirements](design-goals/index)
+- [System architecture](architecture/index)
+- [Data formats and storage](data/index)
+- [Data directory layout](layout/index)
+- [CLI tooling and workflow](cli/index)
+- [Example end-to-end workflow](workflow/index)
+- [Modules](modules/index)
+- [Integration and future interfaces](integration/index)
+- [Extensibility model](extensibility/index)
 - [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
-- [References and external foundations](references/)
+- [References and external foundations](references/index)
 
 ---
 
@@ -25,6 +25,6 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">—</span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Document</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./overview/">BusDK Design Spec: Overview</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./overview/index">BusDK Design Spec: Overview</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

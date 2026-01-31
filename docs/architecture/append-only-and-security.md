@@ -8,8 +8,8 @@ In single-user operation on a local machine, security is primarily OS-level cont
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/">BusDK Design Spec: System architecture</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../architecture/">BusDK Design Spec: System architecture</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/index">BusDK Design Spec: System architecture</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../architecture/index">BusDK Design Spec: System architecture</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./architectural-overview">Architectural overview</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
