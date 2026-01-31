@@ -5,5 +5,5 @@ The system is CLI-first and human-friendly. Every function is accessible via CLI
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Auditability and append-only discipline](./append-only-auditability) · **Index:** [BusDK Design Document](../../index) · **Next:** [Double-entry ledger accounting](./double-entry-ledger)
+**Prev:** [Auditability through append-only changes](./append-only-auditability) · **Index:** [BusDK Design Document](../../index) · **Next:** [Double-entry ledger accounting](./double-entry-ledger)
 <!-- busdk-docs-nav end -->
