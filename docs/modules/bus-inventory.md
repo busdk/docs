@@ -28,7 +28,9 @@ It feeds valuation and posting inputs to
 
 ### See also
 
-Repository: ./modules/bus-inventory
+Repository: https://github.com/busdk/bus-inventory
+
+For dataset structure and audit trail expectations, see [Table schema contract](../spec/data/table-schema-contract) and [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion).
 
 ---
 

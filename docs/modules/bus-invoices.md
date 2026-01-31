@@ -38,7 +38,9 @@ documents and feeds [`bus journal`](./bus-journal),
 
 ### See also
 
-Repository: ./modules/bus-invoices
+Repository: https://github.com/busdk/bus-invoices
+
+For invoice dataset layout and workflow details, see [Invoices area](../spec/layout/invoices-area) and [Create sales invoice](../spec/workflow/create-sales-invoice).
 
 ---
 

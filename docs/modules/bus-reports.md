@@ -37,7 +37,9 @@ workflows.
 
 ### See also
 
-Repository: ./modules/bus-reports
+Repository: https://github.com/busdk/bus-reports
+
+For reporting workflow context and data integrity expectations, see [Accounting workflow overview](../spec/workflow/accounting-workflow-overview) and [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion).
 
 ---
 

@@ -28,7 +28,9 @@ from [`bus reports`](./bus-reports) and
 
 ### See also
 
-Repository: ./modules/bus-filing_prh
+Repository: https://github.com/busdk/bus-filing-prh
+
+For compliance context and closing package expectations, see [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit) and [Year-end close (closing entries)](../spec/workflow/year-end-close).
 
 ---
 

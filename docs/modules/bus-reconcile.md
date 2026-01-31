@@ -35,7 +35,9 @@ and reporting modules, and connects bank data with ledger postings in
 
 ### See also
 
-Repository: ./modules/bus-reconcile
+Repository: https://github.com/busdk/bus-reconcile
+
+For reconciliation workflow context, see [Import bank transactions and apply payment](../spec/workflow/import-bank-transactions-and-apply-payment) and [Accounting workflow overview](../spec/workflow/accounting-workflow-overview).
 
 ---
 

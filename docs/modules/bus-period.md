@@ -34,7 +34,9 @@ postings back to it, and is required before
 
 ### See also
 
-Repository: ./modules/bus-period
+Repository: https://github.com/busdk/bus-period
+
+For period close workflow context, see [Year-end close (closing entries)](../spec/workflow/year-end-close) and [Accounting workflow overview](../spec/workflow/accounting-workflow-overview).
 
 ---
 

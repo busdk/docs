@@ -29,7 +29,9 @@ It is used by [`bus invoices`](./bus-invoices),
 
 ### See also
 
-Repository: ./modules/bus-entities
+Repository: https://github.com/busdk/bus-entities
+
+For reference data organization and schema expectations, see [Data package organization](../spec/data/data-package-organization) and [Table schema contract](../spec/data/table-schema-contract).
 
 ---
 

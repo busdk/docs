@@ -40,7 +40,9 @@ It receives postings from [`bus invoices`](./bus-invoices),
 
 ### See also
 
-Repository: ./modules/bus-journal
+Repository: https://github.com/busdk/bus-journal
+
+For ledger structure and append-only expectations, see [Journal area](../spec/layout/journal-area) and [Double-entry ledger](../spec/design-goals/double-entry-ledger).
 
 ---
 

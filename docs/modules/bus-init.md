@@ -34,7 +34,9 @@ It invokes [`bus accounts`](./bus-accounts),
 
 ### See also
 
-Repository: ./modules/bus-init
+Repository: https://github.com/busdk/bus-init
+
+For workspace layout choices and the initialization workflow, see [Layout principles](../spec/layout/layout-principles) and [Initialize repo](../spec/workflow/initialize-repo).
 
 ---
 

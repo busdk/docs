@@ -30,7 +30,9 @@ It posts to [`bus journal`](./bus-journal) and contributes to
 
 ### See also
 
-Repository: ./modules/bus-payroll
+Repository: https://github.com/busdk/bus-payroll
+
+For schema expectations and workflow context, see [Table schema contract](../spec/data/table-schema-contract) and [Accounting workflow overview](../spec/workflow/accounting-workflow-overview).
 
 ---
 

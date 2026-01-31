@@ -30,7 +30,9 @@ render PDF documents from a prepared JSON render model.
 
 ### See also
 
-Repository: ./modules/bus-pdf
+Repository: https://github.com/busdk/bus-pdf
+
+For PDF storage conventions and layout expectations, see [Invoice PDF storage](../spec/layout/invoice-pdf-storage) and [Layout principles](../spec/layout/layout-principles).
 
 ---
 

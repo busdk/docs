@@ -30,7 +30,9 @@ accounts from [`bus accounts`](./bus-accounts), feeding
 
 ### See also
 
-Repository: ./modules/bus-budget
+Repository: https://github.com/busdk/bus-budget
+
+For budget dataset layout and variance workflow context, see [Budget area](../spec/layout/budget-area) and [Budgeting and budget vs actual](../spec/workflow/budgeting-and-budget-vs-actual).
 
 ---
 

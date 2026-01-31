@@ -36,7 +36,9 @@ It consumes data from [`bus invoices`](./bus-invoices),
 
 ### See also
 
-Repository: ./modules/bus-vat
+Repository: https://github.com/busdk/bus-vat
+
+For VAT dataset layout and reporting workflow context, see [VAT area](../spec/layout/vat-area) and [VAT reporting and payment](../spec/workflow/vat-reporting-and-payment).
 
 ---
 

@@ -4,6 +4,8 @@ BusDK is organized as a set of independent modules that operate on workspace dat
 
 This section collects the module reference pages that describe what each module does, what data it reads and writes, and how it fits into the overall workflow.
 
+For the architectural rationale behind independent modules and the design goals that shape their boundaries, see [Independent modules](../spec/architecture/independent-modules) and [Modularity](../spec/design-goals/modularity).
+
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating module-owned `init` commands and creating the chosen workspace layout.
 - [`bus accounts`](./bus-accounts): Maintains the chart of accounts as schema-validated CSV datasets used as shared reference data across the workspace.
 - [`bus entities`](./bus-entities): Maintains counterparty reference datasets and stable entity IDs used for linking and matching across modules.

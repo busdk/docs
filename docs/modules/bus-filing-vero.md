@@ -32,7 +32,9 @@ outputs from [`bus vat`](./bus-vat) and reports from
 
 ### See also
 
-Repository: ./modules/bus-filing_vero
+Repository: https://github.com/busdk/bus-filing-vero
+
+For VAT filing workflow and compliance context, see [VAT reporting and payment](../spec/workflow/vat-reporting-and-payment) and [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
 
 ---
 

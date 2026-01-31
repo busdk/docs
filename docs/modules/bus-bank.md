@@ -37,7 +37,9 @@ affecting [`bus reports`](./bus-reports).
 
 ### See also
 
-Repository: ./modules/bus-bank
+Repository: https://github.com/busdk/bus-bank
+
+For bank import workflow context and CSV conventions, see [Import bank transactions and apply payment](../spec/workflow/import-bank-transactions-and-apply-payment) and [CSV conventions](../spec/data/csv-conventions).
 
 ---
 

@@ -30,7 +30,9 @@ exports.
 
 ### See also
 
-Repository: ./modules/bus-filing
+Repository: https://github.com/busdk/bus-filing
+
+For authority reporting context and close prerequisites, see [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit) and [Year-end close (closing entries)](../spec/workflow/year-end-close).
 
 ---
 

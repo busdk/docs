@@ -27,7 +27,9 @@ checks and scripted validations.
 
 ### See also
 
-Repository: ./modules/bus-validate
+Repository: https://github.com/busdk/bus-validate
+
+For shared validation architecture and CLI safety behavior, see [Shared validation layer](../spec/architecture/shared-validation-layer) and [Validation and safety checks](../spec/cli/validation-and-safety-checks).
 
 ---
 

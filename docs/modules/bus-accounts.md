@@ -33,7 +33,9 @@ It is used by [`bus journal`](./bus-journal),
 
 ### See also
 
-Repository: ./modules/bus-accounts
+Repository: https://github.com/busdk/bus-accounts
+
+For account dataset layout and schema expectations, see [Accounts area](../spec/layout/accounts-area) and [Table schema contract](../spec/data/table-schema-contract).
 
 ---
 

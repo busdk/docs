@@ -36,7 +36,9 @@ It links to records in [`bus invoices`](./bus-invoices),
 
 ### See also
 
-Repository: ./modules/bus-attachments
+Repository: https://github.com/busdk/bus-attachments
+
+For attachment storage conventions and audit expectations, see [Invoice PDF storage](../spec/layout/invoice-pdf-storage) and [Append-only and soft deletion](../spec/data/append-only-and-soft-deletion).
 
 ---
 
