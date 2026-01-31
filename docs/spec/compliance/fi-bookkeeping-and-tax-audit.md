@@ -66,12 +66,12 @@ Financial statement output requirements for reports reference Kirjanpitoasetus (
 
 Re-check Finlex and Verohallinto sources at least annually and whenever legislation changes, update citations and requirements when source sections move or are amended, and treat temporary exceptions as historical context only rather than as MUST-level requirements unless they are currently in force.
 
-## Sources (authoritative)
-
-Authoritative sources for this page are Kirjanpitolaki (KPL) at https://finlex.fi/fi/laki/ajantasa/1997/19971336, Kirjanpitoasetus (KPA) at https://finlex.fi/fi/laki/ajantasa/1997/19971339, KILA yleisohje 20.4.2021 (PDF) at https://kirjanpitolautakunta.fi/documents/8208007/11087193/final+2021-04-20+KILA-menetelmaohje+(1).pdf/d19100d1-1b6d-e652-3be0-a22a1a157291/final+2021-04-20+KILA-menetelmaohje+(1).pdf?t=1619681814561, Verohallinnon ohje verotarkastuksesta 4.12.2025 at https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/359968/verohallinnon-ohje-verotarkastuksesta/, Arvonlisäverolaki (AVL) at https://finlex.fi/fi/laki/ajantasa/1993/19931501, Laki verotusmenettelystä (VML) at https://finlex.fi/fi/laki/ajantasa/1995/19951558, Laki oma-aloitteisten verojen verotusmenettelystä (OVML) at https://finlex.fi/fi/laki/ajantasa/2016/20160768, and pien- ja mikroyrityksen tilinpäätösvaatimukset (PMA 1753/2015) at https://finlex.fi/fi/laki/alkup/2015/20151753.
-
 ---
 
 <!-- busdk-docs-nav start -->
 **Prev:** [Validation and safety checks](../cli/validation-and-safety-checks) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Integration and future interfaces](../05-integration-future-interfaces)
 <!-- busdk-docs-nav end -->
+
+## Sources (authoritative)
+
+Authoritative sources for this page are Kirjanpitolaki (KPL) at https://finlex.fi/fi/laki/ajantasa/1997/19971336, Kirjanpitoasetus (KPA) at https://finlex.fi/fi/laki/ajantasa/1997/19971339, KILA yleisohje 20.4.2021 (PDF) at https://kirjanpitolautakunta.fi/documents/8208007/11087193/final+2021-04-20+KILA-menetelmaohje+(1).pdf/d19100d1-1b6d-e652-3be0-a22a1a157291/final+2021-04-20+KILA-menetelmaohje+(1).pdf?t=1619681814561, Verohallinnon ohje verotarkastuksesta 4.12.2025 at https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/359968/verohallinnon-ohje-verotarkastuksesta/, Arvonlisäverolaki (AVL) at https://finlex.fi/fi/laki/ajantasa/1993/19931501, Laki verotusmenettelystä (VML) at https://finlex.fi/fi/laki/ajantasa/1995/19951558, Laki oma-aloitteisten verojen verotusmenettelystä (OVML) at https://finlex.fi/fi/laki/ajantasa/2016/20160768, and pien- ja mikroyrityksen tilinpäätösvaatimukset (PMA 1753/2015) at https://finlex.fi/fi/laki/alkup/2015/20151753.
