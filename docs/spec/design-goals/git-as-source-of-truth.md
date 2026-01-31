@@ -9,5 +9,5 @@ BusDK does not execute Git commands or create commits; it relies on external too
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Initial feature scope (modules)](./feature-scope) · **Index:** [BusDK Design Document](../../index) · **Next:** [Modularity as a first-class requirement](./modularity)
+**Prev:** [Initial feature scope (modules)](./feature-scope) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Modularity as a first-class requirement](./modularity)
 <!-- busdk-docs-nav end -->

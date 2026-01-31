@@ -13,5 +13,5 @@ In accounting terms, append-only auditability means that the ledger remains repr
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [AI-readiness (objective, not dependency)](./ai-readiness) · **Index:** [BusDK Design Document](../../index) · **Next:** [CLI-first and human-friendly interfaces](./cli-first)
+**Prev:** [AI-readiness (objective, not dependency)](./ai-readiness) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [CLI-first and human-friendly interfaces](./cli-first)
 <!-- busdk-docs-nav end -->

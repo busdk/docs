@@ -5,5 +5,5 @@ CSV is viable long-term if proactively managed. To keep repositories performant 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Data Package organization](./data-package-organization) · **Index:** [BusDK Design Document](../../index) · **Next:** [Schema evolution and migration](./schema-evolution-and-migration)
+**Prev:** [Data Package organization](./data-package-organization) · **Index:** [BusDK Design Spec: Data format and storage](../03-data-formats-and-storage) · **Next:** [Schema evolution and migration](./schema-evolution-and-migration)
 <!-- busdk-docs-nav end -->

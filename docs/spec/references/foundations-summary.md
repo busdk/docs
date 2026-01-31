@@ -5,5 +5,5 @@ BusDK’s modular CLI philosophy aligns with the Unix notion of composable tools
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: References and external foundations](../09-references) · **Index:** [BusDK Design Document](../../index) · **Next:** [Link list (original numbered references)](./link-list)
+**Prev:** [BusDK Design Spec: References and external foundations](../09-references) · **Index:** [BusDK Design Spec: References and external foundations](../09-references) · **Next:** [Link list (original numbered references)](./link-list)
 <!-- busdk-docs-nav end -->

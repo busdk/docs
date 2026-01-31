@@ -11,5 +11,5 @@ BusDK branding is therefore limited to BusDK’s own tools and BusDK’s own doc
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Purpose and scope](./purpose-and-scope) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Design goals and requirements](../01-design-goals)
+**Prev:** [Purpose and scope](./purpose-and-scope) · **Index:** [BusDK Design Spec: Overview](../00-overview) · **Next:** [BusDK Design Spec: Design goals and requirements](../01-design-goals)
 <!-- busdk-docs-nav end -->

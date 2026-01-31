@@ -11,5 +11,5 @@ Schemas are expressed using [Frictionless Data Table Schema](https://frictionles
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Double-entry ledger accounting](./double-entry-ledger) · **Index:** [BusDK Design Document](../../index) · **Next:** [Initial feature scope (modules)](./feature-scope)
+**Prev:** [Double-entry ledger accounting](./double-entry-ledger) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Initial feature scope (modules)](./feature-scope)
 <!-- busdk-docs-nav end -->

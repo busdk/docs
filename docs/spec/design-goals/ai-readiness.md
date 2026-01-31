@@ -9,5 +9,5 @@ Claims that “AI reduces manual effort” should be treated as optional augment
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Index:** [BusDK Design Document](../../index) · **Next:** [Auditability through append-only changes](./append-only-auditability)
+**Prev:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Auditability through append-only changes](./append-only-auditability)
 <!-- busdk-docs-nav end -->

@@ -9,5 +9,5 @@ This spec defines BusDK’s goals, system architecture, data formats and storage
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Overview](../00-overview) · **Index:** [BusDK Design Document](../../index) · **Next:** [Visual identity and branding on outputs](./visual-identity)
+**Prev:** [BusDK Design Spec: Overview](../00-overview) · **Index:** [BusDK Design Spec: Overview](../00-overview) · **Next:** [Visual identity and branding on outputs](./visual-identity)
 <!-- busdk-docs-nav end -->

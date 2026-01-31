@@ -9,5 +9,5 @@ Pipes and stream processing are implementation choices, not the definition of th
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Schema-driven data contract (Frictionless Table Schema)](./schema-contract) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: System architecture](../02-architecture)
+**Prev:** [Schema-driven data contract (Frictionless Table Schema)](./schema-contract) · **Index:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [BusDK Design Spec: System architecture](../02-architecture)
 <!-- busdk-docs-nav end -->

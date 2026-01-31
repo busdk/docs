@@ -5,5 +5,5 @@ As modularity increases, schema divergence becomes a risk. BusDK treats core sch
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [AI and external service integration](./ai-and-external-services) · **Index:** [BusDK Design Document](../../index) · **Next:** [Event hooks and automation](./event-hooks-and-automation)
+**Prev:** [AI and external service integration](./ai-and-external-services) · **Index:** [BusDK Design Spec: Extensibility model](../06-extensibility-model) · **Next:** [Event hooks and automation](./event-hooks-and-automation)
 <!-- busdk-docs-nav end -->

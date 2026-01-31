@@ -7,5 +7,5 @@ This design mirrors the practical benefits of Unix composability in modern toolc
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Append-only discipline and security model](./append-only-and-security) · **Index:** [BusDK Design Document](../../index) · **Next:** [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface)
+**Prev:** [Append-only discipline and security model](./append-only-and-security) · **Index:** [BusDK Design Spec: System architecture](../02-architecture) · **Next:** [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface)
 <!-- busdk-docs-nav end -->

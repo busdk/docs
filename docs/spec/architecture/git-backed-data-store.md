@@ -5,5 +5,5 @@ The data store is a Git repository containing all business records in CSV form p
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface) · **Index:** [BusDK Design Document](../../index) · **Next:** [Independent modules (integration through shared datasets)](./independent-modules)
+**Prev:** [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface) · **Index:** [BusDK Design Spec: System architecture](../02-architecture) · **Next:** [Independent modules (integration through shared datasets)](./independent-modules)
 <!-- busdk-docs-nav end -->
