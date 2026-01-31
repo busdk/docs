@@ -1,4 +1,4 @@
-# Reporting and query commands
+## Reporting and query commands
 
 In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the CSV resources. Examples include `busdk accounts list`; `busdk journal balance --as-of 2026-03-31`; `busdk invoice list --status unpaid`; `busdk vat report Q1-2026`; and `busdk budget report --period 2026`. Output is expected to be human-readable and may include tabular terminal formatting; where relevant, machine-readable output options should exist for integration with scripts and downstream analysis.
 

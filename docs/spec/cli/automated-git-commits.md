@@ -1,4 +1,4 @@
-# Git commit conventions per operation (external Git)
+## Git commit conventions per operation (external Git)
 
 BusDK runs on top of a Git-managed repository, but it does not implement or run Git itself. The spec defines commit conventions per operation and expects users or external automation to apply them using their existing Git tooling. For example:
 

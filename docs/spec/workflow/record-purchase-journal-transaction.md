@@ -1,4 +1,4 @@
-# Record a purchase as a journal transaction
+## Record a purchase as a journal transaction
 
 When she buys a new laptop for work, she records the transaction as a double-entry journal record that credits Cash and debits an equipment-related expense or asset account. She runs:
 

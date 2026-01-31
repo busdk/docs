@@ -1,4 +1,4 @@
-# BusDK Design Spec: References and external foundations
+## BusDK Design Spec: References and external foundations
 
 This section is split into **single-concept** documents:
 

@@ -1,4 +1,4 @@
-# Minimal example layout
+## Minimal example layout
 
 A minimal example layout is:
 

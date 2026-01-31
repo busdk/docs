@@ -1,4 +1,4 @@
-# BusDK Design Spec: CLI tooling and workflow
+## BusDK Design Spec: CLI tooling and workflow
 
 This section is split into **single-concept** documents:
 

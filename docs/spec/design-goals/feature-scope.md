@@ -1,4 +1,4 @@
-# Initial feature scope (modules)
+## Initial feature scope (modules)
 
 BusDK’s initial feature scope is an end-to-end bookkeeping workflow implemented as dedicated `bus-*` modules that operate on workspace datasets (CSV + schemas) stored alongside supporting evidence in the repository. The preferred default is that the repository is a Git repository, but Git is an implementation choice rather than the definition of the goal, consistent with [Git as the canonical, append-only source of truth](./git-as-source-of-truth). The double-entry ledger is the canonical dataset that other modules produce, validate, and report from, and the audit trail from evidence to postings and back from reported figures to vouchers is treated as a first-class requirement, consistent with [Double-entry ledger accounting](./double-entry-ledger) and [Auditability through append-only changes](./append-only-auditability).
 

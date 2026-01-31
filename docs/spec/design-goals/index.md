@@ -1,4 +1,4 @@
-# BusDK Design Spec: Design goals and requirements
+## BusDK Design Spec: Design goals and requirements
 
 This section is split into **single-concept** documents:
 

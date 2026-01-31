@@ -1,28 +1,28 @@
-# bus-init
+## bus-init
 
 Bus Init bootstraps a new BusDK workspace by orchestrating module-owned init
 commands. It creates the chosen workspace layout (for example `fi`) by calling
 subcommands like `bus accounts init`, `bus journal init`, and `bus invoices init`
 so that each module remains the sole owner of its datasets and schemas.
 
-## How to run
+### How to run
 
 Run `bus init` … and use `--help` for available arguments.
 
-## Data it reads and writes
+### Data it reads and writes
 
 It may create or update workspace-level metadata at the workspace root
 (`datapackage.json`). All other datasets are created by the module init commands
 that `bus init` invokes.
 
-## Outputs and side effects
+### Outputs and side effects
 
 It executes a deterministic sequence of `bus <module> init …` calls and checks
 that the expected workspace directories and baseline files exist afterwards. It
 prints subcommand output to stdout/stderr and stops on the first failure. It
 does not run any git commands and performs no network operations.
 
-## Integrations
+### Integrations
 
 It invokes [`bus accounts`](./bus-accounts),
 [`bus journal`](./bus-journal),
@@ -32,7 +32,7 @@ It invokes [`bus accounts`](./bus-accounts),
 [`bus bank`](./bus-bank), and
 [`bus reports`](./bus-reports) to scaffold their module-owned workspace areas.
 
-## See also
+### See also
 
 Repository: ./modules/bus-init
 

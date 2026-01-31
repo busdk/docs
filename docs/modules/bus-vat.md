@@ -1,40 +1,40 @@
-# bus-vat
+## bus-vat
 
 Bus VAT computes VAT totals per reporting period, validates VAT code and rate
 mappings against reference data, and reconciles invoice VAT with ledger
 postings.
 
-## How to run
+### How to run
 
 Run `bus vat` … and use `--help` for available
 subcommands and arguments.
 
-## Data it reads and writes
+### Data it reads and writes
 
 It reads invoice data from [`bus invoices`](./bus-invoices) and
 postings from [`bus journal`](./bus-journal), optionally uses
 VAT reference datasets in the VAT area, and uses JSON Table Schemas stored
 beside their CSV datasets.
 
-## Outputs and side effects
+### Outputs and side effects
 
 It writes VAT summaries and export files for reporting and archiving, and emits
 diagnostics for VAT mismatches or missing mappings.
 
-## Finnish compliance responsibilities
+### Finnish compliance responsibilities
 
 Bus VAT MUST compute VAT reports from journal and invoice data with traceable references. It MUST retain VAT code, rate, base, and tax amount in source data used for reporting, and it MUST output VAT summaries with links to underlying postings and vouchers.
 
 See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
 
-## Integrations
+### Integrations
 
 It consumes data from [`bus invoices`](./bus-invoices),
 [`bus journal`](./bus-journal), and
 [`bus accounts`](./bus-accounts), and feeds
 [`bus filing`](./bus-filing) and statutory reporting workflows.
 
-## See also
+### See also
 
 Repository: ./modules/bus-vat
 

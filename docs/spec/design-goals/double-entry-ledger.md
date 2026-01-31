@@ -1,16 +1,16 @@
-# Double-entry ledger accounting
+## Double-entry ledger accounting
 
 Double-entry ledger accounting is a core requirement for BusDK. In the Finnish context, double-entry bookkeeping is the statutory baseline for essentially all incorporated/legal entities and most other bookkeeping obligors, with limited exceptions for small sole traders under thresholds, as defined in [Kirjanpitolaki (KPL) 1336/1997 (Finlex)](https://finlex.fi/fi/laki/ajantasa/1997/19971336). In practice, this makes a balanced, auditable double-entry ledger the canonical dataset that other modules produce, validate, and report from.
 
 In double-entry bookkeeping, every business transaction is recorded as postings that affect at least two accounts, with equal debit and credit totals. This “always balanced” constraint acts as a built-in checksum: if entries don’t balance, the ledger is not valid. The same structure supports accrual accounting (receivables, payables, allocations, period-end adjustments) rather than only cash-in/cash-out views.
 
-## What Finnish bookkeeping expects from the ledger
+### What Finnish bookkeeping expects from the ledger
 
 Finnish bookkeeping requirements are not only “debits equal credits”. They also require that the bookkeeping is structured so it can be reviewed and verified through an audit chain (kirjausketju / audit trail) from source evidence to postings and onward into financial statements — and, importantly, back again. This expectation is set in [Kirjanpitolaki (KPL) 1336/1997 (Finlex)](https://finlex.fi/fi/laki/ajantasa/1997/19971336) and reinforced by Kirjanpitolautakunta’s guidance in [Yleisohje kirjanpidon menetelmistä ja aineistoista (20.4.2021)](https://kirjanpitolautakunta.fi/documents/8208007/11087193/final%2B2021-04-20%2BKILA-menetelmaohje%2B%281%29.pdf).
 
 In BusDK terms, this expectation means that postings are voucher-based, that the ledger can be reviewed both chronologically and by account when needed, and that traceability works in both directions from evidence into postings and from reported figures back to the postings and vouchers that justify them. It also means that once outputs have been prepared for external use, corrections are represented as additional bookkeeping rather than silent edits to history, consistent with [Auditability through append-only changes](./append-only-auditability) and the storage-level mechanics described in [Append-only updates and soft deletion](../data/append-only-and-soft-deletion).
 
-## Implications for BusDK
+### Implications for BusDK
 
 BusDK treats the ledger as the core dataset that other modules feed into. Modules may originate economic events (sales, purchases, bank movements, payroll, depreciation, inventory changes), but they must not weaken the ledger’s invariants or the audit chain.
 
@@ -24,7 +24,7 @@ The compliance requirements for Finnish audit trail, vouchers, and retention liv
 **Prev:** [CLI-first and human-friendly interfaces](./cli-first) · **Index:** [BusDK Design Spec: Design goals and requirements](./) · **Next:** [Extensibility as a first-class goal](./extensibility)
 <!-- busdk-docs-nav end -->
 
-## Sources
+### Sources
 
 - [Kirjanpitolaki (KPL) 1336/1997 (Finlex)](https://finlex.fi/fi/laki/ajantasa/1997/19971336)
 - [Kirjanpitoasetus (KPA) 1339/1997 (Finlex)](https://finlex.fi/fi/laki/ajantasa/1997/19971339)

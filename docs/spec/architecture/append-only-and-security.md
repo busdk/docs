@@ -1,4 +1,4 @@
-# Append-only discipline and security model
+## Append-only discipline and security model
 
 Historical financial data is append-only. Modules add lines, mark records inactive where appropriate, and avoid destructive updates. If scrubbing sensitive data is ever required, it is handled via an explicit redaction commit that flags the redaction rather than silently excising history.
 

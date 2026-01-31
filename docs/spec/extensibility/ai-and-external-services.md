@@ -1,4 +1,4 @@
-# AI and external service integration
+## AI and external service integration
 
 AI integration is treated as an optional module layer. BusDK must remain fully functional without AI, and any AI-driven automation must operate through the same deterministic interfaces as human workflows.
 

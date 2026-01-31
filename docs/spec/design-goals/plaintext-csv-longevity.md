@@ -1,4 +1,4 @@
-# Plain-text CSV for longevity
+## Plain-text CSV for longevity
 
 BusDK treats business and accounting data as durable records that must remain accessible decades into the future. The core design constraint is that the canonical dataset should stay readable with common, general-purpose tooling and should not depend on proprietary application storage or vendor-controlled file formats.
 

@@ -4,7 +4,7 @@ Status: pre-release, under active development. Interfaces and schemas may still 
 
 BusDK’s accounting workflow and its end-to-end bookkeeping sequence are defined in the spec. Start with [Accounting workflow overview](spec/workflow/accounting-workflow-overview) for the narrative flow, then use the [Modules index](./modules/) for per-module reference details and CLI entry points.
 
-## Spec index
+### Spec index
 
 - [Overview](spec/overview/)
 - [Design goals and requirements](spec/design-goals/)

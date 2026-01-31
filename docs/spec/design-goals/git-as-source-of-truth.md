@@ -1,4 +1,4 @@
-# Git as the canonical, append-only source of truth
+## Git as the canonical, append-only source of truth
 
 BusDK treats the workspace datasets and schemas as a versioned, append-only source of truth with a tamper-evident change history. Today, the preferred default is a Git repository that tracks the tabular datasets and their schemas, because Git provides a widely understood, content-addressed commit graph that is easy to inspect, replicate, and audit. Every change — adding transactions, adding an account, recording an invoice, correcting an error — produces a new revision that preserves prior revisions and makes corrections explicit rather than silently destructive, consistent with [Auditability through append-only changes](./append-only-auditability).
 

@@ -1,4 +1,4 @@
-# BusDK Design Spec: Data format and storage
+## BusDK Design Spec: Data format and storage
 
 This section is split into **single-concept** documents:
 

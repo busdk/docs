@@ -1,4 +1,4 @@
-# Initialize a new repository
+## Initialize a new repository
 
 She begins by creating a dedicated repository for the bookkeeping year. The initial step is to scaffold the standard directory layout and schema files (manually or via module-provided init commands), then commit the baseline revision using Git directly. This repository becomes the canonical source of truth for the year’s workspace data: every update to the workspace datasets and every supporting document is tracked as a commit, with Git operations handled outside BusDK.
 

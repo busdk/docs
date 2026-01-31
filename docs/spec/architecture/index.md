@@ -1,4 +1,4 @@
-# BusDK Design Spec: System architecture
+## BusDK Design Spec: System architecture
 
 This section is split into **single-concept** documents:
 

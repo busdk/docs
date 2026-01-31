@@ -1,15 +1,15 @@
-# BusDK Design Spec: Overview
+## BusDK Design Spec: Overview
 
 Modular CLI-first accounting toolkit (schema-driven datasets with reviewable change history)
 
-## Purpose and scope
+### Purpose and scope
 
 This overview is split into **single-concept** documents:
 
 - [Purpose and scope](./purpose-and-scope)
 - [Visual identity and branding on outputs](./visual-identity)
 
-## Navigation
+### Navigation
 
 - [Design goals and requirements](../design-goals/)
 - [System architecture](../architecture/)

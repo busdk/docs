@@ -1,4 +1,4 @@
-# Purpose and scope
+## Purpose and scope
 
 BusDK (Business Development Kit), formerly known as Bus, is a modular, command-line-first toolkit for runniong a business, including accounting and bookkeeping. It is intentionally designed for longevity, clarity, and extensibility: all financial data is stored in transparent, human-readable text files and tracked in a Git repository so that the full history of bookkeeping activity remains auditable and reproducible. BusDK does not execute any Git commands or commit changes; Git operations are handled externally by the user or automation. The primary target user is a sole entrepreneur who wants to automate their own bookkeeping in areas such as ledger entries, invoicing, VAT (ALV) handling, bank transaction imports, PDF invoice generation, and budgeting, while keeping the system sufficiently structured and standardized to support future AI-assisted automation without making AI a dependency.
 

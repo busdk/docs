@@ -1,34 +1,34 @@
-# bus-invoices
+## bus-invoices
 
 Bus Invoices keeps sales and purchase invoices in schema-validated CSV
 datasets, validates totals, VAT amounts, and line consistency, and optionally
 produces posting outputs for [`bus journal`](./bus-journal).
 
-## How to run
+### How to run
 
 Run `bus invoices` … and use `--help` for
 available subcommands and arguments.
 
-## Data it reads and writes
+### Data it reads and writes
 
 It reads and writes invoice header and line datasets in the invoices area, uses
 reference data from [`bus entities`](./bus-entities),
 [`bus accounts`](./bus-accounts), and VAT rates, and relies on
 JSON Table Schemas stored beside their CSV datasets.
 
-## Outputs and side effects
+### Outputs and side effects
 
 It writes updated invoice CSVs and status changes, emits validation diagnostics
 for missing references or mismatched totals, and produces journal posting
 outputs when configured.
 
-## Finnish compliance responsibilities
+### Finnish compliance responsibilities
 
 Bus Invoices MUST assign stable invoice identifiers and maintain deterministic invoice numbering, and it MUST capture voucher-relevant metadata (dates, counterparty, totals, VAT breakdown). It MUST link invoices to attachments and to any generated journal entries, and it MUST represent corrections as new records (credit notes or adjustment invoices), not overwrites.
 
 See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
 
-## Integrations
+### Integrations
 
 It links to [`bus attachments`](./bus-attachments) for invoice
 documents and feeds [`bus journal`](./bus-journal),
@@ -36,7 +36,7 @@ documents and feeds [`bus journal`](./bus-journal),
 [`bus reconcile`](./bus-reconcile), and
 [`bus vat`](./bus-vat).
 
-## See also
+### See also
 
 Repository: ./modules/bus-invoices
 

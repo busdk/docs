@@ -1,4 +1,4 @@
-# Accounts area (chart of accounts and references)
+## Accounts area (chart of accounts and references)
 
 The accounts area holds the chart of accounts and related reference data.
 `accounts.csv` contains ledger accounts with fields such as account

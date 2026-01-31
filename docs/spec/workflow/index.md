@@ -1,4 +1,4 @@
-# BusDK Design Spec: Example end-to-end workflow
+## BusDK Design Spec: Example end-to-end workflow
 
 This section is split into **single-concept** documents:
 

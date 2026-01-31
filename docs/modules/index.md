@@ -1,4 +1,4 @@
-# Modules
+## Modules
 
 BusDK is organized as a set of independent modules that operate on workspace datasets. Each module is implemented as a CLI program that plugs into the `bus` dispatcher (for example `bus accounts`, `bus journal`, or `bus vat`). A module owns its datasets and schemas, provides commands to initialize and maintain them, and emits deterministic diagnostics so that workflows remain reviewable in the Git repository.
 

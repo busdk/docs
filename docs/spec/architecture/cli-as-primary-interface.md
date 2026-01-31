@@ -1,4 +1,4 @@
-# CLI as the primary interface (controlled read/modify/write)
+## CLI as the primary interface (controlled read/modify/write)
 
 The CLI is the primary interface. Commands are expected to perform a controlled read-modify-write cycle: load the necessary resources from the repository, validate requested changes against schema and business rules, apply the operation, write the updated files, then commit the change with a descriptive message. For example, a journal command such as:
 

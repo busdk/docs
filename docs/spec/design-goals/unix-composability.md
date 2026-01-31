@@ -1,4 +1,4 @@
-# Unix-style composability (micro-tools)
+## Unix-style composability (micro-tools)
 
 Unix-style composability is a design objective: BusDK should behave like a set of small, deterministic tools that can be combined into larger workflows. Independent commands must cooperate through stable interfaces and predictable conventions, consistent with the classic Unix approach of making programs easy to script and chain together.
 

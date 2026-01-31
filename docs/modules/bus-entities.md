@@ -1,25 +1,25 @@
-# bus-entities
+## bus-entities
 
 Bus Entities maintains entity reference datasets as schema-validated CSV,
 normalizes names, IDs, and banking details for matching, and provides stable
 entity IDs for linking across modules.
 
-## How to run
+### How to run
 
 Run `bus entities` … and use `--help` for
 available subcommands and arguments.
 
-## Data it reads and writes
+### Data it reads and writes
 
 It reads and writes entity datasets in the entities/reference area, with each
 JSON Table Schema stored beside its CSV dataset.
 
-## Outputs and side effects
+### Outputs and side effects
 
 It writes updated entity CSV datasets and emits validation diagnostics for
 missing or conflicting identities.
 
-## Integrations
+### Integrations
 
 It is used by [`bus invoices`](./bus-invoices),
 [`bus bank`](./bus-bank),
@@ -27,7 +27,7 @@ It is used by [`bus invoices`](./bus-invoices),
 [`bus vat`](./bus-vat), and
 [`bus attachments`](./bus-attachments) for stable links.
 
-## See also
+### See also
 
 Repository: ./modules/bus-entities
 

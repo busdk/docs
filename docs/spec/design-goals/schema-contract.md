@@ -1,4 +1,4 @@
-# Schema-driven data contract (Frictionless Table Schema)
+## Schema-driven data contract (Frictionless Table Schema)
 
 BusDK modules interoperate through shared tabular datasets: rows plus an explicit, machine-readable schema that defines the table’s field names, types, and constraints. The schema is part of the canonical dataset and travels with the data so that independent modules — and external tools — can validate and process tables consistently without sharing code.
 

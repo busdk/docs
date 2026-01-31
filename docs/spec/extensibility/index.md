@@ -1,4 +1,4 @@
-# BusDK Design Spec: Extensibility model
+## BusDK Design Spec: Extensibility model
 
 This section is split into **single-concept** documents:
 
