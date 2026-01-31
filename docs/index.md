@@ -1,12 +1,12 @@
 # BusDK Design Document
 
-BusDK is a modular, Git-native, CLI-first toolkit for running a business, built on open, long-lived formats and transparent, auditable workflows. Workspaces live in Git repositories, business data is stored as UTF-8 CSV datasets validated with Frictionless Data Table Schemas (JSON), and the system favors deterministic workflows that work for both humans and AI agents. See [busdk.com](https://busdk.com/) for a high-level overview.
+BusDK is a modular, CLI-first toolkit for running a business, built on open, long-lived formats and transparent, auditable workflows. The preferred default is that workspaces live in Git repositories and business data is stored as UTF-8 CSV datasets validated with Frictionless Data Table Schemas (JSON), but Git and CSV are implementation choices: the goal is that the workspace datasets and their change history remain reviewable and exportable. The system favors deterministic workflows that work for both humans and AI agents. See [busdk.com](https://busdk.com/) for a high-level overview.
 
 Status: pre-release, under active development. Interfaces and schemas may still change.
 
 ## Accounting workflow
 
-BusDK is designed for year-round bookkeeping in a dedicated Git repo: CSV datasets are validated by Frictionless Table Schemas and every data change is committed alongside its supporting evidence. The core dispatcher is [`bus`](https://github.com/busdk/bus) and the workflow below reflects the current set of planned modules in the BusDK org.
+BusDK is designed for year-round bookkeeping in a dedicated repository workspace. The preferred default is a Git repository where the workspace datasets are stored as UTF-8 CSV validated by Frictionless Table Schemas, and every data change is committed alongside its supporting evidence. The core dispatcher is [`bus`](https://github.com/busdk/bus) and the workflow below reflects the current set of planned modules in the BusDK org.
 
 - Set up a Git repository for the bookkeeping year and install `bus` plus the module binaries you will use.
 - Define master data: chart of accounts with [`bus accounts`](./modules/bus-accounts), counterparties with [`bus entities`](./modules/bus-entities), and periods with [`bus period`](./modules/bus-period).
@@ -14,7 +14,7 @@ BusDK is designed for year-round bookkeeping in a dedicated Git repo: CSV datase
 - Record activity: invoices with [`bus invoices`](./modules/bus-invoices), ledger postings with [`bus journal`](./modules/bus-journal), assets with [`bus assets`](./modules/bus-assets), and loans with [`bus loans`](./modules/bus-loans) as they occur.
 - Reconcile regularly: import bank feeds with [`bus bank`](./modules/bus-bank), match and reconcile with [`bus reconcile`](./modules/bus-reconcile), then fill gaps via [`bus invoices`](./modules/bus-invoices) or [`bus journal`](./modules/bus-journal).
 - Close each period: validate with [`bus validate`](./modules/bus-validate), compute VAT with [`bus vat`](./modules/bus-vat), lock with [`bus period`](./modules/bus-period), and generate reports with [`bus reports`](./modules/bus-reports).
-- At year end, repeat the close flow, ensure assets and VAT are complete, and tag the final state.
+- At year end, repeat the close flow, ensure assets and VAT are complete, and tag the final revision.
 
 The loan register supports portfolio reporting for applications and special situations like corporate restructuring, business reorganisation, debt adjustment, or debt restructuring.
 

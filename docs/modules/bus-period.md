@@ -17,12 +17,12 @@ calculations, and uses JSON Table Schemas stored beside their CSV datasets.
 
 ## Outputs and side effects
 
-It writes period state datasets and closing entry outputs, and emits diagnostics
+It writes period datasets and closing entry outputs, and emits diagnostics
 for unbalanced or invalid period closures.
 
 ## Finnish compliance responsibilities
 
-Bus Period MUST lock closed periods and prevent edits that would break reported data. It MUST create opening and closing entries as append-only records with references, and it MUST support an annual close package containing period state, reports, and references.
+Bus Period MUST lock closed periods and prevent edits that would break reported data. It MUST create opening and closing entries as append-only records with references, and it MUST support an annual close package containing period datasets, reports, and references.
 
 See [Finnish bookkeeping and tax-audit compliance](../spec/compliance/fi-bookkeeping-and-tax-audit).
 
