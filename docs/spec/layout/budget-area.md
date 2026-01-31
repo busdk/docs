@@ -5,5 +5,5 @@ A budgeting area holds planned budgets in datasets such as `budgets.csv`, where 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Accounts area (chart of accounts and references)](./accounts-area) · **Next:** [Invoice PDF storage](./invoice-pdf-storage)
+**Prev:** [Accounts area (chart of accounts and references)](./accounts-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [Invoice PDF storage](./invoice-pdf-storage)
 <!-- busdk-docs-nav end -->

@@ -13,5 +13,5 @@ The default model is “one commit per high-level operation” to maximize audit
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Extensible CLI surface and API parity](./api-parity) · **Next:** [Command structure and discoverability](./command-structure)
+**Prev:** [Extensible CLI surface and API parity](./api-parity) · **Index:** [BusDK Design Document](../../index) · **Next:** [Command structure and discoverability](./command-structure)
 <!-- busdk-docs-nav end -->

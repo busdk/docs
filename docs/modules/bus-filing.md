@@ -35,5 +35,5 @@ Repository: ./modules/bus-filing
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-reports](./bus-reports) · **Next:** [bus-filing-prh](./bus-filing-prh)
+**Prev:** [bus-reports](./bus-reports) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-filing-prh](./bus-filing-prh)
 <!-- busdk-docs-nav end -->

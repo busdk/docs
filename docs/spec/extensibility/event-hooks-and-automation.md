@@ -5,5 +5,5 @@ Although BusDK is CLI-driven rather than event-driven by default, the architectu
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Governance of core schemas](./core-schema-governance) · **Next:** [One-developer contributions and ecosystem](./one-developer-ecosystem)
+**Prev:** [Governance of core schemas](./core-schema-governance) · **Index:** [BusDK Design Document](../../index) · **Next:** [One-developer contributions and ecosystem](./one-developer-ecosystem)
 <!-- busdk-docs-nav end -->

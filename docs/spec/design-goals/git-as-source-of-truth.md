@@ -5,5 +5,5 @@ Git is the canonical, append-only source of truth. The Git repository containing
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Initial feature scope (modules)](./feature-scope) · **Next:** [Modularity as a first-class requirement](./modularity)
+**Prev:** [Initial feature scope (modules)](./feature-scope) · **Index:** [BusDK Design Document](../../index) · **Next:** [Modularity as a first-class requirement](./modularity)
 <!-- busdk-docs-nav end -->

@@ -5,5 +5,5 @@ BusDK lowers the barrier for user-written extensions. A user can write small scr
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Event hooks and automation](./event-hooks-and-automation) · **Next:** [Plug-in modules via new datasets](./plugin-modules-via-datasets)
+**Prev:** [Event hooks and automation](./event-hooks-and-automation) · **Index:** [BusDK Design Document](../../index) · **Next:** [Plug-in modules via new datasets](./plugin-modules-via-datasets)
 <!-- busdk-docs-nav end -->

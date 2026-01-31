@@ -5,5 +5,5 @@ BusDK aims to provide comprehensive small-business features through dedicated mo
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Extensibility as a first-class goal](./extensibility) · **Next:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth)
+**Prev:** [Extensibility as a first-class goal](./extensibility) · **Index:** [BusDK Design Document](../../index) · **Next:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth)
 <!-- busdk-docs-nav end -->

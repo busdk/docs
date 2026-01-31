@@ -5,5 +5,5 @@ AI-readiness is a design objective, not a dependency. BusDK must remain fully fu
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Next:** [Auditability and append-only discipline](./append-only-auditability)
+**Prev:** [BusDK Design Spec: Design goals and requirements](../01-design-goals) · **Index:** [BusDK Design Document](../../index) · **Next:** [Auditability and append-only discipline](./append-only-auditability)
 <!-- busdk-docs-nav end -->

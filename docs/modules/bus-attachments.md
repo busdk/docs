@@ -41,5 +41,5 @@ Repository: ./modules/bus-attachments
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-period](./bus-period) · **Next:** [bus-invoices](./bus-invoices)
+**Prev:** [bus-period](./bus-period) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-invoices](./bus-invoices)
 <!-- busdk-docs-nav end -->

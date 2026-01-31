@@ -7,5 +7,5 @@ For Finnish compliance, the layout MUST support audit-trail review and long-term
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Journal area (general ledger transactions)](./journal-area) · **Next:** [Minimal example layout](./minimal-example-layout)
+**Prev:** [Journal area (general ledger transactions)](./journal-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [Minimal example layout](./minimal-example-layout)
 <!-- busdk-docs-nav end -->

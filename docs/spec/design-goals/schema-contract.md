@@ -5,5 +5,5 @@ Plain CSV is paired with structured schemas. Each dataset adheres to Frictionles
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Plain-text CSV for longevity](./plaintext-csv-longevity) · **Next:** [Unix-style composability (micro-tools)](./unix-composability)
+**Prev:** [Plain-text CSV for longevity](./plaintext-csv-longevity) · **Index:** [BusDK Design Document](../../index) · **Next:** [Unix-style composability (micro-tools)](./unix-composability)
 <!-- busdk-docs-nav end -->

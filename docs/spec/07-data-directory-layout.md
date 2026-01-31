@@ -16,5 +16,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Plug-in modules via new datasets](./extensibility/plugin-modules-via-datasets) · **Next:** [Accounts area (chart of accounts and references)](./layout/accounts-area)
+**Prev:** [Plug-in modules via new datasets](./extensibility/plugin-modules-via-datasets) · **Index:** [BusDK Design Document](../index) · **Next:** [Accounts area (chart of accounts and references)](./layout/accounts-area)
 <!-- busdk-docs-nav end -->

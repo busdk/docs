@@ -7,5 +7,5 @@ When PDFs are stored outside Git, BusDK MUST still preserve attachment metadata 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Budgeting area](./budget-area) · **Next:** [Invoices area (headers and lines)](./invoices-area)
+**Prev:** [Budgeting area](./budget-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [Invoices area (headers and lines)](./invoices-area)
 <!-- busdk-docs-nav end -->

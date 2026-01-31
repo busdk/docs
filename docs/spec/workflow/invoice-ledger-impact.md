@@ -5,5 +5,5 @@ For integration convenience, the invoice module can also write the corresponding
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Initialize a new repository](./initialize-repo) · **Next:** [Record a purchase as a journal transaction](./record-purchase-journal-transaction)
+**Prev:** [Initialize a new repository](./initialize-repo) · **Index:** [BusDK Design Document](../../index) · **Next:** [Record a purchase as a journal transaction](./record-purchase-journal-transaction)
 <!-- busdk-docs-nav end -->

@@ -5,5 +5,5 @@ She configures her chart of accounts by adding accounts via CLI. For example, sh
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual) · **Next:** [Create a sales invoice (interactive workflow)](./create-sales-invoice)
+**Prev:** [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual) · **Index:** [BusDK Design Document](../../index) · **Next:** [Create a sales invoice (interactive workflow)](./create-sales-invoice)
 <!-- busdk-docs-nav end -->

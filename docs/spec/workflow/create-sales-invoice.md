@@ -5,5 +5,5 @@ When Alice needs to bill a client, she issues a sales invoice. She runs `busdk i
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Configure the chart of accounts](./configure-chart-of-accounts) · **Next:** [Evolution over time (extending the model)](./evolution-over-time)
+**Prev:** [Configure the chart of accounts](./configure-chart-of-accounts) · **Index:** [BusDK Design Document](../../index) · **Next:** [Evolution over time (extending the model)](./evolution-over-time)
 <!-- busdk-docs-nav end -->

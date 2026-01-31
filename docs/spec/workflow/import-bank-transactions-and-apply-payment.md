@@ -5,5 +5,5 @@ When the customer pays, Alice downloads her bank’s February CSV statement and 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Evolution over time (extending the model)](./evolution-over-time) · **Next:** [Initialize a new repository](./initialize-repo)
+**Prev:** [Evolution over time (extending the model)](./evolution-over-time) · **Index:** [BusDK Design Document](../../index) · **Next:** [Initialize a new repository](./initialize-repo)
 <!-- busdk-docs-nav end -->

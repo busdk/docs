@@ -20,5 +20,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [VAT area (reference data and filed summaries)](./layout/vat-area) · **Next:** [Accounting workflow overview (current planned modules)](./workflow/accounting-workflow-overview)
+**Prev:** [VAT area (reference data and filed summaries)](./layout/vat-area) · **Index:** [BusDK Design Document](../index) · **Next:** [Accounting workflow overview (current planned modules)](./workflow/accounting-workflow-overview)
 <!-- busdk-docs-nav end -->

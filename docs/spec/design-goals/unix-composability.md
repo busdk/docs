@@ -5,5 +5,5 @@ BusDK is built to reflect the “small tools that do one thing well” philosoph
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Schema-driven data contract (Frictionless Table Schema)](./schema-contract) · **Next:** [BusDK Design Spec: System architecture](../02-architecture)
+**Prev:** [Schema-driven data contract (Frictionless Table Schema)](./schema-contract) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: System architecture](../02-architecture)
 <!-- busdk-docs-nav end -->

@@ -5,5 +5,5 @@ The system is modular from the start. Each major feature area is implemented as 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth) · **Next:** [Plain-text CSV for longevity](./plaintext-csv-longevity)
+**Prev:** [Git as the canonical, append-only source of truth](./git-as-source-of-truth) · **Index:** [BusDK Design Document](../../index) · **Next:** [Plain-text CSV for longevity](./plaintext-csv-longevity)
 <!-- busdk-docs-nav end -->

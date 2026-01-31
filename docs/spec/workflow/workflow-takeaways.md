@@ -5,5 +5,5 @@ Across this workflow, BusDK emphasizes transparency (CSV plus Git history show e
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [VAT reporting and payment](./vat-reporting-and-payment) · **Next:** [Year-end close (closing entries)](./year-end-close)
+**Prev:** [VAT reporting and payment](./vat-reporting-and-payment) · **Index:** [BusDK Design Document](../../index) · **Next:** [Year-end close (closing entries)](./year-end-close)
 <!-- busdk-docs-nav end -->

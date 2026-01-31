@@ -7,5 +7,5 @@ For Finnish compliance, invoice headers and lines MUST carry identifiers and ref
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Invoice PDF storage](./invoice-pdf-storage) · **Next:** [Journal area (general ledger transactions)](./journal-area)
+**Prev:** [Invoice PDF storage](./invoice-pdf-storage) · **Index:** [BusDK Design Document](../../index) · **Next:** [Journal area (general ledger transactions)](./journal-area)
 <!-- busdk-docs-nav end -->

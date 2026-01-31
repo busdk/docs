@@ -5,5 +5,5 @@ She begins by creating a dedicated Git repository for the bookkeeping year. The 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment) · **Next:** [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
+**Prev:** [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment) · **Index:** [BusDK Design Document](../../index) · **Next:** [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
 <!-- busdk-docs-nav end -->

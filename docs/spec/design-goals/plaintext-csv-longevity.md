@@ -5,5 +5,5 @@ The data format is deliberately plain-text and longevity-oriented. All business 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Modularity as a first-class requirement](./modularity) · **Next:** [Schema-driven data contract (Frictionless Table Schema)](./schema-contract)
+**Prev:** [Modularity as a first-class requirement](./modularity) · **Index:** [BusDK Design Document](../../index) · **Next:** [Schema-driven data contract (Frictionless Table Schema)](./schema-contract)
 <!-- busdk-docs-nav end -->

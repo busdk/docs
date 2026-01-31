@@ -5,5 +5,5 @@ Auditability and append-only discipline are non-negotiable. BusDK enforces an ap
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [AI-readiness (objective, not dependency)](./ai-readiness) · **Next:** [CLI-first and human-friendly interfaces](./cli-first)
+**Prev:** [AI-readiness (objective, not dependency)](./ai-readiness) · **Index:** [BusDK Design Document](../../index) · **Next:** [CLI-first and human-friendly interfaces](./cli-first)
 <!-- busdk-docs-nav end -->

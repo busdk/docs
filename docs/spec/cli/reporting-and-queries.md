@@ -7,5 +7,5 @@ Reporting commands SHOULD support audit-trail exports and period-scoped output s
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Interactive use and scripting parity](./interactive-and-scripting-parity) · **Next:** [Validation and safety checks](./validation-and-safety-checks)
+**Prev:** [Interactive use and scripting parity](./interactive-and-scripting-parity) · **Index:** [BusDK Design Document](../../index) · **Next:** [Validation and safety checks](./validation-and-safety-checks)
 <!-- busdk-docs-nav end -->

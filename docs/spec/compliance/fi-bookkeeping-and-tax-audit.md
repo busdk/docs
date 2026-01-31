@@ -73,5 +73,5 @@ Authoritative sources for this page are Kirjanpitolaki (KPL) at https://finlex.f
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Validation and safety checks](../cli/validation-and-safety-checks) · **Next:** [BusDK Design Spec: Integration and future interfaces](../05-integration-future-interfaces)
+**Prev:** [Validation and safety checks](../cli/validation-and-safety-checks) · **Index:** [BusDK Design Document](../../index) · **Next:** [BusDK Design Spec: Integration and future interfaces](../05-integration-future-interfaces)
 <!-- busdk-docs-nav end -->

@@ -7,5 +7,5 @@ After a period is closed or statutory reporting is produced, BusDK MUST prevent 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Data format and storage](../03-data-formats-and-storage) · **Next:** [CSV conventions](./csv-conventions)
+**Prev:** [BusDK Design Spec: Data format and storage](../03-data-formats-and-storage) · **Index:** [BusDK Design Document](../../index) · **Next:** [CSV conventions](./csv-conventions)
 <!-- busdk-docs-nav end -->

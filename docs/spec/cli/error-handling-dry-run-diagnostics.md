@@ -9,5 +9,5 @@ For Finnish compliance, missing audit-trail references or retention-critical met
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Command structure and discoverability](./command-structure) · **Next:** [Interactive use and scripting parity](./interactive-and-scripting-parity)
+**Prev:** [Command structure and discoverability](./command-structure) · **Index:** [BusDK Design Document](../../index) · **Next:** [Interactive use and scripting parity](./interactive-and-scripting-parity)
 <!-- busdk-docs-nav end -->

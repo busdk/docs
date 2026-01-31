@@ -37,5 +37,5 @@ For the full narrative, see [Accounting workflow overview](spec/workflow/account
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** — · **Next:** [BusDK Design Spec: Overview](./spec/00-overview)
+**Prev:** — · **Index:** [BusDK Design Document](./index) · **Next:** [BusDK Design Spec: Overview](./spec/00-overview)
 <!-- busdk-docs-nav end -->

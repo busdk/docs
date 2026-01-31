@@ -5,5 +5,5 @@ Every command must be usable interactively and non-interactively. Interactive pr
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics) · **Next:** [Reporting and query commands](./reporting-and-queries)
+**Prev:** [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics) · **Index:** [BusDK Design Document](../../index) · **Next:** [Reporting and query commands](./reporting-and-queries)
 <!-- busdk-docs-nav end -->

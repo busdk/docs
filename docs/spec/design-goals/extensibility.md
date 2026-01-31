@@ -5,5 +5,5 @@ Extensibility is a first-class goal. The architecture must remain simple enough 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Double-entry ledger accounting](./double-entry-ledger) · **Next:** [Initial feature scope (modules)](./feature-scope)
+**Prev:** [Double-entry ledger accounting](./double-entry-ledger) · **Index:** [BusDK Design Document](../../index) · **Next:** [Initial feature scope (modules)](./feature-scope)
 <!-- busdk-docs-nav end -->

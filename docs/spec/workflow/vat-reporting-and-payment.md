@@ -17,5 +17,5 @@ The module may also generate a file for record-keeping such as `vat/vat_return_2
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Scenario introduction](./scenario-introduction) · **Next:** [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
+**Prev:** [Scenario introduction](./scenario-introduction) · **Index:** [BusDK Design Document](../../index) · **Next:** [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
 <!-- busdk-docs-nav end -->

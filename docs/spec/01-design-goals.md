@@ -17,5 +17,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Visual identity and branding on outputs](./overview/visual-identity) · **Next:** [AI-readiness (objective, not dependency)](./design-goals/ai-readiness)
+**Prev:** [Visual identity and branding on outputs](./overview/visual-identity) · **Index:** [BusDK Design Document](../index) · **Next:** [AI-readiness (objective, not dependency)](./design-goals/ai-readiness)
 <!-- busdk-docs-nav end -->

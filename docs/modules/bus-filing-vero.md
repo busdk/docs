@@ -37,5 +37,5 @@ Repository: ./modules/bus-filing_vero
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-filing-prh](./bus-filing-prh) · **Next:** —
+**Prev:** [bus-filing-prh](./bus-filing-prh) · **Index:** [BusDK Design Document](../index) · **Next:** —
 <!-- busdk-docs-nav end -->

@@ -32,5 +32,5 @@ Repository: ./modules/bus-validate
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-inventory](./bus-inventory) · **Next:** [bus-vat](./bus-vat)
+**Prev:** [bus-inventory](./bus-inventory) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-vat](./bus-vat)
 <!-- busdk-docs-nav end -->

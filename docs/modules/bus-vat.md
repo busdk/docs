@@ -41,5 +41,5 @@ Repository: ./modules/bus-vat
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-validate](./bus-validate) · **Next:** [bus-reports](./bus-reports)
+**Prev:** [bus-validate](./bus-validate) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-reports](./bus-reports)
 <!-- busdk-docs-nav end -->

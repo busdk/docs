@@ -7,5 +7,5 @@ The full, module-level flow is summarized in `workflow/accounting-workflow-overv
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Record a purchase as a journal transaction](./record-purchase-journal-transaction) · **Next:** [VAT reporting and payment](./vat-reporting-and-payment)
+**Prev:** [Record a purchase as a journal transaction](./record-purchase-journal-transaction) · **Index:** [BusDK Design Document](../../index) · **Next:** [VAT reporting and payment](./vat-reporting-and-payment)
 <!-- busdk-docs-nav end -->

@@ -5,5 +5,5 @@ Double-entry ledger accounting is a core requirement. The ledger follows double-
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [CLI-first and human-friendly interfaces](./cli-first) · **Next:** [Extensibility as a first-class goal](./extensibility)
+**Prev:** [CLI-first and human-friendly interfaces](./cli-first) · **Index:** [BusDK Design Document](../../index) · **Next:** [Extensibility as a first-class goal](./extensibility)
 <!-- busdk-docs-nav end -->

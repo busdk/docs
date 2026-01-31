@@ -38,5 +38,5 @@ my-business-books/
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Data directory layout (principles)](./layout-principles) · **Next:** [Repository-level README expectations](./repository-readme-expectations)
+**Prev:** [Data directory layout (principles)](./layout-principles) · **Index:** [BusDK Design Document](../../index) · **Next:** [Repository-level README expectations](./repository-readme-expectations)
 <!-- busdk-docs-nav end -->

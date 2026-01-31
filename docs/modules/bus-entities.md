@@ -34,5 +34,5 @@ Repository: ./modules/bus-entities
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-accounts](./bus-accounts) · **Next:** [bus-period](./bus-period)
+**Prev:** [bus-accounts](./bus-accounts) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-period](./bus-period)
 <!-- busdk-docs-nav end -->

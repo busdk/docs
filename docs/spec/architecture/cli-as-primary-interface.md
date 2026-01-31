@@ -11,5 +11,5 @@ is expected to append new ledger rows to the journal file and commit with a mess
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Architectural overview](./architectural-overview) · **Next:** [Git-backed data repository (the data store)](./git-backed-data-store)
+**Prev:** [Architectural overview](./architectural-overview) · **Index:** [BusDK Design Document](../../index) · **Next:** [Git-backed data repository (the data store)](./git-backed-data-store)
 <!-- busdk-docs-nav end -->

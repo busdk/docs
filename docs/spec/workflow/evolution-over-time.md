@@ -5,5 +5,5 @@ As the business evolves, BusDK’s data model can extend. International currency
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Create a sales invoice (interactive workflow)](./create-sales-invoice) · **Next:** [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
+**Prev:** [Create a sales invoice (interactive workflow)](./create-sales-invoice) · **Index:** [BusDK Design Document](../../index) · **Next:** [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
 <!-- busdk-docs-nav end -->

@@ -7,5 +7,5 @@ For Finnish compliance, journal entries MUST include stable identifiers and expl
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Invoices area (headers and lines)](./invoices-area) · **Next:** [Data directory layout (principles)](./layout-principles)
+**Prev:** [Invoices area (headers and lines)](./invoices-area) · **Index:** [BusDK Design Document](../../index) · **Next:** [Data directory layout (principles)](./layout-principles)
 <!-- busdk-docs-nav end -->

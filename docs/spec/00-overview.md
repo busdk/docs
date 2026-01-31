@@ -25,5 +25,5 @@ This overview is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Document](../index) · **Next:** [Purpose and scope](./overview/purpose-and-scope)
+**Prev:** [BusDK Design Document](../index) · **Index:** [BusDK Design Document](../index) · **Next:** [Purpose and scope](./overview/purpose-and-scope)
 <!-- busdk-docs-nav end -->

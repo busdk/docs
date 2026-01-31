@@ -5,5 +5,5 @@ BusDK assumes schemas will evolve as a business evolves. Schema changes are vers
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Scaling over decades](./scaling-over-decades) · **Next:** [Frictionless Table Schema as the contract](./table-schema-contract)
+**Prev:** [Scaling over decades](./scaling-over-decades) · **Index:** [BusDK Design Document](../../index) · **Next:** [Frictionless Table Schema as the contract](./table-schema-contract)
 <!-- busdk-docs-nav end -->

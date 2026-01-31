@@ -8,5 +8,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Year-end close (closing entries)](./workflow/year-end-close) · **Next:** [References and external foundations (summary)](./references/foundations-summary)
+**Prev:** [Year-end close (closing entries)](./workflow/year-end-close) · **Index:** [BusDK Design Document](../index) · **Next:** [References and external foundations (summary)](./references/foundations-summary)
 <!-- busdk-docs-nav end -->

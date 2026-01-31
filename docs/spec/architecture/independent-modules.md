@@ -5,5 +5,5 @@ Modules are independent tools or services. Each functional area is a module: led
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Git-backed data repository (the data store)](./git-backed-data-store) · **Next:** [Shared validation layer (schema + logical validation)](./shared-validation-layer)
+**Prev:** [Git-backed data repository (the data store)](./git-backed-data-store) · **Index:** [BusDK Design Document](../../index) · **Next:** [Shared validation layer (schema + logical validation)](./shared-validation-layer)
 <!-- busdk-docs-nav end -->

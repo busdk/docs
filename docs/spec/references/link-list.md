@@ -12,5 +12,5 @@
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [References and external foundations (summary)](./foundations-summary) · **Next:** [bus-accounts](../../modules/bus-accounts)
+**Prev:** [References and external foundations (summary)](./foundations-summary) · **Index:** [BusDK Design Document](../../index) · **Next:** [bus-accounts](../../modules/bus-accounts)
 <!-- busdk-docs-nav end -->

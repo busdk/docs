@@ -7,5 +7,5 @@ For Finnish compliance, a Data Package descriptor SHOULD be used as the manifest
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [CSV conventions](./csv-conventions) · **Next:** [Scaling over decades](./scaling-over-decades)
+**Prev:** [CSV conventions](./csv-conventions) · **Index:** [BusDK Design Document](../../index) · **Next:** [Scaling over decades](./scaling-over-decades)
 <!-- busdk-docs-nav end -->

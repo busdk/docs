@@ -42,5 +42,5 @@ Repository: ./modules/bus-reports
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [bus-vat](./bus-vat) · **Next:** [bus-filing](./bus-filing)
+**Prev:** [bus-vat](./bus-vat) · **Index:** [BusDK Design Document](../index) · **Next:** [bus-filing](./bus-filing)
 <!-- busdk-docs-nav end -->

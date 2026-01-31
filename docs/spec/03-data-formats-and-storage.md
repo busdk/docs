@@ -12,5 +12,5 @@ This section is split into **single-concept** documents:
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Shared validation layer (schema + logical validation)](./architecture/shared-validation-layer) · **Next:** [Append-only updates and soft deletion](./data/append-only-and-soft-deletion)
+**Prev:** [Shared validation layer (schema + logical validation)](./architecture/shared-validation-layer) · **Index:** [BusDK Design Document](../index) · **Next:** [Append-only updates and soft deletion](./data/append-only-and-soft-deletion)
 <!-- busdk-docs-nav end -->

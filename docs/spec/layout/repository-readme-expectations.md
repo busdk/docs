@@ -7,5 +7,5 @@ For Finnish compliance, the repository MUST also include a methods description a
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Minimal example layout](./minimal-example-layout) · **Next:** [Schemas beside datasets (Table Schema JSON files)](./schemas-area)
+**Prev:** [Minimal example layout](./minimal-example-layout) · **Index:** [BusDK Design Document](../../index) · **Next:** [Schemas beside datasets (Table Schema JSON files)](./schemas-area)
 <!-- busdk-docs-nav end -->

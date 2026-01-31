@@ -46,5 +46,5 @@ Repeat the close flow for the final period, ensure assets and VAT are complete, 
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [BusDK Design Spec: Example end-to-end workflow](../08-example-workflow) · **Next:** [AI-assisted classification (review before external commit)](./ai-assisted-classification-review)
+**Prev:** [BusDK Design Spec: Example end-to-end workflow](../08-example-workflow) · **Index:** [BusDK Design Document](../../index) · **Next:** [AI-assisted classification (review before external commit)](./ai-assisted-classification-review)
 <!-- busdk-docs-nav end -->

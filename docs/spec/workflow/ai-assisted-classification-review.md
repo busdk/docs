@@ -5,5 +5,5 @@ If AI assistance is present, classification can be suggested automatically, such
 ---
 
 <!-- busdk-docs-nav start -->
-**Prev:** [Accounting workflow overview (current planned modules)](./accounting-workflow-overview) · **Next:** [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
+**Prev:** [Accounting workflow overview (current planned modules)](./accounting-workflow-overview) · **Index:** [BusDK Design Document](../../index) · **Next:** [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
 <!-- busdk-docs-nav end -->
