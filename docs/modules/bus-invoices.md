@@ -11,7 +11,7 @@ available subcommands and arguments.
 
 ### Subcommands
 
-- `init`: Create invoice datasets and schemas in the invoices area.
+- `init`: Create invoice datasets and schemas in the repository root.
 - `create`: Create a sales or purchase invoice record.
 - `list`: List invoices by status, period, or counterparty.
 - `pdf`: Render invoice PDFs from stored invoice data.
@@ -19,7 +19,8 @@ available subcommands and arguments.
 
 ### Data it reads and writes
 
-It reads and writes invoice header and line datasets in the invoices area, uses
+It reads and writes invoice header and line datasets in the repository root
+(for example `sales-invoices.csv` and `sales-invoice-lines.csv`), uses
 reference data from [`bus entities`](./bus-entities),
 [`bus accounts`](./bus-accounts), and VAT rates, and relies on
 JSON Table Schemas stored beside their CSV datasets.

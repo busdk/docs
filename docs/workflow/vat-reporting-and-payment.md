@@ -12,7 +12,7 @@ Input VAT (@24%): €60
 VAT payable: €180
 ```
 
-The module may also generate a file for record-keeping such as `vat/vat_return_2026Q1.csv`, which is then committed via external Git tooling. When Alice pays €180, she records the payment as a journal transaction (debit VAT Payable, credit Cash) or imports it from the next bank statement.
+The module may also generate a file for record-keeping such as `2026/vat-returns/202603-vat-return.csv`, which is then referenced from `vat-returns.csv` and committed via external Git tooling. When Alice pays €180, she records the payment as a journal transaction (debit VAT Payable, credit Cash) or imports it from the next bank statement.
 
 ---
 

@@ -18,12 +18,14 @@ subcommands and arguments.
 
 It reads invoice data from [`bus invoices`](./bus-invoices) and
 postings from [`bus journal`](./bus-journal), optionally uses
-VAT reference datasets in the VAT area, and uses JSON Table Schemas stored
-beside their CSV datasets.
+VAT reference datasets such as `vat-rates.csv` in the repository root, and uses
+JSON Table Schemas stored beside their CSV datasets.
 
 ### Outputs and side effects
 
-It writes VAT summaries and export files for reporting and archiving, and emits
+It writes VAT summaries and export files for reporting and archiving (for
+example under `2026/vat-reports/` and `2026/vat-returns/`, tracked from
+`vat-reports.csv` and `vat-returns.csv` in the repository root), and emits
 diagnostics for VAT mismatches or missing mappings.
 
 ### Finnish compliance responsibilities

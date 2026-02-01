@@ -11,17 +11,18 @@ available subcommands and arguments.
 
 ### Subcommands
 
-- `init`: Create journal datasets and schemas in the journal area.
+- `init`: Create journal datasets and schemas in the repository root.
 - `record`: Append a balanced journal entry to the ledger.
 - `add`: Alias for `record` when supported.
 - `balance`: Compute balances as of a given date.
 
 ### Data it reads and writes
 
-It reads and writes journal datasets in the journal area (for example
-`journal.csv`), uses reference data from
-[`bus accounts`](./bus-accounts) and other posting sources, and
-uses JSON Table Schemas stored beside their CSV datasets.
+It reads and writes the journal index table `journals.csv` in the repository
+root and the period journal files it references (for example
+`2026/journals/2026-journal.csv`). It uses reference data from
+[`bus accounts`](./bus-accounts) and other posting sources, and uses
+JSON Table Schemas stored beside their CSV datasets.
 
 ### Outputs and side effects
 

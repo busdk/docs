@@ -17,9 +17,10 @@ for available subcommands and arguments.
 
 ### Data it reads and writes
 
-It reads and writes attachment metadata CSVs in the attachments area, manages
-binary documents stored under a predictable folder structure, and stores each
-JSON Table Schema beside its CSV dataset.
+It reads and writes attachment metadata in `attachments.csv` in the repository
+root, manages binary documents stored under a predictable period directory
+structure (for example `2026/attachments/20260115-INV-1001.pdf`), and stores
+each JSON Table Schema beside its CSV dataset.
 
 ### Outputs and side effects
 

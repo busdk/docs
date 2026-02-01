@@ -9,7 +9,7 @@ bus journal record --date 2026-01-10 \
 --credit "Cash"=2500
 ```
 
-The command generates two ledger rows in `journal/journal_2026.csv`, linking them with a shared transaction ID. The CLI ensures the debits equal the credits and rejects unknown account names. On success, the change is committed via external Git tooling with a message such as “Record transaction: 2026-01-10 Bought new laptop €2,500.” This makes it difficult to accidentally record only half of a double-entry transaction, supporting reliable bookkeeping.
+The command generates two ledger rows in `2026/journals/2026-journal.csv`, linking them with a shared transaction ID. The CLI ensures the debits equal the credits and rejects unknown account names. If the repository did not yet have a 2026 journal file, the tool also updates `journals.csv` so the new file is discoverable and unambiguous. On success, the change is committed via external Git tooling with a message such as “Record transaction: 2026-01-10 Bought new laptop €2,500.” This makes it difficult to accidentally record only half of a double-entry transaction, supporting reliable bookkeeping.
 
 ---
 

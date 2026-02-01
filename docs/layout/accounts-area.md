@@ -6,8 +6,8 @@ code/number, name, category/type (Asset, Liability, Equity, Income, Expense),
 optional description, and possibly hierarchical relationships through parent
 accounts. A corresponding schema such as `accounts.schema.json` sits beside the
 dataset file and enforces uniqueness and valid types. Additional reference datasets
-such as `contacts.csv` or `entities.csv` may exist if customer and vendor
-identity tracking is needed beyond invoice free-text fields.
+such as `entities.csv` may exist if counterparty identity tracking is needed
+beyond invoice free-text fields.
 
 ---
 
