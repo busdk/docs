@@ -11,9 +11,8 @@ available subcommands and arguments.
 
 ### Subcommands
 
-- `init`: Create journal datasets and schemas in the repository root.
-- `record`: Append a balanced journal entry to the ledger.
-- `add`: Alias for `record` when supported.
+- `init`: Initialize journal datasets and schemas in the repository root.
+- `add`: Append a balanced journal entry to the ledger.
 - `balance`: Compute balances as of a given date.
 
 ### Data it reads and writes

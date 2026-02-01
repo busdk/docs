@@ -31,7 +31,7 @@ Receipts, invoice PDFs, bank exports, VAT filings, and other documents are archi
 4. Record day-to-day activity as explicit invoice and journal records:
 
 ```bash
-bus invoices create ...
+bus invoices add ...
 bus journal add ...
 ```
 
@@ -44,7 +44,7 @@ bus bank import ...
 bus reconcile match ...
 ```
 
-[`bus bank`](../modules/bus-bank) normalizes and validates bank statement data, and [`bus reconcile`](../modules/bus-reconcile) links bank transactions to invoices or journal entries. When reconciliation reveals missing bookkeeping (fees, partial payments, unrecorded purchases), Alice records the missing source data with `bus invoices create` or posts directly with `bus journal add`, then re-runs matching so the reconciliation history remains explicit.
+[`bus bank`](../modules/bus-bank) normalizes and validates bank statement data, and [`bus reconcile`](../modules/bus-reconcile) links bank transactions to invoices or journal entries. When reconciliation reveals missing bookkeeping (fees, partial payments, unrecorded purchases), Alice records the missing source data with `bus invoices add` or posts directly with `bus journal add`, then re-runs matching so the reconciliation history remains explicit.
 
 6. Close each period with a repeatable, script-friendly sequence:
 

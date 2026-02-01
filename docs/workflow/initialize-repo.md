@@ -11,25 +11,43 @@ cd 2026-bookkeeping
 
 BusDK does not execute any version control commands, so repository setup and revision recording remain explicit and under her control.
 
-2. Alice scaffolds the workspace layout and module-owned baseline datasets:
+2. Alice confirms the CLI is available:
 
 ```bash
-bus init --help
-bus init
+bus -V
+bus -h
 ```
 
-`bus init` orchestrates a deterministic sequence of module-owned init operations (for example `bus accounts init`, `bus journal init`, and `bus invoices init`) so that each module remains the sole owner of its datasets and schemas. The exact arguments depend on the chosen workspace layout and the pinned module versions, so she relies on `--help` to see the available options.
-
-3. Alice validates that the baseline datasets and schemas are internally consistent:
+3. Alice scaffolds the workspace layout and module-owned baseline datasets by running each module’s init command explicitly:
 
 ```bash
-bus validate --help
+bus accounts init
+bus entities init
+bus journal init
+bus invoices init
+bus attachments init
+bus bank init
+bus vat init
+bus budget init
+bus period init
+```
+
+Each module remains the sole owner of its datasets and schemas. This is why the workflow prefers explicit per-module `init` calls rather than a single orchestration command — `bus init` can exist as a convenience wrapper, but it is not the definition of the bootstrap contract.
+
+4. Alice validates that the baseline datasets and schemas are internally consistent:
+
+```bash
 bus validate
+bus accounts validate
+bus entities validate
+bus journal validate
+bus invoices validate
+bus bank validate
 ```
 
-If module-specific validation is preferred, she can run `bus accounts validate` and other module-level validators instead, but the intent is the same — the repository starts from a known-good, schema-validated baseline.
+The aggregate validator exists to provide a stable “is the workspace data coherent?” check, but module-level validators remain the lowest-level surface area that makes ownership and failure modes explicit.
 
-4. Alice records the initial baseline revision using her version control tooling.
+5. Alice records the initial baseline revision using her version control tooling.
 
 From this point on, the repository is the canonical source of truth for the year’s workspace data, and the revision history provides the reviewable audit trail for all subsequent updates.
 

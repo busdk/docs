@@ -8,11 +8,11 @@ Invoices and the general ledger stay integrated by writing shared repository dat
 bus accounts list
 ```
 
-2. Alice creates the invoice as stored invoice rows:
+2. Alice adds the invoice as stored invoice rows:
 
 ```bash
-bus invoices create --help
-bus invoices create --type sales
+bus invoices add --help
+bus invoices add --type sales
 ```
 
 3. If the pinned module version is configured to produce postings, it appends the corresponding journal impact as part of the same user-level operation, for example debiting Accounts Receivable €1240, crediting Consulting Revenue €1000, and crediting VAT Payable €240. The important detail is that the integration happens by writing journal rows in the shared journal dataset, tagged with the invoice identifier for traceability.

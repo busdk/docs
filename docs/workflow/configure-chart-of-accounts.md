@@ -5,6 +5,7 @@ Alice configures the chart of accounts early, because most other workflows depen
 1. Alice initializes the accounts datasets if they are not already present:
 
 ```bash
+cd 2026-bookkeeping
 bus accounts init
 ```
 
@@ -17,11 +18,22 @@ bus accounts list
 3. Alice appends the baseline set of accounts she needs for her day-to-day workflow:
 
 ```bash
-bus accounts add --help
-bus accounts add ...
+bus -h accounts add
+
+bus accounts add \
+  --id 1910 --name "Bank" --type asset
+
+bus accounts add \
+  --id 1700 --name "Accounts Receivable" --type asset
+
+bus accounts add \
+  --id 3000 --name "Consulting Revenue" --type income
+
+bus accounts add \
+  --id 2930 --name "VAT Payable" --type liability
 ```
 
-For a minimal flow she ensures she has accounts such as Cash, a bank account, Accounts Receivable, Consulting Revenue, VAT Payable, and the expense categories she expects to use. Each addition updates `accounts.csv` and validates invariants such as uniqueness and allowed account types.
+Each addition updates `accounts.csv` and validates invariants such as uniqueness and allowed account types. If the command is incorrect, it fails with a non-zero exit code and leaves the workspace datasets unchanged.
 
 4. Alice validates the resulting dataset:
 
@@ -37,6 +49,6 @@ bus accounts validate
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./budgeting-and-budget-vs-actual">Budgeting and budget-vs-actual reporting</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./create-sales-invoice">Create a sales invoice (interactive workflow)</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./create-sales-invoice">Add a sales invoice (interactive workflow)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

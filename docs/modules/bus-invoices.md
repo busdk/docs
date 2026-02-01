@@ -11,11 +11,10 @@ available subcommands and arguments.
 
 ### Subcommands
 
-- `init`: Create invoice datasets and schemas in the repository root.
-- `create`: Create a sales or purchase invoice record.
+- `init`: Initialize invoice datasets and schemas in the repository root.
+- `add`: Add a sales or purchase invoice record.
 - `list`: List invoices by status, period, or counterparty.
 - `pdf`: Render invoice PDFs from stored invoice data.
-- `generate-pdf`: Alias for `pdf` when the module exposes it.
 
 ### Data it reads and writes
 
@@ -49,7 +48,7 @@ documents and feeds [`bus journal`](./bus-journal),
 
 Repository: https://github.com/busdk/bus-invoices
 
-For invoice dataset layout and workflow details, see [Invoices area](../layout/invoices-area) and [Create sales invoice](../workflow/create-sales-invoice).
+For invoice dataset layout and workflow details, see [Invoices area](../layout/invoices-area) and [Add a sales invoice](../workflow/create-sales-invoice).
 
 ---
 

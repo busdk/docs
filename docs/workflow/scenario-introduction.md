@@ -19,7 +19,7 @@ bus accounts add ...
 3. She records day-to-day activity using subledger commands and append-only journal postings:
 
 ```bash
-bus invoices create --type sales
+bus invoices add --type sales
 bus journal add ...
 ```
 

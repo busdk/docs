@@ -23,7 +23,7 @@ bus journal add --help
 bus journal add ...
 ```
 
-For example, a payment match becomes an append-only journal entry that clears Accounts Receivable, and a bank fee becomes its own balanced journal entry. If the workflow also needs subledger updates, the user uses the relevant module commands (for example `bus invoices create` for corrections) so each module remains the owner of its datasets.
+For example, a payment match becomes an append-only journal entry that clears Accounts Receivable, and a bank fee becomes its own balanced journal entry. If the workflow also needs subledger updates, the user uses the relevant module commands (for example `bus invoices add` for corrections) so each module remains the owner of its datasets.
 
 4. The user validates the result and records a new revision:
 

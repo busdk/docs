@@ -8,7 +8,7 @@ The recommended reading order is:
 2. [Scenario introduction](./scenario-introduction)
 3. [Initialize a new repository](./initialize-repo)
 4. [Configure the chart of accounts](./configure-chart-of-accounts)
-5. [Create a sales invoice (interactive workflow)](./create-sales-invoice)
+5. [Add a sales invoice (interactive workflow)](./create-sales-invoice)
 6. [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
 7. [Record a purchase as a journal transaction](./record-purchase-journal-transaction)
 8. [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
