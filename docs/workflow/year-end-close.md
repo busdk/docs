@@ -1,6 +1,55 @@
 ## Year-end close (closing entries)
 
-At year end, Alice closes the books. BusDK may provide a command such as `bus ledger close-year 2026` to generate closing entries that zero income and expense accounts into retained earnings and roll forward balances. If a built-in command does not exist, the open, schema-defined data allows Alice or her accountant to write a script to perform the close and add it as a custom command, reinforcing extensibility. Closing entries are committed via external Git tooling so that the derivation of opening balances for 2027 remains traceable.
+Year-end close is a stricter version of period close: Alice runs validation, ensures VAT is complete, generates closing entries deterministically, locks the final period, and then produces the year-end report set. The outcome is a repository revision that makes the derivation of opening balances for the next year straightforward to review.
+
+1. Alice validates that the workspace datasets are internally consistent before generating close outputs:
+
+```bash
+bus validate --help
+bus validate
+```
+
+2. Alice completes VAT for the final reporting periods and exports the archived VAT artifacts:
+
+```bash
+bus vat report --help
+bus vat report ...
+bus vat export --help
+bus vat export ...
+```
+
+3. Alice closes the final accounting period and generates the closing entry outputs:
+
+```bash
+bus period close --help
+bus period close ...
+```
+
+The close produces deterministic entries that bring the period to a clean boundary and records period-close metadata as repository data. Any income and expense zeroing into retained earnings is expressed as new append-only postings rather than as in-place edits.
+
+4. Alice locks the closed period to prevent later edits from drifting reported results:
+
+```bash
+bus period lock --help
+bus period lock ...
+```
+
+5. Alice generates the year-end report set from the closed, locked journal:
+
+```bash
+bus reports trial-balance --help
+bus reports trial-balance ...
+bus reports general-ledger --help
+bus reports general-ledger ...
+bus reports profit-and-loss --help
+bus reports profit-and-loss ...
+bus reports balance-sheet --help
+bus reports balance-sheet ...
+```
+
+6. Alice records the year-end close as a new revision using her version control tooling, so the closed year is easy to reference and export later.
+
+If a particular jurisdiction, accountant, or workflow needs additional close outputs beyond what the pinned modules provide, the schema-defined repository data still allows Alice to derive those outputs with a script and store them as additional repository data, without rewriting earlier records.
 
 ---
 

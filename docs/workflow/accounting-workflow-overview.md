@@ -1,47 +1,69 @@
 ## Accounting workflow overview (current planned modules)
 
-This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules. It assumes a dedicated repository workspace for the accounting year, with the workspace datasets (tables plus schemas) and supporting evidence living side-by-side as repository data. When Git is used, every change is recorded as a commit using external Git tooling, but Git is an implementation choice rather than the definition of the workflow’s invariants.
+This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules. It assumes a dedicated repository workspace for the accounting year, with the workspace datasets (tables plus schemas) and supporting evidence living side-by-side as repository data. Version control is an implementation choice, not the definition of the workflow’s invariants — the invariant is that the workspace datasets and their revision history remain reviewable and exportable.
 
-### 1) Create the bookkeeping repository
+1. Create the bookkeeping repository and scaffold baseline datasets:
 
-Start a new Git repository for the bookkeeping year. Install the core dispatcher `bus` and the BusDK module binaries you plan to use. Keep the `docs` spec repository nearby when deciding naming, schemas, and conventions. BusDK does not execute any Git commands.
+```bash
+bus init
+```
 
-### 2) Define master data (start-of-year setup)
+`bus init` orchestrates module-owned init commands so each module remains the authoritative owner of its datasets and schemas.
 
-- Chart of accounts with [`bus accounts`](../modules/bus-accounts) (used by all postings and reports).
-- Durable counterparties with [`bus entities`](../modules/bus-entities) (customers, vendors, banks, authorities).
-- Accounting periods with [`bus period`](../modules/bus-period) (typically monthly, with open/close/lock rules).
+2. Define master data that other modules depend on:
 
-### 3) Treat evidence as first-class data
+```bash
+bus accounts add ...
+bus entities add ...
+bus period open ...
+```
 
-Archive receipts, invoices, bank exports, VAT filings, and other documents with [`bus attachments`](../modules/bus-attachments). Reference attachment IDs from invoices, journal entries, and other datasets to keep the audit trail in the same repository.
+The chart of accounts maintained by [`bus accounts`](../modules/bus-accounts) becomes the shared reference for postings and reports. Durable counterparties maintained by [`bus entities`](../modules/bus-entities) keep names and identifiers consistent across invoices, bank imports, and filings. Period control managed by [`bus period`](../modules/bus-period) establishes the close and lock boundaries that prevent later drift.
 
-### 4) Record day-to-day activity
+3. Treat evidence as first-class repository data by registering attachments:
 
-- Invoicing: record sales/purchase invoices with [`bus invoices`](../modules/bus-invoices) and link evidence.
-- Ledger postings: record balanced transactions with [`bus journal`](../modules/bus-journal).
-- Assets: track acquisitions, disposals, and depreciation with [`bus assets`](../modules/bus-assets).
+```bash
+bus attachments add ...
+```
 
-The journal is the authoritative source for financial statements, so it must remain balanced and auditable.
+Receipts, invoice PDFs, bank exports, VAT filings, and other documents are archived through [`bus attachments`](../modules/bus-attachments), and other datasets reference attachment identifiers so provenance remains attached to the records that rely on it.
 
-### 5) Reconcile bank activity
+4. Record day-to-day activity as explicit invoice and journal records:
 
-On a regular cadence (weekly or monthly), import bank statements with [`bus bank`](../modules/bus-bank) and reconcile against invoices or journal entries with [`bus reconcile`](../modules/bus-reconcile). If reconciliation reveals missing bookkeeping (fees, partial payments, unrecorded purchases), add the missing source data with [`bus invoices`](../modules/bus-invoices) or post directly with [`bus journal`](../modules/bus-journal), then re-run reconciliation.
+```bash
+bus invoices create ...
+bus journal add ...
+```
 
-### 6) Close each period
+Invoicing via [`bus invoices`](../modules/bus-invoices) writes validated invoice rows and can produce postings by appending to the shared journal dataset. Direct ledger postings via [`bus journal`](../modules/bus-journal) remain balanced and append-only, because the journal is authoritative for the financial statements.
 
-At month end, run a repeatable close:
+5. Import bank activity and reconcile it against invoices and postings:
 
-- Validate schemas and invariants with [`bus validate`](../modules/bus-validate).
-- Compute VAT with [`bus vat`](../modules/bus-vat) and archive VAT exports via [`bus attachments`](../modules/bus-attachments).
-- Lock the period with [`bus period`](../modules/bus-period).
-- Generate financial outputs (trial balance, general ledger, P&L, balance sheet) with [`bus reports`](../modules/bus-reports).
+```bash
+bus bank import ...
+bus reconcile match ...
+```
 
-Commit the data, evidence, and reports with Git, and tag the period (for example, `2026-01-closed`).
+[`bus bank`](../modules/bus-bank) normalizes and validates bank statement data, and [`bus reconcile`](../modules/bus-reconcile) links bank transactions to invoices or journal entries. When reconciliation reveals missing bookkeeping (fees, partial payments, unrecorded purchases), Alice records the missing source data with `bus invoices create` or posts directly with `bus journal add`, then re-runs matching so the reconciliation history remains explicit.
 
-### 7) Year-end close
+6. Close each period with a repeatable, script-friendly sequence:
 
-Repeat the close flow for the final period, ensure assets and VAT are complete, and run year-level reports with [`bus reports`](../modules/bus-reports). Commit and tag the final revision with Git (for example, `2026-closed`) to preserve a reproducible, audit-friendly year.
+```bash
+bus validate
+bus vat report ...
+bus vat export ...
+bus period close ...
+bus period lock ...
+bus reports trial-balance ...
+```
+
+Validation via [`bus validate`](../modules/bus-validate) ensures schemas and invariants are still satisfied. VAT is computed and exported via [`bus vat`](../modules/bus-vat) as repository data for archiving and filing. The period is closed and locked via [`bus period`](../modules/bus-period), and the financial output set is generated via [`bus reports`](../modules/bus-reports).
+
+7. Record close boundaries as revisions:
+
+After the close outputs are generated and reviewed, Alice records a revision using her version control tooling so the period boundary is easy to return to later.
+
+At year end, the same pattern applies to the final period, producing a reproducible, audit-friendly year-end revision for long-term retention.
 
 ---
 

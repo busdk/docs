@@ -1,21 +1,23 @@
 ## BusDK Design Spec: Example end-to-end workflow
 
-This section is split into **single-concept** documents:
+This section is split into single-concept documents. Each page is written as a small, ordered sequence so that the relevant `bus <module> <subcommand>` invocations and their typical order are easy to scan.
 
-- [Accounting workflow overview (current planned modules)](./accounting-workflow-overview)
-- [AI-assisted classification (review before external commit)](./ai-assisted-classification-review)
-- [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
-- [Configure the chart of accounts](./configure-chart-of-accounts)
-- [Create a sales invoice (interactive workflow)](./create-sales-invoice)
-- [Evolution over time (extending the model)](./evolution-over-time)
-- [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
-- [Initialize a new repository](./initialize-repo)
-- [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
-- [Record a purchase as a journal transaction](./record-purchase-journal-transaction)
-- [Scenario introduction](./scenario-introduction)
-- [VAT reporting and payment](./vat-reporting-and-payment)
-- [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
-- [Year-end close (closing entries)](./year-end-close)
+The recommended reading order is:
+
+1. [Accounting workflow overview (current planned modules)](./accounting-workflow-overview)
+2. [Scenario introduction](./scenario-introduction)
+3. [Initialize a new repository](./initialize-repo)
+4. [Configure the chart of accounts](./configure-chart-of-accounts)
+5. [Create a sales invoice (interactive workflow)](./create-sales-invoice)
+6. [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
+7. [Record a purchase as a journal transaction](./record-purchase-journal-transaction)
+8. [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
+9. [AI-assisted classification (review before recording a revision)](./ai-assisted-classification-review)
+10. [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
+11. [VAT reporting and payment](./vat-reporting-and-payment)
+12. [Year-end close (closing entries)](./year-end-close)
+13. [Evolution over time (extending the model)](./evolution-over-time)
+14. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
 
 ---
 

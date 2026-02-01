@@ -1,6 +1,35 @@
 ## Configure the chart of accounts
 
-She configures her chart of accounts by adding accounts via CLI. For example, she adds “Cash” (an Asset account), “Accounts Receivable” (Asset), “Consulting Revenue” (Income), “VAT Payable” (Liability), and common expense accounts. Each addition updates `accounts.csv`, validates schema rules such as uniqueness, then is committed via external Git tooling with an audit-friendly message.
+Alice configures the chart of accounts early, because most other workflows depend on stable account references. The chart of accounts is stored as schema-validated repository data, so later postings can refer to accounts deterministically.
+
+1. Alice initializes the accounts datasets if they are not already present:
+
+```bash
+bus accounts init
+```
+
+2. Alice lists the current chart of accounts so she can see what exists and what still needs to be added:
+
+```bash
+bus accounts list
+```
+
+3. Alice appends the baseline set of accounts she needs for her day-to-day workflow:
+
+```bash
+bus accounts add --help
+bus accounts add ...
+```
+
+For a minimal flow she ensures she has accounts such as Cash, a bank account, Accounts Receivable, Consulting Revenue, VAT Payable, and the expense categories she expects to use. Each addition updates `accounts.csv` and validates invariants such as uniqueness and allowed account types.
+
+4. Alice validates the resulting dataset:
+
+```bash
+bus accounts validate
+```
+
+5. Alice records the change as a new revision using her version control tooling.
 
 ---
 

@@ -1,6 +1,24 @@
 ## Evolution over time (extending the model)
 
-As the business evolves, BusDK’s data model can extend. International currency support can be introduced by adding a currency field to relevant schemas and records. If Alice hires an assistant, collaboration can happen via shared Git repositories with pull requests and branch protections, using standard Git workflows outside BusDK. If new taxes or reporting obligations appear, new modules can be added without refactoring the core, because the dataset remains the stable interface.
+As the business evolves, the workflow stays stable because the authoritative interface is the workspace datasets and their schemas. BusDK’s module boundaries allow you to extend what is recorded and computed without rewriting history.
+
+1. When a new data need appears, Alice expresses it as a schema change and a corresponding record shape change, for example adding a currency field to the relevant table schemas and then adding the corresponding values to new records.
+
+2. Alice runs validation to ensure the updated schemas and datasets remain consistent:
+
+```bash
+bus validate
+```
+
+3. If the change affects derived outputs, she regenerates them deterministically from the updated repository data:
+
+```bash
+bus reports trial-balance ...
+```
+
+4. Alice records the evolution as a normal, reviewable change to repository data by creating a new revision with her version control tooling.
+
+If Alice hires an assistant, the same sequence is executed through standard version control collaboration outside BusDK. If new taxes or reporting obligations appear, she adds the appropriate module and runs its commands against the same datasets, because “CSV plus schemas” remains the stable interface between modules and workflows.
 
 ---
 

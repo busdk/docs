@@ -1,6 +1,23 @@
 ## Workflow takeaways (transparency, control, automation)
 
-Across this workflow, BusDK emphasizes transparency (CSV plus Git history show exactly what happened, using external Git tooling), control (no silent adjustments; even AI produces reviewable changes), and automation (repeatable commands, integrated document generation, and optional AI-assisted classification). Treating evidence as data and locking periods on close keeps the audit trail intact and ensures that "January stays January."
+Across this workflow, the same sequence repeats in different modules: write or import repository data with explicit commands, validate invariants, produce derived outputs, then record the reviewed result as a new revision. This makes the workflow script-friendly while keeping human review straightforward.
+
+1. Transparency comes from storing the authoritative tables and their schemas as repository data and reviewing changes through the revision history.
+
+2. Control comes from the rule that outcomes are expressed as explicit records rather than as silent adjustments, so journal impact is appended as balanced entries:
+
+```bash
+bus journal add ...
+```
+
+3. Automation comes from repeatable commands that compute outputs from stored data without losing traceability, and from closing workflows that lock the period boundary:
+
+```bash
+bus period close ...
+bus period lock ...
+```
+
+Treating evidence as data and locking periods on close keeps the audit trail intact and ensures that “January stays January.”
 
 ---
 

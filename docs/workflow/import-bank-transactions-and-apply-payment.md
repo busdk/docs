@@ -37,13 +37,15 @@ bus journal add --date 2026-02-14 \
 
 The journal entry date comes from the bank transaction date, and the description carries the invoice number and enough evidence context to make later review straightforward. If a bank transaction identifier is available in the normalized bank dataset, Alice includes it in the description so the posting remains easy to trace back to the imported statement row.
 
+If she is unsure about the available flags in her pinned version, she uses `bus journal add --help`.
+
 5. Alice verifies the result by reviewing the bank list output and the resulting journal postings, then uses invoice listing as a cross-check:
 
 ```bash
 bus invoices list
 ```
 
-Until reconciliation is implemented as a first-class module, invoice “paid” status should be treated as a reporting convenience rather than the definition of correctness. The authoritative outcome is that the ledger is updated via an append-only journal entry whose provenance remains reviewable in the Git change history.
+Until reconciliation is implemented as a first-class module, invoice “paid” status should be treated as a reporting convenience rather than the definition of correctness. The authoritative outcome is that the ledger is updated via an append-only journal entry whose provenance remains reviewable in the revision history.
 
 ---
 

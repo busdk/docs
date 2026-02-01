@@ -1,6 +1,14 @@
 ## VAT reporting and payment
 
-At the end of Q1 2026, Alice files VAT. She runs `bus vat report --period 2026Q1`. The VAT module scans invoices and/or journal entries from Jan–Mar 2026, separates output VAT on sales from input VAT on purchases, and prints a summary such as:
+VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then record the payment as a normal ledger transaction. The goal is that both the computed VAT numbers and the evidence used to file them remain reviewable in the revision history.
+
+1. Alice computes the VAT summary for the reporting period:
+
+```bash
+bus vat report --period 2026Q1
+```
+
+The VAT module scans invoices and/or journal entries from Jan–Mar 2026, separates output VAT on sales from input VAT on purchases, and prints a summary such as:
 
 ```text
 VAT Summary Q1 2026:
@@ -12,7 +20,27 @@ Input VAT (@24%): €60
 VAT payable: €180
 ```
 
-The module may also generate a file for record-keeping such as `2026/vat-returns/202603-vat-return.csv`, which is then referenced from `vat-returns.csv` and committed via external Git tooling. When Alice pays €180, she records the payment as a journal transaction (debit VAT Payable, credit Cash) or imports it from the next bank statement.
+2. Alice exports the VAT output files she will archive alongside the workspace data:
+
+```bash
+bus vat export --help
+bus vat export --period 2026Q1
+```
+
+The module writes period-specific artifacts (for example under `2026/vat-reports/` and `2026/vat-returns/`) and updates any index tables used to make those artifacts discoverable as part of the repository data.
+
+3. After filing, Alice records the VAT payment as a normal journal transaction:
+
+```bash
+bus journal add --date 2026-04-12 \
+--desc "VAT payment for 2026Q1" \
+--debit "VAT Payable"=180 \
+--credit "Cash"=180
+```
+
+If she prefers to treat the bank statement row as the primary evidence, she can import the next bank statement with `bus bank import`, identify the VAT payment row with `bus bank list`, and then record the same journal posting with a description that carries the bank statement reference.
+
+4. Alice records the VAT close as a new revision using her version control tooling.
 
 ---
 

@@ -1,6 +1,28 @@
 ## Invoice ledger impact (integration through journal entries)
 
-For integration convenience, the invoice module can also write the corresponding ledger impact automatically by appending journal lines that debit Accounts Receivable €1240, credit Consulting Revenue €1000, and credit VAT Payable €240, optionally tagging the transaction with invoice number for traceability. This integration is accomplished by writing to the shared journal dataset rather than calling ledger internals.
+Invoices and the general ledger stay integrated by writing shared repository data rather than by calling hidden ledger internals. When invoice posting integration is enabled, the invoice module expresses ledger impact by appending to the journal dataset as normal, reviewable records.
+
+1. Alice ensures the required account references exist:
+
+```bash
+bus accounts list
+```
+
+2. Alice creates the invoice as stored invoice rows:
+
+```bash
+bus invoices create --help
+bus invoices create --type sales
+```
+
+3. If the pinned module version is configured to produce postings, it appends the corresponding journal impact as part of the same user-level operation, for example debiting Accounts Receivable €1240, crediting Consulting Revenue €1000, and crediting VAT Payable €240. The important detail is that the integration happens by writing journal rows in the shared journal dataset, tagged with the invoice identifier for traceability.
+
+4. Alice verifies the posting result from the journal side:
+
+```bash
+bus reports trial-balance --help
+bus reports trial-balance ...
+```
 
 ---
 

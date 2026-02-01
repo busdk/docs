@@ -1,6 +1,46 @@
 ## Create a sales invoice (interactive workflow)
 
-When Alice needs to bill a client, she issues a sales invoice. She runs `bus invoice create --type sales` without providing all fields, and the tool enters interactive mode. It requests the invoice number (such as “INV-1001,” with optional auto-generation), invoice date (such as 2026-01-15), customer name (such as “Acme Corp,” optionally selectable from an entities list if maintained), then prompts for line items iteratively. Alice enters a line item for consulting services with a quantity of 10 hours at €100/hour, maps it to her consulting revenue account, and sets VAT rate to 24%. The CLI calculates subtotal €1000, VAT €240, total €1240, and defaults due date to 30 days from invoice date (2026-02-14). After confirmation, the module writes the invoice header to `sales-invoices.csv`, writes the line item to `sales-invoice-lines.csv`, generates a PDF attachment such as `2026/attachments/20260115-INV-1001.pdf` and records it in `attachments.csv`, then the change is committed via external Git tooling with a message such as “Add sales invoice INV-1001 for €1240 to Acme Corp.”
+When Alice needs to bill a client, she creates a sales invoice as repository data and then generates a PDF as a derived artifact linked back to the invoice records. The important invariant is that invoice totals, VAT, and references are validated at write time so later reporting and postings can treat invoices as trustworthy inputs.
+
+1. Alice confirms she has the account references she will use for invoice line mapping:
+
+```bash
+bus accounts list
+```
+
+If she maintains counterparties as reference data, she also checks the customer exists:
+
+```bash
+bus entities list
+```
+
+2. Alice creates the invoice using interactive prompting. She intentionally omits some fields so the tool asks for them:
+
+```bash
+bus invoices create --help
+bus invoices create --type sales
+```
+
+The tool requests the invoice number (for example `INV-1001`, with optional auto-generation), invoice date (for example `2026-01-15`), customer name (for example `Acme Corp`), and line items. Alice enters a consulting line for 10 hours at €100/hour, maps it to her consulting revenue account, and selects a 24% VAT rate. The module calculates subtotal €1000, VAT €240, and total €1240, and defaults the due date to 30 days from the invoice date (for example `2026-02-14`) unless she overrides it.
+
+On confirmation, the module appends rows to `sales-invoices.csv` and `sales-invoice-lines.csv` and rejects mismatched totals or missing references rather than writing partial data.
+
+3. Alice generates the PDF representation and stores it as an attachment:
+
+```bash
+bus invoices pdf --help
+bus invoices pdf ...
+```
+
+The PDF file path lives inside the repository data alongside other evidence and is referenced from `attachments.csv` so the invoice records and their rendered document remain linked for later review.
+
+4. Alice verifies the invoice is present and consistent by listing invoices:
+
+```bash
+bus invoices list
+```
+
+5. Alice records the result as a new revision using her version control tooling.
 
 ---
 

@@ -1,6 +1,35 @@
-## AI-assisted classification (review before external commit)
+## AI-assisted classification (review before recording a revision)
 
-If AI assistance is present, classification can be suggested automatically, such as identifying that €1240 matches an open invoice and mapping a €10 bank fee to a bank-fees expense account. The user reviews and approves suggestions before external commit, keeping control while benefiting from automation. The import results in reviewable updates to the repository data that are committed via external Git tooling, for example with a message like “Import Feb 2026 bank transactions.”
+When AI assistance is present, it is treated as a suggestion engine over repository data, not as an authority that rewrites records. The user stays in control by reviewing proposed changes before recording them as an authoritative revision, while still benefiting from automation for matching, categorization, and voucher preparation.
+
+1. The user runs a normal import workflow that produces a deterministic baseline dataset:
+
+```bash
+bus bank import --file 2026/bank-statements/202602-bank-statement.csv
+```
+
+2. The user requests and reviews classification suggestions before accepting any changes as authoritative repository data:
+
+```bash
+bus bank list --month 2026-2
+```
+
+Suggestions might include matching a €1240 incoming payment to an open invoice, or mapping a €10 bank fee to a bank-fees expense account. The review boundary is the working tree: the user inspects the proposed edits and additions as changes to CSV datasets and schemas, just like any other change to repository data.
+
+3. The user applies the accepted outcome as explicit records rather than implicit adjustments:
+
+```bash
+bus journal add --help
+bus journal add ...
+```
+
+For example, a payment match becomes an append-only journal entry that clears Accounts Receivable, and a bank fee becomes its own balanced journal entry. If the workflow also needs subledger updates, the user uses the relevant module commands (for example `bus invoices create` for corrections) so each module remains the owner of its datasets.
+
+4. The user validates the result and records a new revision:
+
+```bash
+bus validate
+```
 
 ---
 
