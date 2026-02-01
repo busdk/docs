@@ -15,6 +15,7 @@ available subcommands and arguments.
 - `init`: Create the accounts datasets and schemas in the accounts area.
 - `list`: List chart of accounts entries with optional filters or output formats.
 - `add`: Append a new account row to the chart of accounts.
+- `validate`: Validate accounts CSV against schema.
 
 ### Data it reads and writes
 
