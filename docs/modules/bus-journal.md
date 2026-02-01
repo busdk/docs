@@ -9,6 +9,13 @@ authoritative source of ledger postings.
 Run `bus journal` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create journal datasets and schemas in the journal area.
+- `record`: Append a balanced journal entry to the ledger.
+- `add`: Alias for `record` when supported.
+- `balance`: Compute balances as of a given date.
+
 ### Data it reads and writes
 
 It reads and writes journal datasets in the journal area (for example
@@ -23,7 +30,7 @@ or invalid entries.
 
 ### Finnish compliance responsibilities
 
-Bus Journal MUST write append-only journal entries with stable `entry_id` and `transaction_id` values, and it MUST link every entry to a `voucher_id` while preserving references to source documents or attachments. It MUST provide deterministic ordering (`posting_date` + sequence) to satisfy chronological review, and it MUST support correction entries that reference the original entry rather than overwriting it.
+Bus Journal MUST write append-only journal entries with stable `entry_id` and `transaction_id` values, and it MUST link every entry to a `voucher_id` while preserving references to source documents or attachments. It MUST support both chronological and systematic ordering, including deterministic sequencing, and it MUST preserve links from combined postings to the underlying subledger records and vouchers. It MUST support correction entries that reference the original entry rather than overwriting it and respect period locks to prevent edits after close.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

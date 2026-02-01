@@ -9,6 +9,12 @@ records as schema-validated datasets.
 Run `bus reconcile` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `match`: Match bank transactions to invoices or journal entries.
+- `allocate`: Record allocation details for partials, splits, and fees.
+- `list`: List reconciliation records and allocation history.
+
 ### Data it reads and writes
 
 It reads and writes reconciliation datasets in the reconciliation area, uses
@@ -23,7 +29,7 @@ unmatched items or invalid allocations.
 
 ### Finnish compliance responsibilities
 
-Bus Reconcile MUST link bank transactions to invoices or journal entries with stable reconciliation IDs, and it MUST preserve allocation history for partials, splits, and fees without overwriting prior records. It MUST provide audit-trail references from reconciled items back to vouchers and evidence.
+Bus Reconcile MUST link bank transactions to invoices or journal entries with stable reconciliation IDs, and it MUST preserve allocation history for partials, splits, and fees without overwriting prior records. It MUST maintain chronological ordering of allocations and provide bidirectional audit-trail references from reconciled items to bank transactions, vouchers, and evidence.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

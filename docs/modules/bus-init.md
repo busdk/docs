@@ -9,6 +9,10 @@ so that each module remains the sole owner of its datasets and schemas.
 
 Run `bus init` … and use `--help` for available arguments.
 
+### Subcommands
+
+Bus Init does not define additional subcommands. It is invoked as `bus init` with flags.
+
 ### Data it reads and writes
 
 It may create or update workspace-level metadata at the workspace root
@@ -21,6 +25,10 @@ It executes a deterministic sequence of `bus <module> init …` calls and checks
 that the expected workspace directories and baseline files exist afterwards. It
 prints subcommand output to stdout/stderr and stops on the first failure. It
 does not run any git commands and performs no network operations.
+
+### Finnish compliance responsibilities
+
+Bus Init MUST create a workspace layout that supports the methods description and dataset list required for Finnish bookkeeping and ensures baseline schemas and directories exist for long-term retention and auditability.
 
 ### Integrations
 

@@ -11,6 +11,13 @@ The loan register also supports portfolio reporting for applications and special
 Run `bus loans` … and use `--help` for available
 subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create loan register datasets and schemas.
+- `add`: Register a new loan contract in the loan register.
+- `event`: Record loan events such as disbursements or repayments.
+- `amortize`: Generate amortization schedules and posting outputs.
+
 ### Data it reads and writes
 
 It reads and writes loan register and event datasets in the loans area, uses
@@ -23,6 +30,10 @@ Schemas stored beside their CSV datasets.
 It writes updated loan registers and schedules, emits posting suggestions for
 [`bus journal`](./bus-journal), and provides validation
 diagnostics for inconsistent terms.
+
+### Finnish compliance responsibilities
+
+Bus Loans MUST link loan transactions and amortization postings to dated, numbered vouchers and maintain an audit trail from postings to the underlying loan contracts and evidence.
 
 ### Integrations
 

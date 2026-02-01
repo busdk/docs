@@ -9,6 +9,13 @@ comparing budgets to actuals.
 Run `bus budget` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create budget datasets and schemas in the budgeting area.
+- `add`: Append a new budget row for an account and period.
+- `set`: Replace or upsert budget values for an account and period.
+- `report`: Produce budget vs actual variance outputs.
+
 ### Data it reads and writes
 
 It reads and writes budget datasets in the budgeting area (for example
@@ -21,6 +28,10 @@ Schema beside its CSV dataset.
 
 It writes updated budget CSVs, emits variance reports in text or structured
 formats, and produces validation diagnostics for missing or invalid mappings.
+
+### Finnish compliance responsibilities
+
+Bus Budget is optional for statutory bookkeeping, but when budget datasets are maintained in the repository it MUST preserve stable identifiers and retain budgets as repository data so variance outputs remain reproducible from stored budgets and journal actuals.
 
 ### Integrations
 

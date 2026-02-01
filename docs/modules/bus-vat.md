@@ -9,6 +9,11 @@ postings.
 Run `bus vat` … and use `--help` for available
 subcommands and arguments.
 
+### Subcommands
+
+- `report`: Compute VAT summaries for a reporting period.
+- `export`: Write VAT output files for archiving or filing workflows.
+
 ### Data it reads and writes
 
 It reads invoice data from [`bus invoices`](./bus-invoices) and
@@ -23,7 +28,7 @@ diagnostics for VAT mismatches or missing mappings.
 
 ### Finnish compliance responsibilities
 
-Bus VAT MUST compute VAT reports from journal and invoice data with traceable references. It MUST retain VAT code, rate, base, and tax amount in source data used for reporting, and it MUST output VAT summaries with links to underlying postings and vouchers.
+Bus VAT MUST compute VAT reports from journal and invoice data with traceable references and ensure VAT outputs are derivable without manual rewriting of history. It MUST retain VAT code, rate, base, and tax amount in source data used for reporting, it MUST represent VAT corrections as new entries that reference the originals, and it MUST output VAT summaries with links to underlying postings and vouchers suitable for Vero filing.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

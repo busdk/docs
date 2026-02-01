@@ -10,6 +10,13 @@ period close tooling.
 Run `bus assets` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create fixed-asset register datasets and schemas.
+- `add`: Register a new asset acquisition in the asset register.
+- `depreciate`: Generate depreciation schedules and posting outputs.
+- `dispose`: Record asset disposals with references to vouchers and evidence.
+
 ### Data it reads and writes
 
 It reads and writes fixed asset register datasets in the assets area, with each
@@ -20,6 +27,10 @@ JSON Table Schema stored beside its CSV dataset.
 It writes updated register and schedule CSVs, emits depreciation postings or
 posting suggestions for the journal, and provides validation and reconciliation
 diagnostics.
+
+### Finnish compliance responsibilities
+
+Bus Assets MUST link asset acquisitions and disposals to dated, numbered vouchers, and it MUST generate depreciation postings that reference the source asset records and vouchers. It MUST represent asset corrections as new entries that reference the original records so the audit trail remains intact.
 
 ### Integrations
 

@@ -10,6 +10,12 @@ modules.
 Run `bus accounts` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create the accounts datasets and schemas in the accounts area.
+- `list`: List chart of accounts entries with optional filters or output formats.
+- `add`: Append a new account row to the chart of accounts.
+
 ### Data it reads and writes
 
 It reads and writes `accounts.csv` (and optional related references) in the
@@ -19,6 +25,10 @@ accounts area, with each JSON Table Schema stored beside its CSV dataset.
 
 It writes updated CSV datasets when you add or change accounts and emits
 validation and integrity diagnostics to stdout/stderr.
+
+### Finnish compliance responsibilities
+
+Bus Accounts MUST maintain stable account identifiers that remain traceable across schema evolution, and it MUST preserve the chart of accounts as repository data for the full retention period. It MUST keep account metadata suitable for the methods description and for the dataset list required in Finnish bookkeeping.
 
 ### Integrations
 

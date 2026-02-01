@@ -9,6 +9,13 @@ close.
 Run `bus period` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create period control datasets and schemas.
+- `open`: Open a new accounting period.
+- `close`: Generate closing entries and mark the period closed.
+- `lock`: Lock closed periods to prevent edits.
+
 ### Data it reads and writes
 
 It reads and writes period control datasets in the period area, uses journal
@@ -22,7 +29,7 @@ for unbalanced or invalid period closures.
 
 ### Finnish compliance responsibilities
 
-Bus Period MUST lock closed periods and prevent edits that would break reported data. It MUST create opening and closing entries as append-only records with references, and it MUST support an annual close package containing period datasets, reports, and references.
+Bus Period MUST lock closed periods and prevent edits that would break reported data. It MUST create opening and closing entries as append-only records that reference the prior period close, and it MUST support close workflows that run validation, VAT computation, and reporting before locking. It MUST support an annual close package containing period datasets, reports, and references.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

@@ -9,6 +9,10 @@ diagnostics for invalid workspaces.
 Run `bus validate` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+Bus Validate does not define additional subcommands. It is invoked as `bus validate` with flags.
+
 ### Data it reads and writes
 
 It reads all workspace datasets and schemas. It does not modify data unless a
@@ -18,6 +22,10 @@ command explicitly requests it.
 
 It prints validation diagnostics and summaries, and returns non-zero exit codes
 on validation failures.
+
+### Finnish compliance responsibilities
+
+Bus Validate MUST verify audit-trail integrity from reports to postings to vouchers and evidence, and it MUST check voucher completeness, numbering, and required metadata. It MUST validate that closed periods are protected from edits and that corrections are represented as new entries referencing the originals.
 
 ### Integrations
 

@@ -9,6 +9,12 @@ salaries and taxes.
 Run `bus payroll` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create payroll datasets and schemas.
+- `run`: Record a payroll run and produce posting outputs.
+- `list`: List payroll runs or employees for review.
+
 ### Data it reads and writes
 
 It reads and writes payroll datasets in the payroll area, uses reference data
@@ -21,6 +27,10 @@ Schemas stored beside their CSV datasets.
 It writes updated payroll CSVs, emits posting outputs for
 [`bus journal`](./bus-journal), and produces validation
 diagnostics for inconsistent payroll data.
+
+### Finnish compliance responsibilities
+
+Bus Payroll MUST link payroll runs and resulting postings to dated, numbered vouchers and maintain an audit trail from payroll postings back to the source payroll records and evidence.
 
 ### Integrations
 

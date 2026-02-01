@@ -9,6 +9,12 @@ formats to filing target modules.
 Run `bus filing` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `prh`: Produce PRH-ready filing bundles using `bus filing prh`.
+- `vero`: Produce Vero-ready filing bundles using `bus filing vero`.
+- `tax-audit-pack`: Produce a tax-audit export bundle for a selected period.
+
 ### Data it reads and writes
 
 It reads validated datasets and reports from the workspace and writes filing
@@ -18,6 +24,10 @@ bundle directories or archives.
 
 It writes export bundles suitable for authority submission and emits
 diagnostics for missing prerequisites or invalid bundles.
+
+### Finnish compliance responsibilities
+
+Bus Filing MUST produce tax-audit packs that include the journal/daybook, general ledger, subledgers, vouchers, attachments metadata, VAT summaries, chart of accounts, schemas, and the methods description, and it MUST ensure the bundle is internally consistent so totals reconcile across datasets. It MUST preserve a demonstrable audit trail within the export so postings can be traced back to vouchers and evidence.
 
 ### Integrations
 

@@ -13,6 +13,10 @@ structure is deterministic and auditable.
 Run `bus filing vero` … and use `--help`
 for available subcommands and arguments.
 
+### Subcommands
+
+Bus Filing Vero does not define additional subcommands. It is invoked as `bus filing vero` with flags.
+
 ### Data it reads and writes
 
 It reads validated data, reports, and VAT outputs, and writes Vero-specific
@@ -22,6 +26,10 @@ bundle directories or archives.
 
 It produces Vero-ready export bundles with manifests and hashes, and emits
 diagnostics for missing prerequisites or invalid formats.
+
+### Finnish compliance responsibilities
+
+Bus Filing Vero MUST generate VAT filing bundles that retain references to the underlying postings, vouchers, and VAT summaries, and it MUST keep the electronic export demonstrably traceable for tax-audit review.
 
 ### Integrations
 

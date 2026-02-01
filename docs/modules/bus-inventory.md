@@ -9,6 +9,13 @@ with Table Schemas.
 Run `bus inventory` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create inventory datasets and schemas.
+- `add-item`: Register inventory items in the master data table.
+- `record-movement`: Append stock movement rows with references to vouchers.
+- `valuation`: Produce inventory valuation outputs for reporting.
+
 ### Data it reads and writes
 
 It reads and writes inventory item and movement datasets in the inventory area,
@@ -18,6 +25,10 @@ with each JSON Table Schema stored beside its CSV dataset.
 
 It writes updated inventory CSVs and valuation outputs, and emits diagnostics
 for invalid quantities or missing item references.
+
+### Finnish compliance responsibilities
+
+Bus Inventory MUST link inventory movements and valuation entries to dated, numbered vouchers and maintain an audit trail from valuations back to the underlying movement records and evidence.
 
 ### Integrations
 

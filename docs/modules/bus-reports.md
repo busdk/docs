@@ -9,6 +9,13 @@ text and structured formats.
 Run `bus reports` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `trial-balance`: Emit trial balance outputs for a period or as-of date.
+- `general-ledger`: Emit general ledger outputs with account detail.
+- `profit-and-loss`: Emit profit and loss (income statement) outputs.
+- `balance-sheet`: Emit balance sheet outputs.
+
 ### Data it reads and writes
 
 It reads journal data from [`bus journal`](./bus-journal) and
@@ -23,7 +30,7 @@ diagnostics for integrity or balance issues.
 
 ### Finnish compliance responsibilities
 
-Bus Reports MUST generate financial statement outputs that can be traced back to ledger postings, and it MUST include or reference the basis for report line items to demonstrate the audit trail. It SHOULD support KPA and PMA formats when the user’s entity size requires them.
+Bus Reports MUST generate financial statement outputs that are fully derivable from journal data without manual rewriting, and it MUST include or reference the basis for report line items so postings and vouchers remain traceable. It MUST support report sets needed for tax-audit packs, including trial balance, general ledger, profit and loss, and balance sheet, and it SHOULD support KPA and PMA formats when the user’s entity size requires them.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

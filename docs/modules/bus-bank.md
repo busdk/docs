@@ -9,6 +9,11 @@ entries for posting into the ledger.
 Run `bus bank` … and use `--help` for available
 subcommands and arguments.
 
+### Subcommands
+
+- `import`: Import bank statement CSVs into normalized bank datasets.
+- `list`: List normalized bank transactions for review and reconciliation.
+
 ### Data it reads and writes
 
 It reads and writes bank statement and import datasets in the bank area, uses
@@ -25,7 +30,7 @@ reconciliation diagnostics.
 
 ### Finnish compliance responsibilities
 
-Bus Bank MUST preserve source statement identifiers and transaction references from bank evidence. It MUST link each bank transaction to vouchers and resulting journal postings when reconciled, and it MUST retain original bank statement evidence via attachments metadata.
+Bus Bank MUST preserve source statement identifiers and transaction references from bank evidence and support deterministic chronological ordering of imported transactions. It MUST link each bank transaction to vouchers and resulting journal postings when reconciled, and it MUST preserve reconciliation history as append-only records so allocation changes remain traceable. It MUST retain original bank statement evidence via attachments metadata.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

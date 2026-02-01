@@ -8,6 +8,10 @@ invoice PDFs without modifying any accounting datasets.
 
 Run `bus pdf` … and use `--help` for available subcommands and arguments.
 
+### Subcommands
+
+Bus PDF does not define additional subcommands. It is invoked as `bus pdf` with flags.
+
 ### Data it reads and writes
 
 It reads JSON input provided via `--data <file>` or `--data @-` (stdin) and
@@ -20,6 +24,10 @@ It creates or overwrites PDF files when rendering (only overwriting when
 `--overwrite` is provided) and emits validation and rendering diagnostics to
 stdout/stderr. It must not create journal entries, invoices, attachments
 metadata, VAT data, bank data, or any other canonical bookkeeping records.
+
+### Finnish compliance responsibilities
+
+Bus PDF MUST render documents in a deterministic, readable form suitable for the full retention period so invoices and reports remain printable and reviewable during audits.
 
 ### Integrations
 

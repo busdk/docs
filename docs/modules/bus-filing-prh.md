@@ -9,6 +9,10 @@ is deterministic and auditable.
 Run `bus filing prh` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+Bus Filing PRH does not define additional subcommands. It is invoked as `bus filing prh` with flags.
+
 ### Data it reads and writes
 
 It reads validated data, reports, and period close outputs, and writes
@@ -18,6 +22,10 @@ PRH-specific bundle directories or archives.
 
 It produces PRH-ready export bundles with manifests and hashes, and emits
 diagnostics for missing prerequisites or invalid formats.
+
+### Finnish compliance responsibilities
+
+Bus Filing PRH MUST include the required financial statements and supporting datasets in PRH bundles and preserve audit-trail references back to journal postings, vouchers, and evidence. It MUST keep bundle contents deterministic with manifests and hashes so the filing export remains verifiable.
 
 ### Integrations
 

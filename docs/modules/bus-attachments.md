@@ -10,6 +10,11 @@ entries, and bank records.
 Run `bus attachments` … and use `--help`
 for available subcommands and arguments.
 
+### Subcommands
+
+- `add`: Register a new attachment and store its metadata.
+- `list`: List attachment metadata and linked record references.
+
 ### Data it reads and writes
 
 It reads and writes attachment metadata CSVs in the attachments area, manages
@@ -23,7 +28,7 @@ missing files or schema violations.
 
 ### Finnish compliance responsibilities
 
-Bus Attachments MUST assign stable `attachment_id` values and store immutable metadata (filename, media type, hash). It MUST support links from vouchers, journal entries, invoices, and bank records to attachment metadata, and it MUST retain evidence references even when files are stored outside Git.
+Bus Attachments MUST assign stable `attachment_id` values and store immutable metadata (filename, media type, hash). It MUST support links from vouchers, journal entries, invoices, and bank records to attachment metadata, and it MUST retain evidence references even when files are stored outside Git. It MUST keep attachments readable and printable for the full retention period and provide metadata suitable for tax-audit pack exports.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

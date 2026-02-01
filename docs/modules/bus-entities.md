@@ -9,6 +9,12 @@ entity IDs for linking across modules.
 Run `bus entities` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create entity reference datasets and schemas.
+- `list`: List entities and reference identifiers.
+- `add`: Append new entities or import entity rows.
+
 ### Data it reads and writes
 
 It reads and writes entity datasets in the entities/reference area, with each
@@ -18,6 +24,10 @@ JSON Table Schema stored beside its CSV dataset.
 
 It writes updated entity CSV datasets and emits validation diagnostics for
 missing or conflicting identities.
+
+### Finnish compliance responsibilities
+
+Bus Entities MUST maintain stable entity identifiers so vouchers, invoices, and bank records can retain counterparty references across the retention period. It MUST keep entity reference data available for audit trail verification whenever those entities are linked to vouchers or postings.
 
 ### Integrations
 

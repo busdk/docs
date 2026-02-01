@@ -9,6 +9,14 @@ produces posting outputs for [`bus journal`](./bus-journal).
 Run `bus invoices` … and use `--help` for
 available subcommands and arguments.
 
+### Subcommands
+
+- `init`: Create invoice datasets and schemas in the invoices area.
+- `create`: Create a sales or purchase invoice record.
+- `list`: List invoices by status, period, or counterparty.
+- `pdf`: Render invoice PDFs from stored invoice data.
+- `generate-pdf`: Alias for `pdf` when the module exposes it.
+
 ### Data it reads and writes
 
 It reads and writes invoice header and line datasets in the invoices area, uses
@@ -24,7 +32,7 @@ outputs when configured.
 
 ### Finnish compliance responsibilities
 
-Bus Invoices MUST assign stable invoice identifiers and maintain deterministic invoice numbering, and it MUST capture voucher-relevant metadata (dates, counterparty, totals, VAT breakdown). It MUST link invoices to attachments and to any generated journal entries, and it MUST represent corrections as new records (credit notes or adjustment invoices), not overwrites.
+Bus Invoices MUST assign stable invoice identifiers and maintain systematic, non-reusable invoice numbering, and it MUST capture voucher-relevant metadata (dates, counterparty, totals, VAT breakdown) that meets Finnish VAT invoice content requirements. It MUST link invoices to attachments and to any generated journal entries, and it MUST represent corrections as new records (credit notes or adjustment invoices), not overwrites.
 
 See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
