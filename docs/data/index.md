@@ -2,6 +2,7 @@
 
 This section is split into **single-concept** documents:
 
+- [Account types in double-entry bookkeeping](./account-types)
 - [Append-only updates and soft deletion](./append-only-and-soft-deletion)
 - [CSV conventions](./csv-conventions)
 - [Data Package organization](./data-package-organization)
@@ -15,6 +16,6 @@ This section is split into **single-concept** documents:
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/shared-validation-layer">Shared validation layer (schema + logical validation)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./append-only-and-soft-deletion">Append-only updates and soft deletion</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./account-types">Account types in double-entry bookkeeping</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
