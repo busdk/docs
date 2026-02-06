@@ -22,6 +22,8 @@ reference data from [`bus entities`](./bus-entities),
 [`bus invoices`](./bus-invoices), and stores each JSON Table
 Schema beside its CSV dataset.
 
+In the default workspace layout, the bank import baseline is represented as two root-level datasets: `bank-imports.csv` (import runs and source references) and `bank-transactions.csv` (normalized transactions), each with a beside-the-dataset schema file (`bank-imports.schema.json` and `bank-transactions.schema.json`). Source bank statement files may be stored anywhere in the workspace (for example under `YYYY/bank-statements/`) and registered via attachments when they must be retained as evidence.
+
 ### Outputs and side effects
 
 It writes normalized bank transaction CSVs, produces journal postings for

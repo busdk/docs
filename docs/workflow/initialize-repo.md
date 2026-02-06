@@ -2,6 +2,8 @@
 
 Alice begins by creating a dedicated repository for the bookkeeping year. The baseline revision establishes the workspace layout and the initial module-owned datasets and schemas, so every later change to the workspace datasets and supporting evidence is reviewable as a normal change to repository data.
 
+The minimal “must exist after initialization” baseline is defined in [Minimal workspace baseline (after initialization)](../layout/minimal-workspace-baseline).
+
 1. Alice creates the repository directory and initializes it with her version control tooling:
 
 ```bash

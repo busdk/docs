@@ -3,7 +3,7 @@
 This section is split into **single-concept** documents:
 
 - [References and external foundations (summary)](./foundations-summary)
-- [Link list (original numbered references)](./link-list)
+- [Sources](./link-list)
 ---
 
 <!-- busdk-docs-nav start -->

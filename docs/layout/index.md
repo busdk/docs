@@ -8,6 +8,7 @@ This section is split into **single-concept** documents:
 - [Invoices area (headers and lines)](./invoices-area)
 - [Journal area (general ledger transactions)](./journal-area)
 - [Data directory layout (principles)](./layout-principles)
+- [Minimal workspace baseline (after initialization)](./minimal-workspace-baseline)
 - [Minimal example layout](./minimal-example-layout)
 - [Repository-level README expectations](./repository-readme-expectations)
 - [Schemas beside datasets (Table Schema JSON files)](./schemas-area)

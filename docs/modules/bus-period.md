@@ -22,6 +22,8 @@ It reads and writes period control datasets in the period area, uses journal
 data from [`bus journal`](./bus-journal) for closing
 calculations, and uses JSON Table Schemas stored beside their CSV datasets.
 
+In the default workspace layout, the period control baseline is represented as a root-level dataset `periods.csv` with a beside-the-dataset schema `periods.schema.json`. Period open/close/lock operations update these datasets append-only so period boundaries and locks remain reviewable as repository data.
+
 ### Outputs and side effects
 
 It writes period datasets and closing entry outputs, and emits diagnostics
