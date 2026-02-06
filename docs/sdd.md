@@ -13,7 +13,7 @@ Change log: 2026-02-06 — Initial consolidation of the multi-page design spec i
 
 ### Review notes
 
-This document consolidates the existing multi-page BusDK design spec into a single, implementation-oriented SDD structure. It is written to be citeable and reviewable without changing the intent of the underlying pages, and the acceptance criteria below are derived from the current source pages so they can be verified against documented behavior. Checklist for review: acceptance criteria are defined for all requirements with no TBDs or open questions remaining, and the only documented conflict is between sources that describe CLI-managed commits versus external Git-managed commits, which requires a decision to resolve.
+This document consolidates the existing multi-page BusDK design spec into a single, implementation-oriented SDD structure. It is written to be citeable and reviewable without changing the intent of the underlying pages, and the acceptance criteria below are derived from the current source pages so they can be verified against documented behavior. Checklist for review: acceptance criteria are defined for all requirements with no TBDs or open questions remaining, and no unresolved conflicts are documented.
 
 ### Canonical multi-page design spec (original sources)
 
@@ -85,7 +85,7 @@ This section defines requirements with stable identifiers. Each requirement is p
   **Acceptance criteria**: Each dataset has a clear owning module; schema changes have a documented migration path.
 
 - **NFR-004 Reliability**: Workflows SHOULD fail fast with clear diagnostics when data contracts are violated.  
-  **Acceptance criteria**: Invalid usage MUST exit with status code 2 and a concise usage error on standard error. Failures caused by repository contents, filesystem I/O, or schema and invariant violations MUST exit non-zero and include diagnostics that identify the dataset and stable identifiers involved. Commands MUST refuse to commit invalid data when validation fails.
+  **Acceptance criteria**: Invalid usage MUST exit with status code 2 and a concise usage error on standard error. Failures caused by repository contents, filesystem I/O, or schema and invariant violations MUST exit non-zero and include diagnostics that identify the dataset and stable identifiers involved. Commands MUST refuse to write invalid data when validation fails.
 
 - **NFR-005 Security and access control**: Repository data MUST be protected by explicit access controls appropriate to the deployment context, and auditability MUST be preserved through append-only history.  
   **Acceptance criteria**: In single-user operation, OS-level permissions MUST be the primary security boundary. In collaborative scenarios, Git permissions and workflow controls (for example branch protections, reviews, and separation of duties) MUST be used to control who can propose and approve changes. If sensitive data must be scrubbed, it MUST be handled via an explicit redaction commit that flags the redaction rather than silently excising history.  
@@ -125,7 +125,7 @@ Git is treated as an external mechanism for recording revisions. BusDK does not 
 
 This separation is a design goal, not a workflow convenience. See [Git as the canonical, append-only source of truth](./design-goals/git-as-source-of-truth) and the operational conventions described in [Git commit conventions per operation (external Git)](./cli/automated-git-commits).
 
-Conflict note: [CLI as the primary interface](./architecture/cli-as-primary-interface) describes the CLI committing changes directly after the read-modify-write cycle, while the external Git convention pages state that commits are made outside BusDK. Both positions are preserved here for traceability and require a decision to converge on a single contract.
+BusDK does not execute Git commands or create commits. All Git operations are performed externally by users or automation, and the CLI’s responsibility ends at deterministic read-modify-write of repository data.
 
 ## Data Design
 
