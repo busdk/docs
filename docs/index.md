@@ -11,7 +11,7 @@ Version: 2026-02-06
 Status: Draft  
 Last updated: 2026-02-06  
 Owner: BusDK development team  
-Change log: 2026-02-06 — Refinements for determinism, terminology, and sources formatting.
+Change log: 2026-02-06 — Refinements for determinism, terminology, and sources formatting. 2026-02-06 — Added a testing strategy section to the design spec index.
 
 ### Review notes
 
@@ -35,6 +35,7 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 - [Modules](modules/index)
 - [Integration and future interfaces](integration/index)
 - [Extensibility model](extensibility/index)
+- [Testing](testing/index)
 - [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
 - [References and external foundations](references/index)
 

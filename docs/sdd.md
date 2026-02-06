@@ -9,11 +9,11 @@ Version: 2026-02-06
 Status: Draft  
 Last updated: 2026-02-06  
 Owner: BusDK development team  
-Change log: 2026-02-06 — Initial consolidation of the multi-page design spec into a single, deterministic SDD view. Updated acceptance criteria to reflect the documented CLI, data, and validation conventions, and expanded non-functional requirements and operational sections from source material.
+Change log: 2026-02-06 — Initial consolidation of the multi-page design spec into a single, deterministic SDD view. Updated acceptance criteria to reflect the documented CLI, data, and validation conventions, and expanded non-functional requirements and operational sections from source material. 2026-02-06 — Defined a testing strategy for module unit tests and command-level end-to-end coverage.
 
 ### Review notes
 
-This document consolidates the existing multi-page BusDK design spec into a single, implementation-oriented SDD structure. It is written to be citeable and reviewable without changing the intent of the underlying pages, and the acceptance criteria below are derived from the current source pages so they can be verified against documented behavior. Checklist for review: acceptance criteria are defined for all requirements with no TBDs or open questions remaining, and no unresolved conflicts are documented.
+This document consolidates the existing multi-page BusDK design spec into a single, implementation-oriented SDD structure. It is written to be citeable and reviewable without changing the intent of the underlying pages, and the acceptance criteria below are derived from the current source pages so they can be verified against documented behavior. The testing strategy has been added so module verification expectations are explicit. Checklist for review: acceptance criteria are defined for all requirements with no TBDs or open questions remaining, and no unresolved conflicts are documented.
 
 ### Canonical multi-page design spec (original sources)
 
@@ -155,7 +155,9 @@ BusDK commands must fail with clear diagnostics when inputs are invalid or when 
 
 ## Testing Strategy
 
-Not Applicable. The current design pages do not specify a testing strategy for BusDK modules or the CLI toolchain.
+Each module is tested using standard unit testing rules for its implementation language, with Go modules using `go test` and idiomatic Go test structure by default. Unit tests focus on deterministic behavior for parsing, validation, schema enforcement, and dataset transformations, and they must be runnable without network dependencies or external services so they remain stable in local and CI environments.
+
+Every command exposed by a module is also covered by a simple end-to-end bash test that executes the command against a fixture workspace, asserts on standard output and standard error, and verifies repository data changes on disk. These end-to-end tests live alongside the module they verify, but they run in an isolated Git repository per command so each test is independent and does not share state or side effects with other tests. The test harness must initialize a fresh repository, apply only the fixtures required for the command under test, and verify exit codes and outputs deterministically. See [Testing strategy](./testing/testing-strategy) for the canonical multi-page design spec section.
 
 ## Deployment and Operations
 
