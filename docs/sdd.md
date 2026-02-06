@@ -9,11 +9,11 @@ Version: 2026-02-06
 Status: Draft  
 Last updated: 2026-02-06  
 Owner: BusDK development team  
-Change log: 2026-02-06 — Initial consolidation of the multi-page design spec into a single, deterministic SDD view. Updated acceptance criteria to reflect the documented CLI, data, and validation conventions, and expanded non-functional requirements and operational sections from source material. 2026-02-06 — Defined a testing strategy for module unit tests and command-level end-to-end coverage. 2026-02-06 — Normalized section order, added stable IDs for interfaces and key decisions, and documented open questions and assumption impacts.
+Change log: 2026-02-06 — Initial consolidation of the multi-page design spec into a single, deterministic SDD view. Updated acceptance criteria to reflect the documented CLI, data, and validation conventions, and expanded non-functional requirements and operational sections from source material. 2026-02-06 — Defined a testing strategy for module unit tests and command-level end-to-end coverage. 2026-02-06 — Normalized section order, added stable IDs for interfaces and key decisions, and documented open questions and assumption impacts. 2026-02-06 — Defined compliance scope as Finland and EU to close the open question on jurisdictions. 2026-02-06 — Clarified the storage backend abstraction boundary, exportability requirements, and non-file backend testing and operations expectations. 2026-02-06 — Clarified repository layering and dependency rules to prevent CLI coupling and allow shared mechanical libraries like bus-data.
 
 ### Review notes
 
-This refinement normalizes the deterministic section order, converts enumerations to paragraph-form IDs for consistent retrieval, and adds explicit Key Decisions and Open Questions so the SDD can be reviewed without changing the intent of the multi-page design spec. Reviewer checklist: confirm the intended users and SDD audience, confirm that key decisions match the canonical design pages, and confirm that acceptance criteria are complete with no remaining gaps or TBDs.
+This refinement normalizes the deterministic section order, converts enumerations to paragraph-form IDs for consistent retrieval, and adds explicit Key Decisions and Open Questions so the SDD can be reviewed without changing the intent of the multi-page design spec. Reviewer checklist: confirm that key decisions match the canonical design pages, and confirm that acceptance criteria are complete with no remaining gaps or TBDs.
 
 ### Canonical multi-page design spec (original sources)
 
@@ -25,7 +25,7 @@ BusDK (Business Development Kit), formerly known as Bus, is a modular, CLI-first
 
 The preferred default is that the workspace lives in a Git repository and that tabular datasets are stored as UTF-8 CSV with beside-the-table schemas expressed as Frictionless Data Table Schemas (JSON). Git and CSV are implementation choices, not the definition of the goal — the invariant is that the workspace datasets and their change history remain reviewable and exportable. See [Git as the canonical, append-only source of truth](./design-goals/git-as-source-of-truth), [Plain-text CSV for longevity](./design-goals/plaintext-csv-longevity), and [Schema-driven data contract (Frictionless Table Schema)](./design-goals/schema-contract).
 
-This SDD is the single-page “source of truth” view for design review and implementation traceability. The intended users and primary audience for this SDD are TBD and require explicit confirmation during review. Out of scope includes executing Git operations and making discretionary accounting judgments, as captured in the Non-goals section.
+This SDD is the single-page “source of truth” view for design review and implementation traceability. The intended audience includes human reviewers validating correctness, AI agents refining documentation from human input, and AI agents implementing and maintaining the Bus codebase. Out of scope includes executing Git operations and making discretionary accounting judgments, as captured in the Non-goals section.
 
 ### Goals
 
@@ -61,17 +61,19 @@ FR-002 Modular command surface. BusDK MUST be organized as independent modules (
 
 FR-003 Workspace initialization. BusDK MUST support a workspace bootstrap workflow where module-owned initialization creates baseline datasets and schemas without a monolithic initializer owning all files. Acceptance criteria: The minimal “must exist after initialization” baseline is defined in [Minimal workspace baseline (after initialization)](./layout/minimal-workspace-baseline). Initialization must result in a schema-valid workspace where the end-to-end workflow can run without implicit dataset creation. Primary sources: [Initialize a new repository](./workflow/initialize-repo), [Minimal workspace baseline (after initialization)](./layout/minimal-workspace-baseline), [Data directory layout (principles)](./layout/layout-principles), and [`bus init`](./modules/bus-init).
 
-FR-004 Schema validation as a first-class workflow step. BusDK MUST support schema-based validation and cross-table invariant checks as a repeatable step in day-to-day and period-close workflows. Acceptance criteria: Schema validation MUST check types and referential integrity before any data mutation, and logical validation MUST enforce balanced debits and credits for transactions, valid account references, invoice totals matching line items, and VAT classification completeness when generating VAT reports. Validation failures MUST be deterministic, MUST exit non-zero, and MUST write diagnostics to standard error that cite datasets and stable identifiers. For Finnish compliance, validation MUST enforce audit-trail invariants (stable IDs, required voucher references, deterministic ordering fields) and MUST prevent changes that would break a closed period or previously reported data. Primary sources: [Shared validation layer](./architecture/shared-validation-layer), [Validation and safety checks](./cli/validation-and-safety-checks), and [`bus validate`](./modules/bus-validate).
+FR-004 Schema validation as a first-class workflow step. BusDK MUST support schema-based validation and cross-table invariant checks as a repeatable step in day-to-day and period-close workflows. Acceptance criteria: Schema validation MUST check types and referential integrity before any data mutation, and logical validation MUST enforce balanced debits and credits for transactions, valid account references, invoice totals matching line items, and VAT classification completeness when generating VAT reports. Validation failures MUST be deterministic, MUST exit non-zero, and MUST write diagnostics to standard error that cite datasets and stable identifiers. For Finland and EU compliance, validation MUST enforce audit-trail invariants (stable IDs, required voucher references, deterministic ordering fields) and MUST prevent changes that would break a closed period or previously reported data. Primary sources: [Shared validation layer](./architecture/shared-validation-layer), [Validation and safety checks](./cli/validation-and-safety-checks), and [`bus validate`](./modules/bus-validate).
 
 FR-005 Evidence is first-class repository data. BusDK MUST support registering and linking supporting evidence (receipts, invoice PDFs, exports) so that datasets can reference attachment identifiers for traceability. Acceptance criteria: Attachments MUST be registered in `attachments.csv` at the repository root with a stable `attachment_id` and immutable metadata (filename, media type, hash). Attachment files SHOULD be stored under a predictable period directory structure, and metadata MUST remain in the repository even when files are stored outside Git. Vouchers, journal entries, invoices, and bank records MUST link to attachments via `attachment_id` so the audit trail remains demonstrable. Primary sources: [`bus attachments`](./modules/bus-attachments), [Invoice PDF storage](./layout/invoice-pdf-storage), and [Finnish bookkeeping and tax-audit compliance](./compliance/fi-bookkeeping-and-tax-audit).
 
 ### Non-functional requirements
 
-NFR-001 Longevity and exportability. Repository data MUST remain exportable and interpretable without requiring a specific runtime or proprietary storage backend. Acceptance criteria: The default representation MUST be UTF-8 CSV with a header row, comma delimiters, ISO dates (YYYY-MM-DD), and predictable numeric formats for monetary values, paired with beside-the-table Frictionless Table Schemas. The canonical datasets MUST remain readable with general-purpose tools. If an alternative storage backend is used, it MUST preserve deterministic, schema-validated tables and MUST export back to simple tabular text formats consistent with these conventions.
+NFR-001 Longevity and exportability. Repository data MUST remain exportable and interpretable without requiring a specific runtime or proprietary storage backend. Acceptance criteria: The default representation MUST be UTF-8 CSV with a header row, comma delimiters, ISO dates (YYYY-MM-DD), and predictable numeric formats for monetary values, paired with beside-the-table Frictionless Table Schemas. The canonical datasets MUST remain readable with general-purpose tools. If an alternative storage backend is used, it MUST preserve deterministic, schema-validated tables and MUST provide canonical import and export to the same tabular conventions, preserving Table Schema semantics including types, constraints, primary keys, and foreign keys so audits and reviews remain possible.
 
 NFR-002 Deterministic behavior. Human-facing diagnostics and machine-facing outputs MUST be deterministic given the same repository data and configuration inputs. Acceptance criteria: Command results MUST be written to standard output and diagnostics to standard error, with any terminal styling limited to standard error when it is a terminal. Machine-readable output modes MUST document stable formats, column sets, column order, and record ordering based on stable identifiers and explicit sort keys. Diagnostics MUST cite datasets and stable identifiers and show paths relative to the workspace root so that output remains stable across machines.
 
 NFR-003 Maintainability through clear boundaries. Module responsibilities and dataset ownership MUST be explicit so that modules can evolve independently. Acceptance criteria: Each dataset has a clear owning module; schema changes have a documented migration path.
+
+NFR-008 Pluggable storage boundary. Modules MUST depend on the workspace store interface or shared library APIs for persistence rather than shelling out to another CLI as an internal API. Acceptance criteria: Module implementations do not require a generic CRUD CLI to run successfully, and storage access is performed through the documented interface or library APIs so that swapping the backend does not introduce hidden runtime dependencies or change module behavior.
 
 NFR-004 Reliability. Workflows SHOULD fail fast with clear diagnostics when data contracts are violated. Acceptance criteria: Invalid usage MUST exit with status code 2 and a concise usage error on standard error. Failures caused by repository contents, filesystem I/O, or schema and invariant violations MUST exit non-zero and include diagnostics that identify the dataset and stable identifiers involved. Commands MUST refuse to write invalid data when validation fails.
 
@@ -109,11 +111,23 @@ Each module owns one or more datasets and their schemas, provides commands to in
 
 Interface IF-002 (module CLI). Each module exposes a CLI program named after its module directory and reads and writes workspace datasets and schemas using the documented repository layout and schema conventions.
 
+### Repository library and CLI layering
+
+Each `bus-<module>` repository MUST contain a library package that implements the module’s behavior and a CLI entrypoint that is a thin wrapper over that library. The CLI is a presentation layer: it parses arguments, orchestrates I/O, and renders outputs, while the library performs validation, domain rules, and dataset updates and returns structured results to the CLI. Acceptance criteria: module tests target the library directly; the CLI program contains only argument parsing and output formatting; and all observable business behavior is available through library calls without shelling out to other BusDK tools. Modules MUST NOT invoke other `bus-*` CLIs as internal dependencies for core behavior. If a module needs shared mechanics such as workspace storage, schema parsing, or CSV I/O, it MUST import the shared mechanical library (for example `bus-data`) or implement the documented storage backend interface rather than calling another module program. The repository layout and dependency rules are defined in [Module repository structure and dependency rules](./implementation/module-repository-structure).
+
+### Workspace store (storage backend) interface
+
+The workspace store interface defines the persistence boundary that modules depend on. It can be backed by the default filesystem implementation (CSV plus schemas) or by a future SQL or other backend, but the interface is mechanical and MUST not embed domain business logic. It must provide deterministic read and write of tables, deterministic record ordering rules, schema load and save, validation preconditions that refuse invalid writes, and canonical export back to the tabular text contract. It must support the append-only and audit-trail discipline required by the rest of the system by refusing destructive changes or representing corrections explicitly, while policy decisions about what is allowed remain in domain modules. See [Storage backends and workspace store interface](./data/storage-backends).
+
+Interface IF-003 (workspace store interface). The storage backend provides deterministic table and schema persistence, schema-driven validation preconditions, and canonical import and export to the tabular text contract without implementing domain business rules.
+
+A shared library implementation is allowed and recommended for Go modules to keep behavior consistent, while cross-language interoperability remains guaranteed by the table and schema contract and by required export and import support when a non-file backend is used.
+
 ### External Git tooling
 
 Git is treated as an external mechanism for recording revisions. BusDK does not commit changes and does not invoke Git commands. Workflows describe when a user should record a revision boundary (for example at period close), but the mechanism is external. This separation is a design goal, not a workflow convenience. See [Git as the canonical, append-only source of truth](./design-goals/git-as-source-of-truth) and the operational conventions described in [Git commit conventions per operation (external Git)](./cli/automated-git-commits).
 
-Interface IF-003 (external version control). Version control actions are performed externally by users or automation, and BusDK’s responsibility ends at deterministic read-modify-write operations on repository data.
+Interface IF-004 (external version control). Version control actions are performed externally by users or automation, and BusDK’s responsibility ends at deterministic read-modify-write operations on repository data.
 
 ## Data Design
 
@@ -123,13 +137,17 @@ Corrections are represented as additional bookkeeping that preserves history rat
 
 ## Assumptions and Dependencies
 
-AD-001 Local filesystem workspace. The current design assumes a local filesystem workspace and a toolchain that can read and write structured text data. If a local filesystem is not available or accessible, BusDK cannot operate on repository data and the CLI workflows described here are not applicable.
+AD-001 Local filesystem workspace. The current design assumes a local filesystem workspace and a toolchain that can read and write structured text data, but the architecture defines a workspace store interface so the persistence layer can be swapped later without changing domain module responsibilities. If a local filesystem is not available or accessible, BusDK cannot operate on repository data with the default backend and the CLI workflows described here are not applicable.
 
 AD-002 Repository layout conventions. Workspace layout assumptions (what lives where in the repository) follow [Data directory layout](./layout/index) with an explicit baseline example in [Minimal example layout](./layout/minimal-example-layout). If the layout deviates, modules cannot locate datasets and schemas deterministically and FR-002 and FR-003 cannot be satisfied.
 
-AD-003 Preferred Git-backed repository. The preferred default assumes a Git repository workspace. If Git is not used, an alternative mechanism MUST preserve an append-only, reviewable change history or NFR-005 is not met.
+AD-003 Preferred Git-backed repository. The preferred default assumes a Git repository workspace. Git remains external revision tooling and is not part of the storage backend interface contract. If Git is not used, an alternative mechanism MUST preserve an append-only, reviewable change history or NFR-005 is not met.
 
 AD-004 Preferred CSV plus Frictionless Table Schema. The preferred default assumes CSV datasets and JSON schemas using the Frictionless Table Schema specification. If CSV and Frictionless Table Schema are not used, an alternative storage backend MUST still provide deterministic, schema-validated tables and export back to simple, tabular text formats so the workspace datasets and their change history remain reviewable and exportable, or NFR-001 and FR-004 cannot be satisfied.
+
+AD-005 Compliance scope limited to Finland and the EU. The current design targets Finnish and EU compliance requirements only. If additional jurisdictions are added, validation rules, reporting outputs, and acceptance criteria MUST be extended and explicitly documented so the scope remains reviewable.
+
+AD-006 Supported operating environments. BusDK supports Linux and macOS environments and assumes a Bash shell for CLI workflows and test harnesses. If a different OS or shell is used, command behavior, fixtures, and scripts may not be portable and test coverage must be expanded.
 
 ## Security Considerations
 
@@ -149,9 +167,11 @@ Each module is tested using standard unit testing rules for its implementation l
 
 Every command exposed by a module is also covered by a simple end-to-end bash test that executes the command against a fixture workspace, asserts on standard output and standard error, and verifies repository data changes on disk. These end-to-end tests live alongside the module they verify, but they run in an isolated Git repository per command so each test is independent and does not share state or side effects with other tests. The test harness must initialize a fresh repository, apply only the fixtures required for the command under test, and verify exit codes and outputs deterministically. See [Testing strategy](./testing/testing-strategy) for the canonical multi-page design spec section.
 
+If a non-file backend such as SQL is implemented, it MUST provide an equivalent deterministic test mode using an ephemeral local instance and fixtures, and the same command-level assertions on standard output, standard error, exit codes, and resulting logical table contents MUST hold. Tests remain isolated and must not rely on external network services; any containerized or local service used for optional backends must be strictly local and used only when that backend is enabled.
+
 ## Deployment and Operations
 
-Not Applicable. The current design pages do not specify a deployment or operations model beyond the local repository workflow.
+For the default filesystem backend, operations are limited to workspace management and external Git workflows. If an alternative backend is enabled, documentation MUST specify configuration (including connection settings and credentials handling), migrations or schema evolution procedures, backup and restore expectations, and concurrency or locking semantics at least at a single-user baseline.
 
 ## Migration/Rollout
 
@@ -163,11 +183,7 @@ Not Applicable. The current design pages do not enumerate specific project risks
 
 ## Open Questions
 
-OQ-001 Intended users and SDD audience. The intended users and primary audience for this SDD are not explicitly stated in the canonical design pages. This must be confirmed to validate documentation tone, review expectations, and verification scope.
-
-OQ-002 Supported operating environments. The canonical design pages do not state supported operating environments or filesystem constraints. This must be defined to set portability expectations and determine test coverage requirements.
-
-OQ-003 Compliance scope beyond Finnish references. The design pages include Finnish compliance references, but do not state whether other jurisdictions are in scope. This must be clarified to bound validation and reporting expectations.
+None at this time.
 
 ## Glossary and Terminology
 

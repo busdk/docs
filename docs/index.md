@@ -28,6 +28,7 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 - [Overview](overview/index)
 - [Design goals and requirements](design-goals/index)
 - [System architecture](architecture/index)
+- [Implementation conventions](implementation/index)
 - [Data formats and storage](data/index)
 - [Data directory layout](layout/index)
 - [CLI tooling and workflow](cli/index)

@@ -8,6 +8,8 @@ Extensibility applies within modules as well as between them. A module should pr
 
 The schema system is a core enabler of extensibility because it makes module interoperability a data contract rather than a code contract. BusDK follows the upstream Table Schema specification as closely as possible, and any BusDK-specific semantics are expressed as optional, namespaced extensions so that external tooling can still validate and process the tables. The detailed contract and extension rules are defined in [Schema-driven data contract (Frictionless Table Schema)](./schema-contract).
 
+Shared implementation is allowed only for mechanical concerns such as the workspace store, schema parsing, and CSV handling, while interoperability remains defined by datasets and schemas, not by module-to-module APIs. CLI-to-CLI dependency is not an integration mechanism — the `bus` dispatcher provides a unified UX while modules remain independently implemented — and the canonical repository layout and dependency rules are defined in [Module repository structure and dependency rules](../implementation/module-repository-structure).
+
 ---
 
 <!-- busdk-docs-nav start -->
