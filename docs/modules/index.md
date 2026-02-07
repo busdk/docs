@@ -1,12 +1,13 @@
 ## Modules
 
-BusDK is organized as a set of independent modules that operate on workspace datasets. Each module is implemented as a CLI program that plugs into the `bus` dispatcher (for example `bus accounts`, `bus journal`, or `bus vat`). A module owns its datasets and schemas, provides commands to initialize and maintain them, and emits deterministic diagnostics so that workflows remain reviewable in the Git repository.
+BusDK is organized as a set of independent modules that operate on workspace datasets. Each module is implemented as a CLI program that plugs into the `bus` dispatcher (for example `bus accounts`, `bus journal`, or `bus vat`). A module owns its datasets and schemas, provides commands to initialize and maintain them, and emits deterministic diagnostics so that workflows remain reviewable in the Git repository. BusDK includes both domain modules and a small number of infrastructure modules, and infrastructure modules may primarily exist to provide shared mechanical behavior as Go libraries.
 
 This section collects the module reference pages that describe what each module does, what data it reads and writes, and how it fits into the overall workflow.
 
 For the architectural rationale behind independent modules and the design goals that shape their boundaries, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating module-owned `init` commands and creating the chosen workspace layout.
+- [`bus data`](./bus-data): Tabular data layer: schema-validated dataset I/O and validation for BusDK workspaces (CSV + JSON Table Schema), providing a Go library (and a thin 'bus data ...' CLI) for deterministic CRUD-style table and schema handling without domain business logic or CLI-to-CLI dependencies.
 - [`bus accounts`](./bus-accounts): Maintains the chart of accounts as schema-validated CSV datasets used as shared reference data across the workspace.
 - [`bus entities`](./bus-entities): Maintains counterparty reference datasets and stable entity IDs used for linking and matching across modules.
 - [`bus period`](./bus-period): Opens and closes accounting periods, generates closing and opening balance entries, and locks closed periods to prevent changes after close.

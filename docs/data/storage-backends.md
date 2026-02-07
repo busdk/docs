@@ -6,7 +6,7 @@ The default backend is a local filesystem repository that stores datasets as UTF
 
 Storage backends must respect append-only and audit-trail expectations by refusing destructive changes or representing corrections explicitly, but the policy decisions belong to domain modules. The backend provides deterministic record ordering and explicit schema enforcement so the modules can apply their business rules in a consistent, reviewable way. This keeps generic CRUD tooling optional and prevents it from becoming a required internal API.
 
-When modules are implemented in Go, a shared library implementation of the workspace store interface is allowed and recommended to keep behavior consistent. Cross-language interoperability is still guaranteed by the table-and-schema contract and by the requirement that any non-file backend can export and import the canonical CSV plus schema form.
+When modules are implemented in Go, a shared library implementation of the workspace store interface is allowed and recommended to keep behavior consistent, such as [`bus-data`](../modules/bus-data). Cross-language interoperability is still guaranteed by the table-and-schema contract and by the requirement that any non-file backend can export and import the canonical CSV plus schema form.
 
 Repository layout and dependency rules remain separate from the storage interface: modules must not depend on invoking other `bus-*` CLIs as internal APIs, and shared implementation is limited to mechanical libraries like the workspace store. The canonical repository structure and dependency rules are defined in [Module repository structure and dependency rules](../implementation/module-repository-structure).
 
