@@ -2,108 +2,172 @@
 
 ### Name
 
-`bus-data` — inspect and maintain workspace datasets and schemas.
-
-### Synopsis
-
-`bus-data [global flags] <command> [args]`
+`bus-data` — inspect and maintain workspace datasets, schemas, and data packages.
 
 ### Description
 
-`bus-data` is a mechanical dataset tool for BusDK repositories. It lists tables, prints schema content, validates and emits CSV or JSON, and performs schema-governed write operations. Other BusDK modules use the bus-data library for dataset I/O; this CLI is for inspection and deterministic maintenance.
+`bus-data` is the workspace dataset tool for BusDK repositories. It reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. The goal is to make dataset maintenance predictable and reviewable while keeping day-to-day operations simple and non-interactive.
 
-### Usage
+### Getting started
+
+Start by defining a schema and letting `bus-data` create the table and its beside-the-table schema file. The table path may omit the `.csv` suffix.
 
 ```text
-bus-data is a mechanical dataset tool for BusDK repositories.
-
-Usage:
-  bus-data [global flags] <command> [args]
-
-Commands:
-  table list                          List tables with beside-the-table schemas.
-  table read <table_path>             Validate a table and emit CSV or JSON.
-  schema show <table_path>            Print the Table Schema JSON for a table.
-  schema init <table_path>            Initialize a CSV and beside-the-table schema.
-  schema infer <table_path>           Infer a schema from an existing CSV.
-  schema add-field <table_path>       Add a field to the schema and extend the CSV.
-  schema set-type <table_path>        Change a field type when compatible.
-  row add <table_path>                Append a new row.
-  row update <table_path>             Update a row by primary key when allowed.
-  row delete <table_path>             Delete a row by primary key when allowed.
-
-  <table_path> may omit the .csv suffix (e.g. "transactions" for transactions.csv).
-
-Global flags:
-  -h, --help               Show help and exit.
-  -V, --version            Show version and exit.
-  -v, --verbose            Increase verbosity (repeatable, e.g. -vv).
-  -q, --quiet              Suppress non-error output.
-  -C, --chdir <dir>        Use <dir> as the workspace root.
-  -o, --output <file>      Write command output to <file>.
-  -f, --format <format>    Output format: list tsv|json (default tsv), read csv|json (default csv).
-      --row <n>            (read only) Emit only the nth data row (1-based). Use N:NN for a range.
-      --key <id>           (read only) Emit only the row whose first column (primary key) equals <id>.
-      --filter <col=val>   (read only) Keep rows where column equals value; repeat for AND.
-      --column <name>      (read only) Emit only selected columns; repeat to keep multiple.
-      Read flags (--row, --key, --filter, --column) may appear before or after the table path.
-      --dry-run            Show planned file changes without writing.
-      --color <mode>       auto|always|never for stderr messages (default: auto).
-      --no-color           Alias for --color=never.
-  --                       Stop parsing flags.
-
-Write flags:
-  --schema <file>          (schema init) Source schema JSON to write beside the table.
-  --sample <n>             (schema infer) Limit inference to the first n data rows.
-  --field <name>           (schema add-field/set-type) Field name to append or update.
-  --type <type>            (schema add-field/set-type) Field type to append or apply.
-  --required               (schema add-field) Mark the field as required.
-  --description <text>     (schema add-field) Field description text.
-  --default <value>        (schema add-field) Default value written to existing rows.
-  --key <id>               (row update/delete) Select a row by primary key.
-  --set <col=val>          (row add/update) Set a column value; repeatable.
-  --json <file>            (row add/update) JSON object row input; use - for stdin.
-  --force                  Allow overwriting existing files during schema init.
-
-Examples:
-  bus-data -vv table list
-  bus-data --format json table list
-  bus-data table read people
-  bus-data --format json --filter name=alice --row 1 table read people
-  bus-data --key p-001 --column name --column age table read people
-  bus-data schema init people --schema people.schema.json
-  bus-data schema infer people
-  bus-data schema add-field people --field nickname --type string
-  bus-data schema set-type people --field age --type integer
-  bus-data row add people --set id=p-001 --set name=Alice
-  bus-data row update people --key p-001 --set name=Alice A.
-  bus-data row delete people --key p-001
-  bus-data -- table read --weird.csv   (use -- when the table path starts with '-')
+bus-data schema init customers --schema customers.schema.json
 ```
 
-### Command behavior
+If you manage a workspace data package, initialize `datapackage.json` after the table exists so the resource is discovered deterministically.
 
-The `table list` command prints a TSV of `table_path` and `schema_path` for every CSV that has a beside-the-table schema. Order is lexicographic by table path.
+```text
+bus-data package init
+```
 
-The `schema show <table_path>` command writes the schema file content for the given table path to standard output.
+Add rows with either repeated `--set` assignments or a JSON file.
 
-The `table read <table_path>` command validates the table against its schema and writes canonical CSV or JSON to standard output, exiting non-zero on validation failure. Read filters do not change validation behavior; they only select which validated rows are emitted. Use `--column` with `--key` to emit only specific fields for a single row.
+```text
+bus-data row add customers --set id=1 --set name=Ada --set active=true
+bus-data row add customers --json row2.json
+```
 
-In addition to read-only inspection, bus-data supports initializing a new CSV with a beside-the-table schema, inferring a schema from an existing CSV, extending schemas by adding columns, changing field types when compatible, and performing row-level CRUD operations. These write operations are explicit and operate on workspace-relative table paths in the same way as the inspection commands.
+List tables in the workspace to confirm what exists. The output is a deterministic list of table and schema paths.
 
-CRUD operations validate against the beside-the-table schema and write changes without modifying unrelated rows. Update and delete are permitted only when the schema’s BusDK metadata explicitly allows the operation and defines the soft-delete behavior when applicable.
+```text
+bus-data table list
+```
 
-The `schema infer` command guesses field types and constraints by scanning data rows and emits a deterministic schema. The `schema set-type` command refuses incompatible changes and does not rewrite table data; it updates the schema only when all existing values can be interpreted as the new type.
+Read a table to get its canonical CSV. `bus-data` always validates against the schema before it emits rows.
 
-BusDK schema metadata for mutability lives in the optional `busdk` object. `busdk.update_policy` may be `forbid` or `in_place`, and `busdk.delete_policy` may be `forbid`, `soft`, or `hard`. When `busdk.delete_policy` is `soft`, `busdk.soft_delete_field` and `busdk.soft_delete_value` must be set so deletions are deterministic.
+```text
+bus-data table read customers
+```
+
+### Read only what you need
+
+When you want a narrower view, you can select rows and columns without changing validation. The filters are applied after validation, so the table still must pass its schema.
+
+```text
+bus-data table read customers --row 1 --column id --column name
+bus-data table read customers --filter status=active --filter name=Ada
+```
+
+If your tables use a primary key, use `--key field=value` for a single row read. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`.
+
+```text
+bus-data table read customers --key id=1
+```
+
+### Update and delete rows
+
+Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work.
+
+```text
+bus-data row update customers --key id=1 --set balance=15.00
+```
+
+Row deletes follow the schema’s delete policy. When the policy is `soft`, `bus-data` writes the configured soft-delete field and value rather than removing the row. The schema’s `busdk.delete_policy`, `busdk.soft_delete_field`, and `busdk.soft_delete_value` control that behavior.
+
+```text
+bus-data row delete customers --key id=2
+```
+
+### Manage data packages and resources
+
+Use `package show` to inspect `datapackage.json`, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Use `resource list` to see the current resources, and `resource validate` to validate a single resource without modifying files.
+
+```text
+bus-data package show
+bus-data package patch --patch package.patch.json
+bus-data package validate
+bus-data resource list
+bus-data resource validate customers
+```
+
+Add resources explicitly with a name and CSV path and provide `--schema` to supply the Table Schema to write beside the table. This creates the CSV and beside-the-table schema artifacts. Remove a resource with `--delete-files` to delete its CSV and schema; the command refuses removal when any foreign key references the resource.
+
+```text
+bus-data resource add --name customers --path customers.csv --schema customers.schema.json
+bus-data resource remove customers --delete-files
+```
+
+### Inspect and evolve schemas
+
+Use `schema show` when you need the exact schema JSON. It prints the schema file as-is, either by table path or by resource name.
+
+```text
+bus-data schema show --table customers
+bus-data schema show --resource customers
+```
+
+If you already have a CSV, you can infer a schema from existing data and write it beside the table.
+
+```text
+bus-data schema infer products --sample 2
+```
+
+Adding a field extends both the schema and the CSV. A default value is written to existing rows.
+
+```text
+bus-data schema field add --resource products --field category --type string --default general
+```
+
+Changing a field type updates the schema only when existing values are compatible with the new type.
+
+```text
+bus-data schema field set-type --resource products --field price --type number
+```
+
+When you need full control over schema metadata, apply a JSON merge patch that preserves unknown properties.
+
+```text
+bus-data schema patch --resource products --patch schema.patch.json
+```
+
+### Output formats and files
+
+`bus-data` can emit JSON where a command supports structured output. Table and resource listings default to TSV, while table reads default to CSV. Package and resource validation report one row per resource and use TSV by default, or JSON when `--format json` is set.
+
+```text
+bus-data --format json table list
+bus-data --format json resource list
+bus-data --format json table read customers
+```
+
+To capture output in a file, use `--output`. If you also use `--quiet`, output is suppressed and the file is not written.
+
+```text
+bus-data --output out_list.tsv table list
+bus-data --quiet --output out_list.tsv table list
+```
+
+### Workspace and safety flags
+
+Use `--chdir` to set the workspace root before resolving any paths. This is useful when you run `bus-data` from another directory.
+
+```text
+bus-data --chdir /path/to/workspace table list
+```
+
+Use `--dry-run` on mutating commands to see what would change without writing files.
+
+```text
+bus-data --dry-run row add products --set id=P-4 --set name="Product D"
+```
+
+If a table name starts with `-`, place `--` before the command arguments to stop flag parsing.
+
+```text
+bus-data -- table read -taulu
+```
+
+Help and diagnostics are printed to standard error. You can disable or force colored output with `--color auto|always|never` or `--no-color`. Version and help are always available through `--version` and `--help`.
 
 ### Files
 
-Operates on any workspace CSV and its beside-the-table `.schema.json` (same directory, `.csv` replaced by `.schema.json`).
+Operates on any workspace CSV and its beside-the-table `.schema.json` (same directory, `.csv` replaced by `.schema.json`), plus `datapackage.json` at the workspace root when present.
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage, missing files, or schema validation failure.
+`0` on success. `2` on invalid usage. Non-zero on missing files, schema validation failure, or foreign key integrity failure.
 
 ### See also
 
