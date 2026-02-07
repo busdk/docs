@@ -1,6 +1,6 @@
 ## VAT area (reference data and filed summaries)
 
-VAT datasets can generally be generated from invoices and journal entries, but reference data such as `vat-rates.csv` is useful to track VAT percentages over time. When VAT reports or filed returns are committed to preserve what was computed or submitted, keep the index tables in the repository root (for example `vat-reports.csv` and `vat-returns.csv`) and store the actual files under a period directory such as `2026/vat-reports/202603-vat-report.csv` and `2026/vat-returns/202603-vat-return.csv`.
+VAT datasets can generally be generated from invoices and journal entries, but reference data such as `vat-rates.csv` is useful to track VAT percentages over time. When VAT reports or filed returns are committed to preserve what was computed or submitted, keep the index tables in the repository root (for example `vat-reports.csv` and `vat-returns.csv`) and store the actual files directly in the repository root with a period prefix such as `202603-vat-report.csv` and `202603-vat-return.csv`.
 
 For Finnish compliance, VAT summaries MUST retain links to the postings and vouchers that produced each reported amount. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

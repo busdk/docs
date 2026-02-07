@@ -29,13 +29,13 @@ Documented parameters are `bus bank import --file <path>` and `bus bank list` fi
 Usage examples:
 
 ```bash
-bus bank import --file 2026/bank-statements/202602-bank-statement.csv
+bus bank import --file 202602-bank-statement.csv
 bus bank list --month 2026-2
 ```
 
 ### Data Design
 
-The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Source bank statement files may live under `YYYY/bank-statements/` and be registered as attachments.
+The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments.
 
 ### Assumptions and Dependencies
 

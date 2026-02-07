@@ -5,7 +5,7 @@ When the customer pays, Alice imports the bank statement as evidence, identifies
 1. Alice imports the raw bank statement evidence with Bus Bank:
 
 ```bash
-bus bank import --file 2026/bank-statements/202602-bank-statement.csv
+bus bank import --file 202602-bank-statement.csv
 ```
 
 Bus Bank writes schema-validated bank datasets and preserves source statement identifiers so each imported transaction remains traceable back to the original evidence.

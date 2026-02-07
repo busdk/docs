@@ -24,7 +24,7 @@ KD-DAT-001 Shared library for data mechanics. Dataset I/O and schema handling ar
 
 Interface IF-DAT-001 (data library). The module exposes a Go library interface for reading, validating, and writing tables and schemas deterministically.
 
-Interface IF-DAT-002 (module CLI). The module exposes `bus data` as a minimal, read-only inspection CLI for workspace tables and schemas. It accepts a workspace-relative table path that points to a CSV file (for example `accounts/accounts.csv`) and resolves the schema beside the table by replacing the `.csv` suffix with `.schema.json` in the same directory. The minimal subcommands are fixed so the inspection surface is deterministic.
+Interface IF-DAT-002 (module CLI). The module exposes `bus data` as a minimal, read-only inspection CLI for workspace tables and schemas. It accepts a workspace-relative table path that points to a CSV file (for example `accounts.csv`) and resolves the schema beside the table by replacing the `.csv` suffix with `.schema.json` in the same directory. The minimal subcommands are fixed so the inspection surface is deterministic.
 
 Subcommand `bus data list` takes no parameters and emits a deterministic TSV with columns `table_path` and `schema_path`, one row per table. A table is any `*.csv` file that has a beside-the-table schema file. Output ordering is lexicographic by `table_path` so the results are stable across machines.
 

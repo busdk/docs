@@ -5,7 +5,7 @@ When AI assistance is present, it is treated as a suggestion engine over reposit
 1. The user runs a normal import workflow that produces a deterministic baseline dataset:
 
 ```bash
-bus bank import --file 2026/bank-statements/202602-bank-statement.csv
+bus bank import --file 202602-bank-statement.csv
 ```
 
 2. The user requests and reviews classification suggestions before accepting any changes as authoritative repository data:

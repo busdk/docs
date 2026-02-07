@@ -26,7 +26,7 @@ bus journal add ...
 4. She imports evidence such as bank statements, then records the ledger impact explicitly:
 
 ```bash
-bus bank import --file 2026/bank-statements/202602-bank-statement.csv
+bus bank import --file 202602-bank-statement.csv
 bus journal add ...
 ```
 

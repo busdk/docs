@@ -2,7 +2,7 @@
 
 BusDK organizes data so commands operate directly in the current working directory. Canonical module datasets live in the repository root as plain files, with their JSON Table Schemas stored beside them using the same base name.
 
-When a module needs multiple files over time, the repository root still contains a single index table (for example `journals.csv`, `attachments.csv`, or `vat-reports.csv`) that records which files exist, which period each file covers, and where it lives in the repository. The actual files live under a period directory such as `2026/journals/2026-journal.csv` or `2026/vat-reports/202603-vat-report.csv`, using the `YYYY[MM[DD]]-name.suffix` pattern with hyphens.
+When a module needs multiple files over time, the repository root still contains a single index table (for example `journals.csv`, `attachments.csv`, or `vat-reports.csv`) that records which files exist, which period each file covers, and where it lives in the repository. Most datasets keep their files directly in the repository root and use a `YYYY[MM[DD]]-name.suffix` prefix for disambiguation. Journal entries are the exception: period journal files live under a period directory such as `2026/journals/2026-journal.csv` while the index table `journals.csv` remains in the repository root.
 
 For Finnish compliance, the layout MUST support audit-trail review and long-term readability, and it MUST be documented in the repository methods description. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
