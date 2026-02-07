@@ -1,20 +1,5 @@
 ## BusDK Software Design Document (SDD)
 
-### Document control
-
-Title: BusDK Software Design Document (SDD)  
-Project: BusDK  
-Document ID: `BUSDK-SDD`  
-Version: 2026-02-06  
-Status: Draft  
-Last updated: 2026-02-06  
-Owner: BusDK development team  
-Change log: 2026-02-06 — Initial consolidation of the multi-page design spec into a single, deterministic SDD view. Updated acceptance criteria to reflect the documented CLI, data, and validation conventions, and expanded non-functional requirements and operational sections from source material. 2026-02-06 — Defined a testing strategy for module unit tests and command-level end-to-end coverage. 2026-02-06 — Normalized section order, added stable IDs for interfaces and key decisions, and documented open questions and assumption impacts. 2026-02-06 — Defined compliance scope as Finland and EU to close the open question on jurisdictions. 2026-02-06 — Clarified the storage backend abstraction boundary, exportability requirements, and non-file backend testing and operations expectations. 2026-02-06 — Clarified repository layering and dependency rules to prevent CLI coupling and allow shared mechanical libraries like [`bus-data`](./modules/bus-data).
-
-### Review notes
-
-This refinement normalizes the deterministic section order, converts enumerations to paragraph-form IDs for consistent retrieval, and adds explicit Key Decisions and Open Questions so the SDD can be reviewed without changing the intent of the multi-page design spec. Reviewer checklist: confirm that key decisions match the canonical design pages, and confirm that acceptance criteria are complete with no remaining gaps or TBDs.
-
 ### Canonical multi-page design spec (original sources)
 
 The canonical source material for this SDD is the existing multi-page BusDK design spec. Start from the [design spec entrypoint](./index) and follow the section indexes from there. This SDD links directly to the most relevant inner pages inline wherever it is logical for traceability.
@@ -212,3 +197,13 @@ Change history (revision history): the reviewable history of changes to reposito
 </p>
 <!-- busdk-docs-nav end -->
 
+### Document control
+
+Title: BusDK Software Design Document (SDD)  
+Project: BusDK  
+Document ID: `BUSDK-SDD`  
+Version: 2026-02-06  
+Status: Draft  
+Last updated: 2026-02-06  
+Owner: BusDK development team  
+Change log: 2026-02-06 — Initial consolidation of the multi-page design spec into a single, deterministic SDD view. Updated acceptance criteria to reflect the documented CLI, data, and validation conventions, and expanded non-functional requirements and operational sections from source material. 2026-02-06 — Defined a testing strategy for module unit tests and command-level end-to-end coverage. 2026-02-06 — Normalized section order, added stable IDs for interfaces and key decisions, and documented open questions and assumption impacts. 2026-02-06 — Defined compliance scope as Finland and EU to close the open question on jurisdictions. 2026-02-06 — Clarified the storage backend abstraction boundary, exportability requirements, and non-file backend testing and operations expectations. 2026-02-06 — Clarified repository layering and dependency rules to prevent CLI coupling and allow shared mechanical libraries like [`bus-data`](./modules/bus-data).
