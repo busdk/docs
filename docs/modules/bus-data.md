@@ -10,10 +10,11 @@
 
 ### Getting started
 
-Start by defining a schema and letting `bus-data` create the table and its beside-the-table schema file. The table path may omit the `.csv` suffix.
+Start by defining a schema and letting `bus-data` create the table and its beside-the-table schema file. The table path may omit the `.csv` suffix, and `schema init` writes both the CSV and the `.schema.json` in one deterministic step. Use `--force` when you need to overwrite an existing table and schema with a new definition.
 
 ```text
 bus-data schema init customers --schema customers.schema.json
+bus-data schema init customers --schema customers.schema.json --force
 ```
 
 If you manage a workspace data package, initialize `datapackage.json` after the table exists so the resource is discovered deterministically.
@@ -22,14 +23,14 @@ If you manage a workspace data package, initialize `datapackage.json` after the 
 bus-data package init
 ```
 
-Add rows with either repeated `--set` assignments or a JSON file.
+Add rows with either repeated `--set` assignments or a JSON file. Each row is validated against the schema before it is written.
 
 ```text
 bus-data row add customers --set id=1 --set name=Ada --set active=true
 bus-data row add customers --json row2.json
 ```
 
-List tables in the workspace to confirm what exists. The output is a deterministic list of table and schema paths.
+List tables in the workspace to confirm what exists. The output is a deterministic, workspace-relative list of table and schema paths.
 
 ```text
 bus-data table list
@@ -43,38 +44,41 @@ bus-data table read customers
 
 ### Read only what you need
 
-When you want a narrower view, you can select rows and columns without changing validation. The filters are applied after validation, so the table still must pass its schema.
+When you want a narrower view, you can select rows and columns without changing validation. The filters are applied after validation, so the table still must pass its schema. Use `--row` with a single index or an inclusive `start:end` range, and repeat `--column` or `--filter` to refine the output.
 
 ```text
 bus-data table read customers --row 1 --column id --column name
+bus-data table read customers --row 1:2 --column id
 bus-data table read customers --filter status=active --filter name=Ada
 ```
 
-If your tables use a primary key, use `--key field=value` for a single row read. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`.
+If your tables use a primary key, use `--key <value>` for a single-column key. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`.
 
 ```text
-bus-data table read customers --key id=1
+bus-data table read customers --key 1
 ```
 
 ### Update and delete rows
 
-Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work.
+Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work. Updates accept either repeated `--set` assignments or a JSON file payload.
 
 ```text
-bus-data row update customers --key id=1 --set balance=15.00
+bus-data row update customers --key 1 --set balance=15.00
+bus-data row update customers --key 1 --json row_update.json
 ```
 
 Row deletes follow the schema’s delete policy. When the policy is `soft`, `bus-data` writes the configured soft-delete field and value rather than removing the row. The schema’s `busdk.delete_policy`, `busdk.soft_delete_field`, and `busdk.soft_delete_value` control that behavior.
 
 ```text
-bus-data row delete customers --key id=2
+bus-data row delete customers --key 2
 ```
 
 ### Manage data packages and resources
 
-Use `package show` to inspect `datapackage.json`, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Use `resource list` to see the current resources, and `resource validate` to validate a single resource without modifying files.
+Use `package init` to create `datapackage.json` from the current tables and beside-the-table schemas, `package show` to inspect it, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Use `resource list` to see the current resources in deterministic order, and `resource validate` to validate a single resource without modifying files.
 
 ```text
+bus-data package init
 bus-data package show
 bus-data package patch --patch package.patch.json
 bus-data package validate
@@ -91,10 +95,10 @@ bus-data resource remove customers --delete-files
 
 ### Inspect and evolve schemas
 
-Use `schema show` when you need the exact schema JSON. It prints the schema file as-is, either by table path or by resource name.
+Use `schema show` when you need the exact schema JSON. It prints the schema file as-is, either by table path or by resource name, so the output matches the bytes on disk. When `datapackage.json` is present, `--resource` resolves the schema path from the package.
 
 ```text
-bus-data schema show --table customers
+bus-data schema show customers
 bus-data schema show --resource customers
 ```
 
@@ -104,16 +108,16 @@ If you already have a CSV, you can infer a schema from existing data and write i
 bus-data schema infer products --sample 2
 ```
 
-Adding a field extends both the schema and the CSV. A default value is written to existing rows.
+Adding a field extends both the schema and the CSV. A default value is written to existing rows, and you can mark the field as required and add a description.
 
 ```text
-bus-data schema field add --resource products --field category --type string --default general
+bus-data schema add-field products --field category --type string --default general --required --description "category"
 ```
 
 Changing a field type updates the schema only when existing values are compatible with the new type.
 
 ```text
-bus-data schema field set-type --resource products --field price --type number
+bus-data schema set-type products --field price --type number
 ```
 
 When you need full control over schema metadata, apply a JSON merge patch that preserves unknown properties.
@@ -130,6 +134,8 @@ bus-data schema patch --resource products --patch schema.patch.json
 bus-data --format json table list
 bus-data --format json resource list
 bus-data --format json table read customers
+bus-data --format json package validate
+bus-data --format json resource validate customers
 ```
 
 To capture output in a file, use `--output`. If you also use `--quiet`, output is suppressed and the file is not written.
@@ -147,7 +153,7 @@ Use `--chdir` to set the workspace root before resolving any paths. This is usef
 bus-data --chdir /path/to/workspace table list
 ```
 
-Use `--dry-run` on mutating commands to see what would change without writing files.
+Use `--dry-run` on mutating commands to see what would change without writing files. This keeps existing CSV and schema files unchanged.
 
 ```text
 bus-data --dry-run row add products --set id=P-4 --set name="Product D"
@@ -159,7 +165,7 @@ If a table name starts with `-`, place `--` before the command arguments to stop
 bus-data -- table read -taulu
 ```
 
-Help and diagnostics are printed to standard error. You can disable or force colored output with `--color auto|always|never` or `--no-color`. Version and help are always available through `--version` and `--help`.
+Help and diagnostics are printed to standard error. You can disable or force colored output with `--color auto|always|never` or `--no-color`, and the flags are accepted even when you only need help or version output. Version and help are always available through `--version` and `--help`.
 
 ### Files
 
