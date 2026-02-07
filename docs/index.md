@@ -26,6 +26,7 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 ### Spec index
 
 - [Overview](overview/index)
+- [Software Design Documents (SDD)](sdd/index)
 - [Design goals and requirements](design-goals/index)
 - [System architecture](architecture/index)
 - [Implementation conventions](implementation/index)

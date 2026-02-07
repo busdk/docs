@@ -33,8 +33,8 @@ For the architectural rationale behind independent modules and the design goals 
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../workflow/year-end-close">Year-end close (closing entries)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./modules">Modules (SDD)</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-init">bus-init</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

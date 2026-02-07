@@ -91,7 +91,7 @@ For account dataset layout and schema expectations, see [Accounts area](../layou
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-data">bus-data</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./modules">Modules (SDD)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-entities">bus-entities</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

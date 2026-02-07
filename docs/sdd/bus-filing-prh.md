@@ -89,7 +89,7 @@ For compliance context and closing package expectations, see [Finnish bookkeepin
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing">bus-filing</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./modules">Modules (SDD)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-vero">bus-filing-vero</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
