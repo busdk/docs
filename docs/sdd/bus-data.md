@@ -16,7 +16,7 @@ FR-DAT-004 Schema extension. The module MUST support extending an existing schem
 
 FR-DAT-005 Row append. The module MUST support appending a new row to an existing CSV through an explicit CLI option. Acceptance criteria: the appended row is validated against the beside-the-table schema and appended in canonical column order without modifying existing rows.
 
-FR-DAT-006 CRUD operations. The module MUST support basic create, read, update, and delete operations that obey the constraints and instructions defined by the table schema. Acceptance criteria: all CRUD operations validate against the schema and refuse changes that violate schema-defined requirements, and update or delete operations are permitted only when the schema explicitly allows them, including composite primary keys.
+FR-DAT-006 Controlled row mutation. The module MUST support row add, update, and delete operations that obey the constraints and mutation policies defined by the table schema. Acceptance criteria: all row mutations validate against the schema and refuse changes that violate schema-defined requirements, and update or delete operations are permitted only when the schema explicitly allows them, including composite primary keys.
 
 FR-DAT-007 Schema inference. The module MUST support initializing a Table Schema by analyzing an existing CSV and inferring field types and constraints. Acceptance criteria: inferred schemas are deterministic for the same input and do not modify the CSV contents.
 
@@ -34,7 +34,7 @@ FR-DAT-013 Workspace-level validation. The module MUST validate the entire works
 
 FR-DAT-014 Safe patching and destructive refusal. The module MUST support safe schema and package patching that preserves unknown properties, and it MUST refuse destructive structural operations unless explicitly forced. Acceptance criteria: field removal, resource deletion, and schema changes that would discard data are rejected by default, and only proceed with an explicit force flag after all integrity checks pass, while row-level deletes remain governed by `busdk.delete_policy`.
 
-FR-DAT-015 Non-interactive, flags-only UX. The module MUST operate without prompts and must express every operation as a single deterministic command with explicit flags and arguments. Acceptance criteria: every mutating command supports `--dry-run` and produces a deterministic plan without modifying files.
+FR-DAT-015 Non-interactive, flags-only UX. The module MUST operate without prompts and must express every operation as a single deterministic command with explicit flags and arguments. Acceptance criteria: every mutating command supports `--dry-run`, produces deterministic log messages to standard error that describe planned file and schema changes, and does not modify files.
 
 FR-DAT-016 Deterministic serialization. The module MUST serialize schemas and data packages deterministically. Acceptance criteria: JSON output uses UTF-8, LF line endings, two-space indentation, and lexicographic object key ordering; resource arrays are ordered lexicographically by resource name; schema field arrays preserve their declared order.
 
@@ -43,10 +43,15 @@ NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and
 NFR-DAT-002 No Git or network behavior. The module MUST NOT perform Git operations or network access. Acceptance criteria: the library and CLI only read and write local workspace files.
 
 NFR-DAT-003 Deterministic diagnostics. The module MUST emit deterministic diagnostics with stable identifiers. Acceptance criteria: error messages mention dataset paths, resource names, and field identifiers consistently and are written only to standard error.
+NFR-DAT-004 Security boundaries. The module MUST rely on OS-level filesystem permissions and schema-defined mutation policies, and MUST NOT embed authentication or authorization logic. Acceptance criteria: the library and CLI do not prompt for credentials, do not store secrets, and refuse mutations that are not permitted by schema policy.
+NFR-DAT-005 Performance. The module SHOULD remain responsive for day-to-day use on typical workspace datasets. Acceptance criteria: table read, validation, and row mutation operations complete in time proportional to table size, and diagnostics remain deterministic regardless of data volume.
+NFR-DAT-006 Scalability. The module MUST support workspaces that segment datasets across multiple files without changing the schema contract. Acceptance criteria: `datapackage.json` can reference multiple resources for a module, and validation works across all referenced resources deterministically.
+NFR-DAT-007 Reliability. The module MUST fail fast without partial writes when validation or filesystem errors occur. Acceptance criteria: any operation that fails leaves the workspace datasets and schemas unchanged and returns a non-zero exit code.
+NFR-DAT-008 Maintainability. The module MUST keep the library as the authoritative integration surface with the CLI as a thin wrapper. Acceptance criteria: the CLI delegates all data and schema logic to library calls, and tests can exercise behavior through library APIs without invoking the CLI.
 
 ### System Architecture
 
-Bus Data implements the workspace store interface and dataset I/O mechanics used by other modules. The library is the authoritative integration surface for reading, writing, validating, and patching CSV, Table Schema, and Data Package descriptors. The CLI delegates directly to the library for inspection, validation, and explicit, mechanical maintenance of schemas, data packages, resources, and rows.
+Bus Data implements the workspace store interface and dataset I/O mechanics used by other modules, satisfying FR-DAT-001, FR-DAT-002, FR-DAT-009, FR-DAT-012, and FR-DAT-013. The library is the authoritative integration surface for reading, writing, validating, and patching CSV, Table Schema, and Data Package descriptors, satisfying FR-DAT-002, FR-DAT-011, and FR-DAT-016. The CLI delegates directly to the library for inspection, validation, and explicit, mechanical maintenance of schemas, data packages, resources, and rows, satisfying FR-DAT-015 and NFR-DAT-008.
 
 ### Key Decisions
 
@@ -55,9 +60,9 @@ KD-DAT-002 Frictionless-native data package support. Data Package descriptors ar
 
 ### Component Design and Interfaces
 
-Interface IF-DAT-001 (data library). The module exposes a Go library interface for reading, validating, and writing tables, schemas, and data packages deterministically. The library provides explicit operations for schema inference, schema patching, resource add/remove/rename, and cross-resource validation. JSON patching uses a deterministic, safe merge approach and preserves unknown properties on both Table Schema and Data Package descriptors.
+Interface IF-DAT-001 (data library). The module exposes a Go library interface for reading, validating, and writing tables, schemas, and data packages deterministically, satisfying FR-DAT-001, FR-DAT-007, FR-DAT-009, FR-DAT-011, and FR-DAT-016. The library provides explicit operations for schema inference, schema patching, resource add/remove/rename, and cross-resource validation, satisfying FR-DAT-007, FR-DAT-009, FR-DAT-010, FR-DAT-012, and FR-DAT-013. JSON patching uses a deterministic, safe merge approach and preserves unknown properties on both Table Schema and Data Package descriptors, satisfying FR-DAT-009, FR-DAT-011, and FR-DAT-014.
 
-Interface IF-DAT-002 (module CLI). The module exposes `bus-data` as a thin wrapper over the library for deterministic inspection and maintenance of workspace tables, schemas, and data packages. It accepts workspace-relative resource names and table paths, resolves beside-the-table schema files by replacing the `.csv` suffix with `.schema.json` in the same directory, and never shells out to other CLIs. All commands are explicit, non-interactive, and map directly to library operations so that other modules can call the library without invoking the CLI.
+Interface IF-DAT-002 (module CLI). The module exposes `bus-data` as a thin wrapper over the library for deterministic inspection and maintenance of workspace tables, schemas, and data packages, satisfying FR-DAT-002, FR-DAT-015, NFR-DAT-003, and NFR-DAT-008. It accepts workspace-relative resource names and table paths, resolves beside-the-table schema files by replacing the `.csv` suffix with `.schema.json` in the same directory, and never shells out to other CLIs. All commands are explicit, non-interactive, and map directly to library operations so that other modules can call the library without invoking the CLI.
 
 Command `bus-data package init` creates `datapackage.json` at the workspace root with the `tabular-data-package` profile and includes one resource entry per existing table that has a beside-the-table schema. Resource names are derived from the CSV basename without the `.csv` suffix, paths are stored as workspace-relative CSV paths, and resources are ordered lexicographically by name. Command `bus-data package show` emits the `datapackage.json` content as stored on disk, and command `bus-data package patch` applies a JSON merge patch while preserving unknown properties and enforcing deterministic formatting. Command `bus-data package validate` validates all resources and foreign keys defined in the data package and returns a deterministic report.
 
@@ -81,11 +86,11 @@ Schema field remove and rename commands update both the schema and CSV determini
 
 Command `bus-data row add <table>` appends a new row. Row input is provided as repeated `--set col=value` flags or as a JSON object via `--json`. The row is validated against the schema and written in canonical column order.
 
-Command `bus-data row update <table>` replaces or updates a row identified by the primary key. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. It revalidates the resulting row and writes changes only when the schema permits in-place updates.
+Command `bus-data row update <table>` replaces or updates a row identified by the primary key only when schema mutation policy allows in-place updates. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. It revalidates the resulting row and writes changes only when the schema permits in-place updates.
 
 Command `bus-data row delete <table>` removes a row identified by the primary key only when the schema permits deletion. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. Soft deletion uses the schema’s configured soft-delete field and value, while hard deletion removes the row entirely.
 
-Initialization, schema extension, package and resource mutation, and row mutation commands write or modify files only when explicitly invoked and operate in the same workspace-relative path conventions as the inspection commands. Schema extension only adds columns and must not reorder or delete existing columns unless explicitly forced and compatible. CRUD operations validate against the schema and write changes without altering unrelated rows.
+Initialization, schema extension, package and resource mutation, and row mutation commands write or modify files only when explicitly invoked and operate in the same workspace-relative path conventions as the inspection commands. Schema extension only adds columns and must not reorder or delete existing columns unless explicitly forced and compatible. Row mutation operations validate against the schema and mutation policy and write changes without altering unrelated rows.
 
 Usage:
 
@@ -139,7 +144,7 @@ Global flags:
       --filter <col=val>   (read only) Keep rows where column equals value; repeat for AND.
       --column <name>      (read only) Emit only selected columns; repeat to keep multiple.
       Read flags (--row, --key, --filter, --column) may appear before or after the table path.
-      --dry-run            Show planned file changes without writing.
+      --dry-run            Show planned file and schema changes as stderr logs without writing.
       --color <mode>       auto|always|never for stderr messages (default: auto).
       --no-color           Alias for --color=never.
   --                       Stop parsing flags.
@@ -193,7 +198,7 @@ Examples:
 
 The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files. The canonical schema for a table is the beside-the-table file with the `.schema.json` suffix. A workspace `datapackage.json` is stored at the workspace root and references resources by a deterministic name and a relative `path` to the CSV file. Resource names default to the CSV basename without the `.csv` suffix, and paths are stored as workspace-relative CSV paths. Each resource embeds its Table Schema descriptor inline, sourced from the beside-the-table schema file; when schema changes are applied, the schema file and the embedded resource schema are updated together to remain consistent.
 
-BusDK extends Table Schema metadata with an optional `busdk` object used by `bus-data` to determine whether in-place updates and deletions are permitted. The `busdk.update_policy` field may be `forbid` or `in_place`, and the `busdk.delete_policy` field may be `forbid`, `soft`, or `hard`. When `busdk.delete_policy` is `soft`, `busdk.soft_delete_field` and `busdk.soft_delete_value` must be set so the command can apply a deterministic soft deletion update, and the updated row must still satisfy schema constraints and key uniqueness. The `busdk` extension coexists with Frictionless descriptors and is preserved verbatim when schemas and data packages are rewritten.
+BusDK extends Table Schema metadata with a `busdk` object used by `bus-data` to determine whether in-place updates and deletions are permitted. The `busdk.update_policy` field may be `forbid` or `in_place`, and the `busdk.delete_policy` field may be `forbid`, `soft`, or `hard`. When `busdk.delete_policy` is `soft`, `busdk.soft_delete_field` and `busdk.soft_delete_value` must be set so the command can apply a deterministic soft deletion update, and the updated row must still satisfy schema constraints and key uniqueness. The default is that updates and deletions are forbidden unless the schema explicitly enables them, and the CLI provides explicit schema commands to set or change these policies. The `busdk` extension coexists with Frictionless descriptors and is preserved verbatim when schemas and data packages are rewritten.
 
 Bus Data owns mechanical concerns only: reading and writing CSV, reading and writing schema JSON, creating and patching `datapackage.json`, enforcing Table Schema constraints, and validating foreign key integrity. Domain modules own business rules, domain invariants, and any accounting classification decisions; `bus-data` does not infer or enforce those semantics.
 
@@ -211,7 +216,7 @@ Command results are written to standard output, and diagnostics are written to s
 
 ### Error Handling and Resilience
 
-Invalid usage exits with status code 2 and a concise usage error. Schema violations, foreign key integrity failures, or disallowed operations exit non-zero without modifying datasets, schemas, or `datapackage.json`, and without emitting partial output.
+Invalid usage exits with status code 2 and a concise usage error. Schema violations, foreign key integrity failures, disallowed mutation attempts, or filesystem errors exit non-zero without modifying datasets, schemas, or `datapackage.json`, and without emitting partial output.
 
 ### Testing Strategy
 
@@ -261,4 +266,4 @@ Version: 2026-02-07
 Status: Draft  
 Last updated: 2026-02-07  
 Owner: BusDK development team  
-Change log: 2026-02-07 — Expanded the SDD to cover full Frictionless Data Package and Table Schema management, deterministic serialization, foreign key integrity validation, and non-interactive CLI commands aligned with the library-first design. 2026-02-07 — Proposed the BusDK-aligned `bus-data` CLI surface including table, schema, and row verbs with deterministic write options and schema-governed mutability. 2026-02-07 — Defined the minimal `bus-data` inspection subcommands and parameters to close OQ-DAT-001. 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Moved module SDDs under `docs/sdd` and linked to end user CLI references.
+Change log: 2026-02-07 — Clarified schema-governed mutation defaults, dry-run logging behavior, and requirement traceability; added non-functional requirements for security, performance, scalability, reliability, and maintainability. 2026-02-07 — Expanded the SDD to cover full Frictionless Data Package and Table Schema management, deterministic serialization, foreign key integrity validation, and non-interactive CLI commands aligned with the library-first design. 2026-02-07 — Proposed the BusDK-aligned `bus-data` CLI surface including table, schema, and row verbs with deterministic write options and schema-governed mutability. 2026-02-07 — Defined the minimal `bus-data` inspection subcommands and parameters to close OQ-DAT-001. 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Moved module SDDs under `docs/sdd` and linked to end user CLI references.
