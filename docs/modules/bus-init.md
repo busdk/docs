@@ -24,7 +24,7 @@ KD-INIT-001 Module-owned initialization. The bootstrap workflow delegates datase
 
 Interface IF-INIT-001 (module CLI). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command does not accept layout selection flags and always initializes the standard workspace layout with deterministic dataset and schema filenames.
 
-Module-specific parameters are not defined in the current design spec and must be provided by the module help output for a pinned version.
+The pinned module version defines no module-specific parameters. `bus init` accepts no positional arguments and no module-level flags beyond the shared global flags, so its deterministic CLI help lists only the single `bus init` invocation with the global options described in the shared CLI conventions.
 
 Usage example:
 
@@ -98,4 +98,4 @@ Version: 2026-02-07
 Status: Draft  
 Last updated: 2026-02-07  
 Owner: BusDK development team  
-Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Removed layout selection flags in favor of the standard workspace layout and deterministic filenames.
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Removed layout selection flags in favor of the standard workspace layout and deterministic filenames. 2026-02-07 — Documented that `bus init` has no module-specific parameters in the pinned version.

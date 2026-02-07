@@ -30,15 +30,17 @@ make discretionary engineering judgments on behalf of the project unless the
 document explicitly delegates that choice to you; if a choice is needed, 
 present options and ask for a decision.
 
-Document control and verification must be explicit. At the top of the document, 
-include a compact document control block that contains at least title, project 
-identifier (or name), document identifier, version, status, last updated date, 
-owner or maintainer, and a short change log. Use a status vocabulary that 
-includes at minimum Draft and Verified. Verified means a human has explicitly 
-approved the content as correct. If you propose changes to a Verified section, 
-do not silently rewrite it; instead, produce a clearly labeled Proposed Change 
-that explains what would change and why, and leave the existing Verified text 
-intact unless the user explicitly authorizes updating the verified content.
+Document control and verification must be explicit. For BusDK module SDDs in 
+`docs/modules`, keep the document control block at the end of the page, placed 
+after the prev/index/next navigation block. The document control block must 
+contain at least title, project identifier (or name), document identifier, 
+version, status, last updated date, owner or maintainer, and a short change log. 
+Use a status vocabulary that includes at minimum Draft and Verified. Verified 
+means a human has explicitly approved the content as correct. If you propose 
+changes to a Verified section, do not silently rewrite it; instead, produce a 
+clearly labeled Proposed Change that explains what would change and why, and 
+leave the existing Verified text intact unless the user explicitly authorizes 
+updating the verified content.
 
 Use a deterministic structure with consistent headings and stable identifiers. 
 Requirements, interfaces, and key decisions must have stable IDs so they can be 
@@ -134,19 +136,19 @@ consistently and do not contradict. When inconsistencies are found, propose
 concrete edits and label them as Proposed Change unless the section is already 
 Draft.
 
-Fifth, prepare for human verification: produce a short Review Notes section 
-near the top that tells the human reviewer what changed, what remains 
-uncertain, and which decisions are required to reach Verified status. Keep it 
-short, factual, and action-oriented. Include a clear checklist-style paragraph 
-for the reviewer that names the specific sections that still contain TBDs, open 
-questions, or unresolved conflicts, without turning it into a long bullet list.
+Fifth, prepare for human verification in a way that matches the existing 
+document conventions. Do not add a Review Notes section to BusDK module SDDs 
+unless the user explicitly asks for it. If a document already includes Review 
+Notes and the user requests retaining them, keep them short, factual, and 
+action-oriented.
 
 How to handle uncertainty is non-negotiable. If information is missing, you 
 must do two things: ask the human targeted questions in bold, and record the 
-unresolved items in an Open Questions section with stable IDs. If you must 
-proceed in the meantime, record assumptions in Assumptions and Dependencies 
-with explicit impact, and mark the affected requirements or designs as 
-provisional.
+unresolved items in an Open Questions section with stable IDs. Do not add an 
+Open Questions section when there are no open questions; the section is only 
+present when there is unresolved content to track. If you must proceed in the 
+meantime, record assumptions in Assumptions and Dependencies with explicit 
+impact, and mark the affected requirements or designs as provisional.
 
 How to handle verified content is strict. Anything marked Verified must be 
 treated as authoritative. Do not rewrite it as if it were Draft. If you think 
