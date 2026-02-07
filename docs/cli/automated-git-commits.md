@@ -1,6 +1,6 @@
 ## Git commit conventions per operation (external Git)
 
-BusDK runs on top of a Git-managed repository, but it does not implement or run Git itself. The spec defines commit conventions per operation and expects users or external automation to apply them using their existing Git tooling. For example:
+BusDK can be used with or without Git, and it does not implement or run Git itself. The spec defines commit conventions per operation for teams that track workspace datasets in Git and expects users or external automation to apply them using their existing Git tooling. For example:
 
 ```bash
 bus accounts add --code 3000 --name "Consulting Income" --type Income
