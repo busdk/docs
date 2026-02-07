@@ -1,40 +1,78 @@
 ## bus-pdf
 
-Bus PDF renders deterministic, template-based PDF documents from structured input
-data, enabling BusDK workspaces to produce archival-friendly artifacts such as
-invoice PDFs without modifying any accounting datasets.
+### Introduction and Overview
 
-### How to run
+Bus PDF renders deterministic, template-based PDF documents from structured input data, enabling BusDK workspaces to produce archival-friendly artifacts without modifying accounting datasets.
 
-Run `bus pdf` … and use `--help` for available subcommands and arguments.
+### Requirements
 
-### Subcommands
+FR-PDF-001 Deterministic rendering. The module MUST render PDFs deterministically from JSON input. Acceptance criteria: identical inputs yield byte-stable outputs when template and rendering settings are unchanged.
 
-Bus PDF does not define additional subcommands. It is invoked as `bus pdf` with flags.
+FR-PDF-002 Controlled file output. The module MUST write PDFs only to the specified output path and must not modify workspace datasets. Acceptance criteria: only the requested PDF file is created or overwritten when allowed.
 
-### Data it reads and writes
+NFR-PDF-001 Auditability. Rendered documents MUST remain readable for the full retention period. Acceptance criteria: output PDFs are deterministic and compatible with standard PDF readers.
 
-It reads JSON input provided via `--data <file>` or `--data @-` (stdin) and
-writes PDF files to the user-specified `--out` path. It does not read or write
-any BusDK CSV datasets.
+### System Architecture
 
-### Outputs and side effects
+Bus PDF is a standalone rendering module that reads JSON input and writes a PDF file. It integrates with other modules by consuming prepared render models and emitting the resulting file for attachment registration.
 
-It creates or overwrites PDF files when rendering (only overwriting when
-`--overwrite` is provided) and emits validation and rendering diagnostics to
-stdout/stderr. It must not create journal entries, invoices, attachments
-metadata, VAT data, bank data, or any other canonical bookkeeping records.
+### Key Decisions
 
-### Finnish compliance responsibilities
+KD-PDF-001 Rendering is external to domain datasets. PDF outputs are derived artifacts and do not alter canonical bookkeeping datasets.
 
-Bus PDF MUST render documents in a deterministic, readable form suitable for the full retention period so invoices and reports remain printable and reviewable during audits.
+### Component Design and Interfaces
 
-### Integrations
+Interface IF-PDF-001 (module CLI). The module is invoked as `bus pdf` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-It is typically invoked by [`bus invoices`](./bus-invoices) to generate sales
-invoice PDFs from invoice datasets, and it may also be used by
-[`bus reports`](./bus-reports) or other modules that want to
-render PDF documents from a prepared JSON render model.
+Documented parameters are `--data <file>` (or `--data @-` for stdin), `--out <path>`, and `--overwrite` to allow overwriting an existing file.
+Template selection is explicit and part of the render model. Each render model references exactly one template by repository-relative path, and the renderer uses only that template for the run. Multiple templates are supported by storing multiple template directories in the repository data and selecting the desired one in the render model; the module does not auto-discover or switch templates based on content.
+
+Usage example:
+
+```bash
+bus pdf --data invoice-render.json --out tmp/INV-1001.pdf --overwrite
+```
+
+### Data Design
+
+The module reads JSON render models from a file or stdin and writes a PDF file to the specified output path. It does not read or write any BusDK datasets.
+
+### Assumptions and Dependencies
+
+Bus PDF depends on a deterministic render template and a valid JSON input model. Invalid input results in deterministic diagnostics.
+
+### Security Considerations
+
+PDF outputs may contain sensitive data and should be protected by repository access controls. Rendering must not read or write unintended files.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to the input model and output path.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Rendering failures exit non-zero without partial output.
+
+### Testing Strategy
+
+Unit tests cover JSON model validation and rendering determinism, and command-level tests exercise input and output behavior for `--data` and `--out`.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on standard filesystem access.
+
+### Migration/Rollout
+
+Not Applicable. Template changes are handled by updating the render template and documenting the new output expectations.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic render outputs.
+
+### Glossary and Terminology
+
+Render model: the JSON input that describes the content to be rendered into a PDF.  
+Derived artifact: a file output generated from canonical datasets without modifying them.
 
 ### See also
 
@@ -51,3 +89,14 @@ For PDF storage conventions and layout expectations, see [Invoice PDF storage](.
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-journal">bus-journal</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-pdf module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-PDF`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Defined template selection through the render model.

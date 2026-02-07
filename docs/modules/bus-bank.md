@@ -1,46 +1,78 @@
 ## bus-bank
 
-Bus Bank imports bank statement CSVs into schema-validated datasets, matches
-transactions to invoices, entities, and accounts, and emits balanced journal
-entries for posting into the ledger.
+### Introduction and Overview
 
-### How to run
+Bus Bank imports bank statement evidence into schema-validated datasets, normalizes transactions, and provides review outputs that can be reconciled into the journal.
 
-Run `bus bank` … and use `--help` for available
-subcommands and arguments.
+### Requirements
 
-### Subcommands
+FR-BNK-001 Bank import normalization. The module MUST import bank statement data into normalized datasets with deterministic ordering and stable identifiers. Acceptance criteria: imports create or update `bank-imports.csv` and `bank-transactions.csv` with schema validation.
 
-- `import`: Import bank statement CSVs into normalized bank datasets.
-- `list`: List normalized bank transactions for review and reconciliation.
+FR-BNK-002 Review surface. The module MUST provide list outputs for review and reconciliation. Acceptance criteria: `bus bank list` emits deterministic transaction listings and fails with clear diagnostics on invalid filters.
 
-### Data it reads and writes
+NFR-BNK-001 Auditability. Imports MUST preserve source statement identifiers and evidence links. Acceptance criteria: each normalized transaction records a source reference and can be traced to attachments metadata.
 
-It reads and writes bank statement and import datasets in the bank area, uses
-reference data from [`bus entities`](./bus-entities),
-[`bus accounts`](./bus-accounts), and
-[`bus invoices`](./bus-invoices), and stores each JSON Table
-Schema beside its CSV dataset.
+### System Architecture
 
-In the default workspace layout, the bank import baseline is represented as two root-level datasets: `bank-imports.csv` (import runs and source references) and `bank-transactions.csv` (normalized transactions), each with a beside-the-dataset schema file (`bank-imports.schema.json` and `bank-transactions.schema.json`). Source bank statement files may be stored anywhere in the workspace (for example under `YYYY/bank-statements/`) and registered via attachments when they must be retained as evidence.
+Bus Bank owns the bank import datasets and normalizes raw statement data into repository tables. It integrates with `bus reconcile` for matching and with `bus journal` for posting outcomes, using `bus accounts`, `bus entities`, and `bus invoices` as reference data.
 
-### Outputs and side effects
+### Key Decisions
 
-It writes normalized bank transaction CSVs, produces journal postings for
-[`bus journal`](./bus-journal), and emits matching and
-reconciliation diagnostics.
+KD-BNK-001 Bank statements are normalized into canonical datasets. The module converts raw statement data into schema-validated tables for deterministic downstream processing.
 
-### Finnish compliance responsibilities
+### Component Design and Interfaces
 
-Bus Bank MUST preserve source statement identifiers and transaction references from bank evidence and support deterministic chronological ordering of imported transactions. It MUST link each bank transaction to vouchers and resulting journal postings when reconciled, and it MUST preserve reconciliation history as append-only records so allocation changes remain traceable. It MUST retain original bank statement evidence via attachments metadata.
+Interface IF-BNK-001 (module CLI). The module exposes `bus bank` with subcommands `import` and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+Documented parameters are `bus bank import --file <path>` and `bus bank list` filters that constrain the transaction set deterministically. The complete `list` filter surface is `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-ref <text>`. Date filters apply to the normalized transaction date in `bank-transactions.csv`. `--month` selects the calendar month and is mutually exclusive with `--from` or `--to`. `--from` and `--to` may be used together or independently and are inclusive bounds. `--counterparty` filters by the stable counterparty identifier as recorded in the transaction row, matching `bus entities` identifiers exactly. `--invoice-ref` filters by the normalized invoice reference string present on the transaction row, matching exactly as stored. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.
 
-### Integrations
+Usage examples:
 
-It feeds [`bus reconcile`](./bus-reconcile) with matched
-transaction context and posts to [`bus journal`](./bus-journal),
-affecting [`bus reports`](./bus-reports).
+```bash
+bus bank import --file 2026/bank-statements/202602-bank-statement.csv
+bus bank list --month 2026-2
+```
+
+### Data Design
+
+The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Source bank statement files may live under `YYYY/bank-statements/` and be registered as attachments.
+
+### Assumptions and Dependencies
+
+Bus Bank depends on the workspace layout and schema conventions and on reference data from `bus entities`, `bus accounts`, and `bus invoices` when matching. If required datasets or schemas are missing, the module fails with deterministic diagnostics.
+
+### Security Considerations
+
+Bank statements and normalized transactions are sensitive repository data and should be protected by the same access controls as the rest of the workspace. Evidence references must remain intact for auditability.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Import and schema violations exit non-zero without modifying datasets.
+
+### Testing Strategy
+
+Unit tests cover normalization and schema validation, and command-level tests exercise `import` and `list` against fixture workspaces with sample bank statements.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.
+
+### Migration/Rollout
+
+Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly bank data handling.
+
+### Glossary and Terminology
+
+Bank import: a normalized record of a statement ingest run stored in `bank-imports.csv`.  
+Bank transaction: a normalized transaction row stored in `bank-transactions.csv`.
 
 ### See also
 
@@ -57,3 +89,14 @@ For bank import workflow context and CSV conventions, see [Import bank transacti
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-reconcile">bus-reconcile</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-bank module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-BANK`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Defined the deterministic filter surface for `bus bank list`.

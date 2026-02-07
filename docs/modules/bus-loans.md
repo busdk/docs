@@ -1,46 +1,84 @@
 ## bus-loans
 
-Bus Loans maintains loan master data and event logs in CSV datasets, generates
-amortization schedules from contract terms, and produces journal posting
-suggestions for loan activity.
+### Introduction and Overview
 
-The loan register also supports portfolio reporting for applications and special situations such as corporate restructuring, business reorganisation, debt adjustment, or debt restructuring.
+Bus Loans maintains loan master data and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions for loan activity.
 
-### How to run
+### Requirements
 
-Run `bus loans` … and use `--help` for available
-subcommands and arguments.
+FR-LOAN-001 Loan registry. The module MUST store loan contracts and events as schema-validated datasets with stable identifiers. Acceptance criteria: loan rows validate against schemas and reference counterparties and accounts.
 
-### Subcommands
+FR-LOAN-002 Amortization outputs. The module MUST generate amortization schedules and posting outputs for the journal. Acceptance criteria: outputs reference the originating loan identifiers and vouchers.
 
-- `init`: Create loan register datasets and schemas.
-- `add`: Register a new loan contract in the loan register.
-- `event`: Record loan events such as disbursements or repayments.
-- `amortize`: Generate amortization schedules and posting outputs.
+NFR-LOAN-001 Auditability. Loan corrections MUST be append-only and traceable to original records. Acceptance criteria: schedules and events remain reviewable in repository history.
 
-### Data it reads and writes
+### System Architecture
 
-It reads and writes loan register and event datasets in the loans area, uses
-reference data from [`bus accounts`](./bus-accounts) and
-[`bus entities`](./bus-entities), and relies on JSON Table
-Schemas stored beside their CSV datasets.
+Bus Loans owns the loan datasets and generates schedules and posting suggestions. It relies on `bus accounts` and `bus entities` for reference data and integrates with the journal and reporting workflows.
 
-### Outputs and side effects
+### Key Decisions
 
-It writes updated loan registers and schedules, emits posting suggestions for
-[`bus journal`](./bus-journal), and provides validation
-diagnostics for inconsistent terms.
+KD-LOAN-001 Loan records are repository data. Loan contracts, events, and schedules are stored as datasets for auditability and exportability.
 
-### Finnish compliance responsibilities
+### Component Design and Interfaces
 
-Bus Loans MUST link loan transactions and amortization postings to dated, numbered vouchers and maintain an audit trail from postings to the underlying loan contracts and evidence.
+Interface IF-LOAN-001 (module CLI). The module exposes `bus loans` with subcommands `init`, `add`, `event`, and `amortize` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-### Integrations
+The `add` command records a new loan contract in the loan register. It accepts `--loan-id <id>`, `--counterparty <entity-id>`, `--principal <amount>`, `--start-date <YYYY-MM-DD>`, `--maturity-date <YYYY-MM-DD>`, `--interest-rate <percent>`, `--principal-account <account-id>`, `--interest-account <account-id>`, and `--cash-account <account-id>` as required parameters, and it accepts `--name <text>`, `--rate-type <fixed|variable>`, `--payment-frequency <monthly|quarterly|yearly>`, and `--desc <text>` as optional parameters. When `--rate-type` is omitted, the rate is treated as fixed; when `--payment-frequency` is omitted, the schedule assumes monthly payments.
 
-It posts to [`bus journal`](./bus-journal) and influences
-[`bus reports`](./bus-reports), linking to
-[`bus bank`](./bus-bank) and
-[`bus reconcile`](./bus-reconcile) for cash movements.
+The `event` command appends an event record that references the loan contract and produces posting output when applicable. It accepts `--loan-id <id>`, `--date <YYYY-MM-DD>`, `--type <disbursement|repayment|interest|fee|adjustment>`, and `--amount <amount>` as required parameters, and it accepts `--principal <amount>`, `--interest <amount>`, `--fees <amount>`, `--desc <text>`, `--voucher <voucher-id>`, and `--cash-account <account-id>` as optional parameters. When allocation fields are omitted, the module derives allocation deterministically from the loan contract terms.
+
+The `amortize` command generates amortization schedules and posting output for a specific period. It accepts `--period <period>` as a required parameter and `--loan-id <id>` and `--post-date <YYYY-MM-DD>` as optional parameters. When `--loan-id` is omitted, the command scopes to all loans; when `--post-date` is omitted, the posting date is the last date of the selected period.
+
+Usage examples:
+
+```bash
+bus loans init
+bus loans add --loan-id LN-100 --counterparty ACME-BANK --principal 250000 --start-date 2026-01-01 --maturity-date 2031-01-01 --interest-rate 4.5 --principal-account "Long-term loans" --interest-account "Interest expense" --cash-account "Bank"
+bus loans event --loan-id LN-100 --date 2026-01-01 --type disbursement --amount 250000 --voucher V-2026-0001
+bus loans amortize --period 2026-02
+```
+
+### Data Design
+
+The module reads and writes loan register and event datasets in the loans area, with JSON Table Schemas stored beside each CSV dataset.
+
+### Assumptions and Dependencies
+
+Bus Loans depends on reference data from `bus accounts` and `bus entities` and on the workspace layout and schema conventions. Missing datasets or schemas result in deterministic diagnostics.
+
+### Security Considerations
+
+Loan data is repository data and should be protected by repository access controls. Evidence references remain intact for auditability.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Schema or reference violations exit non-zero without modifying datasets.
+
+### Testing Strategy
+
+Unit tests cover loan validation and amortization logic, and command-level tests exercise `init`, `add`, `event`, and `amortize` against fixture workspaces.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.
+
+### Migration/Rollout
+
+Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic loan data handling.
+
+### Glossary and Terminology
+
+Loan event: an append-only record of loan activity such as disbursement or repayment.  
+Amortization schedule: derived records allocating principal and interest over time.
 
 ### See also
 
@@ -57,3 +95,14 @@ For schema expectations and append-only audit trails, see [Table schema contract
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-bank">bus-bank</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-loans module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-LOANS`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Defined the module-specific flags and defaults for `add`, `event`, and `amortize`.

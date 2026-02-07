@@ -1,44 +1,77 @@
 ## bus-init
 
-Bus Init bootstraps a new BusDK workspace by orchestrating module-owned init
-commands. It creates the chosen workspace layout (for example `fi`) by calling
-subcommands like `bus accounts init`, `bus journal init`, and `bus invoices init`
-so that each module remains the sole owner of its datasets and schemas.
+### Introduction and Overview
 
-### How to run
+Bus Init bootstraps a new BusDK workspace by orchestrating module-owned `init` commands so each module remains the sole owner of its datasets and schemas.
 
-Run `bus init` … and use `--help` for available arguments.
+### Requirements
 
-### Subcommands
+FR-INIT-001 Workspace bootstrap. The module MUST orchestrate a deterministic sequence of module `init` commands. Acceptance criteria: the resulting workspace contains the minimal baseline datasets and schemas for the standard BusDK workspace layout.
 
-Bus Init does not define additional subcommands. It is invoked as `bus init` with flags.
+FR-INIT-002 Non-invasive initialization. The module MUST not perform Git or network operations. Acceptance criteria: initialization only affects workspace datasets and metadata.
 
-### Data it reads and writes
+NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostics and stop on the first failure. Acceptance criteria: failures identify the module command that failed.
 
-It may create or update workspace-level metadata at the workspace root
-(`datapackage.json`). All other datasets are created by the module init commands
-that `bus init` invokes.
+### System Architecture
 
-### Outputs and side effects
+Bus Init is an orchestrator that invokes module `init` commands and verifies the resulting workspace baseline. It does not own domain datasets beyond optional workspace metadata.
 
-It executes a deterministic sequence of `bus <module> init …` calls and checks
-that the expected workspace directories and baseline files exist afterwards. It
-prints subcommand output to stdout/stderr and stops on the first failure. It
-does not run any git commands and performs no network operations.
+### Key Decisions
 
-### Finnish compliance responsibilities
+KD-INIT-001 Module-owned initialization. The bootstrap workflow delegates dataset creation to each module to preserve ownership boundaries.
 
-Bus Init MUST create a workspace layout that supports the methods description and dataset list required for Finnish bookkeeping and ensures baseline schemas and directories exist for long-term retention and auditability.
+### Component Design and Interfaces
 
-### Integrations
+Interface IF-INIT-001 (module CLI). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command does not accept layout selection flags and always initializes the standard workspace layout with deterministic dataset and schema filenames.
 
-It invokes [`bus accounts`](./bus-accounts),
-[`bus journal`](./bus-journal),
-[`bus invoices`](./bus-invoices),
-[`bus vat`](./bus-vat),
-[`bus attachments`](./bus-attachments),
-[`bus bank`](./bus-bank), and
-[`bus reports`](./bus-reports) to scaffold their module-owned workspace areas.
+Module-specific parameters are not defined in the current design spec and must be provided by the module help output for a pinned version.
+
+Usage example:
+
+```bash
+bus init
+```
+
+### Data Design
+
+The module may create or update workspace-level metadata such as `datapackage.json` at the repository root. All other datasets are created by module `init` commands it invokes.
+
+### Assumptions and Dependencies
+
+Bus Init depends on the presence of module CLIs for each required area and on the standard workspace layout conventions. Missing module commands result in deterministic diagnostics.
+
+### Security Considerations
+
+Initialization only creates baseline datasets and does not perform network or version control operations. Access controls are handled at the repository level.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to the module command that failed.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Module failures are surfaced directly without partial completion.
+
+### Testing Strategy
+
+Command-level tests exercise `bus init` against fixture workspaces and verify that required baseline datasets and schemas are created.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.
+
+### Migration/Rollout
+
+Not Applicable. Changes to the bootstrap baseline are handled by updating module `init` behavior and documentation.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and repeatable initialization.
+
+### Glossary and Terminology
+
+Workspace bootstrap: the initial creation of baseline datasets and schemas in a new repository.  
+Module-owned initialization: each module creates its own datasets during bootstrap.
 
 ### See also
 
@@ -55,3 +88,14 @@ For workspace layout choices and the initialization workflow, see [Layout princi
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-data">bus-data</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-init module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-INIT`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Removed layout selection flags in favor of the standard workspace layout and deterministic filenames.

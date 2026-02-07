@@ -1,43 +1,78 @@
 ## bus-budget
 
-Bus Budget maintains budget CSVs keyed by account and period, validates budgets
-against schemas and the chart of accounts, and produces variance output by
-comparing budgets to actuals.
+### Introduction and Overview
 
-### How to run
+Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus actual variance outputs.
 
-Run `bus budget` … and use `--help` for
-available subcommands and arguments.
+### Requirements
 
-### Subcommands
+FR-BUD-001 Budget datasets. The module MUST store budgets as schema-validated repository data keyed by account and period. Acceptance criteria: budgets validate against schemas and reference valid account identifiers.
 
-- `init`: Create budget datasets and schemas in the budgeting area.
-- `add`: Append a new budget row for an account and period.
-- `set`: Replace or upsert budget values for an account and period.
-- `report`: Produce budget vs actual variance outputs.
+FR-BUD-002 Variance reporting. The module MUST compute budget versus actual variance outputs from budgets and journal data. Acceptance criteria: `bus budget report` emits deterministic output with stable ordering.
 
-### Data it reads and writes
+NFR-BUD-001 Reproducibility. Budget outputs MUST be reproducible from stored budgets and journal actuals. Acceptance criteria: variance results are derived from repository data without external dependencies.
 
-It reads and writes budget datasets in the budgeting area (for example
-`budgets.csv`), uses reference data from
-[`bus accounts`](./bus-accounts) and actuals from
-[`bus journal`](./bus-journal), and stores each JSON Table
-Schema beside its CSV dataset.
+### System Architecture
 
-### Outputs and side effects
+Bus Budget owns the budgeting area datasets and produces variance outputs by reading journal actuals and accounts. It integrates with `bus reports` and management reporting workflows.
 
-It writes updated budget CSVs, emits variance reports in text or structured
-formats, and produces validation diagnostics for missing or invalid mappings.
+### Key Decisions
 
-### Finnish compliance responsibilities
+KD-BUD-001 Budgets are stored as repository datasets. Budget intent is recorded as data so variance outputs remain deterministic and reviewable.
 
-Bus Budget is optional for statutory bookkeeping, but when budget datasets are maintained in the repository it MUST preserve stable identifiers and retain budgets as repository data so variance outputs remain reproducible from stored budgets and journal actuals.
+### Component Design and Interfaces
 
-### Integrations
+Interface IF-BUD-001 (module CLI). The module exposes `bus budget` with subcommands `init`, `add`, `set`, and `report` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-It reads actuals from [`bus journal`](./bus-journal) and
-accounts from [`bus accounts`](./bus-accounts), feeding
-[`bus reports`](./bus-reports) and management summaries.
+Documented parameters include `bus budget report --year <YYYY>` and `bus budget report --period <period>`. Documented parameters for `bus budget add` are `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`, with no positional arguments. Documented parameters for `bus budget set` are the same, and `set` is defined as an upsert keyed by `(account, year, period)` that replaces the existing row for that key or inserts a new row when none exists.
+
+Usage examples:
+
+```bash
+bus budget init
+bus budget report --year 2026
+```
+
+### Data Design
+
+The module reads and writes budget datasets in the budgeting area, such as `budgets.csv`, with JSON Table Schemas stored beside each dataset.
+
+### Assumptions and Dependencies
+
+Bus Budget depends on valid account references from `bus accounts` and actuals from `bus journal`. If referenced datasets or schemas are missing, the module fails with deterministic diagnostics.
+
+### Security Considerations
+
+Budget datasets are repository data and should be protected by the same access controls as the rest of the workspace. Budgets remain separate from statutory records but still require audit-friendly handling.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Schema or reference violations exit non-zero without modifying datasets.
+
+### Testing Strategy
+
+Unit tests cover budget validation and variance calculation, and command-level tests exercise `init`, `add`, `set`, and `report` against fixture workspaces.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.
+
+### Migration/Rollout
+
+Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly budget data.
+
+### Glossary and Terminology
+
+Budget dataset: the repository table that records planned amounts by account and period.  
+Variance report: derived output comparing budgeted and actual amounts.
 
 ### See also
 
@@ -54,3 +89,14 @@ For budget dataset layout and variance workflow context, see [Budget area](../la
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-payroll">bus-payroll</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-budget module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-BUDGET`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples.

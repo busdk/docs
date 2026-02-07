@@ -1,45 +1,78 @@
 ## bus-vat
 
-Bus VAT computes VAT totals per reporting period, validates VAT code and rate
-mappings against reference data, and reconciles invoice VAT with ledger
-postings.
+### Introduction and Overview
 
-### How to run
+Bus VAT computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger postings.
 
-Run `bus vat` … and use `--help` for available
-subcommands and arguments.
+### Requirements
 
-### Subcommands
+FR-VAT-001 VAT computations. The module MUST compute VAT summaries from invoice and journal data. Acceptance criteria: VAT report outputs are deterministic and traceable to source postings.
 
-- `report`: Compute VAT summaries for a reporting period.
-- `export`: Write VAT output files for archiving or filing workflows.
+FR-VAT-002 VAT export outputs. The module MUST write VAT summary and export files as repository data. Acceptance criteria: export outputs are recorded in datasets such as `vat-reports.csv` and `vat-returns.csv`.
 
-### Data it reads and writes
+NFR-VAT-001 Auditability. VAT corrections MUST be append-only and traceable to original records. Acceptance criteria: corrections create new records that reference originals.
 
-It reads invoice data from [`bus invoices`](./bus-invoices) and
-postings from [`bus journal`](./bus-journal), optionally uses
-VAT reference datasets such as `vat-rates.csv` in the repository root, and uses
-JSON Table Schemas stored beside their CSV datasets.
+### System Architecture
 
-### Outputs and side effects
+Bus VAT reads invoice and journal datasets and optional VAT reference datasets to compute reports and exports. It integrates with filing workflows and reporting outputs.
 
-It writes VAT summaries and export files for reporting and archiving (for
-example under `2026/vat-reports/` and `2026/vat-returns/`, tracked from
-`vat-reports.csv` and `vat-returns.csv` in the repository root), and emits
-diagnostics for VAT mismatches or missing mappings.
+### Key Decisions
 
-### Finnish compliance responsibilities
+KD-VAT-001 VAT outputs are stored as repository data. VAT summaries and exports remain reviewable and exportable.
 
-Bus VAT MUST compute VAT reports from journal and invoice data with traceable references and ensure VAT outputs are derivable without manual rewriting of history. It MUST retain VAT code, rate, base, and tax amount in source data used for reporting, it MUST represent VAT corrections as new entries that reference the originals, and it MUST output VAT summaries with links to underlying postings and vouchers suitable for Vero filing.
+### Component Design and Interfaces
 
-See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `report` and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-### Integrations
+Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument.
 
-It consumes data from [`bus invoices`](./bus-invoices),
-[`bus journal`](./bus-journal), and
-[`bus accounts`](./bus-accounts), and feeds
-[`bus filing`](./bus-filing) and statutory reporting workflows.
+Usage examples:
+
+```bash
+bus vat report --period 2026Q1
+bus vat export --period 2026Q1
+```
+
+### Data Design
+
+The module reads invoice data and journal postings and writes VAT summaries and export files, such as those under `2026/vat-reports/` and `2026/vat-returns/`, tracked in root datasets with beside-the-table schemas.
+
+### Assumptions and Dependencies
+
+Bus VAT depends on invoice and journal datasets and on VAT reference datasets such as `vat-rates.csv`. Missing datasets or schemas result in deterministic diagnostics.
+
+### Security Considerations
+
+VAT data is repository data and should be protected by repository access controls. Evidence references remain intact for auditability.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Schema or VAT mapping violations exit non-zero without modifying datasets.
+
+### Testing Strategy
+
+Unit tests cover VAT computations and mapping validation, and command-level tests exercise `report` and `export` against fixture workspaces.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.
+
+### Migration/Rollout
+
+Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic VAT outputs.
+
+### Glossary and Terminology
+
+VAT report: a computed summary of VAT totals for a reporting period.  
+VAT export: a repository data output intended for filing or archiving.
 
 ### See also
 
@@ -56,3 +89,14 @@ For VAT dataset layout and reporting workflow context, see [VAT area](../layout/
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-vat module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-VAT`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples.

@@ -1,42 +1,81 @@
 ## bus-filing-vero
 
-Bus Filing VERO generates
-Vero-ready tax filing bundles for use through
-`bus filing vero`.
+### Introduction and Overview
 
-Bus Filing Vero converts validated workspace data into Vero export bundles,
-applies Vero-specific packaging rules and metadata, and ensures bundle
-structure is deterministic and auditable.
+Bus Filing Vero converts validated workspace data into Vero export bundles, applying Vero-specific packaging rules and metadata while keeping bundle structure deterministic and auditable.
 
-### How to run
+### Requirements
 
-Run `bus filing vero` … and use `--help`
-for available subcommands and arguments.
+FR-VERO-001 Vero bundle generation. The module MUST produce Vero-ready bundle directories or archives from validated data and VAT outputs. Acceptance criteria: outputs include manifests and hashes and validate internal consistency.
 
-### Subcommands
+FR-VERO-002 VAT traceability. The module MUST retain references to underlying postings, vouchers, and VAT summaries. Acceptance criteria: bundles include VAT summaries and reference identifiers back to source datasets.
 
-Bus Filing Vero does not define additional subcommands. It is invoked as `bus filing vero` with flags.
+NFR-VERO-001 Deterministic export. Bundle contents MUST be deterministic so exports remain verifiable. Acceptance criteria: manifests and hashes are stable for identical inputs.
 
-### Data it reads and writes
+### System Architecture
 
-It reads validated data, reports, and VAT outputs, and writes Vero-specific
-bundle directories or archives.
+Bus Filing Vero is invoked through `bus filing vero` and consumes validated datasets, VAT outputs, and reports produced by other modules. It produces a Vero-specific export bundle.
 
-### Outputs and side effects
+### Key Decisions
 
-It produces Vero-ready export bundles with manifests and hashes, and emits
-diagnostics for missing prerequisites or invalid formats.
+KD-VERO-001 Vero export is a target-specific specialization. The module focuses only on Vero packaging and relies on shared validation and reporting outputs.
 
-### Finnish compliance responsibilities
+### Component Design and Interfaces
 
-Bus Filing Vero MUST generate VAT filing bundles that retain references to the underlying postings, vouchers, and VAT summaries, and it MUST keep the electronic export demonstrably traceable for tax-audit review.
+Interface IF-VERO-001 (module CLI). The module is invoked as `bus filing vero` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-### Integrations
+Module-specific parameters are not defined in the current design spec and must be provided by the module help output for a pinned version.
 
-It requires [`bus filing`](./bus-filing) orchestration and
-[`bus period`](./bus-period) closed data, and consumes VAT
-outputs from [`bus vat`](./bus-vat) and reports from
-[`bus reports`](./bus-reports).
+Usage example:
+
+```bash
+bus filing vero
+```
+
+### Data Design
+
+The module reads validated datasets, VAT outputs, and report outputs and writes Vero-specific bundle directories or archives with manifests and hashes.
+
+### Assumptions and Dependencies
+
+Bus Filing Vero depends on `bus filing` orchestration, `bus period` closed data, and outputs from `bus vat` and `bus reports`. Missing prerequisites result in deterministic diagnostics.
+
+### Security Considerations
+
+Vero bundles contain sensitive financial data and must be protected by repository access controls. Manifests and hashes must remain intact for verifiability.
+
+### Observability and Logging
+
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to bundle paths and missing prerequisites.
+
+### Error Handling and Resilience
+
+Invalid usage exits with a non-zero status and a concise usage error. Missing prerequisites or invalid bundles exit non-zero without partial output.
+
+### Testing Strategy
+
+Unit tests cover bundle assembly rules, and command-level tests exercise Vero exports against fixture workspaces with known outputs.
+
+### Deployment and Operations
+
+Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.
+
+### Migration/Rollout
+
+Not Applicable. Bundle structure changes are handled by updating the module and documenting the new bundle format.
+
+### Risks
+
+Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly exports.
+
+### Open Questions
+
+OQ-VERO-001 Vero export parameters. Define the complete parameter set for `bus filing vero` so the command surface is deterministic.
+
+### Glossary and Terminology
+
+Vero bundle: an export package formatted for Finnish Vero filing requirements.  
+Manifest: a deterministic listing and checksum set for bundle contents.
 
 ### See also
 
@@ -53,3 +92,14 @@ For VAT filing workflow and compliance context, see [VAT reporting and payment](
   <span class="busdk-prev-next-item busdk-next"><a href="../integration/index">BusDK Design Spec: Integration and future interfaces</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Document control
+
+Title: bus-filing-vero module SDD  
+Project: BusDK  
+Document ID: `BUSDK-MOD-FILING-VERO`  
+Version: 2026-02-07  
+Status: Draft  
+Last updated: 2026-02-07  
+Owner: BusDK development team  
+Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples.
