@@ -45,7 +45,8 @@ Global flags:
       --row <n>            (read only) Emit only the nth data row (1-based). Use N:NN for a range.
       --key <id>           (read only) Emit only the row whose first column (primary key) equals <id>.
       --filter <col=val>   (read only) Keep rows where column equals value; repeat for AND.
-      Read flags (--row, --key, --filter) may appear before or after the table path.
+      --column <name>      (read only) Emit only selected columns; repeat to keep multiple.
+      Read flags (--row, --key, --filter, --column) may appear before or after the table path.
       --dry-run            Show planned file changes without writing.
       --color <mode>       auto|always|never for stderr messages (default: auto).
       --no-color           Alias for --color=never.
@@ -69,6 +70,7 @@ Examples:
   bus-data --format json table list
   bus-data table read people
   bus-data --format json --filter name=alice --row 1 table read people
+  bus-data --key p-001 --column name --column age table read people
   bus-data schema init people --schema people.schema.json
   bus-data schema infer people
   bus-data schema add-field people --field nickname --type string
@@ -85,7 +87,7 @@ The `table list` command prints a TSV of `table_path` and `schema_path` for ever
 
 The `schema show <table_path>` command writes the schema file content for the given table path to standard output.
 
-The `table read <table_path>` command validates the table against its schema and writes canonical CSV or JSON to standard output, exiting non-zero on validation failure. Read filters do not change validation behavior; they only select which validated rows are emitted.
+The `table read <table_path>` command validates the table against its schema and writes canonical CSV or JSON to standard output, exiting non-zero on validation failure. Read filters do not change validation behavior; they only select which validated rows are emitted. Use `--column` with `--key` to emit only specific fields for a single row.
 
 In addition to read-only inspection, bus-data supports initializing a new CSV with a beside-the-table schema, inferring a schema from an existing CSV, extending schemas by adding columns, changing field types when compatible, and performing row-level CRUD operations. These write operations are explicit and operate on workspace-relative table paths in the same way as the inspection commands.
 

@@ -42,7 +42,7 @@ Command `bus-data table list` takes no parameters and emits a deterministic TSV 
 
 Command `bus-data schema show <table>` takes a required table path and writes the schema file content exactly as stored on disk to standard output. If the schema file is missing or unreadable, the command exits non-zero with a concise diagnostic.
 
-Command `bus-data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows and filters without changing validation behavior.
+Command `bus-data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows, filters, and columns without changing validation behavior.
 
 Command `bus-data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
 
@@ -90,7 +90,8 @@ Global flags:
       --row <n>            (read only) Emit only the nth data row (1-based). Use N:NN for a range.
       --key <id>           (read only) Emit only the row whose first column (primary key) equals <id>.
       --filter <col=val>   (read only) Keep rows where column equals value; repeat for AND.
-      Read flags (--row, --key, --filter) may appear before or after the table path.
+      --column <name>      (read only) Emit only selected columns; repeat to keep multiple.
+      Read flags (--row, --key, --filter, --column) may appear before or after the table path.
       --dry-run            Show planned file changes without writing.
       --color <mode>       auto|always|never for stderr messages (default: auto).
       --no-color           Alias for --color=never.
@@ -114,6 +115,7 @@ Examples:
   bus-data --format json table list
   bus-data table read people
   bus-data --format json --filter name=alice --row 1 table read people
+  bus-data --key p-001 --column name --column age table read people
   bus-data schema init people --schema people.schema.json
   bus-data schema infer people
   bus-data schema add-field people --field nickname --type string
