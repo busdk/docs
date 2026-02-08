@@ -38,6 +38,14 @@ FR-DAT-015 Non-interactive, flags-only UX. The module MUST operate without promp
 
 FR-DAT-016 Deterministic serialization. The module MUST serialize schemas and data packages deterministically. Acceptance criteria: JSON output uses UTF-8, LF line endings, two-space indentation, and lexicographic object key ordering; resource arrays are ordered lexicographically by resource name; schema field arrays preserve their declared order.
 
+FR-DAT-017 Formula field metadata support. The module MUST recognize BusDK formula metadata on Table Schema field descriptors and treat it as a first-class, deterministic contract for formula storage and evaluation. Acceptance criteria: schema show and schema patch round-trip formula metadata without loss and preserve unknown properties, and validation rejects inconsistent or incomplete formula metadata with deterministic diagnostics.
+
+FR-DAT-018 Formula validation. The module MUST validate BFL expressions for formula-enabled fields during resource, table, and workspace validation. Acceptance criteria: invalid expressions, unknown identifiers, type errors, or invalid rounding policies produce deterministic validation errors that identify the resource, field, and row when applicable.
+
+FR-DAT-019 Formula projection during read. The module MUST compute formula values at read time for formula-enabled fields and return a deterministic projected dataset view without writing back to CSV. Acceptance criteria: computed values are validated against the declared result type and constraints and replace the formula source in the output projection, while the stored CSV remains unchanged.
+
+FR-DAT-020 Opt-in formula source output. The module MUST provide an explicit, deterministic option to include formula source alongside computed values for diagnostics and tooling without colliding with user columns. Acceptance criteria: default output contains computed values only, and the opt-in mode includes the formula source using a deterministic, non-colliding representation.
+
 NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and MUST NOT implement domain-specific accounting logic. Acceptance criteria: domain invariants are enforced by domain modules, not by `bus-data`.
 
 NFR-DAT-002 No Git or network behavior. The module MUST NOT perform Git operations or network access. Acceptance criteria: the library and CLI only read and write local workspace files.
@@ -52,6 +60,8 @@ NFR-DAT-008 Maintainability. The module MUST keep the library as the authoritati
 ### System Architecture
 
 Bus Data implements the workspace store interface and dataset I/O mechanics used by other modules, satisfying FR-DAT-001, FR-DAT-002, FR-DAT-009, FR-DAT-012, and FR-DAT-013. The library is the authoritative integration surface for reading, writing, validating, and patching CSV, Table Schema, and Data Package descriptors, satisfying FR-DAT-002, FR-DAT-011, and FR-DAT-016. The CLI delegates directly to the library for inspection, validation, and explicit, mechanical maintenance of schemas, data packages, resources, and rows, satisfying FR-DAT-015 and NFR-DAT-008.
+
+Bus Data integrates [bus-bfl](./bus-bfl) to validate and evaluate formulas declared in Table Schema metadata, satisfying FR-DAT-017, FR-DAT-018, and FR-DAT-019. Formula evaluation is deterministic, row-local, and bounded by the bus-bfl defaults unless a schema-provided rounding policy is present, and read-time projection never writes back to CSV.
 
 ### Key Decisions
 
@@ -73,6 +83,8 @@ Command `bus-data table list` takes no parameters and emits a deterministic TSV 
 Command `bus-data schema show --table <table>` writes the schema file content exactly as stored on disk to standard output. Command `bus-data schema show --resource <name>` resolves the resource in `datapackage.json` and writes the resolved schema. If the schema file is missing or unreadable, the command exits non-zero with a concise diagnostic.
 
 Command `bus-data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows, filters, and columns without changing validation behavior.
+
+When a table contains formula-enabled fields, `bus-data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns.
 
 Command `bus-data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
 
@@ -200,11 +212,15 @@ The module operates on workspace datasets as CSV resources with beside-the-table
 
 BusDK extends Table Schema metadata with a `busdk` object used by `bus-data` to determine whether in-place updates and deletions are permitted. The `busdk.update_policy` field may be `forbid` or `in_place`, and the `busdk.delete_policy` field may be `forbid`, `soft`, or `hard`. When `busdk.delete_policy` is `soft`, `busdk.soft_delete_field` and `busdk.soft_delete_value` must be set so the command can apply a deterministic soft deletion update, and the updated row must still satisfy schema constraints and key uniqueness. The default is that updates and deletions are forbidden unless the schema explicitly enables them, and the CLI provides explicit schema commands to set or change these policies. The `busdk` extension coexists with Frictionless descriptors and is preserved verbatim when schemas and data packages are rewritten.
 
+BusDK also extends Table Schema field descriptors with `busdk.formula` metadata to declare BFL-enabled fields and their evaluation rules. The canonical representation uses the following keys under each field descriptor’s `busdk.formula` object: `language` set to `bfl`, `mode` set to `inline` or `constant`, `expression` as a string when `mode` is `constant`, `result` as an object describing the computed logical type, `prefix` as an optional string used only when the consumer enables a prefix stripping policy, `on_error` set to `fail` or `null`, and `rounding` as an optional object with `scale` and `mode` (`half_up` or `half_even`). Formula-enabled fields are stored physically as standard Frictionless types that can hold the UTF-8 formula source, while the computed result type is enforced only at read-time projection and validation.
+
 Bus Data owns mechanical concerns only: reading and writing CSV, reading and writing schema JSON, creating and patching `datapackage.json`, enforcing Table Schema constraints, and validating foreign key integrity. Domain modules own business rules, domain invariants, and any accounting classification decisions; `bus-data` does not infer or enforce those semantics.
 
 ### Assumptions and Dependencies
 
 Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and an optional `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.
+
+Bus Data depends on the [bus-bfl](./bus-bfl) library for parsing, validation, and evaluation of BFL expressions. If the library surface or error contracts change, Bus Data must update its integration while preserving deterministic diagnostics and stable validation behavior.
 
 ### Security Considerations
 
@@ -221,6 +237,8 @@ Invalid usage exits with status code 2 and a concise usage error. Schema violati
 ### Testing Strategy
 
 Unit tests cover Table Schema and Data Package parsing, safe patching with preservation of unknown properties, deterministic JSON serialization, deterministic CSV write behavior, schema inference determinism, and foreign key validation logic. Command-level end-to-end tests validate outputs, exit codes, and on-disk changes using fixture workspaces, including at least one test that verifies cross-resource foreign key integrity and one test that proves resource deletion is refused when referenced.
+
+Integration tests cover formula metadata round-tripping in schemas and data packages, formula validation failures with deterministic error context, and read-time projection of computed values without modifying stored CSV. Tests include at least one case for inline formulas, one case for constant formulas, and one case that verifies the configured rounding policy is applied or rejected deterministically.
 
 ### Deployment and Operations
 
@@ -239,13 +257,20 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Workspace store interface: the persistence boundary for deterministic table and schema operations.  
 Mechanical data layer: functionality that handles storage and validation without domain rules.  
 Schema operation policy: the optional `busdk` metadata in a Table Schema that declares whether in-place update and delete operations are permitted.
+Formula-enabled field: a field descriptor that declares `busdk.formula` metadata and is evaluated using BFL during read-time projection.
 
 ### See also
 
 End user documentation: [bus-data CLI reference](../modules/bus-data)  
 Repository: https://github.com/busdk/bus-data
 
-For the storage backend boundary and repository rules that the library implements, see [Storage backends and workspace store interface](../data/storage-backends) and [Module repository structure and dependency rules](../implementation/module-repository-structure).
+For the storage backend boundary and repository rules that the library implements, see [Storage backends and workspace store interface](../data/storage-backends) and [Module repository structure and dependency rules](../implementation/module-repository-structure). For formula semantics, see [bus-bfl SDD](./bus-bfl).
+
+### Open Questions
+
+OQ-DAT-001 What is the exact CLI flag name and output shape for the opt-in mode that includes formula source alongside computed values, and which output formats must support it?
+
+OQ-DAT-002 Should `bus-data table read` fail the entire command on the first formula evaluation error, or should it report all formula errors and then fail without emitting partial output?
 
 ---
 
@@ -262,7 +287,7 @@ For the storage backend boundary and repository rules that the library implement
 Title: bus-data module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-DATA`  
-Version: 2026-02-07  
+Version: 2026-02-08  
 Status: Draft  
-Last updated: 2026-02-07  
+Last updated: 2026-02-08  
 Owner: BusDK development team  
