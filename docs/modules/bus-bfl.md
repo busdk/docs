@@ -11,35 +11,37 @@
 
 ### Description
 
-BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output and diagnostics to standard error.
+BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output and diagnostics to standard error. Colored output only applies to human-facing text on stderr.
 
 ### Getting started
 
 Install the BusDK toolchain and run `bus-bfl` from your PATH, or invoke the binary directly (for example `./bin/bus-bfl`). To see available commands and global flags, run `bus-bfl --help`. To see the tool version, run `bus-bfl --version`. Both help and version exit immediately and ignore any other flags or arguments.
 
-You can control colored output for help and error messages with `--color auto`, `--color always`, or `--no-color`. The default is `auto` (color when stderr is a terminal). If you pass an invalid color mode, the tool prints a usage error to stderr and exits with status 2. The flags `--quiet` and `--verbose` cannot be used together; combining them is invalid usage.
+You can control colored output for help and error messages with `--color auto`, `--color always`, or `--color never`. The default is `auto` (color when stderr is a terminal). The `--no-color` flag is an alias for `--color never`, and if both are provided, color is disabled. If you pass an invalid color mode, the tool prints a usage error to stderr and exits with status 2. The flags `--quiet` and `--verbose` cannot be used together; combining them is invalid usage.
 
 Structured command output can be requested with `--format json`. The default format is plain text. If you specify an unsupported format, the tool reports invalid usage and exits with status 2. The short form `--json` is an alias for `--format json`.
 
-To send command output to a file instead of stdout, use `--output <file>`. The file is created or truncated. If you also use `--quiet`, the command still runs but nothing is written to the output file or to stdout. Errors are always written to stderr.
+To send command output to a file instead of stdout, use `--output <file>`. The file is created or truncated. If you also use `--quiet`, the command still runs but nothing is written to the output file or to stdout. If the file cannot be created or written, the tool prints an error to stderr and exits with status 1. Errors are always written to stderr.
 
-When your schema or context files live in another directory, use `--chdir <dir>` so that relative paths are resolved from that directory. The working directory is changed before any file reads.
+When your schema or context files live in another directory, use `--chdir <dir>` so that relative paths are resolved from that directory. The working directory is changed before any file reads. If the directory does not exist or is not accessible, the tool prints an error to stderr and exits with status 1.
 
-If you need to pass arguments that look like flags to a subcommand, use `--` to stop global flag parsing. Everything after `--` is passed to the subcommand as positional arguments.
+If you need to pass arguments that look like flags to a subcommand, use `--` to stop global flag parsing. Everything after `--` is passed to the subcommand as positional arguments and is not interpreted as a global flag.
+
+The `--help` and `--version` flags are immediate-exit flags. They ignore all other flags and arguments and return status 0. The short forms `-h` and `-V` behave the same way. When a subcommand name is present, help output is for that subcommand. The version output is a single line in the form `bus-bfl <version>`. The `--verbose` flag (`-v`) can be repeated and accumulates; verbose output goes to stderr and does not change the command result on stdout or in `--output`. The `--quiet` flag (`-q`) suppresses normal output to stdout or `--output` but still performs the command work.
 
 ### Listing function sets
 
-The compiled-in function sets determine which functions are available in expressions. To list them, run `funcset list`. The default output is one name per line (for example `basic` and `none`). With `--format json` you get a JSON object with a `funcsets` array. The order is deterministic.
+The compiled-in function sets determine which functions are available in expressions. To list them, run `funcset list`. The default output is one name per line (for example `basic` and `none`). With `--format json` you get a JSON object with a `funcsets` array. The order is deterministic. The default build currently reports `basic` and `none`.
 
 ### Parsing expressions
 
-Use `parse` to see how the tool interprets an expression. Give the expression with `--expr`:
+Use `parse` to see how the tool interprets an expression. Give the expression with `--expr` and optionally set a dialect or source name for diagnostics:
 
 ```sh
 bus-bfl parse --expr "1 + 2"
 ```
 
-The output is a single line showing the abstract syntax tree, for example `(binary + (literal 1) (literal 2))`. With `--format json` you get a JSON object with an `ast` field whose `expr` property is that same string. If the expression is invalid, the tool prints diagnostics to stderr and exits with a non-zero status; stdout is left empty.
+The output is a single line showing the abstract syntax tree, for example `(binary + (literal 1) (literal 2))`. With `--format json` you get a JSON object with an `ast` field whose `expr` property is that same string. The parse command accepts `--dialect <name>` (default `dialect.spreadsheet`) and `--source-name <name>` for diagnostics. If the expression is invalid, the tool prints diagnostics to stderr and exits with a non-zero status; stdout is left empty.
 
 ### Formatting expressions
 
@@ -105,7 +107,7 @@ Date values use `YYYY-MM-DD`; datetime values use RFC3339 with an explicit time 
 
 ### Exit status
 
-The tool exits with status 0 on success. It exits with a non-zero status on parse errors, validation or evaluation failures, invalid usage (for example invalid `--color`, unknown `--format`, or both `--quiet` and `--verbose`), or when a required file is missing or unreadable. Error messages are always written to standard error.
+The tool exits with status 0 on success. It exits with status 2 on invalid usage such as invalid `--color`, unknown `--format`, or both `--quiet` and `--verbose`. It exits with status 1 when a required file or directory is missing or unreadable, or when an output file cannot be written. It exits with a non-zero status on parse errors, validation failures, or evaluation failures. Error messages are always written to standard error.
 
 ### See also
 
