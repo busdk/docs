@@ -35,7 +35,7 @@ The compiled-in function sets determine which functions are available in express
 
 Use `parse` to see how the tool interprets an expression. Give the expression with `--expr`:
 
-```text
+```sh
 bus-bfl parse --expr "1 + 2"
 ```
 
@@ -45,13 +45,13 @@ The output is a single line showing the abstract syntax tree, for example `(bina
 
 Use `format` to rewrite an expression into canonical form (spacing and structure normalized). Pass the expression with `--expr`:
 
-```text
+```sh
 bus-bfl format --expr "1+2"
 ```
 
 The result is printed to stdout, for example `1 + 2`. With `--format json` (or `--json`) you get a JSON object with an `expression` field. You can also omit `--expr` and supply the expression on standard input, which is useful in pipelines:
 
-```text
+```sh
 printf '%s' '1+2' | bus-bfl format
 ```
 
@@ -61,7 +61,7 @@ The `--dialect` option selects a formatting profile (for example `dialect.sheets
 
 Use `validate` to check that an expression parses and typechecks against a schema. You must supply the expression with `--expr` and the schema with `--schema`:
 
-```text
+```sh
 bus-bfl validate --expr "price * qty" --schema schema.json
 ```
 
@@ -84,7 +84,7 @@ Valid `kind` values are `null`, `bool`, `string`, `integer`, `number`, `date`, `
 
 Use `eval` to evaluate an expression against a concrete context. You must supply the expression with `--expr` and the context with `--context`. You may optionally supply a schema with `--schema`; if you omit it, the tool infers types from the context.
 
-```text
+```sh
 bus-bfl eval --expr "price * qty" --context context.json --schema schema.json
 ```
 
