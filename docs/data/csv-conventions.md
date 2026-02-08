@@ -2,7 +2,7 @@
 
 BusDK’s preferred default representation for workspace datasets is UTF-8 CSV with a header row and one record per row, paired with explicit Table Schemas. Conventions prioritize compatibility: UTF-8 encoding; comma delimiters; quoting for fields containing commas or newlines; ISO date formats (YYYY-MM-DD) for date fields; and predictable numeric formats for monetary values. The intended result is that the canonical dataset remains readable with general-purpose tooling and straightforward to inspect and diff, consistent with the long-term accessibility goals described in [Plain-text CSV for longevity](../design-goals/plaintext-csv-longevity) and aligned with [National Archives guidance on selecting sustainable formats for electronic records](https://www.archives.gov/records-mgmt/initiatives/sustainable-faq.html).
 
-CSV is an implementation choice, not the definition of the goal. Other storage backends may be used over time as long as BusDK preserves deterministic, schema-validated tables and predictable export back to simple, tabular text formats.
+CSV is a delivery convention rather than the goal. Other storage backends may be used over time as long as BusDK preserves deterministic, schema-validated tables and predictable export back to simple, tabular text formats.
 
 ### Audit-trail CSV requirements
 

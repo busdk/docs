@@ -8,7 +8,7 @@ The canonical source material for this SDD is the existing multi-page BusDK desi
 
 BusDK (Business Development Kit), formerly known as Bus, is a modular, CLI-first toolkit for running a business, including accounting and bookkeeping. BusDK is designed for longevity, clarity, and extensibility by storing workspace datasets as transparent, human-readable text files validated by explicit schemas, and by keeping the workspace’s change history reviewable over time. This framing is defined in [Purpose and scope](./overview/purpose-and-scope) and elaborated as design goals in the [Design goals and requirements section](./design-goals/index).
 
-The preferred default is that the workspace lives in a Git repository and that tabular datasets are stored as UTF-8 CSV with beside-the-table schemas expressed as Frictionless Data Table Schemas (JSON). Git and CSV are implementation choices, not the definition of the goal — the invariant is that the workspace datasets and their change history remain reviewable and exportable. See [Git as the canonical, append-only source of truth](./design-goals/git-as-source-of-truth), [Plain-text CSV for longevity](./design-goals/plaintext-csv-longevity), and [Schema-driven data contract (Frictionless Table Schema)](./design-goals/schema-contract).
+The preferred default is that the workspace lives in a Git repository and that tabular datasets are stored as UTF-8 CSV with beside-the-table schemas expressed as Frictionless Data Table Schemas (JSON). Git and CSV are delivery conventions rather than the goal; the invariant is that the workspace datasets and their change history remain reviewable and exportable. See [Git as the canonical, append-only source of truth](./design-goals/git-as-source-of-truth), [Plain-text CSV for longevity](./design-goals/plaintext-csv-longevity), and [Schema-driven data contract (Frictionless Table Schema)](./design-goals/schema-contract).
 
 This SDD is the single-page “source of truth” view for design review and implementation traceability. The intended audience includes human reviewers validating correctness, AI agents refining documentation from human input, and AI agents implementing and maintaining the Bus codebase. Out of scope includes executing Git operations and making discretionary accounting judgments, as captured in the Non-goals section.
 
@@ -78,7 +78,7 @@ Data flows from the CLI commands through deterministic read-validate-modify-writ
 
 ## Key Decisions
 
-KD-001 Preferred Git-backed change history. Git is the preferred default for recording a reviewable, append-only change history, but it is an implementation choice, not the definition of the goal.
+KD-001 Preferred Git-backed change history. Git is the preferred default for recording a reviewable, append-only change history, but it is a delivery convention rather than the goal.
 
 KD-002 Preferred CSV plus Frictionless Table Schema. UTF-8 CSV datasets with beside-the-table JSON schemas are the preferred default because they remain readable and exportable with general-purpose tools.
 

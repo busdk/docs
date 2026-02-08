@@ -27,7 +27,7 @@ Avoid these terms unless they are explicitly defined on the page:
 - “corpus”: replace with “dataset”, “workspace datasets”, “repository data”, or “record set”, depending on scope.
 - “state”: replace with “current dataset contents”, “current repository contents”, or “current revision”, depending on what is meant.
 
-When distinguishing goals from implementation details, use the pattern “X is an implementation choice, not the definition of the goal” and then restate the invariant in BusDK terms (for example, “the workspace datasets and their change history remain reviewable and exportable”).
+When distinguishing goals from implementation details, avoid prescribing exact phrasing. Use clear, familiar wording for the scope that makes the distinction explicit, then restate the invariant in BusDK terms (for example, “the workspace datasets and their change history remain reviewable and exportable”).
 
 Use spaced em dashes when they function as punctuation between phrases or clauses. Write them with a space on both sides (for example, “like this — not like this”), and do not use an em dash to join parts of a single word. When a dash is part of the word (for example, “append-only”, “git-backed”), use a normal hyphen without surrounding spaces.
 

@@ -6,6 +6,8 @@ BusDK Formula Language (BFL) is a deterministic expression language for [BusDK w
 
 BFL exists because Frictionless [Table Schema](../data/table-schema-contract) and [Data Package](../data/data-package-organization) descriptors define typing, constraints, and relationships, but they do not define computed fields as a first-class concept. BusDK implements formulas using Frictionless descriptor extensibility — [Table Schema field descriptors](../data/table-schema-contract) may contain additional properties. BFL provides the deterministic expression semantics for those properties.
 
+BusDK’s preferred default is that workspace datasets live in the Git repository as UTF-8 CSV validated with Table Schema. This is a delivery convention rather than the goal; the invariant is that the workspace datasets and their change history remain reviewable and exportable. BFL is storage-agnostic and operates only on expression strings and typed contexts supplied by the consumer.
+
 The primary surface is a Go library that other BusDK modules import directly. BFL is intended to be used by [bus-data](./bus-data) and other modules as a pure evaluation engine.
 
 The goal is to provide a deterministic, row-local formula engine that is portable across BusDK modules and robust for long-lived workspace datasets. Non-goals include domain-specific accounting rules, cross-row aggregation, any built-in function set, and any feature that requires external state or side effects. The audience is BusDK maintainers and reviewers who need an authoritative, implementation-ready description of formula behavior.
