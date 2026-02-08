@@ -8,7 +8,9 @@ BFL exists because Frictionless [Table Schema](../data/table-schema-contract) an
 
 The primary surface is a Go library that other BusDK modules import directly. BFL is intended to be used by [bus-data](./bus-data) and other modules as a pure evaluation engine.
 
-Versioning follows BusDK versioning. BFL expressions do not carry an internal language version tag. Any changes to BFL semantics must be managed through BusDK module versioning and documented as behavior changes. Out of scope are domain-specific accounting rules, cross-row aggregation, any built-in function set, and any feature that requires external state or side effects.
+The goal is to provide a deterministic, row-local formula engine that is portable across BusDK modules and robust for long-lived workspace datasets. Non-goals include domain-specific accounting rules, cross-row aggregation, any built-in function set, and any feature that requires external state or side effects. The audience is BusDK maintainers and reviewers who need an authoritative, implementation-ready description of formula behavior.
+
+Versioning follows BusDK versioning. BFL expressions do not carry an internal language version tag. Any changes to BFL semantics must be managed through BusDK module versioning and documented as behavior changes.
 
 ### Requirements
 
@@ -30,23 +32,23 @@ FR-BFL-008 Function registration framework. The library MUST provide a function 
 
 NFR-BFL-001 Mechanical scope only. The module MUST NOT implement accounting rules, discretionary accounting judgments, or domain-specific semantics. Acceptance criteria: the API only exposes expression mechanics and generic type and constraint handling required by the language.
 
-NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation. Acceptance criteria: the implementation rejects expressions that exceed configured limits on AST size, recursion depth, or evaluation steps and reports a deterministic error without partial results.
+NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation. Acceptance criteria: the implementation rejects expressions that exceed configured limits on AST size, recursion depth, or evaluation steps and reports a deterministic error without partial results. The library defines strict default numeric caps for expression length (4,096 UTF-8 bytes), AST size (512 nodes), and recursion depth (32) and allows callers to override them for known workloads while preserving deterministic errors.
 
-NFR-BFL-003 Performance. Parsing and evaluation MUST meet agreed performance targets for typical workspace datasets. Acceptance criteria: TBD — define target expression sizes, acceptable parse and evaluation latency, and any required benchmarks.
+NFR-BFL-003 Performance. Parsing and evaluation MUST meet agreed performance targets for typical workspace datasets. Acceptance criteria: for expressions up to the default caps, parsing completes in 2 milliseconds or less per expression and evaluation completes in 200 microseconds or less per row on the reference test machine. Benchmarks must include parse-time and evaluation-time microbenchmarks at the default caps and document the reference machine configuration. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
 
-NFR-BFL-004 Scalability. Evaluation MUST remain deterministic and bounded as datasets grow. Acceptance criteria: TBD — define supported dataset sizes and per-row evaluation overhead expectations.
+NFR-BFL-004 Scalability. Evaluation MUST remain deterministic and bounded as datasets grow. Acceptance criteria: default scalability targets for `bus-data` projections are up to 100,000 rows per table with average per-row evaluation overhead at or below 150 microseconds and full-table projection at or below 15 seconds on the reference test machine. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
 
 NFR-BFL-005 Reliability. The library MUST return typed errors for invalid inputs and MUST NOT panic on user-provided expressions. Acceptance criteria: invalid inputs return deterministic parse, bind, type, or evaluation errors and do not crash the process.
 
-NFR-BFL-006 Maintainability. The public API MUST remain stable within a BusDK minor version and document breaking changes. Acceptance criteria: TBD — define the public API stability policy and how breaking changes are communicated.
+NFR-BFL-006 Maintainability. The public API MUST remain stable within a BusDK minor version and document breaking changes. Acceptance criteria: the module changelog and release notes explicitly list any public API changes, and any breaking change includes a short migration note that explains the impact and the expected adjustment.
 
 ### System Architecture
 
-BFL is a small compiler pipeline that parses UTF-8 source text into an AST, binds and validates identifiers against a provided context, and evaluates the AST to a typed result deterministically. Consumers such as [bus-data](./bus-data) integrate BFL by discovering formula semantics from schema metadata, validating formulas during validate and read operations, and computing a current-state projection during read operations without writing back to CSV.
+BFL is a small compiler pipeline that parses UTF-8 source text into an AST, binds and validates identifiers against a provided context, and evaluates the AST to a typed result deterministically. The pipeline includes limit configuration that bounds parse and evaluation work and produces deterministic limit errors. Consumers such as [bus-data](./bus-data) integrate BFL by discovering formula semantics from schema metadata, validating formulas during validate and read operations, and computing a current-state projection during read operations without writing back to CSV.
 
 ### Component Design and Interfaces
 
-Interface IF-BFL-001 Go library. The module exposes a Go library for parsing, validating, and evaluating expressions. The public API MUST support parsing expressions into an AST with stable, structured error reporting, validating an AST against a context definition (available identifiers, types, and allowed functions), evaluating an AST against a concrete context, and optionally formatting an AST back into a canonical expression string if canonicalization is required for determinism or tooling.
+Interface IF-BFL-001 Go library. The module exposes a Go library for parsing, validating, and evaluating expressions. The public API MUST support parsing expressions into an AST with stable, structured error reporting, validating an AST against a context definition (available identifiers, types, and allowed functions), evaluating an AST against a concrete context, and optionally formatting an AST back into a canonical expression string if canonicalization is required for determinism or tooling. The API MUST accept a limit configuration so callers can tune expression length, AST size, and recursion depth caps while retaining deterministic errors.
 
 Interface IF-BFL-002 Integration contract with [bus-data](./bus-data). [bus-data](./bus-data) uses the library to validate formula fields during [package](../data/data-package-organization), resource, and table validation and to compute formula values during table read projection.
 
@@ -75,7 +77,7 @@ Recommended metadata shape on a field descriptor:
 - `field.busdk.formula.result`: an object describing the computed logical type (for example `{ "type": "number" }`)
 - `field.busdk.formula.prefix`: optional string, used only if the consumer wants spreadsheet-style `=` prefix behavior
 - `field.busdk.formula.on_error`: `"fail"` or `"null"`
-- `field.busdk.formula.rounding`: optional rounding configuration for numeric results
+- `field.busdk.formula.rounding`: optional rounding configuration for numeric results; when unset, the default is half-up (ties away from zero)
 
 Semantics are as follows. If mode is inline, the stored cell value is treated as the expression source. If mode is constant, the schema-provided expression is used for all rows. The computed result MUST be validated against the declared result type and any configured constraints at the BusDK layer, since the physical field type may be string or any.
 
@@ -95,13 +97,21 @@ BFL assumes the consumer provides the allowed function surface by registering fu
 
 BFL depends on no external services and is a pure library. If a consumer requires I/O, workspace discovery, or schema parsing, those responsibilities remain outside BFL.
 
+BFL is in an active pre-1.0 phase and follows semver. Backwards compatibility is a goal, but stability guarantees are not required yet and breaking changes may occur as implementations stabilize. Impact if false: module maintainers may over-assume stability and fail to review changes that affect formula behavior or public APIs.
+
+### Open Questions
+
+OQ-BFL-001 Which specific operator precedence table and associativity rules should be treated as canonical when Excel, Google Sheets, and OpenFormula differ, and which product/version references are authoritative?
+
+OQ-BFL-003 Which specific canonical references define the accepted literal formats for numbers, dates, and datetimes across Excel, Google Sheets, OpenFormula, BusDK, and Frictionless Data, including timezone handling rules for datetime?
+
 ### Key Decisions
 
 KD-BFL-001 Schema extension, not spec replacement. BFL is integrated via BusDK metadata inside Frictionless Table Schema and Data Package descriptors, keeping descriptors valid and portable.
 
 KD-BFL-002 Stored value is the formula source. When a field is configured for formulas, the stored CSV cell value is the formula source string as a physical value. Computed values are derived at read time.
 
-KD-BFL-003 Decimal-first numerics. Numeric behavior MUST be deterministic and suitable for business calculations. The implementation SHOULD use decimal arithmetic and an explicit, documented rounding rule rather than exposing binary floating point quirks.
+KD-BFL-003 Decimal-first numerics. Numeric behavior MUST be deterministic and suitable for business calculations. The implementation SHOULD use decimal arithmetic with a spreadsheet-style default rounding rule (half-up, ties away from zero) and support a configurable rounding mode so callers can select alternatives such as half-even when required.
 
 KD-BFL-004 Row-local by default. The default evaluation context is a single row. Cross-row aggregation is out of scope for the initial language surface and should be introduced only with explicit determinism and dependency rules.
 
@@ -115,15 +125,15 @@ UTF-8 input is required. Whitespace is insignificant except inside string litera
 
 #### Value types
 
-BFL supports null, boolean, string, number (decimal), integer (a restricted number), date, and datetime. Callers provide typed context values. When callers originate from CSV, casting rules are owned by `bus-data` and the Table Schema. BFL assumes it receives typed values or explicit string literals.
+BFL supports null, boolean, string, number (decimal), integer (a restricted number), date, and datetime. Callers provide typed context values. When callers originate from CSV, casting rules are owned by `bus-data` and the Table Schema. BFL assumes it receives typed values or explicit string literals. Literal formats for numbers, dates, and datetimes MUST align with Excel, Google Sheets, and OpenFormula, and also accept formats supported by BusDK and Frictionless Data.
 
 #### References
 
-BFL can reference fields from the current row by identifier. Simple column names may be referenced directly. For non-identifier column names, the consumer MUST provide an escape hatch, with `col("column name")` as the recommended form.
+BFL can reference fields from the current row by identifier. Simple column names may be referenced directly. For non-identifier column names, the consumer MUST provide an escape hatch, with `col("column name")` as the recommended form implemented via function registration. Identifier grammar and case sensitivity MUST align as closely as possible with Excel, Google Sheets, and OpenFormula, while keeping identifiers and functions supplied by consumers outside this core library.
 
 #### Operators
 
-The language supports arithmetic operators `+ - * /`, comparison operators `== != < <= > >=`, and boolean operators `and or not`.
+The language supports arithmetic operators `+ - * /`, comparison operators `== != < <= > >=`, and boolean operators `and or not`. Operator precedence and associativity MUST match the shared behavior of Excel, Google Sheets, and OpenFormula so that spreadsheet formulas behave consistently across systems.
 
 #### Functions
 
@@ -170,14 +180,6 @@ R-BFL-001 Ambiguity between identifiers and reserved words. Mitigation: maintain
 R-BFL-002 Numeric precision expectations. Mitigation: decimal arithmetic and explicit rounding configuration with deterministic defaults.
 
 R-BFL-003 Future cross-table lookups. Mitigation: keep row-local semantics initially and introduce lookups only with explicit schema-declared dependencies and deterministic failure modes.
-
-### Open Questions
-
-OQ-BFL-001 What are the default rounding mode and tie-breaking rules for numeric rounding when the caller does not provide explicit rounding configuration?
-
-OQ-BFL-002 What are the maximum supported expression length, AST size, and recursion depth limits that define acceptable performance and scalability for typical workspaces?
-
-OQ-BFL-003 What is the public API stability policy for the Go library across BusDK minor and patch versions?
 
 ### Glossary and Terminology
 
