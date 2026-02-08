@@ -186,6 +186,6 @@ Storage contract: [Storage backends and workspace store interface](../data/stora
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-init">bus-init</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-accounts">bus-accounts</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

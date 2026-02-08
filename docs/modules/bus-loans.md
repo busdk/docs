@@ -42,6 +42,6 @@ Data contract: [Table schema contract](../data/table-schema-contract)
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-assets">bus-assets</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bank">bus-bank</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-inventory">bus-inventory</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

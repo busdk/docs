@@ -90,7 +90,7 @@ For VAT filing workflow and compliance context, see [VAT reporting and payment](
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing-prh">bus-filing-prh</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="../integration/index">BusDK Design Spec: Integration and future interfaces</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../integration/index">Integration and future interfaces</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

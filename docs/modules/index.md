@@ -6,6 +6,7 @@ If you need architectural background on why modules are independent and how they
 
 - [`bus init`](./bus-init): Initialize a new workspace by orchestrating module-owned `init` commands.
 - [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI.
+- [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.
 - [`bus accounts`](./bus-accounts): Manage the chart of accounts.
 - [`bus entities`](./bus-entities): Manage counterparty reference data.
 - [`bus period`](./bus-period): Open, close, and lock accounting periods.

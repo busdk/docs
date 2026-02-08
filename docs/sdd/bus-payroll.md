@@ -88,9 +88,9 @@ For schema expectations and workflow context, see [Table schema contract](../dat
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-budget">bus-budget</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-inventory">bus-inventory</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-inventory">bus-inventory</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-budget">bus-budget</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

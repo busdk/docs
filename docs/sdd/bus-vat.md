@@ -87,7 +87,7 @@ For VAT dataset layout and reporting workflow context, see [VAT area](../layout/
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-validate">bus-validate</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-pdf">bus-pdf</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

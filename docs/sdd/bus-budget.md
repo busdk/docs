@@ -85,9 +85,9 @@ For budget dataset layout and variance workflow context, see [Budget area](../la
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-reconcile">bus-reconcile</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-payroll">bus-payroll</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-payroll">bus-payroll</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

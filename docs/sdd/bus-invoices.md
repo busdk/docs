@@ -94,7 +94,7 @@ For invoice dataset layout and workflow details, see [Invoices area](../layout/i
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-attachments">bus-attachments</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-pdf">bus-pdf</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-journal">bus-journal</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
