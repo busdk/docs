@@ -11,40 +11,63 @@
 
 ### Description
 
-BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. It is not a general programming language and has no I/O, no external state, and no side effects. The primary integration surface is the Go library, which is used by `bus-data` for validation and read-time projection. The `bus bfl` and `bus-bfl` CLI surface is an optional, lightweight developer wrapper around the library and is not a production integration surface.
+BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output and diagnostics to standard error.
 
-The CLI mirrors the library pipeline and operates only on explicit inputs supplied by the caller. It does not read workspace datasets, Table Schema files, or `datapackage.json`, and it never writes computed values back to repository data. Results are written to standard output and diagnostics to standard error using BusDK exit code conventions.
+### Getting started
 
-### Commands
+Install the BusDK toolchain and run `bus-bfl` from your PATH, or invoke the binary directly (for example `./bin/bus-bfl`). To see available commands and global flags, run `bus-bfl --help`. To see the tool version, run `bus-bfl --version`. Both help and version exit immediately and ignore any other flags or arguments.
 
-- `parse` parses the expression and reports deterministic syntax diagnostics.
-- `validate` parses and typechecks the expression against a caller-provided context schema and the compiled-in function set.
-- `eval` evaluates the expression against a caller-provided context and prints the typed result.
-- `format` rewrites the expression into its canonical form using the selected dialect.
+You can control colored output for help and error messages with `--color auto`, `--color always`, or `--no-color`. The default is `auto` (color when stderr is a terminal). If you pass an invalid color mode, the tool prints a usage error to stderr and exits with status 2. The flags `--quiet` and `--verbose` cannot be used together; combining them is invalid usage.
 
-### Formula storage and schema metadata
+Structured command output can be requested with `--format json`. The default format is plain text. If you specify an unsupported format, the tool reports invalid usage and exits with status 2. The short form `--json` is an alias for `--format json`.
 
-BFL formula storage and schema metadata are defined by `bus-data` and the BFL SDD. The CLI does not read or interpret workspace schemas, and it only evaluates the explicit expression and JSON inputs provided by the caller.
+To send command output to a file instead of stdout, use `--output <file>`. The file is created or truncated. If you also use `--quiet`, the command still runs but nothing is written to the output file or to stdout. Errors are always written to stderr.
 
-### Options
+When your schema or context files live in another directory, use `--chdir <dir>` so that relative paths are resolved from that directory. The working directory is changed before any file reads.
 
-The CLI accepts only explicit inputs such as an expression string and optional JSON files for context or schema data. It never discovers workspace data implicitly.
+If you need to pass arguments that look like flags to a subcommand, use `--` to stop global flag parsing. Everything after `--` is passed to the subcommand as positional arguments.
 
-- `--expr <string>` supplies the expression directly. If omitted, the expression is read from standard input.
-- `--dialect <profile>` selects a dialect profile. The default is `dialect.spreadsheet`. Supported profiles are `dialect.spreadsheet`, `dialect.excel_like`, `dialect.sheets_like`, and `dialect.programmer`.
-- `--schema <file>` supplies a context schema for `validate`.
-- `--context <file>` supplies a concrete context for `eval`.
+### Listing function sets
 
-### Examples
+The compiled-in function sets determine which functions are available in expressions. To list them, run `funcset list`. The default output is one name per line (for example `basic` and `none`). With `--format json` you get a JSON object with a `funcsets` array. The order is deterministic.
 
-This workflow validates and evaluates a row-local formula with explicit JSON inputs:
+### Parsing expressions
+
+Use `parse` to see how the tool interprets an expression. Give the expression with `--expr`:
 
 ```text
-bus-bfl validate --expr 'price * qty' --schema schema.json
-bus-bfl eval --expr 'price * qty' --context context.json
+bus-bfl parse --expr "1 + 2"
 ```
 
-The schema file defines the available identifiers and their types:
+The output is a single line showing the abstract syntax tree, for example `(binary + (literal 1) (literal 2))`. With `--format json` you get a JSON object with an `ast` field whose `expr` property is that same string. If the expression is invalid, the tool prints diagnostics to stderr and exits with a non-zero status; stdout is left empty.
+
+### Formatting expressions
+
+Use `format` to rewrite an expression into canonical form (spacing and structure normalized). Pass the expression with `--expr`:
+
+```text
+bus-bfl format --expr "1+2"
+```
+
+The result is printed to stdout, for example `1 + 2`. With `--format json` (or `--json`) you get a JSON object with an `expression` field. You can also omit `--expr` and supply the expression on standard input, which is useful in pipelines:
+
+```text
+printf '%s' '1+2' | bus-bfl format
+```
+
+The `--dialect` option selects a formatting profile (for example `dialect.sheets_like`). Supported profiles include `dialect.spreadsheet`, `dialect.excel_like`, `dialect.sheets_like`, and `dialect.programmer`. The default is `dialect.spreadsheet`.
+
+### Validating expressions
+
+Use `validate` to check that an expression parses and typechecks against a schema. You must supply the expression with `--expr` and the schema with `--schema`:
+
+```text
+bus-bfl validate --expr "price * qty" --schema schema.json
+```
+
+On success the default output is the single line `ok`. With `--format json` you get `{ "status": "ok" }`. If you omit `--schema`, the tool prints an error to stderr and exits with a non-zero status.
+
+The schema file is a JSON object that defines identifiers and their types. For example:
 
 ```json
 {
@@ -55,7 +78,19 @@ The schema file defines the available identifiers and their types:
 }
 ```
 
-The context file supplies typed values for evaluation. Numbers and integers are encoded as strings to preserve decimal precision:
+Valid `kind` values are `null`, `bool`, `string`, `integer`, `number`, `date`, `datetime`, and `any`. Each symbol can have `nullable` set to `true` or `false`.
+
+### Evaluating expressions
+
+Use `eval` to evaluate an expression against a concrete context. You must supply the expression with `--expr` and the context with `--context`. You may optionally supply a schema with `--schema`; if you omit it, the tool infers types from the context.
+
+```text
+bus-bfl eval --expr "price * qty" --context context.json --schema schema.json
+```
+
+The default output is a typed value on one line, for example `number 59.85`. With `--format json` you get a JSON object with `type` and `value` (for example `{ "type": "number", "value": "59.85" }`). If you omit `--context`, the tool prints an error to stderr and exits with a non-zero status.
+
+The context file is a JSON object that supplies values for the symbols used in the expression. Numbers and integers are encoded as strings to preserve precision:
 
 ```json
 {
@@ -66,42 +101,12 @@ The context file supplies typed values for evaluation. Numbers and integers are 
 }
 ```
 
-Successful evaluation prints a typed value to standard output:
-
-```json
-{ "type": "number", "value": "59.85" }
-```
-
-### Input formats
-
-The CLI uses a small JSON schema for schema and context files that mirrors the BFL type and value model.
-
-Context schema files contain a `symbols` map from identifier to type. Each type has `kind` and `nullable` fields. Valid `kind` values are `null`, `bool`, `string`, `integer`, `number`, `date`, `datetime`, and `any`.
-
-Context files contain a `values` map from identifier to value. Each value uses `{ "type": "<kind>", "value": "<literal>" }` and matches the same `kind` strings as the schema. `number` and `integer` values are encoded as strings. `date` uses `YYYY-MM-DD`. `datetime` uses RFC3339 with an explicit `Z` or numeric offset. `null` uses `{ "type": "null", "value": null }`.
-
-### Defaults and limits
-
-The CLI uses the BFL defaults unless explicit overrides are added in a future interface. Expression length defaults to 4,096 UTF-8 bytes, AST size defaults to 512 nodes, recursion depth defaults to 32, and evaluation steps default to 10,000.
-
-### Files
-
-The developer CLI reads only the explicit inputs you provide, such as an expression string and JSON files, and it does not read workspace CSV, Table Schema files, or `datapackage.json`. Computed values are printed to standard output and never written back to the repository data.
+Date values use `YYYY-MM-DD`; datetime values use RFC3339 with an explicit time zone. A null value uses `{ "type": "null", "value": null }`.
 
 ### Exit status
 
-`0` on success. Non-zero on parse, validation, or evaluation errors, or on invalid usage.
+The tool exits with status 0 on success. It exits with a non-zero status on parse errors, validation or evaluation failures, invalid usage (for example invalid `--color`, unknown `--format`, or both `--quiet` and `--verbose`), or when a required file is missing or unreadable. Error messages are always written to standard error.
 
-### Open Questions
-
-OQ-BFL-CLI-001 Confirm the command and flag names for the initial CLI release, including whether `--expr`, `--schema`, `--context`, and `--dialect` should be part of the stable interface.
-
-OQ-BFL-CLI-002 Confirm that the JSON formats shown for schema and context files should be the canonical CLI input format, aligned with the conformance test value encoding.
-
-OQ-BFL-CLI-003 Confirm that `parse` and `validate` should emit a structured JSON success response or a simple text confirmation, and whether `format` should emit only the canonical expression.
-
-OQ-BFL-CLI-004 Confirm whether the CLI should expose a way to select or list the compiled-in function set.
-git 
 ### See also
 
 Module SDD: [bus-bfl](../sdd/bus-bfl)  
