@@ -253,7 +253,7 @@ For the storage backend boundary and repository rules that the library implement
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-init">bus-init</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-accounts">bus-accounts</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
@@ -266,4 +266,3 @@ Version: 2026-02-07
 Status: Draft  
 Last updated: 2026-02-07  
 Owner: BusDK development team  
-Change log: 2026-02-07 — Clarified schema-governed mutation defaults, dry-run logging behavior, and requirement traceability; added non-functional requirements for security, performance, scalability, reliability, and maintainability. 2026-02-07 — Expanded the SDD to cover full Frictionless Data Package and Table Schema management, deterministic serialization, foreign key integrity validation, and non-interactive CLI commands aligned with the library-first design. 2026-02-07 — Proposed the BusDK-aligned `bus-data` CLI surface including table, schema, and row verbs with deterministic write options and schema-governed mutability. 2026-02-07 — Defined the minimal `bus-data` inspection subcommands and parameters to close OQ-DAT-001. 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Moved module SDDs under `docs/sdd` and linked to end user CLI references.

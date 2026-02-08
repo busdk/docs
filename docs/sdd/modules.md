@@ -8,6 +8,7 @@ For the architectural rationale behind independent modules and the design goals 
 
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating module-owned `init` commands and creating the chosen workspace layout.
 - [`bus data`](./bus-data): Tabular data layer: schema-validated dataset I/O and validation for BusDK workspaces (CSV + JSON Table Schema), providing a Go library (and a thin 'bus data ...' CLI) for deterministic CRUD-style table and schema handling without domain business logic or CLI-to-CLI dependencies.
+- [`bus bfl`](./bus-bfl): Defines the deterministic formula language used for computed fields; end users interact with it through schema metadata, validation, and projections rather than a dedicated CLI.
 - [`bus accounts`](./bus-accounts): Maintains the chart of accounts as schema-validated CSV datasets used as shared reference data across the workspace.
 - [`bus entities`](./bus-entities): Maintains counterparty reference datasets and stable entity IDs used for linking and matching across modules.
 - [`bus period`](./bus-period): Opens and closes accounting periods, generates closing and opening balance entries, and locks closed periods to prevent changes after close.

@@ -104,4 +104,3 @@ Version: 2026-02-07
 Status: Draft  
 Last updated: 2026-02-07  
 Owner: BusDK development team  
-Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Defined `bus entities add` parameters and confirmed no list filters. 2026-02-07 — Moved module SDDs under `docs/sdd` and linked to end user CLI references.

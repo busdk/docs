@@ -99,4 +99,3 @@ Version: 2026-02-07
 Status: Draft  
 Last updated: 2026-02-07  
 Owner: BusDK development team  
-Change log: 2026-02-07 — Reframed the module page as a short SDD with command surface, parameters, and usage examples. 2026-02-07 — Removed layout selection flags in favor of the standard workspace layout and deterministic filenames. 2026-02-07 — Documented that `bus init` has no module-specific parameters in the pinned version. 2026-02-07 — Moved module SDDs under `docs/sdd` and linked to end user CLI references.
