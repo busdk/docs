@@ -10,7 +10,7 @@
 
 ### Getting started
 
-Start by defining a schema and letting `bus-data` create the table and its beside-the-table schema file. The table path may omit the `.csv` suffix, and `schema init` writes both the CSV and the `.schema.json` in one deterministic step. Use `--force` when you need to overwrite an existing table and schema with a new definition.
+Start by defining a schema and letting `bus-data` create the table and its beside-the-table schema file. The table path may omit the `.csv` suffix, and `schema init` writes both the CSV and the `.schema.json` in one deterministic step. Schema metadata such as `primaryKey`, `foreignKeys`, and `missingValues` is preserved when you initialize the table. Use `--force` when you need to overwrite an existing table and schema with a new definition.
 
 ```text
 bus-data schema init customers --schema customers.schema.json
@@ -23,20 +23,20 @@ If you manage a workspace data package, initialize `datapackage.json` after the 
 bus-data package init
 ```
 
-Add rows with either repeated `--set` assignments or a JSON file. Each row is validated against the schema before it is written.
+Add rows with either repeated `--set` assignments or a JSON file. Each row is validated against the schema before it is written, and duplicate primary keys are rejected for both single-column and composite keys.
 
 ```text
 bus-data row add customers --set id=1 --set name=Ada --set active=true
 bus-data row add customers --json row2.json
 ```
 
-List tables in the workspace to confirm what exists. The output is a deterministic, workspace-relative list of table and schema paths.
+List tables in the workspace to confirm what exists. The output is a deterministic, workspace-relative list of table and schema paths, and you can request JSON format when you need structured output.
 
 ```text
 bus-data table list
 ```
 
-Read a table to get its canonical CSV. `bus-data` always validates against the schema before it emits rows.
+Read a table to get its canonical CSV. `bus-data` always validates against the schema before it emits rows, and JSON output is available for downstream tooling.
 
 ```text
 bus-data table read customers
@@ -52,30 +52,30 @@ bus-data table read customers --row 1:2 --column id
 bus-data table read customers --filter status=active --filter name=Ada
 ```
 
-If your tables use a primary key, use `--key <value>` for a single-column key. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`. Primary key uniqueness is enforced on `row add` for both single-column and composite keys.
+If your tables use a primary key, use `--key field=value` for a single-column key. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`. Primary key uniqueness is enforced on `row add` for both single-column and composite keys.
 
 ```text
-bus-data table read customers --key 1
+bus-data table read customers --key id=1
 ```
 
 ### Update and delete rows
 
-Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work. Updates accept either repeated `--set` assignments or a JSON file payload. Updates use the primary key to identify a single row, and composite keys are provided by repeating `--key`.
+Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work. Updates accept either repeated `--set` assignments or a JSON file payload. Updates use the primary key to identify a single row, and composite keys are provided by repeating `--key field=value`.
 
 ```text
-bus-data row update customers --key 1 --set balance=15.00
-bus-data row update customers --key 1 --json row_update.json
+bus-data row update customers --key id=1 --set balance=15.00
+bus-data row update customers --key id=1 --json row_update.json
 ```
 
 Row deletes follow the schema’s delete policy. When the policy is `soft`, `bus-data` writes the configured soft-delete field and value rather than removing the row. The schema’s `busdk.delete_policy`, `busdk.soft_delete_field`, and `busdk.soft_delete_value` control that behavior.
 
 ```text
-bus-data row delete customers --key 2
+bus-data row delete customers --key id=2
 ```
 
 ### Manage data packages and resources
 
-Use `package init` to create `datapackage.json` from the current tables and beside-the-table schemas, `package show` to inspect it, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Use `resource list` to see the current resources in deterministic order, and `resource validate` to validate a single resource without modifying files. When foreign key validation fails, the command exits non-zero and reports the failure on standard error.
+Use `package init` to create `datapackage.json` from the current tables and beside-the-table schemas, `package show` to inspect it, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Package initialization and listing keep resource ordering deterministic. Use `resource list` to see the current resources in deterministic order, and `resource validate` to validate a single resource without modifying files. Validation outputs a status row per resource, and when foreign key validation fails the command exits non-zero and reports the failure on standard error.
 
 ```text
 bus-data package init
@@ -108,10 +108,11 @@ If you already have a CSV, you can infer a schema from existing data and write i
 bus-data schema infer products --sample 2
 ```
 
-Adding a field extends both the schema and the CSV. A default value is written to existing rows, and you can mark the field as required and add a description.
+Adding a field extends both the schema and the CSV. A default value is written to existing rows, and you can mark the field as required and add a description. When you need formula metadata inline, use `schema field add` with formula flags so the schema and table stay in sync.
 
 ```text
 bus-data schema add-field products --field category --type string --default general --required --description "category"
+bus-data schema field add products --field total --type string --formula-mode inline --formula-prefix "=" --formula-result-type number --default "=a + b"
 ```
 
 Changing a field type updates the schema only when existing values are compatible with the new type.
@@ -122,7 +123,7 @@ bus-data schema set-type products --field price --type number
 
 Schema metadata can include `primaryKey`, `foreignKeys`, and `missingValues`. These are preserved by `schema init`, and `primaryKey` can be either a single field name or an ordered list for composite keys. Foreign key definitions follow the Table Schema format and are enforced during resource and package validation.
 
-When you need full control over schema metadata, apply a JSON merge patch that preserves unknown properties.
+When you need full control over schema metadata, apply a JSON merge patch that preserves unknown properties. Use `--resource` to target a schema by resource name when `datapackage.json` is present.
 
 ```text
 bus-data schema patch --resource products --patch schema.patch.json
@@ -134,13 +135,73 @@ Schemas can declare formula columns by adding a `busdk.formula` block under a fi
 
 Formulas use the BFL language. Inline formulas typically set a `prefix` such as `=` and accept per-cell expressions. Constant formulas set `mode` to `constant` and provide an `expression` string. When `on_error` is set to `null`, formula errors yield empty output values instead of failing the read.
 
-Formula evaluation uses a table snapshot, so range expressions resolve against the same read and do not depend on row-by-row mutation. Invalid formula metadata is rejected at read time and reports a formula error to standard error.
+To get started with inline formulas, define a column with a `busdk.formula` block, add rows with the formula expression in the cell, and read the table to see computed values. The formula source stays in the CSV, while `table read` emits the computed value.
+
+```text
+cat > laskelmat.schema.json <<'JSON'
+{
+  "fields": [
+    {"name": "a", "type": "integer"},
+    {"name": "b", "type": "integer"},
+    {
+      "name": "total",
+      "type": "string",
+      "busdk": {
+        "formula": {
+          "language": "bfl",
+          "mode": "inline",
+          "prefix": "=",
+          "result": {"type": "integer"}
+        }
+      }
+    }
+  ]
+}
+JSON
+bus-data schema init laskelmat --schema laskelmat.schema.json
+bus-data row add laskelmat --set a=2 --set b=3 --set total==a + b
+bus-data table read laskelmat
+```
 
 If you need to inspect the raw formula sources, `--formula-source` adds an extra column that captures the original formula expression for each formula field without colliding with existing column names. The source column name is the formula field name with the `__formula_source` suffix.
 
+```text
+bus-data table read laskelmat --formula-source
+```
+
+Constant formulas are driven entirely by the schema. This is useful when you want a computed column that does not depend on per-row input, such as a fixed ratio with controlled rounding.
+
+```text
+cat > laskelmat_const.schema.json <<'JSON'
+{
+  "fields": [
+    {"name": "label", "type": "string"},
+    {
+      "name": "total",
+      "type": "string",
+      "busdk": {
+        "formula": {
+          "language": "bfl",
+          "mode": "constant",
+          "expression": "1 / 8",
+          "result": {"type": "number"},
+          "rounding": {"scale": 2, "mode": "half_even"}
+        }
+      }
+    }
+  ]
+}
+JSON
+bus-data schema init laskelmat_const --schema laskelmat_const.schema.json
+bus-data row add laskelmat_const --set label=ok
+bus-data table read laskelmat_const
+```
+
+Formula evaluation uses a table snapshot, so range expressions resolve against the same read and do not depend on row-by-row mutation. Invalid formula metadata is rejected at read time and reports a formula error to standard error. To treat formula errors as empty values, set `on_error` to `null` in the formula block.
+
 ### Output formats and files
 
-`bus-data` can emit JSON where a command supports structured output. Table and resource listings default to TSV, while table reads default to CSV. Package and resource validation report one row per resource and use TSV by default, or JSON when `--format json` is set.
+`bus-data` can emit JSON where a command supports structured output. Table and resource listings default to TSV, while table reads default to CSV. Package and resource validation report one row per resource and use TSV by default, or JSON when `--format json` is set. JSON outputs preserve the CSV string values and keep ordering deterministic.
 
 ```text
 bus-data --format json table list
@@ -177,7 +238,7 @@ If a table name starts with `-`, place `--` before the command arguments to stop
 bus-data -- table read -taulu
 ```
 
-Help and diagnostics are printed to standard error. You can disable or force colored output with `--color auto|always|never` or `--no-color`, and the flags are accepted even when you only need help or version output. Version and help are always available through `--version` and `--help`.
+Help and version output are printed to standard output. Diagnostics and validation failures are printed to standard error. You can disable or force colored output for diagnostics with `--color auto|always|never` or `--no-color`, and the flags are accepted even when you only need help or version output.
 
 ### Files
 
