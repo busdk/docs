@@ -11,7 +11,7 @@
 
 ### Description
 
-BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output and diagnostics to standard error. Colored output only applies to human-facing text on stderr.
+BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. It supports spreadsheet-style references and ranges and can return array values from ranges or registered functions. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output and diagnostics to standard error. Colored output only applies to human-facing text on stderr.
 
 ### Getting started
 
@@ -42,6 +42,8 @@ bus-bfl parse --expr "1 + 2"
 ```
 
 The output is a single line showing the abstract syntax tree, for example `(binary + (literal 1) (literal 2))`. With `--format json` you get a JSON object with an `ast` field whose `expr` property is that same string. The parse command accepts `--dialect <name>` (default `dialect.spreadsheet`) and `--source-name <name>` for diagnostics. If the expression is invalid, the tool prints diagnostics to stderr and exits with a non-zero status; stdout is left empty.
+
+Range expressions are supported using Excel-like A1 notation and the colon operator. Examples include `A1:B10`, `A1:A`, and `A:A`. Range expressions evaluate to array values and can only be used where the language expects an array, such as a function parameter. The core language has no array literals, so arrays are only produced by ranges or by registered functions.
 
 ### Formatting expressions
 
@@ -80,7 +82,7 @@ The schema file is a JSON object that defines identifiers and their types. For e
 }
 ```
 
-Valid `kind` values are `null`, `bool`, `string`, `integer`, `number`, `date`, `datetime`, and `any`. Each symbol can have `nullable` set to `true` or `false`.
+Valid `kind` values are `null`, `bool`, `string`, `integer`, `number`, `date`, `datetime`, `array`, and `any`. Each symbol can have `nullable` set to `true` or `false`.
 
 ### Evaluating expressions
 
@@ -91,6 +93,8 @@ bus-bfl eval --expr "price * qty" --context context.json --schema schema.json
 ```
 
 The default output is a typed value on one line, for example `number 59.85`. With `--format json` you get a JSON object with `type` and `value` (for example `{ "type": "number", "value": "59.85" }`). If you omit `--context`, the tool prints an error to stderr and exits with a non-zero status.
+
+Range evaluation requires a runtime context that can resolve ranges deterministically. If you evaluate an expression containing a range and the context does not provide range resolution, evaluation fails with a deterministic error.
 
 The context file is a JSON object that supplies values for the symbols used in the expression. Numbers and integers are encoded as strings to preserve precision:
 

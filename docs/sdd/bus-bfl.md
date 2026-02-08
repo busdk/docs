@@ -33,12 +33,14 @@ FR-BFL-006 Static validation. The library MUST support validating formulas witho
 FR-BFL-007 Data-source agnostic. The library MUST NOT know about CSV, Frictionless schemas, BusDK workspaces, or any file formats. Acceptance criteria: the public API accepts expression source strings and caller-provided context definitions without referencing any BusDK storage or schema types.
 
 FR-BFL-008 Function registration framework. The library MUST provide a function registration framework in which callers supply function names, signatures, and pure implementations. Acceptance criteria: validation and evaluation only allow registered functions, and unregistered function calls are rejected deterministically.
+FR-BFL-009 Range expressions. The library MUST support spreadsheet-style range expressions using Excel-like A1 notation and the colon operator. The meaning of references and range resolution MUST be provided by the consumer in a pure, deterministic way. Acceptance criteria: `A1:A`, `A:A`, and `A1:B10` parse, compile, and evaluate deterministically, and evaluation requires a consumer-provided range resolver.
+FR-BFL-010 Array values. The Value model MUST support arrays as runtime values so functions can accept arrays and return arrays. Acceptance criteria: arrays are supported as a first-class value kind, function signatures can accept arrays, and functions can return arrays deterministically.
 
 #### Non-Functional Requirements
 
 NFR-BFL-001 Mechanical scope only. The module MUST NOT implement accounting rules, discretionary accounting judgments, or domain-specific semantics. Acceptance criteria: the API only exposes expression mechanics and generic type and constraint handling required by the language.
 
-NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation. Acceptance criteria: the implementation rejects expressions that exceed configured limits on AST size, recursion depth, or evaluation steps and reports a deterministic error without partial results. The library defines strict default numeric caps for expression length (4,096 UTF-8 bytes), AST size (512 nodes), recursion depth (32), and evaluation steps (10,000) and allows callers to override them for known workloads while preserving deterministic errors.
+NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation, including range and array materialization. Acceptance criteria: the implementation rejects expressions or evaluations that exceed configured limits on AST size, recursion depth, evaluation steps, or array elements and reports a deterministic error without partial results. The library defines strict default numeric caps for expression length (4,096 UTF-8 bytes), AST size (512 nodes), recursion depth (32), evaluation steps (10,000), and array elements (10,000) and allows callers to override them for known workloads while preserving deterministic errors.
 
 NFR-BFL-003 Performance. Parsing and evaluation MUST meet agreed performance targets for typical workspace datasets. Acceptance criteria: for expressions up to the default caps, parsing completes in 2 milliseconds or less per expression and evaluation completes in 200 microseconds or less per row on the normative CI reference profile. Benchmarks must include parse-time and evaluation-time microbenchmarks at the default caps and document the reference profile and benchmark metadata. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
 
@@ -58,7 +60,7 @@ Every published benchmark result MUST include benchmark metadata captured at run
 
 ### System Architecture
 
-BFL is a small compiler pipeline that parses UTF-8 source text into an AST, binds and validates identifiers against a provided context, and evaluates the AST to a typed result deterministically. The pipeline includes limit configuration that bounds parse and evaluation work and produces deterministic limit errors. Consumers such as [bus-data](./bus-data) integrate BFL by discovering formula semantics from schema metadata, validating formulas during validate and read operations, and computing a current dataset view during read operations without writing back to CSV.
+BFL is a small compiler pipeline that parses UTF-8 source text into an AST, binds and validates identifiers against a provided context, and evaluates the AST to a typed result deterministically. The pipeline includes limit configuration that bounds parse and evaluation work and produces deterministic limit errors. Range expressions compile to a distinct `RangeExpr` node and evaluate through a consumer-provided `RangeProvider` that returns an array value. Consumers such as [bus-data](./bus-data) integrate BFL by discovering formula semantics from schema metadata, validating formulas during validate and read operations, and computing a current dataset view during read operations without writing back to CSV.
 
 ### Component Design and Interfaces
 
@@ -99,10 +101,11 @@ type Limits struct {
 	MaxASTNodes       int
 	MaxRecursionDepth int
 	MaxEvalSteps      int
+	MaxArrayElements  int
 }
 ```
 
-Default limits are `MaxExprBytes` 4096 (UTF-8 bytes), `MaxASTNodes` 512, `MaxRecursionDepth` 32, and `MaxEvalSteps` 10000.
+Default limits are `MaxExprBytes` 4096 (UTF-8 bytes), `MaxASTNodes` 512, `MaxRecursionDepth` 32, `MaxEvalSteps` 10000, and `MaxArrayElements` 10000.
 
 ```go
 type ParseOptions struct {
@@ -197,13 +200,15 @@ type Error struct {
 func (e *Error) Error() string
 ```
 
-`ErrorCode` values are stable strings such as `BFL_PARSE_UNEXPECTED_TOKEN`, `BFL_BIND_UNKNOWN_IDENTIFIER`, `BFL_TYPE_MISMATCH`, `BFL_EVAL_DIV_BY_ZERO`, and `BFL_LIMIT_AST_NODES`. `Position.Offset` is the UTF-8 byte offset from the start of the original input, and `Line` and `Column` are 1-based. All library functions MUST return `*Error` for language and limit failures and MUST NOT panic on user input.
+`ErrorCode` values are stable strings such as `BFL_PARSE_UNEXPECTED_TOKEN`, `BFL_BIND_UNKNOWN_IDENTIFIER`, `BFL_TYPE_MISMATCH`, `BFL_EVAL_DIV_BY_ZERO`, `BFL_EVAL_RANGES_UNSUPPORTED`, `BFL_LIMIT_AST_NODES`, and `BFL_LIMIT_ARRAY_ELEMENTS`. `Position.Offset` is the UTF-8 byte offset from the start of the original input, and `Line` and `Column` are 1-based. All library functions MUST return `*Error` for language and limit failures and MUST NOT panic on user input.
 
 #### IF-BFL-002 Integration contract with bus-data
 
 [bus-data](./bus-data) uses the library to validate formula fields during [package](../data/data-package-organization), resource, and table validation and to compute formula values during table read projection.
 
 BFL itself does not define [workspace layout and discovery](../layout/index), [CSV parsing](../data/csv-conventions), [schema parsing](../data/table-schema-contract), [`datapackage.json` handling](../data/data-package-organization), or file writes. Those belong to [bus-data](./bus-data) or other BusDK modules.
+
+For range evaluation, [bus-data](./bus-data) may implement `RangeProvider` by mapping `Ref.ColumnIndex` to the schema field order (1-based) and `Ref.RowIndex` to the physical row order (1-based) in the current resource snapshot. Open-ended ranges such as `A1:A` and `A:A` must resolve the last row deterministically based on the current dataset snapshot as read, without probing or mutating external state. This mapping is a bus-data policy and does not change the BFL core language, which remains storage-agnostic and unaware of tables or schemas.
 
 ### Data Design
 
@@ -251,6 +256,8 @@ BFL assumes the consumer provides the expression source string. If the expressio
 BFL assumes the consumer provides a context mapping identifiers to typed values. If identifiers are missing or types are incompatible, the library returns deterministic bind or type errors. Impact if false: consumers may incorrectly report evaluation errors instead of bind or type errors, reducing diagnosability.
 
 BFL assumes the consumer provides the allowed function surface by registering functions. If a function reference is not in the allowed set, the library returns a deterministic bind error. Impact if false: consumers may unintentionally execute unregistered functions or accept non-deterministic behavior.
+
+BFL assumes that if range expressions are evaluated, the runtime context implements `RangeProvider` and resolves references deterministically. Impact if false: evaluation returns a deterministic unsupported-range error and consumers may misinterpret the cause as a generic failure.
 
 BFL depends on no external services and is a pure library. If a consumer requires I/O, workspace discovery, or schema parsing, those responsibilities remain outside BFL. Impact if false: the library would risk violating determinism and security guarantees.
 
@@ -306,9 +313,17 @@ Custom profiles are supported by directly populating the `Dialect` fields. Consu
 
 UTF-8 input is required. Whitespace is insignificant except inside string literals. The tokenizer recognizes identifiers, keywords, literals, operators, commas, and parentheses. Keywords and literal spellings are matched according to the active dialect’s case-sensitivity rules. String literals use double quotes with JSON-style escapes.
 
+The tokenizer recognizes two additional reference token classes for range syntax. A cell reference token consists of one to three ASCII letters `A` through `Z` (case-insensitive in spreadsheet-like dialects), followed by a 1-based positive integer row number with no separators, such as `A1`, `AA12`, or `ZZZ999`. A column reference token consists of one to three ASCII letters `A` through `Z` only, such as `A`, `BC`, or `ZZZ`. These tokens are ASCII-only and do not permit `$` prefixes, separators, or locale-specific variants.
+
+#### Reference and range grammar (normative)
+
+Range expressions are parsed as a distinct primary expression that is only formed from reference tokens. A range expression is defined as `ref_start ":" ref_end` where each side is either a cell reference token or a column reference token. Open-ended ranges are explicitly supported when the end side is a column reference token, such as `A1:A`, which means “from the start cell down to the last row in that column as defined by the consumer.” A full-column range such as `A:A` is also supported and is interpreted by the consumer as the entire column range. There are no implicit range heuristics, and strings or leading `=` are never interpreted as ranges.
+
+Canonical formatting for references and ranges is deterministic. Column letters are uppercased. The colon is printed with no surrounding whitespace. A cell reference prints as `<COL><ROW>` with a base-10 row number with no leading zeros. A column reference prints as `<COL>`. A range prints as `<REF_START>:<REF_END>` with each side formatted as above.
+
 #### Value types
 
-BFL supports null, boolean, string, number (decimal), integer (a restricted number), date, and datetime. Callers provide typed context values. When callers originate from CSV, casting rules are owned by [bus-data](./bus-data) and the Table Schema. BFL assumes it receives typed values or explicit literals defined below.
+BFL supports null, boolean, string, number (decimal), integer (a restricted number), date, datetime, and array values. Callers provide typed context values. When callers originate from CSV, casting rules are owned by [bus-data](./bus-data) and the Table Schema. BFL assumes it receives typed values or explicit literals defined below. There are no array literals in the core language; arrays are produced by range expressions or by registered functions.
 
 Numeric literals are base-10 with an optional fractional part and an optional exponent. The decimal separator is the dialect’s configured separator, which defaults to `.`. Thousands separators are rejected unless the caller explicitly enables them by setting `allow_thousands_separator` and a specific `thousands_separator` value in the dialect. The exponent marker is `e` or `E` followed by an optional `+` or `-` and at least one digit. A numeric literal without a decimal separator or exponent is an integer literal. If its magnitude fits in signed 64-bit range, it is typed as integer; otherwise it is typed as number. Unary `+` and `-` are operators, not part of the literal token. Leading-dot decimals such as `.5` are accepted only when enabled by the active dialect; otherwise they are rejected deterministically.
 
@@ -334,6 +349,10 @@ Null handling is explicit. Null is a real value that does not auto-coerce. Arith
 
 Evaluation order is deterministic. `and` and `or` evaluate the left operand first and short-circuit deterministically: for `and`, if the left operand is false, the result is false without evaluating the right operand; for `or`, if the left operand is true, the result is true without evaluating the right operand. `not` evaluates its single operand. All other binary operators evaluate the left operand and then the right operand.
 
+#### Reference and range validation (normative)
+
+Parsing validates that cell references and column references conform to the token rules. Column references are limited to one to three ASCII letters, and cell references must include a row number with no separators and a row index greater than zero. Row numbers are limited to at most 10 ASCII digits and MUST fit in signed 32-bit range. References with invalid shapes or zero or out-of-range row numbers are parse errors with stable byte offsets. Compilation does not infer dataset sizes or resolve open-ended ranges; it only validates syntax, produces a `RangeExpr` node, and assigns it a `KindArray` type. Optional symbol typing for identifiers remains consumer-provided and is not required for core conformance.
+
 #### Type system and evaluation context (normative Go representation)
 
 The type system and evaluation context are defined as a stable Go representation so binding and typechecking are deterministic and independent of runtime values.
@@ -349,12 +368,14 @@ const (
 	KindNumber
 	KindDate
 	KindDateTime
+	KindArray
 	KindAny
 )
 
 type Type struct {
 	Kind     Kind
 	Nullable bool
+	Elem     *Type
 }
 
 type Value struct {
@@ -365,16 +386,19 @@ type Value struct {
 	Number   Decimal
 	Date     Date
 	DateTime DateTime
+	Array    Array
 }
 ```
 
-Only the field matching `Kind` is meaningful. Null is represented as `Kind == KindNull`, not by `Nullable`. `KindAny` is allowed for function signatures and symbol declarations but is not required as a runtime value.
+Only the field matching `Kind` is meaningful. Null is represented as `Kind == KindNull`, not by `Nullable`. `KindAny` is allowed for function signatures and symbol declarations but is not required as a runtime value. `KindArray` is a first-class runtime value kind; when `Type.Kind` is `KindArray`, `Type.Elem` may be set to express an element type, and when it is absent the array is treated as array(any).
 
 `Decimal` is a BusDK-owned decimal type with deterministic string formatting and deterministic arithmetic. Decimal values are normalized and compared deterministically. The library MUST NOT use IEEE float semantics for `KindNumber`.
 
 `Date` is a BusDK-owned calendar date representation with validation rules and ISO formatting.
 
 `DateTime` is a BusDK-owned instant representation in UTC with deterministic comparison by timeline order. Any offsets used during optional ISO parsing are normalized into this UTC instant representation and are not preserved as presentation state.
+
+Array values are deterministic, minimal 2D matrices. `Array.Rows` and `Array.Cols` are non-negative integers, and `Array.Items` is a flat slice in row-major order. `Array.Items` length MUST equal `Rows * Cols`, including when one or both dimensions are zero. Array elements may be any `Value` kind; higher-level constraints are owned by consumers and registered function sets.
 
 ```go
 type Decimal struct{}
@@ -386,6 +410,12 @@ type Date struct {
 
 type DateTime struct {
 	UnixNano int64
+}
+
+type Array struct {
+	Rows  int
+	Cols  int
+	Items []Value
 }
 ```
 
@@ -415,7 +445,29 @@ type RuntimeContext interface {
 type MapContext map[string]Value
 ```
 
-Function registration is explicit and deterministic. The canonical `Registry` implementation preserves deterministic registration order so overload selection is stable across runs. Functions are pure and MUST NOT perform I/O, read environment variables, or use time-dependent behavior. They may only use their inputs and the provided call context.
+References and ranges are represented explicitly in the core library to avoid locale parsing at evaluation time. Column indices and row indices are 1-based. The RowIndex is optional for column references.
+
+```go
+type Ref struct {
+	ColumnIndex int
+	RowIndex    int
+	HasRow      bool
+}
+```
+
+Column letters map to indices deterministically: `A` maps to 1, `B` to 2, `Z` to 26, `AA` to 27, and so on. Parsing produces `Ref` values directly from reference tokens, and the evaluator never re-parses reference text. Range resolution is consumer-provided via an optional interface implemented by the runtime context.
+
+```go
+type RangeProvider interface {
+	Range(start Ref, end Ref) (Array, bool, error)
+}
+```
+
+When evaluation encounters a range expression, the runtime context MUST implement `RangeProvider`. If it does not, evaluation returns a deterministic error with a stable error code indicating that ranges are unsupported by the current context. If the interface is present, evaluation calls `Range` and returns its array value. The consumer defines how references map to its data model and how open-ended ranges determine the last row; resolution MUST be pure and deterministic.
+
+Range providers and function implementations MUST respect `Limits.MaxArrayElements` when constructing arrays. If array materialization would exceed the limit, evaluation returns a deterministic limit error. Any evaluation work that iterates array elements counts toward `Limits.MaxEvalSteps` in a deterministic way defined by the function implementation; functions MUST NOT perform unbounded iteration.
+
+Function registration is explicit and deterministic. The canonical `Registry` implementation preserves deterministic registration order so overload selection is stable across runs. Functions are pure and MUST NOT perform I/O, read environment variables, or use time-dependent behavior. They may only use their inputs and the provided call context. Function signatures may use `KindArray` for arguments and return values.
 
 ```go
 type FunctionRegistry interface {
@@ -446,9 +498,13 @@ type CallContext interface {
 
 Overload selection is deterministic. Overloads are tried in the order they are registered and the first matching signature is used; if multiple match equally, the first wins; if none match, the result is a type error with a stable error code. Matching is defined as follows. A runtime null value matches a parameter type only if that parameter type is nullable or `KindAny`. An integer argument matches a number parameter type via integer-to-number promotion, but a number argument does not match an integer parameter type. `KindAny` matches any runtime value. All other kinds require exact kind matches with no implicit conversions.
 
+When a parameter kind is `KindArray`, it matches only `KindArray` values or null values when the parameter is nullable. If `Type.Elem` is provided, array elements must match the element type deterministically during evaluation; if `Type.Elem` is absent, the array is treated as array(any) and element matching is not enforced by the core library.
+
 #### References
 
 BFL can reference fields from the current row by identifier. Identifiers use ASCII letters and underscore for the first character, followed by ASCII letters, digits, or underscore. Identifier matching is case-sensitive or case-insensitive according to the active dialect. For non-identifier column names, the consumer MUST provide an escape hatch, with `col("column name")` as the recommended form implemented via function registration. Identifiers and functions are supplied by consumers outside this core library.
+
+In addition to identifiers, BFL supports spreadsheet-style references and ranges as described in the lexical and grammar sections. References are syntactic tokens that compile to `Ref` values, and ranges are parsed into a distinct AST node `RangeExpr` that only accepts reference tokens on each side. Ranges do not imply any data model or dataset size; they are resolved only through the consumer-provided `RangeProvider` at evaluation time.
 
 #### Operators
 
@@ -456,9 +512,11 @@ The language supports arithmetic operators `+ - * /`, comparison operators, and 
 
 ##### Operator precedence and associativity (normative)
 
-Precedence from highest to lowest is: parenthesized and primary expressions (literals, identifiers, function calls); unary operators (`not`, unary `+`, unary `-`); multiplicative (`*`, `/`); additive (`+`, `-`); comparison (`=`, `==`, `<>`, `!=`, `<`, `<=`, `>`, `>=` as accepted by the dialect); boolean `and`; boolean `or`. Unary operators bind to the immediate right operand. `*`, `/`, `+`, `-`, `and`, and `or` are left-associative. Comparisons are non-associative; chained comparisons such as `a < b < c` are rejected with a deterministic parse error. Parentheses override precedence as usual.
+Precedence from highest to lowest is: parenthesized and primary expressions (literals, identifiers, reference tokens, range expressions, and function calls); unary operators (`not`, unary `+`, unary `-`); multiplicative (`*`, `/`); additive (`+`, `-`); comparison (`=`, `==`, `<>`, `!=`, `<`, `<=`, `>`, `>=` as accepted by the dialect); boolean `and`; boolean `or`. Unary operators bind to the immediate right operand. `*`, `/`, `+`, `-`, `and`, and `or` are left-associative. Comparisons are non-associative; chained comparisons such as `a < b < c` are rejected with a deterministic parse error. Parentheses override precedence as usual.
 
 Canonical printing is optional, but if implemented it MUST use the dialect’s canonical token set and lowercase keyword spellings. In the default dialect, equality prints as `=` and not-equal prints as `<>`. In `dialect.programmer`, equality prints as `==` and not-equal prints as `!=`.
+
+Range expressions are a distinct AST node (`RangeExpr`) that can only be formed from reference tokens on each side of the colon. The colon is not a general operator and cannot be used for arbitrary expression slicing. Arithmetic and comparisons do not accept array or range operands, and the core language does not define any operators over arrays. Arrays may only flow into registered functions or be returned by registered functions unless a later version explicitly adds array operators.
 
 #### Functions
 
@@ -466,13 +524,13 @@ BFL does not implement built-in functions. Callers register function sets with n
 
 #### Errors
 
-Errors are deterministic and use the exported `Error` type with stable kind, code, and source location. Parse errors cover invalid syntax. Bind errors cover unknown identifiers or missing references. Type errors cover invalid operand types for an operator or function. Evaluation errors include division by zero and invalid operations. Limit errors cover configured caps such as expression length, AST nodes, recursion depth, and evaluation steps. Errors MUST include a stable byte offset and may include line and column information, along with a concise message that is not intended as a long-term parsing target.
+Errors are deterministic and use the exported `Error` type with stable kind, code, and source location. Parse errors cover invalid syntax and invalid reference tokens. Bind errors cover unknown identifiers or missing references. Type errors cover invalid operand types for an operator or function. Evaluation errors include division by zero, invalid operations, and unsupported range evaluation when the runtime context does not implement `RangeProvider`. Limit errors cover configured caps such as expression length, AST nodes, recursion depth, evaluation steps, and array elements. Errors MUST include a stable byte offset and may include line and column information, along with a concise message that is not intended as a long-term parsing target.
 
 ### Security Considerations
 
 BFL evaluation is side-effect free. The implementation MUST NOT permit filesystem access, network access, subprocess execution, environment reads, or unbounded computation.
 
-Implementations MUST protect against resource exhaustion by bounding AST size, recursion depth, and evaluation complexity.
+Implementations MUST protect against resource exhaustion by bounding AST size, recursion depth, evaluation complexity, and array materialization size.
 
 ### Observability and Logging
 
@@ -484,13 +542,15 @@ The library must return typed errors for invalid inputs and must not panic for u
 
 ### Testing Strategy
 
-Unit tests cover deterministic parsing and evaluation, stable parse error locations, unknown references, type errors, division by zero, rounding behavior, rejection of unregistered functions, correct execution of registered functions, and row-local evaluation across multiple rows or contexts with different formulas.
+Unit tests cover deterministic parsing and evaluation, stable parse error locations, unknown references, type errors, division by zero, rounding behavior, rejection of unregistered functions, correct execution of registered functions, range parsing and canonical formatting, array materialization limits, and row-local evaluation across multiple rows or contexts with different formulas.
 
 Integration tests in [bus-data](./bus-data) cover computing projected values during table reads without writing, deterministic diagnostics when formulas fail, and preservation of raw formula strings in storage.
 
-A machine-readable conformance test suite is required and must ship with the library. The suite lives under `./tests` in the `bus-bfl` repository and is the authoritative compatibility lock for future changes. It MUST cover operator precedence grouping and associativity, canonical printing, numeric literal parsing including exponent handling and leading-dot acceptance where allowed, rejection cases such as chained comparisons and thousands separators, datetimes without offsets when ISO parsing is enabled, and date/datetime comparison semantics using typed context values. The required file format is JSON Lines with UTF-8 encoding, one test vector per line, so it is easy to stream, diff, and extend. File names use `./tests/dialect.<profile>.jsonl` for each named dialect profile, plus an optional `./tests/README.md` describing the schema.
+A machine-readable conformance test suite is required and must ship with the library. The suite lives under `./tests` in the `bus-bfl` repository and is the authoritative compatibility lock for future changes. It MUST cover operator precedence grouping and associativity, canonical printing, numeric literal parsing including exponent handling and leading-dot acceptance where allowed, rejection cases such as chained comparisons and thousands separators, datetimes without offsets when ISO parsing is enabled, date/datetime comparison semantics using typed context values, and range parsing and formatting for `A1:A`, `A:A`, and `A1:B2` with deterministic offsets. The required file format is JSON Lines with UTF-8 encoding, one test vector per line, so it is easy to stream, diff, and extend. File names use `./tests/dialect.<profile>.jsonl` for each named dialect profile, plus an optional `./tests/README.md` describing the schema.
 
 Each test vector object includes a stable `id` string (for example `BFL-CONF-000001`), the `dialect` profile name, the `expr` source string, optional `limits` overrides only when needed, an optional `symbols` map from identifier to type, an optional `context` map from identifier to typed value, an optional `format_expect` string for canonical printing, and either an `eval_expect` typed value or an `error_expect` object. Values are type-tagged to avoid JSON number ambiguity, with each value encoded as an object containing `type` and `value`, where decimal numbers and integers are encoded as strings, dates use `YYYY-MM-DD`, and datetimes use RFC3339 strings with an offset or `Z` that normalize to the internal UTC instant. The `error_expect` object matches the library error contract and includes `kind`, `code`, and at least `offset` for position; line and column may be included but offset is mandatory. These test vectors must be run in CI for source code library releases and are not required for `bus-bfl` CLI binary releases.
+
+The suite MUST include evaluation vectors that use a minimal test harness context implementing `RangeProvider` and returning known arrays, plus vectors where a user-registered function accepts an array and returns a scalar and where a user-registered function returns an array that is passed into another function. These vectors must demonstrate arrays as first-class runtime values without relying on any real dataset.
 
 Benchmark tests must run against the normative CI reference profile and emit the required benchmark metadata via the helper in stable text and JSON forms. CI MUST store the benchmark output and metadata as artifacts for each release tag so timing targets are auditable and comparable across releases.
 
@@ -519,6 +579,14 @@ Formula source is the stored string representation of an expression.
 Computed value is the result of evaluating a formula source against a context.
 
 Projection is a read-time view of a dataset that may include computed values without writing.
+
+Cell reference is an Excel-like A1 token that identifies a column and row by letters and a 1-based row number.
+
+Column reference is an Excel-like token that identifies a column by letters without a row number.
+
+Range is a `ref_start:ref_end` expression that resolves to an array via a consumer-provided range resolver.
+
+Array value is a 2D, row-major matrix of `Value` elements carried as a first-class runtime kind.
 
 ### See also
 

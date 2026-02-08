@@ -46,6 +46,8 @@ FR-DAT-019 Formula projection during read. The module MUST compute formula value
 
 FR-DAT-020 Opt-in formula source output. The module MUST provide an explicit, deterministic option to include formula source alongside computed values for diagnostics and tooling without colliding with user columns. Acceptance criteria: default output contains computed values only, and the opt-in mode includes the formula source using a deterministic, non-colliding representation.
 
+FR-DAT-021 Range resolution for BFL. When evaluating BFL expressions that contain range syntax, the module MUST provide a deterministic range resolver to the BFL runtime context. Acceptance criteria: range expressions resolve to arrays based on a stable mapping from BFL column and row references to the current resource snapshot, and open-ended ranges resolve a deterministic last row without inspecting external state.
+
 NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and MUST NOT implement domain-specific accounting logic. Acceptance criteria: domain invariants are enforced by domain modules, not by `bus-data`.
 
 NFR-DAT-002 No Git or network behavior. The module MUST NOT perform Git operations or network access. Acceptance criteria: the library and CLI only read and write local workspace files.
@@ -61,7 +63,7 @@ NFR-DAT-008 Maintainability. The module MUST keep the library as the authoritati
 
 Bus Data implements the workspace store interface and dataset I/O mechanics used by other modules, satisfying FR-DAT-001, FR-DAT-002, FR-DAT-009, FR-DAT-012, and FR-DAT-013. The library is the authoritative integration surface for reading, writing, validating, and patching CSV, Table Schema, and Data Package descriptors, satisfying FR-DAT-002, FR-DAT-011, and FR-DAT-016. The CLI delegates directly to the library for inspection, validation, and explicit, mechanical maintenance of schemas, data packages, resources, and rows, satisfying FR-DAT-015 and NFR-DAT-008.
 
-Bus Data integrates [bus-bfl](./bus-bfl) to validate and evaluate formulas declared in Table Schema metadata, satisfying FR-DAT-017, FR-DAT-018, and FR-DAT-019. Formula evaluation is deterministic, row-local, and bounded by the bus-bfl defaults unless a schema-provided rounding policy is present, and read-time projection never writes back to CSV.
+Bus Data integrates [bus-bfl](./bus-bfl) to validate and evaluate formulas declared in Table Schema metadata, satisfying FR-DAT-017, FR-DAT-018, FR-DAT-019, and FR-DAT-021. Formula evaluation is deterministic, row-local, and bounded by the bus-bfl defaults unless a schema-provided rounding policy is present, and read-time projection never writes back to CSV. When formulas include range expressions, bus-data provides a deterministic range resolver that maps column and row references to the current resource snapshot.
 
 ### Key Decisions
 
@@ -84,7 +86,7 @@ Command `bus-data schema show --table <table>` writes the schema file content ex
 
 Command `bus-data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows, filters, and columns without changing validation behavior.
 
-When a table contains formula-enabled fields, `bus-data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns.
+When a table contains formula-enabled fields, `bus-data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns. For formulas that include ranges, bus-data resolves `Ref.ColumnIndex` to the schema field order (1-based) and `Ref.RowIndex` to the physical row order (1-based) in the current resource snapshot, and it resolves open-ended ranges using the last row in that snapshot without probing external state.
 
 Command `bus-data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
 
@@ -220,7 +222,7 @@ Bus Data owns mechanical concerns only: reading and writing CSV, reading and wri
 
 Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and an optional `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.
 
-Bus Data depends on the [bus-bfl](./bus-bfl) library for parsing, validation, and evaluation of BFL expressions. If the library surface or error contracts change, Bus Data must update its integration while preserving deterministic diagnostics and stable validation behavior.
+Bus Data depends on the [bus-bfl](./bus-bfl) library for parsing, validation, and evaluation of BFL expressions. If the library surface or error contracts change, Bus Data must update its integration while preserving deterministic diagnostics and stable validation behavior. For range evaluation, Bus Data assumes that the current resource snapshot provides a stable ordering of rows and fields so range resolution remains deterministic for a given read operation.
 
 ### Security Considerations
 
@@ -238,7 +240,7 @@ Invalid usage exits with status code 2 and a concise usage error. Schema violati
 
 Unit tests cover Table Schema and Data Package parsing, safe patching with preservation of unknown properties, deterministic JSON serialization, deterministic CSV write behavior, schema inference determinism, and foreign key validation logic. Command-level end-to-end tests validate outputs, exit codes, and on-disk changes using fixture workspaces, including at least one test that verifies cross-resource foreign key integrity and one test that proves resource deletion is refused when referenced.
 
-Integration tests cover formula metadata round-tripping in schemas and data packages, formula validation failures with deterministic error context, and read-time projection of computed values without modifying stored CSV. Tests include at least one case for inline formulas, one case for constant formulas, and one case that verifies the configured rounding policy is applied or rejected deterministically.
+Integration tests cover formula metadata round-tripping in schemas and data packages, formula validation failures with deterministic error context, and read-time projection of computed values without modifying stored CSV. Tests include at least one case for inline formulas, one case for constant formulas, one case that verifies the configured rounding policy is applied or rejected deterministically, and at least one case that evaluates a range expression using the bus-data range resolver against a fixed dataset snapshot.
 
 ### Deployment and Operations
 
