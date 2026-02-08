@@ -38,13 +38,21 @@ NFR-BFL-001 Mechanical scope only. The module MUST NOT implement accounting rule
 
 NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation. Acceptance criteria: the implementation rejects expressions that exceed configured limits on AST size, recursion depth, or evaluation steps and reports a deterministic error without partial results. The library defines strict default numeric caps for expression length (4,096 UTF-8 bytes), AST size (512 nodes), recursion depth (32), and evaluation steps (10,000) and allows callers to override them for known workloads while preserving deterministic errors.
 
-NFR-BFL-003 Performance. Parsing and evaluation MUST meet agreed performance targets for typical workspace datasets. Acceptance criteria: for expressions up to the default caps, parsing completes in 2 milliseconds or less per expression and evaluation completes in 200 microseconds or less per row on the reference test machine. Benchmarks must include parse-time and evaluation-time microbenchmarks at the default caps and document the reference machine configuration. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
+NFR-BFL-003 Performance. Parsing and evaluation MUST meet agreed performance targets for typical workspace datasets. Acceptance criteria: for expressions up to the default caps, parsing completes in 2 milliseconds or less per expression and evaluation completes in 200 microseconds or less per row on the normative CI reference profile. Benchmarks must include parse-time and evaluation-time microbenchmarks at the default caps and document the reference profile and benchmark metadata. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
 
-NFR-BFL-004 Scalability. Evaluation MUST remain deterministic and bounded as datasets grow. Acceptance criteria: default scalability targets for [bus-data](./bus-data) projections are up to 100,000 rows per table with average per-row evaluation overhead at or below 150 microseconds and full-table projection at or below 15 seconds on the reference test machine. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
+NFR-BFL-004 Scalability. Evaluation MUST remain deterministic and bounded as datasets grow. Acceptance criteria: default scalability targets for [bus-data](./bus-data) projections are up to 100,000 rows per table with average per-row evaluation overhead at or below 150 microseconds and full-table projection at or below 15 seconds on the normative CI reference profile. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
 
 NFR-BFL-005 Reliability. The library MUST return typed errors for invalid inputs and MUST NOT panic on user-provided expressions. Acceptance criteria: invalid inputs return deterministic parse, bind, type, or evaluation errors and do not crash the process.
 
 NFR-BFL-006 Maintainability. The public API MUST remain stable within a BusDK minor version and document breaking changes. Acceptance criteria: the module changelog and release notes explicitly list any public API changes, and any breaking change includes a short migration note that explains the impact and the expected adjustment.
+
+#### Benchmark reference profile and metadata (normative)
+
+Performance and scalability targets are measured against a pinned, normative CI reference profile with a stable identifier. The primary reference profile is `BFL-REF-UBU-2404`, defined as the standard GitHub-hosted runner label `ubuntu-24.04` selected via `runs-on` as described in [Choosing the runner for a job](https://docs.github.com/actions/using-jobs/choosing-the-runner-for-a-job), with 4 vCPU, 16 GB RAM, and 14 GB SSD on x64 for public repositories, as documented in the [GitHub-hosted runners reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners). If GitHub changes the underlying runner resources for this label, if the repository’s hosting tier changes and the runner resources differ, or if BusDK changes the CI runner label used for benchmarks, the project MUST re-baseline the performance and scalability measurements and update this reference profile section accordingly. The normative acceptance criteria apply only to this CI reference profile; local developer runs are informative only and MUST NOT be used to accept or reject the absolute timing targets.
+
+If the project chooses to add a second benchmark profile, it MUST be an explicitly named GitHub-hosted larger runner CI profile with documented label and hardware resources, and it remains optional. No developer laptop profiles are normative for acceptance criteria.
+
+Every published benchmark result MUST include benchmark metadata captured at runtime: operating system, kernel, CPU model, number of CPU cores visible to the process, total RAM visible to the process, Go version, `GOARCH`, `GOOS`, and whether the process is running inside a container. The `bus-bfl` repository MUST include a helper that prints this metadata in a stable text form and a stable JSON form. CI MUST store both the metadata and benchmark output as artifacts for each release tag.
 
 ### System Architecture
 
@@ -109,7 +117,8 @@ type CompileOptions struct {
 }
 
 type EvalOptions struct {
-	Limits Limits
+	Limits   Limits
+	Rounding *RoundingPolicy
 }
 
 type FormatOptions struct {
@@ -128,6 +137,22 @@ func Compile(expr *Expr, opt CompileOptions) (*Program, error)
 func ParseCompile(src string, opt CompileOptions) (*Program, error)
 func Eval(p *Program, ctx RuntimeContext, opt EvalOptions) (Value, error)
 func Format(expr *Expr, opt FormatOptions) (string, error)
+```
+
+Rounding is configurable for numeric evaluation and division results. The default is a deterministic decimal context of scale 18 with half-up rounding (ties away from zero). If provided, `EvalOptions.Rounding` overrides both the default division context and the final numeric result rounding, and its `Scale` MUST be non-negative or evaluation returns a deterministic type error.
+
+```go
+type RoundingMode int
+
+const (
+	RoundingHalfUp RoundingMode = iota
+	RoundingHalfEven
+)
+
+type RoundingPolicy struct {
+	Scale int
+	Mode  RoundingMode
+}
 ```
 
 `ParseCompile` is a convenience helper that calls `Parse` then `Compile` and returns the first deterministic error.
@@ -201,7 +226,9 @@ Recommended metadata shape on a field descriptor:
 - `field.busdk.formula.result`: an object describing the computed logical type (for example `{ "type": "number" }`)
 - `field.busdk.formula.prefix`: optional string, used only if the consumer wants spreadsheet-style `=` prefix behavior
 - `field.busdk.formula.on_error`: `"fail"` or `"null"`
-- `field.busdk.formula.rounding`: optional rounding configuration for numeric results; when unset, the default is half-up (ties away from zero)
+- `field.busdk.formula.rounding`: optional rounding policy for numeric results (mode and scale); when unset, evaluator defaults apply
+
+`field.busdk.formula.rounding` is an object with two required properties when present: `scale` (a non-negative integer) and `mode` (a string value of `half_up` or `half_even`). `scale` is the number of decimal places for rounding, and `mode` defines the deterministic tie-breaking behavior used by the evaluator.
 
 Semantics are as follows. If mode is inline, the stored cell value is treated as the expression source. If mode is constant, the schema-provided expression is used for all rows. The computed result MUST be validated against the declared result type and any configured constraints at the BusDK layer, since the physical field type may be string or any.
 
@@ -212,6 +239,8 @@ BFL only defines parsing and evaluation. Projection rules belong to [bus-data](.
 When reading a table with formula fields enabled, [bus-data](./bus-data) computes formula values and returns a projected current dataset view deterministically without writing back to CSV. The default projected dataset view uses computed values as the field value for formula-enabled fields, typed as the declared `field.busdk.formula.result` type, and it does not replace or rewrite the stored formula source in CSV. The formula source remains the physical stored value.
 
 [bus-data](./bus-data) must provide an explicit, deterministic option to include formula source alongside computed values for diagnostics and tooling, but the default projection output mode is computed values only. Any extra output must be opt-in and must not collide with user columns, such as a reserved-prefix companion field or structured metadata in non-CSV output modes. This is a [bus-data](./bus-data) policy choice, not a BFL core responsibility.
+
+When [bus-data](./bus-data) evaluates formulas, it MUST map `field.busdk.formula.rounding` into `EvalOptions.Rounding` deterministically. If the schema has no rounding policy, bus-data passes `Rounding` as nil so evaluator defaults apply. If the schema rounding policy is invalid, bus-data MUST fail validation deterministically before evaluation.
 
 ### Assumptions and Dependencies
 
@@ -224,16 +253,6 @@ BFL assumes the consumer provides the allowed function surface by registering fu
 BFL depends on no external services and is a pure library. If a consumer requires I/O, workspace discovery, or schema parsing, those responsibilities remain outside BFL. Impact if false: the library would risk violating determinism and security guarantees.
 
 BFL is in an active pre-1.0 phase and follows semver. Backwards compatibility is a goal, but stability guarantees are not required yet and breaking changes may occur as implementations stabilize. Impact if false: module maintainers may over-assume stability and fail to review changes that affect formula behavior or public APIs.
-
-### Open Questions
-
-OQ-BFL-001 What is the reference test machine configuration for the performance and scalability acceptance criteria, and where is it recorded so benchmarks can be compared deterministically across releases? The performance and scalability requirements rely on absolute timing targets, but the document does not yet define the reference machine that makes those targets meaningful. The reference should be a developer’s local machine profile and a common cloud CI baseline such as the GitHub Actions runner. Options include: A) define a primary reference profile as “developer machine” and a secondary “GitHub Actions runner” profile, both recorded in the `bus-bfl` repository `tests/README.md` with CPU, memory, and OS details, or B) define the same dual-profile reference in the BusDK SDD index and require BFL benchmarks to record which profile they used alongside their results.
-
-OQ-BFL-002 What are the exact numeric and type coercion rules for operators and function overload selection, including integer to number promotion, nullability handling, and any implicit conversions that are permitted? The language definition specifies types and literals but does not define coercion rules, which means different implementations could diverge on cases like integer plus decimal, comparisons between integers and decimals, or null propagation. The goal is deterministic evaluation across modules, so these rules must be explicit. Options include: A) strict typing with no implicit conversions and all mixed-kind operator usage requiring explicit function calls, or B) a narrow, documented promotion set limited to integer to number for arithmetic and comparisons while keeping string, boolean, date, and datetime conversions disallowed unless a registered function provides them.
-
-OQ-BFL-003 What is the authoritative definition of the BusDK-owned `Decimal`, `Date`, and `DateTime` types for BFL, including rounding rules, overflow behavior, and comparison semantics beyond the brief summaries in this document? The SDD currently references BusDK-owned types but does not link to a definitive contract, leaving room for inconsistent behavior across modules. Because BFL is a shared library and must be deterministic, these types need a single authoritative specification. Options include: A) define a dedicated BusDK type specification document and reference it here as normative for BFL, or B) define the minimal normative contract in this SDD and delegate any extended behaviors to the shared BusDK type package documentation.
-
-OQ-BFL-004 Where is formula rounding configuration specified in the Go API surface, and how does schema-level `field.busdk.formula.rounding` map to BFL evaluation settings? The schema metadata describes rounding configuration, but the Go API surface shown does not include a rounding setting or mapping contract. Because rounding affects computed values, the mapping must be explicit and deterministic. Options include: A) add a rounding configuration field to `EvalOptions` that is populated by bus-data from the schema metadata, or B) require rounding behavior to be implemented as registered functions so the schema metadata is validated and translated into function calls before evaluation.
 
 ### Key Decisions
 
@@ -258,6 +277,14 @@ KD-BFL-009 BusDK-owned numeric and datetime types. The authoritative type system
 KD-BFL-010 bus-data projection default. The default [bus-data](./bus-data) projection output mode is computed values only, with opt-in inclusion of formula source for diagnostics that must not collide with user columns.
 
 KD-BFL-011 Conformance test suite as compatibility lock. The conformance test suite lives under `./tests` as JSONL test vectors with stable IDs and stable expected errors and must run in CI for source code library releases, not for `bus-bfl` CLI binary releases.
+
+KD-BFL-012 Normative CI benchmark profile. Performance and scalability acceptance criteria are measured against `BFL-REF-UBU-2404` (GitHub-hosted `ubuntu-24.04` with 4 vCPU, 16 GB RAM, and 14 GB SSD), and changes to runner resources or labels require re-baselining and SDD updates.
+
+KD-BFL-013 Explicit coercion and evaluation order. Core semantics include only integer-to-number promotion for numeric operators, numeric comparisons, and numeric function parameters, with explicit null handling and deterministic left-to-right evaluation with short-circuiting for `and` and `or`.
+
+KD-BFL-014 BusDK-owned type contracts. `Decimal`, `Date`, and `DateTime` semantics are defined in this SDD and enforced by dedicated conformance tests in `bus-bfl`.
+
+KD-BFL-015 Rounding policy in EvalOptions. Numeric rounding is configured through `EvalOptions.Rounding` with deterministic defaults, and bus-data maps schema rounding metadata into the evaluator configuration.
 
 ### Language Definition
 
@@ -292,6 +319,18 @@ Date and datetime values are typed values supplied in the evaluation context. BF
 Optional ISO-only parsing may be enabled by dialect configuration or by a companion utility package. When enabled, the only accepted date literal text format is `YYYY-MM-DD`. The only accepted datetime literal text format is an RFC3339 timestamp with an explicit UTC `Z` or a numeric offset like `+02:00`. The default policy is offset-required, which rejects datetimes without an explicit offset. Locale and timezone are never inferred from the machine; any locale-like behavior must be configured explicitly by the caller.
 
 Datetime values are interpreted as absolute instants. Comparison and ordering are done on the instant timeline, and any provided offset is normalized to UTC internally for comparison. If the caller explicitly enables `datetime_assume_timezone` and provides a timezone identifier, a datetime string without an offset may be interpreted in that timezone as a deterministic policy choice; otherwise datetimes without offsets are rejected.
+
+#### Typing, coercion, and evaluation order (normative)
+
+BFL has a narrow, explicit coercion model. The only implicit conversions are integer-to-number promotion inside numeric operators, integer-to-number promotion for numeric comparisons, and integer-to-number promotion for numeric function parameters when the expected type is number. There are no other implicit conversions. Booleans do not coerce from numbers or strings, strings do not coerce to numbers, and date or datetime conversions require explicit registered functions or pre-conversion by the consumer.
+
+Arithmetic operator typing is defined as follows. The `+`, `-`, and `*` operators accept integer and number operands only. If both operands are integers and the mathematical result fits in signed 64-bit range, the result is an integer; otherwise the result is a number. If either operand is a number, both operands are treated as numbers and the result is a number. The `/` operator accepts integer and number operands and always produces a number. Division by zero is a deterministic evaluation error.
+
+Comparison operator typing is defined as follows. Equality and not-equal are allowed between any two values, but evaluate to true only when both operands are the same kind and the same value, except that integers and numbers compare by numeric value after integer-to-number promotion. Ordering comparisons `<`, `<=`, `>`, and `>=` are defined only for numeric values (integer or number) and for date and datetime values. Ordering comparisons across unrelated kinds are deterministic type errors.
+
+Null handling is explicit. Null is a real value that does not auto-coerce. Arithmetic with null is a type error. Ordering comparisons with null are a type error. Equality against null is allowed and is true only when both operands are null. If spreadsheet-style empty value behavior is desired in the future, it must be introduced only as a fully specified dialect policy or as library-provided helper functions.
+
+Evaluation order is deterministic. `and` and `or` evaluate the left operand first and short-circuit deterministically: for `and`, if the left operand is false, the result is false without evaluating the right operand; for `or`, if the left operand is true, the result is true without evaluating the right operand. `not` evaluates its single operand. All other binary operators evaluate the left operand and then the right operand.
 
 #### Type system and evaluation context (normative Go representation)
 
@@ -348,6 +387,16 @@ type DateTime struct {
 }
 ```
 
+#### BusDK-owned type contracts (normative)
+
+`Decimal` is the authoritative numeric type for BFL. Decimal parsing from numeric literals is exact and preserves the literal’s base-10 value without introducing binary floating point semantics. Canonical decimal strings never use exponent notation, remove trailing zeros after the decimal point, omit a trailing decimal point, and normalize negative zero to `0`. Decimal comparison is by numeric value after normalization. Arithmetic is deterministic and uses a decimal context with a default scale of 18 and default rounding mode half-up (ties away from zero). Division produces a finite decimal by applying the active decimal context; non-terminating divisions are rounded deterministically. If `EvalOptions.Rounding` is provided, its scale and mode override the default context for division and for the final numeric result.
+
+`Date` uses the proleptic Gregorian calendar and validates month and day ranges. `Date` compares lexicographically by `(year, month, day)` and formats as `YYYY-MM-DD`. The valid range is `0001-01-01` through `9999-12-31`; out-of-range values are a deterministic error during parsing or conversion.
+
+`DateTime` is an absolute UTC instant with no stored timezone. `DateTime` comparisons are by timeline order and formatting for tests uses RFC3339 with `Z`. `DateTime` values must fit in signed 64-bit nanoseconds from the Unix epoch; out-of-range values are a deterministic error during parsing or conversion.
+
+The `bus-bfl` repository MUST include dedicated unit tests that verify the `Decimal`, `Date`, and `DateTime` semantics used by evaluation, including edge cases such as `1/3`, rounding ties, and datetime normalization. If a shared BusDK type package is introduced later, it may reuse these tests, but the BFL SDD remains the normative behavioral contract.
+
 Static and runtime contexts are defined separately. Compile uses `SymbolTable` only. Eval uses `RuntimeContext` only. Eval MUST return a deterministic error if a required identifier is missing at runtime even if it existed at compile time. Identifier matching is applied consistently according to the active dialect in both compilation and evaluation.
 
 ```go
@@ -393,7 +442,7 @@ type CallContext interface {
 }
 ```
 
-Overload selection is deterministic. Overloads are tried in the order they are registered and the first matching signature is used; if multiple match equally, the first wins; if none match, the result is a type error with a stable error code.
+Overload selection is deterministic. Overloads are tried in the order they are registered and the first matching signature is used; if multiple match equally, the first wins; if none match, the result is a type error with a stable error code. Matching is defined as follows. A runtime null value matches a parameter type only if that parameter type is nullable or `KindAny`. An integer argument matches a number parameter type via integer-to-number promotion, but a number argument does not match an integer parameter type. `KindAny` matches any runtime value. All other kinds require exact kind matches with no implicit conversions.
 
 #### References
 
@@ -440,6 +489,8 @@ Integration tests in [bus-data](./bus-data) cover computing projected values dur
 A machine-readable conformance test suite is required and must ship with the library. The suite lives under `./tests` in the `bus-bfl` repository and is the authoritative compatibility lock for future changes. It MUST cover operator precedence grouping and associativity, canonical printing, numeric literal parsing including exponent handling and leading-dot acceptance where allowed, rejection cases such as chained comparisons and thousands separators, datetimes without offsets when ISO parsing is enabled, and date/datetime comparison semantics using typed context values. The required file format is JSON Lines with UTF-8 encoding, one test vector per line, so it is easy to stream, diff, and extend. File names use `./tests/dialect.<profile>.jsonl` for each named dialect profile, plus an optional `./tests/README.md` describing the schema.
 
 Each test vector object includes a stable `id` string (for example `BFL-CONF-000001`), the `dialect` profile name, the `expr` source string, optional `limits` overrides only when needed, an optional `symbols` map from identifier to type, an optional `context` map from identifier to typed value, an optional `format_expect` string for canonical printing, and either an `eval_expect` typed value or an `error_expect` object. Values are type-tagged to avoid JSON number ambiguity, with each value encoded as an object containing `type` and `value`, where decimal numbers and integers are encoded as strings, dates use `YYYY-MM-DD`, and datetimes use RFC3339 strings with an offset or `Z` that normalize to the internal UTC instant. The `error_expect` object matches the library error contract and includes `kind`, `code`, and at least `offset` for position; line and column may be included but offset is mandatory. These test vectors must be run in CI for source code library releases and are not required for `bus-bfl` CLI binary releases.
+
+Benchmark tests must run against the normative CI reference profile and emit the required benchmark metadata via the helper in stable text and JSON forms. CI MUST store the benchmark output and metadata as artifacts for each release tag so timing targets are auditable and comparable across releases.
 
 ### Deployment and Operations
 
@@ -490,4 +541,3 @@ Version: 2026-02-08
 Status: Draft  
 Last updated: 2026-02-08  
 Owner: BusDK development team  
-Change log: 2026-02-08 Added normative Go API, type system, projection defaults, and conformance test suite.  
