@@ -52,7 +52,7 @@ bus-data table read customers --row 1:2 --column id
 bus-data table read customers --filter status=active --filter name=Ada
 ```
 
-If your tables use a primary key, use `--key <value>` for a single-column key. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`.
+If your tables use a primary key, use `--key <value>` for a single-column key. Repeat `--key` for composite keys in the same order as the schema’s `primaryKey`. Primary key uniqueness is enforced on `row add` for both single-column and composite keys.
 
 ```text
 bus-data table read customers --key 1
@@ -60,7 +60,7 @@ bus-data table read customers --key 1
 
 ### Update and delete rows
 
-Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work. Updates accept either repeated `--set` assignments or a JSON file payload.
+Row updates only succeed when the schema allows in-place edits. The schema’s `busdk.update_policy` must be set to `in_place` for updates to work. Updates accept either repeated `--set` assignments or a JSON file payload. Updates use the primary key to identify a single row, and composite keys are provided by repeating `--key`.
 
 ```text
 bus-data row update customers --key 1 --set balance=15.00
@@ -75,7 +75,7 @@ bus-data row delete customers --key 2
 
 ### Manage data packages and resources
 
-Use `package init` to create `datapackage.json` from the current tables and beside-the-table schemas, `package show` to inspect it, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Use `resource list` to see the current resources in deterministic order, and `resource validate` to validate a single resource without modifying files.
+Use `package init` to create `datapackage.json` from the current tables and beside-the-table schemas, `package show` to inspect it, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Use `resource list` to see the current resources in deterministic order, and `resource validate` to validate a single resource without modifying files. When foreign key validation fails, the command exits non-zero and reports the failure on standard error.
 
 ```text
 bus-data package init
@@ -120,11 +120,23 @@ Changing a field type updates the schema only when existing values are compatibl
 bus-data schema set-type products --field price --type number
 ```
 
+Schema metadata can include `primaryKey`, `foreignKeys`, and `missingValues`. These are preserved by `schema init`, and `primaryKey` can be either a single field name or an ordered list for composite keys. Foreign key definitions follow the Table Schema format and are enforced during resource and package validation.
+
 When you need full control over schema metadata, apply a JSON merge patch that preserves unknown properties.
 
 ```text
 bus-data schema patch --resource products --patch schema.patch.json
 ```
+
+### Formula-driven columns
+
+Schemas can declare formula columns by adding a `busdk.formula` block under a field. Inline formulas are stored in the CSV cell values and evaluated at read time. Constant formulas ignore cell values and use the schema expression as the source of truth. Formula results are typed and may include rounding rules for numeric results.
+
+Formulas use the BFL language. Inline formulas typically set a `prefix` such as `=` and accept per-cell expressions. Constant formulas set `mode` to `constant` and provide an `expression` string. When `on_error` is set to `null`, formula errors yield empty output values instead of failing the read.
+
+Formula evaluation uses a table snapshot, so range expressions resolve against the same read and do not depend on row-by-row mutation. Invalid formula metadata is rejected at read time and reports a formula error to standard error.
+
+If you need to inspect the raw formula sources, `--formula-source` adds an extra column that captures the original formula expression for each formula field without colliding with existing column names. The source column name is the formula field name with the `__formula_source` suffix.
 
 ### Output formats and files
 
