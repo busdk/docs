@@ -36,7 +36,7 @@ FR-BFL-008 Function registration framework. The library MUST provide a function 
 
 NFR-BFL-001 Mechanical scope only. The module MUST NOT implement accounting rules, discretionary accounting judgments, or domain-specific semantics. Acceptance criteria: the API only exposes expression mechanics and generic type and constraint handling required by the language.
 
-NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation. Acceptance criteria: the implementation rejects expressions that exceed configured limits on AST size, recursion depth, or evaluation steps and reports a deterministic error without partial results. The library defines strict default numeric caps for expression length (4,096 UTF-8 bytes), AST size (512 nodes), and recursion depth (32) and allows callers to override them for known workloads while preserving deterministic errors.
+NFR-BFL-002 Security and sandboxing. The module MUST prevent access to external state and must bound resource usage for expression parsing and evaluation. Acceptance criteria: the implementation rejects expressions that exceed configured limits on AST size, recursion depth, or evaluation steps and reports a deterministic error without partial results. The library defines strict default numeric caps for expression length (4,096 UTF-8 bytes), AST size (512 nodes), recursion depth (32), and evaluation steps (10,000) and allows callers to override them for known workloads while preserving deterministic errors.
 
 NFR-BFL-003 Performance. Parsing and evaluation MUST meet agreed performance targets for typical workspace datasets. Acceptance criteria: for expressions up to the default caps, parsing completes in 2 milliseconds or less per expression and evaluation completes in 200 microseconds or less per row on the reference test machine. Benchmarks must include parse-time and evaluation-time microbenchmarks at the default caps and document the reference machine configuration. These defaults may be raised for known workloads only when the benchmarks and acceptance criteria are updated accordingly.
 
@@ -56,7 +56,121 @@ BFL is a small compiler pipeline that parses UTF-8 source text into an AST, bind
 
 The module exposes a Go library for parsing, validating, and evaluating expressions. The public API MUST support parsing expressions into an AST with stable, structured error reporting, validating an AST against a context definition (available identifiers, types, and allowed functions), evaluating an AST against a concrete context, and optionally formatting an AST back into a canonical expression string if canonicalization is required for determinism or tooling. The API MUST accept a limit configuration so callers can tune expression length, AST size, and recursion depth caps while retaining deterministic errors.
 
-The public API shape is TBD and must be specified with concrete Go types, function signatures, and error types. Until it is specified, the requirements above are authoritative for behavior but not yet for the Go surface.
+The public API is defined below and is the normative surface for the library. It is data-source agnostic, deterministic, and safe for concurrent use.
+
+#### Go API surface (normative)
+
+The API is centered on the pipeline Parse → Compile (bind + typecheck) → Evaluate, with optional Format for canonical printing. The AST is immutable and safe for concurrent use. Its structure is opaque to callers; the exported handle is `*Expr`, which supports validation, evaluation, and formatting without exposing node types.
+
+The library defines a dialect configuration that is used consistently across parsing, binding, typechecking, and formatting.
+
+```go
+type Dialect struct {
+	EqualityTokens         []string
+	NotEqualTokens         []string
+	KeywordCaseSensitive   bool
+	StripFormulaPrefix     string
+	DecimalSeparator       string
+	AllowLeadingDotDecimal bool
+	AllowThousandsSeparator bool
+	ThousandsSeparator     string
+	DateTimeParse          string
+	DateTimeAssumeTimezone string
+}
+```
+
+Defaults are deterministic and match the dialect definition: `EqualityTokens` is `[]string{"=", "=="}`, `NotEqualTokens` is `[]string{"<>", "!="}`, `KeywordCaseSensitive` is false, `StripFormulaPrefix` is empty, `DecimalSeparator` is `.`, `AllowLeadingDotDecimal` is false, `AllowThousandsSeparator` is false, `ThousandsSeparator` is empty, `DateTimeParse` is `disabled`, and `DateTimeAssumeTimezone` is empty. `DateTimeParse` accepts only `disabled` or `iso_offset_required`.
+
+Limits bound work deterministically. Zero values in options use these defaults.
+
+```go
+type Limits struct {
+	MaxExprBytes      int
+	MaxASTNodes       int
+	MaxRecursionDepth int
+	MaxEvalSteps      int
+}
+```
+
+Default limits are `MaxExprBytes` 4096 (UTF-8 bytes), `MaxASTNodes` 512, `MaxRecursionDepth` 32, and `MaxEvalSteps` 10000.
+
+```go
+type ParseOptions struct {
+	Dialect    Dialect
+	Limits     Limits
+	SourceName string
+}
+
+type CompileOptions struct {
+	Dialect   Dialect
+	Limits    Limits
+	Symbols   SymbolTable
+	Functions FunctionRegistry
+}
+
+type EvalOptions struct {
+	Limits Limits
+}
+
+type FormatOptions struct {
+	Dialect Dialect
+}
+```
+
+The stable function surface is defined as follows.
+
+```go
+type Expr struct{}
+type Program struct{}
+
+func Parse(src string, opt ParseOptions) (*Expr, error)
+func Compile(expr *Expr, opt CompileOptions) (*Program, error)
+func ParseCompile(src string, opt CompileOptions) (*Program, error)
+func Eval(p *Program, ctx RuntimeContext, opt EvalOptions) (Value, error)
+func Format(expr *Expr, opt FormatOptions) (string, error)
+```
+
+`ParseCompile` is a convenience helper that calls `Parse` then `Compile` and returns the first deterministic error.
+It uses `CompileOptions.Dialect` and `CompileOptions.Limits` for parsing and leaves `SourceName` empty unless the caller chooses to parse separately.
+
+Error typing is a stable, explicit contract. Callers MUST treat `Kind`, `Code`, and `Span` as the stable machine contract. `Message` is concise and human-oriented but is not intended as a long-term parsing target.
+
+```go
+type ErrorKind int
+
+const (
+	ErrorKindParse ErrorKind = iota
+	ErrorKindBind
+	ErrorKindType
+	ErrorKindEval
+	ErrorKindLimit
+)
+
+type ErrorCode string
+
+type Position struct {
+	Offset int
+	Line   int
+	Column int
+}
+
+type Span struct {
+	Start Position
+	End   Position
+}
+
+type Error struct {
+	Kind       ErrorKind
+	Code       string
+	Message    string
+	Span       Span
+	SourceName string
+}
+
+func (e *Error) Error() string
+```
+
+`ErrorCode` values are stable strings such as `BFL_PARSE_UNEXPECTED_TOKEN`, `BFL_BIND_UNKNOWN_IDENTIFIER`, `BFL_TYPE_MISMATCH`, `BFL_EVAL_DIV_BY_ZERO`, and `BFL_LIMIT_AST_NODES`. `Position.Offset` is the UTF-8 byte offset from the start of the original input, and `Line` and `Column` are 1-based. All library functions MUST return `*Error` for language and limit failures and MUST NOT panic on user input.
 
 #### IF-BFL-002 Integration contract with bus-data
 
@@ -95,7 +209,9 @@ Semantics are as follows. If mode is inline, the stored cell value is treated as
 
 BFL only defines parsing and evaluation. Projection rules belong to [bus-data](./bus-data), but this SDD defines the expected integration outcome.
 
-When reading a table with formula fields enabled, [bus-data](./bus-data) computes formula values and returns a projected current dataset view deterministically without writing back to CSV. The consumer may choose to return raw formula strings, computed values, or both, but the choice must be explicit and deterministic.
+When reading a table with formula fields enabled, [bus-data](./bus-data) computes formula values and returns a projected current dataset view deterministically without writing back to CSV. The default projected dataset view uses computed values as the field value for formula-enabled fields, typed as the declared `field.busdk.formula.result` type, and it does not replace or rewrite the stored formula source in CSV. The formula source remains the physical stored value.
+
+[bus-data](./bus-data) must provide an explicit, deterministic option to include formula source alongside computed values for diagnostics and tooling, but the default projection output mode is computed values only. Any extra output must be opt-in and must not collide with user columns, such as a reserved-prefix companion field or structured metadata in non-CSV output modes. This is a [bus-data](./bus-data) policy choice, not a BFL core responsibility.
 
 ### Assumptions and Dependencies
 
@@ -108,6 +224,16 @@ BFL assumes the consumer provides the allowed function surface by registering fu
 BFL depends on no external services and is a pure library. If a consumer requires I/O, workspace discovery, or schema parsing, those responsibilities remain outside BFL. Impact if false: the library would risk violating determinism and security guarantees.
 
 BFL is in an active pre-1.0 phase and follows semver. Backwards compatibility is a goal, but stability guarantees are not required yet and breaking changes may occur as implementations stabilize. Impact if false: module maintainers may over-assume stability and fail to review changes that affect formula behavior or public APIs.
+
+### Open Questions
+
+OQ-BFL-001 What is the reference test machine configuration for the performance and scalability acceptance criteria, and where is it recorded so benchmarks can be compared deterministically across releases? The performance and scalability requirements rely on absolute timing targets, but the document does not yet define the reference machine that makes those targets meaningful. The reference should be a developer’s local machine profile and a common cloud CI baseline such as the GitHub Actions runner. Options include: A) define a primary reference profile as “developer machine” and a secondary “GitHub Actions runner” profile, both recorded in the `bus-bfl` repository `tests/README.md` with CPU, memory, and OS details, or B) define the same dual-profile reference in the BusDK SDD index and require BFL benchmarks to record which profile they used alongside their results.
+
+OQ-BFL-002 What are the exact numeric and type coercion rules for operators and function overload selection, including integer to number promotion, nullability handling, and any implicit conversions that are permitted? The language definition specifies types and literals but does not define coercion rules, which means different implementations could diverge on cases like integer plus decimal, comparisons between integers and decimals, or null propagation. The goal is deterministic evaluation across modules, so these rules must be explicit. Options include: A) strict typing with no implicit conversions and all mixed-kind operator usage requiring explicit function calls, or B) a narrow, documented promotion set limited to integer to number for arithmetic and comparisons while keeping string, boolean, date, and datetime conversions disallowed unless a registered function provides them.
+
+OQ-BFL-003 What is the authoritative definition of the BusDK-owned `Decimal`, `Date`, and `DateTime` types for BFL, including rounding rules, overflow behavior, and comparison semantics beyond the brief summaries in this document? The SDD currently references BusDK-owned types but does not link to a definitive contract, leaving room for inconsistent behavior across modules. Because BFL is a shared library and must be deterministic, these types need a single authoritative specification. Options include: A) define a dedicated BusDK type specification document and reference it here as normative for BFL, or B) define the minimal normative contract in this SDD and delegate any extended behaviors to the shared BusDK type package documentation.
+
+OQ-BFL-004 Where is formula rounding configuration specified in the Go API surface, and how does schema-level `field.busdk.formula.rounding` map to BFL evaluation settings? The schema metadata describes rounding configuration, but the Go API surface shown does not include a rounding setting or mapping contract. Because rounding affects computed values, the mapping must be explicit and deterministic. Options include: A) add a rounding configuration field to `EvalOptions` that is populated by bus-data from the schema metadata, or B) require rounding behavior to be implemented as registered functions so the schema metadata is validated and translated into function calls before evaluation.
 
 ### Key Decisions
 
@@ -124,6 +250,14 @@ KD-BFL-005 Dialect-driven parsing and canonicalization. BFL uses a single core A
 KD-BFL-006 Normative operator precedence and associativity. BFL defines a fixed precedence order with left-associative arithmetic and boolean operators, unary binding to the right operand, and non-associative comparisons that reject chaining without parentheses.
 
 KD-BFL-007 Deterministic literal grammar and datetime policy. Numeric, string, boolean, and null literal formats are defined explicitly; date and datetime values are typed context values with optional ISO-only parsing when enabled, and datetime offsets are required by default with no implicit timezone.
+
+KD-BFL-008 Normative Go API surface. The Go API is explicitly defined as Parse → Compile → Eval → Format with immutable AST handles, typed contexts, and deterministic, typed errors.
+
+KD-BFL-009 BusDK-owned numeric and datetime types. The authoritative type system uses BusDK-owned decimal and datetime representations to guarantee deterministic arithmetic and comparison semantics.
+
+KD-BFL-010 bus-data projection default. The default [bus-data](./bus-data) projection output mode is computed values only, with opt-in inclusion of formula source for diagnostics that must not collide with user columns.
+
+KD-BFL-011 Conformance test suite as compatibility lock. The conformance test suite lives under `./tests` as JSONL test vectors with stable IDs and stable expected errors and must run in CI for source code library releases, not for `bus-bfl` CLI binary releases.
 
 ### Language Definition
 
@@ -159,6 +293,108 @@ Optional ISO-only parsing may be enabled by dialect configuration or by a compan
 
 Datetime values are interpreted as absolute instants. Comparison and ordering are done on the instant timeline, and any provided offset is normalized to UTC internally for comparison. If the caller explicitly enables `datetime_assume_timezone` and provides a timezone identifier, a datetime string without an offset may be interpreted in that timezone as a deterministic policy choice; otherwise datetimes without offsets are rejected.
 
+#### Type system and evaluation context (normative Go representation)
+
+The type system and evaluation context are defined as a stable Go representation so binding and typechecking are deterministic and independent of runtime values.
+
+```go
+type Kind int
+
+const (
+	KindNull Kind = iota
+	KindBool
+	KindString
+	KindInteger
+	KindNumber
+	KindDate
+	KindDateTime
+	KindAny
+)
+
+type Type struct {
+	Kind     Kind
+	Nullable bool
+}
+
+type Value struct {
+	Kind     Kind
+	Bool     bool
+	String   string
+	Int      int64
+	Number   Decimal
+	Date     Date
+	DateTime DateTime
+}
+```
+
+Only the field matching `Kind` is meaningful. Null is represented as `Kind == KindNull`, not by `Nullable`. `KindAny` is allowed for function signatures and symbol declarations but is not required as a runtime value.
+
+`Decimal` is a BusDK-owned decimal type with deterministic string formatting and deterministic arithmetic. Decimal values are normalized and compared deterministically. The library MUST NOT use IEEE float semantics for `KindNumber`.
+
+`Date` is a BusDK-owned calendar date representation with validation rules and ISO formatting.
+
+`DateTime` is a BusDK-owned instant representation in UTC with deterministic comparison by timeline order. Any offsets used during optional ISO parsing are normalized into this UTC instant representation and are not preserved as presentation state.
+
+```go
+type Decimal struct{}
+type Date struct {
+	Year  int
+	Month int
+	Day   int
+}
+
+type DateTime struct {
+	UnixNano int64
+}
+```
+
+Static and runtime contexts are defined separately. Compile uses `SymbolTable` only. Eval uses `RuntimeContext` only. Eval MUST return a deterministic error if a required identifier is missing at runtime even if it existed at compile time. Identifier matching is applied consistently according to the active dialect in both compilation and evaluation.
+
+```go
+type SymbolTable interface {
+	TypeOf(name string) (Type, bool)
+}
+
+type MapSymbols map[string]Type
+
+type RuntimeContext interface {
+	ValueOf(name string) (Value, bool)
+}
+
+type MapContext map[string]Value
+```
+
+Function registration is explicit and deterministic. The canonical `Registry` implementation preserves deterministic registration order so overload selection is stable across runs. Functions are pure and MUST NOT perform I/O, read environment variables, or use time-dependent behavior. They may only use their inputs and the provided call context.
+
+```go
+type FunctionRegistry interface {
+	Lookup(name string) ([]FunctionOverload, bool)
+}
+
+type Registry struct{}
+
+type FunctionOverload struct {
+	Name      string
+	Signature Signature
+	Impl      FunctionImpl
+}
+
+type Signature struct {
+	Args   []Type
+	VarArgs *Type
+	Return Type
+}
+
+type FunctionImpl func(call CallContext, args []Value) (Value, error)
+
+type CallContext interface {
+	Dialect() Dialect
+	Lookup(name string) (Value, bool)
+}
+```
+
+Overload selection is deterministic. Overloads are tried in the order they are registered and the first matching signature is used; if multiple match equally, the first wins; if none match, the result is a type error with a stable error code.
+
 #### References
 
 BFL can reference fields from the current row by identifier. Identifiers use ASCII letters and underscore for the first character, followed by ASCII letters, digits, or underscore. Identifier matching is case-sensitive or case-insensitive according to the active dialect. For non-identifier column names, the consumer MUST provide an escape hatch, with `col("column name")` as the recommended form implemented via function registration. Identifiers and functions are supplied by consumers outside this core library.
@@ -179,7 +415,7 @@ BFL does not implement built-in functions. Callers register function sets with n
 
 #### Errors
 
-Errors are deterministic and fall into these classes: parse error, bind error, type error, and evaluation error. Parse errors cover invalid syntax. Bind errors cover unknown identifiers or missing references. Type errors cover invalid operand types for an operator or function. Evaluation errors include division by zero and invalid operations. Errors MUST include stable location information (byte offset or line and column) and a concise message.
+Errors are deterministic and use the exported `Error` type with stable kind, code, and source location. Parse errors cover invalid syntax. Bind errors cover unknown identifiers or missing references. Type errors cover invalid operand types for an operator or function. Evaluation errors include division by zero and invalid operations. Limit errors cover configured caps such as expression length, AST nodes, recursion depth, and evaluation steps. Errors MUST include a stable byte offset and may include line and column information, along with a concise message that is not intended as a long-term parsing target.
 
 ### Security Considerations
 
@@ -201,7 +437,9 @@ Unit tests cover deterministic parsing and evaluation, stable parse error locati
 
 Integration tests in [bus-data](./bus-data) cover computing projected values during table reads without writing, deterministic diagnostics when formulas fail, and preservation of raw formula strings in storage.
 
-A machine-readable conformance corpus is required and must ship with the library. The corpus defines parsing and evaluation outcomes for each named dialect profile and is the authoritative compatibility lock for future changes. It MUST cover operator precedence grouping and associativity, canonical printing, numeric literal parsing including exponent handling and leading-dot acceptance where allowed, rejection cases such as chained comparisons, thousands separators, and datetimes without offsets when ISO parsing is enabled, and date/datetime comparison semantics using typed context values.
+A machine-readable conformance test suite is required and must ship with the library. The suite lives under `./tests` in the `bus-bfl` repository and is the authoritative compatibility lock for future changes. It MUST cover operator precedence grouping and associativity, canonical printing, numeric literal parsing including exponent handling and leading-dot acceptance where allowed, rejection cases such as chained comparisons and thousands separators, datetimes without offsets when ISO parsing is enabled, and date/datetime comparison semantics using typed context values. The required file format is JSON Lines with UTF-8 encoding, one test vector per line, so it is easy to stream, diff, and extend. File names use `./tests/dialect.<profile>.jsonl` for each named dialect profile, plus an optional `./tests/README.md` describing the schema.
+
+Each test vector object includes a stable `id` string (for example `BFL-CONF-000001`), the `dialect` profile name, the `expr` source string, optional `limits` overrides only when needed, an optional `symbols` map from identifier to type, an optional `context` map from identifier to typed value, an optional `format_expect` string for canonical printing, and either an `eval_expect` typed value or an `error_expect` object. Values are type-tagged to avoid JSON number ambiguity, with each value encoded as an object containing `type` and `value`, where decimal numbers and integers are encoded as strings, dates use `YYYY-MM-DD`, and datetimes use RFC3339 strings with an offset or `Z` that normalize to the internal UTC instant. The `error_expect` object matches the library error contract and includes `kind`, `code`, and at least `offset` for position; line and column may be included but offset is mandatory. These test vectors must be run in CI for source code library releases and are not required for `bus-bfl` CLI binary releases.
 
 ### Deployment and Operations
 
@@ -218,16 +456,6 @@ R-BFL-001 Ambiguity between identifiers and reserved words. Mitigation: maintain
 R-BFL-002 Numeric precision expectations. Mitigation: decimal arithmetic and explicit rounding configuration with deterministic defaults.
 
 R-BFL-003 Future cross-table lookups. Mitigation: keep row-local semantics initially and introduce lookups only with explicit schema-declared dependencies and deterministic failure modes.
-
-### Open Questions
-
-OQ-BFL-001 What are the exact Go public API types, function signatures, and error types for parsing, validation, evaluation, and canonical printing? The SDD requires stable behavior but the concrete surface is still TBD.
-
-OQ-BFL-002 What is the authoritative representation of the evaluation context and type system in the Go API, including how identifiers map to typed values and how function signatures are expressed?
-
-OQ-BFL-003 For [bus-data](./bus-data) projections, which output mode is normative when a formula field is enabled: computed values only, raw formula strings only, or both? The SDD currently requires the choice to be explicit but does not specify the default.
-
-OQ-BFL-004 Where does the machine-readable conformance corpus live in the repository, and what is its required format and naming convention?
 
 ### Glossary and Terminology
 
@@ -262,3 +490,4 @@ Version: 2026-02-08
 Status: Draft  
 Last updated: 2026-02-08  
 Owner: BusDK development team  
+Change log: 2026-02-08 Added normative Go API, type system, projection defaults, and conformance test suite.  
