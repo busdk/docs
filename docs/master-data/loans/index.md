@@ -32,7 +32,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-A loan belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+A loan belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 A loan references one [party](../parties/index) (lender or borrower) via [`counterparty_id`](./counterparty-id).
 

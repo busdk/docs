@@ -10,11 +10,11 @@
 
 ### Description
 
-`bus init` bootstraps a new workspace by running each module’s `init` command in a deterministic sequence. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. The result is the standard workspace layout with baseline datasets and schemas.
+`bus init` bootstraps a new workspace by writing workspace-level configuration and by running each module’s `init` command in a deterministic sequence. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. The result is the standard workspace layout with baseline datasets and schemas, plus an initial `bus.yml` that defines accounting entity settings for the workspace.
 
 ### Commands
 
-This module has no subcommands. Run `bus init` from the repository root.
+This module has no subcommands. Run `bus init` from the workspace root (the directory that will contain the workspace datasets).
 
 ### Options
 
@@ -22,7 +22,7 @@ No module-specific flags. Global flags such as `-C`, `--help`, and `--verbose` a
 
 ### Files
 
-Creates or updates workspace-level metadata (e.g. `datapackage.json`) and invokes module inits that create datasets and schemas in their respective areas.
+Creates or updates workspace-level metadata (e.g. `datapackage.json` and `bus.yml`) and invokes module inits that create datasets and schemas in their respective areas.
 
 ### Exit status
 

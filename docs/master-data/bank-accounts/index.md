@@ -27,7 +27,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-A bank account belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+A bank account belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 A bank account can have zero or more [bank transactions](../bank-transactions/index). Each bank transaction references its statement source via [`bank_account_id`](../bank-transactions/bank-account-id).
 

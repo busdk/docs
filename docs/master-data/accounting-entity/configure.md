@@ -4,7 +4,9 @@ Set base currency, fiscal year boundaries, and VAT reporting expectations used b
 
 Owner: [bus init](../../modules/bus-init).
 
-Configure the entity settings that other modules rely on when they interpret dates, currency, and VAT reporting expectations. These settings make period-based reporting and validation deterministic rather than inferred.
+Configure accounting entity settings by editing the workspace configuration file `bus.yml` at the workspace root. Other modules rely on these settings when they interpret dates, currency, and VAT reporting expectations, and they resolve them from `bus.yml` rather than from row-level fields in operational datasets.
+
+The canonical reference for supported keys and their meaning is [Workspace configuration (`bus.yml`)](../../data/workspace-configuration).
 
 ---
 

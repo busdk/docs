@@ -37,7 +37,7 @@ Party defaults and identifiers support deterministic [VAT treatment](../vat-trea
 
 ### Relations
 
-A party belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id) and can be referenced by multiple bookkeeping objects over time.
+A party belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory, and the same party record can be referenced by multiple bookkeeping objects over time.
 
 Sales invoices reference a customer party via [`client_id`](../sales-invoices/client-id). Purchase invoices reference a supplier party via [`purchase_company_id`](../purchase-invoices/purchase-company-id). Bank transactions can reference parties on either side using [`client_id`](../bank-transactions/client-id) and [`purchase_company_id`](../bank-transactions/purchase-company-id).
 

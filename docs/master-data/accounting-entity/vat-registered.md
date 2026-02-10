@@ -1,6 +1,6 @@
 ## `vat_registered` (VAT registration)
 
-`vat_registered` indicates whether the accounting entity is VAT registered. Bookkeeping uses this as the first switch that determines whether VAT reporting is expected and which VAT completeness checks are relevant for invoices, purchases, and postings.
+`vat_registered` indicates whether the workspace’s accounting entity is VAT registered. It is configured in `bus.yml` at the workspace root. Bookkeeping uses this as the first switch that determines whether VAT reporting is expected and which VAT completeness checks are relevant for invoices, purchases, and postings.
 
 When VAT registration is explicit, the system does not need to guess whether VAT-related workflows apply, which reduces the risk of missing VAT handling in review and reporting.
 

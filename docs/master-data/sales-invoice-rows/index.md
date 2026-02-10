@@ -31,7 +31,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`service_start_date`](./service-start-date): Line-level service period start.
 - [`service_end_date`](./service-end-date): Line-level service period end.
 
-Sales invoice rows inherit accounting scope via [`group_id`](../accounting-entity/group-id) and typically reference accounts via [`ledger_account_id`](../chart-of-accounts/ledger-account-id).
+Sales invoice rows belong to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory, and rows typically reference accounts via [`ledger_account_id`](../chart-of-accounts/ledger-account-id).
 
 ### Relations
 

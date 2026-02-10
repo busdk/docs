@@ -33,7 +33,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-The chart of accounts belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id). Most bookkeeping objects reference ledger accounts by storing a [`ledger_account_id`](./ledger-account-id) (or an account-id field that resolves to one).
+The chart of accounts belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory, so it is not expressed as a per-row key in operational datasets. Most bookkeeping objects reference ledger accounts by storing a [`ledger_account_id`](./ledger-account-id) (or an account-id field that resolves to one).
 
 Sales invoice rows reference revenue accounts via [`ledger_account_id`](../sales-invoice-rows/ledger-account-id). Purchase posting specifications reference expense or asset accounts via [`ledger_account_id`](../purchase-posting-specifications/ledger-account-id).
 

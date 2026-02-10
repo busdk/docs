@@ -20,21 +20,13 @@ bus -V
 bus -h
 ```
 
-3. Alice scaffolds the workspace layout and module-owned baseline datasets by running each module’s init command explicitly:
+3. Alice scaffolds the workspace layout, writes the workspace configuration (`bus.yml`), and creates module-owned baseline datasets by running `bus init`:
 
 ```bash
-bus accounts init
-bus entities init
-bus journal init
-bus invoices init
-bus attachments init
-bus bank init
-bus vat init
-bus budget init
-bus period init
+bus init
 ```
 
-Each module remains the sole owner of its datasets and schemas. This is why the workflow prefers explicit per-module `init` calls rather than a single orchestration command — `bus init` can exist as a convenience wrapper, but it is not the definition of the bootstrap contract.
+`bus init` delegates to each module’s `init` command in a deterministic sequence. Each module remains the sole owner of its datasets and schemas, and you can still run an individual module’s `init` command when you intentionally want to initialize only one area of the workspace.
 
 4. Alice validates that the baseline datasets and schemas are internally consistent:
 

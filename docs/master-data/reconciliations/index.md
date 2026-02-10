@@ -28,7 +28,7 @@ Secondary read-only use cases are provided by these modules when they consume re
 - [`target_id`](./target-id): Stable identifier of the referenced target record.
 - [`amount`](./amount): Allocation amount in the bank transaction currency.
 
-Reconciliations bind to bank transaction currency via [`currency` on bank transactions](../bank-transactions/currency) and inherit accounting scope via the bank transaction’s [`group_id`](../accounting-entity/group-id).
+Reconciliations bind to bank transaction currency via [`currency` on bank transactions](../bank-transactions/currency) and belong to the workspace’s [accounting entity](../accounting-entity/index) because both the bank transactions and the reconciliation records live in the same workspace.
 
 ### Relations
 

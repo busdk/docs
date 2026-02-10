@@ -24,7 +24,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-A payroll run belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+A payroll run belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 A payroll run is computed from the employee register, typically including all [employees](../employees/index) active in the run month. The run produces posting intent that references [ledger accounts](../chart-of-accounts/index) through the account fields stored on employees.
 

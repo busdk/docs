@@ -30,7 +30,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-A document belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+A document belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 A document can be linked to one or more bookkeeping records using [`linked_entity_reference`](./linked-entity-reference). In practice the primary targets are [sales invoices](../sales-invoices/index), [purchase invoices](../purchase-invoices/index), and [bank transactions](../bank-transactions/index), so that reviewers can navigate from postings and open items back to evidence.
 

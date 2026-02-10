@@ -30,7 +30,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-An employee belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+An employee belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 An employee references one [party](../parties/index) via [`entity_id`](./entity-id) so that identity, payment identifiers, and deduplication rules can be shared with other counterparty workflows.
 

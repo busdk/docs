@@ -2,7 +2,7 @@
 
 ### Introduction and Overview
 
-Bus Init bootstraps a new BusDK workspace by orchestrating module-owned `init` commands so each module remains the sole owner of its datasets and schemas.
+Bus Init bootstraps a new BusDK workspace by writing workspace-level configuration (`bus.yml`) and orchestrating module-owned `init` commands so each module remains the sole owner of its datasets and schemas.
 
 ### Requirements
 
@@ -14,7 +14,7 @@ NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostic
 
 ### System Architecture
 
-Bus Init is an orchestrator that invokes module `init` commands and verifies the resulting workspace baseline. It does not own domain datasets beyond optional workspace metadata.
+Bus Init is an orchestrator that writes workspace-level configuration and invokes module `init` commands to produce the workspace baseline. It does not own domain datasets beyond workspace metadata and configuration.
 
 ### Key Decisions
 
@@ -34,7 +34,7 @@ bus init
 
 ### Data Design
 
-The module may create or update workspace-level metadata such as `datapackage.json` at the repository root. All other datasets are created by module `init` commands it invokes.
+The module creates or updates workspace-level configuration (`bus.yml`) and metadata such as `datapackage.json` at the workspace root. All other datasets are created by module `init` commands it invokes.
 
 ### Assumptions and Dependencies
 

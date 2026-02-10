@@ -8,7 +8,7 @@ This section describes the business objects and the bookkeeping properties they 
 
 #### Bookkeeping foundations (shared across workflows)
 
-- [Accounting entity](./accounting-entity/index): The bookkeeping scope that keeps journals, VAT, and reports separated per company or ledger.
+- [Accounting entity](./accounting-entity/index): The bookkeeping scope defined by the workspace directory boundary, keeping journals, VAT, and reports separated per business entity.
 - [Chart of accounts](./chart-of-accounts/index): The ledger accounts and reporting structure used for posting and review.
 - [VAT treatment](./vat-treatment/index): The minimal VAT metadata that makes posting and VAT reporting deterministic.
 - [Parties (customers and suppliers)](./parties/index): The counterparties attached to invoices, transactions, and sometimes postings.

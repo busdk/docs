@@ -10,6 +10,10 @@ Canonical module datasets live in the workspace root as plain files. Each datase
 
 When a dataset is split across multiple files over time, the workspace root still contains a single index table for that dataset family (for example `journals.csv` or `vat-reports.csv`). The index table records which period-scoped files exist and where they live in the repository. Period-scoped files are stored in the workspace root with a `YYYY[MM[DD]]-name.suffix` prefix, except for journal entries which live under a period directory such as `2026/journals/2026-journal.csv`.
 
+### Baseline workspace configuration
+
+After initialization, the workspace MUST include `bus.yml` at the workspace root. This file defines accounting entity settings (base currency, fiscal year boundaries, and VAT reporting expectations) as workspace-level configuration rather than as per-row fields in operational datasets. See [Workspace configuration (`bus.yml`)](../data/workspace-configuration).
+
 ### Baseline datasets and schemas
 
 After initialization, the following root-level datasets and their beside-the-dataset schemas MUST exist. Files may be empty baseline tables, but they must be present and schema-valid so that later commands can operate deterministically.

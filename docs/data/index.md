@@ -5,6 +5,7 @@ This section is split into **single-concept** documents:
 - [Account types in double-entry bookkeeping](./account-types)
 - [Append-only updates and soft deletion](./append-only-and-soft-deletion)
 - [CSV conventions](./csv-conventions)
+- [Workspace configuration (`bus.yml`)](./workspace-configuration)
 - [Storage backends and workspace store interface](./storage-backends)
 - [Data Package organization](./data-package-organization)
 - [Scaling over decades](./scaling-over-decades)

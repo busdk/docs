@@ -1,37 +1,34 @@
 ## Accounting entity
 
-An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for. Every bookable object belongs to exactly one accounting entity so that transactions from different companies or ledgers never mix during posting, reconciliation, or reporting.
+An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for. In BusDK, that scope is defined by the workspace directory: one BusDK workspace represents exactly one internal business entity, and all datasets inside that workspace belong to that entity by construction.
 
 ### Ownership
 
-Owner: [bus init](../../modules/bus-init). This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it.
+Owner: [bus init](../../modules/bus-init). This module creates a new workspace and writes the workspace-level accounting entity settings in [`bus.yml`](../../data/workspace-configuration).
 
-Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
+Other modules consume the accounting entity settings as read-only workspace configuration when they validate, post, reconcile, report, or produce filings:
 
-- [bus accounts](../../modules/bus-accounts): reads the entity scope to keep charts separated per bookkeeping scope.
+- [bus accounts](../../modules/bus-accounts): reads workspace scope and entity settings to keep charts and validations consistent.
 - [bus invoices](../../modules/bus-invoices): reads entity settings to interpret invoice dates, currency, and VAT context.
 - [bus vat](../../modules/bus-vat): reads VAT registration and reporting cadence for period reporting.
 - [bus journal](../../modules/bus-journal): posts and reports per entity scope.
 
 ### Actions
 
-- [Create an accounting entity](./create): Create a new bookkeeping scope so journals and VAT never mix across companies.
-- [Configure accounting entity settings](./configure): Set base currency, fiscal year boundaries, and VAT reporting expectations used by automation.
+- [Create an accounting entity](./create): Create a new workspace directory so journals and VAT never mix across business entities.
+- [Configure accounting entity settings](./configure): Edit workspace configuration that controls currency, fiscal year boundaries, and VAT reporting expectations.
 
 ### Properties
 
-- [`group_id`](./group-id): Accounting entity key (scope).
-- [`base_currency`](./base-currency): Entity-level default currency.
-- [`fiscal_year_start`](./fiscal-year-start): Financial year start.
-- [`fiscal_year_end`](./fiscal-year-end): Financial year end.
-- [`vat_registered`](./vat-registered): VAT registration.
-- [`vat_reporting_period`](./vat-reporting-period): VAT reporting cadence.
+Accounting entity settings are workspace-level configuration stored in `bus.yml` at the workspace root. The canonical reference is [Workspace configuration (`bus.yml`)](../../data/workspace-configuration), which defines base currency, fiscal year boundaries, VAT registration, and VAT reporting cadence.
 
 ### Relations
 
-An accounting entity is the shared scope for all master data and bookkeeping records. Objects inherit entity scope via [`group_id`](./group-id) so that journals, VAT reporting, and reconciliations never mix across companies or ledgers.
+An accounting entity is the shared scope for all master data and bookkeeping records in a workspace. Scope is derived from the workspace root directory, not from a per-row key, and entity-wide settings are resolved from `bus.yml` rather than being referenced on row-level in operational datasets.
 
-An accounting entity has one [chart of accounts](../chart-of-accounts/index) (and therefore many ledger accounts) and one set of [accounting periods](../accounting-periods/index) that define when bookkeeping is open, closed, and locked.
+Within a workspace, there is one [chart of accounts](../chart-of-accounts/index) (and therefore many ledger accounts) and one set of [accounting periods](../accounting-periods/index) that define when bookkeeping is open, closed, and locked.
+
+Multi-company workflows are expressed as multi-workspace operations; see [Workspace scope and multi-workspace workflows](../../architecture/workspace-scope-and-multi-workspace).
 
 ---
 

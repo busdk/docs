@@ -38,7 +38,7 @@ Purchase invoices also use shared workflow and evidence fields. See [`accounting
 
 ### Relations
 
-A purchase invoice belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id) and references one [party](../parties/index) (the supplier) via [`purchase_company_id`](./purchase-company-id).
+A purchase invoice belongs to the workspace’s [accounting entity](../accounting-entity/index) and references one [party](../parties/index) (the supplier) via [`purchase_company_id`](./purchase-company-id).
 
 A purchase invoice can have one or more [purchase posting specifications](../purchase-posting-specifications/index) that capture posting intent (accounts, VAT handling, and capitalizable lines) at the level where the booking decision is made.
 

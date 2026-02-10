@@ -7,6 +7,7 @@ This section is split into **single-concept** documents:
 - [CLI as the primary interface (controlled read/modify/write)](./cli-as-primary-interface)
 - [Git-backed data repository (the data store)](./git-backed-data-store)
 - [Independent modules (integration through shared datasets)](./independent-modules)
+- [Workspace scope and multi-workspace workflows](./workspace-scope-and-multi-workspace)
 - [Shared validation layer (schema + logical validation)](./shared-validation-layer)
 
 ---

@@ -44,11 +44,11 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`booked_by`](./booked-by): Booking actor.
 - [`accounting_note`](./accounting-note): Exception explanation.
 
-Bank transactions inherit accounting scope via [`group_id`](../accounting-entity/group-id) and attach to a statement source via [`bank_account_id`](../bank-accounts/bank-account-id).
+Bank transactions belong to the workspace’s [accounting entity](../accounting-entity/index) and attach to a statement source via [`bank_account_id`](../bank-accounts/bank-account-id).
 
 ### Relations
 
-A bank transaction belongs to one [bank account](../bank-accounts/index) via [`bank_account_id`](./bank-account-id) and to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+A bank transaction belongs to one [bank account](../bank-accounts/index) via [`bank_account_id`](./bank-account-id). Its accounting scope is derived from the workspace root directory rather than from a per-row key.
 
 A bank transaction can be linked to one or more [reconciliations](../reconciliations/index), which explain how the cash movement settles one or more targets such as a [sales invoice](../sales-invoices/index), a [purchase invoice](../purchase-invoices/index), or a journal transaction.
 

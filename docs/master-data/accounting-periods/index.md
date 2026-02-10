@@ -26,7 +26,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-Accounting periods belong to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+Accounting periods belong to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 Period boundaries affect when postings can be finalized and locked, and they are referenced by workflows that are period-based by definition, such as budget variance and month-based payroll.
 

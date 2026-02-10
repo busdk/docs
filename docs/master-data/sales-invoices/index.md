@@ -30,11 +30,11 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`service_start_date`](./service-start-date): Service period start.
 - [`service_end_date`](./service-end-date): Service period end.
 
-Sales invoices typically also use the shared workflow fields described in [Bookkeeping status and review workflow](../workflow-metadata/index), and they inherit accounting scope via [`group_id`](../accounting-entity/group-id).
+Sales invoices typically also use the shared workflow fields described in [Bookkeeping status and review workflow](../workflow-metadata/index), and they belong to the workspace’s [accounting entity](../accounting-entity/index).
 
 ### Relations
 
-A sales invoice belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id) and references one [party](../parties/index) (the customer) via [`client_id`](./client-id).
+A sales invoice belongs to the workspace’s [accounting entity](../accounting-entity/index) and references one [party](../parties/index) (the customer) via [`client_id`](./client-id).
 
 A sales invoice can have one or more [sales invoice rows](../sales-invoice-rows/index). Rows reference their parent invoice via [`invoice_id`](../sales-invoice-rows/invoice-id).
 

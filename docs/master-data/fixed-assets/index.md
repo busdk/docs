@@ -32,7 +32,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-A fixed asset belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+A fixed asset belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 Fixed assets reference [ledger accounts](../chart-of-accounts/index) for posting intent, typically including an asset account, an accumulated depreciation account, and a depreciation expense account.
 

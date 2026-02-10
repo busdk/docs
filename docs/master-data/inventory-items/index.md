@@ -28,7 +28,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Relations
 
-An inventory item belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+An inventory item belongs to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory rather than from a per-row key.
 
 Inventory movements reference items via [`item_id`](../inventory-movements/item-id) so stock levels and valuation can be traced back to a stable item master record.
 
