@@ -94,3 +94,6 @@ Exit 0 on success. Non-zero in these cases:
 - [Layout: Layout principles](../layout/layout-principles)
 - [Workflow: Initialize repo](../workflow/initialize-repo)
 
+### TODO
+
+We should consider refactoring `bus init configure ...` to its own module like `bus config ...`.
