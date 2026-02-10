@@ -592,7 +592,7 @@ Array value is a 2D, row-major matrix of `Value` elements carried as a first-cla
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-data">bus-data</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-dev">bus-dev</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-accounts">bus-accounts</a> &rarr;</span>
 </p>
