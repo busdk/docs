@@ -8,6 +8,8 @@ Party master data reduces duplicates, improves matching, and makes reports and e
 
 Owner: [bus entities](../../modules/bus-entities). This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it.
 
+In the current CLI surface, `bus entities add` records the stable entity identifier and display name. Other party fields that exist in the workspace schema (such as business identifiers, VAT numbers, country codes, payment identifiers, and default bookkeeping fields) are maintained by editing `entities.csv` directly and validating with `bus validate`, so field editability remains explicit and script-friendly.
+
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
 - [bus invoices](../../modules/bus-invoices): references parties on invoices for receivables and payables.

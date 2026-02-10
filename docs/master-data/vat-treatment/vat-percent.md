@@ -2,7 +2,9 @@
 
 `vat_percent` is the applied VAT percentage, used as an alias name in some datasets and UIs. For bookkeeping, the key requirement is the same as for [`vat_rate`](./vat-rate): the applied percentage must be explicit at line level so VAT amounts and VAT reporting can be reviewed and exported deterministically.
 
-Example values: `24`, `0`.
+BusDK examples use the current Finnish VAT rate set as the canonical sample values: `25.5`, `13.5`, `10`, `0`.
+
+Older Finnish rates such as `24` and `14` can still appear in historical rows and must remain valid as data, but they should not be treated as defaults for new records.
 
 ---
 

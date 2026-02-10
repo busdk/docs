@@ -31,8 +31,8 @@ For a simple incoming payment with no fees, she needs the bank asset account tha
 ```bash
 bus journal add --date 2026-02-14 \
 --desc "Payment received for INV-1001 (bank statement 202602)" \
---debit "Bank"=1240 \
---credit "Accounts Receivable"=1240
+--debit "Bank"=1255 \
+--credit "Accounts Receivable"=1255
 ```
 
 The journal entry date comes from the bank transaction date, and the description carries the invoice number and enough evidence context to make later review straightforward. If a bank transaction identifier is available in the normalized bank dataset, Alice includes it in the description so the posting remains easy to trace back to the imported statement row.

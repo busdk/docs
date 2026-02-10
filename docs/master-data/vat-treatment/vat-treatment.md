@@ -4,7 +4,9 @@
 
 Bookkeeping uses the treatment code to keep VAT reporting and validation deterministic and to make the rationale reviewable later without re-reading invoice narratives.
 
-Example values: `domestic_standard`, `reverse_charge`.
+In BusDK documentation, VAT treatment codes also define how invoices must be marked so the VAT handling remains reviewable from the invoice evidence itself. The mapping is documented in [Invoice markings for VAT treatments](./invoice-markings).
+
+Example values: `domestic_standard`, `reverse_charge`, `intra_eu_supply`, `export`.
 
 ---
 

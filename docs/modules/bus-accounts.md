@@ -23,6 +23,12 @@
 
 The `add` command accepts `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. For global flags and command-specific help, run `bus accounts --help`.
 
+### Write path and field coverage
+
+The CLI surface covers the core lifecycle needed for scripts and UIs to create and validate accounts. `bus accounts add` writes the stable account identifier, name, and type, and it refuses to write rows that would violate schema or invariants.
+
+If your `accounts.csv` schema includes additional reporting and control columns (for example `ledger_category_id` and `is_active`), those fields are currently maintained by editing `accounts.csv` directly and then validating with `bus accounts validate` (and, for whole-workspace checks, `bus validate`). This keeps the authoritative dataset explicit while avoiding documentation that implies unsupported flags exist.
+
 ### Files
 
 `accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area.

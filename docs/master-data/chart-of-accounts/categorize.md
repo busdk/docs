@@ -6,6 +6,8 @@ Owner: [bus accounts](../../modules/bus-accounts).
 
 Categorize accounts so profit and loss and balance sheet views remain consistent. Categories are what keep statements readable even when postings are made at account level.
 
+In the current CLI surface, categorization is performed by updating the account’s `ledger_category_id` in `accounts.csv` and then running `bus accounts validate` (or `bus validate`) to ensure the result is schema-valid and consistent.
+
 ---
 
 <!-- busdk-docs-nav start -->

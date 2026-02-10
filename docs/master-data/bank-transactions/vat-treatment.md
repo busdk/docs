@@ -4,7 +4,7 @@
 
 This uses the same value set as [`vat_treatment` in VAT treatment](../vat-treatment/vat-treatment).
 
-Example values: `domestic_standard`, `reverse_charge`.
+Example values: `domestic_standard`, `reverse_charge`, `intra_eu_supply`.
 
 ---
 

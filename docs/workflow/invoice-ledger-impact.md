@@ -15,7 +15,7 @@ bus invoices add --help
 bus invoices add --type sales
 ```
 
-3. If the pinned module version is configured to produce postings, it appends the corresponding journal impact as part of the same user-level operation, for example debiting Accounts Receivable €1240, crediting Consulting Revenue €1000, and crediting VAT Payable €240. The important detail is that the integration happens by writing journal rows in the shared journal dataset, tagged with the invoice identifier for traceability.
+3. If the pinned module version is configured to produce postings, it appends the corresponding journal impact as part of the same user-level operation, for example debiting Accounts Receivable €1255, crediting Consulting Revenue €1000, and crediting VAT Payable €255. The important detail is that the integration happens by writing journal rows in the shared journal dataset, tagged with the invoice identifier for traceability.
 
 4. Alice verifies the posting result from the journal side:
 

@@ -6,6 +6,8 @@ Owner: [bus accounts](../../modules/bus-accounts).
 
 Deactivate accounts to prevent new postings to inactive targets while keeping historical postings intact. Automation should avoid selecting inactive accounts for new classification.
 
+In the current CLI surface, deactivation is performed by setting `is_active` to `false` in `accounts.csv` and then running `bus accounts validate` (or `bus validate`) to ensure the result is schema-valid and consistent.
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -6,6 +6,8 @@ Defaults should remain overrideable per line, because VAT treatment can still di
 
 Example values: `domestic_standard`, `reverse_charge`.
 
+For cross-border counterparties, a treatment such as `intra_eu_supply` can be used as a default to make EU vs domestic validation deterministic, while still allowing line-level overrides.
+
 ---
 
 <!-- busdk-docs-nav start -->

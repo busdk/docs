@@ -2,7 +2,7 @@
 
 `vat_treatment` is a short code that explains the VAT handling category behind the percentage. Bookkeeping uses it to keep VAT validation and reporting deterministic, especially when the percentage alone would be ambiguous.
 
-Example values: `domestic_standard`, `export`.
+Example values: `domestic_standard`, `intra_eu_supply`, `export`.
 
 ---
 

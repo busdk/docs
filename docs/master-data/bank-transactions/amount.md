@@ -4,7 +4,7 @@
 
 When amounts are stored precisely, matching invoices and validating totals becomes straightforward.
 
-Example values: `-1240.00`, `15.90`.
+Example values: `-1255.00`, `15.90`.
 
 ---
 

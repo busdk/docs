@@ -2,9 +2,13 @@
 
 A chart of accounts is the set of ledger accounts you post debits and credits into, together with the reporting structure that makes financial statements readable. Bookkeeping automation depends on being able to choose the correct account consistently, and reviewers depend on stable numbers and names when they validate postings.
 
+Account numbering is a workspace convention, not a BusDK requirement. BusDK supports arbitrary account numbers as long as the chart is internally consistent and accounts map cleanly to the reporting groupings required by your statements and filings. Examples in this documentation use familiar numbers such as `1910` (bank) and `3000` (revenue) as illustrative conventions rather than required ranges.
+
 ### Ownership
 
 Owner: [bus accounts](../../modules/bus-accounts). This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it.
+
+In the current CLI surface, `bus accounts add` records the core account identity (`--code`), `name`, and `type`, and `bus accounts validate` checks schema and invariants. Reporting and control fields such as `ledger_category_id` and `is_active` are maintained by editing `accounts.csv` directly and then validating, so the documentation does not imply unsupported CLI flags exist.
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 

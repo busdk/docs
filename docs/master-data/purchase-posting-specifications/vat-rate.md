@@ -2,7 +2,9 @@
 
 `vat_rate` is the VAT percentage for the purchase posting line when it is not reliably derivable from other fields. Bookkeeping benefits from explicit rate at the posting decision level because it avoids ambiguity and supports consistent VAT amount calculations.
 
-Example values: `24`, `0`.
+BusDK examples use the current Finnish VAT rate set as the canonical sample values: `25.5`, `13.5`, `10`, `0`.
+
+Older Finnish rates such as `24` and `14` can still appear in historical purchase rows and must remain valid as data, but they should not be treated as defaults for new records.
 
 ---
 

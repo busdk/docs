@@ -22,9 +22,15 @@
 
 `add` accepts `--id <entity-id>` and `--name <display-name>`. `list` has no module-specific filters. For global flags and command-specific help, run `bus entities --help`.
 
+### Write path and field coverage
+
+The CLI surface is intentionally small. `bus entities add` writes the stable entity identifier and display name, and it refuses to write rows that would violate schema or invariants.
+
+If your `entities.csv` schema includes additional identity or bookkeeping columns (for example business identifiers, VAT numbers, country codes, payment identifiers, or default handling fields), those fields are currently edited by updating `entities.csv` directly and then validating the workspace with `bus validate`. This makes the “owner write path” explicit: `bus entities` owns the dataset, but not every column is maintained through flags.
+
 ### Files
 
-Entity datasets and their beside-the-table schemas in the entities/reference area.
+`entities.csv` and its beside-the-dataset schema `entities.schema.json` at the workspace root (accounts area).
 
 ### Exit status
 

@@ -6,6 +6,8 @@ Owner: [bus entities](../../modules/bus-entities).
 
 Set defaults to reduce repeated classification work. Defaults should pre-fill likely accounts and VAT handling while remaining overrideable per invoice row or posting line.
 
+In the current CLI surface, defaults are maintained by editing the corresponding columns in `entities.csv` directly and then validating with `bus validate`, because `bus entities add` currently only writes the stable identifier and display name.
+
 ---
 
 <!-- busdk-docs-nav start -->

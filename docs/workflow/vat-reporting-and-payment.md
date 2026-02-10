@@ -13,11 +13,11 @@ The VAT module scans invoices and/or journal entries from Jan–Mar 2026, separa
 ```text
 VAT Summary Q1 2026:
 Sales (taxable) total: €1000
-Output VAT (@24%): €240
-Purchases (tax-deductible) total: €250
-Input VAT (@24%): €60
+Output VAT (@25.5%): €255
+Purchases (tax-deductible) total: €200
+Input VAT (@25.5%): €51
 ----------------------------
-VAT payable: €180
+VAT payable: €204
 ```
 
 2. Alice exports the VAT output files she will archive alongside the workspace data:

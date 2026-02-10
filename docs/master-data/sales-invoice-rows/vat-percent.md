@@ -4,7 +4,9 @@
 
 When VAT percentage is explicit, VAT reporting and validation can be deterministic without re-interpreting free-text descriptions.
 
-Example values: `24`, `0`.
+BusDK examples use the current Finnish VAT rate set as the canonical sample values: `25.5`, `13.5`, `10`, `0`.
+
+Older Finnish rates such as `24` and `14` can still appear in historical invoice rows and must remain valid as data, but they should not be treated as defaults for new invoices.
 
 ---
 

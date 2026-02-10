@@ -4,7 +4,7 @@
 
 Explicit gross totals help reconciliation and reduce manual “is this the same invoice?” checks during review.
 
-Example values: `1240.00`, `99.08`.
+Example values: `1255.00`, `99.08`.
 
 ---
 

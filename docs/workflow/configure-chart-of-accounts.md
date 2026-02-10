@@ -18,19 +18,19 @@ bus accounts list
 3. Alice appends the baseline set of accounts she needs for her day-to-day workflow:
 
 ```bash
-bus -h accounts add
+bus accounts add --help
 
 bus accounts add \
-  --id 1910 --name "Bank" --type asset
+  --code 1910 --name "Bank" --type asset
 
 bus accounts add \
-  --id 1700 --name "Accounts Receivable" --type asset
+  --code 1700 --name "Accounts Receivable" --type asset
 
 bus accounts add \
-  --id 3000 --name "Consulting Revenue" --type income
+  --code 3000 --name "Consulting Revenue" --type income
 
 bus accounts add \
-  --id 2930 --name "VAT Payable" --type liability
+  --code 2930 --name "VAT Payable" --type liability
 ```
 
 Each addition updates `accounts.csv` and validates invariants such as uniqueness and allowed account types. If the command is incorrect, it fails with a non-zero exit code and leaves the workspace datasets unchanged.

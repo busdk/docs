@@ -14,7 +14,7 @@ NFR-ENT-001 Auditability. Entity records MUST remain stable across the retention
 
 ### System Architecture
 
-Bus Entities owns the entities/reference datasets and provides stable identifiers to other modules. It integrates with invoices, bank imports, reconciliation, VAT, and attachments through shared identifier references.
+Bus Entities owns the entity reference dataset (`entities.csv`) and provides stable identifiers to other modules. It integrates with invoices, bank imports, reconciliation, VAT, and attachments through shared identifier references.
 
 ### Key Decisions
 
@@ -39,7 +39,7 @@ bus entities add --id ENT-ACME --name "Acme Corp"
 
 ### Data Design
 
-The module reads and writes entity datasets in the entities/reference area, with JSON Table Schemas stored beside each dataset.
+The module reads and writes `entities.csv` with a beside-the-dataset JSON Table Schema `entities.schema.json` at the workspace root (accounts area). The entity identifier is treated as a stable key referenced by other datasets.
 
 ### Assumptions and Dependencies
 

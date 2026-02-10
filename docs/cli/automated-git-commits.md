@@ -3,7 +3,7 @@
 BusDK can be used with or without Git, and it does not implement or run Git itself. The spec defines commit conventions per operation for teams that track workspace datasets in Git and expects users or external automation to apply them using their existing Git tooling. For example:
 
 ```bash
-bus accounts add --code 3000 --name "Consulting Income" --type Income
+bus accounts add --code 3000 --name "Consulting Income" --type income
 ```
 
 is expected to append a new account row to `accounts.csv`, and the corresponding Git commit (made externally) would use a message such as “Add account 3000 Consulting Income.”

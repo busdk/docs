@@ -17,6 +17,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 ### Actions
 
 - [Define VAT treatment codes](./define): Maintain the allowed treatment codes so 0% and special cases stay deterministic.
+- [Invoice markings for VAT treatments](./invoice-markings): Map each treatment code to the invoice text and identifiers that must be present for reviewable evidence.
 - [Validate VAT mappings](./validate): Check that VAT rates, treatment codes, and reporting expectations align with datasets.
 
 ### Properties

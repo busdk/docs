@@ -12,7 +12,7 @@ Define treatment codes so VAT handling is explainable beyond the percentage. Thi
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">VAT treatment</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">VAT treatment</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./validate">Validate VAT mappings</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./invoice-markings">Invoice markings for VAT treatments</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

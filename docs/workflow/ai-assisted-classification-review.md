@@ -14,7 +14,7 @@ bus bank import --file 202602-bank-statement.csv
 bus bank list --month 2026-2
 ```
 
-Suggestions might include matching a €1240 incoming payment to an open invoice, or mapping a €10 bank fee to a bank-fees expense account. The review boundary is the working tree: the user inspects the proposed edits and additions as changes to CSV datasets and schemas, just like any other change to repository data.
+Suggestions might include matching a €1255 incoming payment to an open invoice, or mapping a €10 bank fee to a bank-fees expense account. The review boundary is the working tree: the user inspects the proposed edits and additions as changes to CSV datasets and schemas, just like any other change to repository data.
 
 3. The user applies the accepted outcome as explicit records rather than implicit adjustments:
 
