@@ -76,13 +76,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Trial balance: a report summarizing balances by account.  
 General ledger: a report listing detailed postings by account.
 
-### See also
-
-End user documentation: [bus-reports CLI reference](../modules/bus-reports)  
-Repository: https://github.com/busdk/bus-reports
-
-For reporting workflow context and data integrity expectations, see [Accounting workflow overview](../workflow/accounting-workflow-overview) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -92,6 +85,15 @@ For reporting workflow context and data integrity expectations, see [Accounting 
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-validate">bus-validate</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-reports CLI reference](../modules/bus-reports)
+- [Repository](https://github.com/busdk/bus-reports)
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Append-only and soft deletion](../data/append-only-and-soft-deletion)
 
 ### Document control
 

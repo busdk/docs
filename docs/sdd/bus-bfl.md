@@ -588,10 +588,6 @@ Range is a `ref_start:ref_end` expression that resolves to an array via a consum
 
 Array value is a 2D, row-major matrix of `Value` elements carried as a first-class runtime kind.
 
-### See also
-
-See also: [Project SDD](https://docs.busdk.com/sdd), [bus-data SDD](./bus-data), [Frictionless Table Schema](https://specs.frictionlessdata.io/table-schema/), [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/), [OpenDocument Formula (OpenFormula) specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/OpenDocument-v1.3-part4-formula.pdf), [Excel operator precedence guidance](https://support.microsoft.com/en-us/office/calculation-operators-and-precedence-in-excel-48be406d-4975-4d31-b2b8-7af9e0e2878a), [Frictionless Table Schema date/time formats](https://frictionlessdata.io/specs/table-schema/), and [Google Sheets locale and time zone settings](https://support.google.com/docs/answer/58515?co=GENIE.Platform%3DDesktop&hl=en).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -601,6 +597,18 @@ See also: [Project SDD](https://docs.busdk.com/sdd), [bus-data SDD](./bus-data),
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-accounts">bus-accounts</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [See also: Project SDD](https://docs.busdk.com/sdd)
+- [bus-data SDD](./bus-data)
+- [Frictionless Table Schema](https://specs.frictionlessdata.io/table-schema/)
+- [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/)
+- [OpenDocument Formula (OpenFormula) specification](https://docs.oasis-open.org/office/OpenDocument/v1.3/OpenDocument-v1.3-part4-formula.pdf)
+- [Excel operator precedence guidance](https://support.microsoft.com/en-us/office/calculation-operators-and-precedence-in-excel-48be406d-4975-4d31-b2b8-7af9e0e2878a)
+- [Frictionless Table Schema date/time formats](https://frictionlessdata.io/specs/table-schema/)
+- [Google Sheets locale and time zone settings](https://support.google.com/docs/answer/58515?co=GENIE.Platform%3DDesktop&hl=en)
 
 ### Document control
 

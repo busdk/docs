@@ -29,11 +29,6 @@
 
 `0` on success. Non-zero on errors, including invalid filters or schema violations.
 
-### See also
-
-Module SDD: [bus-bank](../sdd/bus-bank)  
-Workflow context: [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -43,4 +38,13 @@ Workflow context: [Import bank transactions and apply payment](../workflow/impor
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-reconcile">bus-reconcile</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Bank accounts](../master-data/bank-accounts/index)
+- [Owns master data: Bank transactions](../master-data/bank-transactions/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Module SDD: bus-bank](../sdd/bus-bank)
+- [Workflow context: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
 

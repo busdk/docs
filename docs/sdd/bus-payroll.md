@@ -77,13 +77,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Payroll run: a dataset record describing a payroll period and its totals.  
 Employee record: a reference dataset row for a payroll recipient.
 
-### See also
-
-End user documentation: [bus-payroll CLI reference](../modules/bus-payroll)  
-Repository: https://github.com/busdk/bus-payroll
-
-For schema expectations and workflow context, see [Table schema contract](../data/table-schema-contract) and [Accounting workflow overview](../workflow/accounting-workflow-overview).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -93,6 +86,17 @@ For schema expectations and workflow context, see [Table schema contract](../dat
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-budget">bus-budget</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Employees](../master-data/employees/index)
+- [Owns master data: Payroll runs](../master-data/payroll-runs/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-payroll CLI reference](../modules/bus-payroll)
+- [Repository](https://github.com/busdk/bus-payroll)
+- [Table schema contract](../data/table-schema-contract)
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
 
 ### Document control
 

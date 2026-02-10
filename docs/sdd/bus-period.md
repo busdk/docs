@@ -81,13 +81,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Period control dataset: the repository dataset that records period boundaries and locks.  
 Period lock: a state that prevents edits to closed period data.
 
-### See also
-
-End user documentation: [bus-period CLI reference](../modules/bus-period)  
-Repository: https://github.com/busdk/bus-period
-
-For period close workflow context, see [Year-end close (closing entries)](../workflow/year-end-close) and [Accounting workflow overview](../workflow/accounting-workflow-overview).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -97,6 +90,16 @@ For period close workflow context, see [Year-end close (closing entries)](../wor
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Accounting periods](../master-data/accounting-periods/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
+- [End user documentation: bus-period CLI reference](../modules/bus-period)
+- [Repository](https://github.com/busdk/bus-period)
+- [Year-end close (closing entries)](../workflow/year-end-close)
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
 
 ### Document control
 

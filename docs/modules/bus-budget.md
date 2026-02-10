@@ -31,11 +31,6 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-### See also
-
-Module SDD: [bus-budget](../sdd/bus-budget)  
-Workflow: [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +40,12 @@ Workflow: [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-a
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Budgets](../master-data/budgets/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-budget](../sdd/bus-budget)
+- [Workflow: Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual)
+

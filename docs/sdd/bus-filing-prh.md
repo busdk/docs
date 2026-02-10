@@ -77,13 +77,6 @@ OQ-PRH-001 PRH export parameters. Define the complete parameter set for `bus fil
 PRH bundle: an export package formatted for Finnish PRH filing requirements.  
 Manifest: a deterministic listing and checksum set for bundle contents.
 
-### See also
-
-End user documentation: [bus-filing-prh CLI reference](../modules/bus-filing-prh)  
-Repository: https://github.com/busdk/bus-filing-prh
-
-For compliance context and closing package expectations, see [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Year-end close (closing entries)](../workflow/year-end-close).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -93,6 +86,17 @@ For compliance context and closing package expectations, see [Finnish bookkeepin
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-vero">bus-filing-vero</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [End user documentation: bus-filing-prh CLI reference](../modules/bus-filing-prh)
+- [Repository](https://github.com/busdk/bus-filing-prh)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+- [Year-end close (closing entries)](../workflow/year-end-close)
 
 ### Document control
 

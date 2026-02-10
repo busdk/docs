@@ -261,13 +261,6 @@ Mechanical data layer: functionality that handles storage and validation without
 Schema operation policy: the optional `busdk` metadata in a Table Schema that declares whether in-place update and delete operations are permitted.
 Formula-enabled field: a field descriptor that declares `busdk.formula` metadata and is evaluated using BFL during read-time projection.
 
-### See also
-
-End user documentation: [bus-data CLI reference](../modules/bus-data)  
-Repository: https://github.com/busdk/bus-data
-
-For the storage backend boundary and repository rules that the library implements, see [Storage backends and workspace store interface](../data/storage-backends) and [Module repository structure and dependency rules](../implementation/module-repository-structure). For formula semantics, see [bus-bfl SDD](./bus-bfl).
-
 ### Open Questions
 
 OQ-DAT-001 What is the exact CLI flag name and output shape for the opt-in mode that includes formula source alongside computed values, and which output formats must support it?
@@ -283,6 +276,15 @@ OQ-DAT-002 Should `bus-data table read` fail the entire command on the first for
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [End user documentation: bus-data CLI reference](../modules/bus-data)
+- [Repository](https://github.com/busdk/bus-data)
+- [Storage backends and workspace store interface](../data/storage-backends)
+- [Module repository structure and dependency rules](../implementation/module-repository-structure)
+- [bus-bfl SDD](./bus-bfl)
 
 ### Document control
 

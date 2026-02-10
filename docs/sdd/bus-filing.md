@@ -77,13 +77,6 @@ OQ-FIL-001 Bundle parameterization. Define the complete parameter set for `tax-a
 Filing bundle: an export directory or archive containing datasets, schemas, and manifests for authority filing.  
 Tax-audit pack: a filing bundle optimized for audit review.
 
-### See also
-
-End user documentation: [bus-filing CLI reference](../modules/bus-filing)  
-Repository: https://github.com/busdk/bus-filing
-
-For authority reporting context and close prerequisites, see [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Year-end close (closing entries)](../workflow/year-end-close).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -93,6 +86,17 @@ For authority reporting context and close prerequisites, see [Finnish bookkeepin
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-prh">bus-filing-prh</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [End user documentation: bus-filing CLI reference](../modules/bus-filing)
+- [Repository](https://github.com/busdk/bus-filing)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+- [Year-end close (closing entries)](../workflow/year-end-close)
 
 ### Document control
 

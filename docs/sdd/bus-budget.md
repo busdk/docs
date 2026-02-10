@@ -74,13 +74,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Budget dataset: the repository table that records planned amounts by account and period.  
 Variance report: derived output comparing budgeted and actual amounts.
 
-### See also
-
-End user documentation: [bus-budget CLI reference](../modules/bus-budget)  
-Repository: https://github.com/busdk/bus-budget
-
-For budget dataset layout and variance workflow context, see [Budget area](../layout/budget-area) and [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -90,6 +83,16 @@ For budget dataset layout and variance workflow context, see [Budget area](../la
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Budgets](../master-data/budgets/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-budget CLI reference](../modules/bus-budget)
+- [Repository](https://github.com/busdk/bus-budget)
+- [Budget area](../layout/budget-area)
+- [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual)
 
 ### Document control
 

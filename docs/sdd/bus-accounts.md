@@ -79,13 +79,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Chart of accounts: the authoritative list of account identifiers and types stored as workspace datasets.  
 Account identifier: a stable key used by other datasets to reference accounts.
 
-### See also
-
-End user documentation: [bus-accounts CLI reference](../modules/bus-accounts)  
-Repository: https://github.com/busdk/bus-accounts
-
-For account dataset layout and schema expectations, see [Accounts area](../layout/accounts-area) and [Table schema contract](../data/table-schema-contract).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -95,6 +88,15 @@ For account dataset layout and schema expectations, see [Accounts area](../layou
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-entities">bus-entities</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-accounts CLI reference](../modules/bus-accounts)
+- [Repository](https://github.com/busdk/bus-accounts)
+- [Accounts area](../layout/accounts-area)
+- [Table schema contract](../data/table-schema-contract)
 
 ### Document control
 

@@ -31,11 +31,6 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 `0` on success. Non-zero on invalid usage or integrity failures.
 
-### See also
-
-Module SDD: [bus-reports](../sdd/bus-reports)  
-Workflow: [Accounting workflow overview](../workflow/accounting-workflow-overview)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +40,11 @@ Workflow: [Accounting workflow overview](../workflow/accounting-workflow-overvie
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-validate">bus-validate</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-reports](../sdd/bus-reports)
+- [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
+

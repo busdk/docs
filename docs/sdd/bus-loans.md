@@ -80,13 +80,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Loan event: an append-only record of loan activity such as disbursement or repayment.  
 Amortization schedule: derived records allocating principal and interest over time.
 
-### See also
-
-End user documentation: [bus-loans CLI reference](../modules/bus-loans)  
-Repository: https://github.com/busdk/bus-loans
-
-For schema expectations and append-only audit trails, see [Table schema contract](../data/table-schema-contract) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -96,6 +89,17 @@ For schema expectations and append-only audit trails, see [Table schema contract
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-inventory">bus-inventory</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Loans](../master-data/loans/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-loans CLI reference](../modules/bus-loans)
+- [Repository](https://github.com/busdk/bus-loans)
+- [Table schema contract](../data/table-schema-contract)
+- [Append-only and soft deletion](../data/append-only-and-soft-deletion)
 
 ### Document control
 

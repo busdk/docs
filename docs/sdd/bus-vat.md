@@ -74,13 +74,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 VAT report: a computed summary of VAT totals for a reporting period.  
 VAT export: a repository data output intended for filing or archiving.
 
-### See also
-
-End user documentation: [bus-vat CLI reference](../modules/bus-vat)  
-Repository: https://github.com/busdk/bus-vat
-
-For VAT dataset layout and reporting workflow context, see [VAT area](../layout/vat-area) and [VAT reporting and payment](../workflow/vat-reporting-and-payment).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -90,6 +83,17 @@ For VAT dataset layout and reporting workflow context, see [VAT area](../layout/
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-pdf">bus-pdf</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [End user documentation: bus-vat CLI reference](../modules/bus-vat)
+- [Repository](https://github.com/busdk/bus-vat)
+- [VAT area](../layout/vat-area)
+- [VAT reporting and payment](../workflow/vat-reporting-and-payment)
 
 ### Document control
 

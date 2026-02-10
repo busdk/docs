@@ -24,11 +24,6 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.
 
-### See also
-
-Module SDD: [bus-filing-prh](../sdd/bus-filing-prh)  
-Compliance: [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -38,3 +33,13 @@ Compliance: [Finnish bookkeeping and tax-audit compliance](../compliance/fi-book
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-vero">bus-filing-vero</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Module SDD: bus-filing-prh](../sdd/bus-filing-prh)
+- [Compliance: Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+

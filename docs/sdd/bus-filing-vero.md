@@ -77,13 +77,6 @@ OQ-VERO-001 Vero export parameters. Define the complete parameter set for `bus f
 Vero bundle: an export package formatted for Finnish Vero filing requirements.  
 Manifest: a deterministic listing and checksum set for bundle contents.
 
-### See also
-
-End user documentation: [bus-filing-vero CLI reference](../modules/bus-filing-vero)  
-Repository: https://github.com/busdk/bus-filing-vero
-
-For VAT filing workflow and compliance context, see [VAT reporting and payment](../workflow/vat-reporting-and-payment) and [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -93,6 +86,17 @@ For VAT filing workflow and compliance context, see [VAT reporting and payment](
   <span class="busdk-prev-next-item busdk-next"><a href="../integration/index">Integration and future interfaces</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [End user documentation: bus-filing-vero CLI reference](../modules/bus-filing-vero)
+- [Repository](https://github.com/busdk/bus-filing-vero)
+- [VAT reporting and payment](../workflow/vat-reporting-and-payment)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 
 ### Document control
 

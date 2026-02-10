@@ -113,11 +113,6 @@ Date values use `YYYY-MM-DD`; datetime values use RFC3339 with an explicit time 
 
 The tool exits with status 0 on success. It exits with status 2 on invalid usage such as invalid `--color`, unknown `--format`, both `--quiet` and `--verbose`, or a subcommand invoked without required arguments after `--` terminates global flag parsing. It exits with status 1 when a required file or directory is missing or unreadable, or when an output file cannot be written. It exits with a non-zero status on parse errors, validation failures, or evaluation failures. Error messages are always written to standard error.
 
-### See also
-
-Module SDD: [bus-bfl](../sdd/bus-bfl)  
-Data model: [Table Schema contract](../data/table-schema-contract)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -127,3 +122,10 @@ Data model: [Table Schema contract](../data/table-schema-contract)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-accounts">bus-accounts</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Module SDD: bus-bfl](../sdd/bus-bfl)
+- [Data model: Table Schema contract](../data/table-schema-contract)
+

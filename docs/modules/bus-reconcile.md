@@ -30,11 +30,6 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 `0` on success. Non-zero on invalid usage or when amounts or references are invalid.
 
-### See also
-
-Module SDD: [bus-reconcile](../sdd/bus-reconcile)  
-Workflow: [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -44,3 +39,12 @@ Workflow: [Import bank transactions and apply payment](../workflow/import-bank-t
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-assets">bus-assets</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Bank transactions](../master-data/bank-transactions/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Module SDD: bus-reconcile](../sdd/bus-reconcile)
+- [Workflow: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
+

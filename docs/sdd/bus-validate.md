@@ -75,13 +75,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Validation diagnostics: deterministic messages that cite dataset paths and identifiers for errors.  
 Invariant: a cross-table rule that must hold for repository data to be valid.
 
-### See also
-
-End user documentation: [bus-validate CLI reference](../modules/bus-validate)  
-Repository: https://github.com/busdk/bus-validate
-
-For shared validation architecture and CLI safety behavior, see [Shared validation layer](../architecture/shared-validation-layer) and [Validation and safety checks](../cli/validation-and-safety-checks).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -91,6 +84,19 @@ For shared validation architecture and CLI safety behavior, see [Shared validati
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-vat">bus-vat</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Bank transactions](../master-data/bank-transactions/index)
+- [End user documentation: bus-validate CLI reference](../modules/bus-validate)
+- [Repository](https://github.com/busdk/bus-validate)
+- [Shared validation layer](../architecture/shared-validation-layer)
+- [Validation and safety checks](../cli/validation-and-safety-checks)
 
 ### Document control
 

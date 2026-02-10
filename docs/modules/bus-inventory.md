@@ -31,11 +31,6 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-### See also
-
-Module SDD: [bus-inventory](../sdd/bus-inventory)  
-Data contract: [Table schema contract](../data/table-schema-contract)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +40,13 @@ Data contract: [Table schema contract](../data/table-schema-contract)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-payroll">bus-payroll</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Inventory items](../master-data/inventory-items/index)
+- [Owns master data: Inventory movements](../master-data/inventory-movements/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-inventory](../sdd/bus-inventory)
+- [Data contract: Table schema contract](../data/table-schema-contract)
+

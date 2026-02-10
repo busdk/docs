@@ -29,11 +29,6 @@
 
 `0` on success. Non-zero on errors, including missing files or schema violations.
 
-### See also
-
-Module SDD: [bus-attachments](../sdd/bus-attachments)  
-Attachment storage: [Invoice PDF storage](../layout/invoice-pdf-storage)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -43,4 +38,11 @@ Attachment storage: [Invoice PDF storage](../layout/invoice-pdf-storage)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-invoices">bus-invoices</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Documents (evidence)](../master-data/documents/index)
+- [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
+- [Module SDD: bus-attachments](../sdd/bus-attachments)
+- [Attachment storage: Invoice PDF storage](../layout/invoice-pdf-storage)
 

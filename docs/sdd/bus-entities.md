@@ -78,13 +78,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Entity: a counterparty or reference subject represented as a stable identifier in workspace datasets.  
 Entity registry: the dataset set storing entity identifiers and metadata.
 
-### See also
-
-End user documentation: [bus-entities CLI reference](../modules/bus-entities)  
-Repository: https://github.com/busdk/bus-entities
-
-For reference data organization and schema expectations, see [Data package organization](../data/data-package-organization) and [Table schema contract](../data/table-schema-contract).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -94,6 +87,15 @@ For reference data organization and schema expectations, see [Data package organ
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-period">bus-period</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-entities CLI reference](../modules/bus-entities)
+- [Repository](https://github.com/busdk/bus-entities)
+- [Data package organization](../data/data-package-organization)
+- [Table schema contract](../data/table-schema-contract)
 
 ### Document control
 

@@ -81,13 +81,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Invoice header: the dataset row describing invoice metadata and totals.  
 Invoice line: the dataset row describing a line item linked to an invoice header.
 
-### See also
-
-End user documentation: [bus-invoices CLI reference](../modules/bus-invoices)  
-Repository: https://github.com/busdk/bus-invoices
-
-For invoice dataset layout and workflow details, see [Invoices area](../layout/invoices-area) and [Add a sales invoice](../workflow/create-sales-invoice).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -97,6 +90,23 @@ For invoice dataset layout and workflow details, see [Invoices area](../layout/i
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-journal">bus-journal</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Sales invoices](../master-data/sales-invoices/index)
+- [Owns master data: Sales invoice rows](../master-data/sales-invoice-rows/index)
+- [Owns master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Owns master data: Purchase posting specifications](../master-data/purchase-posting-specifications/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Owns master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-invoices CLI reference](../modules/bus-invoices)
+- [Repository](https://github.com/busdk/bus-invoices)
+- [Invoices area](../layout/invoices-area)
+- [Add a sales invoice](../workflow/create-sales-invoice)
 
 ### Document control
 

@@ -31,11 +31,6 @@ Fixed-asset datasets and schemas in the assets area.
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-### See also
-
-Module SDD: [bus-assets](../sdd/bus-assets)  
-Audit trail expectations: [Append-only and soft deletion](../data/append-only-and-soft-deletion)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,4 +40,13 @@ Audit trail expectations: [Append-only and soft deletion](../data/append-only-an
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-loans">bus-loans</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Fixed assets](../master-data/fixed-assets/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Module SDD: bus-assets](../sdd/bus-assets)
+- [Audit trail expectations: Append-only and soft deletion](../data/append-only-and-soft-deletion)
 

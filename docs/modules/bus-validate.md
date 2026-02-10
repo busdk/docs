@@ -28,12 +28,6 @@ Reads all workspace datasets and schemas. Does not write.
 
 `0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found.
 
-### See also
-
-Module SDD: [bus-validate](../sdd/bus-validate)  
-Architecture: [Shared validation layer](../architecture/shared-validation-layer)  
-CLI: [Validation and safety checks](../cli/validation-and-safety-checks)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -43,3 +37,16 @@ CLI: [Validation and safety checks](../cli/validation-and-safety-checks)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-vat">bus-vat</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Bank transactions](../master-data/bank-transactions/index)
+- [Module SDD: bus-validate](../sdd/bus-validate)
+- [Architecture: Shared validation layer](../architecture/shared-validation-layer)
+- [CLI: Validation and safety checks](../cli/validation-and-safety-checks)
+

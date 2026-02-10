@@ -24,11 +24,6 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.
 
-### See also
-
-Module SDD: [bus-filing-vero](../sdd/bus-filing-vero)  
-Workflow: [VAT reporting and payment](../workflow/vat-reporting-and-payment)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -38,3 +33,13 @@ Workflow: [VAT reporting and payment](../workflow/vat-reporting-and-payment)
   <span class="busdk-prev-next-item busdk-next"><a href="../integration/index">Integration and future interfaces</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Module SDD: bus-filing-vero](../sdd/bus-filing-vero)
+- [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
+

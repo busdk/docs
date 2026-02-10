@@ -74,13 +74,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Bank import: a normalized record of a statement ingest run stored in `bank-imports.csv`.  
 Bank transaction: a normalized transaction row stored in `bank-transactions.csv`.
 
-### See also
-
-End user documentation: [bus-bank CLI reference](../modules/bus-bank)  
-Repository: https://github.com/busdk/bus-bank
-
-For bank import workflow context and CSV conventions, see [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment) and [CSV conventions](../data/csv-conventions).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -90,6 +83,17 @@ For bank import workflow context and CSV conventions, see [Import bank transacti
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-reconcile">bus-reconcile</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Bank accounts](../master-data/bank-accounts/index)
+- [Owns master data: Bank transactions](../master-data/bank-transactions/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [End user documentation: bus-bank CLI reference](../modules/bus-bank)
+- [Repository](https://github.com/busdk/bus-bank)
+- [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
+- [CSV conventions](../data/csv-conventions)
 
 ### Document control
 

@@ -30,12 +30,6 @@ Journal index `journals.csv` at repository root and period journal files (e.g. `
 
 `0` on success. Non-zero on invalid usage, unbalanced postings, or schema or period violations.
 
-### See also
-
-Module SDD: [bus-journal](../sdd/bus-journal)  
-Layout: [Journal area](../layout/journal-area)  
-Design: [Double-entry ledger](../design-goals/double-entry-ledger)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +39,13 @@ Design: [Double-entry ledger](../design-goals/double-entry-ledger)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-bank">bus-bank</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Module SDD: bus-journal](../sdd/bus-journal)
+- [Layout: Journal area](../layout/journal-area)
+- [Design: Double-entry ledger](../design-goals/double-entry-ledger)
+

@@ -24,11 +24,6 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 `0` on success. Non-zero on invalid usage or rendering failure.
 
-### See also
-
-Module SDD: [bus-pdf](../sdd/bus-pdf)  
-Layout: [Invoice PDF storage](../layout/invoice-pdf-storage)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -38,3 +33,12 @@ Layout: [Invoice PDF storage](../layout/invoice-pdf-storage)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing">bus-filing</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Module SDD: bus-pdf](../sdd/bus-pdf)
+- [Layout: Invoice PDF storage](../layout/invoice-pdf-storage)
+

@@ -30,11 +30,6 @@ Entity datasets and their beside-the-table schemas in the entities/reference are
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-### See also
-
-Module SDD: [bus-entities](../sdd/bus-entities)  
-Data organization: [Data package organization](../data/data-package-organization)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -44,3 +39,11 @@ Data organization: [Data package organization](../data/data-package-organization
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-period">bus-period</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-entities](../sdd/bus-entities)
+- [Data organization: Data package organization](../data/data-package-organization)
+

@@ -74,13 +74,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Render model: the JSON input that describes the content to be rendered into a PDF.  
 Derived artifact: a file output generated from canonical datasets without modifying them.
 
-### See also
-
-End user documentation: [bus-pdf CLI reference](../modules/bus-pdf)  
-Repository: https://github.com/busdk/bus-pdf
-
-For PDF storage conventions and layout expectations, see [Invoice PDF storage](../layout/invoice-pdf-storage) and [Layout principles](../layout/layout-principles).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -90,6 +83,16 @@ For PDF storage conventions and layout expectations, see [Invoice PDF storage](.
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing">bus-filing</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [End user documentation: bus-pdf CLI reference](../modules/bus-pdf)
+- [Repository](https://github.com/busdk/bus-pdf)
+- [Invoice PDF storage](../layout/invoice-pdf-storage)
+- [Layout principles](../layout/layout-principles)
 
 ### Document control
 

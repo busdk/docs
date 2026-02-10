@@ -74,13 +74,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Attachment: an evidence file registered in `attachments.csv` and referenced by stable identifier.  
 Attachment metadata: immutable details such as filename, media type, and hash.
 
-### See also
-
-End user documentation: [bus-attachments CLI reference](../modules/bus-attachments)  
-Repository: https://github.com/busdk/bus-attachments
-
-For attachment storage conventions and audit expectations, see [Invoice PDF storage](../layout/invoice-pdf-storage) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -90,6 +83,15 @@ For attachment storage conventions and audit expectations, see [Invoice PDF stor
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-invoices">bus-invoices</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Documents (evidence)](../master-data/documents/index)
+- [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
+- [End user documentation: bus-attachments CLI reference](../modules/bus-attachments)
+- [Repository](https://github.com/busdk/bus-attachments)
+- [Invoice PDF storage](../layout/invoice-pdf-storage)
+- [Append-only and soft deletion](../data/append-only-and-soft-deletion)
 
 ### Document control
 

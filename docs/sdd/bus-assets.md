@@ -78,13 +78,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Fixed-asset register: the dataset set describing asset acquisitions, disposals, and schedules.  
 Depreciation schedule: derived entries that allocate asset cost over time.
 
-### See also
-
-End user documentation: [bus-assets CLI reference](../modules/bus-assets)  
-Repository: https://github.com/busdk/bus-assets
-
-For dataset invariants and audit trail expectations, see [Append-only and soft deletion](../data/append-only-and-soft-deletion) and [Append-only auditability](../design-goals/append-only-auditability).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -94,6 +87,17 @@ For dataset invariants and audit trail expectations, see [Append-only and soft d
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-loans">bus-loans</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Fixed assets](../master-data/fixed-assets/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [End user documentation: bus-assets CLI reference](../modules/bus-assets)
+- [Repository](https://github.com/busdk/bus-assets)
+- [Append-only and soft deletion](../data/append-only-and-soft-deletion)
+- [Append-only auditability](../design-goals/append-only-auditability)
 
 ### Document control
 

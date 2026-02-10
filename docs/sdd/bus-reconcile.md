@@ -77,13 +77,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Reconciliation record: a dataset row linking a bank transaction to an invoice or journal entry.  
 Allocation history: append-only records detailing partials, splits, and fees.
 
-### See also
-
-End user documentation: [bus-reconcile CLI reference](../modules/bus-reconcile)  
-Repository: https://github.com/busdk/bus-reconcile
-
-For reconciliation workflow context, see [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment) and [Accounting workflow overview](../workflow/accounting-workflow-overview).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -93,6 +86,16 @@ For reconciliation workflow context, see [Import bank transactions and apply pay
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-assets">bus-assets</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Bank transactions](../master-data/bank-transactions/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [End user documentation: bus-reconcile CLI reference](../modules/bus-reconcile)
+- [Repository](https://github.com/busdk/bus-reconcile)
+- [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
 
 ### Document control
 

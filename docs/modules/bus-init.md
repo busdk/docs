@@ -28,12 +28,6 @@ Creates or updates workspace-level metadata (e.g. `datapackage.json`) and invoke
 
 `0` on success. Non-zero on invalid usage or if any module `init` fails; diagnostics identify the failing command.
 
-### See also
-
-Module SDD: [bus-init](../sdd/bus-init)  
-Layout: [Layout principles](../layout/layout-principles)  
-Workflow: [Initialize repo](../workflow/initialize-repo)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -43,3 +37,14 @@ Workflow: [Initialize repo](../workflow/initialize-repo)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-data">bus-data</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Module SDD: bus-init](../sdd/bus-init)
+- [Layout: Layout principles](../layout/layout-principles)
+- [Workflow: Initialize repo](../workflow/initialize-repo)
+

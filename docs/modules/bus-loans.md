@@ -31,11 +31,6 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-### See also
-
-Module SDD: [bus-loans](../sdd/bus-loans)  
-Data contract: [Table schema contract](../data/table-schema-contract)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +40,13 @@ Data contract: [Table schema contract](../data/table-schema-contract)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-inventory">bus-inventory</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Loans](../master-data/loans/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-loans](../sdd/bus-loans)
+- [Data contract: Table schema contract](../data/table-schema-contract)
+

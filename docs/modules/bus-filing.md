@@ -30,12 +30,6 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 `0` on success. Non-zero on invalid usage or missing prerequisites (e.g. unvalidated or open period).
 
-### See also
-
-Module SDD: [bus-filing](../sdd/bus-filing)  
-Compliance: [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)  
-Workflow: [Year-end close (closing entries)](../workflow/year-end-close)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +39,14 @@ Workflow: [Year-end close (closing entries)](../workflow/year-end-close)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-prh">bus-filing-prh</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Module SDD: bus-filing](../sdd/bus-filing)
+- [Compliance: Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+- [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
+

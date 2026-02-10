@@ -29,12 +29,6 @@ Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`)
 
 `0` on success. Non-zero on invalid usage or VAT mapping violations.
 
-### See also
-
-Module SDD: [bus-vat](../sdd/bus-vat)  
-Layout: [VAT area](../layout/vat-area)  
-Workflow: [VAT reporting and payment](../workflow/vat-reporting-and-payment)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -44,3 +38,14 @@ Workflow: [VAT reporting and payment](../workflow/vat-reporting-and-payment)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-pdf">bus-pdf</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Module SDD: bus-vat](../sdd/bus-vat)
+- [Layout: VAT area](../layout/vat-area)
+- [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
+

@@ -35,12 +35,6 @@ Invoice header and line datasets (e.g. `sales-invoices.csv`, `sales-invoice-line
 
 `0` on success. Non-zero on errors, including invalid usage, schema violations, or reference errors.
 
-### See also
-
-Module SDD: [bus-invoices](../sdd/bus-invoices)  
-Layout: [Invoices area](../layout/invoices-area)  
-Workflow: [Create a sales invoice](../workflow/create-sales-invoice)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -50,3 +44,20 @@ Workflow: [Create a sales invoice](../workflow/create-sales-invoice)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-journal">bus-journal</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Sales invoices](../master-data/sales-invoices/index)
+- [Owns master data: Sales invoice rows](../master-data/sales-invoice-rows/index)
+- [Owns master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Owns master data: Purchase posting specifications](../master-data/purchase-posting-specifications/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
+- [Owns master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-invoices](../sdd/bus-invoices)
+- [Layout: Invoices area](../layout/invoices-area)
+- [Workflow: Create a sales invoice](../workflow/create-sales-invoice)
+

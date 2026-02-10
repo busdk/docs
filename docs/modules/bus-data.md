@@ -248,11 +248,6 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 `0` on success. `2` on invalid usage. Non-zero on missing files, schema validation failure, or foreign key integrity failure.
 
-### See also
-
-Module SDD: [bus-data](../sdd/bus-data)  
-Storage contract: [Storage backends and workspace store interface](../data/storage-backends)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -262,3 +257,10 @@ Storage contract: [Storage backends and workspace store interface](../data/stora
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Module SDD: bus-data](../sdd/bus-data)
+- [Storage contract: Storage backends and workspace store interface](../data/storage-backends)
+

@@ -78,13 +78,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Inventory item: a master data record describing a stock item.  
 Stock movement: an append-only record of inventory quantity changes.
 
-### See also
-
-End user documentation: [bus-inventory CLI reference](../modules/bus-inventory)  
-Repository: https://github.com/busdk/bus-inventory
-
-For dataset structure and audit trail expectations, see [Table schema contract](../data/table-schema-contract) and [Append-only and soft deletion](../data/append-only-and-soft-deletion).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -94,6 +87,17 @@ For dataset structure and audit trail expectations, see [Table schema contract](
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-payroll">bus-payroll</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Inventory items](../master-data/inventory-items/index)
+- [Owns master data: Inventory movements](../master-data/inventory-movements/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [End user documentation: bus-inventory CLI reference](../modules/bus-inventory)
+- [Repository](https://github.com/busdk/bus-inventory)
+- [Table schema contract](../data/table-schema-contract)
+- [Append-only and soft deletion](../data/append-only-and-soft-deletion)
 
 ### Document control
 

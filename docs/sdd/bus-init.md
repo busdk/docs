@@ -73,13 +73,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Workspace bootstrap: the initial creation of baseline datasets and schemas in a new repository.  
 Module-owned initialization: each module creates its own datasets during bootstrap.
 
-### See also
-
-End user documentation: [bus-init CLI reference](../modules/bus-init)  
-Repository: https://github.com/busdk/bus-init
-
-For workspace layout choices and the initialization workflow, see [Layout principles](../layout/layout-principles) and [Initialize repo](../workflow/initialize-repo).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -89,6 +82,17 @@ For workspace layout choices and the initialization workflow, see [Layout princi
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-data">bus-data</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Master data (business objects)](../master-data/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [End user documentation: bus-init CLI reference](../modules/bus-init)
+- [Repository](https://github.com/busdk/bus-init)
+- [Layout principles](../layout/layout-principles)
+- [Initialize repo](../workflow/initialize-repo)
 
 ### Document control
 

@@ -32,7 +32,7 @@ present options and ask for a decision.
 
 Document control and verification must be explicit. For BusDK module SDDs in 
 `docs/modules`, keep the document control block at the end of the page, placed 
-after the prev/index/next navigation block. The document control block must 
+after the prev/index/next navigation block and after the page’s `### Sources` section when present. The document control block must 
 contain at least title, project identifier (or name), document identifier, 
 version, status, last updated date, owner or maintainer, and a short change log. 
 Use a status vocabulary that includes at minimum Draft and Verified. Verified 
@@ -54,6 +54,8 @@ group related items, and keep such lists compact and consistent. Keep
 terminology consistent; if a term is used, define it once in the glossary and 
 use it the same way everywhere. If multiple synonyms exist in the source 
 material, pick one canonical term and note the alias once in the glossary.
+
+Prefer embedding cross-links directly in the main text when you reference a concept that already has its own page in this documentation set. The link must not change what the sentence says: write the sentence as you normally would, then wrap the exact words you would have used anyway (typically the concept noun phrase) in a link. Do not add linking-only phrases (for example “Part of …”, “See …”, or “Stored in …”) just to justify a link. Treat Sources as a reference list, not as the place where the reader discovers core cross-links.
 
 The SDD must include, at minimum, the following sections, in this order, unless 
 the project context demands an additional section inserted for clarity. If a 

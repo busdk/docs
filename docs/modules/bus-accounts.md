@@ -31,11 +31,6 @@ The `add` command accepts `--code <account-id>`, `--name <account-name>`, and `-
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-### See also
-
-Module SDD: [bus-accounts](../sdd/bus-accounts)  
-Accounts layout: [Accounts area](../layout/accounts-area)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +40,11 @@ Accounts layout: [Accounts area](../layout/accounts-area)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-entities">bus-entities</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-accounts](../sdd/bus-accounts)
+- [Accounts layout: Accounts area](../layout/accounts-area)
+

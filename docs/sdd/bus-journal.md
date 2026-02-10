@@ -79,13 +79,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Journal entry: a ledger posting row associated with a transaction and voucher.  
 Transaction identifier: a stable identifier that groups journal entries for a posting.
 
-### See also
-
-End user documentation: [bus-journal CLI reference](../modules/bus-journal)  
-Repository: https://github.com/busdk/bus-journal
-
-For ledger structure and append-only expectations, see [Journal area](../layout/journal-area) and [Double-entry ledger](../design-goals/double-entry-ledger).
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -95,6 +88,16 @@ For ledger structure and append-only expectations, see [Journal area](../layout/
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-bank">bus-bank</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Documents (evidence)](../master-data/documents/index)
+- [End user documentation: bus-journal CLI reference](../modules/bus-journal)
+- [Repository](https://github.com/busdk/bus-journal)
+- [Journal area](../layout/journal-area)
+- [Double-entry ledger](../design-goals/double-entry-ledger)
 
 ### Document control
 

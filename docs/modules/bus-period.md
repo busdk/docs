@@ -31,11 +31,6 @@
 
 `0` on success. Non-zero on invalid usage or close/lock violations.
 
-### See also
-
-Module SDD: [bus-period](../sdd/bus-period)  
-Workflow: [Year-end close (closing entries)](../workflow/year-end-close)
-
 ---
 
 <!-- busdk-docs-nav start -->
@@ -45,3 +40,12 @@ Workflow: [Year-end close (closing entries)](../workflow/year-end-close)
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Owns master data: Accounting periods](../master-data/accounting-periods/index)
+- [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
+- [Module SDD: bus-period](../sdd/bus-period)
+- [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
+
