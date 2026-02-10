@@ -23,8 +23,8 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`description`](./description): What was sold.
 - [`amount`](./amount): Quantity.
 - [`price`](./price): Unit price.
-- [`discount_procent`](./discount-procent): Discount impact.
-- [`vat_procent`](./vat-procent): Applied VAT percentage.
+- [`discount_percent`](./discount-percent): Discount impact.
+- [`vat_percent`](./vat-percent): Applied VAT percentage.
 - [`ledger_account_id`](./ledger-account-id): Revenue account intent.
 - [`vat_treatment`](./vat-treatment): VAT handling code.
 - [`dimension`](./dimension): Lightweight reporting tag.
@@ -32,6 +32,12 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`service_end_date`](./service-end-date): Line-level service period end.
 
 Sales invoice rows inherit accounting scope via [`group_id`](../accounting-entity/group-id) and typically reference accounts via [`ledger_account_id`](../chart-of-accounts/ledger-account-id).
+
+### Relations
+
+A sales invoice row belongs to one [sales invoice](../sales-invoices/index) via [`invoice_id`](./invoice-id). A sales invoice typically has one or more rows that together describe what was sold.
+
+A sales invoice row references one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) and one [VAT treatment](../vat-treatment/index) via [`vat_treatment`](./vat-treatment) and [`vat_percent`](./vat-percent).
 
 ---
 

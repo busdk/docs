@@ -33,6 +33,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 Party defaults and identifiers support deterministic [VAT treatment](../vat-treatment/index) selection and validation, especially when cross-border rules and exemptions apply.
 
+### Relations
+
+A party belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id) and can be referenced by multiple bookkeeping objects over time.
+
+Sales invoices reference a customer party via [`client_id`](../sales-invoices/client-id). Purchase invoices reference a supplier party via [`purchase_company_id`](../purchase-invoices/purchase-company-id). Bank transactions can reference parties on either side using [`client_id`](../bank-transactions/client-id) and [`purchase_company_id`](../bank-transactions/purchase-company-id).
+
+Employees reference a party record via [`entity_id`](../employees/entity-id) so payroll can keep identity and payment data consistent with the party master. Loans reference a party via [`counterparty_id`](../loans/counterparty-id).
+
 ---
 
 <!-- busdk-docs-nav start -->

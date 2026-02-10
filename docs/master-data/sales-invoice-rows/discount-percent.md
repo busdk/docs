@@ -1,6 +1,6 @@
-## `discount_procent` (discount impact)
+## `discount_percent` (discount impact)
 
-`discount_procent` records the discount applied to the invoice row. Bookkeeping needs row-level discount information because discount changes net sales and VAT calculations and affects how revenue is evidenced and reviewed.
+`discount_percent` records the discount applied to the invoice row, expressed as a percentage of the row price. Bookkeeping needs row-level discount information because discount changes net sales and VAT calculations and affects how revenue is evidenced and reviewed.
 
 When discounts are explicit, reports and validations can reconstruct net amounts deterministically and avoid “hidden discount” interpretations from descriptions.
 
@@ -12,7 +12,7 @@ Example values: `0`, `10`.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./price">price</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Sales invoice rows</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./vat-procent">vat_procent</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./vat-percent">vat_percent</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

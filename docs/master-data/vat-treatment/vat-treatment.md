@@ -10,7 +10,7 @@ Example values: `domestic_standard`, `reverse_charge`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-procent">vat_procent</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-percent">vat_percent</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">VAT treatment</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./vat-deductible-percent">vat_deductible_percent</a> &rarr;</span>
 </p>

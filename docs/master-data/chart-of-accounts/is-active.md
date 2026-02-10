@@ -1,6 +1,6 @@
 ## `is_active` (operational control)
 
-`is_active` indicates whether an account is available for new postings. Inactive accounts prevent accidental classification to deprecated accounts while keeping historical postings intact and reviewable.
+`is_active` indicates whether an account is available for new postings. Inactive accounts prevent accidental classification to inactive targets while keeping historical postings intact and reviewable.
 
 Bookkeeping automation should avoid selecting inactive accounts for new items, but reporting must still include them when reviewing historical periods.
 

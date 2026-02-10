@@ -30,6 +30,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`depreciation_method`](./depreciation-method): Depreciation method.
 - [`life_months`](./life-months): Depreciation life in months.
 
+### Relations
+
+A fixed asset belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+Fixed assets reference [ledger accounts](../chart-of-accounts/index) for posting intent, typically including an asset account, an accumulated depreciation account, and a depreciation expense account.
+
+Depreciation and disposal workflows are period-based and produce posting intent for a given [accounting period](../accounting-periods/index).
+
 ---
 
 <!-- busdk-docs-nav start -->

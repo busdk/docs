@@ -1,10 +1,10 @@
 ## Deactivate a ledger account
 
-Prevent new postings to a deprecated account while keeping history intact.
+Prevent new postings to an inactive account while keeping history intact.
 
 Owner: [bus accounts](../../modules/bus-accounts).
 
-Deactivate accounts to prevent new postings to deprecated targets while keeping historical postings intact. Automation should avoid selecting inactive accounts for new classification.
+Deactivate accounts to prevent new postings to inactive targets while keeping historical postings intact. Automation should avoid selecting inactive accounts for new classification.
 
 ---
 

@@ -23,6 +23,12 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`period`](./period): Budget period identifier.
 - [`amount`](./amount): Budget amount.
 
+### Relations
+
+A budget line belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+A budget line references one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) and one [accounting period](../accounting-periods/index) via `year` and [`period`](./period), so reporting can compare actuals to budget in the same scope and structure.
+
 ---
 
 <!-- busdk-docs-nav start -->

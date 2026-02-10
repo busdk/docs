@@ -28,6 +28,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`withholding_payable_account_id`](./withholding-payable-account-id): Withholding payable account.
 - [`net_payable_account_id`](./net-payable-account-id): Net wages payable account.
 
+### Relations
+
+An employee belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+An employee references one [party](../parties/index) via [`entity_id`](./entity-id) so that identity, payment identifiers, and deduplication rules can be shared with other counterparty workflows.
+
+Payroll runs consume employee records to compute wages and withholdings for a month. Employee pay structure fields reference [ledger accounts](../chart-of-accounts/index) so payroll outputs can be posted consistently.
+
 ---
 
 <!-- busdk-docs-nav start -->

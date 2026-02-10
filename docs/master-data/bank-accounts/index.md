@@ -25,6 +25,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`currency`](./currency): Account currency.
 - [`ledger_account_id`](./ledger-account-id): Ledger mapping.
 
+### Relations
+
+A bank account belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+A bank account can have zero or more [bank transactions](../bank-transactions/index). Each bank transaction references its statement source via [`bank_account_id`](../bank-transactions/bank-account-id).
+
+A bank account maps to one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) so that cash movement can be posted consistently.
+
 ---
 
 <!-- busdk-docs-nav start -->

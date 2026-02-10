@@ -46,6 +46,16 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 Bank transactions inherit accounting scope via [`group_id`](../accounting-entity/group-id) and attach to a statement source via [`bank_account_id`](../bank-accounts/bank-account-id).
 
+### Relations
+
+A bank transaction belongs to one [bank account](../bank-accounts/index) via [`bank_account_id`](./bank-account-id) and to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+A bank transaction can be linked to one or more [reconciliations](../reconciliations/index), which explain how the cash movement settles one or more targets such as a [sales invoice](../sales-invoices/index), a [purchase invoice](../purchase-invoices/index), or a journal transaction.
+
+When the bank transaction represents a direct, non-invoice bookkeeping event, it can reference one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) and one [VAT treatment](../vat-treatment/index) via [`vat_treatment`](./vat-treatment).
+
+A bank transaction can have zero or more [documents (evidence)](../documents/index) linked to it for audit navigation.
+
 ---
 
 <!-- busdk-docs-nav start -->

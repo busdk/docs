@@ -24,6 +24,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`status`](./status): Period status.
 - [`post_date`](./post-date): Closing post date.
 
+### Relations
+
+Accounting periods belong to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+Period boundaries affect when postings can be finalized and locked, and they are referenced by workflows that are period-based by definition, such as budget variance and month-based payroll.
+
+Budgets reference accounting periods via [`period`](../budgets/period) and `year`. Payroll runs reference months and rely on period control to keep month-close workflows deterministic.
+
 ---
 
 <!-- busdk-docs-nav start -->

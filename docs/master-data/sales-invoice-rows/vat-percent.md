@@ -1,6 +1,6 @@
-## `vat_procent` (applied VAT percentage)
+## `vat_percent` (applied VAT percentage)
 
-`vat_procent` is the VAT percentage applied to the invoice row. Bookkeeping requires the applied VAT percentage to be explicit at line level because VAT can differ by item and can change over time.
+`vat_percent` is the VAT percentage applied to the invoice row. Bookkeeping requires the applied VAT percentage to be explicit at line level because VAT can differ by item and can change over time.
 
 When VAT percentage is explicit, VAT reporting and validation can be deterministic without re-interpreting free-text descriptions.
 
@@ -10,7 +10,7 @@ Example values: `24`, `0`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./discount-procent">discount_procent</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./discount-percent">discount_percent</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Sales invoice rows</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./ledger-account-id">ledger_account_id</a> &rarr;</span>
 </p>

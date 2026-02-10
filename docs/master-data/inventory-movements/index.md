@@ -25,6 +25,12 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`description`](./description): Movement description.
 - [`voucher`](./voucher): Voucher or evidence reference.
 
+### Relations
+
+An inventory movement belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+An inventory movement references one [inventory item](../inventory-items/index) via [`item_id`](./item-id). Over time, one item can have many movements that together form the audit trail for stock level and valuation.
+
 ---
 
 <!-- busdk-docs-nav start -->

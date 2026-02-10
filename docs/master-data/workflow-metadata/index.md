@@ -28,6 +28,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`accounting_note`](./accounting-note): Exception explanation.
 - [`evidence_status`](./evidence-status): Evidence completeness signal.
 
+### Relations
+
+Workflow metadata is stored on operational bookkeeping objects so they can share one review vocabulary and one “bookkeeping inbox” view.
+
+Sales invoices typically carry workflow fields described on this page. Purchase invoices carry the same fields, and both invoice types commonly use the same evidence status rules through [documents (evidence)](../documents/index).
+
+Bank transactions reuse the same status vocabulary so that invoice and bank reconciliation workflows can be reviewed together.
+
 ---
 
 <!-- busdk-docs-nav start -->

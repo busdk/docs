@@ -17,7 +17,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 - [Add a ledger account](./add): Register a new account so postings and exports can reference it deterministically.
 - [Categorize a ledger account](./categorize): Attach the account to a reporting category so statements remain readable.
-- [Deactivate a ledger account](./deactivate): Prevent new postings to a deprecated account while keeping history intact.
+- [Deactivate a ledger account](./deactivate): Prevent new postings to an inactive account while keeping history intact.
 
 ### Properties
 
@@ -26,6 +26,18 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`name`](./name): Account label used in review.
 - [`ledger_category_id`](./ledger-category-id): Reporting structure link.
 - [`is_active`](./is-active): Operational control for new postings.
+
+### Relations
+
+The chart of accounts belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id). Most bookkeeping objects reference ledger accounts by storing a [`ledger_account_id`](./ledger-account-id) (or an account-id field that resolves to one).
+
+Sales invoice rows reference revenue accounts via [`ledger_account_id`](../sales-invoice-rows/ledger-account-id). Purchase posting specifications reference expense or asset accounts via [`ledger_account_id`](../purchase-posting-specifications/ledger-account-id).
+
+Bank accounts map to ledger accounts via [`ledger_account_id`](../bank-accounts/ledger-account-id), and bank transactions can reference a ledger account directly via [`ledger_account_id`](../bank-transactions/ledger-account-id) when the cash movement is booked as a non-invoice event.
+
+Employees reference payroll-related accounts via [`wage_expense_account_id`](../employees/wage-expense-account-id), [`withholding_payable_account_id`](../employees/withholding-payable-account-id), and [`net_payable_account_id`](../employees/net-payable-account-id). Fixed assets reference asset, depreciation, and expense accounts via [`asset_account_id`](../fixed-assets/asset-account-id), [`depreciation_account_id`](../fixed-assets/depreciation-account-id), and [`expense_account_id`](../fixed-assets/expense-account-id). Inventory items reference inventory and COGS accounts via [`inventory_account_id`](../inventory-items/inventory-account-id) and [`cogs_account_id`](../inventory-items/cogs-account-id). Loans reference accounts via [`principal_account_id`](../loans/principal-account-id), [`interest_account_id`](../loans/interest-account-id), and [`cash_account_id`](../loans/cash-account-id).
+
+Budgets reference ledger accounts via [`ledger_account_id`](../budgets/ledger-account-id) so budget vs actual reporting can use the same account structure as postings.
 
 ---
 

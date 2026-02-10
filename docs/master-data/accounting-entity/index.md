@@ -27,6 +27,12 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`vat_registered`](./vat-registered): VAT registration.
 - [`vat_reporting_period`](./vat-reporting-period): VAT reporting cadence.
 
+### Relations
+
+An accounting entity is the shared scope for all master data and bookkeeping records. Objects inherit entity scope via [`group_id`](./group-id) so that journals, VAT reporting, and reconciliations never mix across companies or ledgers.
+
+An accounting entity has one [chart of accounts](../chart-of-accounts/index) (and therefore many ledger accounts) and one set of [accounting periods](../accounting-periods/index) that define when bookkeeping is open, closed, and locked.
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -12,7 +12,7 @@ Example values: `24`, `0`.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">VAT treatment</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">VAT treatment</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./vat-procent">vat_procent</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./vat-percent">vat_percent</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

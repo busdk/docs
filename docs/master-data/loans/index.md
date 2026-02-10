@@ -30,6 +30,16 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`interest_account_id`](./interest-account-id): Interest expense account.
 - [`cash_account_id`](./cash-account-id): Cash or bank account.
 
+### Relations
+
+A loan belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+A loan references one [party](../parties/index) (lender or borrower) via [`counterparty_id`](./counterparty-id).
+
+A loan references [ledger accounts](../chart-of-accounts/index) via its account-id fields so that principal, interest, and cash movement can be posted consistently.
+
+Amortization is produced for a given [accounting period](../accounting-periods/index), based on the loan’s event history.
+
 ---
 
 <!-- busdk-docs-nav start -->

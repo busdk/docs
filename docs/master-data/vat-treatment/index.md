@@ -22,9 +22,19 @@ Secondary read-only use cases are provided by these modules when they consume th
 ### Properties
 
 - [`vat_rate`](./vat-rate): Applied percentage.
-- [`vat_procent`](./vat-procent): Applied percentage (alias).
+- [`vat_percent`](./vat-percent): Applied percentage (alias).
 - [`vat_treatment`](./vat-treatment): Reason and handling code.
 - [`vat_deductible_percent`](./vat-deductible-percent): Purchase-side deductibility.
+
+### Relations
+
+VAT treatment codes are referenced at the level where posting intent is recorded. Sales invoice rows reference VAT treatment via [`vat_treatment`](../sales-invoice-rows/vat-treatment) and rate via [`vat_percent`](../sales-invoice-rows/vat-percent).
+
+Purchase posting specifications reference VAT treatment via [`vat_treatment`](../purchase-posting-specifications/vat-treatment), rate via [`vat_rate`](../purchase-posting-specifications/vat-rate), and deductibility via [`vat_deductible_percent`](../purchase-posting-specifications/vat-deductible-percent).
+
+Bank transactions can reference VAT treatment directly when the cash movement is booked as a non-invoice event using [`vat_treatment`](../bank-transactions/vat-treatment) and [`vat_deductible_percent`](../bank-transactions/vat-deductible-percent).
+
+Parties can carry a default VAT treatment via [`default_vat_treatment`](../parties/default-vat-treatment) to make classification and validation deterministic.
 
 ---
 

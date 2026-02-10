@@ -26,6 +26,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`cogs_account_id`](./cogs-account-id): COGS account.
 - [`sku`](./sku): Stock keeping unit.
 
+### Relations
+
+An inventory item belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+Inventory movements reference items via [`item_id`](../inventory-movements/item-id) so stock levels and valuation can be traced back to a stable item master record.
+
+Inventory items reference [ledger accounts](../chart-of-accounts/index) via [`inventory_account_id`](./inventory-account-id) and [`cogs_account_id`](./cogs-account-id) so valuation and COGS postings can be produced consistently.
+
 ---
 
 <!-- busdk-docs-nav start -->

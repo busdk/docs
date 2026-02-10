@@ -36,6 +36,16 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 Purchase invoices also use shared workflow and evidence fields. See [`accounting_status`](../workflow-metadata/accounting-status), [`evidence_status`](../workflow-metadata/evidence-status), and [`accounting_note`](../workflow-metadata/accounting-note).
 
+### Relations
+
+A purchase invoice belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id) and references one [party](../parties/index) (the supplier) via [`purchase_company_id`](./purchase-company-id).
+
+A purchase invoice can have one or more [purchase posting specifications](../purchase-posting-specifications/index) that capture posting intent (accounts, VAT handling, and capitalizable lines) at the level where the booking decision is made.
+
+A purchase invoice can be settled by one or more [reconciliations](../reconciliations/index) that link a [bank transaction](../bank-transactions/index) to the invoice’s open item.
+
+A purchase invoice can have zero or more [documents (evidence)](../documents/index) linked to it for audit navigation.
+
 ---
 
 <!-- busdk-docs-nav start -->

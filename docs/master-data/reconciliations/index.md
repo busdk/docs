@@ -30,6 +30,14 @@ Secondary read-only use cases are provided by these modules when they consume re
 
 Reconciliations bind to bank transaction currency via [`currency` on bank transactions](../bank-transactions/currency) and inherit accounting scope via the bank transaction’s [`group_id`](../accounting-entity/group-id).
 
+### Relations
+
+A reconciliation belongs to one [bank transaction](../bank-transactions/index) via [`bank_transaction_id`](./bank-transaction-id).
+
+A bank transaction can have one or more reconciliation records when a cash movement is allocated across multiple targets. Each reconciliation record points to exactly one target, identified by [`target_kind`](./target-kind) and [`target_id`](./target-id).
+
+When `target_kind` is `invoice`, the target is either a [sales invoice](../sales-invoices/index) or a [purchase invoice](../purchase-invoices/index). When `target_kind` is `journal`, the target is a journal transaction.
+
 ---
 
 <!-- busdk-docs-nav start -->

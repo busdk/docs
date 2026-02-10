@@ -32,6 +32,16 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 Sales invoices typically also use the shared workflow fields described in [Bookkeeping status and review workflow](../workflow-metadata/index), and they inherit accounting scope via [`group_id`](../accounting-entity/group-id).
 
+### Relations
+
+A sales invoice belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id) and references one [party](../parties/index) (the customer) via [`client_id`](./client-id).
+
+A sales invoice can have one or more [sales invoice rows](../sales-invoice-rows/index). Rows reference their parent invoice via [`invoice_id`](../sales-invoice-rows/invoice-id).
+
+A sales invoice can be settled by one or more [reconciliations](../reconciliations/index) that link a [bank transaction](../bank-transactions/index) to the invoice’s open item.
+
+A sales invoice can have zero or more [documents (evidence)](../documents/index) linked to it for audit navigation.
+
 ---
 
 <!-- busdk-docs-nav start -->

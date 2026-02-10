@@ -22,6 +22,14 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`month`](./month): Payroll month.
 - [`pay_date`](./pay-date): Pay date.
 
+### Relations
+
+A payroll run belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+A payroll run is computed from the employee register, typically including all [employees](../employees/index) active in the run month. The run produces posting intent that references [ledger accounts](../chart-of-accounts/index) through the account fields stored on employees.
+
+Payroll runs are month-based and rely on [accounting periods](../accounting-periods/index) to keep close and lock rules deterministic for payroll workflows.
+
 ---
 
 <!-- busdk-docs-nav start -->

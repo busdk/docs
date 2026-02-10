@@ -32,6 +32,12 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`is_capitalizable`](./is-capitalizable): Asset vs expense intent.
 - [`asset_class_hint`](./asset-class-hint): Asset class hint.
 
+### Relations
+
+A purchase posting specification belongs to a [purchase invoice](../purchase-invoices/index). It captures how the invoice amount is split across one or more [ledger accounts](../chart-of-accounts/index) and which [VAT treatment](../vat-treatment/index) applies to each line.
+
+When `is_capitalizable` is set, the line indicates fixed-asset intent that later [fixed asset](../fixed-assets/index) workflows can consume to keep asset capitalization consistent with what was booked.
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -8,7 +8,7 @@ Example values: `acc-3000`, `acc-3010`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-procent">vat_procent</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-percent">vat_percent</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Sales invoice rows</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./vat-treatment">vat_treatment</a> &rarr;</span>
 </p>

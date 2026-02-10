@@ -28,6 +28,12 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`evidence_status`](./evidence-status): Evidence completeness signal.
 - [`linked_entity_reference`](./linked-entity-reference): Navigable evidence trail.
 
+### Relations
+
+A document belongs to one [accounting entity](../accounting-entity/index) via [`group_id`](../accounting-entity/group-id).
+
+A document can be linked to one or more bookkeeping records using [`linked_entity_reference`](./linked-entity-reference). In practice the primary targets are [sales invoices](../sales-invoices/index), [purchase invoices](../purchase-invoices/index), and [bank transactions](../bank-transactions/index), so that reviewers can navigate from postings and open items back to evidence.
+
 ---
 
 <!-- busdk-docs-nav start -->

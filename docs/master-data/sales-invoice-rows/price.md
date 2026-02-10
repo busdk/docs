@@ -12,7 +12,7 @@ Example values: `99.00`, `150.00`.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./amount">amount</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Sales invoice rows</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./discount-procent">discount_procent</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./discount-percent">discount_percent</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
