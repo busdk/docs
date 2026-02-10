@@ -12,7 +12,7 @@ When a dataset is split across multiple files over time, the workspace root stil
 
 ### Baseline workspace configuration
 
-After initialization, the workspace MUST include `bus.yml` at the workspace root. This file defines accounting entity settings (base currency, fiscal year boundaries, and VAT reporting expectations) as workspace-level configuration rather than as per-row fields in operational datasets. See [Workspace configuration (`bus.yml`)](../data/workspace-configuration).
+After initialization, the workspace MUST include `datapackage.json` at the workspace root. This file serves as a deterministic manifest of datasets and schemas, and it stores accounting entity settings (base currency, fiscal year boundaries, and VAT reporting expectations) as workspace-level configuration rather than as per-row fields in operational datasets. See [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration).
 
 ### Baseline datasets and schemas
 
@@ -36,9 +36,9 @@ After initialization, the following root-level datasets and their beside-the-dat
 
 Budgeting is optional for the end-to-end statutory bookkeeping chain. If budgeting is enabled in a workspace, it MUST follow the same conventions (root-level datasets with beside-the-dataset schemas). A minimal example is `budgets.csv` beside `budgets.schema.json` (see [Budgeting area](./budget-area)).
 
-### Workspace manifest (optional)
+### Workspace manifest
 
-A workspace MAY include a Frictionless Data Package descriptor (`datapackage.json`) at the workspace root to serve as a manifest of datasets, paths, and schema references. When present, it must list every baseline dataset and its schema reference so whole-workspace validation and exports can be performed deterministically. See [Data Package organization](../data/data-package-organization).
+The workspace’s Frictionless Data Package descriptor (`datapackage.json`) is the manifest of datasets, paths, and schema references for whole-workspace validation and deterministic exports. It must list every baseline dataset and its schema reference so whole-workspace validation and exports can be performed deterministically. See [Data Package organization](../data/data-package-organization).
 
 ---
 

@@ -20,7 +20,7 @@ bus -V
 bus -h
 ```
 
-3. Alice scaffolds the workspace layout, writes the workspace configuration (`bus.yml`), and creates module-owned baseline datasets by running `bus init`:
+3. Alice scaffolds the workspace layout, writes the workspace configuration into `datapackage.json`, and creates module-owned baseline datasets by running `bus init`:
 
 ```bash
 bus init

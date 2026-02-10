@@ -4,7 +4,7 @@ An accounting entity is the bookkeeping scope you keep separate journals, VAT, a
 
 ### Ownership
 
-Owner: [bus init](../../modules/bus-init). This module creates a new workspace and writes the workspace-level accounting entity settings in [`bus.yml`](../../data/workspace-configuration).
+Owner: [bus init](../../modules/bus-init). This module creates a new workspace and writes the workspace-level accounting entity settings into the workspace `datapackage.json` as a BusDK extension (see [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration)).
 
 Other modules consume the accounting entity settings as read-only workspace configuration when they validate, post, reconcile, report, or produce filings:
 
@@ -20,11 +20,11 @@ Other modules consume the accounting entity settings as read-only workspace conf
 
 ### Properties
 
-Accounting entity settings are workspace-level configuration stored in `bus.yml` at the workspace root. The canonical reference is [Workspace configuration (`bus.yml`)](../../data/workspace-configuration), which defines base currency, fiscal year boundaries, VAT registration, and VAT reporting cadence.
+Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The canonical reference is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration), which defines base currency, fiscal year boundaries, VAT registration, and VAT reporting cadence.
 
 ### Relations
 
-An accounting entity is the shared scope for all master data and bookkeeping records in a workspace. Scope is derived from the workspace root directory, not from a per-row key, and entity-wide settings are resolved from `bus.yml` rather than being referenced on row-level in operational datasets.
+An accounting entity is the shared scope for all master data and bookkeeping records in a workspace. Scope is derived from the workspace root directory, not from a per-row key, and entity-wide settings are resolved from `datapackage.json` rather than being referenced on row-level in operational datasets.
 
 Within a workspace, there is one [chart of accounts](../chart-of-accounts/index) (and therefore many ledger accounts) and one set of [accounting periods](../accounting-periods/index) that define when bookkeeping is open, closed, and locked.
 

@@ -1,6 +1,8 @@
 ## Data Package organization
 
-BusDK may optionally adopt a Frictionless Data Package (typically a `datapackage.json`) to provide a repository-wide manifest of resources and their schemas. A Data Package descriptor lists resources, their paths, and their schema references, enabling whole-repository validation and standardized publication or interchange patterns. See [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/). Even without a descriptor, the directory structure is designed to be discoverable and navigable, but the Data Package option improves automation and interoperability.
+BusDK uses a Frictionless Data Package descriptor (typically `datapackage.json`) at the workspace root to provide a whole-workspace manifest of resources and their schemas. A Data Package descriptor lists resources, their paths, and their schema references, enabling whole-workspace validation and standardized publication or interchange patterns. See [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/).
+
+The descriptor is also the home for workspace-level BusDK metadata that is not naturally represented as a row-level field in operational datasets. For example, accounting entity configuration lives under the top-level `busdk.accounting_entity` object in `datapackage.json` (see [Workspace configuration (`datapackage.json` extension)](./workspace-configuration)). This relies on Frictionless descriptor extensibility: additional properties are compatible with standard tooling and can be ignored safely by tools that do not understand BusDK.
 
 For Finnish compliance, a Data Package descriptor SHOULD be used as the manifest inside tax-audit export packs to make datasets and schemas self-describing. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

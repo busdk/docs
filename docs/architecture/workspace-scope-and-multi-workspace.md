@@ -17,7 +17,7 @@ Multi-company workflows such as company groups, consolidation, shared reporting,
 ### Sources
 
 - [Accounting entity](../master-data/accounting-entity/index)
-- [Workspace configuration (`bus.yml`)](../data/workspace-configuration)
+- [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration)
 - [Initialize a new repository](../workflow/initialize-repo)
 - [Git-backed data repository (the data store)](./git-backed-data-store)
 

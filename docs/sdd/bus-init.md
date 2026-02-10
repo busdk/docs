@@ -2,7 +2,7 @@
 
 ### Introduction and Overview
 
-Bus Init bootstraps a new BusDK workspace by writing workspace-level configuration (`bus.yml`) and orchestrating module-owned `init` commands so each module remains the sole owner of its datasets and schemas.
+Bus Init bootstraps a new BusDK workspace by writing workspace-level configuration into `datapackage.json` and orchestrating module-owned `init` commands so each module remains the sole owner of its datasets and schemas.
 
 ### Requirements
 
@@ -34,7 +34,7 @@ bus init
 
 ### Data Design
 
-The module creates or updates workspace-level configuration (`bus.yml`) and metadata such as `datapackage.json` at the workspace root. All other datasets are created by module `init` commands it invokes.
+The module creates or updates workspace-level metadata (`datapackage.json`) at the workspace root. The descriptor contains both the workspace resource manifest and BusDK workspace-level configuration via extensibility (for example accounting entity settings under `busdk.accounting_entity`). All other datasets are created by module `init` commands it invokes.
 
 ### Assumptions and Dependencies
 

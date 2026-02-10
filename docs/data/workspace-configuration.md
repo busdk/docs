@@ -1,20 +1,29 @@
-## Workspace configuration (`bus.yml`)
+## Workspace configuration (`datapackage.json` extension)
 
 Each BusDK workspace directory represents exactly one accounting entity. All datasets under that workspace belong to that entity by construction, so scope separation is enforced by filesystem boundaries rather than by repeating an “entity key” on every row.
 
-Entity-wide settings are stored as workspace configuration in `bus.yml` at the workspace root. Modules read these settings when they validate, post, reconcile, report, or produce filings, and they must not require row-level datasets to repeat them.
+Entity-wide settings are stored as BusDK metadata in the workspace’s Frictionless Data Package descriptor (`datapackage.json`) at the workspace root. Modules read these settings when they validate, post, reconcile, report, or produce filings, and they must not require row-level datasets to repeat them.
+
+The settings live under the top-level `busdk.accounting_entity` object in `datapackage.json`. This uses Frictionless descriptor extensibility — additional properties remain compatible with standard tooling, and tooling that does not understand BusDK can safely ignore the `busdk` object.
 
 ### Location
 
-`bus.yml` lives at the workspace root:
+`datapackage.json` lives at the workspace root:
 
-```yaml
-# ./bus.yml
-base_currency: EUR
-fiscal_year_start: 2026-01-01
-fiscal_year_end: 2026-12-31
-vat_registered: true
-vat_reporting_period: quarterly
+```json
+{
+  "profile": "tabular-data-package",
+  "resources": [],
+  "busdk": {
+    "accounting_entity": {
+      "base_currency": "EUR",
+      "fiscal_year_start": "2026-01-01",
+      "fiscal_year_end": "2026-12-31",
+      "vat_registered": true,
+      "vat_reporting_period": "quarterly"
+    }
+  }
+}
 ```
 
 ### Keys
@@ -42,4 +51,5 @@ vat_reporting_period: quarterly
 - [Accounting entity](../master-data/accounting-entity/index)
 - [Initialize a new repository](../workflow/initialize-repo)
 - [Minimal workspace baseline (after initialization)](../layout/minimal-workspace-baseline)
+- [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/)
 

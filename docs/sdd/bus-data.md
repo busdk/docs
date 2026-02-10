@@ -220,7 +220,7 @@ Bus Data owns mechanical concerns only: reading and writing CSV, reading and wri
 
 ### Assumptions and Dependencies
 
-Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and an optional `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.
+Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.
 
 Bus Data depends on the [bus-bfl](./bus-bfl) library for parsing, validation, and evaluation of BFL expressions. If the library surface or error contracts change, Bus Data must update its integration while preserving deterministic diagnostics and stable validation behavior. For range evaluation, Bus Data assumes that the current resource snapshot provides a stable ordering of rows and fields so range resolution remains deterministic for a given read operation.
 
