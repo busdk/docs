@@ -12,7 +12,8 @@ if git status|grep -qE 'nothing to commit, working tree clean'; then
   exit 0
 fi
 
-MODEL=gpt-5.2-codex-high
+#MODEL=gpt-5.2-codex-high
+MODEL=auto
 OUTPUT_FORMAT=stream-json
 TASK_TIMEOUT=15m
 
