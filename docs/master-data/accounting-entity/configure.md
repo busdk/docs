@@ -4,7 +4,7 @@ Set base currency, fiscal year boundaries, and VAT reporting expectations used b
 
 Owner: [bus init](../../modules/bus-init).
 
-Configure accounting entity settings by editing `datapackage.json` at the workspace root. Other modules rely on these settings when they interpret dates, currency, and VAT reporting expectations, and they resolve them from BusDK metadata under `busdk.accounting_entity` rather than from row-level fields in operational datasets.
+Configure accounting entity settings by running [bus init configure](../../modules/bus-init) with the flags for the properties you want to change. The command updates `datapackage.json` at the workspace root under `busdk.accounting_entity`. Omit a flag to leave that property unchanged. Other modules rely on these settings when they interpret dates, currency, and VAT reporting expectations, and they resolve them from BusDK metadata under `busdk.accounting_entity` rather than from row-level fields in operational datasets.
 
 The canonical reference for supported keys and their meaning is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration).
 

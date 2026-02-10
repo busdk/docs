@@ -10,6 +10,8 @@ FR-INIT-001 Workspace bootstrap. The module MUST orchestrate a deterministic seq
 
 FR-INIT-002 Non-invasive initialization. The module MUST not perform Git or network operations. Acceptance criteria: initialization only affects workspace datasets and metadata.
 
+FR-INIT-003 Configure accounting entity settings. The module MUST support updating accounting entity properties in an existing workspace `datapackage.json` without re-running full bootstrap. Acceptance criteria: `bus init configure` accepts flags for each property (`base_currency`, `fiscal_year_start`, `fiscal_year_end`, `vat_registered`, `vat_reporting_period`); only provided flags alter the stored value; the command fails with a clear error if `datapackage.json` does not exist or does not contain `busdk.accounting_entity`.
+
 NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostics and stop on the first failure. Acceptance criteria: failures identify the module command that failed.
 
 ### System Architecture
@@ -22,19 +24,20 @@ KD-INIT-001 Module-owned initialization. The bootstrap workflow delegates datase
 
 ### Component Design and Interfaces
 
-Interface IF-INIT-001 (module CLI). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command does not accept layout selection flags and always initializes the standard workspace layout with deterministic dataset and schema filenames.
+Interface IF-INIT-001 (bootstrap). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command does not accept layout selection flags and always initializes the standard workspace layout with deterministic dataset and schema filenames. `bus init` accepts no positional arguments and no module-level flags beyond the shared global flags.
 
-The pinned module version defines no module-specific parameters. `bus init` accepts no positional arguments and no module-level flags beyond the shared global flags, so its deterministic CLI help lists only the single `bus init` invocation with the global options described in the shared CLI conventions.
+Interface IF-INIT-002 (configure). The module is invoked as `bus init configure` and updates accounting entity settings in an existing workspace `datapackage.json`. The command requires a workspace that already contains `datapackage.json` with a `busdk.accounting_entity` object. It accepts optional flags: `--base-currency`, `--fiscal-year-start`, `--fiscal-year-end`, `--vat-registered`, `--vat-reporting-period`. Only flags explicitly provided are written; other properties remain unchanged. Flag values must conform to the canonical schema in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration); invalid values produce a deterministic usage error and exit code 2.
 
-Usage example:
+Usage examples:
 
 ```bash
 bus init
+bus init configure --base-currency=EUR --vat-registered=true
 ```
 
 ### Data Design
 
-The module creates or updates workspace-level metadata (`datapackage.json`) at the workspace root. The descriptor contains both the workspace resource manifest and BusDK workspace-level configuration via extensibility (for example accounting entity settings under `busdk.accounting_entity`). All other datasets are created by module `init` commands it invokes.
+The module creates or updates workspace-level metadata (`datapackage.json`) at the workspace root. The descriptor contains both the workspace resource manifest and BusDK workspace-level configuration via extensibility (accounting entity settings under `busdk.accounting_entity`). The bootstrap command (`bus init`) creates or overwrites the descriptor; the configure command (`bus init configure`) updates only the `busdk.accounting_entity` subtree for the properties specified by flags. All other datasets are created by module `init` commands invoked during bootstrap.
 
 ### Assumptions and Dependencies
 

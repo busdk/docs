@@ -20,7 +20,7 @@ Other modules consume the accounting entity settings as read-only workspace conf
 
 ### Properties
 
-Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The canonical reference is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration), which defines base currency, fiscal year boundaries, VAT registration, and VAT reporting cadence.
+Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The settings include base currency ([base_currency](./base-currency)), fiscal year boundaries ([fiscal_year_start](./fiscal-year-start) and [fiscal_year_end](./fiscal-year-end)), VAT registration ([vat_registered](./vat-registered)), and VAT reporting cadence ([vat_reporting_period](./vat-reporting-period)). The canonical reference for keys and semantics is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration).
 
 ### Relations
 
