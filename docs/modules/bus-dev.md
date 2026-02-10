@@ -56,6 +56,25 @@ When a subcommand invokes an external agent (e.g. cursor-agent), you can overrid
 
 If the agent binary is not installed or not in `PATH`, the tool reports that on stderr and exits with code 1. It does not push, pull, or perform any remote Git operations.
 
+### Example: building a module from scratch with AI
+
+BusDK specifications are openly readable. You can point an AI assistant (for example the [Cursor CLI](https://cursor.com/docs/cli/overview) with cursor-agent) at those specs and have it build a bus module from scratch in a new repository, then refine, test, and commit using `bus dev`. Prerequisites: install cursor-agent, BusDK at least v0.0.15, and Go. Create the module directory and `.cursor/rules`, initialize a Git repository and an empty Cursor rule file so the module name is known, then run the dev workflow in order.
+
+1. Install cursor-agent (so `bus dev work` and `bus dev spec` can invoke it).
+2. [Install BusDK](https://busdk.com/).
+3. [Install Go](https://go.dev/doc/install).
+4. `mkdir -p bus-accounts/.cursor/rules`
+5. `cd bus-accounts`
+6. `git init`
+7. `touch .cursor/rules/bus-accounts.mdc`
+8. `bus dev spec` — refine the MDC rule from BusDK specs.
+9. `bus dev work` — have the agent implement the module (code, tests, README).
+10. `bus dev e2e` — scaffold and run end-to-end tests.
+11. `git add .` to stage changes.
+12. `bus dev commit` to create commits with good messages.
+
+Because the specs are public and machine-readable, this flow lets you regenerate or rewrite any bus module from scratch with AI, without depending on pre-packaged source. If you prefer not to build from specs yourself, we offer tested and verified bus module source code for a fee. We also offer compiled binaries for free.
+
 ### Files
 
 `bus dev` does not read or write workspace accounting datasets (CSV, schemas, datapackage.json). It operates on the Git repository (metadata and index) and, when running the agent, on the repository working tree (source files, `.cursor/rules/*.mdc`). No bus-dev-specific config file is required; configuration is via flags and environment only.
@@ -80,6 +99,7 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 ### Sources
 
+- [BusDK — installation and overview](https://busdk.com/)
 - [Module SDD: bus-dev](../sdd/bus-dev)
 - [CLI: Error handling, dry-run, and diagnostics](../cli/error-handling-dry-run-diagnostics)
 - [Implementation: Module repository structure and dependency rules](../implementation/module-repository-structure)
