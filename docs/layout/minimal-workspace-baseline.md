@@ -29,7 +29,7 @@ After initialization, the following root-level datasets and their beside-the-dat
 - VAT reference data: `vat-rates.csv` and `vat-rates.schema.json` (see [VAT area](./vat-area))
 - VAT return index: `vat-returns.csv` and `vat-returns.schema.json` (see [VAT area](./vat-area))
 - VAT report index: `vat-reports.csv` and `vat-reports.schema.json` (see [VAT area](./vat-area))
-- Period control: `periods.csv` and `periods.schema.json` (see [`bus period`](../modules/bus-period))
+- Period control: `periods.csv` and `periods.schema.json` at the workspace root — not under a subdirectory such as `periods/` (see [`bus period`](../modules/bus-period))
 - Normalized bank imports and transactions:
   
   `bank-imports.csv` and `bank-imports.schema.json`, and `bank-transactions.csv` and `bank-transactions.schema.json` (see [`bus bank`](../modules/bus-bank))

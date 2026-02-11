@@ -42,7 +42,7 @@ bus period lock --period 2026Q1
 
 ### Data Design
 
-The module reads and writes `periods.csv` at the repository root, with a beside-the-table schema file. Period operations append records so period boundaries remain reviewable.
+The module reads and writes the period control dataset at the workspace root as `periods.csv`, with a beside-the-table schema file `periods.schema.json`. Paths are root-level only: there is no subdirectory (for example, the data is not under `periods/periods.csv`). Period operations append records so period boundaries remain reviewable.
 
 ### Assumptions and Dependencies
 

@@ -25,7 +25,7 @@
 
 ### Files
 
-`periods.csv` and its beside-the-table schema at the repository root.
+`periods.csv` and its beside-the-table schema `periods.schema.json` live at the workspace root. Paths are root-level only — the data is not under a subdirectory such as `periods/periods.csv`.
 
 ### Exit status
 

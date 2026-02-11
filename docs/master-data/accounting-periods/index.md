@@ -4,7 +4,7 @@ Accounting periods are canonical records used for bookkeeping review, posting, a
 
 ### Ownership
 
-Owner: [bus period](../../modules/bus-period). This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it.
+Owner: [bus period](../../modules/bus-period). This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it. The canonical dataset is `periods.csv` (and `periods.schema.json`) at the workspace root; paths are root-level only, not under a subdirectory such as `periods/`.
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
