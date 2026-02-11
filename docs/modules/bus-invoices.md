@@ -29,7 +29,7 @@
 
 ### Files
 
-Invoice header and line datasets (e.g. `sales-invoices.csv`, `sales-invoice-lines.csv`) and their schemas, typically at repository root or in an invoices area.
+Invoice master data is stored only in the project root; it is never under an `invoices/` directory. The files `sales-invoices.csv`, `purchase-invoices.csv`, `sales-invoice-lines.csv`, and `purchase-invoice-lines.csv`, and each dataset’s `.schema.json` file (e.g. `sales-invoices.schema.json`), all live in the same directory at the workspace root.
 
 ### Exit status
 

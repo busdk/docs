@@ -20,6 +20,8 @@ Bus Invoices owns invoice header and line datasets and integrates with the ledge
 
 KD-INV-001 Invoice data is canonical repository data. Invoice headers and lines are stored as datasets so they remain reviewable and exportable.
 
+KD-INV-002 Invoice master data lives in the project root only. All invoice datasets and their schemas are stored in the workspace root directory; the module does not create or use an `invoices/` subdirectory for master data.
+
 ### Component Design and Interfaces
 
 Interface IF-INV-001 (module CLI). The module exposes `bus invoices` with subcommands `init`, `add`, `list`, and `pdf` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -44,7 +46,7 @@ bus invoices list --status unpaid
 
 ### Data Design
 
-The module reads and writes invoice header and line datasets in the repository root, such as `sales-invoices.csv` and `sales-invoice-lines.csv`, with JSON Table Schemas stored beside each dataset.
+Invoice master data is stored only in the project (workspace) root; it is never stored under an `invoices/` or other invoice-specific subdirectory. The header datasets `sales-invoices.csv` and `purchase-invoices.csv`, the line datasets `sales-invoice-lines.csv` and `purchase-invoice-lines.csv`, and each dataset’s JSON Table Schema file (e.g. `sales-invoices.schema.json`) all reside in that same root directory. The module reads and writes these files in place so that invoice data remains reviewable and exportable as canonical repository data.
 
 ### Assumptions and Dependencies
 
