@@ -1,6 +1,6 @@
 ## Minimal example layout
 
-A minimal example layout keeps module datasets in the repository root so tools can read and write directly in the current working directory. When a dataset is split into multiple files over time, keep the actual files under a period directory and track them from a root-level index table such as `journals.csv` or `attachments.csv`.
+A minimal example layout keeps module datasets in the repository root so tools can read and write directly in the current working directory. When a dataset is split into multiple files over time, keep the actual files in the workspace root with a date or period prefix and track them from a root-level index table such as `journals.csv` or `attachments.csv`.
 
 When a filename includes a date, use the `YYYY[MM[DD]]-name.suffix` pattern, with hyphens instead of underscores. For VAT, the default filed-return filename is `YYYYMM-vat-return.csv`.
 
@@ -26,28 +26,22 @@ my-business-books/
   attachments.schema.json
   journals.csv
   journals.schema.json
+  journal-2025.csv
+  journal-2025.schema.json
+  journal-2026.csv
+  journal-2026.schema.json
   vat-rates.csv
   vat-rates.schema.json
   vat-returns.csv
   vat-returns.schema.json
   vat-reports.csv
   vat-reports.schema.json
-  2025/
-    journals/
-      2025-journal.csv
-      2025-journal.schema.json
-  2026/
-    journals/
-      2026-journal.csv
-      2026-journal.schema.json
-    vat-returns/
-      202603-vat-return.csv
-      202603-vat-return.schema.json
-    vat-reports/
-      202603-vat-report.csv
-      202603-vat-report.schema.json
-    attachments/
-      20260115-INV-1001.pdf
+  vat-reports-2026Q1.csv
+  vat-returns-2026Q1.csv
+  attachments/
+    2026/
+      01/
+        20260115-INV-1001.pdf
 ```
 
 ---

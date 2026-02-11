@@ -22,6 +22,8 @@ Bus Attachments owns the repository-root attachments metadata dataset and manage
 
 KD-ATT-001 Attachment evidence is recorded as repository data. Attachment metadata remains in the workspace datasets for the full retention period.
 
+KD-ATT-002 Attachments are a special case for file layout. Evidence files are stored under a dedicated subdirectory `./attachments/yyyy/mm/yyyymmdd-filename...` (relative to the workspace root), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. The metadata dataset and schema remain at the workspace root; only the evidence files use this subdirectory.
+
 ### Component Design and Interfaces
 
 Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with subcommands `init`, `add`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -39,7 +41,7 @@ bus attachments list
 
 ### Data Design
 
-The module reads and writes `attachments.csv` in the repository root with a beside-the-table schema file. Each `attachment_id` is a standard UUID string in canonical form so integrations can generate or validate identifiers without guessing; the expected representation is lowercase hex with hyphens in 8-4-4-4-12 grouping. Attachment files are stored under predictable period paths, such as `2026/attachments/`.
+The module reads and writes `attachments.csv` in the repository root with a beside-the-table schema file. Master data (the metadata dataset and its schema) lives in the workspace root only. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` — for example `attachments/2026/01/20260115-INV-1001.pdf` — where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename begins with an eight-digit date. This is the only BusDK layout that places operational files in a subdirectory; the path is deterministic so the metadata can reference it reliably. Each `attachment_id` is a standard UUID string in canonical form so integrations can generate or validate identifiers without guessing; the expected representation is lowercase hex with hyphens in 8-4-4-4-12 grouping.
 
 ### Assumptions and Dependencies
 

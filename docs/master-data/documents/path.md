@@ -4,7 +4,7 @@
 
 The exact storage scheme can vary, but the bookkeeping requirement is that the locator reliably opens the correct file when navigating from transactions or postings.
 
-Example values: `attachments/2026/02/PI-2026-000045.pdf`, `attachments/2026/02/receipt-2026-02-10.jpg`.
+Example values: `attachments/2026/02/20260215-PI-2026-000045.pdf`, `attachments/2026/01/20260115-INV-1001.pdf` (path pattern `attachments/yyyy/mm/yyyymmdd-filename...`).
 
 ---
 

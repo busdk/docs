@@ -28,7 +28,7 @@
 
 ### Files
 
-Payroll datasets and their beside-the-table schemas in the payroll area.
+Payroll datasets and their beside-the-table schemas in the payroll area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `payroll/` folder).
 
 ### Exit status
 

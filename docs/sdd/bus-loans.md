@@ -43,7 +43,7 @@ bus loans amortize --period 2026-02
 
 ### Data Design
 
-The module reads and writes loan register and event datasets in the loans area, with JSON Table Schemas stored beside each CSV dataset.
+The module reads and writes loan register and event datasets in the loans area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `loans/` or other subdirectory for its datasets and schemas.
 
 ### Assumptions and Dependencies
 

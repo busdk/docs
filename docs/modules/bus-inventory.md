@@ -25,7 +25,7 @@
 
 ### Files
 
-Inventory item and movement datasets and their beside-the-table schemas in the inventory area.
+Inventory item and movement datasets and their beside-the-table schemas in the inventory area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `inventory/` folder).
 
 ### Exit status
 

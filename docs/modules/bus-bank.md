@@ -24,7 +24,7 @@
 
 ### Files
 
-`bank-imports.csv` and `bank-transactions.csv` at the repository root with beside-the-table schemas.
+`bank-imports.csv` and `bank-transactions.csv` at the repository root with beside-the-table schemas. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `bank/` folder).
 
 ### Exit status
 

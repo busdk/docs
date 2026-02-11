@@ -31,7 +31,7 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 ### Files
 
-`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area.
+`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder).
 
 ### Exit status
 

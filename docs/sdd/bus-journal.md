@@ -42,7 +42,7 @@ bus journal balance --as-of 2026-03-31
 
 ### Data Design
 
-The module reads and writes the journal index `journals.csv` in the repository root and period journal files such as `2026/journals/2026-journal.csv`, with JSON Table Schemas stored beside each dataset.
+The module reads and writes the journal index `journals.csv` in the repository root and period journal files at the workspace root with a date prefix, for example `journal-2026.csv` (and its beside-the-table schema `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not create or use a subdirectory such as `2026/journals/` for journal data.
 
 ### Assumptions and Dependencies
 

@@ -1,6 +1,6 @@
 ## Master data (business objects)
 
-Master data is the stable reference layer that bookkeeping relies on when it turns operational events into ledger postings and period-based reports. The goal is that invoices, bank transactions, documents, and postings can all be scoped correctly, classified consistently, and reviewed later without guesswork.
+Master data is the stable reference layer that bookkeeping relies on when it turns operational events into ledger postings and period-based reports. The goal is that invoices, bank transactions, documents, and postings can all be scoped correctly, classified consistently, and reviewed later without guesswork. All master data that a module owns is stored in the workspace root (the effective working directory) only; BusDK does not store master data under subdirectories.
 
 This section describes the business objects and the bookkeeping properties they need. The descriptions are concept-level and intentionally avoid implementation details so the same objects and properties can also support adjacent use cases such as CRM, procurement, and document management.
 

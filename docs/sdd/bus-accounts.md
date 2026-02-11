@@ -42,7 +42,7 @@ bus accounts validate
 
 ### Data Design
 
-The module reads and writes `accounts.csv` with a beside-the-table JSON Table Schema in the accounts area. Account identifiers are stable keys used by other datasets.
+The module reads and writes `accounts.csv` with a beside-the-table JSON Table Schema in the accounts area. Account identifiers are stable keys used by other datasets. Master data owned by this module is stored in the workspace root only; the module does not create or use an `accounts/` or other subdirectory for its datasets and schemas.
 
 ### Assumptions and Dependencies
 

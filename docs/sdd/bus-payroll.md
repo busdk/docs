@@ -40,7 +40,7 @@ bus payroll run --month 2026-01 --run-id PAY-2026-01 --pay-date 2026-01-31
 
 ### Data Design
 
-The module reads and writes payroll datasets in the payroll area, with JSON Table Schemas stored beside each CSV dataset.
+The module reads and writes payroll datasets in the payroll area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `payroll/` or other subdirectory for its datasets and schemas.
 
 ### Assumptions and Dependencies
 

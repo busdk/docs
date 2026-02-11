@@ -25,7 +25,7 @@
 
 ### Files
 
-Budget datasets such as `budgets.csv` and their beside-the-table schemas in the budgeting area.
+Budget datasets such as `budgets.csv` and their beside-the-table schemas in the budgeting area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `budgets/` folder).
 
 ### Exit status
 

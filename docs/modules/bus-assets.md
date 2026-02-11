@@ -25,7 +25,7 @@
 
 ### Files
 
-Fixed-asset datasets and schemas in the assets area.
+Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder).
 
 ### Exit status
 

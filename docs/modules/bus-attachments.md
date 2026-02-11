@@ -24,7 +24,7 @@
 
 ### Files
 
-`attachments.csv` and its beside-the-table schema at the repository root, plus evidence files stored under a predictable period path such as `2026/attachments/`.
+`attachments.csv` and its beside-the-table schema at the repository root. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` (for example `attachments/2026/01/20260115-INV-1001.pdf`), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. This is the only layout that places files in a subdirectory; the metadata (dataset and schema) stays at the workspace root.
 
 ### Exit status
 

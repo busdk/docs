@@ -37,7 +37,7 @@ bus budget report --year 2026
 
 ### Data Design
 
-The module reads and writes budget datasets in the budgeting area, such as `budgets.csv`, with JSON Table Schemas stored beside each dataset.
+The module reads and writes budget datasets in the budgeting area, such as `budgets.csv`, with JSON Table Schemas stored beside each dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `budgets/` or other subdirectory for its datasets and schemas.
 
 ### Assumptions and Dependencies
 

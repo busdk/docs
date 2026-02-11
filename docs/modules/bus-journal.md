@@ -24,7 +24,7 @@
 
 ### Files
 
-Journal index `journals.csv` at repository root and period journal files (e.g. `2026/journals/2026-journal.csv`) with beside-the-table schemas.
+Journal index `journals.csv` at repository root and period journal files at the workspace root with a date prefix (e.g. `journal-2026.csv`, `journal-2025.csv`), each with a beside-the-table schema (e.g. `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not use a subdirectory for journal data.
 
 ### Exit status
 

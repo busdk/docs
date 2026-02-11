@@ -39,7 +39,7 @@ bus vat export --period 2026Q1
 
 ### Data Design
 
-The module reads invoice data and journal postings and writes VAT summaries and export files, such as those under `2026/vat-reports/` and `2026/vat-returns/`, tracked in root datasets with beside-the-table schemas.
+The module reads invoice data and journal postings and writes VAT summaries and export data. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report or return data is written to its own file (rather than only appended to the root index datasets), that file is also stored at the workspace root with a date prefix, for example `vat-reports-2026Q1.csv` or `vat-returns-2026Q1.csv`, not under a subdirectory such as `2026/vat-reports/`. The index datasets at root record which period files exist and where they live.
 
 ### Assumptions and Dependencies
 

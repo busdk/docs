@@ -20,7 +20,7 @@ bus journal add --date 2026-01-10 \
 --credit "Cash"=2500
 ```
 
-The command generates the corresponding ledger rows in `2026/journals/2026-journal.csv`, linking them with a shared transaction identifier. It rejects unknown account names and refuses to write an unbalanced entry. If the repository did not yet have a 2026 journal file, the tool also updates `journals.csv` so the new file is discoverable and unambiguous.
+The command generates the corresponding ledger rows in the period journal file at the workspace root, for example `journal-2026.csv`, linking them with a shared transaction identifier. It rejects unknown account names and refuses to write an unbalanced entry. If the repository did not yet have a 2026 journal file, the tool also updates `journals.csv` so the new file is discoverable and unambiguous.
 
 If she is unsure about the available flags in her pinned version, she uses `bus journal add --help`.
 

@@ -38,7 +38,7 @@ bus reconcile list
 
 ### Data Design
 
-The module reads and writes reconciliation datasets in the reconciliation area, with JSON Table Schemas stored beside each CSV dataset. It consumes bank transactions and invoice references as inputs.
+The module reads and writes reconciliation datasets in the reconciliation area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `reconcile/` or other subdirectory for its datasets and schemas. It consumes bank transactions and invoice references as inputs.
 
 ### Assumptions and Dependencies
 

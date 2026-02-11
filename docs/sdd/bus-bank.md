@@ -39,7 +39,7 @@ bus bank list --month 2026-2
 
 ### Data Design
 
-The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments.
+The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Master data owned by this module is stored in the workspace root only; the module does not create or use a `bank/` or other subdirectory for its datasets and schemas. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments.
 
 ### Assumptions and Dependencies
 

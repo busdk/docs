@@ -6,9 +6,9 @@ The baseline is derived from the initialization workflow in [Initialize a new re
 
 ### Baseline layout invariants
 
-Canonical module datasets live in the workspace root as plain files. Each dataset has a beside-the-dataset Table Schema JSON file with the same base name (for example `accounts.csv` beside `accounts.schema.json`). BusDK does not require a dedicated `schemas/` directory.
+Canonical module datasets live in the workspace root as plain files. Every module that owns master data stores its datasets and schemas in the workspace root only — never under a subdirectory (for example, no `accounts/`, `entities/`, or `invoices/` folders for those datasets). Each dataset has a beside-the-dataset Table Schema JSON file with the same base name (for example `accounts.csv` beside `accounts.schema.json`). BusDK does not require a dedicated `schemas/` directory.
 
-When a dataset is split across multiple files over time, the workspace root still contains a single index table for that dataset family (for example `journals.csv` or `vat-reports.csv`). The index table records which period-scoped files exist and where they live in the repository. Period-scoped files are stored in the workspace root with a `YYYY[MM[DD]]-name.suffix` prefix, except for journal entries which live under a period directory such as `2026/journals/2026-journal.csv`.
+When a dataset is split across multiple files over time, the workspace root still contains a single index table for that dataset family (for example `journals.csv` or `vat-reports.csv`). The index table records which period-scoped files exist and where they live in the repository. Period-scoped files are stored in the workspace root with a date or period prefix — for example period journal files use names like `journal-2026.csv` (with a beside-the-table schema), not a subdirectory such as `2026/journals/`.
 
 ### Baseline workspace configuration
 
