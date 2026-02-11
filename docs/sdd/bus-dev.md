@@ -24,6 +24,8 @@ G-DEV-003 Safety and determinism. No remote Git operations, no history rewriting
 
 G-DEV-004 Agent-friendly integration. Subcommands that invoke an external agent runtime (e.g. cursor-agent) use embedded prompts, consistent defaults for model and timeout, and a well-defined contract for stdout/stderr and exit codes.
 
+G-DEV-005 One-command module scaffold. A single subcommand (`bus dev init bus-NAME`) MUST create the directory and Cursor rules layout for a new module and run the spec → work → e2e sequence there, without performing any Git operations, so contributors can scaffold and implement a module from BusDK specs in one go; language selection (e.g. `--lang go`) controls which default MDC content is installed for future multi-language support.
+
 ### Non-goals
 
 NG-DEV-001 Bus Dev does not perform remote Git operations. Push, pull, fetch, clone, submodule update/init that contacts a remote, or any operation that could contact a remote is out of scope and must never be implemented.
@@ -36,7 +38,7 @@ NG-DEV-004 Bus Dev does not replace the bus dispatcher or module discovery. It i
 
 ### Requirements
 
-FR-DEV-001 CLI integration and naming. The binary MUST be named `bus-dev` and MUST be invoked through the dispatcher as `bus dev <subcommand> [args]`. Acceptance criteria: the dispatcher routes `bus dev commit`, `bus dev work`, `bus dev spec`, and `bus dev e2e` to the same binary with the subcommand as the first positional argument.
+FR-DEV-001 CLI integration and naming. The binary MUST be named `bus-dev` and MUST be invoked through the dispatcher as `bus dev <subcommand> [args]`. Acceptance criteria: the dispatcher routes `bus dev init`, `bus dev commit`, `bus dev work`, `bus dev spec`, and `bus dev e2e` to the same binary with the subcommand as the first positional argument.
 
 FR-DEV-002 Repository discovery. The tool MUST determine the current working repository from the effective working directory (after applying `-C`/`--chdir` if present). It MUST NOT require configuration files or environment variables to locate the repo. Acceptance criteria: when run from inside a Git repository root or any subdirectory, the tool uses that repository as the scope for all operations; when the effective working directory is not a Git repository, the tool exits with a clear diagnostic and a non-zero exit code.
 
@@ -53,6 +55,8 @@ FR-DEV-007 Work subcommand behavior. The `bus dev work` subcommand MUST implemen
 FR-DEV-008 Spec subcommand behavior. The `bus dev spec` subcommand MUST refine only the current repository’s Cursor MDC rule file and nothing else, equivalent to the provided refine-mdc-spec script. The tool MUST locate the current module’s MDC file deterministically (e.g. `.cursor/rules/<module>.mdc`), MUST fail with a clear non-zero error if that file does not exist, and MUST run an embedded refinement prompt that instructs the agent to update only that MDC file and to align it with the latest BusDK specs. Acceptance criteria: no refinement of source code, tests, or README; the MDC path is derived from module identity; missing MDC exits non-zero with a clear message.
 
 FR-DEV-009 E2E subcommand behavior. The `bus dev e2e` subcommand MUST provide a guided workflow to detect missing end-to-end tests for the current module repository and scaffold them in a hermetic way, consistent with BusDK testing conventions and the module’s SDD/CLI reference. The SDD MUST define the minimum intended behavior, acceptance criteria, safety constraints, and a deterministic interface; if implementation details are not yet decided, the SDD MUST identify dependencies and open design questions without blocking the document. Acceptance criteria: at minimum, the command has a defined purpose, preconditions, and what it must not do; extension path for fuller implementation is documented.
+
+FR-DEV-010 Init subcommand behavior. The `bus dev init bus-NAME [--lang go]` subcommand MUST scaffold a new module directory and run the full build-from-spec workflow without performing any Git operations. Behavior MUST be equivalent to: (1) create `bus-NAME/.cursor/rules`; (2) create or install the MDC file at `bus-NAME/.cursor/rules/bus-NAME.mdc` (content or defaults MAY depend on `--lang`); (3) set the effective working directory to `bus-NAME` and run `bus dev spec`, then `bus dev work`, then `bus dev e2e` in that order. The `--lang` flag MUST default to `go` and MUST control which kind of MDC defaults or content the tool installs so that modules for different programming languages can be scaffolded. If the target directory `bus-NAME` already exists, the tool MUST exit with a clear error (exit 2). If any of the steps (mkdir, touch/install MDC, spec, work, e2e) fails, the tool MUST exit with a non-zero code and a clear diagnostic. Acceptance criteria: no Git commands are executed; the same sequence as the manual from-scratch flow is performed except Git; `--lang` is documented and affects installed MDC content; tests verify scaffold layout and optional stub of downstream subcommands.
 
 NFR-DEV-001 Determinism. Output and exit codes MUST be deterministic for the same inputs and repository state. Acceptance criteria: repeated runs with the same staged set and same repo state yield the same exit code and consistent diagnostics.
 
@@ -74,7 +78,7 @@ High-level components:
 
 - **Agent runner.** An internal abstraction that builds the command line for the external agent (e.g. cursor-agent), sets environment variables, applies timeout, and optionally pipes the agent’s stdout through a log formatter (e.g. NDJSON-to-text). The runner is configured by flags or environment (model, output format, timeout) and is designed so tests can substitute a stub binary that writes deterministic NDJSON to stdout and exits with a chosen code.
 
-- **Subcommand handlers.** One logical component per subcommand: commit, work, spec, e2e. Each handler receives parsed flags, the resolved workdir (and repo root and module name when relevant), and stdout/stderr writers, and returns an exit code. Commit may use Git only for read operations plus `git commit` with already-staged content; it must not stage, amend, or touch remotes.
+- **Subcommand handlers.** One logical component per subcommand: init, commit, work, spec, e2e. Each handler receives parsed flags, the resolved workdir (and repo root and module name when relevant), and stdout/stderr writers, and returns an exit code. Init creates the module directory and MDC, then invokes spec, work, and e2e in sequence without performing Git operations. Commit may use Git only for read operations plus `git commit` with already-staged content; it must not stage, amend, or touch remotes.
 
 - **Embedded prompts.** Prompts for commit, work, spec, and (when applicable) e2e are compiled into the binary as string constants or templates. Template variables (e.g. module name, MDC path) are filled at runtime from the repository resolution layer. No prompts are loaded from the filesystem.
 
@@ -94,7 +98,7 @@ KD-DEV-004 Thin CLI, testable core. The CLI parses arguments and delegates to pa
 
 ### Component Design and Interfaces
 
-Interface IF-DEV-001 (dispatcher). The `bus` dispatcher invokes the `bus-dev` binary with the first argument after `dev` as the subcommand (e.g. `commit`, `work`, `spec`, `e2e`). Standard global flags (`-C`, `-o`, `-v`, `-q`, `--help`, `--version`, etc.) follow BusDK CLI conventions; see traceability links.
+Interface IF-DEV-001 (dispatcher). The `bus` dispatcher invokes the `bus-dev` binary with the first argument after `dev` as the subcommand (e.g. `init`, `commit`, `work`, `spec`, `e2e`). For `init`, the second positional argument is the module name (e.g. `bus-accounts`). Standard global flags (`-C`, `-o`, `-v`, `-q`, `--help`, `--version`, etc.) follow BusDK CLI conventions; see traceability links.
 
 Interface IF-DEV-002 (Run entrypoint). The program exposes a single entrypoint `Run(args []string, workdir string, stdout, stderr io.Writer) int`. `main` passes `os.Args[1:]`, the effective working directory (from `-C` or current process), `os.Stdout`, and `os.Stderr`, and exits with the returned code. No other package calls `os.Exit`.
 
@@ -105,6 +109,22 @@ Interface IF-DEV-004 (repo resolution). Given a directory path, the resolver ret
 ### Command Surface
 
 **Invocation.** All subcommands are invoked as `bus dev <subcommand> [options]`. Global flags apply as per BusDK CLI conventions.
+
+**`bus dev init bus-NAME [--lang go]`**
+
+Intent: Scaffold a new BusDK module directory and run the spec → work → e2e workflow so the user gets a fully scaffolded and agent-implemented module without performing any Git operations. The user may run `git init` and `bus dev commit` afterward when ready to version the result.
+
+Preconditions: Invoked from the parent directory where the new module should appear. The target path `bus-NAME` must not already exist (e.g. must not be an existing directory). The effective working directory need not be a Git repository. Agent runtime (e.g. cursor-agent) and BusDK/Go are required for the spec/work/e2e steps to succeed.
+
+Reads: BusDK documentation and embedded prompts when running spec/work/e2e. No workspace datasets.
+
+Writes: Creates `bus-NAME/.cursor/rules` and `bus-NAME/.cursor/rules/bus-NAME.mdc` (content or defaults determined by `--lang`; default `go`). Then, with effective working directory set to `bus-NAME`, invokes `bus dev spec`, `bus dev work`, and `bus dev e2e` in order; those subcommands write under `bus-NAME` as specified in their own command surface.
+
+Allowed mutations: Creating the new directory tree, the initial MDC file, and whatever spec/work/e2e produce under `bus-NAME`. No mutations outside `bus-NAME`. No Git operations.
+
+Must never do: Run any Git command (no `git init`, no add, no commit). Create or modify anything outside the new `bus-NAME` directory (except stderr and any documented stdout). If `bus-NAME` already exists, the tool MUST exit with code 2 and a clear message without creating or modifying anything.
+
+Language flag: `--lang` defaults to `go`. It controls which default or language-specific MDC content the tool installs at `bus-NAME/.cursor/rules/bus-NAME.mdc`, so that init can be used to scaffold modules for different programming languages. The set of supported values and their exact effect on installed content is implementation-defined and MUST be documented in the CLI reference.
 
 **`bus dev commit`**
 
@@ -200,7 +220,7 @@ The distinction between invalid usage (2) and execution failure (1) follows BusD
 
 - **cursor-agent not installed or not in PATH:** The tool MUST detect failure to start the agent (e.g. exec error) and MUST exit with a clear diagnostic to stderr and a non-zero exit code (1). Message MUST indicate that the agent runtime could not be found or executed.
 - **git not installed or not in PATH:** When a subcommand needs Git, the tool MUST detect failure to run `git` and MUST exit with a clear diagnostic and non-zero exit code (1).
-- **Working directory not a Git repo:** Exit with code 2 and a clear message that the operation requires a Git repository.
+- **Working directory not a Git repo:** For subcommands that require a Git repository (commit, work, spec, e2e when run standalone), exit with code 2 and a clear message. For `bus dev init`, the effective working directory need not be a Git repository; the target directory `bus-NAME` must not already exist (exit 2 if it does).
 - **No staged changes (commit):** Exit 0 and do nothing; optionally print a short message to stderr that there was nothing to commit.
 - **Hooks fail (commit):** Exit 1 and report the hook failure output; do not retry.
 - **Timeouts (agent subcommands):** When the agent runner applies a timeout and the agent exceeds it, the tool MUST exit with a non-zero code (1) and MUST report that the run timed out.
@@ -253,7 +273,7 @@ The most relevant BusDK spec pages for implementors are: the [BusDK Software Des
 
 - **Staging area / Git index:** The set of changes that have been `git add`ed and will be included in the next `git commit`. Bus Dev commit operates only on this set; it does not add or remove from it.
 - **Gitlink:** The Git submodule pointer (commit SHA) stored in the superproject tree for a submodule. When you commit inside a submodule, the superproject’s view of that submodule becomes an unstaged gitlink change until the user stages it.
-- **MDC file:** A Cursor rule file in Markdown with optional frontmatter (e.g. `.cursor/rules/<name>.mdc`). Bus Dev spec refines exactly one such file per run.
+- **MDC file:** A Cursor rule file in Markdown with optional frontmatter (e.g. `.cursor/rules/<name>.mdc`). Bus Dev spec refines exactly one such file per run. Init creates an initial MDC file whose default content may depend on `--lang`.
 - **Agent runner:** The internal abstraction that invokes the external agent binary (e.g. cursor-agent) with a prompt, timeout, and output formatting.
 - **Embedded prompt:** A prompt string or template compiled into the bus-dev binary, not loaded from the filesystem.
 
@@ -281,7 +301,8 @@ The most relevant BusDK spec pages for implementors are: the [BusDK Software Des
 Title: bus-dev module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-DEV`  
-Version: 2026-02-10  
+Version: 2026-02-11  
 Status: Draft  
-Last updated: 2026-02-10  
+Last updated: 2026-02-11  
 Owner: BusDK development team  
+Changelog: 2026-02-11 — Added `bus dev init bus-NAME [--lang go]` (goal G-DEV-005, requirement FR-DEV-010, command surface, architecture, error handling, glossary).  

@@ -8,6 +8,7 @@
 
 `bus dev <subcommand> [options]`
 
+`bus dev init bus-NAME [--lang go]` — scaffold a new module directory and run the spec → work → e2e workflow (no Git operations).  
 `bus dev commit` — commit staged changes with high-quality messages (no remote, no history rewrite).  
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).  
 `bus dev spec` — refine only the current module’s Cursor MDC rule file to align with BusDK specs.  
@@ -15,13 +16,15 @@
 
 ### Description
 
-`bus dev` is a developer-only companion. It centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`: commit workflows, agent-runner workflows, MDC refinement, and e2e test scaffolding. It operates on the **current Git repository** (source code and Cursor rules), not on workspace accounting datasets. End users running `bus accounts`, `bus journal`, or `bus validate` do not need `bus dev`; it is for contributors and automation working inside a BusDK module repo.
+`bus dev` is a developer-only companion. It centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`: module scaffolding, commit workflows, agent-runner workflows, MDC refinement, and e2e test scaffolding. Most subcommands operate on the **current Git repository** (source code and Cursor rules); `bus dev init` is the exception — it creates a new module directory under the current directory and runs the spec/work/e2e sequence there without creating or touching a Git repo. The tool does not operate on workspace accounting datasets. End users running `bus accounts`, `bus journal`, or `bus validate` do not need `bus dev`; it is for contributors and automation working inside (or creating) a BusDK module repo.
 
 All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. The tool discovers the repository root from the effective working directory and does not require a config file. Subcommands that need a “module name” (e.g. for the MDC path) derive it from the repo (typically the base name of the repository root directory).
 
 **Safety.** `bus dev` never runs remote Git operations (no push, pull, fetch, clone) and never rewrites history (no amend, rebase, squash). It may run local `git commit` only on already-staged content. Diagnostics and progress go to stderr; stdout is used for deterministic results when a subcommand produces them.
 
 ### Commands
+
+**`init bus-NAME [--lang go]`** — Scaffold a new BusDK module and run the full build-from-spec workflow without performing any Git operations. This subcommand does the same steps as the manual from-scratch flow (create directory, Cursor rules layout, then spec, work, e2e), but it does not create or modify a Git repository. You run it from the parent directory where the new module should appear. The tool creates `bus-NAME/.cursor/rules`, places an empty or language-specific MDC file at `.cursor/rules/bus-NAME.mdc`, then changes the effective working directory to `bus-NAME` and runs `bus dev spec`, `bus dev work`, and `bus dev e2e` in order. The `--lang` flag defaults to `go` and controls which kind of MDC content or defaults the tool installs, so you can scaffold modules for different programming languages. If `bus-NAME` already exists or a step fails, the tool exits with a clear error. Use this when you want a one-command scaffold and AI-driven implementation; run `git init` and subsequent `bus dev commit` yourself when you are ready to version the result.
 
 **`commit`** — Create one or more commits from the **currently staged** changes only. If there is nothing staged (and no submodules with staged changes to commit), the command does nothing and exits 0. The tool does not modify files, does not stage anything, and does not amend or rebase. If the repo has submodules, it commits inside submodules first (depth-first), then the superproject only if it has staged changes. If a submodule commit leaves an unstaged gitlink in the superproject, the tool reports that and stops without staging it. Commit messages follow the usual BusDK conventions: concise, imperative subject; optional body; traceability when helpful. If a hook (e.g. pre-commit, commit-msg) fails, the tool reports the failure and exits non-zero; it does not retry.
 
@@ -58,20 +61,11 @@ If the agent binary is not installed or not in `PATH`, the tool reports that on 
 
 ### Example: building a module from scratch with AI
 
-BusDK specifications are openly readable. You can point an AI assistant (for example the [Cursor CLI](https://cursor.com/docs/cli/overview) with cursor-agent) at those specs and have it build a bus module from scratch in a new repository, then refine, test, and commit using `bus dev`. Prerequisites: install cursor-agent, BusDK at least v0.0.15, and Go. Create the module directory and `.cursor/rules`, initialize a Git repository and an empty Cursor rule file so the module name is known, then run the dev workflow in order.
+BusDK specifications are openly readable. You can have an AI-assisted workflow build a bus module from scratch, then optionally initialize Git and commit. Prerequisites: install cursor-agent, BusDK (at least v0.0.15), and Go.
 
-1. Install cursor-agent (so `bus dev work` and `bus dev spec` can invoke it).
-2. [Install BusDK](https://busdk.com/).
-3. [Install Go](https://go.dev/doc/install).
-4. `mkdir -p bus-accounts/.cursor/rules`
-5. `cd bus-accounts`
-6. `git init`
-7. `touch .cursor/rules/bus-accounts.mdc`
-8. `bus dev spec` — refine the MDC rule from BusDK specs.
-9. `bus dev work` — have the agent implement the module (code, tests, README).
-10. `bus dev e2e` — scaffold and run end-to-end tests.
-11. `git add .` to stage changes.
-12. `bus dev commit` to create commits with good messages.
+**Option: one-command scaffold.** From the directory where the new module should live, run `bus dev init bus-accounts [--lang go]`. The tool creates `bus-accounts/.cursor/rules`, places the initial MDC file, then runs `bus dev spec`, `bus dev work`, and `bus dev e2e` inside `bus-accounts`. It does not run any Git commands. When the workflow finishes, you can `cd bus-accounts`, run `git init`, stage with `git add .`, and run `bus dev commit` to create the first commits.
+
+**Option: manual steps.** If you prefer to create the layout and Git repo yourself, create the module directory and Cursor rules, then run the dev workflow in order: `mkdir -p bus-accounts/.cursor/rules`; `cd bus-accounts`; `git init`; `touch .cursor/rules/bus-accounts.mdc`; `bus dev spec`; `bus dev work`; `bus dev e2e`; then stage and `bus dev commit`. The `--lang` flag on `init` (default `go`) controls which default MDC content is installed so you can scaffold modules for different programming languages.
 
 Because the specs are public and machine-readable, this flow lets you regenerate or rewrite any bus module from scratch with AI, without depending on pre-packaged source. If you prefer not to build from specs yourself, we offer tested and verified bus module source code for a fee. We also offer compiled binaries for free.
 
@@ -83,7 +77,7 @@ Because the specs are public and machine-readable, this flow lets you regenerate
 
 - **0** — Success. For `bus dev commit`, “nothing to commit” is success.
 - **1** — Execution failure: Git command failed, hook failed, agent failed or timed out, or agent runtime not found.
-- **2** — Invalid usage: unknown subcommand, invalid flag, or precondition not met (e.g. not in a Git repository, or MDC file missing for `bus dev spec`).
+- **2** — Invalid usage: unknown subcommand, invalid flag, or precondition not met (e.g. not in a Git repository, MDC file missing for `bus dev spec`, or target directory already exists for `bus dev init`).
 
 Error messages are always on stderr. If you are not in a Git repository when a subcommand requires one, the tool exits with code 2 and a clear message. If the agent runtime (e.g. cursor-agent) is missing, it exits with code 1.
 
