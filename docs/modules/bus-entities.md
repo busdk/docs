@@ -30,7 +30,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 ### Files
 
-`entities.csv` and its beside-the-dataset schema `entities.schema.json` at the workspace root (accounts area).
+`entities.csv` and its beside-the-dataset schema `entities.schema.json` live in the [accounts area](../layout/accounts-area) at the workspace root, alongside other canonical datasets such as `accounts.csv`. The module does not create or use a dedicated `entities/` subdirectory; layout follows the [minimal workspace baseline](../layout/minimal-workspace-baseline) and matches other BusDK modules.
 
 ### Exit status
 
@@ -48,6 +48,8 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 ### Sources
 
+- [Accounts area](../layout/accounts-area)
+- [Minimal workspace baseline](../layout/minimal-workspace-baseline)
 - [Owns master data: Parties (customers and suppliers)](../master-data/parties/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-entities](../sdd/bus-entities)
