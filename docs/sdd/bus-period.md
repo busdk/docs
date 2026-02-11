@@ -24,6 +24,8 @@ KD-PER-001 Period control is recorded as repository data. Period transitions are
 
 Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `open`, `close`, and `lock` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
+The `init` command creates the baseline period control dataset and schema when they are absent. If both `periods.csv` and `periods.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
 Period selection is always explicit and flag-based. The `open`, `close`, and `lock` commands accept `--period <period>` as a required parameter and do not use positional period arguments. A period identifier is a stable string in one of three forms: `YYYY` for a full-year period, `YYYY-MM` for a calendar month, or `YYYYQn` for a quarter (where `n` is 1 through 4). This mirrors period usage in other modules such as `bus vat`, `bus loans`, and `bus payroll`, which also use `--period` and `YYYY-MM` or `YYYYQn` formats rather than positional arguments.
 
 Close generates posting output and therefore accepts one additional optional flag: `--post-date <YYYY-MM-DD>`. When `--post-date` is omitted, the closing entry date defaults to the last date of the selected period, matching the default behavior of other posting-generating commands that accept `--post-date`.

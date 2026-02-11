@@ -24,6 +24,8 @@ KD-JRN-001 Append-only ledger. Journal corrections are expressed as new entries 
 
 Interface IF-JRN-001 (module CLI). The module exposes `bus journal` with subcommands `init`, `add`, and `balance` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
+The `init` command creates the baseline journal index and schema (and any required structure for period journals) when they are absent. If the module’s owned journal data already exists in full and is consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially (e.g. journal index without schema or vice versa), `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
 Documented parameters for `bus journal add` are `--date <YYYY-MM-DD>`, `--desc <text>`, `--debit <account>=<amount>`, and `--credit <account>=<amount>`. Documented parameters for `bus journal balance` include `--as-of <YYYY-MM-DD>`.
 
 Each `--debit` and `--credit` flag represents one journal line and uses the syntax `<account>=<amount>`, where `<account>` is the account name as stored in the accounts dataset and should be quoted when it contains spaces. The flags are repeatable, and multiple debit and credit lines may be provided in any order to form a single transaction. At least one debit and one credit line are required, and the module sums all debit amounts and all credit amounts and requires them to balance before it writes the entry.

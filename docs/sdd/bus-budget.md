@@ -24,6 +24,8 @@ KD-BUD-001 Budgets are stored as repository datasets. Budget intent is recorded 
 
 Interface IF-BUD-001 (module CLI). The module exposes `bus budget` with subcommands `init`, `add`, `set`, and `report` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
+The `init` command creates the baseline budget dataset and schema when they are absent. If both the budget dataset and its schema already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
 Documented parameters include `bus budget report --year <YYYY>` and `bus budget report --period <period>`. Documented parameters for `bus budget add` are `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`, with no positional arguments. Documented parameters for `bus budget set` are the same, and `set` is defined as an upsert keyed by `(account, year, period)` that replaces the existing row for that key or inserts a new row when none exists.
 
 Usage examples:

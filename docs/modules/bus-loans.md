@@ -14,7 +14,7 @@
 
 ### Commands
 
-- `init` creates the baseline loan datasets and schemas.
+- `init` creates the baseline loan datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `add` records a new loan contract in the loan register.
 - `event` appends an event (disbursement, repayment, interest, fee, adjustment) and optionally produces postings.
 - `amortize` generates amortization and posting output for a period.

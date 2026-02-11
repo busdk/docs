@@ -14,7 +14,7 @@
 
 ### Commands
 
-- `init` creates the baseline assets datasets and schemas.
+- `init` creates the baseline assets datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `add` records a new asset acquisition.
 - `depreciate` generates depreciation postings for a period.
 - `dispose` records an asset disposal and emits disposal postings.

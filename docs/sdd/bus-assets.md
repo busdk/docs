@@ -24,6 +24,8 @@ KD-AST-001 Asset records are canonical repository data. The asset register and d
 
 Interface IF-AST-001 (module CLI). The module exposes `bus assets` with subcommands `init`, `add`, `depreciate`, and `dispose` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
+The `init` command creates the baseline fixed-asset datasets and schemas when they are absent. If all owned asset datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
 The `add` command records a new asset acquisition in the fixed-asset register. It accepts `--asset-id <id>`, `--name <text>`, `--acquired <YYYY-MM-DD>`, `--cost <amount>`, `--asset-account <account-id>`, `--depreciation-account <account-id>`, `--expense-account <account-id>`, `--method <straight-line>`, and `--life-months <number>` as required parameters, and it accepts `--in-service <YYYY-MM-DD>`, `--salvage <amount>`, `--desc <text>`, and `--voucher <voucher-id>` as optional parameters. When `--in-service` is omitted, the in-service date is the acquisition date; when `--salvage` is omitted, the salvage value is zero.
 
 The `depreciate` command generates depreciation entries for a specific period and produces posting output for the journal. It accepts `--period <period>` as a required parameter and `--asset-id <id>` and `--post-date <YYYY-MM-DD>` as optional parameters. When `--asset-id` is present, the command scopes to a single asset; when `--post-date` is omitted, the posting date is the last date of the selected period.

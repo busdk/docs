@@ -10,6 +10,8 @@ FR-BNK-001 Bank import normalization. The module MUST import bank statement data
 
 FR-BNK-002 Review surface. The module MUST provide list outputs for review and reconciliation. Acceptance criteria: `bus bank list` emits deterministic transaction listings and fails with clear diagnostics on invalid filters.
 
+FR-BNK-003 Init behavior. The module MUST provide an `init` command that creates the bank baseline datasets and schemas (`bank-imports.csv`, `bank-transactions.csv` and their schemas) when they are absent. When they already exist in full, `init` MUST print a warning to standard error and exit 0 without modifying anything. When they exist only partially, `init` MUST fail with a clear error and not write any file (see [bus-init](../sdd/bus-init) FR-INIT-004). Acceptance criteria: `bus bank init` is available; idempotent and partial-state behavior as specified.
+
 NFR-BNK-001 Auditability. Imports MUST preserve source statement identifiers and evidence links. Acceptance criteria: each normalized transaction records a source reference and can be traced to attachments metadata.
 
 ### System Architecture
@@ -22,7 +24,9 @@ KD-BNK-001 Bank statements are normalized into canonical datasets. The module co
 
 ### Component Design and Interfaces
 
-Interface IF-BNK-001 (module CLI). The module exposes `bus bank` with subcommands `import` and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-BNK-001 (module CLI). The module exposes `bus bank` with subcommands `init`, `import`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+
+The `init` command creates the baseline bank datasets and schemas (`bank-imports.csv`, `bank-transactions.csv` and their beside-the-table schemas) when they are absent. If all owned bank datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 Documented parameters are `bus bank import --file <path>` and `bus bank list` filters that constrain the transaction set deterministically. The complete `list` filter surface is `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-ref <text>`. Date filters apply to the normalized transaction date in `bank-transactions.csv`. `--month` selects the calendar month and is mutually exclusive with `--from` or `--to`. `--from` and `--to` may be used together or independently and are inclusive bounds. `--counterparty` filters by the stable counterparty identifier as recorded in the transaction row, matching `bus entities` identifiers exactly. `--invoice-ref` filters by the normalized invoice reference string present on the transaction row, matching exactly as stored. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.
 

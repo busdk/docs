@@ -14,7 +14,7 @@
 
 ### Commands
 
-- `init` creates the journal index and baseline period datasets and schemas.
+- `init` creates the journal index and baseline period datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `add` appends a balanced transaction (one or more debit and credit lines).
 - `balance` prints account balances as of a given date.
 

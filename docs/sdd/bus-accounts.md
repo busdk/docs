@@ -24,6 +24,8 @@ KD-ACC-001 Accounts are authoritative repository data. The chart of accounts is 
 
 Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `add`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
+The `init` command creates the baseline accounts dataset and schema when they are absent. If both `accounts.csv` and `accounts.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
 The `add` command accepts account identity and type parameters. Documented parameters are `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`.
 
 Usage examples:

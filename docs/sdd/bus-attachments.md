@@ -8,7 +8,9 @@ Bus Attachments stores evidence files and maintains attachment metadata as schem
 
 FR-ATT-001 Attachment metadata registry. The module MUST write stable attachment identifiers and immutable metadata to `attachments.csv` with schema validation. Acceptance criteria: each added attachment has a stable identifier and hash metadata, and invalid inputs fail without modifying datasets.
 
-FR-ATT-002 CLI surface for evidence registration. The module MUST provide commands to add and list attachments. Acceptance criteria: `bus attachments add` and `bus attachments list` are available and emit deterministic outputs.
+FR-ATT-002 CLI surface for evidence registration. The module MUST provide commands to initialize, add, and list attachments. Acceptance criteria: `init`, `bus attachments add`, and `bus attachments list` are available and emit deterministic outputs.
+
+FR-ATT-003 Init behavior. The module MUST provide an `init` command that creates the attachments metadata dataset and schema when they are absent. When they already exist in full, `init` MUST print a warning to standard error and exit 0 without modifying anything. When they exist only partially, `init` MUST fail with a clear error and not write any file (see [bus-init](../sdd/bus-init) FR-INIT-004). Acceptance criteria: `bus attachments init` is available; idempotent and partial-state behavior as specified.
 
 NFR-ATT-001 Auditability. Attachment metadata MUST remain in the repository even if files are stored outside Git. Acceptance criteria: metadata rows are retained and list outputs remain deterministic.
 
@@ -22,7 +24,9 @@ KD-ATT-001 Attachment evidence is recorded as repository data. Attachment metada
 
 ### Component Design and Interfaces
 
-Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with subcommands `add` and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with subcommands `init`, `add`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+
+The `init` command creates the baseline attachments metadata dataset and schema (`attachments.csv` and `attachments.schema.json`) when they are absent. If both already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 The `add` command accepts a positional file path plus a description parameter. Documented parameters are `<file>` as a positional argument and `--desc <text>` for the attachment description.
 

@@ -16,7 +16,7 @@
 
 ### Commands
 
-- `init` creates the baseline payroll datasets and schemas.
+- `init` creates the baseline payroll datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `run` runs payroll for a month and produces postings.
 - `list` lists payroll runs.
 - `employee add` adds an employee record.

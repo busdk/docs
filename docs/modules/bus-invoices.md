@@ -16,7 +16,7 @@
 
 ### Commands
 
-- `init` creates the baseline invoice datasets and schemas.
+- `init` creates the baseline invoice datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `add` adds a new invoice header (sales or purchase).
 - `<invoice-id> add` adds a line item to an existing invoice.
 - `<invoice-id> validate` validates line items and totals for an invoice.

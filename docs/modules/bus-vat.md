@@ -14,6 +14,7 @@
 
 ### Commands
 
+- `init` creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas). If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `report` computes and emits VAT summary for a period.
 - `export` writes VAT export output for a period (e.g. for filing).
 

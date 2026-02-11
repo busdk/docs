@@ -10,6 +10,8 @@ FR-VAT-001 VAT computations. The module MUST compute VAT summaries from invoice 
 
 FR-VAT-002 VAT export outputs. The module MUST write VAT summary and export files as repository data. Acceptance criteria: export outputs are recorded in datasets such as `vat-reports.csv` and `vat-returns.csv`.
 
+FR-VAT-003 CLI surface for VAT baseline. The module MUST provide an `init` command that creates the VAT baseline datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas) when they are absent. When they already exist in full, `init` MUST print a warning to standard error and exit 0 without modifying anything. When they exist only partially, `init` MUST fail with a clear error and not write any file (see [bus-init](../sdd/bus-init) FR-INIT-004). Acceptance criteria: `bus vat init` is available; idempotent and partial-state behavior as specified.
+
 NFR-VAT-001 Auditability. VAT corrections MUST be append-only and traceable to original records. Acceptance criteria: corrections create new records that reference originals.
 
 ### System Architecture
@@ -22,7 +24,9 @@ KD-VAT-001 VAT outputs are stored as repository data. VAT summaries and exports 
 
 ### Component Design and Interfaces
 
-Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `report` and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `report`, and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
+
+The `init` command creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument.
 

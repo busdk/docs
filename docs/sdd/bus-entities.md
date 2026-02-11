@@ -24,6 +24,8 @@ KD-ENT-001 Entity data is a shared reference dataset. Counterparty identifiers a
 
 Interface IF-ENT-001 (module CLI). The module exposes `bus entities` with subcommands `init`, `list`, and `add` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
+The `init` command creates the baseline entity dataset and schema when they are absent. If both `entities.csv` and `entities.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
 The `add` command accepts entity identity parameters. Documented parameters are `--id <entity-id>` and `--name <display-name>`, with no positional arguments. The `list` command accepts no module-specific filters and returns the full entity registry in stable identifier order.
 
 Usage examples:

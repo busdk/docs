@@ -14,7 +14,7 @@
 
 ### Commands
 
-- `init` creates the period control dataset and schema.
+- `init` creates the period control dataset and schema. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `open` marks a period as open.
 - `close` generates closing entries and marks the period closed.
 - `lock` locks a closed period so it cannot be modified.

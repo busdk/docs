@@ -12,6 +12,8 @@ FR-INIT-002 Non-invasive initialization. The module MUST not perform Git or netw
 
 FR-INIT-003 Configure accounting entity settings. The module MUST support updating accounting entity properties in an existing workspace `datapackage.json` without re-running full bootstrap. Acceptance criteria: `bus init configure` accepts flags for each property (`base_currency`, `fiscal_year_start`, `fiscal_year_end`, `vat_registered`, `vat_reporting_period`); only provided flags alter the stored value; the command fails with a clear error if `datapackage.json` does not exist or does not contain `busdk.accounting_entity`.
 
+FR-INIT-004 Module init contract. Every module that owns master data and is invoked during bootstrap MUST provide an `init` command that creates the module’s baseline datasets and schemas when they are absent. When the module’s data already exists in full (all owned datasets and schemas present and consistent), `init` MUST print a warning to standard error and exit with code 0 without modifying any file. When the module’s data exists only partially (one or more owned datasets or schemas missing or inconsistent), `init` MUST fail with a clear error to standard error, MUST NOT modify any file, and MUST exit with a non-zero code. Acceptance criteria: running `init` on an empty workspace creates the baseline; running `init` again after a successful bootstrap yields a warning and exit 0; running `init` when some but not all owned files exist yields an error and no writes.
+
 NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostics and stop on the first failure. Acceptance criteria: failures identify the module command that failed.
 
 ### System Architecture
@@ -21,6 +23,8 @@ Bus Init is an orchestrator that writes workspace-level configuration and invoke
 ### Key Decisions
 
 KD-INIT-001 Module-owned initialization. The bootstrap workflow delegates dataset creation to each module to preserve ownership boundaries.
+
+KD-INIT-002 Init idempotency and partial-state safety. Each module’s `init` obeys the contract in FR-INIT-004: it creates baseline data only when absent, warns and does nothing when data already exists in full, and fails without writing when data exists only partially.
 
 ### Component Design and Interfaces
 

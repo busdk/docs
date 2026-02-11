@@ -14,7 +14,7 @@
 
 ### Commands
 
-- `init` creates the baseline inventory datasets and schemas.
+- `init` creates the baseline inventory datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `add-item` adds a new inventory item to the item master.
 - `record-movement` appends a stock movement (in, out, or adjust) for an item.
 - `valuation` computes valuation output as of a given date.
