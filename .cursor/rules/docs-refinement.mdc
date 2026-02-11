@@ -34,8 +34,10 @@ Document control and verification must be explicit. For BusDK module SDDs in
 `docs/modules`, keep the document control block at the end of the page, placed 
 after the prev/index/next navigation block and after the page’s `### Sources` section when present. The document control block must 
 contain at least title, project identifier (or name), document identifier, 
-version, status, last updated date, owner or maintainer, and a short change log. 
-Use a status vocabulary that includes at minimum Draft and Verified. Verified 
+version, status, last updated date, and owner or maintainer. Do not add a 
+changelog to the document control block; change history is tracked in the 
+repository's git history. Use a status vocabulary that includes at minimum 
+Draft and Verified. Verified 
 means a human has explicitly approved the content as correct. If you propose 
 changes to a Verified section, do not silently rewrite it; instead, produce a 
 clearly labeled Proposed Change that explains what would change and why, and 
