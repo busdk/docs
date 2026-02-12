@@ -1,6 +1,6 @@
 ## BusDK module CLI reference
 
-This section is the end user reference for the BusDK module CLIs. Each page is structured like a man page so you can quickly find the command surface, data files, and how to discover flags and subcommands. For the design and implementation rationale behind each module, see the module SDDs in [Modules (SDD)](../sdd/modules).
+This section is the end user reference for the BusDK module CLIs. Each page is structured like a man page so you can quickly find the command surface, data files, and how to discover flags and subcommands. Command names follow [CLI command naming](../cli/command-naming). In synopsis lines, **[global flags]** denotes the [standard global flags](../cli/global-flags) accepted by most modules; run `bus <module> --help` for the full list for each module. For the design and implementation rationale behind each module, see the module SDDs in [Modules (SDD)](../sdd/modules).
 
 If you need architectural background on why modules are independent and how they integrate, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 

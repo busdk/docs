@@ -6,11 +6,13 @@
 
 ### Synopsis
 
-`bus attachments <command> [options]`
+`bus attachments init [-C <dir>] [global flags]`  
+`bus attachments add <file> [--desc <text>] [-C <dir>] [global flags]`  
+`bus attachments list [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-`bus attachments` registers evidence files and stores attachment metadata in `attachments.csv` so other modules can link to evidence without embedding file paths directly in domain datasets.
+Command names follow [CLI command naming](../cli/command-naming). `bus attachments` registers evidence files and stores attachment metadata in `attachments.csv` so other modules can link to evidence without embedding file paths directly in domain datasets.
 
 ### Commands
 
@@ -20,7 +22,7 @@
 
 ### Options
 
-`add` accepts a positional `<file>` plus `--desc <text>`. For global flags and command-specific help, run `bus attachments --help`.
+`add` accepts a positional `<file>` plus `--desc <text>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus attachments --help`.
 
 ### Files
 

@@ -6,11 +6,13 @@
 
 ### Synopsis
 
-`bus reconcile <command> [options]`
+`bus reconcile match --bank-id <id> (--invoice-id <id> | --journal-id <id>) [-C <dir>] [global flags]`  
+`bus reconcile allocate --bank-id <id> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ... [-C <dir>] [global flags]`  
+`bus reconcile list [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-`bus reconcile` links bank transactions to invoices or journal entries and records allocations for partials, splits, and fees. Reconciliation records are schema-validated and append-only. Use after importing bank data with `bus bank`.
+Command names follow [CLI command naming](../cli/command-naming). `bus reconcile` links bank transactions to invoices or journal entries and records allocations for partials, splits, and fees. Reconciliation records are schema-validated and append-only. Use after importing bank data with `bus bank`.
 
 ### Commands
 
@@ -20,7 +22,7 @@
 
 ### Options
 
-`match` accepts `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`. `allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`. For global flags and command-specific help, run `bus reconcile --help`.
+`match` accepts `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`. `allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reconcile --help`.
 
 ### Files
 

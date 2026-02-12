@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-`bus dev [global-flags] <operation> [operation ...]`
+`bus dev [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|gemini|claude>] <operation> [operation ...]`
 
 Operations: **`init`**, **`commit`**, **`spec`**, **`work`**, **`e2e`**. You can pass one operation per invocation, or list two or more of the workflow operations (**spec**, **work**, **e2e**) to run them in sequence, one at a time. The first operation determines how remaining arguments are parsed: **init** accepts an optional directory argument, then optional workflow operations from the same set; **commit** takes no further positionals; **spec**, **work**, and **e2e** accept optional further operations from that same set and run in order.
 
@@ -19,7 +19,7 @@ Operations: **`init`**, **`commit`**, **`spec`**, **`work`**, **`e2e`**. You can
 
 ### Description
 
-`bus dev` is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`: module scaffolding, commit workflows, agent-runner workflows, MDC refinement, and e2e test scaffolding. It provides a single entry point so behavior and prompts stay consistent and maintainable in one place, as described in the [module SDD](../sdd/bus-dev). The CLI accepts a single operation (e.g. `bus dev work`) or multiple workflow operations in one invocation (e.g. `bus dev spec work e2e`); when multiple are given, they run in order, one at a time, and the run stops on first failure. Most subcommands operate on the **current Git repository** (source code and Cursor rules); `bus dev init` is the exception — it can initialize files in place for the current directory, or in an explicitly provided target directory, without creating or touching a Git repository unless you do that yourself later. The tool does not operate on workspace accounting datasets. End users running `bus accounts`, `bus journal`, or `bus validate` do not need `bus dev`; it exists for contributors and automation working inside (or creating) a BusDK module repository.
+Command names follow [CLI command naming](../cli/command-naming). `bus dev` is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`: module scaffolding, commit workflows, agent-runner workflows, MDC refinement, and e2e test scaffolding. It provides a single entry point so behavior and prompts stay consistent and maintainable in one place, as described in the [module SDD](../sdd/bus-dev). The CLI accepts a single operation (e.g. `bus dev work`) or multiple workflow operations in one invocation (e.g. `bus dev spec work e2e`); when multiple are given, they run in order, one at a time, and the run stops on first failure. Most subcommands operate on the **current Git repository** (source code and Cursor rules); `bus dev init` is the exception — it can initialize files in place for the current directory, or in an explicitly provided target directory, without creating or touching a Git repository unless you do that yourself later. The tool does not operate on workspace accounting datasets. End users running `bus accounts`, `bus journal`, or `bus validate` do not need `bus dev`; it exists for contributors and automation working inside (or creating) a BusDK module repository.
 
 All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. The tool discovers the repository root from the effective working directory and does not require a config file for repository-scoped commands. Subcommands that need a module name in repository scope (for example for the MDC path or e2e script naming) derive it deterministically from the repository: the module name is the base name of the repository root directory (the last path component of the absolute path to the repo root). For `init`, which can run outside a Git repository, the module name is derived from the base name of the init target directory.
 
@@ -39,7 +39,7 @@ All paths and the working directory are resolved relative to the current directo
 
 ### Global flags
 
-These flags apply to all subcommands. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
+These flags apply to all subcommands. The common subset matches the [standard global flags](../cli/global-flags); `bus dev` adds `--agent` for runtime selection. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
 
 - **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
 - **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.

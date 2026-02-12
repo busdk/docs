@@ -6,15 +6,15 @@
 
 ### Synopsis
 
-`bus init [options]`  
-`bus init init [options]`  
-`bus init configure [options]`
+`bus init [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
+`bus init init [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
+`bus init configure [--base-currency <code>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
 
 Running `bus init` with no subcommand runs the bootstrap (same as `bus init init`). All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`.
 
 ### Description
 
-`bus init` bootstraps a new workspace by writing workspace-level configuration and by running each module’s `init` command in a deterministic sequence. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. The result is the standard workspace layout with baseline datasets and schemas, plus an initial `datapackage.json` that stores [accounting entity](../master-data/accounting-entity/index) settings for the workspace as BusDK metadata.
+Command names follow [CLI command naming](../cli/command-naming). `bus init` bootstraps a new workspace by writing workspace-level configuration and by running each module’s `init` command in a deterministic sequence. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. The result is the standard workspace layout with baseline datasets and schemas, plus an initial `datapackage.json` that stores [accounting entity](../master-data/accounting-entity/index) settings for the workspace as BusDK metadata.
 
 `bus init configure` updates accounting entity settings in an existing workspace `datapackage.json`. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object (created by `bus init`). Only the properties you pass via flags are changed; others remain unchanged.
 
@@ -26,7 +26,7 @@ Running `bus init` with no subcommand runs the bootstrap (same as `bus init init
 
 ### Global flags
 
-These flags apply to both `init` and `configure`. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are treated as positional arguments (and for `init` and `configure`, extra positionals are invalid).
+These flags apply to both `init` and `configure`. They match the [standard global flags](../cli/global-flags) shared by most BusDK modules. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are treated as positional arguments (and for `init` and `configure`, extra positionals are invalid).
 
 - **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
 - **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0. Other flags and arguments are ignored.

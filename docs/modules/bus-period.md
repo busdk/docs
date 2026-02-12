@@ -6,11 +6,14 @@
 
 ### Synopsis
 
-`bus period <command> [options]`
+`bus period init [-C <dir>] [global flags]`  
+`bus period open --period <period> [-C <dir>] [global flags]`  
+`bus period close --period <period> [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
+`bus period lock --period <period> [-C <dir>] [global flags]`
 
 ### Description
 
-`bus period` manages period open, close, and lock state as schema-validated repository data. Close generates closing entries; lock prevents further changes to closed period data. Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`.
+Command names follow [CLI command naming](../cli/command-naming). `bus period` manages period open, close, and lock state as schema-validated repository data. Close generates closing entries; lock prevents further changes to closed period data. Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`.
 
 ### Commands
 
@@ -21,7 +24,7 @@
 
 ### Options
 
-`open`, `close`, and `lock` require `--period <period>`. `close` accepts optional `--post-date <YYYY-MM-DD>` (defaults to last date of period). For global flags and command-specific help, run `bus period --help`.
+`open`, `close`, and `lock` require `--period <period>`. `close` accepts optional `--post-date <YYYY-MM-DD>` (defaults to last date of period). Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus period --help`.
 
 ### Files
 

@@ -6,13 +6,16 @@
 
 ### Synopsis
 
-`bus invoices <command> [options]`  
-`bus invoices <invoice-id> add [options]`  
-`bus invoices <invoice-id> validate`
+`bus invoices init [-C <dir>] [global flags]`  
+`bus invoices add --type <sales|purchase> --invoice-id <id> --invoice-date <YYYY-MM-DD> --due-date <YYYY-MM-DD> --customer <name> [-C <dir>] [global flags]`  
+`bus invoices list [--type <sales|purchase>] [--status <status>] [--month <YYYY-M>] [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--due-from <YYYY-MM-DD>] [--due-to <YYYY-MM-DD>] [--counterparty <entity-id>] [--invoice-id <id>] [-C <dir>] [global flags]`  
+`bus invoices pdf <invoice-id> --out <path> [-C <dir>] [global flags]`  
+`bus invoices <invoice-id> add [--desc <text>] [--quantity <number>] [--unit-price <number>] [--revenue-account <account-name>] [--vat-rate <percent>] [-C <dir>] [global flags]`  
+`bus invoices <invoice-id> validate [-C <dir>] [global flags]`
 
 ### Description
 
-`bus invoices` stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the journal. Invoice headers and lines reference entities, accounts, and attachments. PDF rendering is delegated to [bus-pdf](./bus-pdf); evidence file storage is handled by [bus-attachments](./bus-attachments).
+Command names follow [CLI command naming](../cli/command-naming). `bus invoices` stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the journal. Invoice headers and lines reference entities, accounts, and attachments. PDF rendering is delegated to [bus-pdf](./bus-pdf); evidence file storage is handled by [bus-attachments](./bus-attachments).
 
 ### Commands
 
@@ -29,7 +32,7 @@
 
 `bus invoices list` supports `--type <sales|purchase>`, `--status <status>`, `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--due-from <YYYY-MM-DD>`, `--due-to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-id <id>`. Date filters apply to the invoice date in the header; `--due-from` and `--due-to` apply to the due date. `--month` is mutually exclusive with `--from` or `--to`. `--from` and `--to` are inclusive; the same applies to `--due-from` and `--due-to`. `--status` and `--counterparty` match the header values exactly (e.g. unpaid or paid; entity identifiers from `bus entities`).
 
-For global flags and command-specific help, run `bus invoices --help`.
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus invoices --help`.
 
 ### Files
 
@@ -63,7 +66,7 @@ bus invoices list --status unpaid
 
 ### Sources
 
-- [Minimal example layout](../layout/minimal-example-layout)
+- [Layout: Minimal example layout (directory structure)](../layout/minimal-example-layout)
 - [Owns master data: Sales invoices](../master-data/sales-invoices/index)
 - [Owns master data: Sales invoice rows](../master-data/sales-invoice-rows/index)
 - [Owns master data: Purchase invoices](../master-data/purchase-invoices/index)

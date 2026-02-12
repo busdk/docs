@@ -6,11 +6,13 @@
 
 ### Synopsis
 
-`bus entities <command> [options]`
+`bus entities init [-C <dir>] [global flags]`  
+`bus entities list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus entities add --id <entity-id> --name <display-name> [-C <dir>] [global flags]`
 
 ### Description
 
-`bus entities` maintains counterparty reference datasets with stable entity identifiers used by invoices, bank imports, reconciliation, and other modules. Entity data is schema-validated and append-only for auditability.
+Command names follow [CLI command naming](../cli/command-naming). `bus entities` maintains counterparty reference datasets with stable entity identifiers used by invoices, bank imports, reconciliation, and other modules. Entity data is schema-validated and append-only for auditability.
 
 ### Commands
 
@@ -20,7 +22,7 @@
 
 ### Options
 
-`add` accepts `--id <entity-id>` and `--name <display-name>`. `list` has no module-specific filters. For global flags and command-specific help, run `bus entities --help`.
+`add` accepts `--id <entity-id>` and `--name <display-name>`. `list` has no module-specific filters. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus entities --help`.
 
 ### Write path and field coverage
 

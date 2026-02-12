@@ -6,15 +6,15 @@
 
 ### Synopsis
 
-`bus pdf [options]`
+`bus pdf --data <file> --out <path> [--overwrite] [-C <dir>] [--color <mode>] [-v] [-q] [-h] [-V]`
 
 ### Description
 
-`bus pdf` renders deterministic PDFs from structured JSON input. It does not read or write BusDK datasets; it is used to produce archival PDFs (e.g. invoices) that can then be registered as attachments. Template selection is specified in the render model.
+Command names follow [CLI command naming](../cli/command-naming). `bus pdf` renders deterministic PDFs from structured JSON input. It does not read or write BusDK datasets; it is used to produce archival PDFs (e.g. invoices) that can then be registered as attachments. Template selection is specified in the render model.
 
 ### Options
 
-`--data <file>` (or `--data @-` for stdin) supplies the JSON render model. `--out <path>` is the output PDF path. `--overwrite` allows overwriting an existing file. For global flags and help, run `bus pdf --help`.
+`--data <file>` (or `--data @-` for stdin) supplies the JSON render model. `--out <path>` is the output PDF path. `--overwrite` allows overwriting an existing file. Global flags are defined in [Standard global flags](../cli/global-flags). For help, run `bus pdf --help`.
 
 ### Files
 

@@ -22,13 +22,13 @@ KD-INV-001 Inventory is stored as repository data. Item master data and movement
 
 ### Component Design and Interfaces
 
-Interface IF-INV-001 (module CLI). The module exposes `bus inventory` with subcommands `init`, `add-item`, `record-movement`, and `valuation` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-INV-001 (module CLI). The module exposes `bus inventory` with subcommands `init`, `add`, `move`, and `valuation` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline inventory item and movement datasets and schemas when they are absent. If all owned inventory datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-The `add-item` command records a new inventory item in the item master dataset. It accepts `--item-id <id>`, `--name <text>`, `--unit <text>`, `--valuation-method <fifo|weighted-average>`, `--inventory-account <account-id>`, and `--cogs-account <account-id>` as required parameters, and it accepts `--desc <text>` and `--sku <text>` as optional parameters. The valuation method is stored on the item record and is used as the default method when computing valuation outputs.
+The `add` command records a new inventory item in the item master dataset. It accepts `--item-id <id>`, `--name <text>`, `--unit <text>`, `--valuation-method <fifo|weighted-average>`, `--inventory-account <account-id>`, and `--cogs-account <account-id>` as required parameters, and it accepts `--desc <text>` and `--sku <text>` as optional parameters. The valuation method is stored on the item record and is used as the default method when computing valuation outputs.
 
-The `record-movement` command appends a stock movement row for an item. It accepts `--item-id <id>`, `--date <YYYY-MM-DD>`, `--qty <decimal>`, and `--direction <in|out|adjust>` as required parameters, and it accepts `--unit-cost <amount>`, `--desc <text>`, and `--voucher <voucher-id>` as optional parameters. When `--direction` is `in` or `adjust`, `--unit-cost` is required and records the per-unit acquisition or adjustment cost; when `--direction` is `out` and `--unit-cost` is omitted, the cost is derived during valuation using the item's valuation method.
+The `move` command appends a stock movement row for an item. It accepts `--item-id <id>`, `--date <YYYY-MM-DD>`, `--qty <decimal>`, and `--direction <in|out|adjust>` as required parameters, and it accepts `--unit-cost <amount>`, `--desc <text>`, and `--voucher <voucher-id>` as optional parameters. When `--direction` is `in` or `adjust`, `--unit-cost` is required and records the per-unit acquisition or adjustment cost; when `--direction` is `out` and `--unit-cost` is omitted, the cost is derived during valuation using the item's valuation method.
 
 The `valuation` command computes valuation outputs for an as-of date. It accepts `--as-of <YYYY-MM-DD>` as a required parameter and `--item-id <id>` as an optional parameter. When `--item-id` is supplied, the output is scoped to that item; otherwise the output includes all items that have movements up to the as-of date, and valuation uses the method stored on each item record.
 
@@ -61,7 +61,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Schema vio
 
 ### Testing Strategy
 
-Unit tests cover inventory validation and valuation logic, and command-level tests exercise `init`, `add-item`, `record-movement`, and `valuation` against fixture workspaces.
+Unit tests cover inventory validation and valuation logic, and command-level tests exercise `init`, `add`, `move`, and `valuation` against fixture workspaces.
 
 ### Deployment and Operations
 

@@ -4,9 +4,28 @@
 
 `bus-data` — inspect and maintain workspace datasets, schemas, and data packages.
 
+### Synopsis
+
+`bus-data schema init <table> --schema <file> [--force] [--chdir <dir>] [global flags]`  
+`bus-data schema show <table> | schema show --resource <name> [--chdir <dir>] [global flags]`  
+`bus-data schema infer <table> [--sample <n>] [--chdir <dir>] [global flags]`  
+`bus-data schema add-field <table> --field <name> --type <type> [--default <value>] [--required] [--description <text>] [--chdir <dir>] [global flags]`  
+`bus-data schema field add <table> --field <name> --type <type> [--formula-mode ...] [--formula-prefix ...] [--formula-result-type ...] [--default <value>] [--chdir <dir>] [global flags]`  
+`bus-data schema set-type <table> --field <name> --type <type> [--chdir <dir>] [global flags]`  
+`bus-data schema patch [--resource <name>] --patch <file> [--chdir <dir>] [global flags]`  
+`bus-data package init | package show | package patch --patch <file> | package validate [--chdir <dir>] [global flags]`  
+`bus-data resource list | resource validate <resource> [--chdir <dir>] [global flags]`  
+`bus-data resource add --name <name> --path <path> --schema <file> [--chdir <dir>] [global flags]`  
+`bus-data resource remove <resource> [--delete-files] [--chdir <dir>] [global flags]`  
+`bus-data row add <table> (--set <key>=<value> ... | --json <file>) [--chdir <dir>] [global flags]`  
+`bus-data row update <table> --key <key>=<value> ... (--set <key>=<value> ... | --json <file>) [--chdir <dir>] [global flags]`  
+`bus-data row delete <table> --key <key>=<value> ... [--chdir <dir>] [global flags]`  
+`bus-data table read <table> [--row <index|start:end>] [--column <name>] ... [--filter <field>=<value>] ... [--key <key>=<value>] [--formula-source] [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus-data table list [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`
+
 ### Description
 
-`bus-data` is the workspace dataset tool for BusDK repositories. It reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. The goal is to make dataset maintenance predictable and reviewable while keeping day-to-day operations simple and non-interactive.
+Command names follow [CLI command naming](../cli/command-naming). `bus-data` is the workspace dataset tool for BusDK repositories. It reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. The goal is to make dataset maintenance predictable and reviewable while keeping day-to-day operations simple and non-interactive.
 
 ### Getting started
 
@@ -220,7 +239,7 @@ bus-data --quiet --output out_list.tsv table list
 
 ### Workspace and safety flags
 
-Use `--chdir` to set the workspace root before resolving any paths. This is useful when you run `bus-data` from another directory.
+Global flags (including `--chdir`) are defined in [Standard global flags](../cli/global-flags). Use `--chdir` to set the workspace root before resolving any paths. This is useful when you run `bus-data` from another directory.
 
 ```text
 bus-data --chdir /path/to/workspace table list

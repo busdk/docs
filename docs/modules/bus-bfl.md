@@ -9,13 +9,19 @@
 `bus bfl <command> [options]`  
 `bus-bfl <command> [options]`
 
+`bus-bfl funcset list [-f <format>] [-o <file>] [--chdir <dir>] [--color <mode>] [-v] [-q] [-h] [-V]`  
+`bus-bfl parse --expr <expression> [--dialect <name>] [--source-name <name>] [-f <format>] [-o <file>] [--chdir <dir>] [global flags]`  
+`bus-bfl format [--expr <expression>] [--dialect <name>] [-f <format>] [-o <file>] [--chdir <dir>] [global flags]`  
+`bus-bfl validate --expr <expression> --schema <file> [-f <format>] [-o <file>] [--chdir <dir>] [global flags]`  
+`bus-bfl eval --expr <expression> --context <file> [--schema <file>] [-f <format>] [-o <file>] [--chdir <dir>] [global flags]`
+
 ### Description
 
-BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. It supports spreadsheet-style references and ranges and can return array values from ranges or registered functions. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output unless redirected, and diagnostics go to standard error. Colored output only applies to human-facing text on stderr.
+Command names follow [CLI command naming](../cli/command-naming). BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. It supports spreadsheet-style references and ranges and can return array values from ranges or registered functions. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output unless redirected, and diagnostics go to standard error. Colored output only applies to human-facing text on stderr.
 
 ### Getting started
 
-Install the BusDK toolchain and run `bus-bfl` from your PATH, or invoke the binary directly (for example `./bin/bus-bfl`). To see available commands and global flags, run `bus-bfl --help`. To see the tool version, run `bus-bfl --version`. Both help and version exit immediately and ignore any other flags or arguments.
+Install the BusDK toolchain and run `bus-bfl` from your PATH, or invoke the binary directly (for example `./bin/bus-bfl`). The tool accepts the [standard global flags](../cli/global-flags). To see available commands and flags, run `bus-bfl --help`. To see the tool version, run `bus-bfl --version`. Both help and version exit immediately and ignore any other flags or arguments.
 
 You can control colored output for help and error messages with `--color auto`, `--color always`, or `--color never`. The default is `auto` (color when stderr is a terminal). `--color always` forces ANSI color escapes on stderr diagnostics, while `--color never` disables them. The `--no-color` flag is an alias for `--color never`, and if both are provided, color is disabled. If you pass an invalid color mode, the tool prints a usage error to stderr and exits with status 2. The flags `--quiet` and `--verbose` cannot be used together; combining them is invalid usage and exits with status 2.
 

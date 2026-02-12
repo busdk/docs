@@ -6,11 +6,14 @@
 
 ### Synopsis
 
-`bus loans <command> [options]`
+`bus loans init [-C <dir>] [global flags]`  
+`bus loans add --loan-id <id> --counterparty <entity> --principal <amount> --start-date <date> --maturity-date <date> --interest-rate <rate> --principal-account <account> --interest-account <account> --cash-account <account> [--name <name>] [--rate-type <type>] [--payment-frequency <freq>] [--desc <text>] [-C <dir>] [global flags]`  
+`bus loans event --loan-id <id> --date <date> --type <disbursement|repayment|interest|fee|adjustment> --amount <amount> [allocation and voucher flags] [-C <dir>] [global flags]`  
+`bus loans amortize --period <period> [--loan-id <id>] [--post-date <date>] [-C <dir>] [global flags]`
 
 ### Description
 
-`bus loans` maintains loan contracts and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions for the journal. Corrections are append-only and traceable.
+Command names follow [CLI command naming](../cli/command-naming). `bus loans` maintains loan contracts and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions for the journal. Corrections are append-only and traceable.
 
 ### Commands
 
@@ -21,7 +24,7 @@
 
 ### Options
 
-`add` accepts `--loan-id`, `--counterparty`, `--principal`, `--start-date`, `--maturity-date`, `--interest-rate`, `--principal-account`, `--interest-account`, `--cash-account`, and optional `--name`, `--rate-type`, `--payment-frequency`, `--desc`. `event` accepts `--loan-id`, `--date`, `--type`, `--amount`, and optional allocation and voucher flags. `amortize` accepts `--period` and optional `--loan-id`, `--post-date`. For global flags and command-specific help, run `bus loans --help`.
+`add` accepts `--loan-id`, `--counterparty`, `--principal`, `--start-date`, `--maturity-date`, `--interest-rate`, `--principal-account`, `--interest-account`, `--cash-account`, and optional `--name`, `--rate-type`, `--payment-frequency`, `--desc`. `event` accepts `--loan-id`, `--date`, `--type`, `--amount`, and optional allocation and voucher flags. `amortize` accepts `--period` and optional `--loan-id`, `--post-date`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus loans --help`.
 
 ### Files
 

@@ -6,11 +6,13 @@
 
 ### Synopsis
 
-`bus bank <command> [options]`
+`bus bank init [-C <dir>] [global flags]`  
+`bus bank import --file <path> [-C <dir>] [global flags]`  
+`bus bank list [--month <YYYY-M>] [--from <date>] [--to <date>] [--counterparty <id>] [--invoice-ref <ref>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-`bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows.
+Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows.
 
 ### Commands
 
@@ -20,7 +22,7 @@
 
 ### Options
 
-`import` accepts `--file <path>`. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. For global flags and command-specific help, run `bus bank --help`.
+`import` accepts `--file <path>`. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
 
 ### Files
 

@@ -6,11 +6,11 @@
 
 ### Synopsis
 
-`bus validate [options]`
+`bus validate [--format <text|tsv>] [-C <dir>] [global flags]`
 
 ### Description
 
-`bus validate` checks all workspace datasets against their schemas and enforces cross-table invariants (e.g. balanced debits/credits, valid references, period integrity). It does not modify data. Use before period close and filing. Diagnostics go to stderr; stdout is empty on success.
+Command names follow [CLI command naming](../cli/command-naming). `bus validate` checks all workspace datasets against their schemas and enforces cross-table invariants (e.g. balanced debits/credits, valid references, period integrity). It does not modify data. Use before period close and filing. Diagnostics go to stderr; stdout is empty on success.
 
 ### Commands
 
@@ -18,7 +18,7 @@ This module has no subcommands. Run `bus validate` from the workspace (or use `-
 
 ### Options
 
-`--format text` (default) or `--format tsv` controls diagnostics format. TSV columns are `dataset`, `record_id`, `field`, `rule`, `message`. For global flags and help, run `bus validate --help`.
+`--format text` (default) or `--format tsv` controls diagnostics format. TSV columns are `dataset`, `record_id`, `field`, `rule`, `message`. Global flags are defined in [Standard global flags](../cli/global-flags). For help, run `bus validate --help`.
 
 ### Files
 

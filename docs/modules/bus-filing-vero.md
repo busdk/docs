@@ -6,15 +6,15 @@
 
 ### Synopsis
 
-`bus filing vero [options]`
+`bus filing vero [module-specific parameters] [-C <dir>] [-o <file>] [--color <mode>] [-v] [-q] [-h] [-V]`
 
 ### Description
 
-`bus filing vero` converts validated workspace data into Vero-ready export bundles with deterministic packaging, manifests, and hashes. It consumes VAT and report outputs and closed-period data. Invoked via `bus filing vero`.
+Command names follow [CLI command naming](../cli/command-naming). `bus filing vero` converts validated workspace data into Vero-ready export bundles with deterministic packaging, manifests, and hashes. It consumes VAT and report outputs and closed-period data. Invoked via `bus filing vero`.
 
 ### Options
 
-Module-specific parameters are documented in the tool help. For global flags, run `bus filing vero --help`.
+Module-specific parameters are documented in the tool help. Global flags are defined in [Standard global flags](../cli/global-flags). For the full list, run `bus filing vero --help`.
 
 ### Files
 

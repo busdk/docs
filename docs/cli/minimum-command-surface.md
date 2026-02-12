@@ -66,7 +66,7 @@ This is the minimum workflow surface implied by the spec’s current planned mod
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./command-structure">Command structure and discoverability</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./command-naming">CLI command naming</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../cli/index">BusDK Design Spec: CLI tooling and workflow</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./error-handling-dry-run-diagnostics">Error handling, dry-run, and diagnostics</a> &rarr;</span>
 </p>

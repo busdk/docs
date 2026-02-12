@@ -6,11 +6,14 @@
 
 ### Synopsis
 
-`bus accounts <command> [options]`
+`bus accounts init [-C <dir>] [global flags]`  
+`bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
+`bus accounts validate [-C <dir>] [global flags]`
 
 ### Description
 
-`bus accounts` maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types so downstream modules can rely on stable account identifiers.
+Command names follow [CLI command naming](../cli/command-naming). `bus accounts` maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types so downstream modules can rely on stable account identifiers.
 
 ### Commands
 
@@ -21,7 +24,7 @@
 
 ### Options
 
-The `add` command accepts `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. For global flags and command-specific help, run `bus accounts --help`.
+The `add` command accepts `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help`.
 
 ### Write path and field coverage
 

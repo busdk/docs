@@ -6,11 +6,13 @@
 
 ### Synopsis
 
-`bus filing <command> [options]`
+`bus filing prh [module-specific options] [-C <dir>] [global flags]`  
+`bus filing vero [module-specific options] [-C <dir>] [global flags]`  
+`bus filing tax-audit-pack [module-specific options] [-C <dir>] [global flags]`
 
 ### Description
 
-`bus filing` produces deterministic filing bundles from validated, closed-period workspace data. It assembles manifests and checksums and delegates target-specific formats to `bus filing prh` and `bus filing vero`. Use after validation and period close.
+Command names follow [CLI command naming](../cli/command-naming). `bus filing` produces deterministic filing bundles from validated, closed-period workspace data. It assembles manifests and checksums and delegates target-specific formats to `bus filing prh` and `bus filing vero`. Use after validation and period close.
 
 ### Commands
 
@@ -20,7 +22,7 @@
 
 ### Options
 
-Target-specific parameters are documented in each module’s help. For global flags and command-specific help, run `bus filing --help`.
+Target-specific parameters are documented in each module’s help. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus filing --help`.
 
 ### Files
 

@@ -6,11 +6,13 @@
 
 ### Synopsis
 
-`bus vat <command> [options]`
+`bus vat init [-C <dir>] [global flags]`  
+`bus vat report --period <period> [-C <dir>] [global flags]`  
+`bus vat export --period <period> [-C <dir>] [global flags]`
 
 ### Description
 
-`bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data for archiving and filing. Period selection uses the same `--period` form as other period-scoped commands.
+Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data for archiving and filing. Period selection uses the same `--period` form as other period-scoped commands.
 
 ### Commands
 
@@ -20,7 +22,7 @@
 
 ### Options
 
-`report` and `export` require `--period <period>`. For global flags and command-specific help, run `bus vat --help`.
+`report` and `export` require `--period <period>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
 
 ### Files
 

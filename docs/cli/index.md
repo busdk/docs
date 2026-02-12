@@ -5,6 +5,8 @@ This section is split into **single-concept** documents:
 - [Extensible CLI surface and API parity](./api-parity)
 - [Git commit conventions per operation (external Git)](./automated-git-commits)
 - [Command structure and discoverability](./command-structure)
+- [Standard global flags](./global-flags)
+- [CLI command naming](./command-naming)
 - [Minimum required command surface (end-to-end workflow)](./minimum-command-surface)
 - [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
 - [Interactive use and scripting parity](./interactive-and-scripting-parity)

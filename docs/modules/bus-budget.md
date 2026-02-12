@@ -6,11 +6,14 @@
 
 ### Synopsis
 
-`bus budget <command> [options]`
+`bus budget init [-C <dir>] [global flags]`  
+`bus budget add --account <account-id> --year <YYYY> --period <MM|Qn> --amount <decimal> [-C <dir>] [global flags]`  
+`bus budget set --account <account-id> --year <YYYY> --period <MM|Qn> --amount <decimal> [-C <dir>] [global flags]`  
+`bus budget report (--year <YYYY> | --period <period>) [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-`bus budget` maintains budget datasets keyed by account and period and produces budget versus actual variance outputs from journal data. Budgets are stored as schema-validated repository data.
+Command names follow [CLI command naming](../cli/command-naming). `bus budget` maintains budget datasets keyed by account and period and produces budget versus actual variance outputs from journal data. Budgets are stored as schema-validated repository data.
 
 ### Commands
 
@@ -21,7 +24,7 @@
 
 ### Options
 
-`report` accepts `--year <YYYY>` or `--period <period>`. `add` and `set` accept `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`. For global flags and command-specific help, run `bus budget --help`.
+`report` accepts `--year <YYYY>` or `--period <period>`. `add` and `set` accept `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus budget --help`.
 
 ### Files
 

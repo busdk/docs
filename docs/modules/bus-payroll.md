@@ -6,13 +6,15 @@
 
 ### Synopsis
 
-`bus payroll <command> [options]`  
-`bus payroll employee add [options]`  
-`bus payroll employee list`
+`bus payroll init [-C <dir>] [global flags]`  
+`bus payroll run --month <YYYY-MM> [--run-id <id>] [--pay-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
+`bus payroll list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus payroll employee add --employee-id <id> --entity <entity-id> --start-date <date> [--end-date <date>] --gross <amount> --withholding-rate <rate> --wage-expense <account> --withholding-payable <account> --net-payable <account> [-C <dir>] [global flags]`  
+`bus payroll employee list [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-`bus payroll` maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings. Data is schema-validated and append-only for auditability.
+Command names follow [CLI command naming](../cli/command-naming). `bus payroll` maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings. Data is schema-validated and append-only for auditability.
 
 ### Commands
 
@@ -24,7 +26,7 @@
 
 ### Options
 
-`run` accepts `--month <YYYY-MM>`, `--run-id`, `--pay-date <YYYY-MM-DD>`. `employee add` accepts `--employee-id`, `--entity`, `--start-date`, `--end-date` (optional), `--gross`, `--withholding-rate`, `--wage-expense`, `--withholding-payable`, `--net-payable`. For global flags and command-specific help, run `bus payroll --help`.
+`run` accepts `--month <YYYY-MM>`, `--run-id`, `--pay-date <YYYY-MM-DD>`. `employee add` accepts `--employee-id`, `--entity`, `--start-date`, `--end-date` (optional), `--gross`, `--withholding-rate`, `--wage-expense`, `--withholding-payable`, `--net-payable`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus payroll --help`.
 
 ### Files
 
