@@ -4,7 +4,8 @@ This section is the end user reference for the BusDK module CLIs. Each page is s
 
 If you need architectural background on why modules are independent and how they integrate, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
-- [`bus init`](./bus-init): Initialize a new workspace by orchestrating module-owned `init` commands.
+- [`bus init`](./bus-init): Initialize a new workspace by orchestrating `bus config init` and module-owned `init` commands.
+- [`bus config`](./bus-config): Create and update workspace configuration (accounting entity settings in `datapackage.json`).
 - [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI.
 - [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping.
 - [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.

@@ -2,23 +2,21 @@
 
 ### Introduction and Overview
 
-Bus Init bootstraps a new BusDK workspace by writing workspace-level configuration into `datapackage.json` and orchestrating module-owned `init` commands so each module remains the sole owner of its datasets and schemas.
+Bus Init bootstraps a new BusDK workspace by orchestrating a deterministic sequence of module `init` commands. It invokes [bus-config](./bus-config) first to create or ensure workspace-level configuration (`datapackage.json`), then invokes each domain module’s `init` so that every module remains the sole owner of its datasets and schemas. Bus Init does not write configuration or domain data itself; it delegates to bus-config for the descriptor and to each domain module for its baseline data.
 
 ### Requirements
 
-FR-INIT-001 Workspace bootstrap. The module MUST orchestrate a deterministic sequence of module `init` commands. Acceptance criteria: the resulting workspace contains the minimal baseline datasets and schemas for the standard BusDK workspace layout.
+FR-INIT-001 Workspace bootstrap. The module MUST orchestrate a deterministic sequence of module `init` commands, starting with `bus config init` so that workspace configuration exists before domain module inits run. Acceptance criteria: the resulting workspace contains the minimal baseline datasets and schemas for the standard BusDK workspace layout, including `datapackage.json` with a valid `busdk.accounting_entity` object.
 
 FR-INIT-002 Non-invasive initialization. The module MUST not perform Git or network operations. Acceptance criteria: initialization only affects workspace datasets and metadata.
 
-FR-INIT-003 Configure accounting entity settings. The module MUST support updating accounting entity properties in an existing workspace `datapackage.json` without re-running full bootstrap. Acceptance criteria: `bus init configure` accepts flags for each property (`base_currency`, `fiscal_year_start`, `fiscal_year_end`, `vat_registered`, `vat_reporting_period`); only provided flags alter the stored value; the command fails with a clear error if `datapackage.json` does not exist or does not contain `busdk.accounting_entity`.
-
-FR-INIT-004 Module init contract. Every module that owns master data and is invoked during bootstrap MUST provide an `init` command that creates the module’s baseline datasets and schemas when they are absent. When the module’s data already exists in full (all owned datasets and schemas present and consistent), `init` MUST print a warning to standard error and exit with code 0 without modifying any file. When the module’s data exists only partially (one or more owned datasets or schemas missing or inconsistent), `init` MUST fail with a clear error to standard error, MUST NOT modify any file, and MUST exit with a non-zero code. Acceptance criteria: running `init` on an empty workspace creates the baseline; running `init` again after a successful bootstrap yields a warning and exit 0; running `init` when some but not all owned files exist yields an error and no writes.
+FR-INIT-003 Module init contract. Every module invoked during bootstrap (including bus-config for workspace configuration and each domain module that owns master data) MUST provide an `init` command that creates the module’s baseline datasets and schemas when they are absent. When the module’s data already exists in full (all owned datasets and schemas present and consistent), `init` MUST print a warning to standard error and exit with code 0 without modifying any file. When the module’s data exists only partially (one or more owned datasets or schemas missing or inconsistent), `init` MUST fail with a clear error to standard error, MUST NOT modify any file, and MUST exit with a non-zero code. Acceptance criteria: running `init` on an empty workspace creates the baseline; running `init` again after a successful bootstrap yields a warning and exit 0; running `init` when some but not all owned files exist yields an error and no writes.
 
 NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostics and stop on the first failure. Acceptance criteria: failures identify the module command that failed.
 
 ### System Architecture
 
-Bus Init is an orchestrator that writes workspace-level configuration and invokes module `init` commands to produce the workspace baseline. It does not own domain datasets beyond workspace metadata and configuration.
+Bus Init is an orchestrator that invokes `bus config init` and then each domain module’s `init` in a fixed order to produce the workspace baseline. It does not own workspace configuration (bus-config owns `datapackage.json`) or domain datasets; it only coordinates the sequence and verifies that required baseline files exist afterward.
 
 ### Key Decisions
 
@@ -28,24 +26,21 @@ KD-INIT-002 Init idempotency and partial-state safety. Each module’s `init` ob
 
 ### Component Design and Interfaces
 
-Interface IF-INIT-001 (bootstrap). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command does not accept layout selection flags and always initializes the standard workspace layout with deterministic dataset and schema filenames. `bus init` accepts no positional arguments and no module-level flags beyond the shared global flags.
+Interface IF-INIT-001 (bootstrap). The module is invoked as `bus init` (or `bus init init`) and follows BusDK CLI conventions for deterministic output and diagnostics. The command runs `bus config init` first, then each domain module’s `init` in a deterministic order (accounts, entities, period, journal, invoices, vat, attachments, bank). It does not accept layout selection flags and always initializes the standard workspace layout with deterministic dataset and schema filenames. `bus init` accepts no positional arguments and no module-level flags beyond the shared global flags. To change accounting entity settings after bootstrap, use [bus config configure](../modules/bus-config).
 
-Interface IF-INIT-002 (configure). The module is invoked as `bus init configure` and updates accounting entity settings in an existing workspace `datapackage.json`. The command requires a workspace that already contains `datapackage.json` with a `busdk.accounting_entity` object. It accepts optional flags: `--base-currency`, `--fiscal-year-start`, `--fiscal-year-end`, `--vat-registered`, `--vat-reporting-period`. Only flags explicitly provided are written; other properties remain unchanged. Flag values must conform to the canonical schema in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration); invalid values produce a deterministic usage error and exit code 2.
-
-Usage examples:
+Usage example:
 
 ```bash
 bus init
-bus init configure --base-currency=EUR --vat-registered=true
 ```
 
 ### Data Design
 
-The module creates or updates workspace-level metadata (`datapackage.json`) at the workspace root. The descriptor contains both the workspace resource manifest and BusDK workspace-level configuration via extensibility (accounting entity settings under `busdk.accounting_entity`). The bootstrap command (`bus init`) creates or overwrites the descriptor; the configure command (`bus init configure`) updates only the `busdk.accounting_entity` subtree for the properties specified by flags. All other datasets are created by module `init` commands invoked during bootstrap.
+The module does not create or own any workspace files directly. It invokes `bus config init`, which creates or ensures `datapackage.json` and the `busdk.accounting_entity` subtree at the workspace root. It then invokes each domain module’s `init`, which create the baseline datasets and schemas (accounts, entities, periods, journals, invoices, VAT, attachments, bank). After all inits complete, bus-init verifies that every required baseline path exists and fails with a clear error if any is missing.
 
 ### Assumptions and Dependencies
 
-Bus Init depends on the presence of module CLIs for each required area and on the standard workspace layout conventions. Missing module commands result in deterministic diagnostics.
+Bus Init depends on the presence of the `bus` dispatcher, [bus-config](./bus-config) for workspace configuration, and each domain module CLI (accounts, entities, period, journal, invoices, vat, attachments, bank) and on the standard workspace layout conventions. Missing module commands result in deterministic diagnostics.
 
 ### Security Considerations
 
@@ -86,20 +81,20 @@ Module-owned initialization: each module creates its own datasets during bootstr
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./modules">Modules (SDD)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-data">bus-data</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-config">bus-config</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
 ### Sources
 
-- [Master data: Master data (business objects)](../master-data/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
-- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [bus-config module SDD](./bus-config)
 - [End user documentation: bus-init CLI reference](../modules/bus-init)
-- [Repository](https://github.com/busdk/bus-init)
+- [End user documentation: bus-config CLI reference](../modules/bus-config)
 - [Layout principles](../layout/layout-principles)
 - [Initialize repo](../workflow/initialize-repo)
+- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
+- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
+- [Repository](https://github.com/busdk/bus-init)
 
 ### Document control
 

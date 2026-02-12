@@ -2,7 +2,7 @@
 
 Each BusDK workspace directory represents exactly one accounting entity. All datasets under that workspace belong to that entity by construction, so scope separation is enforced by filesystem boundaries rather than by repeating an “entity key” on every row.
 
-Entity-wide settings are stored as BusDK metadata in the workspace’s Frictionless Data Package descriptor (`datapackage.json`) at the workspace root. Modules read these settings when they validate, post, reconcile, report, or produce filings, and they must not require row-level datasets to repeat them.
+Entity-wide settings are stored as BusDK metadata in the workspace’s Frictionless Data Package descriptor (`datapackage.json`) at the workspace root. To create or update the descriptor and accounting entity settings, use the [bus config](../modules/bus-config) CLI. Modules read these settings when they validate, post, reconcile, report, or produce filings, and they must not require row-level datasets to repeat them.
 
 The settings live under the top-level `busdk.accounting_entity` object in `datapackage.json`. This uses Frictionless descriptor extensibility — additional properties remain compatible with standard tooling, and tooling that does not understand BusDK can safely ignore the `busdk` object.
 
@@ -48,6 +48,7 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 ### Sources
 
+- [bus-config CLI reference](../modules/bus-config)
 - [Accounting entity](../master-data/accounting-entity/index)
 - [Initialize a new repository](../workflow/initialize-repo)
 - [Minimal workspace baseline (after initialization)](../layout/minimal-workspace-baseline)
