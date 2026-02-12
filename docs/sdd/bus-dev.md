@@ -50,6 +50,10 @@ FR-DEV-003 Module identity for spec and e2e. When a repository-scoped subcommand
 
 FR-DEV-004 Embedded prompts. All prompts used to drive agent runs MUST be embedded as Go string constants or templates inside the bus-dev binary. The tool MUST NOT load prompts from external prompt files on disk. Acceptance criteria: a fresh clone of the bus-dev repo builds a binary that runs all subcommands without requiring any external prompt files; prompts may still be overridden or extended by flags or environment variables when explicitly documented.
 
+FR-DEV-004a Prompt-template rendering contract. Embedded prompts that use placeholders MUST use the `{{VARIABLE}}` syntax. Rendering MUST be deterministic: the same inputs MUST produce the same rendered prompt. Missing placeholder values (a variable required by the template is not supplied) MUST cause the command to fail before any agent invocation, with a clear diagnostic and exit code 2. Any unresolved placeholder (any `{{...}}` token remaining in the rendered text after substitution) MUST cause the command to fail before agent invocation, with a clear diagnostic and exit code 2. Rendering a template with no placeholders is a pass-through. This contract is part of the determinism and safety guarantees (NFR-DEV-001, NFR-DEV-005): the tool MUST NOT invoke an agent with partially substituted or ambiguous prompt text. Acceptance criteria: unit tests cover missing variable, unresolved variable, repeated placeholder replacement, and expected placeholder set per prompt template; the agent is never invoked when substitution fails.
+
+FR-DEV-004b Configurable docs base URL. The documentation base URL used to derive links in prompts and diagnostics MUST be configurable via the environment variable `BUS_DEV_DOCS_BASE_URL`. The default MUST be `https://docs.busdk.com`. The value MUST be normalized by trimming any trailing slash before use. This value is used to derive documentation links (including the main SDD URL and module-specific SDD and module-docs URLs) that appear in embedded prompts and in diagnostics. The main SDD URL is a first-class derived value: `MAIN_SDD_URL = <DOCS_BASE_URL>/sdd`. The module SDD URL is `<DOCS_BASE_URL>/sdd/<module>` and the module docs URL is `<DOCS_BASE_URL>/modules/<module>`, where `<module>` is the module name (base name of the repository root directory, per FR-DEV-003). Acceptance criteria: when unset, derived URLs use the default base; when set, they use the normalized value; trailing slash is removed; tests verify override effects on derived URLs.
+
 FR-DEV-005 Agent runner abstraction. The implementation MUST provide a small internal "agent runner" abstraction that invokes the configured external agent runtime with consistent defaults for model selection, output format, and timeouts. Acceptance criteria: model, output format, and timeout are configurable via flags or environment variables; defaults are documented and deterministic; the runner is testable in isolation (e.g. by stubbing the executable in PATH).
 
 FR-DEV-005a Supported agent runtimes. The implementation MUST support at least four agent runtimes in a modular way: Cursor CLI (cursor-agent), Codex, Gemini CLI, and Claude CLI. The active runtime MUST be selectable via a documented flag or environment variable (e.g. `--agent cursor|codex|gemini|claude` or equivalent). Each runtime MUST be implemented as a backend that satisfies the same agent runner interface (prompt, workdir, timeout, stdout/stderr contract). Acceptance criteria: the user can select any of the four runtimes; switching runtime does not change subcommand semantics or embedded prompts; tests can stub any backend; documentation lists all runtimes and selection mechanism. If a given CLI cannot be integrated under this contract (e.g. no suitable executable or invocation model), that backend MAY be documented as unavailable or experimental until the integration is feasible.
@@ -96,7 +100,7 @@ High-level components:
 
 - **Subcommand handlers.** One logical component per operation: init, commit, work, spec, e2e. Each handler receives parsed flags, the resolved workdir (and repo root and module name when relevant), and stdout/stderr writers, and returns an exit code. When the user invokes multiple workflow operations (e.g. `bus dev spec work e2e`, or `bus dev init [DIR] spec work e2e`), the CLI layer invokes each handler in order and stops on first non-zero exit (FR-DEV-001a). Init resolves the target directory (current directory by default), creates missing scaffold files (`.cursor/rules`, module MDC, and root `Makefile` from an embedded sample if missing), and by default does not invoke agent workflows; it invokes spec/work/e2e only when those operations are explicitly present after init. Commit may use Git only for read operations plus `git commit` with already-staged content; it must not stage, amend, or touch remotes.
 
-- **Embedded prompts.** Prompts for commit, work, spec, and (when applicable) e2e are compiled into the binary as string constants or templates. Template variables (e.g. module name, MDC path) are filled at runtime from the repository resolution layer. No prompts are loaded from the filesystem.
+- **Embedded prompts.** Prompts for commit, work, spec, and (when applicable) e2e are compiled into the binary as string constants or templates. Templates use `{{VARIABLE}}` placeholders; variables are filled at runtime from the repository resolution layer and the docs base URL (see Prompt variable catalog and FR-DEV-004a). Rendering is deterministic and must complete without missing or unresolved placeholders before any agent invocation. No prompts are loaded from the filesystem.
 
 - **Log formatting (optional).** The NDJSON-to-text style formatter (equivalent to the provided format-cursor-log / ndjson-to-text behavior) may be implemented as an internal library used by the agent runner to convert agent NDJSON output to human-readable text on stderr. The SDD treats this as the desired direction; whether it is a separate subcommand or only internal is left as an implementation detail, with the initial scope kept minimal and deterministic.
 
@@ -125,6 +129,23 @@ Interface IF-DEV-002 (Run entrypoint). The program exposes a single entrypoint `
 Interface IF-DEV-003 (agent runner). The agent runner abstraction accepts: agent backend selector (e.g. cursor | codex | gemini | claude), prompt text (or template + variables), model, output format, timeout, and optional filter options (e.g. roles to include). It returns an exit code and optionally streams formatted output to the provided stderr. It executes the external agent binary for the selected backend (Cursor CLI, Codex, Gemini CLI, or Claude CLI, as configured) in the given workdir with the given environment. Tests may inject a stub by changing PATH or by accepting an optional executable path for the runner. The interface is backend-agnostic so that all supported runtimes (and any future backend) are invoked through the same contract.
 
 Interface IF-DEV-004 (repo resolution). Given a directory path, the resolver returns: whether the path is inside a Git repository, the repository root path, and (when requested) the module name. For repository-scoped operations, module name MUST be the base name of the repository root directory (see FR-DEV-003). If not inside a repo, the resolver returns an error suitable for a clear user-facing message. `init` target naming is deterministic but does not require repo resolution; it uses the base name of the resolved target directory.
+
+**Prompt variable catalog.** The following variables are available for substitution in embedded prompt templates (FR-DEV-004, FR-DEV-004a). All are derived at runtime from repository resolution, the configured docs base URL (FR-DEV-004b), or the operation context. Each prompt template documents which of these it uses; substitution MUST be complete before agent invocation (FR-DEV-004a).
+
+| Variable | Description | Source / derivation |
+| -------- | ----------- | ------------------- |
+| `DOCS_BASE_URL` | Base URL for documentation; used to build all doc links. | `BUS_DEV_DOCS_BASE_URL` env (default `https://docs.busdk.com`), trailing slash trimmed. |
+| `MAIN_SDD_URL` | URL of the main BusDK SDD index. | `<DOCS_BASE_URL>/sdd` |
+| `MODULE_NAME` | Current module name (e.g. `bus-accounts`). | Base name of repository root directory (FR-DEV-003). |
+| `MODULE_SUFFIX` | Module name with `bus-` prefix stripped (e.g. `accounts`). | Derived from `MODULE_NAME`. |
+| `MODULE_SDD_URL` | URL of this module’s SDD page. | `<DOCS_BASE_URL>/sdd/<MODULE_NAME>` |
+| `MODULE_DOCS_URL` | URL of this module’s end-user docs page. | `<DOCS_BASE_URL>/modules/<MODULE_NAME>` |
+| `E2E_SCRIPT` | E2E script filename (e.g. `e2e_bus_accounts.sh`). | `e2e_bus_<MODULE_SUFFIX>.sh` |
+| `E2E_SCRIPT_PATH` | Path to the E2E script under the repo (e.g. `tests/e2e_bus_accounts.sh`). | `tests/<E2E_SCRIPT>` |
+| `E2E_WORKSPACE_DIR` | Absolute path to the repository root used as e2e workspace. | Resolved repo root. |
+| `MDC_FILE` | Path to the module’s MDC rule file (e.g. `.cursor/rules/bus-accounts.mdc`). | `.cursor/rules/<MODULE_NAME>.mdc`. Spec-subcommand prompts only. |
+
+`MDC_FILE` is used only in the spec subcommand’s prompt context; other subcommands do not expose it. The implementation MUST supply the expected placeholder set per template so that missing or unresolved placeholders are detected before agent invocation (FR-DEV-004a).
 
 **Supported agent runtimes.** The agent runner supports at least four modular backends. **Cursor CLI** invokes the cursor-agent (or equivalent) executable. **Codex** invokes the Codex CLI (or equivalent) executable. **Gemini CLI** invokes the Gemini CLI (or equivalent) executable. **Claude CLI** invokes the Claude CLI (or equivalent) executable. The active backend is chosen by configuration (see Agent selection configuration below). All backends satisfy the same runner interface (IF-DEV-003): they receive prompt, workdir, timeout, and I/O writers, and return an exit code. No subcommand behavior or embedded prompt content depends on which backend is selected; only the executable and any backend-specific invocation details (e.g. CLI flags or env vars for that agent) differ. If a given CLI cannot be integrated under this contract, that backend MAY be documented as unavailable or experimental until integration is feasible. This design allows adding further runtimes later without changing subcommand semantics.
 
@@ -207,7 +228,7 @@ Allowed mutations: Whatever the embedded prompt permits (code, tests, README, un
 
 Must never do: Invoke remote Git operations; operate outside the current module repository; change workspace accounting datasets; modify user-global Gemini configuration or memory (see Headless and script mode and Gemini CLI integration). In headless or script mode, the agent MUST NOT perform network operations or other prohibited actions.
 
-Implementation note: The workflow is executed via an embedded prompt template shipped inside bus-dev. The agent runtime reads the repository’s own docs, Cursor rules, and (when Gemini is selected) repository-local Gemini context as part of doing the work; those are the authoritative specs for that repo. For a concrete picture of repo-local files and what each is responsible for, see the Gemini CLI integration subsection.
+Implementation note: The workflow is executed via an embedded prompt template shipped inside bus-dev. Documentation links in the prompt (e.g. main SDD, module SDD, module end-user docs) are derived from the configurable docs base URL (FR-DEV-004b) and the prompt variable catalog (`MAIN_SDD_URL`, `MODULE_SDD_URL`, `MODULE_DOCS_URL`). The agent runtime reads the repository’s own docs, Cursor rules, and (when Gemini is selected) repository-local Gemini context as part of doing the work; those are the authoritative specs for that repo. For a concrete picture of repo-local files and what each is responsible for, see the Gemini CLI integration subsection.
 
 **`bus dev spec`**
 
@@ -215,7 +236,7 @@ Intent: Refine only the current repository’s Cursor MDC rule file so it accura
 
 Preconditions: Effective working directory is inside a BusDK module Git repository. The module’s MDC file must exist (e.g. `.cursor/rules/<module>.mdc`). When the selected runtime is Gemini CLI, Bus Dev uses repository-local Gemini context in parallel with Cursor rules; headless and script mode constraints apply as in Headless and script mode.
 
-Reads: The current MDC file (subject of refinement), BusDK documentation (as referenced by the embedded prompt). When Gemini CLI is selected, the agent may also use repo-local `GEMINI.md` and `.gemini/settings.json`. The agent may read the spec pages to align the MDC.
+Reads: The current MDC file (subject of refinement), BusDK documentation (as referenced by the embedded prompt; links are derived from the docs base URL and prompt variables such as `MAIN_SDD_URL`, `MODULE_SDD_URL`, `MODULE_DOCS_URL`, and `MDC_FILE` per the prompt variable catalog). When Gemini CLI is selected, the agent may also use repo-local `GEMINI.md` and `.gemini/settings.json`. The agent may read the spec pages to align the MDC.
 
 Writes: Only the single MDC file at the deterministic path. No other files. Bus Dev does not write to any user-global Gemini config or memory.
 
@@ -231,7 +252,7 @@ Intent: Guided workflow to detect missing end-to-end tests for the current modul
 
 Preconditions: Effective working directory is inside a BusDK module Git repository. The module has (or the tool can resolve) an SDD and end-user documentation so that required test coverage can be determined.
 
-Reads: Repository layout, existing tests under `tests/`, the module’s SDD document, and end-user documentation (e.g. CLI reference) for the current module. The tool uses these to decide which e2e tests are missing and what scaffold content to produce. Agent-specific rules (e.g. Cursor MDC for the module) define language and module-specific testing expectations and are used when generating or refining scaffolds.
+Reads: Repository layout, existing tests under `tests/`, the module’s SDD document, and end-user documentation (e.g. CLI reference) for the current module. Documentation links in the prompt are derived from the docs base URL (FR-DEV-004b) and the prompt variable catalog (`MAIN_SDD_URL`, `MODULE_SDD_URL`, `MODULE_DOCS_URL`, `E2E_SCRIPT`, `E2E_SCRIPT_PATH`, `E2E_WORKSPACE_DIR`). The tool uses these to decide which e2e tests are missing and what scaffold content to produce. Agent-specific rules (e.g. Cursor MDC for the module) define language and module-specific testing expectations and are used when generating or refining scaffolds.
 
 Writes: New or updated test files under `tests/` only. E2E scripts MUST be named `e2e_bus_<name>.sh` where `<name>` is the module name with the `bus-` prefix stripped (e.g. `bus-accounts` → `tests/e2e_bus_accounts.sh`). Scaffold content MUST align with the behavior described in the SDD and end-user docs and with agent rules. No modification of production code.
 
@@ -239,7 +260,7 @@ Allowed mutations: Adding or updating files under `tests/` (e.g. `e2e_bus_<name>
 
 Must never do: Remote Git operations; history rewriting; modifying workspace accounting datasets; non-hermetic or network-dependent test scaffolding.
 
-Detection and scaffold: The tool detects missing e2e tests by comparing required coverage (derived from the module’s SDD and end-user documentation) to existing tests under `tests/`. The exact scaffold (file names, boilerplate, and suggested cases) is deterministic: it follows the `tests/e2e_bus_<name>.sh` naming and directory layout, and the content is generated to cover the behavior and CLI surface described in the SDD and end-user docs. Language- and module-specific details (e.g. how to build or invoke the binary, Go test layout) are defined in agent-specific configurations (e.g. Cursor MDC) and are used when the agent runs or when the tool produces guidance. When `bus dev e2e` invokes an agent, Headless and script mode and repository-local-only Gemini rules apply; the agent must not perform network operations or modify user-global Gemini config or memory.
+Detection and scaffold: The tool detects missing e2e tests by comparing required coverage (derived from the module’s SDD and end-user documentation, with URLs supplied via the prompt variable catalog) to existing tests under `tests/`. The exact scaffold (file names, boilerplate, and suggested cases) is deterministic: it follows the `tests/e2e_bus_<name>.sh` naming and directory layout, and the content is generated to cover the behavior and CLI surface described in the SDD and end-user docs. Language- and module-specific details (e.g. how to build or invoke the binary, Go test layout) are defined in agent-specific configurations (e.g. Cursor MDC) and are used when the agent runs or when the tool produces guidance. When `bus dev e2e` invokes an agent, Headless and script mode and repository-local-only Gemini rules apply; the agent must not perform network operations or modify user-global Gemini config or memory.
 
 ### I/O Conventions
 
@@ -293,6 +314,8 @@ AD-DEV-004 Operating environment. Same as BusDK: Linux and macOS. Tests and beha
 
 - **Unit tests.** All library-style code (repo resolution, argument parsing including multiple operations (FR-DEV-001a), init target resolution and scaffold creation, prompt template expansion, agent runner with stub) MUST have unit tests. Tests MUST be hermetic: no network, no real Git remotes, no real agent. Parsing and execution of multi-op invocations (e.g. spec, work, e2e in one call, and init with appended operations) MUST be covered; when a stub agent returns non-zero for the second operation, the third MUST not run and the exit code MUST be that of the failed operation. Tests MUST verify that plain `bus dev init` does not invoke any agent operation and that a missing root `Makefile` is created from the embedded sample while an existing `Makefile` is preserved.
 
+- **Prompt rendering tests.** Unit tests MUST cover the prompt-template rendering contract (FR-DEV-004a): (1) missing variable — when a required variable is not supplied, the command MUST fail with a clear diagnostic and exit code 2 before any agent invocation; (2) unresolved variable — when any `{{...}}` token remains after substitution, the command MUST fail with a clear diagnostic and exit code 2 before agent invocation; (3) repeated placeholder replacement — the same variable MAY appear multiple times in a template and each occurrence MUST be replaced consistently; (4) expected placeholder set per prompt template — each template’s required variables MUST be documented and tests MUST verify that supplying that set yields a fully resolved prompt; (5) docs base override — when `BUS_DEV_DOCS_BASE_URL` is set (and when unset), derived URLs (`MAIN_SDD_URL`, module SDD URL, module docs URL) MUST match the specified formulas and normalization (trailing slash trimmed).
+
 - **Fixture repository.** At least one end-to-end style test MUST use a fixture Git repository in a temporary directory (e.g. a repo with a few commits and optionally a submodule) to verify commit behavior: nothing to commit exits 0, staged change leads to commit with message, submodule ordering, unstaged gitlink handling, etc. This test MUST not push or pull; it may run `git commit` only.
 
 - **Agent runner tests.** When the agent is involved, the test strategy MUST stub the agent binary in PATH (or inject a fake path). The stub MUST feed deterministic NDJSON (or plain output) to stdout and exit with a chosen code so that parsing, filtering, and error handling are exercised without calling a real agent or network. Agent detection and automatic default selection (FR-DEV-005d) MUST be testable by controlling PATH so that zero, one, or multiple agent CLIs appear to exist; tests MUST verify that the chosen default is deterministic and that "no agent enabled" yields a clear exit and diagnostic.
@@ -342,6 +365,12 @@ The most relevant BusDK spec pages for implementors are: the [BusDK Software Des
 
 - **Embedded prompt:** A prompt string or template compiled into the bus-dev binary, not loaded from the filesystem.
 
+- **DOCS_BASE_URL:** The base URL for BusDK documentation used to build all documentation links in prompts and diagnostics. Configurable via `BUS_DEV_DOCS_BASE_URL` (default `https://docs.busdk.com`); normalized by trimming a trailing slash. See FR-DEV-004b and the prompt variable catalog.
+
+- **MAIN_SDD_URL:** The URL of the main BusDK SDD index page. Derived as `<DOCS_BASE_URL>/sdd`. Used in prompts and diagnostics when referring to the design spec. See FR-DEV-004b and the prompt variable catalog.
+
+- **Prompt-template variable rendering contract:** The normative behavior for substituting `{{VARIABLE}}` placeholders in embedded prompts: rendering MUST be deterministic; missing or unresolved placeholders MUST cause the command to fail before agent invocation (exit code 2). Ensures the agent never receives partially substituted text. See FR-DEV-004a, NFR-DEV-001, NFR-DEV-005.
+
 - **E2E test script (Bus module):** A Bash script that runs the module’s compiled binary to exercise end-to-end behavior. It MUST live under `tests/` and MUST be named `e2e_bus_<name>.sh` where `<name>` is the module name with the `bus-` prefix stripped (e.g. `bus-accounts` → `tests/e2e_bus_accounts.sh`). See KD-DEV-006 and FR-DEV-009.
 
 ---
@@ -372,7 +401,7 @@ The most relevant BusDK spec pages for implementors are: the [BusDK Software Des
 Title: bus-dev module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-DEV`  
-Version: 2026-02-11  
+Version: 2026-02-12  
 Status: Draft  
-Last updated: 2026-02-11  
+Last updated: 2026-02-12  
 Owner: BusDK development team  
