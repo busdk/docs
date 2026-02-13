@@ -1,10 +1,15 @@
 // Code blocks, inline code, and tables.
 //
 // Aim: consistent contrast in both modes and predictable spacing without
-// changing content structure.
+// changing content structure. Rouge outputs wrappers such as .highlighter-rouge
+// and .language-plaintext; all code and table surfaces must use design tokens
+// so dark mode never gets light-on-light or dark-on-dark.
 
+// Inline code (including when Rouge adds .language-plaintext or .highlighter-rouge).
 .markdown-body code,
-.markdown-body tt {
+.markdown-body tt,
+.markdown-body code.language-plaintext,
+.markdown-body code.highlighter-rouge {
   background: var(--busdk-inline-code-bg);
   color: var(--busdk-fg);
   border-radius: 6px;
@@ -20,19 +25,36 @@
   overflow: auto;
 }
 
+// Rouge block wrapper (e.g. .language-plaintext.highlighter-rouge).
+.markdown-body .highlighter-rouge {
+  background: var(--busdk-code-bg);
+  color: var(--busdk-code-fg);
+  border: 1px solid var(--busdk-border);
+  border-radius: 10px;
+}
+
+.markdown-body .highlighter-rouge .highlight,
 .markdown-body .highlight {
   background: var(--busdk-code-bg);
   border: 1px solid var(--busdk-border);
   border-radius: 10px;
 }
 
+.markdown-body .highlighter-rouge .highlight {
+  border: 0;
+  border-radius: 0;
+}
+
 .markdown-body .highlight pre,
-.markdown-body .highlight code {
+.markdown-body .highlight code,
+.markdown-body .highlighter-rouge pre,
+.markdown-body .highlighter-rouge code {
   background: transparent;
   color: var(--busdk-code-fg);
 }
 
-.markdown-body .highlight pre {
+.markdown-body .highlight pre,
+.markdown-body .highlighter-rouge pre {
   border: 0;
   border-radius: 0;
 }
@@ -48,7 +70,18 @@
   .markdown-body .highlight .no,
   .markdown-body .highlight .nt,
   .markdown-body .highlight .nv,
-  .markdown-body .highlight .o {
+  .markdown-body .highlight .o,
+  .markdown-body .highlighter-rouge .na,
+  .markdown-body .highlighter-rouge .nb,
+  .markdown-body .highlighter-rouge .kc,
+  .markdown-body .highlighter-rouge .kd,
+  .markdown-body .highlighter-rouge .kp,
+  .markdown-body .highlighter-rouge .kr,
+  .markdown-body .highlighter-rouge .k,
+  .markdown-body .highlighter-rouge .no,
+  .markdown-body .highlighter-rouge .nt,
+  .markdown-body .highlighter-rouge .nv,
+  .markdown-body .highlighter-rouge .o {
     color: var(--busdk-link);
   }
 }
@@ -65,19 +98,31 @@
   overflow: auto;
   border: 1px solid var(--busdk-border);
   border-radius: 10px;
+  color: var(--busdk-fg);
 }
 
 .markdown-body table th,
 .markdown-body table td {
   border-color: var(--busdk-border);
+  color: var(--busdk-fg);
 }
 
 .markdown-body table th {
   background: var(--busdk-surface-1);
 }
 
-.markdown-body table tr:nth-child(2n) {
+.markdown-body table tbody tr:nth-child(2n) {
   background: var(--busdk-surface-2);
+}
+
+.markdown-body table tbody tr:nth-child(2n + 1) {
+  background: var(--busdk-bg);
+}
+
+.markdown-body table code,
+.markdown-body table tt {
+  background: var(--busdk-inline-code-bg);
+  color: var(--busdk-fg);
 }
 
 .markdown-body blockquote {
