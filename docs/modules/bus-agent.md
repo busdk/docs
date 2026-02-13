@@ -58,21 +58,30 @@ The agent runner supports four runtimes: **Gemini CLI**, **Cursor CLI**, **Claud
 - **Claude CLI** — https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started
 - **Codex** — https://developers.openai.com/codex/cli/
 
-Runtime selection for `bus agent run` follows the same rules as in [bus dev](./bus-dev): explicit `--agent` for the invocation, then session preference (e.g. environment variable if supported), then the **persistent default agent** from bus configuration, then the automatic default from the set of available runtimes. You can set which agent should be used by default and have that choice saved in bus configuration: use [bus config set agent](./bus-config) (e.g. `bus config set agent gemini`). The bus-agent module reads that value through the bus-config Go library so that the chosen agent is persisted across invocations. When multiple agents are available and no default is set, the order is alphabetical by runtime ID unless you configure a different order; you can also disable or enable specific agents. See Agent order and enable/disable below. Invalid runtime names produce a usage error (exit 2).
+Runtime selection for `bus agent run` follows the same rules as in [bus dev](./bus-dev): explicit `--agent` for the invocation, then session preference (e.g. environment variable if supported), then the **persistent default** from [bus-preferences](./bus-preferences), then the automatic default from the set of available runtimes. The persistent default and other run defaults are read from the user-level preferences file via the bus-preferences Go library. When multiple agents are available and no default is set, the order is alphabetical by runtime ID unless you configure a different order; you can also disable or enable specific agents. See Agent order and enable/disable below. Invalid runtime names produce a usage error (exit 2).
 
-### Setting the default agent (bus configuration)
+### Preference settings (bus-preferences)
 
-To set which agent should be used by default and save that choice in bus configuration, use [bus config](./bus-config): run `bus config set agent <runtime>` (e.g. `bus config set agent gemini`). The value is stored in user-level bus configuration; the bus-agent module reads it through the bus-config Go library when no per-command or session preference is set. To see the current default, run `bus config get agent`. This gives you a single, persistent default that applies to both `bus agent run` and `bus dev` (plan, work, spec, e2e) until you change it or override with `--agent` or a session variable.
+Default settings for the agent runner are read and written through the [bus-preferences](./bus-preferences) Go library (user-level preferences file). The CLI uses these values when resolving the runtime and building run config for `run` when you do not pass `--agent`, a session env, or per-flag overrides.
+
+| Key | Description |
+|-----|-------------|
+| `bus-agent.default_runtime` | Default agent runtime when no `--agent` or session env is set (e.g. `cursor`, `gemini`). |
+| `bus-agent.model` | Default model (e.g. for Cursor). Overridable by `CURSOR_AGENT_MODEL`. |
+| `bus-agent.output_format` | Default output format. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. |
+| `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. |
+
+Set or inspect preferences with the [bus preferences](./bus-preferences) CLI: for example `bus preferences set bus-agent.default_runtime gemini` and `bus preferences get bus-agent.default_runtime`. The bus-agent library exposes helpers such as `GetDefaultRuntime`, `SetDefaultRuntime`, `GetDefaultRunConfig`, and `SetDefault*` so that callers and the CLI can read and write these values without touching the preferences file directly.
 
 ### Agent order and enable/disable
 
 When multiple agent runtimes are available (CLI found in PATH) and no persistent or session preference is set, the automatic default is chosen from that set in a deterministic order. By default the order is alphabetical by runtime ID (e.g. claude, codex, cursor, gemini); the first available runtime in that order is used.
 
-You can change which agent is used first by configuring the order: supply an ordered list of runtime IDs so that the first available runtime in that list becomes the automatic default. You can also disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). Configuration is via environment variables or, when supported, bus configuration; the exact variable names and format are documented in the [module SDD](../sdd/bus-agent) (FR-AGT-005a). For example, you might set an order so that `gemini` is tried first, then `cursor`, and disable `codex` and `claude` for the session.
+You can change which agent is used first by configuring the order: supply an ordered list of runtime IDs so that the first available runtime in that list becomes the automatic default. You can also disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). Configuration is via environment variables or, when supported, [bus-preferences](./bus-preferences); the exact variable names and format are documented in the [module SDD](../sdd/bus-agent) (FR-AGT-005a). For example, you might set an order so that `gemini` is tried first, then `cursor`, and disable `codex` and `claude` for the session.
 
 ### Files
 
-`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent is read from bus configuration (via the bus-config library); the user sets it with [bus config set agent](./bus-config). The module does not own the config file — bus-config owns it — so configuration for the persistent default is through [bus config](./bus-config); flags and environment still override for the session or single invocation.
+`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.default_runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation.
 
 ### Exit status and errors
 
@@ -95,7 +104,7 @@ Template rendering failures (missing variable, unresolved `{{...}}`) occur befor
 ### Sources
 
 - [Module SDD: bus-agent](../sdd/bus-agent)
-- [bus-config CLI reference](./bus-config)
+- [bus-preferences CLI reference](./bus-preferences)
 - [bus-dev CLI reference](./bus-dev)
 - [CLI: Global flags](../cli/global-flags)
 - [Gemini CLI — install](https://geminicli.com/)
