@@ -15,7 +15,7 @@ description: CLI reference for bus agent: detect enabled runtimes, render prompt
 
 Commands: **`detect`**, **`render`**, **`run`**, **`format`**. These operations are intended for diagnostics and development (for example, checking which agent runtimes are available, testing prompt templates, or formatting raw agent output). They do not implement business workflows; higher-level modules such as [bus dev](./bus-dev) use the same agent runner via the library and provide workflow-specific behavior (commit, work, spec, e2e).
 
-`bus agent detect` — list agent runtimes that are enabled (executable found in PATH).  
+`bus agent detect [-1|--first]` — list available agent runtimes (first is the default); with `-1` or `--first`, output only the default runtime.  
 `bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]` — render a prompt template with the given variables and fail if any `{{PLACEHOLDER}}` remains unresolved.  
 `bus agent run [--agent <runtime>] [--timeout <duration>] [--workdir <dir>] (--prompt <file> | --text <text>)` — run the selected agent with the given prompt and stream output in a deterministic, script-safe way.  
 `bus agent format [--runtime <runtime>]` — read raw agent output (e.g. NDJSON) from stdin and write formatted, human-readable text to stdout.
@@ -26,7 +26,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus agent` is
 
 ### Commands
 
-**`detect`** — List the agent runtimes that are currently available. A runtime is available if its CLI executable is found in PATH and is executable and not disabled by user configuration. Output is one runtime identifier per line (e.g. `claude`, `codex`, `cursor`, `gemini`) in alphabetical order by runtime ID. Use this to verify that at least one runtime is available before running workflow commands in [bus dev](./bus-dev), or to confirm which runtimes are considered when no explicit selection is given.
+**`detect`** — List the agent runtimes that are currently available. A runtime is available if its CLI executable is found in PATH and is executable and not disabled by user configuration. Output is one runtime identifier per line, in the same effective order used for automatic default selection (user-configured order if present, otherwise alphabetical by runtime ID), so the first line is always the runtime that would be selected for `bus agent run` when no `--agent` or preference override is set. Use this to verify that at least one runtime is available before running workflow commands in [bus dev](./bus-dev), or to see at a glance which agent would be used by default. With **`--first`** (or **`-1`**), output only that default runtime as a single line; if no runtime is available, the command exits with code 1. Scripts can use `bus agent detect --first` to obtain the default agent ID without parsing the full list.
 
 **`render`** — Render a prompt template with the supplied variables and print the result to stdout. You must supply either `--template <file>` (path to a UTF-8 file containing the template) or `--text <text>` (the template string). Variables are passed with `--var KEY=VALUE`; you can repeat `--var` for multiple keys. Templates use `{{VARIABLE}}` placeholders. Rendering is deterministic; every placeholder must be supplied. If a required variable is missing or any `{{...}}` token remains after substitution, the command fails with invalid usage (exit 2) and no external process is run. Use this to test template expansion or to produce a final prompt for inspection before passing it to `bus agent run`.
 
@@ -86,7 +86,7 @@ You can change which agent is used first by configuring the order: supply an ord
 ### Exit status and errors
 
 - **0** — Success.
-- **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, or could not execute the agent CLI.
+- **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, could not execute the agent CLI, or no runtime available when using `detect --first`.
 - **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render), unresolved template placeholder, invalid runtime name, or invalid `--timeout` or path.
 
 Template rendering failures (missing variable, unresolved `{{...}}`) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.

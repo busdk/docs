@@ -147,7 +147,7 @@ Commands:
   row update <table_path>             Update a row by primary key when allowed.
   row delete <table_path>             Delete a row by primary key when allowed.
 
-  <table_path> may omit the .csv suffix (e.g. "transactions" for transactions.csv).
+  <table_path> may omit the .csv suffix (e.g. "accounts" for accounts.csv).
 
 Global flags:
   -h, --help               Show help and exit.

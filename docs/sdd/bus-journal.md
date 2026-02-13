@@ -47,7 +47,7 @@ bus journal balance --as-of 2026-03-31
 
 ### Data Design
 
-The module reads and writes the journal index `journals.csv` in the repository root and period journal files at the workspace root with a date prefix, for example `journal-2026.csv` (and its beside-the-table schema `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not create or use a subdirectory such as `2026/journals/` for journal data.
+All files owned by Bus Journal include “journal” or “journals” in the filename so that journal data is unambiguous at the workspace root. The module reads and writes the journal index `journals.csv` in the repository root and period journal files at the workspace root with a date prefix, for example `journal-2026.csv` (and its beside-the-table schema `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not create or use a subdirectory such as `2026/journals/` for journal data.
 
 ### Assumptions and Dependencies
 
@@ -84,6 +84,7 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 ### Glossary and Terminology
 
 Journal entry: a ledger posting row associated with a transaction and voucher.  
+Journal index: the root-level dataset `journals.csv` that records which period journal files exist and where they live; all bus-journal owned filenames include “journal” or “journals” so journal data is unambiguous.  
 Transaction identifier: a stable identifier that groups journal entries for a posting.
 
 ---
