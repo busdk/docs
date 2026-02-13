@@ -47,7 +47,9 @@ FR-AGT-003 Supported runtimes. The implementation MUST include at least four bac
 
 FR-AGT-004 Runtime detection. The library MUST be able to detect which backends are enabled by checking whether the backend’s CLI executable exists in PATH and is executable. Acceptance criteria: callers can list enabled runtimes; tests can control PATH to simulate 0/1/many enabled runtimes.
 
-FR-AGT-005 Runtime selection resolution. The library MUST provide a deterministic resolution function that selects the active runtime based on (1) explicit per-call selection, then (2) an optional session preference (environment variable), then (3) an optional persistent preference (if implemented), then (4) an automatic default chosen from enabled runtimes in a documented preference order. Acceptance criteria: same enabled set yields the same automatic choice; invalid selection yields a usage-style error.
+FR-AGT-005 Runtime selection resolution. The library MUST provide a deterministic resolution function that selects the active runtime based on (1) explicit per-call selection, then (2) an optional session preference (environment variable), then (3) an optional persistent preference (if implemented), then (4) an automatic default chosen from the set of available runtimes in a deterministic order. The set of available runtimes is the set of enabled runtimes (executable found in PATH) minus any user-disabled runtimes, or restricted to user-enabled runtimes when an enable list is configured (see FR-AGT-005a). When multiple runtimes are available and no explicit or preference selection is given, the automatic default MUST be the first runtime in the effective order: either the user-specified order (FR-AGT-005a) or, when no order is specified, alphabetical by runtime ID (e.g. claude, codex, cursor, gemini). Acceptance criteria: same available set and same configuration yield the same automatic choice; invalid selection yields a usage-style error.
+
+FR-AGT-005a Agent order and enable/disable. The library MUST support optional user configuration so that (1) the user can specify the order in which available agents are considered for the automatic default (first available in that order is used), and (2) the user can disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). When an order is not specified, the default order over available runtimes MUST be alphabetical by runtime ID. When no enable/disable configuration is present, all enabled runtimes (found in PATH) are available. Configuration MAY be via environment variables, persistent config file, or both; the resolution order between them MUST be documented. Acceptance criteria: callers can pass or configure an ordered list of runtime IDs for automatic default; callers can pass or configure a disable list (runtimes to exclude) or an enable list (only these runtimes count as available); alphabetical default order is deterministic and documented.
 
 FR-AGT-006 Prompt-template rendering contract. Prompt templates MUST support `{{VARIABLE}}` placeholders. Rendering MUST be deterministic. Missing required variables MUST fail before any agent invocation with an error categorized as invalid usage. Any unresolved `{{...}}` token remaining after substitution MUST fail before invocation with an invalid-usage error. Acceptance criteria: unit tests cover missing variable, unresolved placeholder, repeated placeholder replacement, and a “no placeholders” pass-through case.
 
@@ -58,6 +60,8 @@ FR-AGT-008 Output capture and streaming. The runner MUST support (1) capturing s
 FR-AGT-009 Output normalization hooks. The library MUST support an optional output formatter layer (e.g. NDJSON-to-text) that can be applied per backend or per invocation. Acceptance criteria: Cursor-style NDJSON output can be formatted deterministically by a library function; callers can disable formatting and receive raw output.
 
 FR-AGT-010 Installation URL mapping. The module MUST provide a canonical mapping from runtime to installation reference string for diagnostics. Acceptance criteria: when a runtime is selected but missing, callers can show a deterministic message including the correct install reference.
+
+FR-AGT-011 Selected runtime and model reporting. The library MUST provide the caller with the selected runtime identifier and, when the backend can determine it, the model name or identifier in use for that invocation. This information MUST be available after resolution and before or upon starting execution so that consuming modules (e.g. bus-dev) can print which internal agent and model are being used at the start of each agent step. Backends that do not expose a model identifier (e.g. CLI does not report it) MAY report an empty or default model string; the runtime identifier MUST always be present. Acceptance criteria: callers can obtain (runtime ID, model string) for the active invocation; bus-dev can print this to stderr at the start of plan/work/spec/e2e steps.
 
 NFR-AGT-001 Determinism. Given the same inputs, PATH state, and stubbed agent output, the runner MUST produce consistent exit codes and diagnostics. Acceptance criteria: repeated test runs are stable.
 
@@ -97,8 +101,8 @@ KD-AGT-005 Installation references are defined here. The runtime-to-URL table in
 
 Interface IF-AGT-001 (Runner entrypoint). The library exposes a runner entrypoint similar to:
 
-* Inputs: selected runtime (optional), prompt text or (template + variables), workdir, timeout, output mode (capture/stream), optional formatter.
-* Outputs: exit code, raw stdout/stderr, and a typed error category (usage vs execution failure vs timeout).
+* Inputs: selected runtime (optional), prompt text or (template + variables), workdir, timeout, output mode (capture/stream), optional formatter, optional agent order and enable/disable configuration (per FR-AGT-005a).
+* Outputs: exit code, raw stdout/stderr, a typed error category (usage vs execution failure vs timeout), and the resolved runtime identifier and model string (per FR-AGT-011) so callers can report which agent and model are in use.
 
 Interface IF-AGT-002 (Backend). Each backend provides:
 
@@ -133,7 +137,7 @@ Potential operations (optional, minimal set):
 
 * `bus agent detect` — list enabled runtimes detected in PATH.
 * `bus agent render --template <file>|--text <text> --var KEY=VALUE ...` — render a template deterministically and fail on unresolved placeholders.
-* `bus agent run [--agent <runtime>] [--timeout <dur>] [--workdir <dir>] (--prompt <file>|--text <text>)` — run an agent and stream output in a deterministic, script-safe manner.
+* `bus agent run [--agent <runtime>] [--timeout <dur>] [--workdir <dir>] (--prompt <file>|--text <text>)` — run an agent and stream output in a deterministic, script-safe manner. At the start of the run, the CLI MUST print to stderr the selected runtime identifier and model (per FR-AGT-011) so that users and scripts see which agent and model are in use.
 * `bus agent format [--runtime <runtime>]` — format raw agent output (e.g. NDJSON) read from stdin to readable text on stdout.
 
 If the CLI is not implemented initially, all functionality remains available via the Go library and the CLI surface is considered out of scope for the first milestone.
@@ -176,15 +180,16 @@ AD-AGT-003 The module is built and tested in a hermetic environment with stubbed
 
 ### Traceability to BusDK Spec
 
-Bus Agent aligns with BusDK’s library-first, deterministic, non-interactive principles and exists to reduce duplication across modules by centralizing agent runtime mechanics. [bus-dev](./bus-dev) depends on Bus Agent for the agent runner: bus-dev's requirements for runner abstraction (FR-DEV-005), supported runtimes (FR-DEV-005a), selection and detection (FR-DEV-005b, FR-DEV-005d), and installation references are satisfied by importing and using the Bus Agent library. bus-dev retains workflow-specific behavior (embedded prompts for commit, work, spec, e2e; repository and module resolution; Gemini repository-local rules per FR-DEV-005c), which is out of scope for Bus Agent. Workflow semantics, prompts, and any module-specific policies remain defined in each consuming module's SDD.
+Bus Agent aligns with BusDK’s library-first, deterministic, non-interactive principles and exists to reduce duplication across modules by centralizing agent runtime mechanics. [bus-dev](./bus-dev) depends on Bus Agent for the agent runner: bus-dev's requirements for runner abstraction (FR-DEV-005), supported runtimes (FR-DEV-005a), selection and detection (FR-DEV-005b, FR-DEV-005d), agent order and enable/disable (FR-AGT-005a), disclosure of selected agent and model on each step (FR-DEV-005e), and installation references are satisfied by importing and using the Bus Agent library. Bus Agent’s FR-AGT-011 (selected runtime and model reporting) enables bus-dev to print which internal agent and model are in use at the start of each agent step. bus-dev retains workflow-specific behavior (embedded prompts for commit, work, spec, e2e; repository and module resolution; Gemini repository-local rules per FR-DEV-005c), which is out of scope for Bus Agent. Workflow semantics, prompts, and any module-specific policies remain defined in each consuming module's SDD.
 
 ### Glossary and Terminology
 
 * **Runtime/backend:** A specific external agent CLI integration (Cursor/Codex/Gemini/Claude).
 * **Enabled runtime:** A runtime whose executable is found in PATH and is executable.
+* **Available runtime:** A runtime that is eligible for automatic default selection. By default this is the set of enabled runtimes; it can be restricted by user configuration (disable list excludes runtimes, enable list restricts to a subset). See FR-AGT-005a.
+* **Agent order:** Optional user-configured ordering of runtime IDs. When set, the automatic default is the first available runtime in this order; when not set, the order is alphabetical by runtime ID.
 * **Prompt template:** A UTF-8 string containing `{{VARIABLE}}` placeholders rendered deterministically before invocation.
 * **Formatter:** A pure transformation of raw agent output into readable, normalized text.
-
 * **Installation reference:** The canonical URL for installing a given runtime, used in diagnostics when the runtime is not found (see Runtime installation references under Component Design; FR-AGT-010).
 
 ---
