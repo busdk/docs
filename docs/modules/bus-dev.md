@@ -89,7 +89,7 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-data">bus-data</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-agent">bus-agent</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

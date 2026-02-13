@@ -7,7 +7,9 @@ If you need architectural background on why modules are independent and how they
 - [`bus init`](./bus-init): Initialize a new workspace by orchestrating `bus config init` and module-owned `init` commands.
 - [`bus config`](./bus-config): Create and update workspace configuration (accounting entity settings in `datapackage.json`).
 - [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI.
+- [`bus api`](./bus-api): Local REST JSON API gateway for BusDK workspaces.
 - [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping.
+- [`bus agent`](./bus-agent): Diagnostics and development helper for the agent runner (detect, render, run, format).
 - [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.
 - [`bus accounts`](./bus-accounts): Manage the chart of accounts.
 - [`bus entities`](./bus-entities): Manage counterparty reference data.
