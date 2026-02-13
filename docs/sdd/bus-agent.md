@@ -135,15 +135,13 @@ Interface IF-AGT-004 (Formatter). Provide:
 
 ### Command Surface
 
-This module MAY expose a thin CLI as `bus agent` primarily for diagnostics. If implemented, it MUST remain minimal and library-backed.
+This module MAY expose a thin CLI as `bus agent` primarily for diagnostics and development. If implemented, it MUST remain minimal and library-backed and MUST provide the following commands: **detect**, **set**, **render**, **run**, **format**.
 
-Potential operations (optional, minimal set):
-
-* `bus agent detect [-1|--first]` — list available runtimes in the same effective order used for automatic default selection, so the runtime that would be selected when no override is set appears first (one runtime ID per line). When `-1` or `--first` is set, output only that first (would-be-selected) runtime as a single line; if no runtime is available, exit with failure (e.g. exit code 1).
-* `bus agent set runtime <runtime>` — set `bus-agent.runtime` (e.g. `cursor`, `gemini`) via the bus-preferences Go library. * `bus agent set model <value>` — set `bus-agent.model`. * `bus agent set output-format <ndjson|text>` — set `bus-agent.output_format` (valid values: `ndjson`, `text`; default when unset: `text`). * `bus agent set timeout <duration>` — set `bus-agent.timeout` (e.g. `60m`). Each uses the bus-preferences library directly (no shell-out to `bus preferences`). Invalid value yields exit 2.
-* `bus agent render --template <file>|--text <text> --var KEY=VALUE ...` — render a template deterministically and fail on unresolved placeholders.
-* `bus agent run [--agent <runtime>] [--timeout <dur>] [--workdir <dir>] (--prompt <file>|--text <text>)` — run an agent and stream output in a deterministic, script-safe manner. At the start of the run, the CLI MUST print to stderr the selected runtime identifier and model (per FR-AGT-011) so that users and scripts see which agent and model are in use.
-* `bus agent format [--runtime <runtime>]` — format raw agent output (e.g. NDJSON) read from stdin to readable text on stdout.
+* **`bus agent detect [-1|--first]`** — List available runtimes in the same effective order used for automatic default selection (user-configured order if present, otherwise alphabetical by runtime ID), so the first line is the runtime that would be selected for `bus agent run` when no `--agent` or preference override is set. One runtime identifier per line. With `-1` or `--first`, output only that default runtime as a single line; if no runtime is available, exit with code 1.
+* **`bus agent set runtime <runtime>`** — Set `bus-agent.runtime` (e.g. `cursor`, `gemini`) via the [bus-preferences](./bus-preferences) Go library. **`bus agent set model <value>`** — Set `bus-agent.model` (default when unset: `auto`). **`bus agent set output-format <ndjson|text>`** — Set `bus-agent.output_format` (default when unset: `text`). **`bus agent set timeout <duration>`** — Set `bus-agent.timeout` (e.g. `60m`). Each uses the bus-preferences library directly (no shell-out to `bus preferences`). Invalid value yields exit 2.
+* **`bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]`** — Render a prompt template with the supplied variables and print the result to stdout. Exactly one of `--template` or `--text` is required. If a required variable is missing or any `{{...}}` token remains after substitution, the command MUST fail with invalid usage (exit 2) and MUST NOT run any external process.
+* **`bus agent run [--agent <runtime>] [--timeout <duration>] [--workdir <dir>] (--prompt <file> | --text <text>)`** — Run the selected agent runtime with a prompt and stream its output. Exactly one of `--prompt` or `--text` is required. Which runtime is used is determined by the resolution order (FR-AGT-005): for the bus-agent CLI, (1) `--agent`, (2) `BUS_AGENT`, (3) `bus-agent.runtime` from bus-preferences, (4) first available in the effective order; at any step, if the configured runtime is disabled, the tool prints a warning to stderr and continues with the next source. Effective working directory for the agent is the current directory unless `--workdir` is set. The run is subject to a timeout (default or `--timeout`, e.g. `30s`, `5m`). At the start of the run, the CLI MUST print to stderr which agent and model are in use (per FR-AGT-011). Output is streamed in a script-safe, non-interactive manner. If the selected runtime is not installed or not in PATH, the command MUST fail with a clear diagnostic and the canonical installation URL for that runtime (exit 1).
+* **`bus agent format [--runtime <runtime>]`** — Read raw agent output (e.g. NDJSON) from stdin and write formatted, human-readable text to stdout. Use `--runtime <runtime>` to select the formatter for the given backend; if omitted, the tool may use a default or infer from the input (behavior documented in CLI help).
 
 If the CLI is not implemented initially, all functionality remains available via the Go library and the CLI surface is considered out of scope for the first milestone.
 
@@ -151,20 +149,23 @@ If the CLI is not implemented initially, all functionality remains available via
 
 Library: callers control where output goes via provided writers and capture buffers.
 
-CLI (if implemented): stdout is reserved for command results (e.g. detect list, rendered prompt, formatted output). stderr is reserved for diagnostics and progress.
+CLI (if implemented): stdout is reserved for command results (e.g. detect list, rendered prompt, formatted output). stderr is reserved for diagnostics, progress, and agent stream output. When both `--output` and `--quiet` are used, quiet wins: no output is written to the output file. All paths and the effective working directory are resolved relative to the current directory unless `-C` / `--chdir` is set; if the `--chdir` directory does not exist or is not accessible, the command MUST exit with code 1.
 
 ### Exit Codes (CLI, if implemented)
 
-* 0: success
-* 1: execution failure (agent failed, timeout, could not exec)
-* 2: invalid usage (unknown runtime, missing required args, template unresolved)
+* **0** — Success.
+* **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, could not execute the agent CLI, or no runtime available when using `detect --first`. When the selected runtime is missing, the tool MUST include the canonical installation URL for that runtime in the diagnostic.
+* **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render, `--prompt` or `--text` for run), unresolved template placeholder, invalid runtime name, invalid `set` value, or invalid `--timeout` or path.
+
+Template rendering failures (missing variable, unresolved `{{...}}`) MUST occur before any external execution and always result in exit 2.
 
 ### Error Handling
 
-* Missing selected runtime executable: return execution failure with a diagnostic that includes the runtime’s install reference string.
-* No enabled runtime when automatic selection is requested: return a clear failure that lists supported runtimes and install references.
-* Disabled runtime in a config source (FR-AGT-005b): print a warning to stderr and continue resolution with the next source; do not select the disabled runtime.
-* Template rendering failures (missing/unresolved placeholders): invalid usage, and MUST occur before any external execution.
+* **Missing selected runtime executable:** Return execution failure (exit 1) with a diagnostic that includes the runtime’s canonical installation URL (FR-AGT-010). Do not run any external process.
+* **No runtime available when using `detect --first`:** Exit 1 with a clear diagnostic; when automatic default selection is requested for `run` and no runtime is available, exit with a clear failure that lists supported runtimes and install references.
+* **Disabled runtime in a config source (FR-AGT-005b):** Print a warning to stderr and continue resolution with the next source; do not select the disabled runtime.
+* **Template rendering failures (missing variable, unresolved `{{...}}`):** Invalid usage (exit 2); MUST occur before any external execution.
+* **Invalid usage (unknown command or flag, missing required argument, invalid runtime name, invalid `set` value, invalid `--timeout` or path):** Exit 2 with a clear message.
 
 ### Data Design
 
@@ -230,6 +231,7 @@ Bus Agent aligns with BusDK’s library-first, deterministic, non-interactive pr
 - [BusDK Software Design Document (SDD)](../sdd)
 - [bus-preferences module SDD](./bus-preferences)
 - [bus-dev module SDD](./bus-dev)
+- [End user documentation: bus-agent CLI reference](../modules/bus-agent)
 - [Module repository structure and dependency rules](../implementation/module-repository-structure)
 - [Gemini CLI — install](https://geminicli.com/)
 - [Cursor CLI — overview and install](https://cursor.com/docs/cli/overview)
