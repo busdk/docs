@@ -1,3 +1,8 @@
+---
+title: `expense_account_id` (depreciation expense account)
+description: expense_account_id is part of the fixed assets master data.
+---
+
 ## `expense_account_id` (depreciation expense account)
 
 `expense_account_id` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

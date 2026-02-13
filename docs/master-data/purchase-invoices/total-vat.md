@@ -1,3 +1,8 @@
+---
+title: `total_vat` (invoice total VAT)
+description: total_vat is the VAT total for the purchase invoice.
+---
+
 ## `total_vat` (invoice total VAT)
 
 `total_vat` is the VAT total for the purchase invoice. Bookkeeping uses it for validation and for review of VAT deductibility and reporting expectations, especially when posting lines split the invoice across accounts.

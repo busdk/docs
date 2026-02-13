@@ -1,3 +1,8 @@
+---
+title: `payment_identifiers` (matching and payment hints)
+description: payment_identifiers are the counterparty’s payment-related identifiers, such as a supplier’s usual IBAN.
+---
+
 ## `payment_identifiers` (matching and payment hints)
 
 `payment_identifiers` are the counterparty’s payment-related identifiers, such as a supplier’s usual IBAN. Bookkeeping uses them to improve bank transaction matching and to support payment preparation and review.

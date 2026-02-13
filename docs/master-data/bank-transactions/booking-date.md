@@ -1,3 +1,8 @@
+---
+title: `booking_date` (posting period date)
+description: booking_date is the date typically used to select the accounting period for bank postings.
+---
+
 ## `booking_date` (posting period date)
 
 `booking_date` is the date typically used to select the accounting period for bank postings. Bookkeeping needs an explicit, filterable posting date so month-based reports and reconciliation views can be generated deterministically.

@@ -1,3 +1,8 @@
+---
+title: Accounting entity
+description: An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for.
+---
+
 ## Accounting entity
 
 An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for. In BusDK, that scope is defined by the workspace directory: one BusDK workspace represents exactly one internal business entity, and all datasets inside that workspace belong to that entity by construction.

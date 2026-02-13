@@ -1,3 +1,8 @@
+---
+title: `booked_by` (booking actor)
+description: booked_by records who confirmed the bank transaction booking decision.
+---
+
 ## `booked_by` (booking actor)
 
 `booked_by` records who confirmed the bank transaction booking decision. Bookkeeping uses it as part of the audit trail for reconciliation and classification, especially when exceptions are handled manually.

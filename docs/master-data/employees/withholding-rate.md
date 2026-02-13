@@ -1,3 +1,8 @@
+---
+title: `withholding_rate` (withholding rate)
+description: withholding_rate is part of the employees master data.
+---
+
 ## `withholding_rate` (withholding rate)
 
 `withholding_rate` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

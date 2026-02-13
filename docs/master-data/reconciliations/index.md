@@ -1,3 +1,8 @@
+---
+title: Reconciliations (bank-to-open-item links)
+description: A reconciliation record links a bank transaction to the bookkeeping record it settles, such as an invoice or a journal transaction.
+---
+
 ## Reconciliations (bank-to-open-item links)
 
 A reconciliation record links a bank transaction to the bookkeeping record it settles, such as an invoice or a journal transaction. Reconciliations are the audit trail for “why is this cash movement considered handled”, and they make payment status and open-item review deterministic even when statements are imported repeatedly.

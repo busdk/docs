@@ -1,3 +1,8 @@
+---
+title: bus-reconcile
+description: bus reconcile links bank transactions to invoices or journal entries and records allocations for partials, splits, and fees.
+---
+
 ## bus-reconcile
 
 ### Name

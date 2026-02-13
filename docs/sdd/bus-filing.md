@@ -1,3 +1,8 @@
+---
+title: bus-filing — Software Design Document
+description: Bus Filing produces deterministic filing bundles from validated workspace data, assembles manifests and checksums, and delegates target-specific formats to…
+---
+
 ## bus-filing
 
 ### Introduction and Overview

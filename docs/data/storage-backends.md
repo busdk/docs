@@ -1,3 +1,8 @@
+---
+title: Storage backends and workspace store interface
+description: BusDK defines the workspace store (storage backend) interface as the boundary between domain modules and persistence.
+---
+
 ## Storage backends and workspace store interface
 
 BusDK defines the workspace store (storage backend) interface as the boundary between domain modules and persistence. The contract is mechanical: the backend reads and writes deterministic tables plus schemas, enforces schema-valid writes, and provides canonical import and export back to the tabular text conventions. Modules own business rules and invariants; the backend only persists the canonical dataset and schema definitions and exposes them through deterministic ordering and validation preconditions. This separation ensures that datasets remain reviewable and exportable regardless of whether the default filesystem backend or a future SQL-backed implementation is used.

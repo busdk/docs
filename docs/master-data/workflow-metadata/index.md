@@ -1,3 +1,8 @@
+---
+title: Bookkeeping status and review workflow
+description: Bookkeeping needs minimal process metadata that turns operational records into a reviewable queue.
+---
+
 ## Bookkeeping status and review workflow
 
 Bookkeeping needs minimal process metadata that turns operational records into a reviewable queue. These fields do not change the accounting meaning of an invoice or a bank transaction, but they make it clear what is ready to book, what has been booked, and what needs attention.

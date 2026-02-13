@@ -1,3 +1,8 @@
+---
+title: bus-init — initialize a new BusDK workspace
+description: bus init bootstraps a new workspace by running bus config init first (so that datapackage.json and accounting entity settings exist), then running each…
+---
+
 ## bus-init
 
 ### Name

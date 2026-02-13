@@ -1,3 +1,8 @@
+---
+title: Decide purchase VAT handling
+description: Record VAT treatment and deductibility at the posting decision level.
+---
+
 ## Decide purchase VAT handling
 
 Record VAT treatment and deductibility at the posting decision level.

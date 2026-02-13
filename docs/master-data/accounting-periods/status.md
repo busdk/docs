@@ -1,3 +1,8 @@
+---
+title: `status` (period status)
+description: status is part of the accounting periods master data.
+---
+
 ## `status` (period status)
 
 `status` is part of the accounting periods master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

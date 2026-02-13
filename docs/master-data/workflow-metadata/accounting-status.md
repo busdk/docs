@@ -1,3 +1,8 @@
+---
+title: `accounting_status` (review state)
+description: accounting_status is a short status that expresses where a record is in the bookkeeping workflow, such as new, ready, booked, locked, matched, or ignored.
+---
+
 ## `accounting_status` (review state)
 
 `accounting_status` is a short status that expresses where a record is in the bookkeeping workflow, such as new, ready, booked, locked, matched, or ignored. It turns operational records into a reviewable queue without requiring readiness to be re-derived from many fields.

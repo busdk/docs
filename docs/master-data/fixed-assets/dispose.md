@@ -1,3 +1,8 @@
+---
+title: Dispose of a fixed asset
+description: Record an asset disposal and produce the disposal posting intent for the journal.
+---
+
 ## Dispose of a fixed asset
 
 Record an asset disposal and produce the disposal posting intent for the journal.

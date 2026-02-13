@@ -1,3 +1,8 @@
+---
+title: `matched_sale_invoice_id` (sales invoice match)
+description: matched_sale_invoice_id links a bank transaction to a sales invoice when the transaction represents payment of that invoice.
+---
+
 ## `matched_sale_invoice_id` (sales invoice match)
 
 `matched_sale_invoice_id` links a bank transaction to a sales invoice when the transaction represents payment of that invoice. Bookkeeping uses the link to make receivables reconciliation near-automatic and to keep the audit trail navigable from cash movement to invoice evidence.

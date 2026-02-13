@@ -1,3 +1,8 @@
+---
+title: Configure accounting entity settings
+description: Set base currency, fiscal year boundaries, and VAT reporting expectations used by automation.
+---
+
 ## Configure accounting entity settings
 
 Set base currency, fiscal year boundaries, and VAT reporting expectations used by automation.

@@ -1,3 +1,8 @@
+---
+title: `amount` (budget amount)
+description: amount is part of the budgets master data.
+---
+
 ## `amount` (budget amount)
 
 `amount` is part of the budgets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

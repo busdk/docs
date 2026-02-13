@@ -1,3 +1,8 @@
+---
+title: Module repository structure and dependency rules
+description: Each bus-<module> repository contains a library that implements the module’s behavior and a CLI entrypoint that is a thin wrapper over that library.
+---
+
 ## Module repository structure and dependency rules
 
 Each `bus-<module>` repository contains a library that implements the module’s behavior and a CLI entrypoint that is a thin wrapper over that library. The CLI is a presentation layer that parses arguments and renders outputs; the library is the implementation unit that performs validation, domain rules, and dataset updates and returns structured results to the CLI.

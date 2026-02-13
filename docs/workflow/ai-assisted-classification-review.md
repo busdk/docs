@@ -1,3 +1,8 @@
+---
+title: AI-assisted classification (review before recording a revision)
+description: When AI assistance is present, it is treated as a suggestion engine over repository data, not as an authority that rewrites records.
+---
+
 ## AI-assisted classification (review before recording a revision)
 
 When AI assistance is present, it is treated as a suggestion engine over repository data, not as an authority that rewrites records. The user stays in control by reviewing proposed changes before recording them as an authoritative revision, while still benefiting from automation for matching, categorization, and voucher preparation.

@@ -1,3 +1,8 @@
+---
+title: `total_sum` (invoice total, net)
+description: total_sum is the net total for the purchase invoice.
+---
+
 ## `total_sum` (invoice total, net)
 
 `total_sum` is the net total for the purchase invoice. Bookkeeping uses header totals for validation and review, including consistency checks between the invoice evidence, the posting specification, and the bank payment.

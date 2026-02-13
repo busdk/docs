@@ -1,3 +1,8 @@
+---
+title: `currency` (account currency)
+description: currency is the bank account currency.
+---
+
 ## `currency` (account currency)
 
 `currency` is the bank account currency. Bank transaction amounts are denominated in the bank account currency, and bookkeeping needs currency explicit to interpret amounts correctly and keep exports safe as multi-currency activity appears.

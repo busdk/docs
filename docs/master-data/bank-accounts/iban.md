@@ -1,3 +1,8 @@
+---
+title: `iban` (bank account IBAN)
+description: iban identifies the bank account.
+---
+
 ## `iban` (bank account IBAN)
 
 `iban` identifies the bank account. Bookkeeping uses it for validation and for matching workflows that rely on knowing which account transactions belong to, and it helps reviewers confirm payment instructions and spot suspicious changes.

@@ -1,3 +1,8 @@
+---
+title: `purchase_invoice_id` (invoice identity)
+description: purchase_invoice_id is the stable identity of a purchase invoice.
+---
+
 ## `purchase_invoice_id` (invoice identity)
 
 `purchase_invoice_id` is the stable identity of a purchase invoice. Bookkeeping uses it to link documents, supplier, posting specification lines, and bank matching so the audit trail remains navigable from a posting back to the vendor invoice evidence.

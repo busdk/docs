@@ -1,3 +1,8 @@
+---
+title: Fixed assets
+description: Fixed assets are canonical records used for bookkeeping review, posting, and period-based reporting.
+---
+
 ## Fixed assets
 
 Fixed assets are canonical records used for bookkeeping review, posting, and period-based reporting. The goal is that the register remains stable and audit-friendly while automation depends on deterministic identifiers and references.

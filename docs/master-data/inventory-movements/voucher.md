@@ -1,3 +1,8 @@
+---
+title: `voucher` (voucher or evidence reference)
+description: voucher is part of the inventory movements master data.
+---
+
 ## `voucher` (voucher or evidence reference)
 
 `voucher` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

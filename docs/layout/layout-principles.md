@@ -1,3 +1,8 @@
+---
+title: Data directory layout (principles)
+description: BusDK organizes data so commands operate directly in the current working directory.
+---
+
 ## Data directory layout (principles)
 
 BusDK organizes data so commands operate directly in the current working directory. Canonical module datasets live in the repository root as plain files, with their JSON Table Schemas stored beside them using the same base name. Master data that a module owns (all owned datasets and their beside-the-table schemas) must be stored in that same working directory only; BusDK does not use subdirectories for master data (for example, there is no `accounts/`, `invoices/`, or `periods/` directory for those datasets).

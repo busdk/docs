@@ -1,3 +1,8 @@
+---
+title: `end_date` (employment end date)
+description: end_date is part of the employees master data.
+---
+
 ## `end_date` (employment end date)
 
 `end_date` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

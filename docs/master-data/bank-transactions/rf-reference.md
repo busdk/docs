@@ -1,3 +1,8 @@
+---
+title: `rf_reference` (RF reference)
+description: rf_reference is the RF-form reference when present on the bank transaction.
+---
+
 ## `rf_reference` (RF reference)
 
 `rf_reference` is the RF-form reference when present on the bank transaction. Bookkeeping uses it as an additional matching key, especially when the plain reference field is missing or formatted inconsistently.

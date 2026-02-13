@@ -1,3 +1,8 @@
+---
+title: `direction` (movement direction)
+description: direction is part of the inventory movements master data.
+---
+
 ## `direction` (movement direction)
 
 `direction` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: `interest_rate` (nominal interest rate)
+description: interest_rate is part of the loans master data.
+---
+
 ## `interest_rate` (nominal interest rate)
 
 `interest_rate` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: `discount_percent` (discount impact)
+description: discount_percent records the discount applied to the invoice row, expressed as a percentage of the row price.
+---
+
 ## `discount_percent` (discount impact)
 
 `discount_percent` records the discount applied to the invoice row, expressed as a percentage of the row price. Bookkeeping needs row-level discount information because discount changes net sales and VAT calculations and affects how revenue is evidenced and reviewed.

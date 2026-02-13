@@ -1,3 +1,8 @@
+---
+title: Set employee pay structure
+description: Record gross pay and withholding parameters used for payroll calculation and postings.
+---
+
 ## Set employee pay structure
 
 Record gross pay and withholding parameters used for payroll calculation and postings.

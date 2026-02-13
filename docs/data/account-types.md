@@ -1,3 +1,8 @@
+---
+title: Account types in double-entry bookkeeping
+description: In double-entry bookkeeping, every ledger account has an account type.
+---
+
 ## Account types in double-entry bookkeeping
 
 In double-entry bookkeeping, every ledger account has an account type. The type expresses the economic meaning of the account and determines its normal balance (debit-side or credit-side). In practice, this matters because the same posting direction has different effects depending on the account type: a debit increases an asset account but decreases a liability account.

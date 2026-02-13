@@ -1,3 +1,8 @@
+---
+title: Workspace scope and multi-workspace workflows
+description: "A BusDK workspace directory is intentionally single-entity: one workspace represents exactly one internal business entity, and all datasets in that…"
+---
+
 ## Workspace scope and multi-workspace workflows
 
 A BusDK workspace directory is intentionally single-entity: one workspace represents exactly one internal business entity, and all datasets in that workspace belong to that entity by construction. This keeps posting, period close, reconciliation, and validation rules local to one entity, so cross-entity constraints do not leak into the operational data model.

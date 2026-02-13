@@ -1,3 +1,8 @@
+---
+title: `total_sum_including_vat` (invoice total, gross)
+description: total_sum_including_vat is the gross total for the purchase invoice.
+---
+
 ## `total_sum_including_vat` (invoice total, gross)
 
 `total_sum_including_vat` is the gross total for the purchase invoice. Bookkeeping uses gross totals to match bank payments and to validate that net and VAT totals reconcile to the paid amount when the invoice is settled in full.

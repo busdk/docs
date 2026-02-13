@@ -1,3 +1,8 @@
+---
+title: Adjust inventory
+description: Record an adjustment movement when physical count differs from book stock.
+---
+
 ## Adjust inventory
 
 Record an adjustment movement when physical count differs from book stock.

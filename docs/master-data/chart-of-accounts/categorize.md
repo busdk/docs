@@ -1,3 +1,8 @@
+---
+title: Categorize a ledger account
+description: Attach the account to a reporting category so statements remain readable.
+---
+
 ## Categorize a ledger account
 
 Attach the account to a reporting category so statements remain readable.

@@ -1,3 +1,8 @@
+---
+title: `cash_account_id` (cash or bank account)
+description: cash_account_id is part of the loans master data.
+---
+
 ## `cash_account_id` (cash or bank account)
 
 `cash_account_id` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

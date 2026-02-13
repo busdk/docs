@@ -1,3 +1,8 @@
+---
+title: `valuation_method` (valuation method)
+description: valuation_method is part of the inventory items master data.
+---
+
 ## `valuation_method` (valuation method)
 
 `valuation_method` is part of the inventory items master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: bus-assets
+description: bus assets maintains the fixed-asset register and produces depreciation and disposal postings for the journal.
+---
+
 ## bus-assets
 
 ### Name

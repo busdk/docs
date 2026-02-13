@@ -1,3 +1,8 @@
+---
+title: `name` (account label for review)
+description: name is the account’s human-readable label.
+---
+
 ## `name` (account label for review)
 
 `name` is the account’s human-readable label. Bookkeeping review depends on clear names because they let a reviewer confirm postings quickly without having to cross-check numbers.

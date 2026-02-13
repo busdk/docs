@@ -1,3 +1,8 @@
+---
+title: `employee_id` (employee identity)
+description: employee_id is part of the employees master data.
+---
+
 ## `employee_id` (employee identity)
 
 `employee_id` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

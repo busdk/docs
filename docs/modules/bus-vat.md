@@ -1,3 +1,8 @@
+---
+title: bus-vat — compute VAT reports and exports
+description: bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings.
+---
+
 ## bus-vat
 
 ### Name

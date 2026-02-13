@@ -1,3 +1,8 @@
+---
+title: `ledger_account_id` (account identity)
+description: ledger_account_id is the stable identity of a ledger account in the chart of accounts.
+---
+
 ## `ledger_account_id` (account identity)
 
 `ledger_account_id` is the stable identity of a ledger account in the chart of accounts. Bookkeeping uses it as the reference from invoice rows, purchase posting specifications, and bank transactions so classification decisions do not depend on matching by name.

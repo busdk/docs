@@ -1,3 +1,8 @@
+---
+title: Year-end close (closing entries)
+description: "Year-end close is a stricter version of period close: Alice runs validation, ensures VAT is complete, generates closing entries deterministically, locks the…"
+---
+
 ## Year-end close (closing entries)
 
 Year-end close is a stricter version of period close: Alice runs validation, ensures VAT is complete, generates closing entries deterministically, locks the final period, and then produces the year-end report set. The outcome is a repository revision that makes the derivation of opening balances for the next year straightforward to review.

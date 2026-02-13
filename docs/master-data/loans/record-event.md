@@ -1,3 +1,8 @@
+---
+title: Record a loan event
+description: Append disbursements, repayments, interest, fees, and adjustments as an auditable event log.
+---
+
 ## Record a loan event
 
 Append disbursements, repayments, interest, fees, and adjustments as an auditable event log.

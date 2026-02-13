@@ -1,3 +1,8 @@
+---
+title: `linked_entity_reference` (navigable evidence trail)
+description: linked_entity_reference is the reference that links the evidence document to the invoice, bank transaction, or other bookable record it supports.
+---
+
 ## `linked_entity_reference` (navigable evidence trail)
 
 `linked_entity_reference` is the reference that links the evidence document to the invoice, bank transaction, or other bookable record it supports. Bookkeeping requires that reviewers can navigate from booked entries back to the exact evidence file that justified them.

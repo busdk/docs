@@ -1,3 +1,8 @@
+---
+title: Journal area (general ledger transactions)
+description: The journal area contains general ledger transactions.
+---
+
 ## Journal area (general ledger transactions)
 
 The journal area contains general ledger transactions. The current working directory contains an index table `journals.csv` that records which journal files exist, which period each file covers, and where it lives in the repository. Journal entry rows are stored in root-level files with a date prefix, for example `journal-2026.csv` and `journal-2025.csv` (and their beside-the-table schemas), not in subdirectories. The period identifier is usually the calendar year, but it can also be a financial period identifier (or the start year of a financial period) as long as `journals.csv` describes the mapping deterministically.

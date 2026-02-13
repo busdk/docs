@@ -1,3 +1,8 @@
+---
+title: bus-inventory — Software Design Document
+description: Bus Inventory maintains item master data and stock movement ledgers, validates inventory datasets with Table Schemas, and produces valuation outputs for…
+---
+
 ## bus-inventory
 
 ### Introduction and Overview

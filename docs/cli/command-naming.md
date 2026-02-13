@@ -1,3 +1,8 @@
+---
+title: CLI command naming
+description: BusDK module CLIs use short, consistent subcommand names so that the same verb means the same kind of operation across modules.
+---
+
 ## CLI command naming
 
 BusDK module CLIs use short, consistent subcommand names so that the same verb means the same kind of operation across modules. All module CLIs in the [Module CLI reference](../modules/index) follow these conventions.

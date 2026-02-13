@@ -1,3 +1,8 @@
+---
+title: bus-reconcile — Software Design Document
+description: Bus Reconcile links bank transactions to invoices or journal entries, records allocations for partials, splits, and fees, and stores reconciliation records…
+---
+
 ## bus-reconcile
 
 ### Introduction and Overview

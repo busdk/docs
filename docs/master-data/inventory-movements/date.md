@@ -1,3 +1,8 @@
+---
+title: `date` (movement date)
+description: date is part of the inventory movements master data.
+---
+
 ## `date` (movement date)
 
 `date` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

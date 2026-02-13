@@ -1,3 +1,8 @@
+---
+title: Prepare sales invoice postings
+description: Turn invoice intent into a balanced posting proposal for the journal.
+---
+
 ## Prepare sales invoice postings
 
 Turn invoice intent into a balanced posting proposal for the journal.

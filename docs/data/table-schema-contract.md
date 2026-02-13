@@ -1,3 +1,8 @@
+---
+title: Frictionless Table Schema as the contract
+description: In BusDK, each table has a corresponding Table Schema that declares fields, types, constraints, and structural metadata.
+---
+
 ## Frictionless Table Schema as the contract
 
 In BusDK, each table has a corresponding Table Schema that declares fields, types, constraints, and structural metadata. In the preferred default layout, tables are stored as CSV and schemas are stored as JSON, but the invariant is the schema-driven data contract — not a particular serialization format. Table Schema supports declaring required fields, minimums, patterns, primary keys, and foreign keys. The schema functions simultaneously as documentation, as automated validation input, and as a mechanism for keeping revisions interpretable as tables and schemas evolve over time. See [Schema-driven data contract (Frictionless Table Schema)](../design-goals/schema-contract) and the upstream specification at [Frictionless Data Table Schema](https://frictionlessdata.io/specs/table-schema/).

@@ -1,3 +1,8 @@
+---
+title: Set party bookkeeping defaults
+description: Maintain default accounts, VAT handling, and payment identifiers used for pre-fill and matching.
+---
+
 ## Set party bookkeeping defaults
 
 Maintain default accounts, VAT handling, and payment identifiers used for pre-fill and matching.

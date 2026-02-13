@@ -1,3 +1,8 @@
+---
+title: Configure the chart of accounts
+description: Alice configures the chart of accounts early, because most other workflows depend on stable account references.
+---
+
 ## Configure the chart of accounts
 
 Alice configures the chart of accounts early, because most other workflows depend on stable account references. The chart of accounts is stored as schema-validated repository data, so later postings can refer to accounts deterministically.

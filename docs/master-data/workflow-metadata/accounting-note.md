@@ -1,3 +1,8 @@
+---
+title: `accounting_note` (exception explanation)
+description: accounting_note is a free-text explanation for booking decisions that are not obvious from the evidence alone.
+---
+
 ## `accounting_note` (exception explanation)
 
 `accounting_note` is a free-text explanation for booking decisions that are not obvious from the evidence alone. Notes reduce future rework during audits, VAT filings, and year-end close because they preserve the rationale behind exceptions.

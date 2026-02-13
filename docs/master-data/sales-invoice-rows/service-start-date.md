@@ -1,3 +1,8 @@
+---
+title: `service_start_date` (line-level service period start)
+description: service_start_date records when the service period begins for this invoice row.
+---
+
 ## `service_start_date` (line-level service period start)
 
 `service_start_date` records when the service period begins for this invoice row. Bookkeeping uses row-level service periods when one invoice contains multiple service windows, because header-level dates are not precise enough for correct periodization.

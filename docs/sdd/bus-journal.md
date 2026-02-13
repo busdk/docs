@@ -1,3 +1,8 @@
+---
+title: bus-journal — Software Design Document
+description: Bus Journal maintains append-only journal entries as schema-validated repository data, enforces balanced transaction invariants, and serves as the…
+---
+
 ## bus-journal
 
 ### Introduction and Overview

@@ -1,3 +1,8 @@
+---
+title: `unit_cost` (unit cost (when relevant))
+description: unit_cost is part of the inventory movements master data.
+---
+
 ## `unit_cost` (unit cost (when relevant))
 
 `unit_cost` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

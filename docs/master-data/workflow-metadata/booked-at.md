@@ -1,3 +1,8 @@
+---
+title: `booked_at` (booking timestamp)
+description: booked_at records when a record was considered booked for bookkeeping purposes.
+---
+
 ## `booked_at` (booking timestamp)
 
 `booked_at` records when a record was considered booked for bookkeeping purposes. It supports auditability and helps explain differences between operational timelines and reported figures, especially when items are booked after the fact.

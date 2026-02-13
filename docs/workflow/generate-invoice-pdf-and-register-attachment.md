@@ -1,3 +1,8 @@
+---
+title: Generate invoice PDF and register it as evidence
+description: An invoice PDF is derived output.
+---
+
 ## Generate invoice PDF and register it as evidence
 
 An invoice PDF is derived output. The workflow keeps it reviewable by storing the rendered document as repository data and registering it in the attachments dataset so it remains linked to the invoice records that justify it.

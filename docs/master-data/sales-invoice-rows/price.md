@@ -1,3 +1,8 @@
+---
+title: `price` (unit price)
+description: price is the unit price for the invoice row.
+---
+
 ## `price` (unit price)
 
 `price` is the unit price for the invoice row. Together with quantity and discount, bookkeeping uses unit price to reconstruct totals consistently and to validate that net and VAT amounts were computed as expected.

@@ -1,3 +1,8 @@
+---
+title: `period` (period identifier)
+description: period is part of the accounting periods master data.
+---
+
 ## `period` (period identifier)
 
 `period` is part of the accounting periods master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

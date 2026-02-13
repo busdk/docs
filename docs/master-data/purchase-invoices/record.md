@@ -1,3 +1,8 @@
+---
+title: Record a purchase invoice
+description: Register the incoming invoice as evidence and as the basis for payables and VAT.
+---
+
 ## Record a purchase invoice
 
 Register the incoming invoice as evidence and as the basis for payables and VAT.

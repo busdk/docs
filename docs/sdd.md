@@ -1,3 +1,8 @@
+---
+title: BusDK Software Design Document (SDD)
+description: The canonical source material for this SDD is the existing multi-page BusDK design spec.
+---
+
 ## BusDK Software Design Document (SDD)
 
 ### Canonical multi-page design spec (original sources)

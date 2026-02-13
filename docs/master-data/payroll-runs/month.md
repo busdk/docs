@@ -1,3 +1,8 @@
+---
+title: `month` (payroll month)
+description: month is part of the payroll runs master data.
+---
+
 ## `month` (payroll month)
 
 `month` is part of the payroll runs master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

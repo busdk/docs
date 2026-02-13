@@ -1,3 +1,8 @@
+---
+title: Design goals and requirements
+description: BusDK design goals — CLI-first, modularity, append-only auditability, schema contract, extensibility.
+---
+
 ## BusDK Design Spec: Design goals and requirements
 
 This section is split into **single-concept** documents:

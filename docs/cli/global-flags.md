@@ -1,3 +1,8 @@
+---
+title: Standard global flags
+description: Most BusDK module CLIs accept a common set of global flags before the subcommand.
+---
+
 ## Standard global flags
 
 Most BusDK module CLIs accept a common set of global flags before the subcommand. These flags behave the same across modules that support them: help and version exit immediately, working directory and output redirection are applied before any module logic, and color and verbosity affect only human-facing diagnostics. In module synopsis lines this set is referred to as **[global flags]**; the list below is the canonical definition.

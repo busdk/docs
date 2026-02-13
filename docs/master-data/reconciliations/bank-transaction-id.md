@@ -1,3 +1,8 @@
+---
+title: `bank_transaction_id` (bank transaction reference)
+description: bank_transaction_id references the bank transaction being reconciled.
+---
+
 ## `bank_transaction_id` (bank transaction reference)
 
 `bank_transaction_id` references the bank transaction being reconciled. Reconciliations bind settlement history to imported statement facts by referencing the stable transaction identifier from the bank transaction dataset.

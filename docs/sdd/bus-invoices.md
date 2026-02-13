@@ -1,3 +1,8 @@
+---
+title: bus-invoices — Software Design Document
+description: Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…
+---
+
 ## bus-invoices
 
 ### Introduction and Overview

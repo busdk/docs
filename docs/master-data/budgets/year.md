@@ -1,3 +1,8 @@
+---
+title: `year` (budget year)
+description: year is part of the budgets master data.
+---
+
 ## `year` (budget year)
 
 `year` is part of the budgets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: `default_expense_account_id` (classification default for purchases)
+description: default_expense_account_id is the party’s default expense or asset account suggestion for purchase classification.
+---
+
 ## `default_expense_account_id` (classification default for purchases)
 
 `default_expense_account_id` is the party’s default expense or asset account suggestion for purchase classification. Bookkeeping uses it to pre-fill the most likely account for vendor invoices so purchase classification becomes close to automatic for common suppliers.

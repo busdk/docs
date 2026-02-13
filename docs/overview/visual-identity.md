@@ -1,3 +1,8 @@
+---
+title: Visual identity and branding on outputs
+description: "BusDK has its own visual identity (name, logo, colors) used to brand BusDK itself: this documentation site, BusDK’s project materials, and BusDK-owned tool…"
+---
+
 ## Visual identity and branding on outputs
 
 BusDK has its own visual identity (name, logo, colors) used to brand BusDK itself: this documentation site, BusDK’s project materials, and BusDK-owned tool surfaces such as CLI help/version output and other BusDK-specific informational screens. The BusDK logo exists as part of the project identity. 

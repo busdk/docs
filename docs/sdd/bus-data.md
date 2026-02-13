@@ -1,3 +1,8 @@
+---
+title: bus-data — Software Design Document
+description: Bus Data provides the shared tabular data layer for BusDK by implementing deterministic Frictionless Table Schema and Data Package handling for workspace…
+---
+
 ## bus-data
 
 ### Introduction and Overview

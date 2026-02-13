@@ -1,3 +1,8 @@
+---
+title: Workflow takeaways (transparency, control, automation)
+description: "Across this workflow, the same sequence repeats in different modules: write or import repository data with explicit commands, validate invariants, produce…"
+---
+
 ## Workflow takeaways (transparency, control, automation)
 
 Across this workflow, the same sequence repeats in different modules: write or import repository data with explicit commands, validate invariants, produce derived outputs, then record the reviewed result as a new revision. This makes the workflow script-friendly while keeping human review straightforward.

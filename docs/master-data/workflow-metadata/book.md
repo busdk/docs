@@ -1,3 +1,8 @@
+---
+title: Book an item
+description: Record that the bookkeeping decision is finalized with booking timestamp and actor.
+---
+
 ## Book an item
 
 Record that the bookkeeping decision is finalized with booking timestamp and actor.

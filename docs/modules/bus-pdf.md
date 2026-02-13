@@ -1,3 +1,8 @@
+---
+title: bus-pdf — render PDFs from JSON render models
+description: bus pdf renders deterministic PDFs from structured JSON input.
+---
+
 ## bus-pdf
 
 ### Name

@@ -1,3 +1,8 @@
+---
+title: Accounts area (chart of accounts and references)
+description: The accounts area holds the chart of accounts and related reference data.
+---
+
 ## Accounts area (chart of accounts and references)
 
 The accounts area holds the chart of accounts and related reference data.

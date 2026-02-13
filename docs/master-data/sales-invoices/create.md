@@ -1,3 +1,8 @@
+---
+title: Create a sales invoice
+description: Record the legal and accounting document that creates revenue and a receivable.
+---
+
 ## Create a sales invoice
 
 Record the legal and accounting document that creates revenue and a receivable.

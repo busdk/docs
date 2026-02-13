@@ -1,3 +1,8 @@
+---
+title: Minimal example layout
+description: A minimal example layout keeps module datasets in the repository root so tools can read and write directly in the current working directory.
+---
+
 ## Minimal example layout
 
 A minimal example layout keeps module datasets in the repository root so tools can read and write directly in the current working directory. When a dataset is split into multiple files over time, keep the actual files in the workspace root with a date or period prefix and track them from a root-level index table such as `journals.csv` or `attachments.csv`.

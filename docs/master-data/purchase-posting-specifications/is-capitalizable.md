@@ -1,3 +1,8 @@
+---
+title: `is_capitalizable` (asset vs expense intent)
+description: is_capitalizable indicates whether the purchase line should be treated as an asset acquisition rather than an immediate expense.
+---
+
 ## `is_capitalizable` (asset vs expense intent)
 
 `is_capitalizable` indicates whether the purchase line should be treated as an asset acquisition rather than an immediate expense. Bookkeeping uses this as an intent signal at booking time so later fixed-asset workflows can be consistent and reviewable.

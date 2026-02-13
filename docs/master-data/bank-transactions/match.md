@@ -1,3 +1,8 @@
+---
+title: Match a bank transaction
+description: Link cash movement to an invoice or journal entry so open items close deterministically.
+---
+
 ## Match a bank transaction
 
 Link cash movement to an invoice or journal entry so open items close deterministically.

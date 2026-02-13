@@ -1,3 +1,8 @@
+---
+title: Reporting and query commands
+description: In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the workspace…
+---
+
 ## Reporting and query commands
 
 In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the workspace datasets. Examples include `bus accounts list`; `bus journal balance --as-of 2026-03-31`; `bus invoices list --status unpaid`; `bus vat report Q1-2026`; and `bus budget report --period 2026`. Output is expected to be human-readable and may include tabular terminal formatting; where relevant, machine-readable output options should exist for integration with scripts and downstream analysis.

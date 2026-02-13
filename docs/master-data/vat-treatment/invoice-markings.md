@@ -1,3 +1,8 @@
+---
+title: Invoice markings for VAT treatments
+description: Invoices are the primary evidence for VAT handling.
+---
+
 ## Invoice markings for VAT treatments
 
 Invoices are the primary evidence for VAT handling. A VAT percentage alone is not enough to keep evidence reviewable because the same rate, especially 0%, can correspond to different treatments with different reporting consequences.

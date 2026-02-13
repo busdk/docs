@@ -1,3 +1,8 @@
+---
+title: Add a ledger account
+description: Register a new account so postings and exports can reference it deterministically.
+---
+
 ## Add a ledger account
 
 Register a new account so postings and exports can reference it deterministically.

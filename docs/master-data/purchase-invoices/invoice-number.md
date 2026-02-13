@@ -1,3 +1,8 @@
+---
+title: `invoice_number` (supplier invoice number)
+description: invoice_number is the supplier’s invoice number.
+---
+
 ## `invoice_number` (supplier invoice number)
 
 `invoice_number` is the supplier’s invoice number. Bookkeeping uses it for audit trails, disputes, vendor statement reconciliation, and deduplication so the same vendor invoice is not booked twice.

@@ -1,3 +1,8 @@
+---
+title: Correct a sales invoice
+description: Record credit notes or corrections so the audit trail remains consistent.
+---
+
 ## Correct a sales invoice
 
 Record credit notes or corrections so the audit trail remains consistent.

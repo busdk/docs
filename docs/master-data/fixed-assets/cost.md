@@ -1,3 +1,8 @@
+---
+title: `cost` (acquisition cost)
+description: cost is part of the fixed assets master data.
+---
+
 ## `cost` (acquisition cost)
 
 `cost` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

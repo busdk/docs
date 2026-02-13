@@ -1,3 +1,8 @@
+---
+title: `debtor_account` (counterparty account, debtor)
+description: debtor_account records the debtor account identifier from the bank transaction, such as an IBAN when available.
+---
+
 ## `debtor_account` (counterparty account, debtor)
 
 `debtor_account` records the debtor account identifier from the bank transaction, such as an IBAN when available. Bookkeeping uses counterparty account identifiers to improve party matching confidence and to support review, especially when names are ambiguous.

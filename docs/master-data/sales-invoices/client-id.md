@@ -1,3 +1,8 @@
+---
+title: `client_id` (counterparty link)
+description: client_id links a sales invoice to the party it was issued to.
+---
+
 ## `client_id` (counterparty link)
 
 `client_id` links a sales invoice to the party it was issued to. Bookkeeping uses the counterparty link for receivables reporting, matching payments, and proving who the sale was to when reviewing postings and VAT treatments.

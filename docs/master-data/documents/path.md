@@ -1,3 +1,8 @@
+---
+title: `path` (file locator)
+description: path is the locator used to retrieve the evidence file.
+---
+
 ## `path` (file locator)
 
 `path` is the locator used to retrieve the evidence file. Bookkeeping requires evidence to be retrievable deterministically during review and audit work, so a stored locator must remain stable enough that the file can be found without manual searching.

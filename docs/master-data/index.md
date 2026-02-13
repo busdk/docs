@@ -1,3 +1,8 @@
+---
+title: Master data (business objects)
+description: BusDK master data reference — chart of accounts, parties, invoices, bank transactions, and all business objects.
+---
+
 ## Master data (business objects)
 
 Master data is the stable reference layer that bookkeeping relies on when it turns operational events into ledger postings and period-based reports. The goal is that invoices, bank transactions, documents, and postings can all be scoped correctly, classified consistently, and reviewed later without guesswork. All master data that a module owns is stored in the workspace root (the effective working directory) only; BusDK does not store master data under subdirectories.

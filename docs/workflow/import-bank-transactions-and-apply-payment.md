@@ -1,3 +1,8 @@
+---
+title: Import bank transactions and apply payments
+description: When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records…
+---
+
 ## Import bank transactions and apply payments
 
 When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records the ledger impact by appending an explicit journal entry. This keeps the workflow deterministic and reviewable while BusDK is still missing dedicated reconciliation logic.

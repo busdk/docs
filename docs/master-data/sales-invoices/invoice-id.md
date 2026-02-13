@@ -1,3 +1,8 @@
+---
+title: `invoice_id` (invoice identity)
+description: invoice_id is the stable identity of a sales invoice.
+---
+
 ## `invoice_id` (invoice identity)
 
 `invoice_id` is the stable identity of a sales invoice. Bookkeeping uses it to link invoice rows, documents, payments, and any resulting ledger postings so the audit trail remains navigable from a posting back to the original invoice evidence.

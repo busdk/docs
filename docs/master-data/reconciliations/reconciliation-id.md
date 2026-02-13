@@ -1,3 +1,8 @@
+---
+title: `reconciliation_id` (stable reconciliation identifier)
+description: reconciliation_id is the stable identifier of a reconciliation record.
+---
+
 ## `reconciliation_id` (stable reconciliation identifier)
 
 `reconciliation_id` is the stable identifier of a reconciliation record. Bookkeeping uses stable reconciliation identifiers to keep settlement history append-only and reviewable even when matching decisions are refined later.

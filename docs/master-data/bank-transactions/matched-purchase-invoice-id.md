@@ -1,3 +1,8 @@
+---
+title: `matched_purchase_invoice_id` (purchase invoice match)
+description: matched_purchase_invoice_id links a bank transaction to a purchase invoice when the transaction represents payment of that vendor invoice.
+---
+
 ## `matched_purchase_invoice_id` (purchase invoice match)
 
 `matched_purchase_invoice_id` links a bank transaction to a purchase invoice when the transaction represents payment of that vendor invoice. Bookkeeping uses the link to make payables reconciliation near-automatic and to keep the audit trail navigable from cash movement to invoice evidence.

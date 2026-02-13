@@ -1,3 +1,8 @@
+---
+title: bus-payroll — Software Design Document
+description: Bus Payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for salaries and taxes.
+---
+
 ## bus-payroll
 
 ### Introduction and Overview

@@ -1,3 +1,8 @@
+---
+title: bus attachments — register and list evidence files
+description: CLI reference for bus attachments: register evidence files, store metadata in attachments.csv, and let other modules link to evidence without embedding paths.
+---
+
 ## bus-attachments
 
 ### Name

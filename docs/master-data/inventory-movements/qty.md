@@ -1,3 +1,8 @@
+---
+title: `qty` (quantity moved)
+description: qty is part of the inventory movements master data.
+---
+
 ## `qty` (quantity moved)
 
 `qty` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

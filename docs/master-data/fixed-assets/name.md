@@ -1,3 +1,8 @@
+---
+title: `name` (asset name)
+description: name is part of the fixed assets master data.
+---
+
 ## `name` (asset name)
 
 `name` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

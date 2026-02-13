@@ -1,3 +1,8 @@
+---
+title: `asset_class_hint` (asset class hint)
+description: asset_class_hint is a short hint describing what kind of asset a capitalizable line represents, such as software, computer, license, or leasehold improvement.
+---
+
 ## `asset_class_hint` (asset class hint)
 
 `asset_class_hint` is a short hint describing what kind of asset a capitalizable line represents, such as software, computer, license, or leasehold improvement. Bookkeeping uses it to keep later depreciation and asset classification work consistent without rereading the invoice evidence.

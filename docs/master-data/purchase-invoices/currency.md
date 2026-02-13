@@ -1,3 +1,8 @@
+---
+title: `currency` (invoice currency)
+description: currency is the purchase invoice currency.
+---
+
 ## `currency` (invoice currency)
 
 `currency` is the purchase invoice currency. Even when most invoices are in EUR, explicit currency prevents silent assumptions and keeps payables reporting, exports, and review workflows safe when foreign invoices occur.

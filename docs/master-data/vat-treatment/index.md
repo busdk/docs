@@ -1,3 +1,8 @@
+---
+title: VAT treatment (lightweight master)
+description: VAT handling needs more than a percentage to be deterministic.
+---
+
 ## VAT treatment (lightweight master)
 
 VAT handling needs more than a percentage to be deterministic. Bookkeeping and VAT reporting require enough structured VAT metadata that “0%” and other edge cases are still explainable, reviewable, and exportable without relying on free-text descriptions.

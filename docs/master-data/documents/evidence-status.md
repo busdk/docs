@@ -1,3 +1,8 @@
+---
+title: `evidence_status` (evidence completeness signal)
+description: evidence_status expresses whether the evidence document is present and acceptable for booking, such as missing, ok, or needs_review.
+---
+
 ## `evidence_status` (evidence completeness signal)
 
 `evidence_status` expresses whether the evidence document is present and acceptable for booking, such as missing, ok, or needs_review. Bookkeeping uses this as a workflow signal to avoid booking items without proper attachments.

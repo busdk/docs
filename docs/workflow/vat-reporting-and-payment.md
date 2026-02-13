@@ -1,3 +1,8 @@
+---
+title: VAT reporting and payment
+description: "VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then…"
+---
+
 ## VAT reporting and payment
 
 VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then record the payment as a normal ledger transaction. The goal is that both the computed VAT numbers and the evidence used to file them remain reviewable in the revision history.

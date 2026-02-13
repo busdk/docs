@@ -1,3 +1,8 @@
+---
+title: `description` (review aid)
+description: description explains the intent of a purchase posting line, especially when the invoice is split across multiple accounts.
+---
+
 ## `description` (review aid)
 
 `description` explains the intent of a purchase posting line, especially when the invoice is split across multiple accounts. Bookkeeping uses descriptions to make review possible without opening the PDF for every line.

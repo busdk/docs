@@ -1,3 +1,8 @@
+---
+title: `date` (invoice date)
+description: date is the sales invoice date.
+---
+
 ## `date` (invoice date)
 
 `date` is the sales invoice date. Bookkeeping uses it as the primary anchor date for period selection in ordinary revenue recognition workflows and for VAT reporting logic.

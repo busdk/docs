@@ -1,3 +1,8 @@
+---
+title: `value_date` (value date)
+description: value_date is the value date for the bank transaction.
+---
+
 ## `value_date` (value date)
 
 `value_date` is the value date for the bank transaction. Bookkeeping uses it as supporting context to explain timing differences during reconciliation, even when `booking_date` is the primary date used for posting periods.

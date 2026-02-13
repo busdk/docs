@@ -1,3 +1,8 @@
+---
+title: Depreciate fixed assets
+description: Generate depreciation postings for a period based on the asset register.
+---
+
 ## Depreciate fixed assets
 
 Generate depreciation postings for a period based on the asset register.

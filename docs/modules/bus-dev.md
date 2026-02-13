@@ -1,3 +1,8 @@
+---
+title: bus-dev
+description: "bus dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/: module scaffolding,…"
+---
+
 ## bus-dev
 
 ### Name

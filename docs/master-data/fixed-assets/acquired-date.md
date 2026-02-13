@@ -1,3 +1,8 @@
+---
+title: `acquired_date` (acquisition date)
+description: acquired_date is part of the fixed assets master data.
+---
+
 ## `acquired_date` (acquisition date)
 
 `acquired_date` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

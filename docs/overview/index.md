@@ -1,3 +1,8 @@
+---
+title: "BusDK Design Spec: Overview"
+description: Modular CLI-first accounting toolkit (schema-driven datasets with reviewable change history)
+---
+
 ## BusDK Design Spec: Overview
 
 Modular CLI-first accounting toolkit (schema-driven datasets with reviewable change history)

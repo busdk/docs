@@ -1,3 +1,8 @@
+---
+title: `document_role` (purpose classification)
+description: document_role classifies what the document represents, such as purchase invoice PDF, sales invoice PDF, receipt, contract, or statement.
+---
+
 ## `document_role` (purpose classification)
 
 `document_role` classifies what the document represents, such as purchase invoice PDF, sales invoice PDF, receipt, contract, or statement. Bookkeeping uses roles to filter evidence, run completeness checks, and prevent mis-linking arbitrary files as accounting evidence.

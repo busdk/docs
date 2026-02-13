@@ -1,3 +1,8 @@
+---
+title: Allocate a bank transaction
+description: Record allocations for a bank transaction that is split across multiple targets, such as partial payments, settlement batches, or fees booked separately…
+---
+
 ## Allocate a bank transaction
 
 Record allocations for a bank transaction that is split across multiple targets, such as partial payments, settlement batches, or fees booked separately from an invoice.

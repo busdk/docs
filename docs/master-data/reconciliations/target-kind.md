@@ -1,3 +1,8 @@
+---
+title: `target_kind` (reconciliation target kind)
+description: target_kind tells which kind of record the reconciliation references.
+---
+
 ## `target_kind` (reconciliation target kind)
 
 `target_kind` tells which kind of record the reconciliation references. The value is used to interpret `target_id` deterministically and to support lists and validation without guessing whether an identifier belongs to an invoice or to a journal transaction.

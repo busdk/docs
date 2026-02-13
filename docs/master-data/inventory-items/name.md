@@ -1,3 +1,8 @@
+---
+title: `name` (item name)
+description: name is part of the inventory items master data.
+---
+
 ## `name` (item name)
 
 `name` is part of the inventory items master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

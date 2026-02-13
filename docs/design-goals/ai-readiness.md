@@ -1,3 +1,8 @@
+---
+title: AI-readiness
+description: AI-readiness is a design objective, not a dependency.
+---
+
 ## AI-readiness
 
 AI-readiness is a design objective, not a dependency. BusDK must remain fully functional without AI. At the same time, BusDK is intentionally designed so that AI agents can use it as a safe, deterministic toolkit: agents should be able to read structured workspace datasets, run the same CLI workflows as humans, and represent proposed changes as reviewable updates to the repository data before acceptance. When Git is used as the canonical history, those changes naturally take the form of reviewable commits, consistent with [Git as the canonical, append-only source of truth](./git-as-source-of-truth).

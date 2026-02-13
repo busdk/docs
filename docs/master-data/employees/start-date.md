@@ -1,3 +1,8 @@
+---
+title: `start_date` (employment start date)
+description: start_date is part of the employees master data.
+---
+
 ## `start_date` (employment start date)
 
 `start_date` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

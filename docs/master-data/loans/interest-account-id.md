@@ -1,3 +1,8 @@
+---
+title: `interest_account_id` (interest expense account)
+description: interest_account_id is part of the loans master data.
+---
+
 ## `interest_account_id` (interest expense account)
 
 `interest_account_id` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

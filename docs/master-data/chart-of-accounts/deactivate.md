@@ -1,3 +1,8 @@
+---
+title: Deactivate a ledger account
+description: Prevent new postings to an inactive account while keeping history intact.
+---
+
 ## Deactivate a ledger account
 
 Prevent new postings to an inactive account while keeping history intact.

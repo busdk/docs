@@ -1,3 +1,8 @@
+---
+title: bus-api
+description: Bus API provides a local REST JSON API over the BusDK workspace in the selected root.
+---
+
 ## bus-api
 
 ### Name

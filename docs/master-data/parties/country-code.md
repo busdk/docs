@@ -1,3 +1,8 @@
+---
+title: `country_code` (jurisdiction hint)
+description: country_code records the party’s country as a short code, such as FI.
+---
+
 ## `country_code` (jurisdiction hint)
 
 `country_code` records the party’s country as a short code, such as FI. Bookkeeping uses country as a jurisdiction hint because it affects VAT treatment and sometimes required invoice content.

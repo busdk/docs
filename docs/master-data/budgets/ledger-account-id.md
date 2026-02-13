@@ -1,3 +1,8 @@
+---
+title: `ledger_account_id` (account reference)
+description: ledger_account_id is part of the budgets master data.
+---
+
 ## `ledger_account_id` (account reference)
 
 `ledger_account_id` is part of the budgets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

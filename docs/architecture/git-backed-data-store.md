@@ -1,3 +1,8 @@
+---
+title: Git-backed data repository (the data store)
+description: The preferred default data store for BusDK is a Git repository that tracks the workspace datasets (tabular records plus schemas) and supporting evidence as…
+---
+
 ## Git-backed data repository (the data store)
 
 The preferred default data store for BusDK is a Git repository that tracks the workspace datasets (tabular records plus schemas) and supporting evidence as repository data. Git is a preferred default rather than the goal itself: the invariant BusDK relies on is that the canonical dataset and its change history remain reviewable and append-only, regardless of whether revisions are recorded in Git or by some other mechanism.

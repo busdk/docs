@@ -1,3 +1,8 @@
+---
+title: Scenario introduction
+description: Consider Alice, a freelance consultant using BusDK to run bookkeeping in a dedicated repository workspace.
+---
+
 ## Scenario introduction
 
 Consider Alice, a freelance consultant using BusDK to run bookkeeping in a dedicated repository workspace. She uses the `bus` dispatcher and a small set of focused modules (accounts, entities, journal, invoices, bank, reconcile, VAT, reports) to keep her CSV-based records validated, auditable, and reproducible, while handling version control operations outside BusDK.

@@ -1,3 +1,8 @@
+---
+title: `vat_rate` (VAT percentage)
+description: vat_rate is the VAT percentage for the purchase posting line when it is not reliably derivable from other fields.
+---
+
 ## `vat_rate` (VAT percentage)
 
 `vat_rate` is the VAT percentage for the purchase posting line when it is not reliably derivable from other fields. Bookkeeping benefits from explicit rate at the posting decision level because it avoids ambiguity and supports consistent VAT amount calculations.

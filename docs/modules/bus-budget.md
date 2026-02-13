@@ -1,3 +1,8 @@
+---
+title: bus budget — record budgets and run budget vs actual reports
+description: CLI reference for bus budget: maintain budget datasets by account and period, add or set amounts, and emit budget vs actual variance from journal data.
+---
+
 ## bus-budget
 
 ### Name

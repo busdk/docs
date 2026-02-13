@@ -1,3 +1,8 @@
+---
+title: Initialize a new repository
+description: Alice begins by creating a dedicated repository for the bookkeeping year.
+---
+
 ## Initialize a new repository
 
 Alice begins by creating a dedicated repository for the bookkeeping year. The baseline revision establishes the workspace layout and the initial module-owned datasets and schemas, so every later change to the workspace datasets and supporting evidence is reviewable as a normal change to repository data.

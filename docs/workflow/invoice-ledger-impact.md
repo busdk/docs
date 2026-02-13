@@ -1,3 +1,8 @@
+---
+title: Invoice ledger impact (integration through journal entries)
+description: Invoices and the general ledger stay integrated by writing shared repository data rather than by calling hidden ledger internals.
+---
+
 ## Invoice ledger impact (integration through journal entries)
 
 Invoices and the general ledger stay integrated by writing shared repository data rather than by calling hidden ledger internals. When invoice posting integration is enabled, the invoice module expresses ledger impact by appending to the journal dataset as normal, reviewable records.

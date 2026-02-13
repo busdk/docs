@@ -1,3 +1,8 @@
+---
+title: Parties (customers and suppliers)
+description: A party is the counterparty you transact with.
+---
+
 ## Parties (customers and suppliers)
 
 A party is the counterparty you transact with. For bookkeeping, customers and suppliers are the same concept: the party attached to an invoice, a bank transaction, and sometimes directly to a posting for review and audit navigation.

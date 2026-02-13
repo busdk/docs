@@ -1,3 +1,8 @@
+---
+title: bus-dev — Software Design Document
+description: Bus Dev is a developer-only companion module that centralizes the workflow logic currently duplicated under scripts/ in each BusDK module repository.
+---
+
 ## bus-dev
 
 ### Introduction and Overview

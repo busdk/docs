@@ -1,3 +1,8 @@
+---
+title: `iban` (supplier payment account)
+description: iban records the supplier’s payment account for the invoice.
+---
+
 ## `iban` (supplier payment account)
 
 `iban` records the supplier’s payment account for the invoice. Bookkeeping uses it to support payment preparation, to match bank payments, and to detect suspicious changes in supplier payment details during review.

@@ -1,3 +1,8 @@
+---
+title: Double-entry ledger accounting
+description: Double-entry ledger accounting is a core requirement for BusDK.
+---
+
 ## Double-entry ledger accounting
 
 Double-entry ledger accounting is a core requirement for BusDK. In the Finnish context, double-entry bookkeeping is the statutory baseline for essentially all incorporated/legal entities and most other bookkeeping obligors, with limited exceptions for small sole traders under thresholds, as defined in [Kirjanpitolaki (KPL) 1336/1997 (Finlex)](https://finlex.fi/fi/laki/ajantasa/1997/19971336). In practice, this makes a balanced, auditable double-entry ledger the canonical dataset that other modules produce, validate, and report from.

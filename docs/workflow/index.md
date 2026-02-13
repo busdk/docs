@@ -1,3 +1,8 @@
+---
+title: Example end-to-end workflow
+description: Workflow section of the BusDK design spec — accounting workflow, scenarios, and step-by-step guides.
+---
+
 ## BusDK Design Spec: Example end-to-end workflow
 
 This section is split into single-concept documents. Each page is written as a small, ordered sequence so that the relevant `bus <module> <subcommand>` invocations and their typical order are easy to scan.

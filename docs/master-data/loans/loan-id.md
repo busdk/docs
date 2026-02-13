@@ -1,3 +1,8 @@
+---
+title: `loan_id` (loan identity)
+description: loan_id is part of the loans master data.
+---
+
 ## `loan_id` (loan identity)
 
 `loan_id` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

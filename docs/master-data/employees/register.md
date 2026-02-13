@@ -1,3 +1,8 @@
+---
+title: Register an employee
+description: Create an employee record so payroll runs have a stable person reference.
+---
+
 ## Register an employee
 
 Create an employee record so payroll runs have a stable person reference.

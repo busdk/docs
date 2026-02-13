@@ -1,3 +1,8 @@
+---
+title: Minimal workspace baseline (after initialization)
+description: This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without…
+---
+
 ## Minimal workspace baseline (after initialization)
 
 This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without relying on implicit dataset creation. It is the contract that makes workspace initialization testable and reviewable as repository data.

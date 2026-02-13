@@ -1,3 +1,8 @@
+---
+title: `bank_transaction_id` (bank transaction identity)
+description: bank_transaction_id is the stable identity of the bank transaction as imported from the bank statement source.
+---
+
 ## `bank_transaction_id` (bank transaction identity)
 
 `bank_transaction_id` is the stable identity of the bank transaction as imported from the bank statement source. Bookkeeping uses it for deduplication, reconciliation, and audit trails so the same cash movement is not booked twice.

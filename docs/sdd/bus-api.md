@@ -1,3 +1,8 @@
+---
+title: bus-api — Software Design Document
+description: Bus API provides a local REST JSON API gateway for BusDK workspaces.
+---
+
 ## bus-api
 
 ### Introduction and Overview

@@ -1,3 +1,8 @@
+---
+title: Register a bank account
+description: Record bank account identifiers used by imports and reconciliation.
+---
+
 ## Register a bank account
 
 Record bank account identifiers used by imports and reconciliation.

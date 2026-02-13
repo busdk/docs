@@ -1,3 +1,8 @@
+---
+title: `fiscal_year_end` (financial year end)
+description: fiscal_year_end defines when the workspace’s financial year ends.
+---
+
 ## `fiscal_year_end` (financial year end)
 
 `fiscal_year_end` defines when the workspace’s financial year ends. It is configured in `datapackage.json` at the workspace root under `busdk.accounting_entity`. Bookkeeping uses the year end as a hard boundary for annual reporting and closing workflows, and it helps define which periods can be locked and which reports belong to the same financial year.

@@ -1,3 +1,8 @@
+---
+title: `description` (movement description)
+description: description is part of the inventory movements master data.
+---
+
 ## `description` (movement description)
 
 `description` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

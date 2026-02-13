@@ -1,3 +1,8 @@
+---
+title: `client_id` (party link, customer-side)
+description: client_id links a bank transaction to a customer party when the transaction relates to that party but is not necessarily tied to a specific invoice.
+---
+
 ## `client_id` (party link, customer-side)
 
 `client_id` links a bank transaction to a customer party when the transaction relates to that party but is not necessarily tied to a specific invoice. Bookkeeping uses party links for review, rule-based classification, and reporting, especially for non-invoice transactions.

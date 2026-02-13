@@ -1,3 +1,8 @@
+---
+title: `content_type` (file type)
+description: content_type records the document’s file type, such as a PDF or an image.
+---
+
 ## `content_type` (file type)
 
 `content_type` records the document’s file type, such as a PDF or an image. Bookkeeping uses file type for predictable retrieval and for exports and compliance workflows that depend on handling different evidence formats correctly.

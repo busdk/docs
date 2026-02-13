@@ -1,3 +1,8 @@
+---
+title: Record a purchase as a journal transaction
+description: When Alice buys a new laptop for work, she records the transaction as a balanced, append-only journal entry.
+---
+
 ## Record a purchase as a journal transaction
 
 When Alice buys a new laptop for work, she records the transaction as a balanced, append-only journal entry. The journal is authoritative for the ledger, so the workflow is designed to make partial or unbalanced postings difficult to introduce by mistake.

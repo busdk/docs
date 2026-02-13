@@ -1,3 +1,8 @@
+---
+title: Purchase invoices
+description: A purchase invoice is the incoming vendor invoice that creates an expense or an asset and a payable until it is paid.
+---
+
 ## Purchase invoices
 
 A purchase invoice is the incoming vendor invoice that creates an expense or an asset and a payable until it is paid. Purchase invoices drive VAT deduction and periodization decisions, and they are a core evidence object in bookkeeping review.

@@ -1,3 +1,8 @@
+---
+title: `vat_treatment` (VAT handling code)
+description: vat_treatment is the VAT handling category for the purchase posting line.
+---
+
 ## `vat_treatment` (VAT handling code)
 
 `vat_treatment` is the VAT handling category for the purchase posting line. Bookkeeping uses a treatment code to keep VAT validation and reporting deterministic, especially when the percentage alone would be ambiguous.

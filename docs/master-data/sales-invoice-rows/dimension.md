@@ -1,3 +1,8 @@
+---
+title: `dimension` (lightweight reporting tag)
+description: dimension is a lightweight tag used for internal grouping such as project, cost center, or product area.
+---
+
 ## `dimension` (lightweight reporting tag)
 
 `dimension` is a lightweight tag used for internal grouping such as project, cost center, or product area. Bookkeeping uses it to support reporting and year-end analysis without introducing a full dimension subsystem.

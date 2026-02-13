@@ -1,3 +1,8 @@
+---
+title: `date` (invoice date)
+description: date is the purchase invoice date.
+---
+
 ## `date` (invoice date)
 
 `date` is the purchase invoice date. Bookkeeping uses it to anchor period selection and VAT timing logic, and it is part of the evidence context when reviewing purchases by month.

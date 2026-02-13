@@ -1,3 +1,8 @@
+---
+title: `depreciation_method` (depreciation method)
+description: depreciation_method is part of the fixed assets master data.
+---
+
 ## `depreciation_method` (depreciation method)
 
 `depreciation_method` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

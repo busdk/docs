@@ -1,3 +1,8 @@
+---
+title: `doc_date` (document date)
+description: doc_date is the document’s own date.
+---
+
 ## `doc_date` (document date)
 
 `doc_date` is the document’s own date. Bookkeeping uses document date for period selection and searching, because using upload time as a proxy becomes unreliable when documents are received or scanned late.

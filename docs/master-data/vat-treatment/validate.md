@@ -1,3 +1,8 @@
+---
+title: Validate VAT mappings
+description: Check that VAT rates, treatment codes, and reporting expectations align with datasets.
+---
+
 ## Validate VAT mappings
 
 Check that VAT rates, treatment codes, and reporting expectations align with datasets.

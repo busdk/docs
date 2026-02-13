@@ -1,3 +1,8 @@
+---
+title: `service_end_date` (line-level service period end)
+description: service_end_date records when the service period ends for this invoice row.
+---
+
 ## `service_end_date` (line-level service period end)
 
 `service_end_date` records when the service period ends for this invoice row. Together with `service_start_date`, it makes the service window explicit so bookkeeping can allocate revenue across periods correctly when invoices mix service periods.

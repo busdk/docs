@@ -1,3 +1,8 @@
+---
+title: Bank accounts
+description: A bank account is the financial account where bank transactions occur.
+---
+
 ## Bank accounts
 
 A bank account is the financial account where bank transactions occur. Bookkeeping uses bank accounts to group transactions by statement source, to reconcile cash movement, and to map statement activity into ledger postings consistently.

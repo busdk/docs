@@ -1,3 +1,8 @@
+---
+title: `booked_by` (booking actor)
+description: booked_by records who confirmed that a record was booked for bookkeeping purposes.
+---
+
 ## `booked_by` (booking actor)
 
 `booked_by` records who confirmed that a record was booked for bookkeeping purposes. It supports auditability and makes later review easier, because it preserves accountability for booking decisions and exceptions.

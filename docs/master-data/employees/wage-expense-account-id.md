@@ -1,3 +1,8 @@
+---
+title: `wage_expense_account_id` (wage expense account)
+description: wage_expense_account_id is part of the employees master data.
+---
+
 ## `wage_expense_account_id` (wage expense account)
 
 `wage_expense_account_id` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

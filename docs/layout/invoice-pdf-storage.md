@@ -1,3 +1,8 @@
+---
+title: Invoice PDF storage
+description: Generated invoice PDFs are handled through the attachments system.
+---
+
 ## Invoice PDF storage
 
 Generated invoice PDFs are handled through the attachments system. Invoice rows link to attachment identifiers, and the attachment metadata in `attachments.csv` records where the underlying file lives. A typical repository keeps the actual PDFs under `./attachments/yyyy/mm/yyyymmdd-filename...` (for example `attachments/2026/01/20260115-INV-1001.pdf`), while preserving the stable link from invoices to attachments through `attachments.csv`.

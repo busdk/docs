@@ -1,3 +1,8 @@
+---
+title: `vat_percent` (applied percentage, alias)
+description: vat_percent is the applied VAT percentage, used as an alias name in some datasets and UIs.
+---
+
 ## `vat_percent` (applied percentage, alias)
 
 `vat_percent` is the applied VAT percentage, used as an alias name in some datasets and UIs. For bookkeeping, the key requirement is the same as for [`vat_rate`](./vat-rate): the applied percentage must be explicit at line level so VAT amounts and VAT reporting can be reviewed and exported deterministically.

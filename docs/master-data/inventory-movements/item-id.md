@@ -1,3 +1,8 @@
+---
+title: `item_id` (item reference)
+description: item_id is part of the inventory movements master data.
+---
+
 ## `item_id` (item reference)
 
 `item_id` is part of the inventory movements master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

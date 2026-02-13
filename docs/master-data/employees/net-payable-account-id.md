@@ -1,3 +1,8 @@
+---
+title: `net_payable_account_id` (net wages payable account)
+description: net_payable_account_id is part of the employees master data.
+---
+
 ## `net_payable_account_id` (net wages payable account)
 
 `net_payable_account_id` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

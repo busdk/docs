@@ -1,3 +1,8 @@
+---
+title: bus agent — diagnostics and development helper for the agent runner
+description: CLI reference for bus agent: detect enabled runtimes, render prompt templates, run an agent with a prompt, format NDJSON output; for diagnostics and development only.
+---
+
 ## bus-agent
 
 ### Name

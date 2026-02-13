@@ -1,3 +1,8 @@
+---
+title: Software Design Documents (SDD)
+description: Index of BusDK Software Design Documents — single-page SDD and per-module design specs for implementation and review.
+---
+
 ## Software Design Documents (SDD)
 
 This section is the index for BusDK Software Design Documents. The SDD provides a single source of truth for design review and implementation traceability.

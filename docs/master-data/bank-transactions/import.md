@@ -1,3 +1,8 @@
+---
+title: Import bank transactions
+description: Ingest a statement feed into normalized transactions suitable for reconciliation.
+---
+
 ## Import bank transactions
 
 Ingest a statement feed into normalized transactions suitable for reconciliation.

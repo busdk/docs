@@ -1,3 +1,8 @@
+---
+title: `service_end_date` (service period end)
+description: service_end_date records when the purchased service period ends.
+---
+
 ## `service_end_date` (service period end)
 
 `service_end_date` records when the purchased service period ends. Together with `service_start_date`, it makes periodization reviewable and supports consistent “belongs to which months” allocation.

@@ -1,3 +1,8 @@
+---
+title: `creditor_account` (counterparty account, creditor)
+description: creditor_account records the creditor account identifier from the bank transaction, such as an IBAN when available.
+---
+
 ## `creditor_account` (counterparty account, creditor)
 
 `creditor_account` records the creditor account identifier from the bank transaction, such as an IBAN when available. Bookkeeping uses counterparty account identifiers to improve matching and to validate that payments went to the expected account.

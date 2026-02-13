@@ -1,3 +1,8 @@
+---
+title: Register a loan
+description: Record a loan contract so repayments and interest can be booked consistently.
+---
+
 ## Register a loan
 
 Record a loan contract so repayments and interest can be booked consistently.

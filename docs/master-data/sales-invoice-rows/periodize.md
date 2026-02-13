@@ -1,3 +1,8 @@
+---
+title: Set sales row service period
+description: Record service dates when period allocation depends on the delivered period.
+---
+
 ## Set sales row service period
 
 Record service dates when period allocation depends on the delivered period.

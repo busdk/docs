@@ -1,3 +1,8 @@
+---
+title: `vat_rate` (applied percentage)
+description: The VAT rate applied to a sale or purchase must be stored per line, or otherwise derivable without ambiguity, because rates can differ by item and can…
+---
+
 ## `vat_rate` (applied percentage)
 
 The VAT rate applied to a sale or purchase must be stored per line, or otherwise derivable without ambiguity, because rates can differ by item and can change over time. For bookkeeping, the applied rate is part of the accounting evidence that supports the VAT amounts and the posting decision.

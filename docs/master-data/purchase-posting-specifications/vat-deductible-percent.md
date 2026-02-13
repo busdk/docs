@@ -1,3 +1,8 @@
+---
+title: `vat_deductible_percent` (purchase-side deductibility)
+description: vat_deductible_percent expresses how much of the input VAT is deductible for this purchase line.
+---
+
 ## `vat_deductible_percent` (purchase-side deductibility)
 
 `vat_deductible_percent` expresses how much of the input VAT is deductible for this purchase line. Bookkeeping uses it to compute deductible VAT consistently and to separate non-deductible parts deterministically without spreadsheets.

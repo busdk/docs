@@ -1,3 +1,8 @@
+---
+title: bus sheets — local spreadsheet-like web UI for workspaces
+description: Local web UI for BusDK workspaces: multi-tab workbook over CSV resources, view and edit rows and schemas, run validation; delegates to bus-api in-process.
+---
+
 ## bus-sheets
 
 ### Name

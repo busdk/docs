@@ -1,3 +1,8 @@
+---
+title: `pay_date` (pay date)
+description: pay_date is part of the payroll runs master data.
+---
+
 ## `pay_date` (pay date)
 
 `pay_date` is part of the payroll runs master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

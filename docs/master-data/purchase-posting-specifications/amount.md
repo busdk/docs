@@ -1,3 +1,8 @@
+---
+title: `amount` (posted amount)
+description: amount is the amount intended to be posted for this purchase line.
+---
+
 ## `amount` (posted amount)
 
 `amount` is the amount intended to be posted for this purchase line. Bookkeeping needs line amounts to be explicit and stable for audit and export purposes, especially when an invoice is split across multiple accounts.

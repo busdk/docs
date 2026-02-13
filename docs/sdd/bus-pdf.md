@@ -1,3 +1,8 @@
+---
+title: bus-pdf — Software Design Document
+description: Bus PDF renders deterministic, template-based PDF documents from structured input data, enabling BusDK workspaces to produce archival-friendly artifacts…
+---
+
 ## bus-pdf
 
 ### Introduction and Overview

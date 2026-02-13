@@ -1,3 +1,8 @@
+---
+title: Classify a purchase invoice
+description: Create the posting intent split across accounts and VAT treatment decisions.
+---
+
 ## Classify a purchase invoice
 
 Create the posting intent split across accounts and VAT treatment decisions.

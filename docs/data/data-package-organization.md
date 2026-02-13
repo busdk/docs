@@ -1,3 +1,8 @@
+---
+title: Data Package organization
+description: BusDK uses a Frictionless Data Package descriptor (typically datapackage.json) at the workspace root to provide a whole-workspace manifest of resources and…
+---
+
 ## Data Package organization
 
 BusDK uses a Frictionless Data Package descriptor (typically `datapackage.json`) at the workspace root to provide a whole-workspace manifest of resources and their schemas. A Data Package descriptor lists resources, their paths, and their schema references, enabling whole-workspace validation and standardized publication or interchange patterns. See [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/).

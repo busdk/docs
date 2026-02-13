@@ -1,3 +1,8 @@
+---
+title: bus-validate — validate workspace datasets and invariants
+description: bus validate checks all workspace datasets against their schemas and enforces cross-table invariants (e.g.
+---
+
 ## bus-validate
 
 ### Name

@@ -1,3 +1,8 @@
+---
+title: `ledger_category_id` (reporting structure link)
+description: ledger_category_id links an account to the reporting structure used for profit and loss and balance sheet views.
+---
+
 ## `ledger_category_id` (reporting structure link)
 
 `ledger_category_id` links an account to the reporting structure used for profit and loss and balance sheet views. Bookkeeping posts to accounts, but reporting and review often work at category level, so this link is what keeps statements readable and consistent.

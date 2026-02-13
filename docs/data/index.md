@@ -1,3 +1,8 @@
+---
+title: "BusDK Design Spec: Data format and storage"
+description: Data formats and storage section — CSV, Table Schema, data packages, and workspace configuration.
+---
+
 ## BusDK Design Spec: Data format and storage
 
 This section is split into **single-concept** documents:

@@ -1,3 +1,8 @@
+---
+title: `vat_amount` (VAT amount)
+description: vat_amount is the VAT amount for the purchase posting line.
+---
+
 ## `vat_amount` (VAT amount)
 
 `vat_amount` is the VAT amount for the purchase posting line. Recording VAT amount can reduce rounding disputes and keep exports stable even if calculation rules evolve, because the booked amount remains explicit.

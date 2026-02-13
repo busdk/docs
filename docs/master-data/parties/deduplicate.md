@@ -1,3 +1,8 @@
+---
+title: Deduplicate parties
+description: Merge duplicates so reports and audits refer to one legal entity consistently.
+---
+
 ## Deduplicate parties
 
 Merge duplicates so reports and audits refer to one legal entity consistently.

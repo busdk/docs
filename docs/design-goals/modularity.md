@@ -1,3 +1,8 @@
+---
+title: Modularity as a first-class requirement
+description: BusDK is modular from the start.
+---
+
 ## Modularity as a first-class requirement
 
 BusDK is modular from the start. Each major feature area is implemented as an independent module that operates on the workspace datasets through a shared schema-driven data contract, rather than through tight code coupling. The ledger, invoicing, VAT and tax reporting, bank import, budgeting, and document generation workflows must be able to evolve independently while still producing coherent repository data.

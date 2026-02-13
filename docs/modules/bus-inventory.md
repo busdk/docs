@@ -1,3 +1,8 @@
+---
+title: bus-inventory — manage inventory items and movements
+description: bus inventory maintains item master data and stock movement ledgers as schema-validated repository data.
+---
+
 ## bus-inventory
 
 ### Name

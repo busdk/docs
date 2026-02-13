@@ -1,3 +1,8 @@
+---
+title: CLI as the primary interface (controlled read/modify/write)
+description: The CLI is the primary interface.
+---
+
 ## CLI as the primary interface (controlled read/modify/write)
 
 The CLI is the primary interface. Commands are expected to perform a controlled read-modify-write cycle: load the necessary resources from the repository, validate requested changes against schema and business rules, apply the operation, and write the updated files. Git commits are made externally by the user or automation, and BusDK does not execute Git commands.

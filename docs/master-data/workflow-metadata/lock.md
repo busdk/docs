@@ -1,3 +1,8 @@
+---
+title: Lock an item
+description: Prevent further edits once a period is closed or an item is finalized.
+---
+
 ## Lock an item
 
 Prevent further edits once a period is closed or an item is finalized.

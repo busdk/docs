@@ -1,3 +1,8 @@
+---
+title: `booked_at` (booking timestamp)
+description: booked_at records when the bank transaction was considered booked for bookkeeping purposes.
+---
+
 ## `booked_at` (booking timestamp)
 
 `booked_at` records when the bank transaction was considered booked for bookkeeping purposes. Bookkeeping uses it to support audit trails and to explain when a reconciliation decision was finalized.

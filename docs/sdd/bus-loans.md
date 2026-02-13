@@ -1,3 +1,8 @@
+---
+title: bus-loans — Software Design Document
+description: Bus Loans maintains loan master data and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions…
+---
+
 ## bus-loans
 
 ### Introduction and Overview

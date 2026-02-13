@@ -1,3 +1,8 @@
+---
+title: bus-period — Software Design Document
+description: Bus Period opens and closes accounting periods, generates closing and opening balance entries, and locks periods to prevent changes after close.
+---
+
 ## bus-period
 
 ### Introduction and Overview

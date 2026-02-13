@@ -1,3 +1,8 @@
+---
+title: Add a sales invoice (interactive workflow)
+description: When Alice needs to bill a client, she adds a sales invoice as repository data and then generates a PDF as a derived artifact linked back to the invoice…
+---
+
 ## Add a sales invoice (interactive workflow)
 
 When Alice needs to bill a client, she adds a sales invoice as repository data and then generates a PDF as a derived artifact linked back to the invoice records. The important invariant is that invoice totals, VAT, and references are validated at write time so later reporting and postings can treat invoices as trustworthy inputs.

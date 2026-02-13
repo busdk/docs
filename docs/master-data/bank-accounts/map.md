@@ -1,3 +1,8 @@
+---
+title: Map a bank account to a ledger account
+description: Define which chart of accounts entry represents this bank account for postings.
+---
+
 ## Map a bank account to a ledger account
 
 Define which chart of accounts entry represents this bank account for postings.

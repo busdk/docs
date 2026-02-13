@@ -1,3 +1,8 @@
+---
+title: `duedate` (due date)
+description: duedate records when the purchase invoice is due for payment.
+---
+
 ## `duedate` (due date)
 
 `duedate` records when the purchase invoice is due for payment. Bookkeeping uses it for payables scheduling and for review context when cash movement timing differs from invoice periods.

@@ -1,3 +1,8 @@
+---
+title: Budgeting and budget-vs-actual reporting
+description: Budgeting is a controlled computation over stored, schema-validated budget rows and the authoritative journal actuals.
+---
+
 ## Budgeting and budget-vs-actual reporting
 
 Budgeting is a controlled computation over stored, schema-validated budget rows and the authoritative journal actuals. The workflow keeps budgets as repository data so budget-vs-actual output remains reproducible.

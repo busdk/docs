@@ -1,3 +1,8 @@
+---
+title: `cogs_account_id` (cogs account)
+description: cogs_account_id is part of the inventory items master data.
+---
+
 ## `cogs_account_id` (cogs account)
 
 `cogs_account_id` is part of the inventory items master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

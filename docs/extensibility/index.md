@@ -1,3 +1,8 @@
+---
+title: "BusDK Design Spec: Extensibility model"
+description: "This section is split into **single-concept** documents:"
+---
+
 ## BusDK Design Spec: Extensibility model
 
 This section is split into **single-concept** documents:

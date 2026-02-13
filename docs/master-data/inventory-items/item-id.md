@@ -1,3 +1,8 @@
+---
+title: `item_id` (item identity)
+description: item_id is part of the inventory items master data.
+---
+
 ## `item_id` (item identity)
 
 `item_id` is part of the inventory items master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

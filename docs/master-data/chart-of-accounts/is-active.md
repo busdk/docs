@@ -1,3 +1,8 @@
+---
+title: `is_active` (operational control)
+description: is_active indicates whether an account is available for new postings.
+---
+
 ## `is_active` (operational control)
 
 `is_active` indicates whether an account is available for new postings. Inactive accounts prevent accidental classification to inactive targets while keeping historical postings intact and reviewable.

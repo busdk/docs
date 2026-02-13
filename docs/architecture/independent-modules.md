@@ -1,3 +1,8 @@
+---
+title: Independent modules (integration through shared datasets)
+description: BusDK modules are independent tools; integration is through shared datasets and schemas so components can be in different languages without API coupling.
+---
+
 ## Independent modules (integration through shared datasets)
 
 Modules are independent tools or services. Each functional area is a module: ledger, invoice, bank import, VAT, budget, and related features. Modules encapsulate their domain logic and do not call each other’s functions directly. Integration occurs through shared datasets and schemas so that modules can be implemented in different languages without API coupling. For example, a Python component can generate PDFs while a Go component enforces ledger integrity, and both interoperate through the same workspace datasets tracked as repository data — often as CSV in a Git repository by default.

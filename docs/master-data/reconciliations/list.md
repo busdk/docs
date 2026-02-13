@@ -1,3 +1,8 @@
+---
+title: List reconciliations
+description: Produce a reviewable list of reconciliation records so that open-item status and settlement history can be inspected without re-deriving links from bank…
+---
+
 ## List reconciliations
 
 Produce a reviewable list of reconciliation records so that open-item status and settlement history can be inspected without re-deriving links from bank statements and invoice notes.

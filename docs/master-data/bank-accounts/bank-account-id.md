@@ -1,3 +1,8 @@
+---
+title: `bank_account_id` (bank account identity)
+description: bank_account_id is the stable identity of the bank account as a transaction source in your bank feed or bank integration.
+---
+
 ## `bank_account_id` (bank account identity)
 
 `bank_account_id` is the stable identity of the bank account as a transaction source in your bank feed or bank integration. Bookkeeping uses it to ensure each bank transaction is tied to the correct account and to support deterministic imports, deduplication, and statement-level review.

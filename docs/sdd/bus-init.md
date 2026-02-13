@@ -1,3 +1,8 @@
+---
+title: bus-init — Software Design Document
+description: Bus Init bootstraps a new BusDK workspace by orchestrating a deterministic sequence of module init commands.
+---
+
 ## bus-init
 
 ### Introduction and Overview

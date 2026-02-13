@@ -1,3 +1,8 @@
+---
+title: Git commit conventions per operation (external Git)
+description: BusDK can be used with or without Git, and it does not implement or run Git itself.
+---
+
 ## Git commit conventions per operation (external Git)
 
 BusDK can be used with or without Git, and it does not implement or run Git itself. The spec defines commit conventions per operation for teams that track workspace datasets in Git and expects users or external automation to apply them using their existing Git tooling. For example:

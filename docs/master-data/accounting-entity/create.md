@@ -1,3 +1,8 @@
+---
+title: Create an accounting entity
+description: Create a new bookkeeping scope so journals and VAT never mix across companies.
+---
+
 ## Create an accounting entity
 
 Create a new bookkeeping scope so journals and VAT never mix across companies.

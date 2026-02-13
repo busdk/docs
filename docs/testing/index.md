@@ -1,3 +1,8 @@
+---
+title: "BusDK Design Spec: Testing"
+description: This section defines how BusDK modules are tested and how command behavior is verified end to end.
+---
+
 ## BusDK Design Spec: Testing
 
 This section defines how BusDK modules are tested and how command behavior is verified end to end. The focus is on deterministic, script-friendly tests that can run in local and CI environments without external services.

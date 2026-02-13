@@ -1,3 +1,8 @@
+---
+title: `purchase_company_id` (party link, supplier-side)
+description: purchase_company_id links a bank transaction to a supplier party when the transaction relates to that supplier but is not necessarily tied to a specific…
+---
+
 ## `purchase_company_id` (party link, supplier-side)
 
 `purchase_company_id` links a bank transaction to a supplier party when the transaction relates to that supplier but is not necessarily tied to a specific purchase invoice. Bookkeeping uses party links to improve review, classification, and reporting for statement items such as platform charges, fees, or vendor settlements.

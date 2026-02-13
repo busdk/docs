@@ -1,3 +1,8 @@
+---
+title: Auditability through append-only changes
+description: "Auditability is a core constraint for BusDK: the workspace datasets must remain reviewable in a way that makes it straightforward to answer what changed,…"
+---
+
 ## Auditability through append-only changes
 
 Auditability is a core constraint for BusDK: the workspace datasets must remain reviewable in a way that makes it straightforward to answer what changed, when it changed, who changed it, and why. The practical consequence is an append-only discipline for business and accounting records. When something is wrong, it is corrected by adding new records that explicitly describe the correction (for example, reversal and adjustment postings) rather than rewriting or erasing prior records.

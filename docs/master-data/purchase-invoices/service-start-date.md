@@ -1,3 +1,8 @@
+---
+title: `service_start_date` (service period start)
+description: service_start_date records when the purchased service period begins.
+---
+
 ## `service_start_date` (service period start)
 
 `service_start_date` records when the purchased service period begins. Bookkeeping uses service period dates to support periodization decisions without reopening the vendor invoice document.

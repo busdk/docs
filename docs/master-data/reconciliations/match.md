@@ -1,3 +1,8 @@
+---
+title: Match a bank transaction
+description: Record a one-to-one reconciliation link between a bank transaction and exactly one target record.
+---
+
 ## Match a bank transaction
 
 Record a one-to-one reconciliation link between a bank transaction and exactly one target record.

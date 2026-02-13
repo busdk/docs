@@ -1,3 +1,8 @@
+---
+title: BusDK Design Spec — CLI tooling and workflow
+description: CLI tooling section of the BusDK design spec — command structure, global flags, naming, and scripting.
+---
+
 ## BusDK Design Spec: CLI tooling and workflow
 
 This section is split into **single-concept** documents:

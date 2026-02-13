@@ -1,3 +1,8 @@
+---
+title: `ledger_account_id` (classification target)
+description: ledger_account_id identifies the expense or asset account the purchase line is intended to be posted to.
+---
+
 ## `ledger_account_id` (classification target)
 
 `ledger_account_id` identifies the expense or asset account the purchase line is intended to be posted to. Bookkeeping needs explicit account selection at this level so purchase classification becomes reviewable automation rather than repeated manual work.

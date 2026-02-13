@@ -1,3 +1,8 @@
+---
+title: `service_end_date` (service period end)
+description: service_end_date records when the invoiced service period ends.
+---
+
 ## `service_end_date` (service period end)
 
 `service_end_date` records when the invoiced service period ends. Together with `service_start_date`, it makes the service period explicit so bookkeeping can allocate revenue across periods consistently and keep the allocation reviewable.

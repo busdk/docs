@@ -1,3 +1,8 @@
+---
+title: Workspace configuration (`datapackage.json` extension)
+description: Each BusDK workspace directory represents exactly one accounting entity.
+---
+
 ## Workspace configuration (`datapackage.json` extension)
 
 Each BusDK workspace directory represents exactly one accounting entity. All datasets under that workspace belong to that entity by construction, so scope separation is enforced by filesystem boundaries rather than by repeating an “entity key” on every row.

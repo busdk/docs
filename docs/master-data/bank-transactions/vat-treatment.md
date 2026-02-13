@@ -1,3 +1,8 @@
+---
+title: `vat_treatment` (VAT handling code, when relevant)
+description: vat_treatment records the VAT handling category when a bank transaction is booked as a purchase-like event directly from the statement.
+---
+
 ## `vat_treatment` (VAT handling code, when relevant)
 
 `vat_treatment` records the VAT handling category when a bank transaction is booked as a purchase-like event directly from the statement. Bookkeeping needs VAT handling to be explicit in these cases because there may be no separate purchase invoice flow to carry VAT metadata.

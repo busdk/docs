@@ -1,3 +1,8 @@
+---
+title: `currency` (invoice currency)
+description: currency is the sales invoice currency.
+---
+
 ## `currency` (invoice currency)
 
 `currency` is the sales invoice currency. Even when most invoices are in EUR, explicit currency prevents silent assumptions and keeps exports and reviews consistent when exceptions occur.

@@ -1,3 +1,8 @@
+---
+title: `duedate` (due date)
+description: duedate records when payment is expected for the sales invoice.
+---
+
 ## `duedate` (due date)
 
 `duedate` records when payment is expected for the sales invoice. Bookkeeping uses it for receivables aging, reminders, and cash-flow explanations.

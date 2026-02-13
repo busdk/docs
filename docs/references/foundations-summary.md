@@ -1,3 +1,8 @@
+---
+title: References and external foundations (summary)
+description: BusDK’s modular CLI philosophy aligns with the Unix notion of composable tools and clear interfaces, where programs do one thing well and cooperate through…
+---
+
 ## References and external foundations (summary)
 
 BusDK’s modular CLI philosophy aligns with the Unix notion of composable tools and clear interfaces, where programs do one thing well and cooperate through simple formats. See [The Art of Unix Programming: Basics of the Unix Philosophy](https://www.catb.org/esr/writings/taoup/html/ch01s06.html).

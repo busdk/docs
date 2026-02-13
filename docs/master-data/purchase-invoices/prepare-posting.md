@@ -1,3 +1,8 @@
+---
+title: Prepare purchase invoice postings
+description: Turn purchase intent into a balanced posting proposal for the journal.
+---
+
 ## Prepare purchase invoice postings
 
 Turn purchase intent into a balanced posting proposal for the journal.

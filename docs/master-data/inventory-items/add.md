@@ -1,3 +1,8 @@
+---
+title: Add an inventory item
+description: Register an item so stock movements can be recorded against a stable identifier.
+---
+
 ## Add an inventory item
 
 Register an item so stock movements can be recorded against a stable identifier.

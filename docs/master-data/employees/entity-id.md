@@ -1,3 +1,8 @@
+---
+title: `entity_id` (party reference for the employee)
+description: entity_id is part of the employees master data.
+---
+
 ## `entity_id` (party reference for the employee)
 
 `entity_id` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

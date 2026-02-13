@@ -1,3 +1,8 @@
+---
+title: bus-entities — Software Design Document
+description: Bus Entities maintains counterparty reference datasets as schema-validated repository data, normalizes identity details, and provides stable entity…
+---
+
 ## bus-entities
 
 ### Introduction and Overview

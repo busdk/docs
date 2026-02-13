@@ -1,3 +1,8 @@
+---
+title: Link evidence to a record
+description: Attach evidence to an invoice or bank transaction so audit navigation is one step.
+---
+
 ## Link evidence to a record
 
 Attach evidence to an invoice or bank transaction so audit navigation is one step.

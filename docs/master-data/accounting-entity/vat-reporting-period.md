@@ -1,3 +1,8 @@
+---
+title: `vat_reporting_period` (VAT reporting cadence)
+description: vat_reporting_period records the VAT reporting cadence for the workspace, such as monthly, quarterly, or yearly.
+---
+
 ## `vat_reporting_period` (VAT reporting cadence)
 
 `vat_reporting_period` records the VAT reporting cadence for the workspace, such as monthly, quarterly, or yearly. It is configured in `datapackage.json` at the workspace root under `busdk.accounting_entity`. Bookkeeping automation uses this to decide which VAT completeness checks to run and to frame VAT-related review and filing steps in the right time buckets.

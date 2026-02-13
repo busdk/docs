@@ -1,3 +1,8 @@
+---
+title: `creditor_name` (counterparty name, creditor)
+description: creditor_name records the creditor party name from the bank transaction.
+---
+
 ## `creditor_name` (counterparty name, creditor)
 
 `creditor_name` records the creditor party name from the bank transaction. Bookkeeping uses counterparty names to explain statement entries in review workflows and as a matching signal when references are missing or noisy.

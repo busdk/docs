@@ -1,3 +1,8 @@
+---
+title: bus-config — Software Design Document
+description: Bus Config owns workspace-level configuration stored in datapackage.json at the workspace root.
+---
+
 ## bus-config
 
 ### Introduction and Overview

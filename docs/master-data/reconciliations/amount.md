@@ -1,3 +1,8 @@
+---
+title: `amount` (allocated amount)
+description: amount is the amount assigned to a single reconciliation target.
+---
+
 ## `amount` (allocated amount)
 
 `amount` is the amount assigned to a single reconciliation target. It is expressed as a positive decimal in the bank transaction currency, and allocation rows must sum to the bank transaction amount exactly.

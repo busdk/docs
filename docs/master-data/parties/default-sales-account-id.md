@@ -1,3 +1,8 @@
+---
+title: `default_sales_account_id` (classification default for sales)
+description: default_sales_account_id is the party’s default revenue account suggestion.
+---
+
 ## `default_sales_account_id` (classification default for sales)
 
 `default_sales_account_id` is the party’s default revenue account suggestion. Bookkeeping uses it to pre-fill the most likely sales account for new invoice rows so sales classification becomes review rather than repeated manual selection.

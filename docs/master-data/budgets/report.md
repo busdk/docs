@@ -1,3 +1,8 @@
+---
+title: Report budget vs actual
+description: Emit variance output for a year or period based on budget lines and journal actuals.
+---
+
 ## Report budget vs actual
 
 Emit variance output for a year or period based on budget lines and journal actuals.

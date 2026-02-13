@@ -1,3 +1,8 @@
+---
+title: Bank transactions
+description: A bank transaction is the cash movement you reconcile against invoices and post for non-invoice events such as fees, taxes, loan payments, and payment…
+---
+
 ## Bank transactions
 
 A bank transaction is the cash movement you reconcile against invoices and post for non-invoice events such as fees, taxes, loan payments, and payment provider settlements. Bank transactions are a primary driver for automation because they confirm what actually happened in the bank account.

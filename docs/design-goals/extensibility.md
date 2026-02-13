@@ -1,3 +1,8 @@
+---
+title: Extensibility as a first-class goal
+description: Extensibility is a first-class goal.
+---
+
 ## Extensibility as a first-class goal
 
 Extensibility is a first-class goal. The architecture must remain simple enough that a single developer can implement a new module over a weekend using common libraries, without rewriting or tightly coupling the core.

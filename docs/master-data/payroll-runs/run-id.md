@@ -1,3 +1,8 @@
+---
+title: `run_id` (payroll run identity)
+description: run_id is part of the payroll runs master data.
+---
+
 ## `run_id` (payroll run identity)
 
 `run_id` is part of the payroll runs master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: bus-budget — Software Design Document
+description: Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus…
+---
+
 ## bus-budget
 
 ### Introduction and Overview

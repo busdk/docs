@@ -1,3 +1,8 @@
+---
+title: `currency` (money movement currency)
+description: currency is the bank transaction currency.
+---
+
 ## `currency` (money movement currency)
 
 `currency` is the bank transaction currency. Bookkeeping needs currency explicit to interpret amounts correctly and to keep matching and exports safe, especially if a bank account or transaction feed can contain non-base currency movements.

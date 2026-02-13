@@ -1,3 +1,8 @@
+---
+title: `reference` (payment reference)
+description: reference is the payment reference carried by the bank transaction.
+---
+
 ## `reference` (payment reference)
 
 `reference` is the payment reference carried by the bank transaction. Bookkeeping uses references as high-signal matching keys for linking payments to invoices and for making reconciliation deterministic.

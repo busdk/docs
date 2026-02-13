@@ -1,3 +1,8 @@
+---
+title: Classify a non-invoice bank transaction
+description: Record the target ledger account and VAT intent for fees, taxes, and other events.
+---
+
 ## Classify a non-invoice bank transaction
 
 Record the target ledger account and VAT intent for fees, taxes, and other events.

@@ -1,3 +1,8 @@
+---
+title: Mark a line as capitalizable
+description: Capture asset intent so later fixed-asset workflows remain consistent.
+---
+
 ## Mark a line as capitalizable
 
 Capture asset intent so later fixed-asset workflows remain consistent.

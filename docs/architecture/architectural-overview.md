@@ -1,3 +1,8 @@
+---
+title: Architectural overview
+description: BusDK is a collection of loosely coupled modules centered around a canonical dataset with a reviewable, append-only change history.
+---
+
 ## Architectural overview
 
 BusDK is a collection of loosely coupled modules centered around a canonical dataset with a reviewable, append-only change history. It intentionally avoids a monolithic application design and instead follows a “micro-tool” architecture: each feature area is implemented as an independent CLI tool (or service) that reads and writes shared workspace datasets (tables plus schemas) as repository data. Modules coordinate by sharing data and by relying on an append-only revision history, rather than by calling each other’s internal APIs.

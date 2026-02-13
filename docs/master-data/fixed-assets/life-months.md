@@ -1,3 +1,8 @@
+---
+title: `life_months` (depreciation life in months)
+description: life_months is part of the fixed assets master data.
+---
+
 ## `life_months` (depreciation life in months)
 
 `life_months` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: `evidence_status` (evidence completeness signal)
+description: evidence_status expresses whether the required evidence files are present and acceptable for booking, such as missing, ok, or needs_review.
+---
+
 ## `evidence_status` (evidence completeness signal)
 
 `evidence_status` expresses whether the required evidence files are present and acceptable for booking, such as missing, ok, or needs_review. It prevents accidentally booking items without proper attachments and supports a clean checklist before VAT filings and year-end work.

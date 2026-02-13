@@ -1,3 +1,8 @@
+---
+title: `start_date` (start date)
+description: start_date is part of the loans master data.
+---
+
 ## `start_date` (start date)
 
 `start_date` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

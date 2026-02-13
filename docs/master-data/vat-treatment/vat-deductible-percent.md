@@ -1,3 +1,8 @@
+---
+title: `vat_deductible_percent` (purchase-side deductibility)
+description: vat_deductible_percent expresses how much of the input VAT is deductible for the purchase.
+---
+
 ## `vat_deductible_percent` (purchase-side deductibility)
 
 `vat_deductible_percent` expresses how much of the input VAT is deductible for the purchase. Not all VAT is deductible in all contexts, and deductibility can be partial.

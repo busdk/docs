@@ -1,3 +1,8 @@
+---
+title: Close an accounting period
+description: Generate closing entries and mark the period closed for review.
+---
+
 ## Close an accounting period
 
 Generate closing entries and mark the period closed for review.

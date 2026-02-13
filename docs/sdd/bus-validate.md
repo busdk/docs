@@ -1,3 +1,8 @@
+---
+title: bus-validate — Software Design Document
+description: Bus Validate validates all workspace datasets against their schemas, verifies cross-table integrity and double-entry invariants, and produces actionable…
+---
+
 ## bus-validate
 
 ### Introduction and Overview

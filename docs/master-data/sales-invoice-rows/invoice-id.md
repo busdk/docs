@@ -1,3 +1,8 @@
+---
+title: `invoice_id` (parent invoice link)
+description: invoice_id links a sales invoice row to its parent invoice.
+---
+
 ## `invoice_id` (parent invoice link)
 
 `invoice_id` links a sales invoice row to its parent invoice. Bookkeeping uses this link so row-level posting intent can always be reviewed in the invoice context, including counterparty, dates, totals, and linked evidence.

@@ -1,3 +1,8 @@
+---
+title: Error handling, dry-run, and diagnostics
+description: The CLI is expected to fail gracefully and provide clear error messages.
+---
+
 ## Error handling, dry-run, and diagnostics
 
 The CLI is expected to fail gracefully and provide clear error messages. BusDK does not require a Git repository to run and does not execute any Git commands or commit changes. When users choose to track the workspace datasets in Git, merge conflicts caused by concurrent edits or manual file modifications must be detected and surfaced, with guidance for resolution. A `--dry-run` flag should be available to preview file changes without committing. Optional logging should provide visibility into validation steps and planned file changes, supporting trust and diagnosability.

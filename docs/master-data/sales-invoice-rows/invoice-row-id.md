@@ -1,3 +1,8 @@
+---
+title: `invoice_row_id` (invoice row identity)
+description: invoice_row_id is the stable identity of a sales invoice row.
+---
+
 ## `invoice_row_id` (invoice row identity)
 
 `invoice_row_id` is the stable identity of a sales invoice row. Bookkeeping uses row identity for traceability when postings, exports, or later corrections need to point to the exact commercial line that drove the accounting decision.

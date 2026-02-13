@@ -1,3 +1,8 @@
+---
+title: `principal_account_id` (principal account)
+description: principal_account_id is part of the loans master data.
+---
+
 ## `principal_account_id` (principal account)
 
 `principal_account_id` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: `asset_id` (asset identity)
+description: asset_id is part of the fixed assets master data.
+---
+
 ## `asset_id` (asset identity)
 
 `asset_id` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

@@ -1,3 +1,8 @@
+---
+title: Sales invoices
+description: A sales invoice is a legal and accounting document that creates revenue and a receivable until it is paid.
+---
+
 ## Sales invoices
 
 A sales invoice is a legal and accounting document that creates revenue and a receivable until it is paid. In bookkeeping, sales invoices become postings and later become open items for payment matching and receivables review.

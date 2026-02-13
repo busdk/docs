@@ -1,3 +1,8 @@
+---
+title: `business_id` (strong national identifier)
+description: business_id is a strong identifier for a legal entity, such as a Finnish Y-tunnus.
+---
+
 ## `business_id` (strong national identifier)
 
 `business_id` is a strong identifier for a legal entity, such as a Finnish Y-tunnus. Bookkeeping uses it to reduce duplicates and to match counterparties consistently across invoices, bank transactions, and documents.

@@ -1,3 +1,8 @@
+---
+title: `gross` (gross pay amount)
+description: gross is part of the employees master data.
+---
+
 ## `gross` (gross pay amount)
 
 `gross` is part of the employees master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

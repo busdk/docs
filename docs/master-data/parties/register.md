@@ -1,3 +1,8 @@
+---
+title: Register a party
+description: Create or import a counterparty record so invoices and matching can link deterministically.
+---
+
 ## Register a party
 
 Create or import a counterparty record so invoices and matching can link deterministically.

@@ -1,3 +1,8 @@
+---
+title: `amount` (quantity)
+description: amount is the quantity for the invoice row.
+---
+
 ## `amount` (quantity)
 
 `amount` is the quantity for the invoice row. Bookkeeping uses quantity as part of the commercial evidence and for validation of invoice totals and VAT calculations.

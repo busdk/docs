@@ -1,3 +1,8 @@
+---
+title: Sales invoice rows
+description: A sales invoice row is the line-level specification of what was sold.
+---
+
 ## Sales invoice rows
 
 A sales invoice row is the line-level specification of what was sold. For bookkeeping, invoice rows are the best place to record posting intent because they determine the revenue account and VAT handling more precisely than invoice headers.

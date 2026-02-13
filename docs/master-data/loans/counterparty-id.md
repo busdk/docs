@@ -1,3 +1,8 @@
+---
+title: `counterparty_id` (lender or borrower party reference)
+description: counterparty_id is part of the loans master data.
+---
+
 ## `counterparty_id` (lender or borrower party reference)
 
 `counterparty_id` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

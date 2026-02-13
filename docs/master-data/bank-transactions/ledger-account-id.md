@@ -1,3 +1,8 @@
+---
+title: `ledger_account_id` (classification target for non-invoice events)
+description: ledger_account_id is the classification target used when a bank transaction is not a direct invoice payment, such as fees, taxes, loan repayments, and…
+---
+
 ## `ledger_account_id` (classification target for non-invoice events)
 
 `ledger_account_id` is the classification target used when a bank transaction is not a direct invoice payment, such as fees, taxes, loan repayments, and settlement movements. Bookkeeping needs explicit classification targets so posting can be automated beyond importing the statement.

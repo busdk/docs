@@ -1,3 +1,8 @@
+---
+title: `accounting_status` (review state)
+description: accounting_status expresses where the bank transaction is in the bookkeeping workflow, such as new, matched, ready, booked, or ignored.
+---
+
 ## `accounting_status` (review state)
 
 `accounting_status` expresses where the bank transaction is in the bookkeeping workflow, such as new, matched, ready, booked, or ignored. Bookkeeping uses status to separate “needs review” from “already handled” items in a reconciliation queue.

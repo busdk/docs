@@ -1,3 +1,8 @@
+---
+title: "BusDK Design Spec: Implementation conventions"
+description: "This section is split into **single-concept** documents:"
+---
+
 ## BusDK Design Spec: Implementation conventions
 
 This section is split into **single-concept** documents:

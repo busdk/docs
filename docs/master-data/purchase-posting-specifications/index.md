@@ -1,3 +1,8 @@
+---
+title: Purchase posting specifications
+description: A purchase posting specification records the bookkeeping intent for a purchase invoice.
+---
+
 ## Purchase posting specifications
 
 A purchase posting specification records the bookkeeping intent for a purchase invoice. It typically splits the purchase across one or more expense or asset accounts and captures the VAT handling decisions at the level where posting is decided.

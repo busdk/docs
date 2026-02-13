@@ -1,3 +1,8 @@
+---
+title: bus-bank — Software Design Document
+description: Bus Bank imports bank statement evidence into schema-validated datasets, normalizes transactions, and provides review outputs that can be reconciled into…
+---
+
 ## bus-bank
 
 ### Introduction and Overview

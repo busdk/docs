@@ -1,3 +1,8 @@
+---
+title: Triage items for bookkeeping
+description: Set review state and evidence completeness so the bookkeeping inbox stays actionable.
+---
+
 ## Triage items for bookkeeping
 
 Set review state and evidence completeness so the bookkeeping inbox stays actionable.

@@ -1,3 +1,8 @@
+---
+title: bus-vat — Software Design Document
+description: Bus VAT computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger…
+---
+
 ## bus-vat
 
 ### Introduction and Overview

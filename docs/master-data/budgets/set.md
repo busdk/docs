@@ -1,3 +1,8 @@
+---
+title: Set a budget line
+description: Record a budget amount for an account and period so variance reports are deterministic.
+---
+
 ## Set a budget line
 
 Record a budget amount for an account and period so variance reports are deterministic.

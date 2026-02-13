@@ -1,3 +1,8 @@
+---
+title: `ledger_account_id` (revenue account intent)
+description: ledger_account_id records which revenue account the invoice row belongs to.
+---
+
 ## `ledger_account_id` (revenue account intent)
 
 `ledger_account_id` records which revenue account the invoice row belongs to. A revenue account per sales line is one of the highest-value fields for automation because it turns sales bookkeeping from manual classification into validation and review.

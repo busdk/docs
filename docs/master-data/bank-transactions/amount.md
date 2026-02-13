@@ -1,3 +1,8 @@
+---
+title: `amount` (money movement amount)
+description: amount is the bank transaction amount.
+---
+
 ## `amount` (money movement amount)
 
 `amount` is the bank transaction amount. Bookkeeping requires exact amounts for reconciliation, matching, and posting, because even small rounding or parsing differences break deterministic exports and audit trails.

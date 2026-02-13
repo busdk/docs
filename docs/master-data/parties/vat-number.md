@@ -1,3 +1,8 @@
+---
+title: `vat_number` (VAT identity for cross-border rules)
+description: vat_number identifies the counterparty in VAT contexts.
+---
+
 ## `vat_number` (VAT identity for cross-border rules)
 
 `vat_number` identifies the counterparty in VAT contexts. Bookkeeping uses VAT numbers to support EU VAT scenarios, to justify VAT treatment decisions, and to keep the VAT audit trail reviewable without repeated manual checks.

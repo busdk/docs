@@ -1,3 +1,8 @@
+---
+title: `accounting_note` (exception explanation)
+description: accounting_note records why a bank transaction was booked in a particular way when the decision is not obvious from the statement evidence alone.
+---
+
 ## `accounting_note` (exception explanation)
 
 `accounting_note` records why a bank transaction was booked in a particular way when the decision is not obvious from the statement evidence alone. Bookkeeping uses notes to make exceptions reproducible later, such as private portions, partial deductions, or settlement batches that required a manual split.

@@ -1,3 +1,8 @@
+---
+title: bus-reports — Software Design Document
+description: Bus Reports computes financial reports from journal entries and reference data, verifies integrity and balances, and emits deterministic report outputs.
+---
+
 ## bus-reports
 
 ### Introduction and Overview

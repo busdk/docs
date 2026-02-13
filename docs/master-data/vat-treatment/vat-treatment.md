@@ -1,3 +1,8 @@
+---
+title: `vat_treatment` (reason and handling code)
+description: vat_treatment is a short code that explains the VAT handling category behind the rate.
+---
+
 ## `vat_treatment` (reason and handling code)
 
 `vat_treatment` is a short code that explains the VAT handling category behind the rate. A percentage alone is not enough for automation because the same percentage, especially 0%, can correspond to different legal treatments such as domestic 0, export, reverse charge, or exempt.

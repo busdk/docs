@@ -1,3 +1,8 @@
+---
+title: Register a fixed asset
+description: Record a new asset acquisition so depreciation and disposals can be booked deterministically.
+---
+
 ## Register a fixed asset
 
 Record a new asset acquisition so depreciation and disposals can be booked deterministically.

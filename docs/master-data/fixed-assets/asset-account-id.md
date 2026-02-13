@@ -1,3 +1,8 @@
+---
+title: `asset_account_id` (balance sheet asset account)
+description: asset_account_id is part of the fixed assets master data.
+---
+
 ## `asset_account_id` (balance sheet asset account)
 
 `asset_account_id` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

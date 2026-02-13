@@ -1,3 +1,8 @@
+---
+title: bus-attachments — Software Design Document
+description: Bus Attachments stores evidence files and maintains attachment metadata as schema-validated repository data so other modules can link to evidence without…
+---
+
 ## bus-attachments
 
 ### Introduction and Overview

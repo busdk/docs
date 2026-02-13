@@ -1,3 +1,8 @@
+---
+title: Define VAT treatment codes
+description: Maintain the allowed treatment codes so 0% and special cases stay deterministic.
+---
+
 ## Define VAT treatment codes
 
 Maintain the allowed treatment codes so 0% and special cases stay deterministic.

@@ -1,3 +1,8 @@
+---
+title: Open an accounting period
+description: Mark a period open so bookkeeping work can proceed for that period.
+---
+
 ## Open an accounting period
 
 Mark a period open so bookkeeping work can proceed for that period.

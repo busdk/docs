@@ -1,3 +1,8 @@
+---
+title: Amortize a loan
+description: Generate amortization schedule and posting intent for a period.
+---
+
 ## Amortize a loan
 
 Generate amortization schedule and posting intent for a period.

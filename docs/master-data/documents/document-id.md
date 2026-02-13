@@ -1,3 +1,8 @@
+---
+title: `document_id` (document identity)
+description: document_id is the stable identity of an evidence document.
+---
+
 ## `document_id` (document identity)
 
 `document_id` is the stable identity of an evidence document. Bookkeeping uses stable document identity to link evidence to invoices, bank transactions, and postings so audit trails remain navigable even if file locations change.

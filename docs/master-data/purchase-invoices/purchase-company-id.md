@@ -1,3 +1,8 @@
+---
+title: `purchase_company_id` (supplier link)
+description: purchase_company_id links a purchase invoice to the supplier.
+---
+
 ## `purchase_company_id` (supplier link)
 
 `purchase_company_id` links a purchase invoice to the supplier. Bookkeeping uses the supplier link for payables reporting, matching bank payments, and applying classification defaults for common vendors.

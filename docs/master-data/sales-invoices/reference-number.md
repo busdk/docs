@@ -1,3 +1,8 @@
+---
+title: `reference_number` (payment matching key)
+description: reference_number is the payment reference used for matching incoming bank payments to the invoice.
+---
+
 ## `reference_number` (payment matching key)
 
 `reference_number` is the payment reference used for matching incoming bank payments to the invoice. In Finnish banking, reference numbers are one of the strongest keys for deterministic matching.

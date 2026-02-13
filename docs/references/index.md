@@ -1,3 +1,8 @@
+---
+title: "BusDK Design Spec: References and external foundations"
+description: "This section is split into **single-concept** documents:"
+---
+
 ## BusDK Design Spec: References and external foundations
 
 This section is split into **single-concept** documents:

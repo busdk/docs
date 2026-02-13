@@ -1,3 +1,8 @@
+---
+title: `debtor_name` (counterparty name, debtor)
+description: debtor_name records the debtor party name from the bank transaction.
+---
+
 ## `debtor_name` (counterparty name, debtor)
 
 `debtor_name` records the debtor party name from the bank transaction. Bookkeeping uses counterparty names for matching when references are missing and for explaining statement entries during review, especially for non-invoice transactions.

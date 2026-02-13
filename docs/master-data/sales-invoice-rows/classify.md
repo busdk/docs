@@ -1,3 +1,8 @@
+---
+title: Classify a sales invoice row
+description: Record revenue account and VAT treatment so sales bookkeeping is deterministic.
+---
+
 ## Classify a sales invoice row
 
 Record revenue account and VAT treatment so sales bookkeeping is deterministic.

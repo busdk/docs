@@ -1,3 +1,8 @@
+---
+title: Split a purchase across accounts
+description: Record multi-line intent so expenses and assets are posted to the correct accounts.
+---
+
 ## Split a purchase across accounts
 
 Record multi-line intent so expenses and assets are posted to the correct accounts.

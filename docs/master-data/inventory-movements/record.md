@@ -1,3 +1,8 @@
+---
+title: Record an inventory movement
+description: Append stock movements so inventory levels and valuation remain auditable.
+---
+
 ## Record an inventory movement
 
 Append stock movements so inventory levels and valuation remain auditable.

@@ -1,3 +1,8 @@
+---
+title: `description` (what was sold)
+description: description explains what the invoice row represents.
+---
+
 ## `description` (what was sold)
 
 `description` explains what the invoice row represents. Bookkeeping and audits rely on clear descriptions because they reduce the need to open PDFs during review and help explain exceptions later.

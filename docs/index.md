@@ -1,3 +1,8 @@
+---
+title: BusDK design spec
+description: Canonical design documentation for BusDK — modular CLI-first toolkit, workspace datasets, and auditable workflows.
+---
+
 ## BusDK design spec
 
 BusDK is a modular, CLI-first toolkit for running a business, built on open, long-lived formats and transparent, auditable workflows. The preferred default is that workspace datasets live in the Git repository and are stored as UTF-8 CSV tables validated with Frictionless Data Table Schemas (JSON), but Git and CSV are implementation choices: the goal is that the workspace datasets and their change history remain reviewable and exportable. The system favors deterministic workflows that work for both humans and AI agents. See [busdk.com](https://busdk.com/) for a high-level overview.

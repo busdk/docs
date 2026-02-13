@@ -1,3 +1,8 @@
+---
+title: Value inventory
+description: Compute valuation output as of a date for review and posting decisions.
+---
+
 ## Value inventory
 
 Compute valuation output as of a date for review and posting decisions.

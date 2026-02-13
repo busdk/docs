@@ -1,3 +1,8 @@
+---
+title: `vat_registered` (VAT registration)
+description: vat_registered indicates whether the workspace’s accounting entity is VAT registered.
+---
+
 ## `vat_registered` (VAT registration)
 
 `vat_registered` indicates whether the workspace’s accounting entity is VAT registered. It is configured in `datapackage.json` at the workspace root under `busdk.accounting_entity`. Bookkeeping uses this as the first switch that determines whether VAT reporting is expected and which VAT completeness checks are relevant for invoices, purchases, and postings.

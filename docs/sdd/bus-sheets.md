@@ -1,3 +1,8 @@
+---
+title: bus-sheets — Software Design Document
+description: Bus Sheets provides a local, spreadsheet-like web user interface for BusDK workspaces.
+---
+
 ## bus-sheets
 
 ### Introduction and Overview

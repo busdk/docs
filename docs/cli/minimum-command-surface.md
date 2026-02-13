@@ -1,3 +1,8 @@
+---
+title: Minimum required command surface (end-to-end workflow)
+description: This page defines the minimum CLI surface that must exist for the end-to-end bookkeeping workflow described in the design spec.
+---
+
 ## Minimum required command surface (end-to-end workflow)
 
 This page defines the minimum CLI surface that must exist for the end-to-end bookkeeping workflow described in the design spec. It is derived from the workflow narrative in [Accounting workflow overview](../workflow/accounting-workflow-overview) and the current planned module set in [Modules](../modules/index).

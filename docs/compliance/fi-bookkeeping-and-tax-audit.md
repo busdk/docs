@@ -1,3 +1,8 @@
+---
+title: Finnish bookkeeping and tax-audit compliance
+description: BusDK compliance with Finnish bookkeeping and tax-audit requirements — audit trail and retention.
+---
+
 ## Finnish Bookkeeping and Tax-Audit Compliance (BusDK)
 
 Last verified: 2026-01-27

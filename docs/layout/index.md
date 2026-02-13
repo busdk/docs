@@ -1,3 +1,8 @@
+---
+title: Data directory layout
+description: Workspace layout and directory structure for BusDK datasets, schemas, and areas.
+---
+
 ## BusDK Design Spec: Data directory layout
 
 This section is split into **single-concept** documents:

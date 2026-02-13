@@ -1,3 +1,8 @@
+---
+title: Lock an accounting period
+description: Prevent further changes to closed period data.
+---
+
 ## Lock an accounting period
 
 Prevent further changes to closed period data.

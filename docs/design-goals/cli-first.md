@@ -1,3 +1,8 @@
+---
+title: CLI-first and human-friendly interfaces
+description: BusDK is CLI-first.
+---
+
 ## CLI-first and human-friendly interfaces
 
 BusDK is CLI-first. The primary user interface is a set of command-line tools that support day-to-day bookkeeping work directly in a repository workspace, including over SSH and in automation. The CLI should be discoverable and consistent, with a command structure that a human can learn and that scripts can rely on over time.

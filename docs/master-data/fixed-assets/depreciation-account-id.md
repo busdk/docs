@@ -1,3 +1,8 @@
+---
+title: `depreciation_account_id` (accumulated depreciation account)
+description: depreciation_account_id is part of the fixed assets master data.
+---
+
 ## `depreciation_account_id` (accumulated depreciation account)
 
 `depreciation_account_id` is part of the fixed assets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

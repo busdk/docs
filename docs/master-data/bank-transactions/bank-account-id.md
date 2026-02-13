@@ -1,3 +1,8 @@
+---
+title: `bank_account_id` (bank account link)
+description: bank_account_id links the bank transaction to the bank account it belongs to.
+---
+
 ## `bank_account_id` (bank account link)
 
 `bank_account_id` links the bank transaction to the bank account it belongs to. Bookkeeping uses this link to keep statement review, reconciliation, and posting tied to the correct cash account.

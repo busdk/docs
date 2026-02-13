@@ -1,0 +1,19 @@
+---
+description: How to write per-page SEO metadata (title and meta description) for Markdown and HTML documents.
+globs:
+  - "**/*.md"
+  - "**/*.html"
+alwaysApply: false
+---
+
+When you add or edit SEO metadata (HTML title and meta description, or YAML front matter `title` and `description` on Markdown pages), follow this standard so each page has unique, accurate metadata that matches its content.
+
+Derive the title and description from what the page actually contains. Use the page’s primary purpose, the main query intent it satisfies, the H1 and first-screen content, the key differentiators stated on the page, and concrete proof points (features, constraints, audience, scope) that the page explicitly states. Metadata must be unique per URL and must not promise anything the page does not deliver. If the page does not mention something, do not put it in the description.
+
+Workflow: read the page, extract three to five “truths” (what it is, who it is for, what problem it solves, the strongest differentiator, any important qualifier), choose the primary keyword phrase that naturally matches the page’s own wording and headings, then draft a title and description that reflect those truths. The title should lead with the most specific, intent-matching concept and align with the H1 or the page’s Name/summary line. The description should complete the thought in one or two sentences, staying within the facts stated on the page. Place keywords early but naturally; avoid stuffing. Use the brand name when it helps clarity or on primary entry points; omit or de-emphasize it on deep docs or feature pages where the topic is the draw. Tone: clear, human, non-clickbait. Add page-specific modifiers (use case, product variant, audience) only when the page content supports them.
+
+Length is secondary to accuracy. Titles are often truncated (roughly 50–60 characters in many layouts); meta descriptions around 155–160 characters are commonly shown. To improve the chance metadata survives search-engine rewrites, keep it accurate, specific, and aligned with on-page headings and copy. Front-load the most important information so a truncated snippet still sets correct expectations. Avoid trailing filler like “learn more” or “click here.”
+
+In this repo, Markdown pages set per-page metadata in YAML front matter as `title` and `description`; jekyll-seo-tag uses these for the HTML title and meta description. HTML files that define their own head should include a unique `<title>` and `<meta name="description" content="...">` that follow the same rules. When using templates, the unique parts per page are the primary topic, the main differentiator for that URL, and any qualifier that distinguishes this page from sibling pages. Do not reuse the same description across multiple URLs.
+
+Avoid generic titles (e.g. “Home”, “Services”), duplicate descriptions across pages, keyword stuffing, unsupported claims, and missing qualifiers (e.g. implying all platforms when the page covers one). QA: confirm the title and description are unique for that URL, match the page’s primary intent, align with the H1 and first-screen copy, and would accurately set expectations for someone who clicks through. The full standard with examples and special cases is in `docs/seo-metadata-standard.md`.

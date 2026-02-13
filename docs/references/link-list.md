@@ -1,3 +1,8 @@
+---
+title: Sources
+description: These external sources are referenced by the BusDK design spec.
+---
+
 ## Sources
 
 These external sources are referenced by the BusDK design spec. They are provided as background and authority links and do not define BusDK’s behavior on their own.

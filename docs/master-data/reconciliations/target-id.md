@@ -1,3 +1,8 @@
+---
+title: `target_id` (reconciliation target identifier)
+description: target_id is the stable identifier of the record being settled.
+---
+
 ## `target_id` (reconciliation target identifier)
 
 `target_id` is the stable identifier of the record being settled.

@@ -1,3 +1,8 @@
+---
+title: Testing strategy
+description: Each module is tested using standard unit testing rules for its implementation language.
+---
+
 ## Testing strategy
 
 Each module is tested using standard unit testing rules for its implementation language. Go modules use `go test` and idiomatic Go test structure by default. Unit tests focus on deterministic behavior for parsing, validation, schema enforcement, and dataset transformations, and they must be runnable without network dependencies or external services so they remain stable across local runs and CI.

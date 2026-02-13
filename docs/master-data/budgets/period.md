@@ -1,3 +1,8 @@
+---
+title: `period` (budget period identifier)
+description: period is part of the budgets master data.
+---
+
 ## `period` (budget period identifier)
 
 `period` is part of the budgets master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

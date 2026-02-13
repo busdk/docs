@@ -1,3 +1,8 @@
+---
+title: `vat_deductible_percent` (VAT deductibility, when relevant)
+description: vat_deductible_percent records how much of the input VAT is deductible when a bank transaction is booked as a purchase-like event directly from the statement.
+---
+
 ## `vat_deductible_percent` (VAT deductibility, when relevant)
 
 `vat_deductible_percent` records how much of the input VAT is deductible when a bank transaction is booked as a purchase-like event directly from the statement. Bookkeeping uses it to compute deductible VAT deterministically and to separate non-deductible portions without manual spreadsheets.

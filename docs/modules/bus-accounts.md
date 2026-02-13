@@ -1,3 +1,8 @@
+---
+title: bus accounts — manage the chart of accounts
+description: CLI reference for bus accounts: init, list, add, and validate the chart of accounts; schema-validated repository data and stable identifiers for downstream modules.
+---
+
 ## bus-accounts
 
 ### Name

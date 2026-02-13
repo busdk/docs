@@ -1,3 +1,8 @@
+---
+title: Chart of accounts
+description: A chart of accounts is the set of ledger accounts you post debits and credits into, together with the reporting structure that makes financial statements…
+---
+
 ## Chart of accounts
 
 A chart of accounts is the set of ledger accounts you post debits and credits into, together with the reporting structure that makes financial statements readable. Bookkeeping automation depends on being able to choose the correct account consistently, and reviewers depend on stable numbers and names when they validate postings.

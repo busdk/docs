@@ -1,3 +1,8 @@
+---
+title: `fiscal_year_start` (financial year start)
+description: fiscal_year_start defines when the workspace’s financial year begins.
+---
+
 ## `fiscal_year_start` (financial year start)
 
 `fiscal_year_start` defines when the workspace’s financial year begins. It is configured in `datapackage.json` at the workspace root under `busdk.accounting_entity`. Bookkeeping uses financial year boundaries to structure reporting, support year-end workflows, and make it unambiguous which annual reporting context entries belong to.

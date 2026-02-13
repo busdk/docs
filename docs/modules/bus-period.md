@@ -1,3 +1,8 @@
+---
+title: bus-period — open, close, and lock accounting periods
+description: bus period manages period open, close, and lock state as schema-validated repository data.
+---
+
 ## bus-period
 
 ### Name

@@ -1,3 +1,8 @@
+---
+title: Register an evidence document
+description: Add the evidence file and its metadata so bookkeeping can retrieve it deterministically.
+---
+
 ## Register an evidence document
 
 Add the evidence file and its metadata so bookkeeping can retrieve it deterministically.

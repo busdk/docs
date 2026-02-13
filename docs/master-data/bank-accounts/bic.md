@@ -1,3 +1,8 @@
+---
+title: `bic` (bank account BIC)
+description: bic identifies the bank and branch for the bank account.
+---
+
 ## `bic` (bank account BIC)
 
 `bic` identifies the bank and branch for the bank account. Bookkeeping uses it as supporting identifier information, especially in payment and matching workflows and in exports that require bank identification.

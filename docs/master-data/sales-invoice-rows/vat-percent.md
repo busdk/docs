@@ -1,3 +1,8 @@
+---
+title: `vat_percent` (applied VAT percentage)
+description: vat_percent is the VAT percentage applied to the invoice row.
+---
+
 ## `vat_percent` (applied VAT percentage)
 
 `vat_percent` is the VAT percentage applied to the invoice row. Bookkeeping requires the applied VAT percentage to be explicit at line level because VAT can differ by item and can change over time.

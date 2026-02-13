@@ -1,3 +1,8 @@
+---
+title: `default_vat_treatment` (VAT handling default)
+description: default_vat_treatment is the party’s default VAT handling suggestion.
+---
+
 ## `default_vat_treatment` (VAT handling default)
 
 `default_vat_treatment` is the party’s default VAT handling suggestion. Some counterparties consistently imply a VAT handling pattern, especially foreign vendors and platforms, and a default treatment makes pre-filling reliable.

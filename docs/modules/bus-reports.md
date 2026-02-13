@@ -1,3 +1,8 @@
+---
+title: bus-reports
+description: bus reports computes financial reports from journal entries and reference data.
+---
+
 ## bus-reports
 
 ### Name

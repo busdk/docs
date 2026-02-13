@@ -1,3 +1,8 @@
+---
+title: Evolution over time (extending the model)
+description: As the business evolves, the workflow stays stable because the authoritative interface is the workspace datasets and their schemas.
+---
+
 ## Evolution over time (extending the model)
 
 As the business evolves, the workflow stays stable because the authoritative interface is the workspace datasets and their schemas. BusDK’s module boundaries allow you to extend what is recorded and computed without rewriting history.

@@ -1,3 +1,8 @@
+---
+title: `maturity_date` (maturity date)
+description: maturity_date is part of the loans master data.
+---
+
 ## `maturity_date` (maturity date)
 
 `maturity_date` is part of the loans master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.

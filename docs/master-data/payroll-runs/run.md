@@ -1,3 +1,8 @@
+---
+title: Run payroll
+description: Compute payroll for a month and produce posting intent for wages and withholdings.
+---
+
 ## Run payroll
 
 Compute payroll for a month and produce posting intent for wages and withholdings.

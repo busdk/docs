@@ -1,3 +1,8 @@
+---
+title: `party_name` (counterparty label)
+description: party_name is the primary human-facing identifier for a counterparty.
+---
+
 ## `party_name` (counterparty label)
 
 `party_name` is the primary human-facing identifier for a counterparty. Bookkeeping uses it in review, matching, and audit trails, and it remains valuable even when other identifiers are missing or inconsistent.

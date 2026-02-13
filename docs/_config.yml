@@ -1,3 +1,6 @@
+# Site-wide defaults for jekyll-seo-tag. Each page can override with YAML front matter:
+#   title: Page-specific title (used in <title> and og:title)
+#   description: Short page-specific description (used in meta description and og:description)
 title: BusDK Design Document
 description: Design documentation for BusDK, a modular CLI-first toolkit for running a business in a Git repository with reviewable workspace datasets and auditable workflows.
 theme: jekyll-theme-primer

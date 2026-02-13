@@ -1,3 +1,8 @@
+---
+title: Documents (evidence)
+description: A document is the evidence file that supports a transaction, such as a PDF invoice, receipt, contract, or statement.
+---
+
 ## Documents (evidence)
 
 A document is the evidence file that supports a transaction, such as a PDF invoice, receipt, contract, or statement. Bookkeeping needs documents to be linkable and auditable by period, counterparty, and transaction so that every posting can be justified later.

@@ -1,3 +1,8 @@
+---
+title: bus-filing-vero — Software Design Document
+description: Bus Filing Vero converts validated workspace data into Vero export bundles, applying Vero-specific packaging rules and metadata while keeping bundle…
+---
+
 ## bus-filing-vero
 
 ### Introduction and Overview

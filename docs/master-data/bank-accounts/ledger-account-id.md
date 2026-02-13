@@ -1,3 +1,8 @@
+---
+title: `ledger_account_id` (ledger mapping)
+description: ledger_account_id maps the bank account to exactly one ledger account in the chart of accounts, such as a bank or cash account.
+---
+
 ## `ledger_account_id` (ledger mapping)
 
 `ledger_account_id` maps the bank account to exactly one ledger account in the chart of accounts, such as a bank or cash account. Bookkeeping uses this mapping to make posting bank movements systematic and to keep reconciliation and exports consistent.

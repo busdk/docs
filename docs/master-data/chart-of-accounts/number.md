@@ -1,3 +1,8 @@
+---
+title: `number` (human-facing account number)
+description: number is the human-facing account number used in exports, reporting, and review.
+---
+
 ## `number` (human-facing account number)
 
 `number` is the human-facing account number used in exports, reporting, and review. Account numbers should be unique within the accounting entity and treated as stable identifiers in day-to-day bookkeeping work.
