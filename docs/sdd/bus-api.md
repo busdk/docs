@@ -8,7 +8,7 @@ Intended users are system administrators, developers, and tools that integrate w
 
 By default, `bus-api` binds only to localhost and prints a capability-style URL that includes an unguessable random path prefix. Clients must know that URL to access the API. This keeps the MVP simple while still preventing accidental access by unrelated local processes.
 
-Bus API can expose formula-projected views when [bus-data](./bus-data) is configured to evaluate formula fields; formula semantics come from [bus-data](./bus-data)’s integration with [bus-bfl](./bus-bfl) (including range resolution through [bus-data](./bus-data)’s deterministic range resolver). Bus API also outputs an OpenAPI document so clients can discover and generate client bindings for the HTTP surface.
+Bus API can expose formula-projected views when [bus-data](./bus-data) is configured to evaluate formula fields; formula semantics come from [bus-data](./bus-data)’s integration with [bus-bfl](./bus-bfl) (including range resolution through [bus-data](./bus-data)’s deterministic range resolver). Bus API also outputs an OpenAPI document so clients can discover and generate client bindings for the HTTP surface. To support change detection, the API exposes an event stream: clients can subscribe to a long-lived stream and receive events whenever mutations are performed through the API (row create/update/delete, schema changes, or resource and package changes). Events are emitted only for mutations that occur via this API instance, so that tools and UIs can react to CSV and schema changes without polling.
 
 ### Requirements
 
@@ -40,11 +40,13 @@ FR-API-012 Schema and resource mutation. The API MUST expose schema and resource
 
 FR-API-013 Module exposure. The API MUST expose bus-modules so that domain modules (e.g. bus-accounts) can provide access to their data and semantics through their Go library only; the server MUST NOT invoke any Bus module CLI. Acceptance criteria: the server delegates requests to registered module backends by calling their Go APIs in-process; module code provides handlers or resource views for module-owned data; the API surface for module-provided endpoints is documented and stable.
 
+FR-API-014 Event stream for change detection. The API MUST expose an endpoint that allows clients to subscribe to a stream of events describing changes to workspace data performed through the API. Events MUST be emitted for (a) row create, update, and delete (CSV changes) and (b) schema changes (field add/remove/rename, primary or foreign key changes, schema patch) and (c) resource and package changes (resource add/remove/rename, package patch). Acceptance criteria: clients can open a long-lived connection to the event stream and receive exactly one event per successful mutating request, in request order; each event is machine-readable with a stable type and payload shape; events are emitted only for mutations performed via this API instance (no filesystem watchers); the OpenAPI document describes the event endpoint and event payloads.
+
 #### Non-Functional Requirements
 
 NFR-API-001 Deterministic responses. For the same workspace state and the same sequence of requests, responses MUST be deterministic in content and ordering. Acceptance criteria: JSON object key ordering is stable, arrays are ordered deterministically, and error payloads are stable and comparable in tests.
 
-NFR-API-002 No hidden background work. The server MUST NOT mutate workspace data without an explicit API request and MUST NOT run filesystem watchers by default. Acceptance criteria: no writes occur after startup until a mutating endpoint is called.
+NFR-API-002 No hidden background work. The server MUST NOT mutate workspace data without an explicit API request and MUST NOT run filesystem watchers by default. Acceptance criteria: no writes occur after startup until a mutating endpoint is called; the event stream is driven solely by mutating API requests in this process and does not require background filesystem watchers.
 
 NFR-API-003 Concurrency safety. The server MUST prevent concurrent write corruption. Acceptance criteria: all mutating operations obtain a workspace-level lock (or equivalent deterministic lock strategy) and either serialize writers or reject concurrent writes with a deterministic “busy” error.
 
@@ -56,15 +58,15 @@ NFR-API-006 Maintainability. The module MUST be library-first with a thin CLI wr
 
 NFR-API-007 Library-only integration with Bus modules. Every dependency on another Bus module (bus-data, bus-bfl, bus-accounts, or any other bus-* module) MUST be satisfied by calling that module’s Go library only. The bus-api process MUST NOT execute, shell out to, or invoke the CLI binary of bus-data, bus-bfl, or any other Bus module. Acceptance criteria: no code path runs `exec`, `os/exec`, or equivalent to start a bus-* process; all integration is in-process library calls; tests and code review can verify the constraint.
 
-NFR-API-008 Performance. The server MUST remain responsive for local use on typical workspace datasets. Acceptance criteria: health and read endpoints respond within a documented timeout under normative load; no unbounded in-memory growth for listing resources or reading rows within the scope of a single request.
+NFR-API-008 Performance. The server MUST remain responsive for local use on typical workspace datasets. Acceptance criteria: health and read endpoints respond within a documented timeout under normative load; no unbounded in-memory growth for listing resources or reading rows within the scope of a single request; event delivery to subscribers does not block the mutating request.
 
-NFR-API-005 Scalability. The module targets a single workspace per server instance. Acceptance criteria: the design does not assume distributed deployment or multi-tenant sharing; scaling is by running additional instances bound to different workspace roots.
+NFR-API-009 Scalability. The module targets a single workspace per server instance. Acceptance criteria: the design does not assume distributed deployment or multi-tenant sharing; scaling is by running additional instances bound to different workspace roots.
 
-NFR-API-007 Reliability. The server MUST fail requests deterministically without corrupting workspace data. Acceptance criteria: any request that fails leaves the workspace unchanged; error responses are stable and include sufficient context for diagnosis.
+NFR-API-010 Reliability. The server MUST fail requests deterministically without corrupting workspace data. Acceptance criteria: any request that fails leaves the workspace unchanged; error responses are stable and include sufficient context for diagnosis.
 
 ### System Architecture
 
-Bus API is an HTTP gateway that delegates to [bus-data](./bus-data) for workspace data and to bus-module libraries for module-owned data, satisfying FR-API-001, FR-API-005, FR-API-006, FR-API-007, FR-API-012, and FR-API-013. The **HTTP layer** parses requests, validates path parameters, enforces workspace-root confinement (FR-API-004), applies operation gating (NFR-API-005), and routes to the appropriate backend. The **workspace engine** is [bus-data](./bus-data): it handles CSV, Table Schema and Data Package descriptors, schema and resource mutation, mutation policies, foreign keys, and formula projection. Formula evaluation is exposed through [bus-data](./bus-data)’s integration with [bus-bfl](./bus-bfl) (FR-API-008). **Module backends** are Go libraries (e.g. bus-accounts) that register with the server and provide handlers or resource views for their data; the server delegates module-scoped requests to them by in-process library calls only (no CLI execution; NFR-API-007). The **OpenAPI generator** is embedded and emits an OpenAPI 3.1 document describing the stable API surface (FR-API-010).
+Bus API is an HTTP gateway that delegates to [bus-data](./bus-data) for workspace data and to bus-module libraries for module-owned data, satisfying FR-API-001, FR-API-005, FR-API-006, FR-API-007, FR-API-012, FR-API-013, and FR-API-014. The **HTTP layer** parses requests, validates path parameters, enforces workspace-root confinement (FR-API-004), applies operation gating (NFR-API-005), and routes to the appropriate backend. The **workspace engine** is [bus-data](./bus-data): it handles CSV, Table Schema and Data Package descriptors, schema and resource mutation, mutation policies, foreign keys, and formula projection. Formula evaluation is exposed through [bus-data](./bus-data)’s integration with [bus-bfl](./bus-bfl) (FR-API-008). **Module backends** are Go libraries (e.g. bus-accounts) that register with the server and provide handlers or resource views for their data; the server delegates module-scoped requests to them by in-process library calls only (no CLI execution; NFR-API-007). The **event stream** is an in-process fan-out: when a mutating request succeeds, the server emits one or more mutation events to all connected event subscribers. Events are not persisted; delivery is best-effort to current subscribers only. The **OpenAPI generator** is embedded and emits an OpenAPI 3.1 document describing the stable API surface including the event endpoint (FR-API-010, FR-API-014).
 
 ### Key Decisions
 
@@ -83,6 +85,8 @@ KD-API-005 HTTP by default, optional HTTPS via SSL parameters. The server listen
 KD-API-006 Full bus-data parity with optional gating. The API exposes the same operations as bus-data (row CRUD, schema and resource mutation, package and validation), so that system administrators and tools can manage workspace data over HTTP and create custom data outside of Bus domain modules. Operations can be restricted by feature flags or modes (e.g. `--read-only`); by default everything is enabled.
 
 KD-API-007 Module exposure via Go library. Bus-modules are exposed through bus-api so that domain modules (e.g. bus-accounts) can provide correct access to their data in code using their Go library only (NFR-API-007). The server delegates to module backends for module-owned resources by in-process library calls. Module endpoints use the path-based layout `/{token}/v1/modules/{module}/...`, and which modules are enabled is controlled by configuration or CLI flags (e.g. `--enable-module`). Module backends implement `http.Handler`; the server strips the path prefix and forwards the request (see IF-API-003).
+
+KD-API-009 Events only for API-originated mutations (FR-API-014). The event stream is driven solely by mutating requests handled by this API instance. The server does not run filesystem watchers by default and does not emit events for changes made to the workspace by other processes or by direct file edits; clients that need to detect external changes must poll or use a separate mechanism.
 
 ### Component Design and Interfaces
 
@@ -108,6 +112,21 @@ Normative shape (names illustrative, not mandatory):
 * `ReadOnly` or operation flags (optional; when set, mutating endpoints return 403; default: all operations enabled)
 * `ModuleBackends` or equivalent (optional; list of registered module backends that provide handlers or resource views for module-owned data)
 * `ModulesEnabled` or equivalent (optional; list of module identifiers to enable; only backends in this list are mounted under `/{token}/v1/modules/{module}/...`. When empty or unset, no module endpoints are exposed.)
+* `EventBufferSize` or equivalent (optional; maximum number of events to buffer per subscriber when delivery is slower than production; when full, behavior is implementation-defined — drop oldest, drop newest, or back-pressure. Default is documented and finite.)
+
+#### IF-API-004 Event stream
+
+The API exposes a long-lived event stream so that clients can detect changes to workspace data (CSV rows and schemas) performed through the API (FR-API-014). Transport: Server-Sent Events (SSE). Endpoint: `GET /{token}/v1/events`. Response: `Content-Type: text/event-stream`. Each event is a single SSE message; the `data` payload is a single line of UTF-8 JSON conforming to the mutation event payload shape below. Events are emitted in the order mutating requests complete; exactly one event (or one event per logical change when a single request causes multiple changes) is emitted per successful mutation. Optional query parameters: `resource` (filter by resource name), `type` (filter by event type prefix). Unsupported query values are ignored; filtering is best-effort and may be implemented server-side or documented as client-filtered. Connection lifecycle: the server keeps the connection open until the client disconnects or the server shuts down; no persistence or replay of events. Subscribers receive only events that occur after they connect.
+
+Mutation event payload shape (stable JSON object; key order is deterministic for tests):
+
+* `type` (string, required): Event type. Values include `resource.rows.created`, `resource.rows.updated`, `resource.rows.deleted`, `resource.schema.changed`, `resource.added`, `resource.removed`, `resource.renamed`, `package.changed`. New types may be added in future versions; clients MUST ignore unknown types.
+* `resource` (string, optional): Resource name (table name) when the event is resource-scoped.
+* `rowKey` (array of values, optional): Primary key of the affected row in schema primaryKey order, for row events; omitted for schema or package events.
+* `summary` (string, optional): Short human-readable summary of the change; for diagnostics only, not for machine logic.
+* Additional properties MAY be present for extensibility; clients MUST not rely on them for correctness.
+
+The Go server core MUST provide a way to publish mutation events (e.g. a callback or channel) that is invoked after each successful mutating operation so that the HTTP layer can fan out to all active SSE connections.
 
 #### IF-API-002 Module CLI
 
@@ -154,6 +173,7 @@ Core endpoints:
 
 * `GET /{token}/v1/healthz` → `{ "status": "ok" }`
 * `GET /{token}/v1/openapi.json` → OpenAPI document
+* `GET /{token}/v1/events` → Server-Sent Events stream of mutation events (FR-API-014). Query params (optional): `resource`, `type`. Each event is one SSE message; `data` is a single line of JSON with keys `type`, `resource` (optional), `rowKey` (optional), `summary` (optional). Event types: `resource.rows.created`, `resource.rows.updated`, `resource.rows.deleted`, `resource.schema.changed`, `resource.added`, `resource.removed`, `resource.renamed`, `package.changed`.
 * `GET /{token}/v1/resources` → list of resources (deterministically ordered)
 * `GET /{token}/v1/package` → `datapackage.json` as stored (404 if absent)
 * `PATCH /{token}/v1/package` → apply merge patch (delegates to `bus-data` semantics)
@@ -189,7 +209,7 @@ All mutation endpoints are subject to operation gating (NFR-API-005); when restr
 
 ### Data Design
 
-Bus API does not introduce new on-disk data formats. It operates purely on the workspace datasets and metadata managed by [bus-data](./bus-data) (CSV tables, beside-the-table schemas, and `datapackage.json`). The module does not own persistent storage for API state: the server is stateless aside from the workspace files it reads and writes through [bus-data](./bus-data). Not Applicable: API-owned databases, caches, or session stores; all persistent data lives in the workspace.
+Bus API does not introduce new on-disk data formats. It operates purely on the workspace datasets and metadata managed by [bus-data](./bus-data) (CSV tables, beside-the-table schemas, and `datapackage.json`). The module does not own persistent storage for API state: the server is stateless aside from the workspace files it reads and writes through [bus-data](./bus-data). Mutation events are not persisted; they are emitted in-process to connected event-stream subscribers only and are lost when the connection closes or the server stops. Not Applicable: API-owned databases, caches, or session stores; all persistent data lives in the workspace.
 
 ### Assumptions and Dependencies
 
@@ -219,6 +239,10 @@ AD-API-005 Single process. Concurrency safety (NFR-API-003) is defined for a sin
 
 **Library-only integration:** The requirement that bus-api (and, for module backends, any Bus module) integrate with other Bus modules solely by calling their Go libraries, never by executing their CLI binaries or subprocesses. See NFR-API-007 and KD-API-008.
 
+**Event stream:** A long-lived HTTP response (Server-Sent Events) at `GET /{token}/v1/events` that delivers mutation events to the client. Events are emitted only when mutations are performed through this API instance (row CRUD, schema or resource or package changes). See FR-API-014 and IF-API-004.
+
+**Mutation event:** A machine-readable JSON object pushed over the event stream describing a single change to workspace data (CSV or schema). It includes at least `type`, and optionally `resource`, `rowKey`, and `summary`. Used for change detection without polling.
+
 ### Security Considerations
 
 The server binds to loopback only by default (FR-API-003) and serves HTTP by default. When the operator supplies `--tls-cert` and `--tls-key`, the server serves HTTPS on the same listen address and port. In many deployments TLS is terminated by an external service (reverse proxy, load balancer) and the API runs HTTP behind it; optional in-process HTTPS is for operators who need it. The random token in the URL is treated as a bearer capability: anyone who has the full URL can access the API. The server must never serve files outside the workspace root and must reject path traversal attempts (FR-API-004). Request logging, if enabled, must avoid printing the token by default (e.g. log paths with the token redacted).
@@ -233,7 +257,7 @@ Invalid usage exits with code 2 and a concise usage error. Runtime request failu
 
 ### Testing Strategy
 
-Unit tests MUST cover token path gating, workspace-root confinement, deterministic JSON ordering, and OpenAPI document validity. Integration tests MUST start the server with fixed `--token` and fixed `--port`, run CRUD and validation requests against a fixture workspace, and verify on-disk results match the equivalent [bus-data](./bus-data) library operations (library-only integration; no CLI invocation). Concurrency tests MUST assert that two concurrent write requests serialize or reject deterministically without corrupting CSV files.
+Unit tests MUST cover token path gating, workspace-root confinement, deterministic JSON ordering, and OpenAPI document validity. Integration tests MUST start the server with fixed `--token` and fixed `--port`, run CRUD and validation requests against a fixture workspace, and verify on-disk results match the equivalent [bus-data](./bus-data) library operations (library-only integration; no CLI invocation). Integration tests for the event stream MUST verify that a client subscribed to `GET /{token}/v1/events` receives exactly one event (or the documented set of events) per successful mutating request, with payload shape conforming to IF-API-004, and that events are not emitted for failed or read-only requests. Concurrency tests MUST assert that two concurrent write requests serialize or reject deterministically without corrupting CSV files.
 
 ### Deployment and Operations
 
