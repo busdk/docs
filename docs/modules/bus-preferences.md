@@ -53,7 +53,7 @@ The directory for the file is created automatically when you first write a prefe
 
 Keys are dot-separated paths. Each segment may contain only lowercase letters (`a-z`), digits (`0-9`), hyphens (`-`), and underscores (`_`). Uppercase characters are not allowed so that keys have a single canonical form. Invalid keys (e.g. empty segment, disallowed character, or leading/trailing dot) are rejected with a usage error and exit code 2.
 
-The recommended convention is to use the first segment as a module namespace (e.g. `bus-agent`, `bus-dev`, `bus`) and the rest as module-defined subkeys. For example `bus-agent.default_runtime` and `bus-dev.ui.theme` keep different modules’ preferences from colliding. Bus preferences does not enforce what namespaces mean; it only enforces the key grammar and storage invariants.
+The recommended convention is to use the first segment as a module namespace (e.g. `bus-agent`, `bus-dev`, `bus`) and the rest as module-defined subkeys. For example `bus-agent.runtime` and `bus-dev.ui.theme` keep different modules’ preferences from colliding. Bus preferences does not enforce what namespaces mean; it only enforces the key grammar and storage invariants.
 
 ### Global flags
 
@@ -75,8 +75,8 @@ Command results (e.g. `get` output or `list` lines) are written to stdout when p
 Set a string preference and read it back:
 
 ```bash
-bus preferences set bus-agent.default_runtime gemini
-bus preferences get bus-agent.default_runtime
+bus preferences set bus-agent.runtime gemini
+bus preferences get bus-agent.runtime
 ```
 
 Store a JSON object for a module that expects structured options:
@@ -94,7 +94,7 @@ bus preferences list bus-dev
 Remove a preference:
 
 ```bash
-bus preferences unset bus-agent.default_runtime
+bus preferences unset bus-agent.runtime
 ```
 
 ### Files

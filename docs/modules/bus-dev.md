@@ -13,7 +13,7 @@ description: "bus dev is a developer-only companion that centralizes workflow lo
 
 `bus dev [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|gemini|claude>] <operation> [operation ...]`
 
-Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`work`**, **`e2e`**. You can pass one operation per invocation, or list two or more of the workflow operations (**spec**, **work**, **e2e**) to run them in sequence, one at a time. The first operation determines how remaining arguments are parsed: **init** accepts an optional directory argument, then optional workflow operations from the same set; **commit** and **plan** take no further positionals; **spec**, **work**, and **e2e** accept optional further operations from that same set and run in order.
+Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`work`**, **`e2e`**, **`set`**. You can pass one operation per invocation, or list two or more of the workflow operations (**spec**, **work**, **e2e**) to run them in sequence, one at a time. The first operation determines how remaining arguments are parsed: **init** accepts an optional directory argument, then optional workflow operations from the same set; **commit** and **plan** take no further positionals; **spec**, **work**, and **e2e** accept optional further operations from that same set and run in order.
 
 `bus dev init [DIR] [--lang go] [spec|work|e2e ...]` — initialize module files in the current directory by default, or in `DIR` when provided; does not run spec/work/e2e unless explicitly listed.  
 `bus dev commit` — commit staged changes with high-quality messages (no remote, no history rewrite).  
@@ -21,6 +21,10 @@ Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`work`**, **`e2e
 `bus dev spec` — refine only the current module’s Cursor MDC rule file to align with BusDK specs.  
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).  
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.  
+`bus dev set agent <cursor|codex|gemini|claude>` — set the default agent for bus-dev (and the shared default when used elsewhere) via the bus-preferences Go library.  
+`bus dev set model <value>` — set the default model (default when unset: `auto`).  
+`bus dev set output-format <ndjson|text>` — set the default output format (default when unset: `text`).  
+`bus dev set timeout <duration>` — set the default run timeout (e.g. `60m`).  
 `bus dev spec [work [e2e]]` — run one or more of spec, work, e2e in the order given (e.g. `bus dev spec work e2e` runs all three in sequence; if one fails, the run stops).
 
 ### Description
@@ -45,6 +49,16 @@ All paths and the working directory are resolved relative to the current directo
 
 **`e2e`** — Guided workflow to detect missing end-to-end tests for the current module and scaffold them in a hermetic way, consistent with BusDK testing conventions and the module’s [SDD](../sdd/bus-dev) and end-user documentation. May be combined with **spec** and **work** in one invocation (e.g. `bus dev spec work e2e`); operations run in the order given and stop on first failure. E2E tests are Bash scripts under `tests/` named `e2e_bus_<name>.sh`, where `<name>` is the module name with the `bus-` prefix stripped (for example `bus-accounts` → `tests/e2e_bus_accounts.sh`). The tool uses the module’s SDD and end-user docs to determine which tests are needed and produces scaffolds that cover the behavior described there. When `PLAN.md` exists at repository root, the workflow reads it first, treats checked items as completed-feature coverage obligations, verifies each checked item is fully covered by e2e tests, and prioritizes unchecked test-related items. It also continues to search SDD and end-user docs for other untested behavior exactly as it does without `PLAN.md`. This subcommand does not remove already checked plan items; checked-item pruning is handled by `bus dev plan`. The command does not perform remote Git operations or modify workspace accounting datasets.
 
+**`set`** — Set a persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). Bus-dev provides a dedicated subcommand for each key that affects agent use:
+
+**`set agent <runtime>`** — Set the default agent (`bus-dev.agent`; same preference is used as the default when no session override is set). `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Set with `bus dev set agent <runtime>`. Invalid runtime yields exit 2.
+
+**`set model <value>`** — Set the default model (`bus-agent.model`). When unset, the default is `auto`. Invalid value yields exit 2.
+
+**`set output-format <ndjson|text>`** — Set the default output format (`bus-agent.output_format`). Valid values: `ndjson` (raw structured output), `text` (human-readable). When unset, the default is `text`. Invalid value yields exit 2.
+
+**`set timeout <duration>`** — Set the default run timeout (`bus-agent.timeout`), e.g. `60m`. Invalid value yields exit 2.
+
 ### Global flags
 
 These flags apply to all subcommands. The common subset matches the [standard global flags](../cli/global-flags); `bus dev` adds `--agent` for runtime selection. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
@@ -57,7 +71,7 @@ These flags apply to all subcommands. The common subset matches the [standard gl
 - **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. The file is created or truncated. Errors and diagnostics still go to stderr. If both `--output` and `--quiet` are used, quiet wins: no output is written to the file.
 - **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. Invalid value is usage error (exit 2).
 - **`--no-color`** — Same as `--color=never`.
-- **`--agent <runtime>`** — Select the agent runtime for this invocation only. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid value is usage error (exit 2). This overrides the default set by the `BUS_DEV_AGENT` environment variable (see Agent runtime selection below).
+- **`--agent <runtime>`** — Select the agent runtime for this invocation only. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid value is usage error (exit 2). This overrides the default set by `BUS_DEV_AGENT`, `BUS_AGENT`, and any persistent preferences (see Agent runtime selection below).
 
 Command results are written to stdout when a subcommand produces them. Diagnostics, progress, and human-readable agent output are written to stderr.
 
@@ -65,9 +79,20 @@ Command results are written to stdout when a subcommand produces them. Diagnosti
 
 Subcommands that invoke an external agent (`plan`, `work`, `spec`, and `e2e`, including when these are requested after `init`) use the [bus-agent](../sdd/bus-agent) library and one of its supported runtimes: **Cursor CLI**, **Codex**, **Gemini CLI**, and **Claude CLI**. At the start of each such step, the tool prints to stderr which internal agent and which model are in use so that logs and scripts can see the active runtime and model.
 
-The active runtime is chosen as follows. The `--agent <runtime>` flag for that invocation overrides everything else. If no flag is given, the session-stored preference **`BUS_DEV_AGENT`** applies when set (e.g. `export BUS_DEV_AGENT=codex`); that value is used as the default for every `bus dev` command in that session until the variable is unset or changed. When neither flag nor session preference is set, the [bus-agent](../sdd/bus-agent) library reads the **persistent default agent** from user-level preferences via the [bus-preferences](./bus-preferences) Go library; you can set it with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.default_runtime gemini`). The preference keys and behavior are documented in the [bus-agent](./bus-agent) module; bus-dev does not define them — it delegates to the bus-agent library for resolution. When no persistent default is set, the tool uses the automatic default from the set of available runtimes in the effective order (alphabetic by runtime ID by default). You can configure which agent is used first by setting an agent order, and you can disable or enable specific agents; see the [bus-agent](../sdd/bus-agent) SDD and [bus-agent module docs](./bus-agent) for the exact environment variables or config.
+The active runtime is chosen in this order: (1) **`--agent <runtime>`** for that invocation; (2) **`BUS_DEV_AGENT`** (bus-dev-only session default; when set, used for every `bus dev` command in that session until unset or overridden); (3) **`BUS_AGENT`** (shared session default, used when `BUS_DEV_AGENT` is not set); (4) **bus-dev persistent preference** (e.g. `bus-dev.agent` via [bus-preferences](./bus-preferences), affects only bus-dev); (5) **bus-agent persistent preference** (`bus-agent.runtime`); (6) **first available** runtime in the effective order (alphabetic by runtime ID by default). Set bus-dev’s default with `bus preferences set bus-dev.agent <runtime>` and the shared default with `bus preferences set bus-agent.runtime <runtime>`. At any step, if the configured runtime is **disabled** by user configuration, the tool prints a warning to stderr and continues with the next source. You can configure agent order and enable/disable; see the [bus-agent](../sdd/bus-agent) SDD and [bus-agent module docs](./bus-agent).
 
-Invalid runtime names (e.g. `--agent unknown` or an invalid value in `BUS_DEV_AGENT`) produce a clear usage error and exit 2. If the user has selected an agent (via flag or `BUS_DEV_AGENT`) and that agent’s CLI is not installed or not in PATH, the tool reports that on stderr, directs you to the canonical installation URL for that runtime, and exits with code 1. When no runtime is selected and no agent is available (none in PATH or all disabled/restricted), the tool exits with a clear diagnostic and directs you to install or enable at least one supported agent, with pointers to the canonical installation URLs for each runtime. Model, output format, and timeout for the agent are configurable via the runtime’s own environment variables or flags (documented by each runtime).
+Invalid runtime names (e.g. `--agent unknown` or an invalid value in `BUS_DEV_AGENT` or `BUS_AGENT`) produce a clear usage error and exit 2. If the user has selected an agent (via flag or `BUS_DEV_AGENT`) and that agent’s CLI is not installed or not in PATH, the tool reports that on stderr, directs you to the canonical installation URL for that runtime, and exits with code 1. When no runtime is selected and no agent is available (none in PATH or all disabled/restricted), the tool exits with a clear diagnostic and directs you to install or enable at least one supported agent, with pointers to the canonical installation URLs for each runtime. Model, output format, and timeout for the agent are read from [bus-agent](./bus-agent) preferences when bus-dev invokes the agent; see Preference settings below and the [bus-agent](./bus-agent) module for those keys and options (default model `auto`, default output format `text`).
+
+### Preference settings (bus-preferences)
+
+Preferences that affect `bus dev` are stored via the [bus-preferences](./bus-preferences) Go library. Bus-dev stores its own default agent; when bus-dev invokes the agent (plan, work, spec, e2e), it also reads run-config from the bus-agent namespace. Set any of these with **`bus dev set <key> <value>`** (e.g. `bus dev set agent gemini`, `bus dev set model auto`, `bus dev set output-format text`, `bus dev set timeout 60m`) or with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-dev.agent gemini`). Inspect with `bus preferences get <key>`. The bus-dev CLI uses the bus-preferences library directly and does not shell out to `bus preferences`.
+
+| Key   | Description |
+|-------|-------------|
+| `bus-dev.agent` | Default agent runtime (same option as `bus-agent.runtime`; bus-dev uses this key for its default). Valid values: **`cursor`**, **`codex`**, **`gemini`**, **`claude`**. When unset, resolution falls through to `BUS_AGENT`, then bus-agent preference, then first available. Overridden by `--agent` and `BUS_DEV_AGENT` for the session. Set with `bus dev set agent <runtime>`. For the shared default when not using bus-dev, set `bus-agent.runtime` via `bus agent set runtime <runtime>`. |
+| `bus-agent.model` | Default model (e.g. for Cursor). When unset, the default is `auto`. Overridable by `CURSOR_AGENT_MODEL`. Set with `bus dev set model <value>`. |
+| `bus-agent.output_format` | Default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable; NDJSON formatted to text). When unset, the default is `text`. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. Set with `bus dev set output-format` (values: `ndjson`, `text`). |
+| `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. Set with `bus dev set timeout <duration>`. |
 
 ### Example: building a module from scratch with AI
 
@@ -89,7 +114,7 @@ Because the specs are public and machine-readable, this flow lets you regenerate
 
 - **0** — Success. For `bus dev commit`, “nothing to commit” is success.
 - **1** — Execution failure: Git command failed, hook failed, agent failed or timed out, selected agent runtime not found or not executable, or no agent enabled when the automatic default would apply.
-- **2** — Invalid usage: unknown subcommand, invalid flag (including invalid `--agent` runtime name), or precondition not met (e.g. not in a Git repository for commands that require one, MDC file missing for `bus dev spec`, or init target path is not a directory).
+- **2** — Invalid usage: unknown subcommand, invalid flag (including invalid `--agent` or `set agent` runtime name), or precondition not met (e.g. not in a Git repository for commands that require one, MDC file missing for `bus dev spec`, or init target path is not a directory).
 
 Error messages are always on stderr. If you are not in a Git repository when a subcommand requires one, the tool exits with code 2 and a clear message. If the selected agent runtime is missing or cannot be executed, or if no agent is enabled when the automatic default would apply, the tool exits with code 1 and directs you to the canonical installation URLs for the supported runtimes.
 

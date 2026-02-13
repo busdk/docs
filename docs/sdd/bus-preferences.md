@@ -85,11 +85,11 @@ Key-path validation failures and invalid JSON for `set-json` MUST exit with code
 Usage examples:
 
 ```bash
-bus preferences set bus-agent.default_runtime gemini
+bus preferences set bus-agent.runtime gemini
 bus preferences set-json bus-dev.ui '{"theme":"dark","density":"compact"}'
-bus preferences get bus-agent.default_runtime
+bus preferences get bus-agent.runtime
 bus preferences list bus-dev
-bus preferences unset bus-agent.default_runtime
+bus preferences unset bus-agent.runtime
 ```
 
 #### Interface IF-PRF-003 (Go library)
@@ -111,7 +111,7 @@ Satisfies NFR-PRF-001. Keys are canonical “paths” using dot-separated segmen
 
 * Grammar (informal): `segment("." segment)*`
 * Segment allowed characters: `a-z`, `0-9`, `-`, `_` (lowercase only)
-* Recommended convention: first segment is a module namespace (e.g. `bus-agent`, `bus-dev`, `bus`), followed by module-defined subkeys (e.g. `default_runtime`, `ui.theme`).
+* Recommended convention: first segment is a module namespace (e.g. `bus-agent`, `bus-dev`, `bus`), followed by module-defined subkeys (e.g. `runtime`, `ui.theme`).
 
 Keys MUST be treated as case-sensitive at the storage layer; the CLI and library MUST reject keys containing uppercase characters to maintain a single canonical form.
 
@@ -123,7 +123,7 @@ The preferences file is a JSON document with an envelope and a values map:
 {
   "version": 1,
   "values": {
-    "bus-agent.default_runtime": "gemini",
+    "bus-agent.runtime": "gemini",
     "bus-dev.ui": { "theme": "dark" }
   }
 }

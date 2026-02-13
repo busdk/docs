@@ -13,9 +13,13 @@ description: CLI reference for bus agent: detect enabled runtimes, render prompt
 
 `bus agent [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] <command> [options]`
 
-Commands: **`detect`**, **`render`**, **`run`**, **`format`**. These operations are intended for diagnostics and development (for example, checking which agent runtimes are available, testing prompt templates, or formatting raw agent output). They do not implement business workflows; higher-level modules such as [bus dev](./bus-dev) use the same agent runner via the library and provide workflow-specific behavior (commit, work, spec, e2e).
+Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These operations are intended for diagnostics and development (for example, checking which agent runtimes are available, testing prompt templates, or formatting raw agent output). They do not implement business workflows; higher-level modules such as [bus dev](./bus-dev) use the same agent runner via the library and provide workflow-specific behavior (commit, work, spec, e2e).
 
 `bus agent detect [-1|--first]` — list available agent runtimes (first is the default); with `-1` or `--first`, output only the default runtime.  
+`bus agent set runtime <runtime>` — set the default agent (e.g. `cursor`, `gemini`) via the bus-preferences Go library.  
+`bus agent set model <value>` — set the default model (default when unset is `auto`).  
+`bus agent set output-format <ndjson|text>` — set the default output format (default when unset: `text`).  
+`bus agent set timeout <duration>` — set the default run timeout (e.g. `60m`).  
 `bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]` — render a prompt template with the given variables and fail if any `{{PLACEHOLDER}}` remains unresolved.  
 `bus agent run [--agent <runtime>] [--timeout <duration>] [--workdir <dir>] (--prompt <file> | --text <text>)` — run the selected agent with the given prompt and stream output in a deterministic, script-safe way.  
 `bus agent format [--runtime <runtime>]` — read raw agent output (e.g. NDJSON) from stdin and write formatted, human-readable text to stdout.
@@ -30,7 +34,9 @@ Command names follow [CLI command naming](../cli/command-naming). `bus agent` is
 
 **`render`** — Render a prompt template with the supplied variables and print the result to stdout. You must supply either `--template <file>` (path to a UTF-8 file containing the template) or `--text <text>` (the template string). Variables are passed with `--var KEY=VALUE`; you can repeat `--var` for multiple keys. Templates use `{{VARIABLE}}` placeholders. Rendering is deterministic; every placeholder must be supplied. If a required variable is missing or any `{{...}}` token remains after substitution, the command fails with invalid usage (exit 2) and no external process is run. Use this to test template expansion or to produce a final prompt for inspection before passing it to `bus agent run`.
 
-**`run`** — Run the selected agent runtime with a prompt and stream its output. You must supply either `--prompt <file>` (path to a UTF-8 file whose contents are the prompt) or `--text <text>` (the prompt string). The effective working directory for the agent is the current directory unless you set `--workdir <dir>`. The run is subject to a timeout; use `--timeout <duration>` (e.g. `30s`, `5m`) or rely on the default. Which runtime is used is determined by `--agent <runtime>` (one of `cursor`, `codex`, `gemini`, `claude`); if omitted, the same resolution order as in [bus dev](./bus-dev) applies (explicit selection, then session preference, then automatic default from available runtimes). When multiple agents are available, the automatic default is the first in the user-configured order, or alphabetical by runtime ID when no order is set. You can configure which agents are available and their order (see Agent order and enable/disable below). At the start of the run, the tool prints to stderr which agent and model are in use. Output is streamed in a script-safe, non-interactive manner. If the selected runtime is not installed or not in PATH, the command fails with a clear diagnostic and the canonical installation URL for that runtime.
+**`run`** — Run the selected agent runtime with a prompt and stream its output. You must supply either `--prompt <file>` (path to a UTF-8 file whose contents are the prompt) or `--text <text>` (the prompt string). The effective working directory for the agent is the current directory unless you set `--workdir <dir>`. The run is subject to a timeout; use `--timeout <duration>` (e.g. `30s`, `5m`) or rely on the default. Which runtime is used is determined by the resolution order: `--agent`, then `BUS_AGENT`, then `bus-agent.runtime`, then first available in the effective order (see Agent runtimes and installation below). If a configured runtime is disabled, the tool prints a warning and uses the next source. At the start of the run, the tool prints to stderr which agent and model are in use. Output is streamed in a script-safe, non-interactive manner. If the selected runtime is not installed or not in PATH, the command fails with a clear diagnostic and the canonical installation URL for that runtime.
+
+**`set`** — Set a bus-agent persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). The CLI provides a dedicated subcommand for each key: **`bus agent set runtime <runtime>`** (e.g. `cursor`, `gemini`), **`bus agent set model <value>`** (default when unset: `auto`), **`bus agent set output-format <ndjson|text>`** (default when unset: `text`), **`bus agent set timeout <duration>`** (e.g. `60m`). Each writes the corresponding key in the table under Preference settings below. Invalid value yields exit 2.
 
 **`format`** — Read raw agent output from stdin and write formatted text to stdout. This is useful when you have captured NDJSON or other backend-specific output and want human-readable text. Use `--runtime <runtime>` to select the formatter for the given backend (e.g. Cursor-style NDJSON). If the runtime is omitted, the tool may use a default or infer from the input where possible; see `bus agent format --help` for the current behavior.
 
@@ -58,20 +64,20 @@ The agent runner supports four runtimes: **Gemini CLI**, **Cursor CLI**, **Claud
 - **Claude CLI** — https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started
 - **Codex** — https://developers.openai.com/codex/cli/
 
-Runtime selection for `bus agent run` follows the same rules as in [bus dev](./bus-dev): explicit `--agent` for the invocation, then session preference (e.g. environment variable if supported), then the **persistent default** from [bus-preferences](./bus-preferences), then the automatic default from the set of available runtimes. The persistent default and other run defaults are read from the user-level preferences file via the bus-preferences Go library. When multiple agents are available and no default is set, the order is alphabetical by runtime ID unless you configure a different order; you can also disable or enable specific agents. See Agent order and enable/disable below. Invalid runtime names produce a usage error (exit 2).
+Runtime selection for `bus agent run` uses this order (same logic as [bus dev](./bus-dev) when it delegates to the bus-agent library, but without bus-dev-only sources): (1) **`--agent`** for that invocation, (2) **`BUS_AGENT`** (session default), (3) **`bus-agent.runtime`** from [bus-preferences](./bus-preferences), (4) **first available** runtime in the effective order. When multiple agents are available and no earlier source is set, the order is alphabetical by runtime ID unless you configure a different order; you can also disable or enable specific agents (see Agent order and enable/disable below). At any step, if the configured runtime is **disabled** by user configuration, the tool prints a warning to stderr and continues with the next source instead of selecting it. Invalid runtime names produce a usage error (exit 2).
 
 ### Preference settings (bus-preferences)
 
-Default settings for the agent runner are read and written through the [bus-preferences](./bus-preferences) Go library (user-level preferences file). The CLI uses these values when resolving the runtime and building run config for `run` when you do not pass `--agent`, a session env, or per-flag overrides.
+Default settings for the agent runner are read and written through the [bus-preferences](./bus-preferences) Go library (user-level preferences file). Session default can also be set with **`BUS_AGENT`** (e.g. `export BUS_AGENT=gemini`); it is consulted after `--agent` and before persistent preferences. The CLI uses these values when resolving the runtime and building run config for `run` when you do not pass `--agent` or a session env.
 
 | Key | Description |
 |-----|-------------|
-| `bus-agent.default_runtime` | Default agent runtime when no `--agent` or session env is set (e.g. `cursor`, `gemini`). |
-| `bus-agent.model` | Default model (e.g. for Cursor). Overridable by `CURSOR_AGENT_MODEL`. |
-| `bus-agent.output_format` | Default output format. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. |
+| `bus-agent.runtime` | Default agent runtime when no `--agent` or `BUS_AGENT` is set (e.g. `cursor`, `gemini`). |
+| `bus-agent.model` | Default model (e.g. for Cursor). When unset, the default is `auto`. Overridable by `CURSOR_AGENT_MODEL`. |
+| `bus-agent.output_format` | Default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable; NDJSON formatted to text). When unset, the default is `text`. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. |
 | `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. |
 
-Set or inspect preferences with the [bus preferences](./bus-preferences) CLI: for example `bus preferences set bus-agent.default_runtime gemini` and `bus preferences get bus-agent.default_runtime`. The bus-agent library exposes helpers such as `GetDefaultRuntime`, `SetDefaultRuntime`, `GetDefaultRunConfig`, and `SetDefault*` so that callers and the CLI can read and write these values without touching the preferences file directly.
+Set preferences with **`bus agent set runtime <runtime>`**, **`bus agent set model <value>`**, **`bus agent set output-format <value>`**, or **`bus agent set timeout <duration>`** (e.g. `bus agent set runtime gemini`), or with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). Inspect with `bus preferences get bus-agent.runtime`. The bus-agent CLI uses the bus-preferences Go library directly; it does not shell out to `bus preferences`. The bus-agent library exposes helpers such as `GetDefaultRuntime`, `SetDefaultRuntime`, `GetDefaultRunConfig`, and `SetDefault*` so that callers and the CLI can read and write these values without touching the preferences file path.
 
 ### Agent order and enable/disable
 
@@ -81,13 +87,13 @@ You can change which agent is used first by configuring the order: supply an ord
 
 ### Files
 
-`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.default_runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation.
+`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation.
 
 ### Exit status and errors
 
 - **0** — Success.
 - **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, could not execute the agent CLI, or no runtime available when using `detect --first`.
-- **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render), unresolved template placeholder, invalid runtime name, or invalid `--timeout` or path.
+- **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render), unresolved template placeholder, invalid runtime name, invalid `set` value, or invalid `--timeout` or path.
 
 Template rendering failures (missing variable, unresolved `{{...}}`) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.
 
