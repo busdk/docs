@@ -118,6 +118,20 @@
     text-decoration: none !important;
   }
 
+  .page-404-cta--secondary {
+    background: var(--busdk-surface-1);
+    color: var(--busdk-fg) !important;
+    border: 1px solid var(--busdk-border);
+  }
+
+  .page-404-cta--secondary:hover,
+  .page-404-cta--secondary:focus-visible {
+    background: var(--busdk-surface-2);
+    color: var(--busdk-fg) !important;
+    border-color: var(--busdk-border);
+    text-decoration: none !important;
+  }
+
   .page-404-report {
     color: var(--busdk-muted);
     font-size: 0.9rem;
