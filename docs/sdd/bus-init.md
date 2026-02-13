@@ -19,6 +19,8 @@ FR-INIT-003 Module init contract. Every module invoked during bootstrap (includi
 
 NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostics and stop on the first failure. Acceptance criteria: failures identify the module command that failed.
 
+FR-INIT-004 Owned paths only. The module MUST NOT require or verify the presence of files owned by other modules (e.g. `journals.csv`, `accounts.csv`). Success MUST be determined solely by the exit codes of the commands it invokes (`bus config init` and each domain module’s `init`). Acceptance criteria: the implementation does not perform a post-hoc check against a fixed list of baseline paths; running `bus init` never fails with a “missing required path X” error for any path X owned by bus-config or a domain module.
+
 ### System Architecture
 
 Bus Init is an orchestrator that invokes `bus config init` and then each domain module’s `init` in a fixed order to produce the workspace baseline. It does not own workspace configuration (bus-config owns `datapackage.json`) or domain datasets; it only coordinates the sequence and verifies that required baseline files exist afterward.
@@ -27,7 +29,9 @@ Bus Init is an orchestrator that invokes `bus config init` and then each domain 
 
 KD-INIT-001 Module-owned initialization. The bootstrap workflow delegates dataset creation to each module to preserve ownership boundaries.
 
-KD-INIT-002 Init idempotency and partial-state safety. Each module’s `init` obeys the contract in FR-INIT-004: it creates baseline data only when absent, warns and does nothing when data already exists in full, and fails without writing when data exists only partially.
+KD-INIT-002 Init idempotency and partial-state safety. Each module’s `init` obeys the contract in FR-INIT-003: it creates baseline data only when absent, warns and does nothing when data already exists in full, and fails without writing when data exists only partially.
+
+KD-INIT-003 No verification of other modules’ paths. Per FR-INIT-004, bus-init does not require or verify the presence of files owned by other modules. Success is determined solely by the orchestration: `bus config init` and each domain module’s `init` exit successfully. Each module is responsible for creating its own datasets and for failing its init when it cannot; bus-init does not perform a post-hoc check against a fixed list of baseline paths. This avoids bus-init failing with “missing required path X” when X is owned by a module that was not run, failed earlier, or is not installed.
 
 ### Component Design and Interfaces
 
@@ -41,7 +45,7 @@ bus init
 
 ### Data Design
 
-The module does not create or own any workspace files directly. It invokes `bus config init`, which creates or ensures `datapackage.json` and the `busdk.accounting_entity` subtree at the workspace root. It then invokes each domain module’s `init`, which create the baseline datasets and schemas (accounts, entities, periods, journals, invoices, VAT, attachments, bank). After all inits complete, bus-init verifies that every required baseline path exists and fails with a clear error if any is missing.
+The module does not create or own any workspace files directly. It invokes `bus config init`, which creates or ensures `datapackage.json` and the `busdk.accounting_entity` subtree at the workspace root. It then invokes each domain module’s `init`, which create the baseline datasets and schemas (accounts, entities, periods, journals, invoices, VAT, attachments, bank). Success is determined only by the orchestration: when every invoked command (`bus config init` and each module’s `init`) exits with code 0, the bootstrap is successful. Bus-init does not verify a fixed list of baseline paths afterward; each module owns its outputs and is responsible for failing its init if it cannot create them. Bus-init must not fail with a “missing required path” error for any file owned by another module (see KD-INIT-003).
 
 ### Assumptions and Dependencies
 

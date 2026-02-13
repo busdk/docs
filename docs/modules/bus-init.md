@@ -22,7 +22,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus init` boo
 
 ### Commands
 
-`init` (or no subcommand) — Bootstrap a new workspace. The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command runs `bus config init` first, then eight domain module inits in this order: accounts, entities, period, journal, invoices, vat, attachments, bank. After all steps complete, it verifies that every required baseline file exists; if any path is missing, the command fails and reports the first missing path. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
+`init` (or no subcommand) — Bootstrap a new workspace. The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command runs `bus config init` first, then eight domain module inits in this order: accounts, entities, period, journal, invoices, vat, attachments, bank. Success is determined only by those steps: when every invoked command exits with code 0, the bootstrap is complete. The command does not check for a fixed list of baseline paths afterward; each module is responsible for creating its own files and for failing its init if it cannot. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
 
 ### Global flags
 
@@ -41,15 +41,13 @@ Command results (e.g. help or version) are written to stdout. Diagnostics, progr
 
 ### Init: step order and baseline files
 
-Bootstrap runs `bus config init` first, then eight domain module inits in order: accounts, entities, period, journal, invoices, vat, attachments, bank. Each step is implemented by the corresponding module (e.g. `bus config init`, `bus accounts init`, `bus entities init`). Each module’s `init` creates its baseline data only when absent; if the data already exists in full, the module prints a warning and does nothing; if the data exists only partially, the module fails with an error and does not modify any file. The tool depends on the `bus` dispatcher being available in your `PATH`; if `bus` is not found, the command exits with a clear “bus dispatcher not found in PATH” error.
-
-When all steps have completed, the command verifies that every required baseline file exists in the workspace. The required paths are: `datapackage.json`; `accounts.csv` and `accounts.schema.json`; `entities.csv` and `entities.schema.json`; `attachments.csv` and `attachments.schema.json`; `journals.csv` and `journals.schema.json`; `sales-invoices.csv`, `sales-invoices.schema.json`, `sales-invoice-lines.csv`, `sales-invoice-lines.schema.json`; `purchase-invoices.csv`, `purchase-invoices.schema.json`, `purchase-invoice-lines.csv`, `purchase-invoice-lines.schema.json`; `vat-rates.csv`, `vat-rates.schema.json`, `vat-reports.csv`, `vat-reports.schema.json`, `vat-returns.csv`, `vat-returns.schema.json`; `periods.csv` and `periods.schema.json`; `bank-imports.csv`, `bank-imports.schema.json`, `bank-transactions.csv`, `bank-transactions.schema.json`. If any of these is missing, the command fails and reports the first missing path (e.g. “missing required path accounts.csv”). Verification runs after all module inits; it does not change or create files.
+Bootstrap runs `bus config init` first, then eight domain module inits in order: accounts, entities, period, journal, invoices, vat, attachments, bank. Each step is implemented by the corresponding module (e.g. `bus config init`, `bus accounts init`, `bus entities init`). Each module’s `init` creates its baseline data only when absent; if the data already exists in full, the module prints a warning and does nothing; if the data exists only partially, the module fails with an error and does not modify any file. The tool depends on the `bus` dispatcher being available in your `PATH`; if `bus` is not found, the command exits with a clear “bus dispatcher not found in PATH” error. When every invoked command exits with code 0, the bootstrap is complete. The command does not verify a fixed list of baseline paths afterward; each module owns its datasets and schemas and is responsible for failing its init if it cannot create them.
 
 The initial `datapackage.json` is created by `bus config init` and follows the [workspace configuration](../data/workspace-configuration) shape. Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, and fiscal year and VAT registration set as documented in the data package extension. You can adjust these afterward with [bus config configure](./bus-config).
 
 ### Files
 
-Bootstrap invokes `bus config init` (which creates or ensures `datapackage.json`) and then each domain module’s init so that datasets and schema files appear in the workspace root as listed above. Bus init does not write any files directly; it only orchestrates the sequence and verifies baseline paths.
+Bootstrap invokes `bus config init` (which creates or ensures `datapackage.json`) and then each domain module’s init so that datasets and schema files appear in the workspace root. Bus init does not write any files directly; it only orchestrates the sequence. Success is determined by each step’s exit code, not by a post-hoc check of baseline paths.
 
 ### Exit status and errors
 
@@ -59,8 +57,6 @@ Exit 0 on success. Non-zero in these cases:
 - **Missing bus dispatcher (exit 1)** — `bus` is not found in `PATH`. Message: “bus dispatcher not found in PATH”.
 - **Module init failure (exit non-zero)** — A module’s `init` command fails. The tool stops immediately after that step and reports “step failed: bus *module* init” (with the actual module name) on stderr. It does not run later steps.
 - **Module compatibility (exit non-zero)** — A module exits with code 2, indicating a version or compatibility issue. The tool reports that the module “must be upgraded” and stops.
-- **Missing baseline path (exit non-zero)** — After all module inits, one of the required baseline files is missing. The first missing path is reported (e.g. “missing required path accounts.csv”).
-
 ---
 
 <!-- busdk-docs-nav start -->
