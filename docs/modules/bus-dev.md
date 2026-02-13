@@ -21,10 +21,10 @@ Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`work`**, **`e2e
 `bus dev spec` — refine only the repository-root [AGENTS.md](https://agents.md/) so it aligns with BusDK specs.  
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).  
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.  
-`bus dev set agent <cursor|codex|gemini|claude>` — set the default agent for bus-dev (and the shared default when used elsewhere) via the bus-preferences Go library.  
-`bus dev set model <value>` — set the default model (default when unset: `auto`).  
-`bus dev set output-format <ndjson|text>` — set the default output format (default when unset: `text`).  
-`bus dev set timeout <duration>` — set the default run timeout (e.g. `60m`).  
+`bus dev set agent <cursor|codex|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.  
+`bus dev set model <value>` — set the bus-dev persistent default model (`bus-dev.model`).  
+`bus dev set output-format <ndjson|text>` — set the bus-dev persistent default output format (`bus-dev.output_format`).  
+`bus dev set timeout <duration>` — set the bus-dev persistent default timeout (`bus-dev.timeout`).  
 `bus dev spec [work [e2e]]` — run one or more of spec, work, e2e in the order given (e.g. `bus dev spec work e2e` runs all three in sequence; if one fails, the run stops).
 
 ### Description
@@ -51,13 +51,13 @@ All paths and the working directory are resolved relative to the current directo
 
 **`set`** — Set a persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). Bus-dev provides a dedicated subcommand for each key that affects agent use:
 
-**`set agent <runtime>`** — Set the default agent (`bus-dev.agent`; same preference is used as the default when no session override is set). `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Set with `bus dev set agent <runtime>`. Invalid runtime yields exit 2.
+**`set agent <runtime>`** — Set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library. Only the `bus-dev` namespace is written; no other namespace is modified. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid runtime yields exit 2.
 
-**`set model <value>`** — Set the default model (`bus-agent.model`). When unset, the default is `auto`. Invalid value yields exit 2.
+**`set model <value>`** — Set the bus-dev persistent default model (`bus-dev.model`) via the bus-preferences Go library. Only the `bus-dev` namespace is written. Invalid value yields exit 2.
 
-**`set output-format <ndjson|text>`** — Set the default output format (`bus-agent.output_format`). Valid values: `ndjson` (raw structured output), `text` (human-readable). When unset, the default is `text`. Invalid value yields exit 2.
+**`set output-format <ndjson|text>`** — Set the bus-dev persistent default output format (`bus-dev.output_format`) via the bus-preferences Go library. Valid values: `ndjson` (raw structured output), `text` (human-readable). Only the `bus-dev` namespace is written. Invalid value yields exit 2.
 
-**`set timeout <duration>`** — Set the default run timeout (`bus-agent.timeout`), e.g. `60m`. Invalid value yields exit 2.
+**`set timeout <duration>`** — Set the bus-dev persistent default timeout (`bus-dev.timeout`) via the bus-preferences Go library (e.g. `60m`). Only the `bus-dev` namespace is written. Invalid value yields exit 2.
 
 ### Global flags
 
@@ -81,18 +81,18 @@ Subcommands that invoke an external agent (`plan`, `work`, `spec`, and `e2e`, in
 
 The active runtime is chosen in this order: (1) **`--agent <runtime>`** for that invocation; (2) **`BUS_DEV_AGENT`** (bus-dev-only session default; when set, used for every `bus dev` command in that session until unset or overridden); (3) **`BUS_AGENT`** (shared session default, used when `BUS_DEV_AGENT` is not set); (4) **bus-dev persistent preference** (e.g. `bus-dev.agent` via [bus-preferences](./bus-preferences), affects only bus-dev); (5) **bus-agent persistent preference** (`bus-agent.runtime`); (6) **first available** runtime in the effective order (alphabetic by runtime ID by default). Set bus-dev’s default with `bus preferences set bus-dev.agent <runtime>` and the shared default with `bus preferences set bus-agent.runtime <runtime>`. At any step, if the configured runtime is **disabled** by user configuration, the tool prints a warning to stderr and continues with the next source. You can configure agent order and enable/disable; see the [bus-agent](../sdd/bus-agent) SDD and [bus-agent module docs](./bus-agent).
 
-Invalid runtime names (e.g. `--agent unknown` or an invalid value in `BUS_DEV_AGENT` or `BUS_AGENT`) produce a clear usage error and exit 2. If the user has selected an agent (via flag or `BUS_DEV_AGENT`) and that agent’s CLI is not installed or not in PATH, the tool reports that on stderr, directs you to the canonical installation URL for that runtime, and exits with code 1. When no runtime is selected and no agent is available (none in PATH or all disabled/restricted), the tool exits with a clear diagnostic and directs you to install or enable at least one supported agent, with pointers to the canonical installation URLs for each runtime. Model, output format, and timeout for the agent are read from [bus-agent](./bus-agent) preferences when bus-dev invokes the agent; see Preference settings below and the [bus-agent](./bus-agent) module for those keys and options (default model `auto`, default output format `text`).
+Invalid runtime names (e.g. `--agent unknown` or an invalid value in `BUS_DEV_AGENT` or `BUS_AGENT`) produce a clear usage error and exit 2. If the user has selected an agent (via flag or `BUS_DEV_AGENT`) and that agent’s CLI is not installed or not in PATH, the tool reports that on stderr, directs you to the canonical installation URL for that runtime, and exits with code 1. When no runtime is selected and no agent is available (none in PATH or all disabled/restricted), the tool exits with a clear diagnostic and directs you to install or enable at least one supported agent, with pointers to the canonical installation URLs for each runtime. Model, output format, and timeout follow the same resolution logic as agent (see Preference settings below): bus-dev session env (`BUS_DEV_MODEL`, `BUS_DEV_TIMEOUT`, `BUS_DEV_OUTPUT_FORMAT`), then bus-dev persistent preferences (`bus-dev.model`, `bus-dev.timeout`, `bus-dev.output_format`), then bus-agent preferences as fallback, then bus-agent defaults (e.g. model `auto`, output format `text`).
 
 ### Preference settings (bus-preferences)
 
-Preferences that affect `bus dev` are stored via the [bus-preferences](./bus-preferences) Go library. Bus-dev stores its own default agent; when bus-dev invokes the agent (plan, work, spec, e2e), it also reads run-config from the bus-agent namespace. Set any of these with **`bus dev set <key> <value>`** (e.g. `bus dev set agent gemini`, `bus dev set model auto`, `bus dev set output-format text`, `bus dev set timeout 60m`) or with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-dev.agent gemini`). Inspect with `bus preferences get <key>`. The bus-dev CLI uses the bus-preferences library directly and does not shell out to `bus preferences`.
+Preferences that affect `bus dev` are stored via the [bus-preferences](./bus-preferences) Go library. **Bus-dev only ever writes to the `bus-dev` namespace.** When you run `bus dev set agent`, `bus dev set model`, `bus dev set output-format`, or `bus dev set timeout`, the tool writes only the corresponding `bus-dev.*` key (e.g. `bus-dev.agent`, `bus-dev.model`, `bus-dev.output_format`, `bus-dev.timeout`) and never modifies `bus-agent.*` or any other namespace. When bus-dev invokes the agent (plan, work, spec, e2e), it resolves each option in the same order: per-command override (e.g. `--agent`) if present, then bus-dev session environment (`BUS_DEV_AGENT`, `BUS_DEV_MODEL`, `BUS_DEV_TIMEOUT`, `BUS_DEV_OUTPUT_FORMAT`), then bus-dev persistent preferences (`bus-dev.agent`, `bus-dev.model`, `bus-dev.timeout`, `bus-dev.output_format`), then bus-agent persistent preferences as fallback (`bus-agent.runtime`, `bus-agent.model`, `bus-agent.output_format`, `bus-agent.timeout`), then bus-agent defaults. Set any bus-dev default with **`bus dev set <key> <value>`** (e.g. `bus dev set agent gemini`, `bus dev set model auto`, `bus dev set output-format text`, `bus dev set timeout 60m`) or with `bus preferences set bus-dev.<key> <value>`. Inspect with `bus preferences get <key>`. The bus-dev CLI uses the bus-preferences library directly and does not shell out to `bus preferences`.
 
-| Key   | Description |
-|-------|-------------|
-| `bus-dev.agent` | Default agent runtime (same option as `bus-agent.runtime`; bus-dev uses this key for its default). Valid values: **`cursor`**, **`codex`**, **`gemini`**, **`claude`**. When unset, resolution falls through to `BUS_AGENT`, then bus-agent preference, then first available. Overridden by `--agent` and `BUS_DEV_AGENT` for the session. Set with `bus dev set agent <runtime>`. For the shared default when not using bus-dev, set `bus-agent.runtime` via `bus agent set runtime <runtime>`. |
-| `bus-agent.model` | Default model (e.g. for Cursor). When unset, the default is `auto`. Overridable by `CURSOR_AGENT_MODEL`. Set with `bus dev set model <value>`. |
-| `bus-agent.output_format` | Default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable; NDJSON formatted to text). When unset, the default is `text`. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. Set with `bus dev set output-format` (values: `ndjson`, `text`). |
-| `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. Set with `bus dev set timeout <duration>`. |
+| Key | Description |
+|-----|-------------|
+| `bus-dev.agent` | Bus-dev default agent runtime. Valid values: **`cursor`**, **`codex`**, **`gemini`**, **`claude`**. Resolution order: `--agent` → `BUS_DEV_AGENT` → `BUS_AGENT` → `bus-dev.agent` → `bus-agent.runtime` → first available. Set with `bus dev set agent <runtime>`. For the shared default when not using bus-dev, set `bus-agent.runtime` via `bus agent set runtime <runtime>`. |
+| `bus-dev.model` | Bus-dev default model (e.g. for Cursor). Resolution order: per-command override (if any) → `BUS_DEV_MODEL` → `bus-dev.model` → `bus-agent.model` → bus-agent default (`auto`). Set with `bus dev set model <value>`. |
+| `bus-dev.output_format` | Bus-dev default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable). Resolution order: per-command override (if any) → `BUS_DEV_OUTPUT_FORMAT` → `bus-dev.output_format` → `bus-agent.output_format` → bus-agent default (`text`). Set with `bus dev set output-format <ndjson|text>`. |
+| `bus-dev.timeout` | Bus-dev default run timeout as a duration string (e.g. `60m`). Resolution order: per-command override (if any) → `BUS_DEV_TIMEOUT` → `bus-dev.timeout` → `bus-agent.timeout` → bus-agent default. Set with `bus dev set timeout <duration>`. |
 
 ### Example: building a module from scratch with AI
 
