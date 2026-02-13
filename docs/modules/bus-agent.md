@@ -55,6 +55,18 @@ These flags apply to all subcommands. They match the [standard global flags](../
 
 Command results (e.g. detect list, rendered prompt, formatted output) are written to stdout. Diagnostics, progress, and agent stream output are written to stderr unless otherwise documented for a subcommand.
 
+### Project instructions (AGENTS.md)
+
+The agent runner treats **AGENTS.md** at the repository root as the canonical, vendor-neutral source of project instructions for each run. Instruction discovery follows a root-to-cwd layering model; where a runtime supports directory-scoped instructions, the one closest to the current working directory takes precedence for that scope. The runner prefers per-invocation flags and environment variables to enable AGENTS.md; it uses repo-local file creation or merge only when necessary, and when it does, it never removes or rewrites your existing content — changes are additive only, with clearly marked Bus-owned blocks. The only exception is the legacy Cursor rule file at `.cursor/rules/{bus-NAME}.mdc`, which may be replaced or migrated as part of standardizing on AGENTS.md. If AGENTS.md is missing or too large for the runtime's limits, the run still proceeds with the prompt you supplied and any instruction content that fits; the runner does not fail solely because AGENTS.md is absent or over limit. The full contract (per-runtime knobs, allowed repo-local files, and fallback behavior) is defined in the [module SDD](../sdd/bus-agent); the list below summarizes how each runtime is configured.
+
+**Codex.** The child process runs with its working directory set to the project (repo root or your chosen workdir). `CODEX_HOME` is set to a repo-local directory so no global state is used or mutated; all state and caches stay inside the repository. AGENTS.md is discovered natively by Codex when the workdir is the repo root; no repo-local file changes are required.
+
+**Cursor.** The agent is invoked from the repository root so Cursor's native AGENTS.md loading applies. No global Cursor configuration is edited. When stricter enforcement is needed, Bus may add Bus-owned rule files under `.cursor/rules/` in an additive way only; existing user rules are not touched. The legacy file `.cursor/rules/{bus-NAME}.mdc` may be replaced or migrated (e.g. merged into AGENTS.md and removed) as part of standardization.
+
+**Gemini CLI.** Repo-local `.gemini/settings.json` can be added or merged to configure context discovery to prefer or include AGENTS.md; `.geminiignore` controls scan scope. Merges are additive with Bus-owned markers; your existing content is never removed or rewritten. Per-run environment or flag-based system-instruction injection is used only as a fallback when repo-local config is undesirable.
+
+**Claude Code.** The preferred approach is to inject AGENTS.md via command-line system prompt append on each run (with safeguards for command length and size). If that is not possible, a last-resort compatibility shim is to create or append a clearly marked Bus-owned block in `CLAUDE.md` that imports or references `@AGENTS.md`; existing CLAUDE.md content is never modified or removed.
+
 ### Agent runtimes and installation
 
 The agent runner supports four runtimes: **Gemini CLI**, **Cursor CLI**, **Claude CLI**, and **Codex**. Each is a separate external CLI; Bus Agent does not embed provider SDKs or call model APIs directly. When a selected runtime is not installed or not in PATH, the tool reports that on stderr and directs you to the canonical installation reference for that runtime. Those references are:
@@ -87,7 +99,7 @@ You can change which agent is used first by configuring the order: supply an ord
 
 ### Files
 
-`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation.
+`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation. When the runner enables AGENTS.md for a runtime that requires repo-local config (e.g. Gemini or Claude), it may create or merge files only under the additive, Bus-owned rules described in [Project instructions (AGENTS.md)](#project-instructions-agentsmd) and in the [module SDD](../sdd/bus-agent); it never edits user configuration outside the project working directory.
 
 ### Exit status and errors
 
