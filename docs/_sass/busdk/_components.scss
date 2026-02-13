@@ -57,3 +57,74 @@
 .busdk-prev-next-item.busdk-next {
   text-align: right;
 }
+
+// 404 page: clear hierarchy so the main message, path, and action stand out.
+.page-404 {
+  .page-404-lead {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--busdk-fg);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-404-reason {
+    color: var(--busdk-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .page-404-path {
+    background: var(--busdk-surface-1);
+    border: 1px solid var(--busdk-border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .page-404-path-label {
+    color: var(--busdk-muted);
+    margin-right: 0.5rem;
+  }
+
+  .page-404-path-value {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--busdk-code-fg);
+    background: var(--busdk-inline-code-bg);
+    padding: 0.12em 0.4em;
+    border-radius: 4px;
+    word-break: break-all;
+  }
+
+  .page-404-cta-wrap {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-404-cta {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    color: var(--busdk-bg) !important;
+    background: var(--busdk-accent);
+    border-radius: 6px;
+    text-decoration: none !important;
+  }
+
+  .page-404-cta:hover,
+  .page-404-cta:focus-visible {
+    background: var(--busdk-link-hover);
+    color: var(--busdk-bg) !important;
+    text-decoration: none !important;
+  }
+
+  .page-404-report {
+    color: var(--busdk-muted);
+    font-size: 0.9rem;
+  }
+
+  .page-404-report a {
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+  }
+}
