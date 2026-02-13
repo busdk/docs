@@ -47,9 +47,9 @@ FR-AGT-003 Supported runtimes. The implementation MUST include at least four bac
 
 FR-AGT-004 Runtime detection. The library MUST be able to detect which backends are enabled by checking whether the backend’s CLI executable exists in PATH and is executable. Acceptance criteria: callers can list enabled runtimes; tests can control PATH to simulate 0/1/many enabled runtimes.
 
-FR-AGT-005 Runtime selection resolution. The library MUST provide a deterministic resolution function that selects the active runtime based on (1) explicit per-call selection, then (2) an optional session preference (environment variable), then (3) an optional persistent preference (if implemented), then (4) an automatic default chosen from the set of available runtimes in a deterministic order. The set of available runtimes is the set of enabled runtimes (executable found in PATH) minus any user-disabled runtimes, or restricted to user-enabled runtimes when an enable list is configured (see FR-AGT-005a). When multiple runtimes are available and no explicit or preference selection is given, the automatic default MUST be the first runtime in the effective order: either the user-specified order (FR-AGT-005a) or, when no order is specified, alphabetical by runtime ID (e.g. claude, codex, cursor, gemini). Acceptance criteria: same available set and same configuration yield the same automatic choice; invalid selection yields a usage-style error.
+FR-AGT-005 Runtime selection resolution. The library MUST provide a deterministic resolution function that selects the active runtime based on (1) explicit per-call selection, then (2) an optional session preference (environment variable), then (3) persistent preference from [bus-config](./bus-config) (read via the bus-config Go library), then (4) an automatic default chosen from the set of available runtimes in a deterministic order. The implementation MUST depend on the bus-config Go library for step (3); it MUST NOT implement its own config file or path for the persistent default agent. The set of available runtimes is the set of enabled runtimes (executable found in PATH) minus any user-disabled runtimes, or restricted to user-enabled runtimes when an enable list is configured (see FR-AGT-005a). When multiple runtimes are available and no explicit or preference selection is given, the automatic default MUST be the first runtime in the effective order: either the user-specified order (FR-AGT-005a) or, when no order is specified, alphabetical by runtime ID (e.g. claude, codex, cursor, gemini). Acceptance criteria: same available set and same configuration yield the same automatic choice; invalid selection yields a usage-style error; persistent preference is read from bus-config only.
 
-FR-AGT-005a Agent order and enable/disable. The library MUST support optional user configuration so that (1) the user can specify the order in which available agents are considered for the automatic default (first available in that order is used), and (2) the user can disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). When an order is not specified, the default order over available runtimes MUST be alphabetical by runtime ID. When no enable/disable configuration is present, all enabled runtimes (found in PATH) are available. Configuration MAY be via environment variables, persistent config file, or both; the resolution order between them MUST be documented. Acceptance criteria: callers can pass or configure an ordered list of runtime IDs for automatic default; callers can pass or configure a disable list (runtimes to exclude) or an enable list (only these runtimes count as available); alphabetical default order is deterministic and documented.
+FR-AGT-005a Agent order and enable/disable. The library MUST support optional user configuration so that (1) the user can specify the order in which available agents are considered for the automatic default (first available in that order is used), and (2) the user can disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). When an order is not specified, the default order over available runtimes MUST be alphabetical by runtime ID. When no enable/disable configuration is present, all enabled runtimes (found in PATH) are available. Configuration MAY be via environment variables, via the [bus-config](./bus-config) library when it exposes order/enable/disable, or both; the resolution order between them MUST be documented. The default agent (which runtime to use when no override is given) is always read from bus-config (FR-AGT-005 step (3)); order and enable/disable may be read from bus-config if the bus-config library provides them, otherwise from environment or call parameters. Acceptance criteria: callers can pass or configure an ordered list of runtime IDs for automatic default; callers can pass or configure a disable list (runtimes to exclude) or an enable list (only these runtimes count as available); alphabetical default order is deterministic and documented.
 
 FR-AGT-006 Prompt-template rendering contract. Prompt templates MUST support `{{VARIABLE}}` placeholders. Rendering MUST be deterministic. Missing required variables MUST fail before any agent invocation with an error categorized as invalid usage. Any unresolved `{{...}}` token remaining after substitution MUST fail before invocation with an invalid-usage error. Acceptance criteria: unit tests cover missing variable, unresolved placeholder, repeated placeholder replacement, and a “no placeholders” pass-through case.
 
@@ -83,7 +83,7 @@ High-level components:
 * **Formatters (optional).** Pure functions to normalize agent output (e.g. NDJSON-to-text) without depending on external processes.
 * **CLI (optional).** A minimal binary `bus-agent` invoked via dispatcher as `bus agent …` when included, intended for diagnostics and development rather than business workflows.
 
-Data flow: caller (e.g. `bus-dev`) builds a prompt template + variables → renderer produces final prompt or fails → selection resolves runtime → runner executes external CLI with prompt in a workdir under timeout → output is captured/streamed and optionally formatted → caller interprets result according to its own workflow rules.
+Data flow: caller (e.g. `bus-dev`) builds a prompt template + variables → renderer produces final prompt or fails → selection resolves runtime (per-call, then session, then persistent from bus-config library, then automatic default from available runtimes) → runner executes external CLI with prompt in a workdir under timeout → output is captured/streamed and optionally formatted → caller interprets result according to its own workflow rules.
 
 ### Key Decisions
 
@@ -162,7 +162,7 @@ CLI (if implemented): stdout is reserved for command results (e.g. detect list, 
 
 ### Data Design
 
-Bus Agent stores no persistent state by default. Configuration is via call parameters and environment variables as chosen by the caller. The module does not own workspace datasets or repo-local context files; those remain the responsibility of higher-level modules.
+Bus Agent does not own a persistent config file or path. The persistent default agent preference is stored in bus configuration and read via the [bus-config](./bus-config) Go library; the user sets it with `bus config set agent <runtime>` (or equivalent) and it is saved in bus configuration. All other configuration is via call parameters and environment variables as chosen by the caller. The module does not own workspace datasets or repo-local context files; those remain the responsibility of higher-level modules.
 
 ### Assumptions and Dependencies
 
@@ -171,6 +171,8 @@ AD-AGT-001 External agent CLIs are installed by the user and available in PATH w
 AD-AGT-002 Linux and macOS are supported platforms. If the runtime is used on an unsupported platform, behavior and test coverage are not guaranteed.
 
 AD-AGT-003 The module is built and tested in a hermetic environment with stubbed executables. Tests that rely on real agent CLIs or network are out of scope for the standard test suite (NFR-AGT-003).
+
+AD-AGT-004 bus-config dependency. Bus Agent depends on the [bus-config](./bus-config) Go library for reading (and optionally writing) the persistent default agent. The bus-config library defines where that preference is stored (user-level bus configuration); bus-agent uses the library and does not read or write a config file directly. If bus-config is unavailable or the library interface changes incompatibly, resolution step (3) (persistent preference) is skipped and resolution falls through to the automatic default. Tests may stub the bus-config dependency to control the persistent preference without touching the real config file.
 
 ### Testing Strategy
 
@@ -205,6 +207,7 @@ Bus Agent aligns with BusDK’s library-first, deterministic, non-interactive pr
 ### Sources
 
 - [BusDK Software Design Document (SDD)](../sdd)
+- [bus-config module SDD](./bus-config)
 - [bus-dev module SDD](./bus-dev)
 - [Module repository structure and dependency rules](../implementation/module-repository-structure)
 - [Gemini CLI — install](https://geminicli.com/)

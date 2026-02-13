@@ -12,23 +12,33 @@ description: bus config owns workspace-level configuration stored in datapackage
 ### Synopsis
 
 `bus config init [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
-`bus config configure [--base-currency <code>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
+`bus config configure [--base-currency <code>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
+`bus config set agent <runtime>`  
+`bus config get agent [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
 
-All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`.
+All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`. The `set agent` and `get agent` commands operate on user-level bus configuration and do not require a workspace.
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root. That file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence) as BusDK metadata so other modules can read them without duplicating settings in row-level datasets.
+Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root and user-level bus configuration stored in a dedicated config file. The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence) as BusDK metadata so other modules can read them without duplicating settings in row-level datasets. The user-level bus configuration holds preferences that apply across invocations, such as the default agent runtime used by [bus agent](./bus-agent) and [bus dev](./bus-dev); that preference is read and written by the bus-agent module through the bus-config library so that the chosen agent is saved in bus configuration.
 
 `bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object. When the file already has that object, init prints a warning and does nothing. [bus init](./bus-init) runs `bus config init` first during bootstrap, then runs each domain module’s init; you can also run `bus config init` on its own when you need only the workspace descriptor.
 
 `bus config configure` updates accounting entity settings in an existing workspace `datapackage.json`. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object. Only the properties you pass via flags are changed; others remain unchanged.
+
+`bus config set agent <runtime>` saves the default agent runtime to bus configuration. The value is persisted so that [bus agent](./bus-agent) and [bus dev](./bus-dev) use that runtime when you do not pass `--agent` or set a session variable. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`; any other value is invalid usage (exit 2). You do not need to be in a workspace to set or get the default agent.
+
+`bus config get agent` prints the current default agent from bus configuration to stdout. If none is set, the command may print nothing or a documented sentinel; see `bus config get agent --help` for the current behavior.
 
 ### Commands
 
 `init` — Create or ensure `datapackage.json` at the effective workspace root with a `busdk.accounting_entity` object. If the file is missing or does not contain that object, it is created or updated with default values. If it already contains `busdk.accounting_entity`, the command prints a warning to stderr and exits 0 without modifying the file. No extra positional arguments are accepted.
 
 `configure` — Edit accounting entity settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence) in the workspace `datapackage.json`. Requires an existing workspace that already has `datapackage.json` and a `busdk.accounting_entity` object. Only the flags you provide are applied. No extra positional arguments are accepted.
+
+`set agent <runtime>` — Save the default agent runtime to bus configuration. The [bus-agent](./bus-agent) and [bus-dev](./bus-dev) modules read this value via the bus-config library when no per-command or session preference is set. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Does not require a workspace.
+
+`get agent` — Print the current default agent from bus configuration to stdout. Does not require a workspace.
 
 ### Global flags
 
@@ -63,7 +73,7 @@ Configure requires an existing workspace. If `datapackage.json` is missing in th
 
 ### Files
 
-The module reads and writes only `datapackage.json` at the workspace root. The `init` subcommand creates it or ensures the `busdk.accounting_entity` subtree exists. The `configure` subcommand updates only that subtree in place; it does not create or remove other files.
+The module reads and writes `datapackage.json` at the workspace root for workspace configuration and a dedicated user-level config file for bus configuration (e.g. default agent). The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `configure` subcommand updates only that subtree in place. The `set agent` and `get agent` commands read and write the user-level bus configuration file; the exact path is documented in the [module SDD](../sdd/bus-config).
 
 ### Exit status and errors
 
@@ -87,4 +97,6 @@ Exit 0 on success. Non-zero in these cases:
 - [Workspace configuration (datapackage.json extension)](../data/workspace-configuration)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-config](../sdd/bus-config)
+- [bus-agent CLI reference](./bus-agent)
+- [bus-dev CLI reference](./bus-dev)
 - [Workflow: Initialize repo](../workflow/initialize-repo)
