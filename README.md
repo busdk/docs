@@ -23,4 +23,6 @@ bundle exec jekyll serve -s docs
 
 ## GitHub Pages
 
+Custom Jekyll plugins in `docs/_plugins` (for example the chapter-wrapping filter) do not run when GitHub Pages builds the site from the branch (safe mode). To use them, switch the site to **Deploy from GitHub Actions**: in the repo **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**. The workflow in `.github/workflows/jekyll.yml` runs `bundle exec jekyll build -s docs` so plugins are loaded, then deploys the built site.
+
 This site includes a smart not-found page in `docs/404.md`. It is built to `/404.html` via `permalink: /404.html`, suggests the appropriate section index by matching the requested URL path, and uses `{{ "/" | relative_url }}` plus `site.baseurl` so it remains correct with both a custom domain and a `baseurl`. The page still works without JavaScript, falling back to the documentation index and a short list of section links.

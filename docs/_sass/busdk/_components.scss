@@ -37,7 +37,7 @@
   border-top: 1px solid var(--busdk-border);
 }
 
-// Chapters: alternating backgrounds (applied by JS that wraps each h2 block).
+// Chapters: alternating backgrounds (build-time plugin wraps h2–h6 blocks).
 .busdk-chapter {
   margin-left: -1rem;
   margin-right: -1rem;
@@ -55,6 +55,17 @@
 
 .busdk-chapter:nth-of-type(even) {
   background: var(--busdk-chapter-even-bg);
+}
+
+// Nested chapters (h3–h6): sit inside parent, no full-width pull.
+.busdk-chapter .busdk-chapter {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.5rem 0 0.75rem;
+}
+
+.busdk-chapter .busdk-chapter + .busdk-chapter {
+  margin-top: 0.5rem;
 }
 
 // Primer theme uses a `.masthead` header with nav links.

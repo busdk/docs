@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# Wraps each h2 and its following siblings (until the next h2 or .busdk-prev-next)
-# in a <section class="busdk-chapter"> so CSS can style alternating chapter backgrounds.
+# Wraps each heading (h2 through h6) and its content until the next same-or-higher
+# heading in a <section class="busdk-chapter busdk-chapter--level-N"> so CSS can
+# style alternating chapter backgrounds. Stops before .busdk-prev-next at top level.
 # Use in layout: {{ content | wrap_busdk_chapters }}
 
 require "nokogiri"
@@ -13,6 +14,23 @@ module Jekyll
 
       fragment = Nokogiri::HTML::DocumentFragment.parse(html.to_s)
       nodes = fragment.children.to_a
+      output = group_by_heading(nodes, 2, fragment.document)
+      fragment.children.each(&:remove)
+      output.each { |n| fragment.add_child(n) }
+      fragment.to_html
+    end
+
+    private
+
+    def heading_level(node)
+      return nil unless node.element? && node.name.match(/\Ah([2-6])\z/)
+      Regexp.last_match(1).to_i
+    end
+
+    def group_by_heading(nodes, level, document)
+      return nodes if level > 6
+
+      tag = "h#{level}"
       output = []
       i = 0
 
@@ -24,20 +42,25 @@ module Jekyll
           next
         end
 
-        if node.name == "h2"
-          section = Nokogiri::XML::Node.new("section", fragment.document)
-          section["class"] = "busdk-chapter"
+        if node.name == tag
+          section = Nokogiri::XML::Node.new("section", document)
+          section["class"] = "busdk-chapter busdk-chapter--level-#{level}"
           section.add_child(node)
           i += 1
           while i < nodes.size
             n = nodes[i]
             break unless n.element?
-            break if n.name == "h2"
-            break if n["class"].to_s.include?("busdk-prev-next")
+            l = heading_level(n)
+            break if l && l <= level
+            break if level == 2 && n["class"].to_s.include?("busdk-prev-next")
 
             section.add_child(n)
             i += 1
           end
+          section_children = section.children.to_a
+          section.children.each(&:remove)
+          grouped = group_by_heading(section_children, level + 1, document)
+          grouped.each { |c| section.add_child(c) }
           output << section
         else
           output << node
@@ -45,9 +68,7 @@ module Jekyll
         end
       end
 
-      fragment.children.each(&:remove)
-      output.each { |n| fragment.add_child(n) }
-      fragment.to_html
+      output
     end
   end
 end
