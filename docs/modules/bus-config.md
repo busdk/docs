@@ -80,7 +80,7 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-**Value:** Create and update workspace configuration (`datapackage.json`) and accounting-entity settings so every BusDK workspace has a single, schema-valid source for currency, fiscal year, and VAT settings.
+**Value promise:** Create and update workspace configuration (`datapackage.json`) and accounting-entity settings so every BusDK workspace has a single, schema-valid source for currency, fiscal year, and VAT settings.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 

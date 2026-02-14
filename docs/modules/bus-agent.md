@@ -107,7 +107,7 @@ Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% e
 
 ### Development state
 
-**Value:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and bus-dev can use a configured default runtime without hard-coding it.
+**Value promise:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and [bus-dev](./bus-dev) can use a configured default runtime without hard-coding it.
 
 **Use cases:** [Developer module workflow with Cursor CLI](../implementation/development-status#developer-module-workflow-with-cursor-cli), [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 

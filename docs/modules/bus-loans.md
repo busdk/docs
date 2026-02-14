@@ -37,7 +37,7 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 ### Development state
 
-**Value:** Maintain loan register and events so amortization and event postings feed the [bus-journal](./bus-journal) and loan accounts appear in [bus-reports](./bus-reports).
+**Value promise:** Maintain loan register and events so amortization and event postings feed the [bus-journal](./bus-journal) and loan accounts appear in [bus-reports](./bus-reports).
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 

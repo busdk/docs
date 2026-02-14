@@ -37,7 +37,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 ### Development state
 
-**Value:** Manage period control (open, close, lock) and period-scoped balance so the [accounting workflow](../workflow/accounting-workflow-overview) can close and lock periods and downstream modules can rely on closed state for reporting and filing.
+**Value promise:** Manage period control (open, close, lock) and period-scoped balance so the [accounting workflow](../workflow/accounting-workflow-overview) can close and lock periods and downstream modules can rely on closed state for reporting and filing.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 

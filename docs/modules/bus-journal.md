@@ -35,7 +35,7 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 ### Development state
 
-**Value:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream for the [accounting workflow](../workflow/accounting-workflow-overview).
+**Value promise:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream for the [accounting workflow](../workflow/accounting-workflow-overview).
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 

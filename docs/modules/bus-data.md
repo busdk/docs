@@ -270,7 +270,7 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 ### Development state
 
-**Value:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.
+**Value promise:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 

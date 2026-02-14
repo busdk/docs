@@ -35,7 +35,7 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 ### Development state
 
-**Value:** Orchestrate filing by delegating to target executables (e.g. bus-filing-prh, bus-filing-vero) so users can run `bus filing <target>` and produce PRH/Vero bundles from closed-period data.
+**Value promise:** Orchestrate filing by delegating to target executables (e.g. [bus-filing-prh](./bus-filing-prh), [bus-filing-vero](./bus-filing-vero)) so users can run `bus filing <target>` and produce PRH/Vero bundles from closed-period data.
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

@@ -37,7 +37,7 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 
 ### Development state
 
-**Value:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and optional planning workflows have a single source for budget figures.
+**Value promise:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and optional planning workflows have a single source for budget figures.
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 

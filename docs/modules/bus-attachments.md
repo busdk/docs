@@ -35,7 +35,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 ### Development state
 
-**Value:** Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the [accounting workflow](../workflow/accounting-workflow-overview) treats evidence as first-class.
+**Value promise:** Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the [accounting workflow](../workflow/accounting-workflow-overview) treats evidence as first-class.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 

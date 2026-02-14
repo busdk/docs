@@ -178,7 +178,7 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 ### Development state
 
-**Value:** Developer tooling to scaffold and run standardized workflows (commit, work, spec, e2e, triage, set) in BusDK module repos so contributors get a consistent Makefile, rules, and prompts.
+**Value promise:** Developer tooling to scaffold and run standardized workflows (commit, work, spec, e2e, triage, set) in BusDK module repos so contributors get a consistent Makefile, rules, and prompts.
 
 **Use cases:** [Developer module workflow with Cursor CLI](../implementation/development-status#developer-module-workflow-with-cursor-cli) (only runtime with e2e coverage); [Developer module workflow with Gemini / Claude / Codex CLI](../implementation/development-status#developer-module-workflow-with-gemini-cli) (same CLI; run/work/spec/e2e with those runtimes not exercised in e2e).
 

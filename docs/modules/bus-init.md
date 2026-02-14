@@ -82,7 +82,7 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-**Value:** Initialize a new BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits), so users can run `bus init` or `bus init all` and get a deterministic, script-friendly setup.
+**Value promise:** Initialize a new BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits), so users can run `bus init` or `bus init all` and get a deterministic, script-friendly setup.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 

@@ -27,7 +27,7 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 ### Development state
 
-**Value:** Render PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
+**Value promise:** Render PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (invoice PDF generation).
 

@@ -99,7 +99,7 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ### Development state
 
-**Value:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
+**Value promise:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 

@@ -31,7 +31,7 @@ Reads all workspace datasets and schemas. Does not write.
 
 ### Development state
 
-**Value:** Validate workspace datasets and invariants so the [accounting workflow](../workflow/accounting-workflow-overview) can run a single check before period close and filing and get deterministic diagnostics.
+**Value promise:** Validate workspace datasets and invariants so the [accounting workflow](../workflow/accounting-workflow-overview) can run a single check before period close and filing and get deterministic diagnostics.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 

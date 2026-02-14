@@ -34,7 +34,7 @@ Any other non-zero exit code is the exit code returned by the module binary (e.g
 
 ### Development state
 
-**Value:** Single entrypoint that delegates to `bus-<module>` binaries so users can run one command (`bus <module> …`) to set up or use any module without knowing individual binary names.
+**Value promise:** Single entrypoint that delegates to `bus-<module>` binaries so users can run one command (`bus <module> …`) to set up or use any module without knowing individual binary names.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (dispatcher for all workflow steps).
 

@@ -27,7 +27,7 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 ### Development state
 
-**Value:** Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the `prh` target of [bus-filing](./bus-filing).
+**Value promise:** Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the `prh` target of [bus-filing](./bus-filing).
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

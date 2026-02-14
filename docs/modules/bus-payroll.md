@@ -39,7 +39,7 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 ### Development state
 
-**Value:** Run payroll and produce postings so salary and related entries can feed the [bus-journal](./bus-journal); validate and export support a focused payroll scope.
+**Value promise:** Run payroll and produce postings so salary and related entries can feed the [bus-journal](./bus-journal); validate and export support a focused payroll scope.
 
 **Use cases:** [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 

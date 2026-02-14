@@ -57,7 +57,7 @@ bus invoices list --status unpaid
 
 ### Development state
 
-**Value:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
+**Value promise:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 

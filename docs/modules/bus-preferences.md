@@ -111,7 +111,7 @@ When `get` is called for a key that is not present, the command exits with a non
 
 ### Development state
 
-**Value:** Store and retrieve user-level preferences (e.g. default agent runtime, output format) so bus-agent and other CLI callers get consistent defaults across invocations without workspace-specific config.
+**Value promise:** Store and retrieve user-level preferences (e.g. default agent runtime, output format) so [bus-agent](./bus-agent) and other CLI callers get consistent defaults across invocations without workspace-specific config.
 
 **Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow).
 

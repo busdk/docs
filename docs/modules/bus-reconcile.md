@@ -35,7 +35,7 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ### Development state
 
-**Value:** Link bank transactions to invoices or journal entries (match and allocate) so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
+**Value promise:** Link bank transactions to invoices or journal entries (match and allocate) so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 

@@ -161,6 +161,8 @@ Modules not mapped to any documented use case appear here with overall completen
 |--------|-----------|--------------|-----------------|
 | [run](../modules/bus-run#development-state) | 50% (Primary journey) – context, pipeline/action/script list and set/unset (repo), run script token, global flags; e2e and unit tests. Run with prompt (agent) and stop-on-first-failure not verified. | Unit test for run sequence stop-on-first-failure (PLAN.md). | None known. |
 
+**run:** 50% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. No new use case doc needed — generic runner, not journey-specific.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./module-repository-structure">Module repository structure and dependency rules</a></span>

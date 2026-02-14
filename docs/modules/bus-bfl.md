@@ -122,7 +122,7 @@ The tool exits with status 0 on success. It exits with status 2 on invalid usage
 
 ### Development state
 
-**Value:** Parse, evaluate, and render BFL (Bus Formula Language) expressions so bus-data and spreadsheets can use formula-enabled fields with deterministic, testable semantics.
+**Value promise:** Parse, evaluate, and render BFL (Bus Formula Language) expressions so [bus-data](./bus-data) and spreadsheets can use formula-enabled fields with deterministic, testable semantics.
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 

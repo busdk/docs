@@ -84,7 +84,7 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ### Development state
 
-**Value:** Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.
+**Value promise:** Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 

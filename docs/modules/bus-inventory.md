@@ -37,7 +37,7 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 ### Development state
 
-**Value:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.
+**Value promise:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.
 
 **Use cases:** [Inventory valuation and COGS postings](../implementation/development-status#inventory-valuation-and-cogs-postings).
 

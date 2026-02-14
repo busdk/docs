@@ -35,7 +35,7 @@ Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`)
 
 ### Development state
 
-**Value:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the [accounting workflow](../workflow/accounting-workflow-overview) and archive returns for filing.
+**Value promise:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the [accounting workflow](../workflow/accounting-workflow-overview) and archive returns for filing.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 

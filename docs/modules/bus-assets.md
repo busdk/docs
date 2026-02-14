@@ -37,7 +37,7 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 ### Development state
 
-**Value:** Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset accounts appear in [bus-reports](./bus-reports).
+**Value promise:** Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset accounts appear in [bus-reports](./bus-reports).
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
