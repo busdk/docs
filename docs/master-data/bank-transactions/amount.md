@@ -11,8 +11,6 @@ When amounts are stored precisely, matching invoices and validating totals becom
 
 Example values: `-1255.00`, `15.90`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./value-date">value_date</a></span>

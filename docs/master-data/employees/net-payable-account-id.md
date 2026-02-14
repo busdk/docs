@@ -9,8 +9,6 @@ description: net_payable_account_id is part of the employees master data.
 
 Example values: `acc-2910`, `acc-2920`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

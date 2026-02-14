@@ -11,8 +11,6 @@ When booking time is explicit, a reviewer can later reconstruct when the bookkee
 
 Example values: `2026-02-10T15:04:05Z`, `2026-03-01T09:30:00Z`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./accounting-status">accounting_status</a></span>

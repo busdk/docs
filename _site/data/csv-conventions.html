@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"BusDK’s preferred default representation for workspace datasets is UTF-8 CSV with a header row and one record per row, paired with explicit Table Schemas.","headline":"CSV conventions","url":"http://localhost:4000/data/csv-conventions.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1187,8 +1200,6 @@
 <p>To satisfy Finnish audit-trail expectations, tabular datasets MUST be deterministic, linkable, and stable over time. See <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
 
 <p>Each dataset MUST include a stable primary identifier column (<code class="language-plaintext highlighter-rouge">*_id</code>) that never changes once written, and cross-dataset references MUST be explicit as foreign key columns (for example: <code class="language-plaintext highlighter-rouge">voucher_id</code>, <code class="language-plaintext highlighter-rouge">entry_id</code>, <code class="language-plaintext highlighter-rouge">attachment_id</code>, <code class="language-plaintext highlighter-rouge">bank_txn_id</code>). Row ordering MUST be reproducible using date + sequence columns so that independent tools can produce the same time-ordered view.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

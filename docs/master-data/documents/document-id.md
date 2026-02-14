@@ -11,8 +11,6 @@ When identity is stable, a reviewer can always traverse from a booking back to t
 
 Example values: `DOC-2026-000120`, `DOC-2026-000121`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Documents (evidence)</a></span>

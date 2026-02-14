@@ -11,8 +11,6 @@ When invoice date is explicit, period-based reports and completeness checks can 
 
 Example values: `2026-02-01`, `2026-02-15`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./client-id">client_id</a></span>

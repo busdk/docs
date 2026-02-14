@@ -9,8 +9,6 @@ description: voucher is part of the inventory movements master data.
 
 Example values: `DOC-2026-000120`, `JRN-2026-02-0012`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

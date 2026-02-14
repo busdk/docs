@@ -11,8 +11,6 @@ Defaults should be treated as suggestions that remain overrideable per invoice r
 
 Example values: `acc-3000`, `acc-3010`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./country-code">country_code</a></span>

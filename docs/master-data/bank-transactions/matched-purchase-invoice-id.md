@@ -9,8 +9,6 @@ description: matched_purchase_invoice_id links a bank transaction to a purchase 
 
 Example values: `PI-2026-000045`, `PI-2026-000046`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./matched-sale-invoice-id">matched_sale_invoice_id</a></span>

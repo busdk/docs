@@ -11,8 +11,6 @@ When payment account information is explicit, reconciliation can rely on structu
 
 Example values: `FI2112345600000785`, `FI5544443333222211`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./reference-number">reference_number</a></span>

@@ -41,8 +41,6 @@ Sales invoices typically carry workflow fields described on this page. Purchase 
 
 Bank transactions reuse the same status vocabulary so that invoice and bank reconciliation workflows can be reviewed together.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../parties/index">Parties (customers and suppliers)</a></span>

@@ -11,8 +11,6 @@ When amounts are recorded per posting line, reviewers can validate the split wit
 
 Example values: `1000.00`, `79.90`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ledger-account-id">ledger_account_id</a></span>

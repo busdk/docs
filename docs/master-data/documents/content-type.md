@@ -11,8 +11,6 @@ When content type is explicit, tooling can process documents deterministically w
 
 Example values: `application/pdf`, `image/jpeg`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./doc-date">doc_date</a></span>

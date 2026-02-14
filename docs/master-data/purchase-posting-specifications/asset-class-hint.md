@@ -11,8 +11,6 @@ Hints are not authoritative categories. They are reviewable signals that reduce 
 
 Example values: `computer`, `software`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./is-capitalizable">is_capitalizable</a></span>

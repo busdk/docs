@@ -23,8 +23,6 @@ In BusDK terms, a business event is posted as a balanced set. A single event may
 
 The compliance requirements for Finnish audit trail, vouchers, and retention live in [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit). The storage-level rules for append-only correction workflows live in [Append-only updates and soft deletion](../data/append-only-and-soft-deletion).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./cli-first">CLI-first and human-friendly interfaces</a></span>

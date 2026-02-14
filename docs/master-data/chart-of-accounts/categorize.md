@@ -13,8 +13,6 @@ Categorize accounts so profit and loss and balance sheet views remain consistent
 
 In the current CLI surface, categorization is performed by updating the account’s `ledger_category_id` in `accounts.csv` and then running `bus accounts validate` (or `bus validate`) to ensure the result is schema-valid and consistent.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./add">Add a ledger account</a></span>

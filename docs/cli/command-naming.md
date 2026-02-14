@@ -15,8 +15,6 @@ For multi-word concepts that are standard terms (e.g. report types), hyphenated 
 
 This document defines the current naming convention only. Deprecated or alternate command names are not maintained; the canonical names are those documented in each module’s CLI reference and in the [minimum required command surface](./minimum-command-surface).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./global-flags">Standard global flags</a></span>

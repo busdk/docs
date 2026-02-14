@@ -9,8 +9,6 @@ description: valuation_method is part of the inventory items master data.
 
 Example values: `fifo`, `weighted_average`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory items</a></span>

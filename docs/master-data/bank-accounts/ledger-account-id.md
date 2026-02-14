@@ -11,8 +11,6 @@ This is a reference to [`ledger_account_id` in the chart of accounts](../chart-o
 
 Example values: `acc-1910`, `acc-1930`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./currency">currency</a></span>

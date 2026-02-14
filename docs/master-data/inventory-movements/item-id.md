@@ -9,8 +9,6 @@ description: item_id is part of the inventory movements master data.
 
 Example values: `ITEM-0001`, `ITEM-2026-0042`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

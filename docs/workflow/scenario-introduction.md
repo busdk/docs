@@ -44,8 +44,6 @@ bus reports trial-balance ...
 
 The full, module-level flow is summarized in `workflow/accounting-workflow-overview.md`, and the rest of this section walks through concrete examples of how the pieces fit together.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./record-purchase-journal-transaction">Record a purchase as a journal transaction</a></span>

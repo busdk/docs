@@ -11,8 +11,6 @@ Interactive prompting must never block automation. In non-interactive contexts, 
 
 When an operation has both a “guided” interactive mode and an explicit non-interactive mode, the resulting repository data must be equivalent. Interactive mode is an implementation choice for user experience, not a different behavioral contract.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./error-handling-dry-run-diagnostics">Error handling, dry-run, and diagnostics</a></span>

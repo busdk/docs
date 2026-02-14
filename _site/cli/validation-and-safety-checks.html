@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Before any data mutation, the CLI performs schema validation and logical validation.","headline":"Validation and safety checks","url":"http://localhost:4000/cli/validation-and-safety-checks.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1181,8 +1194,6 @@
 <p>Validation failures must be script-friendly and deterministic. Commands must exit non-zero on validation failure and must write diagnostics to standard error so that standard output remains reserved for command results and exports. Diagnostics should cite datasets and stable identifiers so that validation output can be reviewed and compared across revisions.</p>
 
 <p>For Finnish compliance, validation MUST also enforce audit-trail invariants (stable IDs, required voucher references, deterministic ordering fields) and must prevent changes that would break a closed period or previously reported data. See <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

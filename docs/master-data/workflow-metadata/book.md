@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Booking records when and by whom an item was finalized for bookkeeping purposes. This improves auditability and makes later review of exceptions reproducible.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./triage">Triage items for bookkeeping</a></span>

@@ -11,8 +11,6 @@ Statuses are workflow signals. The accounting evidence remains the invoice conte
 
 Example values: `new`, `booked`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Bookkeeping status and review workflow</a></span>

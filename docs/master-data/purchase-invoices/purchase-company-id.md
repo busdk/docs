@@ -9,8 +9,6 @@ description: purchase_company_id links a purchase invoice to the supplier.
 
 Example values: `supplier-001`, `supplier-017`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./purchase-invoice-id">purchase_invoice_id</a></span>

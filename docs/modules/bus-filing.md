@@ -55,8 +55,6 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-pdf">bus-pdf</a></span>

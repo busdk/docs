@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Decide VAT handling at posting-line level so VAT reporting remains deterministic. Deductibility decisions belong where you decide bookkeeping, not hidden in free text.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./split">Split a purchase across accounts</a></span>

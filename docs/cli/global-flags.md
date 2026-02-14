@@ -22,8 +22,6 @@ Global flags are accepted in any order before the subcommand name. A lone `--` e
 
 Some modules add their own global flags (e.g. `bus dev --agent`). Those are documented on the module’s CLI reference page. To see the full set of flags for a module, run `bus <module> --help`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./command-structure">Command structure and discoverability</a></span>

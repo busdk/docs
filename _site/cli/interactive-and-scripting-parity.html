@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Every command must be usable interactively and non-interactively.","headline":"Interactive use and scripting parity","url":"http://localhost:4000/cli/interactive-and-scripting-parity.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1181,8 +1194,6 @@
 <p>Interactive prompting must never block automation. In non-interactive contexts, commands must not prompt for missing inputs; they must instead fail with a concise diagnostic and a usage error exit code. In interactive contexts, prompts must be avoidable by providing explicit flags and arguments so the same operation can be expressed as a deterministic command line.</p>
 
 <p>When an operation has both a “guided” interactive mode and an explicit non-interactive mode, the resulting repository data must be equivalent. Interactive mode is an implementation choice for user experience, not a different behavioral contract.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

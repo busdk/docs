@@ -11,8 +11,6 @@ Even when most activity is in EUR, explicit currency prevents silent errors.
 
 Example values: `EUR`, `SEK`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./amount">amount</a></span>

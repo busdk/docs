@@ -11,8 +11,6 @@ Due date is not the posting date, but it is important context during review beca
 
 Example values: `2026-02-15`, `2026-03-01`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./date">date</a></span>

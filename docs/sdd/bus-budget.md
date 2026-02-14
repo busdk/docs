@@ -81,8 +81,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Budget dataset: the repository table that records planned amounts by account and period.  
 Variance report: derived output comparing budgeted and actual amounts.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-payroll">bus-payroll</a></span>

@@ -13,8 +13,6 @@ Match transactions to invoices or journal entries to close open items determinis
 
 Matching decisions are stored as [Reconciliations](../reconciliations/index) and written by [bus reconcile](../../modules/bus-reconcile).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./import">Import bank transactions</a></span>

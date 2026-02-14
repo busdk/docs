@@ -19,8 +19,6 @@ bus init
 
 This creates the baseline workspace layout and writes the workspace-level accounting entity settings into `datapackage.json` as BusDK metadata (see [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration)). If you later need multi-company workflows such as consolidation or shared reporting, they are handled by higher-level commands that accept multiple workspace directories as inputs rather than by placing multiple accounting entities into one workspace. The design note [Workspace scope and multi-workspace workflows](../../architecture/workspace-scope-and-multi-workspace) explains the rationale and expectations.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Accounting entity</a></span>

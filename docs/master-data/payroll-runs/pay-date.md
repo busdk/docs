@@ -9,8 +9,6 @@ description: pay_date is part of the payroll runs master data.
 
 Example values: `2026-02-28`, `2026-03-31`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Payroll runs</a></span>

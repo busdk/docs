@@ -9,8 +9,6 @@ description: invoice_id links a sales invoice row to its parent invoice.
 
 Example values: `SI-2026-000123`, `SI-2026-000124`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./invoice-row-id">invoice_row_id</a></span>

@@ -9,8 +9,6 @@ description: client_id links a bank transaction to a customer party when the tra
 
 Example values: `client-001`, `client-042`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./matched-purchase-invoice-id">matched_purchase_invoice_id</a></span>

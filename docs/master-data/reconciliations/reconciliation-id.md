@@ -11,8 +11,6 @@ The identifier is stable within the repository and must not be reused for a diff
 
 Example values: `rec-2026-02-10-0001`, `rec-2026-02-10-0002`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Reconciliations</a></span>

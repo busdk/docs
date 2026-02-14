@@ -16,8 +16,6 @@ These external sources are referenced by the BusDK design spec. They are provide
 - [Kirjanpitolautakunta (KILA): yleisohje kirjanpidon menetelmistä ja aineistoista (20.4.2021)](https://kirjanpitolautakunta.fi/documents/8208007/11087193/final%2B2021-04-20%2BKILA-menetelmaohje%2B%281%29.pdf)
 - [Frictionless Data: Data Package specification](https://specs.frictionlessdata.io/data-package/)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./foundations-summary">References and external foundations (summary)</a></span>

@@ -80,8 +80,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Validation diagnostics: deterministic messages that cite dataset paths and identifiers for errors.  
 Invariant: a cross-table rule that must hold for repository data to be valid.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-reports">bus-reports</a></span>

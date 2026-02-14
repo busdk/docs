@@ -12,8 +12,6 @@ Allowed values:
 - `invoice`: The target is an invoice header record.
 - `journal`: The target is a journal transaction record.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bank-transaction-id">bank_transaction_id</a></span>

@@ -11,8 +11,6 @@ This is the same workflow field as [`booked_by` in bookkeeping status and review
 
 Example values: `jane.doe`, `accountant`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./booked-at">booked_at</a></span>

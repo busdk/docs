@@ -9,8 +9,6 @@ BusDK is a collection of loosely coupled modules centered around a canonical dat
 
 This design mirrors the practical benefits of Unix composability in modern toolchains, where interoperability arises from stable, simple interfaces and predictable conventions. See [The Art of Unix Programming: Basics of the Unix Philosophy](https://www.catb.org/esr/writings/taoup/html/ch01s06.html). In BusDK, the stable interface is the workspace datasets and their schemas: tables governed by a schema-driven data contract and organized in a consistent directory structure. The preferred default is that the repository is a Git repository and tables are stored as CSV, but Git and CSV are implementation choices rather than the definition of the architectural goal.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./append-only-and-security">Append-only discipline and security model</a></span>

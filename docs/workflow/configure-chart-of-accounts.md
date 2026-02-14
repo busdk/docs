@@ -48,8 +48,6 @@ bus accounts validate
 
 5. Alice records the change as a new revision using her version control tooling.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./budgeting-and-budget-vs-actual">Budgeting and budget-vs-actual reporting</a></span>

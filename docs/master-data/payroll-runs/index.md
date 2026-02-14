@@ -35,8 +35,6 @@ A payroll run is computed from the employee register, typically including all [e
 
 Payroll runs are month-based and rely on [accounting periods](../accounting-periods/index) to keep close and lock rules deterministic for payroll workflows.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

@@ -13,8 +13,6 @@ Modularity is also required inside each module. A module’s domain logic should
 
 A particular packaging model for modules (separate executables, subcommands of a single CLI, or a plugin system) is a delivery convention rather than the goal. The invariant is that the workspace datasets and their change history remain reviewable and exportable, and that module interoperability is defined by the schema contract rather than by shared code.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./git-as-source-of-truth">Git as the canonical, append-only source of truth</a></span>

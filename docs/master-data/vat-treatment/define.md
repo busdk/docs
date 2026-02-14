@@ -11,8 +11,6 @@ Owner: [bus vat](../../modules/bus-vat).
 
 Define treatment codes so VAT handling is explainable beyond the percentage. This is especially important for 0% scenarios, where the same rate can represent different legal treatments.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">VAT treatment</a></span>

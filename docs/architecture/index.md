@@ -15,8 +15,6 @@ This section is split into **single-concept** documents:
 - [Workspace scope and multi-workspace workflows](./workspace-scope-and-multi-workspace)
 - [Shared validation layer (schema + logical validation)](./shared-validation-layer)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../design-goals/unix-composability">Unix-style composability (micro-tools)</a></span>

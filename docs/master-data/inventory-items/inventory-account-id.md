@@ -9,8 +9,6 @@ description: inventory_account_id is part of the inventory items master data.
 
 Example values: `acc-1400`, `acc-1410`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory items</a></span>

@@ -11,8 +11,6 @@ Keeping supplier invoice numbers explicit makes review and export workflows clea
 
 Example values: `INV-77881`, `2026-00045`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./purchase-company-id">purchase_company_id</a></span>

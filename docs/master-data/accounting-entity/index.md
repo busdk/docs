@@ -35,8 +35,6 @@ Within a workspace, there is one [chart of accounts](../chart-of-accounts/index)
 
 Multi-company workflows are expressed as multi-workspace operations; see [Workspace scope and multi-workspace workflows](../../architecture/workspace-scope-and-multi-workspace).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Correct sales invoices through explicit correction records so the change history remains reviewable. Corrections should preserve the original evidence trail and make the net effect clear.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./create">Create a sales invoice</a></span>

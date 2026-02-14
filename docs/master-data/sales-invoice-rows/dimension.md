@@ -11,8 +11,6 @@ When kept simple and consistent, a single dimension field is often enough for sm
 
 Example values: `Project Alpha`, `Operations`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-treatment">vat_treatment</a></span>

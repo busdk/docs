@@ -63,8 +63,6 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-bfl">bus-bfl</a></span>

@@ -11,8 +11,6 @@ Even in a single-user system, booking actor information reduces ambiguity when r
 
 Example values: `jane.doe`, `accountant`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./booked-at">booked_at</a></span>

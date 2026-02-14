@@ -143,8 +143,6 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-data">bus-data</a></span>

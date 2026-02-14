@@ -83,8 +83,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Bank import: a normalized record of a statement ingest run stored in `bank-imports.csv`.  
 Bank transaction: a normalized transaction row stored in `bank-transactions.csv`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-journal">bus-journal</a></span>

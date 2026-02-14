@@ -19,8 +19,6 @@ This section is split into **single-concept** documents:
 - [Schema-driven data contract (Frictionless Table Schema)](./schema-contract)
 - [Unix-style composability (micro-tools)](./unix-composability)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../overview/visual-identity">Visual identity and branding on outputs</a></span>

@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Budgets are canonical records used for bookkeeping review, posting, and period-based reporting.","headline":"Budgets","url":"http://localhost:4000/master-data/budgets/"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1223,8 +1236,6 @@
 <p>A budget line belongs to the workspace’s <a href="../accounting-entity/index">accounting entity</a>. Scope is derived from the workspace root directory rather than from a per-row key.</p>
 
 <p>A budget line references one <a href="../chart-of-accounts/index">ledger account</a> via <a href="./ledger-account-id"><code class="language-plaintext highlighter-rouge">ledger_account_id</code></a> and one <a href="../accounting-periods/index">accounting period</a> via <code class="language-plaintext highlighter-rouge">year</code> and <a href="./period"><code class="language-plaintext highlighter-rouge">period</code></a>, so reporting can compare actuals to budget in the same scope and structure.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

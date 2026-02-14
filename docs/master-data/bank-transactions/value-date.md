@@ -11,8 +11,6 @@ When value date is available, review workflows can explain “why it hit the acc
 
 Example values: `2026-02-10`, `2026-02-13`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./booking-date">booking_date</a></span>

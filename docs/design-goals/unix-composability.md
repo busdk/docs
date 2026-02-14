@@ -11,8 +11,6 @@ In BusDK, the primary interface between tools is the workspace datasets and thei
 
 Pipes and stream processing are implementation choices, not the definition of the goal. The invariant is that a command’s behavior is defined in terms of explicit inputs and outputs, and that any change to the canonical dataset is expressed as a reviewable update to the repository data rather than as hidden application storage. When commands also support machine-readable output and convenient interoperability with general-purpose tooling, the result is a system that is both CLI-friendly and automation-friendly — including for long-lived scripts and for AI-assisted workflows described in [AI-readiness](./ai-readiness).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./schema-contract">Schema-driven data contract (Frictionless Table Schema)</a></span>

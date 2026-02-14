@@ -9,8 +9,6 @@ description: qty is part of the inventory movements master data.
 
 Example values: `10`, `-2`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

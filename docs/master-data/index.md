@@ -62,8 +62,6 @@ This section describes the business objects and the bookkeeping properties they 
 
 - [Budgets](./budgets/index): Budget lines keyed by account and period for variance reporting.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../layout/index">Data directory layout</a></span>

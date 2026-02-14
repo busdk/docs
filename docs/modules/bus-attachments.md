@@ -55,8 +55,6 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-period">bus-period</a></span>

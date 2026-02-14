@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"BusDK is a collection of loosely coupled modules centered around a canonical dataset with a reviewable, append-only change history.","headline":"Architectural overview","url":"http://localhost:4000/architecture/architectural-overview.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1179,8 +1192,6 @@
 <p>BusDK is a collection of loosely coupled modules centered around a canonical dataset with a reviewable, append-only change history. It intentionally avoids a monolithic application design and instead follows a “micro-tool” architecture: each feature area is implemented as an independent CLI tool (or service) that reads and writes shared workspace datasets (tables plus schemas) as repository data. Modules coordinate by sharing data and by relying on an append-only revision history, rather than by calling each other’s internal APIs.</p>
 
 <p>This design mirrors the practical benefits of Unix composability in modern toolchains, where interoperability arises from stable, simple interfaces and predictable conventions. See <a href="https://www.catb.org/esr/writings/taoup/html/ch01s06.html">The Art of Unix Programming: Basics of the Unix Philosophy</a>. In BusDK, the stable interface is the workspace datasets and their schemas: tables governed by a schema-driven data contract and organized in a consistent directory structure. The preferred default is that the repository is a Git repository and tables are stored as CSV, but Git and CSV are implementation choices rather than the definition of the architectural goal.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

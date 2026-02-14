@@ -9,8 +9,6 @@ description: description is part of the inventory movements master data.
 
 Example values: `Initial stock`, `Stock correction after count`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

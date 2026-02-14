@@ -11,8 +11,6 @@ Bookkeeping relies on explicit currency to interpret amounts correctly and to ke
 
 Example values: `EUR`, `SEK`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./reference-number">reference_number</a></span>

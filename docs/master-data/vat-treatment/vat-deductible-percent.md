@@ -11,8 +11,6 @@ When deductibility is recorded where you decide the posting, bookkeeping can com
 
 Example values: `100`, `0`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-treatment">vat_treatment</a></span>

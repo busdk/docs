@@ -11,8 +11,6 @@ When a strong identifier is present, reports and audits remain cleaner because t
 
 Example values: `1234567-8`, `9876543-2`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./party-name">party_name</a></span>

@@ -9,8 +9,6 @@ description: start_date is part of the employees master data.
 
 Example values: `2026-02-01`, `2025-01-15`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

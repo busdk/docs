@@ -11,8 +11,6 @@ This field does not replace asset bookkeeping. It captures the decision context 
 
 Example values: `true`, `false`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./dimension">dimension</a></span>

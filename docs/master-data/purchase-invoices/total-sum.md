@@ -11,8 +11,6 @@ Having totals explicit on the header supports quick review without opening the P
 
 Example values: `1000.00`, `79.90`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./iban">iban</a></span>

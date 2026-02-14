@@ -11,8 +11,6 @@ Keeping reference numbers as a clean, dedicated field directly improves reconcil
 
 Example values: `1234567890`, `2026000123`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./duedate">duedate</a></span>

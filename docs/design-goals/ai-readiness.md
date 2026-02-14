@@ -11,8 +11,6 @@ This is why BusDK emphasizes modular CLI tools, machine-readable outputs, schema
 
 Claims that “AI reduces manual effort” should be treated as optional augmentation and not as a promise of correctness. The safety property BusDK guarantees is that any automation — AI-driven or rule-driven — operates through deterministic interfaces and produces reviewable, auditable outcomes.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Design goals and requirements</a></span>

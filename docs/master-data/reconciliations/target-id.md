@@ -13,8 +13,6 @@ The value is treated as an opaque identifier. It is not parsed or reinterpreted 
 
 Example values: `SI-2026-000123`, `PI-2026-000017`, `JRN-2026-014`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./target-kind">target_kind</a></span>

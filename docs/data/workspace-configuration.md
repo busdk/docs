@@ -41,8 +41,6 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 `vat_reporting_period` defines the VAT reporting cadence used for VAT reporting workflows and completeness checks. Typical values are `monthly` and `quarterly`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./data-package-organization">Data Package organization</a></span>

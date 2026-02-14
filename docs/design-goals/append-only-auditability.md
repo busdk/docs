@@ -15,8 +15,6 @@ Auditability is also a durability requirement. The canonical dataset should rema
 
 In accounting terms, append-only auditability means that the ledger remains reproducible and traceable: a reported figure must be explainable by a chain of records from originating evidence into postings and onward into reports, and corrections must preserve history rather than hiding it. This expectation aligns with the ledger invariants described in [Double-entry ledger accounting](./double-entry-ledger), while the storage-level mechanics for soft deletion and append-only updates are defined in [Append-only updates and soft deletion](../data/append-only-and-soft-deletion).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ai-readiness">AI-readiness (objective, not dependency)</a></span>

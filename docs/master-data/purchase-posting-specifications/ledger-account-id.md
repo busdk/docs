@@ -9,8 +9,6 @@ description: ledger_account_id identifies the expense or asset account the purch
 
 Example values: `acc-4000`, `acc-1700`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Purchase posting specifications</a></span>

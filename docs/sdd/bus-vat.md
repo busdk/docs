@@ -83,8 +83,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 VAT report: a computed summary of VAT totals for a reporting period.  
 VAT export: a repository data output intended for filing or archiving.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-validate">bus-validate</a></span>

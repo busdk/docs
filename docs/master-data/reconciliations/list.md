@@ -11,8 +11,6 @@ Owner: [bus reconcile](../../modules/bus-reconcile).
 
 This command reads records from [Reconciliations](./index).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./allocate">Allocate a bank transaction</a></span>

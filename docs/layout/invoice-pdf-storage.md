@@ -11,8 +11,6 @@ Storing PDFs in Git is supported for completeness even though diffs for binaries
 
 When PDFs are stored outside Git, BusDK MUST still preserve attachment metadata and stable references so that vouchers and postings can be verified. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./budget-area">Budgeting area</a></span>

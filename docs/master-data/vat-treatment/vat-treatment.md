@@ -13,8 +13,6 @@ In BusDK documentation, VAT treatment codes also define how invoices must be mar
 
 Example values: `domestic_standard`, `reverse_charge`, `intra_eu_supply`, `export`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-percent">vat_percent</a></span>

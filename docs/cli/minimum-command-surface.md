@@ -67,8 +67,6 @@ The following command surface is the minimum needed to execute the workflow as d
 
 This is the minimum workflow surface implied by the spec’s current planned modules. As BusDK grows, new modules may add new commands without breaking this minimum surface, consistent with [Extensible CLI surface and API parity](./api-parity).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./command-naming">CLI command naming</a></span>

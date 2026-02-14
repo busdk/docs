@@ -9,8 +9,6 @@ description: name is part of the fixed assets master data.
 
 Example values: `Laptop Dell XPS 13`, `Accounting software license`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Fixed assets</a></span>

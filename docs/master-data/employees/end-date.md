@@ -9,8 +9,6 @@ description: end_date is part of the employees master data.
 
 Example values: `2026-12-31`, `…`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

@@ -9,8 +9,6 @@ description: employee_id is part of the employees master data.
 
 Example values: `EMP-0001`, `EMP-2026-0012`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

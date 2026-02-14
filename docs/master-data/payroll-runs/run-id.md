@@ -9,8 +9,6 @@ description: run_id is part of the payroll runs master data.
 
 Example values: `PAYRUN-2026-02`, `PAYRUN-2026-03`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Payroll runs</a></span>

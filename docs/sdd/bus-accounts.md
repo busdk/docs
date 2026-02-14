@@ -86,8 +86,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Chart of accounts: the authoritative list of account identifiers and types stored as workspace datasets.  
 Account identifier: a stable key used by other datasets to reference accounts.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-bfl">bus-bfl</a></span>

@@ -11,8 +11,6 @@ Explicit unit prices improve reviewability because a reviewer can spot outliers 
 
 Example values: `99.00`, `150.00`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./amount">amount</a></span>

@@ -57,8 +57,6 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-budget">bus-budget</a></span>

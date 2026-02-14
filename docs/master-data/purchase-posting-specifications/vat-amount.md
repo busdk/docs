@@ -11,8 +11,6 @@ When VAT amounts are explicit per line, reviewers can validate VAT splits withou
 
 Example values: `240.00`, `0.00`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-rate">vat_rate</a></span>

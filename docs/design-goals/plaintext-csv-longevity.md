@@ -11,8 +11,6 @@ The preferred default representation is UTF-8 CSV paired with explicit schemas. 
 
 CSV is a delivery convention rather than the goal. BusDK should be able to adopt other storage or serialization approaches over time as long as the system preserves long-term accessibility — in the sense of open documentation, broad tool support, and predictable export back to simple, tabular text formats — consistent with [National Archives guidance on selecting sustainable formats for electronic records](https://www.archives.gov/records-mgmt/initiatives/sustainable-faq.html).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./modularity">Modularity as a first-class requirement</a></span>

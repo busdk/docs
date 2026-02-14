@@ -9,8 +9,6 @@ Modules are independent tools or services. Each functional area is a module: led
 
 CLI-to-CLI dependency is not an integration mechanism. Modules must not invoke other `bus-*` CLIs as internal dependencies, and the `bus` dispatcher provides a unified UX without turning module CLIs into internal APIs. The canonical repository layout and dependency rules are defined in [Module repository structure and dependency rules](../implementation/module-repository-structure).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./git-backed-data-store">Git-backed data repository (the data store)</a></span>

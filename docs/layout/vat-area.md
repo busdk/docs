@@ -9,8 +9,6 @@ VAT datasets can generally be generated from invoices and journal entries, but r
 
 For Finnish compliance, VAT summaries MUST retain links to the postings and vouchers that produced each reported amount. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./schemas-area">Schemas beside datasets (Table Schema JSON files)</a></span>

@@ -11,8 +11,6 @@ Schemas are expressed using [Frictionless Data Table Schema](https://frictionles
 
 Frictionless Table Schema is a preferred implementation, not the goal itself. In BusDK terms, the data contract is \((table, schema)\): each table must have a clear contract that can be validated, diffed, and evolved over time while keeping older revisions interpretable and exportable.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./plaintext-csv-longevity">Plain-text CSV for longevity</a></span>

@@ -9,8 +9,6 @@ description: vat_deductible_percent expresses how much of the input VAT is deduc
 
 Example values: `100`, `50`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-amount">vat_amount</a></span>

@@ -32,8 +32,6 @@ bus attachments list
 
 4. Alice records the result as a new revision using her version control tooling.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./create-sales-invoice">Add a sales invoice (interactive workflow)</a></span>

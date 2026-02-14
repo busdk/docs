@@ -45,8 +45,6 @@ A loan references [ledger accounts](../chart-of-accounts/index) via its account-
 
 Amortization is produced for a given [accounting period](../accounting-periods/index), based on the loan’s event history.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

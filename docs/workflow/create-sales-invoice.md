@@ -53,8 +53,6 @@ Generating the PDF representation and registering it as evidence is a separate w
 
 4. Alice records the result as a new revision using her version control tooling.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./configure-chart-of-accounts">Configure the chart of accounts</a></span>

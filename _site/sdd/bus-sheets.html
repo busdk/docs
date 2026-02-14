@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Bus Sheets provides a local, spreadsheet-like web user interface for BusDK workspaces.","headline":"bus-sheets — spreadsheet-like web UI for workspace data (SDD)","url":"http://localhost:4000/sdd/bus-sheets.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1212,8 +1225,6 @@
 
 <p>NG-SHT-004 No formula engine in the UI backend. Bus Sheets does not evaluate formulas itself; formula behavior is delegated through Bus API → Bus Data → BFL. (<a href="./bus-api">bus-api SDD</a>)</p>
 
-<hr>
-
 </div></section>
 </div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
 <section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
@@ -1267,8 +1278,6 @@
 
 <p>NFR-SHT-008 Scalability. The module targets a single workspace per server instance. Acceptance criteria: the design does not assume distributed deployment or multi-tenant sharing; scaling is by running additional instances bound to different workspace roots.</p>
 
-<hr>
-
 </div></section>
 </div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
 <section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
@@ -1308,8 +1317,6 @@
 
 <p>Requests not under <code class="language-plaintext highlighter-rouge">/{token}/</code> return 404.</p>
 
-<hr>
-
 </div></section>
 </div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="key-decisions">Key Decisions</h2>
@@ -1323,8 +1330,6 @@
 <p>KD-SHT-004 Formula display is delegated. Formulas are shown via Bus API’s formula-projected reads; BFL’s range and array mechanics remain a library concern (Bus Data provides the range resolver; BFL supports ranges and arrays as first-class values). (<a href="./bus-api">bus-api SDD</a>)</p>
 
 <p>KD-SHT-005 Agent integration is optional and IDE-style. The agent is exposed as a chat dialog (similar to IDE AI integrations), disabled by default and controllable via CLI flag and runtime UI visibility. The agent runs with the workspace as workdir and can run Bus CLI tools so the user can request multi-step operations and see results in the sheets view. (<a href="./bus-agent">bus-agent</a>)</p>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
 <section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
@@ -1390,8 +1395,6 @@
 
 <p>When <code class="language-plaintext highlighter-rouge">EnableAgent</code> is true, the server mounts agent endpoints under a defined prefix (e.g. <code class="language-plaintext highlighter-rouge">/{token}/v1/agent/...</code>). These endpoints delegate to the <a href="./bus-agent">bus-agent</a> library with the workspace root as working directory. The contract is: the frontend sends user messages to the agent endpoint; the server invokes the agent (via bus-agent) with the workspace as workdir; the agent runtime may run Bus CLI tools in that directory; the server returns agent responses (e.g. streamed or batched) to the frontend. The frontend does not invoke Bus CLI directly; only the agent execution context has that capability. When <code class="language-plaintext highlighter-rouge">EnableAgent</code> is false, no agent routes are registered and the UI must not display or request the chat panel.</p>
 
-<hr>
-
 </div></section>
 </div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="command-surface">Command Surface</h2>
@@ -1439,8 +1442,6 @@
   <li>
 <code class="language-plaintext highlighter-rouge">--enable-agent</code> enables the optional <a href="./bus-agent">bus-agent</a> chat integration; when set, the UI exposes a chat dialog and the agent can run Bus CLI tools in the workspace. Default: disabled. When disabled, the chat is not shown and no agent endpoints are exposed.</li>
 </ul>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
 <section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
@@ -1518,15 +1519,11 @@
 
 <p>When the server is started with <code class="language-plaintext highlighter-rouge">--enable-agent</code>, the UI shows an optional chat panel (IDE-style). The user can hide or unhide this panel at runtime without restarting the server. In the chat, the user can ask the AI agent to perform operations; the agent has access to run Bus CLI tools in the workspace working directory, so requests can result in data changes, validation runs, or other Bus commands. After the agent performs mutating operations, the user can refresh the sheet view to see updated data. The chat and agent endpoints are not available when agent integration is disabled.</p>
 
-<hr>
-
 </div></section>
 </div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="data-design">Data Design</h2>
 
 <p>Bus Sheets introduces no new on-disk formats or persistent state. All persistent data remains BusDK workspace datasets: CSV files, beside-the-table schema JSON files, and an optional <code class="language-plaintext highlighter-rouge">datapackage.json</code>. The server holds no persistent state; all reads and writes go through the embedded <a href="./bus-api">bus-api</a> and thus the <a href="./bus-data">bus-data</a> stack.</p>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="assumptions-and-dependencies">Assumptions and Dependencies</h2>
@@ -1537,8 +1534,6 @@
   <li>AD-SHT-003 Formula semantics are provided transitively via Bus Data → BFL; Bus Sheets does not require direct BFL integration. (<a href="./bus-bfl">bus-bfl SDD</a>)</li>
   <li>AD-SHT-004 When agent integration is enabled, the <a href="./bus-agent">bus-agent</a> library is available and the agent execution context (workdir = workspace root) is allowed to run Bus CLI tools; agent runtimes (e.g. Cursor CLI, Codex) are configured or detected outside bus-sheets per bus-agent semantics.</li>
 </ul>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="security-considerations">Security Considerations</h2>
@@ -1553,14 +1548,10 @@
   <li>Logging should redact the token in request paths by default.</li>
 </ul>
 
-<hr>
-
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="observability-and-logging">Observability and Logging</h2>
 
 <p>Startup prints only the capability base URL to stdout. Diagnostics go to stderr. Logs SHOULD be stable (timestamps off by default) to keep outputs comparable in tests, consistent with Bus API’s deterministic posture. (<a href="./bus-api">bus-api SDD</a>)</p>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="error-handling-and-resilience">Error Handling and Resilience</h2>
@@ -1568,8 +1559,6 @@
 <p>Invalid CLI usage exits with code 2 and a concise usage error. Runtime failures return deterministic HTTP statuses and JSON error bodies from the embedded Bus API. Bus Sheets surfaces those errors in the UI without rewording away stable codes/fields.</p>
 
 <p>Any request that fails must leave the workspace unchanged, relying on Bus API / Bus Data atomicity guarantees. (<a href="./bus-api">bus-api SDD</a>)</p>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="testing-strategy">Testing Strategy</h2>
@@ -1597,14 +1586,10 @@
   </li>
 </ul>
 
-<hr>
-
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="deployment-and-operations">Deployment and Operations</h2>
 
 <p>Not Applicable. The module ships as a single embedded binary for local use; no separate deployment or operational runbook is required beyond starting the server.</p>
-
-<hr>
 
 </div></section></div></section><section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="glossary-and-terminology">Glossary and Terminology</h2>
@@ -1620,8 +1605,6 @@
 <p><strong>Agent chat / agent integration.</strong> Optional IDE-style chat dialog backed by <a href="./bus-agent">bus-agent</a>. When enabled, the user can converse with an AI agent that runs with the workspace as working directory and has access to run Bus CLI tools, so the user can request operations and see resulting changes in the sheets view after refresh. Controllable at startup via <code class="language-plaintext highlighter-rouge">--enable-agent</code> and at runtime via hide/unhide of the chat panel.</p>
 
 <p><strong>Event stream.</strong> The <a href="./bus-api">bus-api</a> event stream at <code class="language-plaintext highlighter-rouge">GET /{token}/v1/events</code> (Server-Sent Events) delivers mutation events for changes performed through the API. Bus Sheets subscribes to it and uses events to refresh the affected sheet or resource list so that API-originated changes appear without manual refresh. Changes made outside the API (e.g. by the agent running Bus CLI) do not produce events.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

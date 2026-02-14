@@ -272,8 +272,6 @@ OQ-DAT-001 What is the exact CLI flag name and output shape for the opt-in mode 
 
 OQ-DAT-002 Should `bus-data table read` fail the entire command on the first formula evaluation error, or should it report all formula errors and then fail without emitting partial output?
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-config">bus-config</a></span>

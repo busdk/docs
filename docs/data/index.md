@@ -17,8 +17,6 @@ This section is split into **single-concept** documents:
 - [Schema evolution and migration](./schema-evolution-and-migration)
 - [Frictionless Table Schema as the contract](./table-schema-contract)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/shared-validation-layer">Shared validation layer (schema + logical validation)</a></span>

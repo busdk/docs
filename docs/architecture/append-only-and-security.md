@@ -9,8 +9,6 @@ Historical financial data is append-only. Modules add lines, mark records inacti
 
 In single-user operation on a local machine, security is primarily OS-level control. In collaborative scenarios, Git permissions and workflows are used to control who can propose and approve changes. Branch protections, pull requests, and reviews can enforce separation of duties such as preparer-versus-approver. The architecture is designed so these workflows are natural extensions of the Git data store rather than special cases.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/index">BusDK Design Spec: System architecture</a></span>

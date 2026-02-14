@@ -11,8 +11,6 @@ Good names reduce review time and make “bookkeeping inbox” workflows practic
 
 Example values: `Bank account`, `Sales, domestic`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./number">number</a></span>

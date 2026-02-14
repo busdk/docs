@@ -37,8 +37,6 @@ NG-SHT-003 No background watchers by default. The server does not watch files or
 
 NG-SHT-004 No formula engine in the UI backend. Bus Sheets does not evaluate formulas itself; formula behavior is delegated through Bus API → Bus Data → BFL. ([bus-api SDD](./bus-api))
 
----
-
 ## Requirements
 
 ### Functional Requirements
@@ -87,8 +85,6 @@ NFR-SHT-007 Performance. The server MUST remain responsive for local use on typi
 
 NFR-SHT-008 Scalability. The module targets a single workspace per server instance. Acceptance criteria: the design does not assume distributed deployment or multi-tenant sharing; scaling is by running additional instances bound to different workspace roots.
 
----
-
 ## System Architecture
 
 Bus Sheets is a local web app server that embeds two major parts, satisfying FR-SHT-001, FR-SHT-004, and FR-SHT-005.
@@ -114,8 +110,6 @@ The embedded Bus API exposes an event stream at `GET /{token}/v1/events` (Server
 
 Requests not under `/{token}/` return 404.
 
----
-
 ## Key Decisions
 
 KD-SHT-001 “Sheets vibe” naming. The module is named `bus-sheets` to intentionally evoke the familiar spreadsheet mental model: workspace = workbook, resource = sheet/tab.
@@ -127,8 +121,6 @@ KD-SHT-003 Bus API as the only workspace backend. The UI backend delegates all o
 KD-SHT-004 Formula display is delegated. Formulas are shown via Bus API’s formula-projected reads; BFL’s range and array mechanics remain a library concern (Bus Data provides the range resolver; BFL supports ranges and arrays as first-class values). ([bus-api SDD](./bus-api))
 
 KD-SHT-005 Agent integration is optional and IDE-style. The agent is exposed as a chat dialog (similar to IDE AI integrations), disabled by default and controllable via CLI flag and runtime UI visibility. The agent runs with the workspace as workdir and can run Bus CLI tools so the user can request multi-step operations and see results in the sheets view. ([bus-agent](./bus-agent))
-
----
 
 ## Component Design and Interfaces
 
@@ -172,8 +164,6 @@ The SPA must be built to support a dynamic base path rooted at `/{token}/` (for 
 
 When `EnableAgent` is true, the server mounts agent endpoints under a defined prefix (e.g. `/{token}/v1/agent/...`). These endpoints delegate to the [bus-agent](./bus-agent) library with the workspace root as working directory. The contract is: the frontend sends user messages to the agent endpoint; the server invokes the agent (via bus-agent) with the workspace as workdir; the agent runtime may run Bus CLI tools in that directory; the server returns agent responses (e.g. streamed or batched) to the frontend. The frontend does not invoke Bus CLI directly; only the agent execution context has that capability. When `EnableAgent` is false, no agent routes are registered and the UI must not display or request the chat panel.
 
----
-
 ## Command Surface
 
 The module exposes `bus-sheets` as a CLI entry point (and via dispatcher as `bus sheets …`).
@@ -197,8 +187,6 @@ Serve flags (module-specific, aligned with Bus API defaults):
 * `--tls-key <file>` optional (when used with `--tls-cert`)
 * `--read-only` disables all mutating operations (403) via embedded Bus API ([bus-api SDD](./bus-api))
 * `--enable-agent` enables the optional [bus-agent](./bus-agent) chat integration; when set, the UI exposes a chat dialog and the agent can run Bus CLI tools in the workspace. Default: disabled. When disabled, the chat is not shown and no agent endpoints are exposed.
-
----
 
 ## UI Behavior
 
@@ -249,13 +237,9 @@ The UI subscribes to `GET /{token}/v1/events` (Server-Sent Events) as defined by
 
 When the server is started with `--enable-agent`, the UI shows an optional chat panel (IDE-style). The user can hide or unhide this panel at runtime without restarting the server. In the chat, the user can ask the AI agent to perform operations; the agent has access to run Bus CLI tools in the workspace working directory, so requests can result in data changes, validation runs, or other Bus commands. After the agent performs mutating operations, the user can refresh the sheet view to see updated data. The chat and agent endpoints are not available when agent integration is disabled.
 
----
-
 ## Data Design
 
 Bus Sheets introduces no new on-disk formats or persistent state. All persistent data remains BusDK workspace datasets: CSV files, beside-the-table schema JSON files, and an optional `datapackage.json`. The server holds no persistent state; all reads and writes go through the embedded [bus-api](./bus-api) and thus the [bus-data](./bus-data) stack.
-
----
 
 ## Assumptions and Dependencies
 
@@ -263,8 +247,6 @@ Bus Sheets introduces no new on-disk formats or persistent state. All persistent
 * AD-SHT-002 Workspaces live on the local filesystem; the workspace root is the security boundary, enforced by Bus API path safety rules. ([bus-api SDD](./bus-api))
 * AD-SHT-003 Formula semantics are provided transitively via Bus Data → BFL; Bus Sheets does not require direct BFL integration. ([bus-bfl SDD](./bus-bfl))
 * AD-SHT-004 When agent integration is enabled, the [bus-agent](./bus-agent) library is available and the agent execution context (workdir = workspace root) is allowed to run Bus CLI tools; agent runtimes (e.g. Cursor CLI, Codex) are configured or detected outside bus-sheets per bus-agent semantics.
-
----
 
 ## Security Considerations
 
@@ -276,21 +258,15 @@ Bus Sheets inherits Bus API’s MVP security model:
 * Workspace root confinement: all operations remain workspace-relative and must not escape the root boundary. ([bus-api SDD](./bus-api))
 * Logging should redact the token in request paths by default.
 
----
-
 ## Observability and Logging
 
 Startup prints only the capability base URL to stdout. Diagnostics go to stderr. Logs SHOULD be stable (timestamps off by default) to keep outputs comparable in tests, consistent with Bus API’s deterministic posture. ([bus-api SDD](./bus-api))
-
----
 
 ## Error Handling and Resilience
 
 Invalid CLI usage exits with code 2 and a concise usage error. Runtime failures return deterministic HTTP statuses and JSON error bodies from the embedded Bus API. Bus Sheets surfaces those errors in the UI without rewording away stable codes/fields.
 
 Any request that fails must leave the workspace unchanged, relying on Bus API / Bus Data atomicity guarantees. ([bus-api SDD](./bus-api))
-
----
 
 ## Testing Strategy
 
@@ -306,13 +282,9 @@ Any request that fails must leave the workspace unchanged, relying on Bus API / 
   * perform row add/update/delete via the UI backend endpoints and verify on-disk effects match Bus API behavior
   * verify read-only mode returns deterministic 403 on mutating operations ([bus-api SDD](./bus-api))
 
----
-
 ## Deployment and Operations
 
 Not Applicable. The module ships as a single embedded binary for local use; no separate deployment or operational runbook is required beyond starting the server.
-
----
 
 ## Glossary and Terminology
 
@@ -327,8 +299,6 @@ Not Applicable. The module ships as a single embedded binary for local use; no s
 **Agent chat / agent integration.** Optional IDE-style chat dialog backed by [bus-agent](./bus-agent). When enabled, the user can converse with an AI agent that runs with the workspace as working directory and has access to run Bus CLI tools, so the user can request operations and see resulting changes in the sheets view after refresh. Controllable at startup via `--enable-agent` and at runtime via hide/unhide of the chat panel.
 
 **Event stream.** The [bus-api](./bus-api) event stream at `GET /{token}/v1/events` (Server-Sent Events) delivers mutation events for changes performed through the API. Bus Sheets subscribes to it and uses events to refresh the affected sheet or resource list so that API-originated changes appear without manual refresh. Changes made outside the API (e.g. by the agent running Bus CLI) do not produce events.
-
----
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

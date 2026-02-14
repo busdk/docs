@@ -11,8 +11,6 @@ When booking date is explicit, “what belongs to this month” can be answered 
 
 Example values: `2026-02-10`, `2026-02-11`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bank-account-id">bank_account_id</a></span>

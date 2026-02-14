@@ -9,8 +9,6 @@ description: asset_id is part of the fixed assets master data.
 
 Example values: `ASSET-0001`, `ASSET-2026-0012`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Fixed assets</a></span>

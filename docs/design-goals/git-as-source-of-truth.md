@@ -11,8 +11,6 @@ Git is an implementation choice, not the definition of the design goal. BusDK ca
 
 BusDK does not execute Git commands or create commits; it relies on external tooling or orchestration to record revisions and enforce repository policy. When Git is used, its object model (content-addressed objects and parent-linked commits) provides the concrete mechanism for the tamper-evident audit log. See [Git Internals: Git Objects](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./feature-scope">Initial feature scope (modules)</a></span>

@@ -34,8 +34,6 @@ A budget line belongs to the workspace’s [accounting entity](../accounting-ent
 
 A budget line references one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) and one [accounting period](../accounting-periods/index) via `year` and [`period`](./period), so reporting can compare actuals to budget in the same scope and structure.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

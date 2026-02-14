@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Preparing postings turns the purchase posting specification into a balanced proposal for the journal. This makes the journal append-only while still allowing purchase workflows to evolve.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./classify">Classify a purchase invoice</a></span>

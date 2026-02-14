@@ -9,8 +9,6 @@ description: purchase_company_id links a bank transaction to a supplier party wh
 
 Example values: `supplier-001`, `supplier-017`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./client-id">client_id</a></span>

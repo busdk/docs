@@ -11,8 +11,6 @@ When categories are explicit, a chart of accounts can evolve without breaking th
 
 Example values: `assets_current`, `revenue_sales`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./name">name</a></span>

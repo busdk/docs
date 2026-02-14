@@ -9,8 +9,6 @@ description: vat_treatment is a short code that explains the VAT handling catego
 
 Example values: `domestic_standard`, `intra_eu_supply`, `export`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ledger-account-id">ledger_account_id</a></span>

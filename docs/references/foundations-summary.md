@@ -15,8 +15,6 @@ The archival document preference for invoices is consistent with PDF/A’s long-
 
 When Git is used for the canonical change history, the tamper-evident audit model relies on Git’s content-addressed object model and parent-linked commit structure. See [Git Internals: Git Objects](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../references/index">BusDK Design Spec: References and external foundations</a></span>

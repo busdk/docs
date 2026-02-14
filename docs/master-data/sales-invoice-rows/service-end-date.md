@@ -9,8 +9,6 @@ description: service_end_date records when the service period ends for this invo
 
 Example values: `2026-02-28`, `2026-01-31`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./service-start-date">service_start_date</a></span>

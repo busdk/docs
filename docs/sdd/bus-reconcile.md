@@ -82,8 +82,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Reconciliation record: a dataset row linking a bank transaction to an invoice or journal entry.  
 Allocation history: append-only records detailing partials, splits, and fees.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-bank">bus-bank</a></span>

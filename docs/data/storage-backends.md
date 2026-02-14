@@ -15,8 +15,6 @@ When modules are implemented in Go, a shared library implementation of the works
 
 Repository layout and dependency rules remain separate from the storage interface: modules must not depend on invoking other `bus-*` CLIs as internal APIs, and shared implementation is limited to mechanical libraries like the workspace store. The canonical repository structure and dependency rules are defined in [Module repository structure and dependency rules](../implementation/module-repository-structure).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./csv-conventions">CSV conventions</a></span>

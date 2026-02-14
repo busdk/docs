@@ -11,8 +11,6 @@ Stable bank account identity also makes reconciliation and reporting consistent 
 
 Example values: `bankacct-001`, `bankacct-002`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Bank accounts</a></span>

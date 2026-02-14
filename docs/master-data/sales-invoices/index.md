@@ -47,8 +47,6 @@ A sales invoice can be settled by one or more [reconciliations](../reconciliatio
 
 A sales invoice can have zero or more [documents (evidence)](../documents/index) linked to it for audit navigation.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../workflow-metadata/index">Bookkeeping status and review workflow</a></span>

@@ -11,8 +11,6 @@ Names are particularly important for fees, taxes, and settlements where no invoi
 
 Example values: `Example Supplier AB`, `Tax authority`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./debtor-name">debtor_name</a></span>

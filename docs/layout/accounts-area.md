@@ -16,8 +16,6 @@ beyond invoice free-text fields.
 
 Account numbering conventions are workspace policy. Examples in BusDK documentation may use familiar Finnish-style numbers such as `1910` and `3000`, but BusDK does not require any specific numbering ranges as long as the chart is internally consistent and supports the reporting groupings you need.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../layout/index">BusDK Design Spec: Data directory layout</a></span>

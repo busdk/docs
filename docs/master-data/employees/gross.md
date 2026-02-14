@@ -9,8 +9,6 @@ description: gross is part of the employees master data.
 
 Example values: `3500.00`, `4200.00`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

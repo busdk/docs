@@ -9,8 +9,6 @@ description: status is part of the accounting periods master data.
 
 Example values: `open`, `locked`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Accounting periods</a></span>

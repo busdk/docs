@@ -11,8 +11,6 @@ This is the same workflow field as [`accounting_note` in bookkeeping status and 
 
 Example values: `Bank fee — booked as expense.`, `Settlement batch — split across invoices.`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./booked-by">booked_by</a></span>

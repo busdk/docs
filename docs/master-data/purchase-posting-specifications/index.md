@@ -43,8 +43,6 @@ A purchase posting specification belongs to a [purchase invoice](../purchase-inv
 
 When `is_capitalizable` is set, the line indicates fixed-asset intent that later [fixed asset](../fixed-assets/index) workflows can consume to keep asset capitalization consistent with what was booked.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../purchase-invoices/index">Purchase invoices</a></span>

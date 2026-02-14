@@ -44,8 +44,6 @@ A sales invoice row belongs to one [sales invoice](../sales-invoices/index) via 
 
 A sales invoice row references one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) and one [VAT treatment](../vat-treatment/index) via [`vat_treatment`](./vat-treatment) and [`vat_percent`](./vat-percent).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../sales-invoices/index">Sales invoices</a></span>

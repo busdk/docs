@@ -11,8 +11,6 @@ Explicit gross totals help reconciliation and reduce manual “is this the same 
 
 Example values: `1255.00`, `99.08`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./total-vat">total_vat</a></span>

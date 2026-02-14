@@ -11,8 +11,6 @@ An explicit VAT total makes “header vs lines vs payment” consistency checks 
 
 Example values: `240.00`, `19.18`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./total-sum">total_sum</a></span>

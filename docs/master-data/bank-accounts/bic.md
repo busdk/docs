@@ -11,8 +11,6 @@ Keeping BIC explicit improves reviewability when bank details appear on invoices
 
 Example values: `BANKFIHH`, `NDEAFIHH`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./iban">iban</a></span>

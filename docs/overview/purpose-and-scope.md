@@ -11,8 +11,6 @@ While bookkeeping is the current focus, BusDK is intended to grow into a broader
 
 This spec defines BusDK’s goals, system architecture, data formats and storage conventions, CLI tooling and workflow expectations, extensibility model, canonical data directory layout, and an end-to-end example workflow illustrating day-to-day use. Finnish bookkeeping and tax-audit compliance requirements are specified separately in [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Overview</a></span>

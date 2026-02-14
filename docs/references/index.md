@@ -9,7 +9,6 @@ This section is split into **single-concept** documents:
 
 - [References and external foundations (summary)](./foundations-summary)
 - [Sources](./link-list)
----
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

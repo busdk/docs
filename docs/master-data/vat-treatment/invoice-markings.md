@@ -19,8 +19,6 @@ The phrases below are written in English as canonical examples. Workspaces may u
 | `export` | No | Optional | Required when VAT-relevant | `Export` | A customs/export evidence reference is optional but often useful for review. The invoice must make the export treatment explicit so 0% is not ambiguous later. |
 | `exempt` | No | Optional | Required when VAT-relevant | `VAT exempt` | The invoice must make the exemption explicit so it is not confused with export or intra-EU treatments. |
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./define">Define VAT treatment codes</a></span>

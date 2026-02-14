@@ -52,8 +52,6 @@ To change accounting entity settings (base currency, fiscal year, VAT registrati
 
 From this point on, the repository is the canonical source of truth for the year’s workspace data, and the revision history provides the reviewable audit trail for all subsequent updates.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./import-bank-transactions-and-apply-payment">Import bank transactions and apply payments</a></span>

@@ -11,8 +11,6 @@ When account identity is stable, postings, exports, and audit trails remain cons
 
 Example values: `acc-1910`, `acc-3000`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Chart of accounts</a></span>

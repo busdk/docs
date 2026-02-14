@@ -11,8 +11,6 @@ When VAT registration is explicit, the system does not need to guess whether VAT
 
 Example values: `true`, `false`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./fiscal-year-end">fiscal_year_end</a></span>

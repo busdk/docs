@@ -13,8 +13,6 @@ Example values: `1910`, `3000`.
 
 Account numbering schemes are conventions chosen by the workspace. BusDK does not require any specific numbering ranges and accepts arbitrary numbers as long as the chart of accounts remains internally consistent and the reporting structure (`ledger_category_id`) can group accounts into the required financial statement categories.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ledger-account-id">ledger_account_id</a></span>

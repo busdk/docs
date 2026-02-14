@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"A shared validation layer is foundational.","headline":"Shared validation layer (schema + logical validation)","url":"http://localhost:4000/architecture/shared-validation-layer.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1177,8 +1190,6 @@
 <h2 id="shared-validation-layer-schema--logical-validation">Shared validation layer (schema + logical validation)</h2>
 
 <p>A shared validation layer is foundational. Each module relies on schema validation and logical validation before accepting a mutation. Schema validation checks types and constraints such as required fields, formats, keys, and referential integrity. Logical validation enforces accounting rules such as balanced double-entry transactions and consistency of invoice totals. Schema compliance is standardized through the schema contract described in <a href="../design-goals/schema-contract">Schema-driven data contract (Frictionless Table Schema)</a> and expressed using <a href="https://frictionlessdata.io/specs/table-schema/">Frictionless Data Table Schema</a>. Logical validation is implemented in module logic, particularly where cross-row invariants are required (for example, “sum of debits equals sum of credits for a transaction group”).</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

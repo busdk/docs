@@ -45,8 +45,6 @@ Budgeting is optional for the end-to-end statutory bookkeeping chain. If budgeti
 
 The workspace’s Frictionless Data Package descriptor (`datapackage.json`) is the manifest of datasets, paths, and schema references for whole-workspace validation and deterministic exports. It must list every baseline dataset and its schema reference so whole-workspace validation and exports can be performed deterministically. See [Data Package organization](../data/data-package-organization).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./layout-principles">Data directory layout (principles)</a></span>

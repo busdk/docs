@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"The preferred default data store for BusDK is a Git repository that tracks the workspace datasets (tabular records plus schemas) and supporting evidence as…","headline":"Git-backed data repository (the data store)","url":"http://localhost:4000/architecture/git-backed-data-store.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1181,8 +1194,6 @@
 <p>When Git is used, modules treat the repository data as the canonical source of truth for both human and automated workflows. When reading data, a module operates on the current working tree contents of the repository. When writing data, it produces explicit updates to the relevant tables and schemas in the repository data. BusDK does not execute Git commands or create commits; revisions are recorded by the user or by external tooling or orchestration. Git provides a widely understood, content-addressed commit graph that supports inspection, replication, diff-based review, and tamper-evident history. The Git internals model — content-addressed objects and parent-linked commits — provides the concrete mechanism behind that history when anchor points are agreed and histories are shared. See <a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects">Git Internals: Git Objects</a>.</p>
 
 <p>This Git-backed filesystem repository is the default implementation of the workspace store interface. Git remains external revision tooling and is not part of the storage backend contract; the storage interface focuses on deterministic table and schema persistence, while change history is maintained by external tooling. See <a href="../data/storage-backends">Storage backends and workspace store interface</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

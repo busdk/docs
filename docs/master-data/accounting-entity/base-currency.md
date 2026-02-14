@@ -11,8 +11,6 @@ Bookkeeping uses the base currency as the stable reference for financial stateme
 
 Example values: `EUR`, `SEK`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Accounting entity</a></span>

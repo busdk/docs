@@ -102,8 +102,6 @@ Not Applicable beyond the need for deterministic, repeatable behavior when readi
 
 **Default agent:** the persistent preference for which agent runtime (cursor, codex, gemini, claude) to use when no per-command or session preference is set. Stored in user-level bus configuration and read by bus-agent through the bus-config library.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-init">bus-init</a></span>

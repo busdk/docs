@@ -9,8 +9,6 @@ description: counterparty_id is part of the loans master data.
 
 Example values: `party-001`, `party-017`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Loans</a></span>

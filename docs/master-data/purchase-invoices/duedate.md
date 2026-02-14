@@ -11,8 +11,6 @@ Due date is not the posting date, but it helps explain why payments occur when t
 
 Example values: `2026-02-20`, `2026-03-10`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./date">date</a></span>

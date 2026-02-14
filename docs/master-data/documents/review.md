@@ -11,8 +11,6 @@ Owner: [bus attachments](../../modules/bus-attachments).
 
 Review evidence completeness before booking and filing. This keeps missing attachments visible early and avoids booking items that cannot be supported later.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./link">Link evidence to a record</a></span>

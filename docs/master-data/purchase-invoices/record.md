@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Record the purchase invoice as evidence and as the basis for payables, VAT deduction, and periodization decisions. The goal is that review can be done without reopening the PDF for every item.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Purchase invoices</a></span>

@@ -41,7 +41,7 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 **Value:** Run payroll and produce postings so salary and related entries can feed the [bus-journal](./bus-journal); validate and export support a focused payroll scope.
 
-**Use cases:** Orphan: no documented use case yet (optional accounting — payroll).
+**Use cases:** [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
 **Completeness:** 40% (Meaningful task, partial verification) — validate and export implemented; unit tests cover flags and run. No e2e for full payroll run.
 
@@ -56,8 +56,6 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 **Used by:** Standalone payroll runs; postings feed [bus-journal](./bus-journal).
 
 See [Development status](../implementation/development-status).
-
----
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -74,5 +72,6 @@ See [Development status](../implementation/development-status).
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-payroll](../sdd/bus-payroll)
+- [Workflow: Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
 

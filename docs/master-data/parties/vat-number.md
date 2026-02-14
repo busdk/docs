@@ -11,8 +11,6 @@ When VAT identity is part of party master data, VAT validation and reporting can
 
 Example values: `FI12345678`, `SE123456789001`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./business-id">business_id</a></span>

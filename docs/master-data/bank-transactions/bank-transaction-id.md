@@ -11,8 +11,6 @@ Stable transaction identity also makes matching and exports deterministic across
 
 Example values: `txn-2026-02-10-0001`, `txn-2026-02-10-0002`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Bank transactions</a></span>

@@ -70,8 +70,6 @@ After the close outputs are generated and reviewed, Alice records a revision usi
 
 At year end, the same pattern applies to the final period, producing a reproducible, audit-friendly year-end revision for long-term retention.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../workflow/index">BusDK Design Spec: Example end-to-end workflow</a></span>

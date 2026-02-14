@@ -9,8 +9,6 @@ A BusDK workspace directory is intentionally single-entity: one workspace repres
 
 Multi-company workflows such as company groups, consolidation, shared reporting, or parallel bookkeeping are handled by higher-level commands that accept multiple workspace directories as inputs. Those commands produce outputs that remain separated per input workspace unless an explicit consolidation output is requested, so the boundary between entities stays reviewable and script-friendly.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./independent-modules">Independent modules (integration through shared datasets)</a></span>

@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Locking prevents accidental edits after a period is closed or a filing is prepared. A locked item should remain readable and exportable, but changes should require an explicit correction workflow.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./book">Book an item</a></span>

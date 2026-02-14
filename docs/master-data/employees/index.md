@@ -41,8 +41,6 @@ An employee references one [party](../parties/index) via [`entity_id`](./entity-
 
 Payroll runs consume employee records to compute wages and withholdings for a month. Employee pay structure fields reference [ledger accounts](../chart-of-accounts/index) so payroll outputs can be posted consistently.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

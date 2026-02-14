@@ -9,8 +9,6 @@ description: wage_expense_account_id is part of the employees master data.
 
 Example values: `acc-5000`, `acc-5010`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

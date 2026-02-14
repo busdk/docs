@@ -243,8 +243,6 @@ Bus Agent aligns with BusDK’s library-first, deterministic, non-interactive pr
 * **Bus-owned block:** A contiguous block of content in a repo-local file (e.g. CLAUDE.md, .gemini/settings.json) that is added by BusDK (bus-agent or bus-dev) with an explicit marker so it can be identified and updated without touching existing user content. All such changes are append-only; user content is never removed or rewritten (except the legacy .cursor/rules/{bus-NAME}.mdc exception).
 * **Instruction discovery:** The process by which an agent runtime learns project instructions (e.g. from AGENTS.md). Bus-agent uses root-to-cwd layering and "closest wins" where supported; adapters are documented per runtime in the "Project instructions (AGENTS.md) and per-runtime adapters" subsection.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-api">bus-api</a></span>

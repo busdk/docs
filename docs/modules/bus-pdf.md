@@ -47,8 +47,6 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-vat">bus-vat</a></span>

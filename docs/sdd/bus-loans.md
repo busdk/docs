@@ -87,8 +87,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Loan event: an append-only record of loan activity such as disbursement or repayment.  
 Amortization schedule: derived records allocating principal and interest over time.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-assets">bus-assets</a></span>

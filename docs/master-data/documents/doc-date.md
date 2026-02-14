@@ -11,8 +11,6 @@ An explicit document date helps evidence trails remain filterable by month and f
 
 Example values: `2026-02-05`, `2026-01-31`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./document-id">document_id</a></span>

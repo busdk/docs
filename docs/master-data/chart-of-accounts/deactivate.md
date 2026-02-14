@@ -13,8 +13,6 @@ Deactivate accounts to prevent new postings to inactive targets while keeping hi
 
 In the current CLI surface, deactivation is performed by setting `is_active` to `false` in `accounts.csv` and then running `bus accounts validate` (or `bus validate`) to ensure the result is schema-valid and consistent.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./categorize">Categorize a ledger account</a></span>

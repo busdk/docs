@@ -34,8 +34,6 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 - [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](compliance/fi-company-reorganisation-evidence-pack)
 - [References and external foundations](references/index)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">—</span>

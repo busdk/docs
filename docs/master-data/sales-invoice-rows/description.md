@@ -11,8 +11,6 @@ Good line descriptions make row-level posting intent understandable even when th
 
 Example values: `Monthly hosting, Feb 2026`, `Consulting services`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./invoice-id">invoice_id</a></span>

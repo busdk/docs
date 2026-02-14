@@ -11,8 +11,6 @@ Keeping dimension simple supports year-end analysis and internal reporting witho
 
 Example values: `Office`, `Project Alpha`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-deductible-percent">vat_deductible_percent</a></span>

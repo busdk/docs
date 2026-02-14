@@ -11,8 +11,6 @@ This is the same workflow field as [`evidence_status` in bookkeeping status and 
 
 Example values: `ok`, `needs_review`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./document-role">document_role</a></span>

@@ -11,8 +11,6 @@ This is the same workflow field as [`accounting_status` in bookkeeping status an
 
 Example values: `new`, `matched`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-deductible-percent">vat_deductible_percent</a></span>

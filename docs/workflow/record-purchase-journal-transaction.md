@@ -38,8 +38,6 @@ bus journal balance ...
 
 4. Alice records the change as a new revision using her version control tooling.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./invoice-ledger-impact">Invoice ledger impact (integration through journal entries)</a></span>

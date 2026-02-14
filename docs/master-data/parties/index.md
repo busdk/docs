@@ -48,8 +48,6 @@ Sales invoices reference a customer party via [`client_id`](../sales-invoices/cl
 
 Employees reference a party record via [`entity_id`](../employees/entity-id) so payroll can keep identity and payment data consistent with the party master. Loans reference a party via [`counterparty_id`](../loans/counterparty-id).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../vat-treatment/index">VAT treatment</a></span>

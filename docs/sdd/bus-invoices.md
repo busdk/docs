@@ -92,8 +92,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Invoice header: the dataset row describing invoice metadata and totals.  
 Invoice line: the dataset row describing a line item linked to an invoice header.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-attachments">bus-attachments</a></span>

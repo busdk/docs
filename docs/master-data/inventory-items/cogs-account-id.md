@@ -9,8 +9,6 @@ description: cogs_account_id is part of the inventory items master data.
 
 Example values: `acc-4000`, `acc-4010`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory items</a></span>

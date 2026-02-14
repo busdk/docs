@@ -21,10 +21,9 @@ The recommended reading order is:
 10. [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
 11. [VAT reporting and payment](./vat-reporting-and-payment)
 12. [Year-end close (closing entries)](./year-end-close)
-13. [Evolution over time (extending the model)](./evolution-over-time)
-14. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
-
----
+13. [Finnish payroll handling (monthly pay run)](./finnish-payroll-monthly-pay-run)
+14. [Evolution over time (extending the model)](./evolution-over-time)
+15. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

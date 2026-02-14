@@ -11,8 +11,6 @@ Every command exposed by a module is also covered by a simple end-to-end bash te
 
 If a non-file backend such as SQL is implemented, it must provide an equivalent deterministic test mode using an ephemeral local instance and fixtures, and the same command-level assertions on standard output, standard error, exit codes, and resulting logical table contents must hold. Tests remain isolated and must not rely on external network services; any containerized or local service used for optional backends must be strictly local and used only when that backend is enabled.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Testing</a></span>

@@ -39,8 +39,6 @@ Travel               €800.00     €950.00     €-150.00
 
 If Alice adjusts her plan mid-year, she appends new budget rows (or uses `bus budget set` when the module supports upsert semantics), then re-runs the report to keep variance output aligned with the current budget dataset.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ai-assisted-classification-review">AI-assisted classification (review before external commit)</a></span>

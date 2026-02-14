@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Set base currency, fiscal year boundaries, and VAT reporting expectations used by automation.","headline":"Configure accounting entity settings","url":"http://localhost:4000/master-data/accounting-entity/configure.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1183,8 +1196,6 @@
 <p>Configure accounting entity settings by running <a href="../../modules/bus-init">bus init configure</a> with the flags for the properties you want to change. The command updates <code class="language-plaintext highlighter-rouge">datapackage.json</code> at the workspace root under <code class="language-plaintext highlighter-rouge">busdk.accounting_entity</code>. Omit a flag to leave that property unchanged. Other modules rely on these settings when they interpret dates, currency, and VAT reporting expectations, and they resolve them from BusDK metadata under <code class="language-plaintext highlighter-rouge">busdk.accounting_entity</code> rather than from row-level fields in operational datasets.</p>
 
 <p>The canonical reference for supported keys and their meaning is <a href="../../data/workspace-configuration">Workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> extension)</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

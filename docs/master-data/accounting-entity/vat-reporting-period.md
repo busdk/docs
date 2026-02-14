@@ -11,8 +11,6 @@ When reporting cadence is explicit, VAT workflows remain deterministic and do no
 
 Example values: `monthly`, `quarterly`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-registered">vat_registered</a></span>

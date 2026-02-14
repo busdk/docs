@@ -9,8 +9,6 @@ description: date is part of the inventory movements master data.
 
 Example values: `2026-02-10`, `2026-02-11`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

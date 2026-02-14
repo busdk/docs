@@ -11,8 +11,6 @@ When country is explicit, VAT handling can be deterministic and reviewable witho
 
 Example values: `FI`, `SE`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-number">vat_number</a></span>

@@ -84,8 +84,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Payroll run: a dataset record describing a payroll period and its totals.  
 Employee record: a reference dataset row for a payroll recipient.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-inventory">bus-inventory</a></span>

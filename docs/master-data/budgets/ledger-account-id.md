@@ -9,8 +9,6 @@ description: ledger_account_id is part of the budgets master data.
 
 Example values: `acc-3000`, `acc-4000`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Budgets</a></span>

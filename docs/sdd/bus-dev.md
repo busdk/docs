@@ -451,8 +451,6 @@ The most relevant BusDK spec pages for implementors are: the [BusDK Software Des
 
 - **E2E test script (Bus module):** A Bash script that runs the module’s compiled binary to exercise end-to-end behavior. It MUST live under `tests/` and MUST be named `e2e_bus_<name>.sh` where `<name>` is the module name with the `bus-` prefix stripped (e.g. `bus-accounts` → `tests/e2e_bus_accounts.sh`). See KD-DEV-006 and FR-DEV-009.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-data">bus-data</a></span>

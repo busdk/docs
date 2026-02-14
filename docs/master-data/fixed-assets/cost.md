@@ -9,8 +9,6 @@ description: cost is part of the fixed assets master data.
 
 Example values: `1200.00`, `499.00`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Fixed assets</a></span>

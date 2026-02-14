@@ -49,8 +49,6 @@ my-business-books/
         20260115-INV-1001.pdf
 ```
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./minimal-workspace-baseline">Minimal workspace baseline (after initialization)</a></span>

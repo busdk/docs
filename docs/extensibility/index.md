@@ -13,8 +13,6 @@ This section is split into **single-concept** documents:
 - [One-developer contributions and ecosystem](./one-developer-ecosystem)
 - [Plug-in modules via new datasets](./plugin-modules-via-datasets)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../integration/future-interfaces">Future interfaces (APIs, dashboards, wrappers)</a></span>

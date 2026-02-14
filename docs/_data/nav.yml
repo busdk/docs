@@ -17,6 +17,8 @@
       url: /workflow/accounting-workflow-overview
     - label: Example end-to-end workflow
       url: /workflow/
+    - label: Finnish payroll (monthly pay run)
+      url: /workflow/finnish-payroll-monthly-pay-run
     - label: CLI tooling and workflow
       url: /cli/
 

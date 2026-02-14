@@ -9,8 +9,6 @@ description: entity_id is part of the employees master data.
 
 Example values: `party-emp-001`, `party-emp-017`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

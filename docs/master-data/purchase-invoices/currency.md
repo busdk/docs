@@ -11,8 +11,6 @@ When currency is explicit, bank matching and totals validation can be interprete
 
 Example values: `EUR`, `SEK`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./total-sum-including-vat">total_sum_including_vat</a></span>

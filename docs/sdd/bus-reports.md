@@ -81,8 +81,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Trial balance: a report summarizing balances by account.  
 General ledger: a report listing detailed postings by account.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-budget">bus-budget</a></span>

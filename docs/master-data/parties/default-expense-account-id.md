@@ -11,8 +11,6 @@ Defaults should remain overrideable per invoice or posting line, because real pu
 
 Example values: `acc-4000`, `acc-4300`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./default-sales-account-id">default_sales_account_id</a></span>

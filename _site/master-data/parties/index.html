@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"A party is the counterparty you transact with.","headline":"Parties (customers and suppliers)","url":"http://localhost:4000/master-data/parties/"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1243,8 +1256,6 @@
 <p>Sales invoices reference a customer party via <a href="../sales-invoices/client-id"><code class="language-plaintext highlighter-rouge">client_id</code></a>. Purchase invoices reference a supplier party via <a href="../purchase-invoices/purchase-company-id"><code class="language-plaintext highlighter-rouge">purchase_company_id</code></a>. Bank transactions can reference parties on either side using <a href="../bank-transactions/client-id"><code class="language-plaintext highlighter-rouge">client_id</code></a> and <a href="../bank-transactions/purchase-company-id"><code class="language-plaintext highlighter-rouge">purchase_company_id</code></a>.</p>
 
 <p>Employees reference a party record via <a href="../employees/entity-id"><code class="language-plaintext highlighter-rouge">entity_id</code></a> so payroll can keep identity and payment data consistent with the party master. Loans reference a party via <a href="../loans/counterparty-id"><code class="language-plaintext highlighter-rouge">counterparty_id</code></a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

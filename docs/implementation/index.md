@@ -10,8 +10,6 @@ This section covers how modules are structured and their current implementation 
 - [Module repository structure and dependency rules](./module-repository-structure)
 - [Development status](./development-status): implementation state of each BusDK module and the Bus as a whole, derived from each repository’s PLAN.md
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/index">BusDK Design Spec: System architecture</a></span>

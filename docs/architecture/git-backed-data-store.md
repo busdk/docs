@@ -11,8 +11,6 @@ When Git is used, modules treat the repository data as the canonical source of t
 
 This Git-backed filesystem repository is the default implementation of the workspace store interface. Git remains external revision tooling and is not part of the storage backend contract; the storage interface focuses on deterministic table and schema persistence, while change history is maintained by external tooling. See [Storage backends and workspace store interface](../data/storage-backends).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./cli-as-primary-interface">CLI as the primary interface (controlled read/modify/write)</a></span>

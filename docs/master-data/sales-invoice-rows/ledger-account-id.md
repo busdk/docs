@@ -9,8 +9,6 @@ description: ledger_account_id records which revenue account the invoice row bel
 
 Example values: `acc-3000`, `acc-3010`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-percent">vat_percent</a></span>

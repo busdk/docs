@@ -45,8 +45,6 @@ The dispatcher assumes that module binaries are installed and available on PATH 
 
 **Subcommand:** the first positional argument to `bus` (e.g. `init`, `accounts`, `config`). It corresponds to the executable name `bus-<subcommand>`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./modules">Modules (SDD)</a></span>

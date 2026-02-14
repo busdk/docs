@@ -13,8 +13,6 @@ This use case emphasises correctness and traceability of bookkeeping, explicit s
 
 Which BusDK modules contribute to the evidence pack and what is verified today (by tests) is summarised in the [Development status — BusDK modules](../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) page under the section **Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack**. That section lists bus-period, bus-reports, bus-validate, bus-attachments, bus-journal, bus-invoices, bus-bank, bus-reconcile, bus-loans, bus-budget, and bus-assets with their readiness percentages, value for the evidence pack, planned next steps, and blockers.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></span>

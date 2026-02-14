@@ -189,8 +189,6 @@ Not Applicable initially. The `version` field enables future migrations. If migr
 * Unbounded extensibility may lead to inconsistent consumer conventions. This is mitigated by enforcing a strict key grammar and encouraging module namespaces and documented keys.
 * Storing non-string JSON values may complicate consumer parsing. This is mitigated by providing string-first convenience APIs (`GetString`/`SetString`) and keeping typed JSON optional.
 
----
-
 ### Sources
 
 * [Layout principles](../layout/layout-principles)

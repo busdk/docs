@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"AI integration is treated as an optional module layer.","headline":"AI and external service integration","url":"http://localhost:4000/extensibility/ai-and-external-services.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1179,8 +1192,6 @@
 <p>AI integration is treated as an optional module layer. BusDK must remain fully functional without AI, and any AI-driven automation must operate through the same deterministic interfaces as human workflows.</p>
 
 <p>An AI assistant can read structured workspace datasets, run the same CLI workflows as a human, and propose changes as reviewable updates to the repository data. When Git is used for the canonical change history, those proposals naturally take the form of commits or branches created via external Git tooling. The safety property BusDK relies on is that proposed changes remain schema-validated, auditable, and human-reviewable before acceptance, consistent with <a href="../design-goals/ai-readiness">AI-readiness (objective, not dependency)</a> and <a href="../design-goals/git-as-source-of-truth">Git as the canonical, append-only source of truth</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

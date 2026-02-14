@@ -82,8 +82,6 @@ OQ-FIL-001 Bundle parameterization. Define the complete parameter set for `tax-a
 Filing bundle: an export directory or archive containing datasets, schemas, and manifests for authority filing.  
 Tax-audit pack: a filing bundle optimized for audit review.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-pdf">bus-pdf</a></span>

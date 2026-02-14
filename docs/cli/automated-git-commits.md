@@ -15,8 +15,6 @@ is expected to append a new account row to `accounts.csv`, and the corresponding
 
 The default model is “one commit per high-level operation” to maximize audit clarity and align with append-only discipline. External workflows may also batch operations into a single commit when needed (for example, after a scripted import).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./api-parity">Extensible CLI surface and API parity</a></span>

@@ -36,8 +36,6 @@ An inventory movement belongs to the workspace’s [accounting entity](../accoun
 
 An inventory movement references one [inventory item](../inventory-items/index) via [`item_id`](./item-id). Over time, one item can have many movements that together form the audit trail for stock level and valuation.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

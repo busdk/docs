@@ -24,8 +24,6 @@ bus period lock ...
 
 Treating evidence as data and locking periods on close keeps the audit trail intact and ensures that “January stays January.”
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-reporting-and-payment">VAT reporting and payment</a></span>

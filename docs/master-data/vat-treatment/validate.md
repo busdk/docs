@@ -11,8 +11,6 @@ Owner: [bus vat](../../modules/bus-vat).
 
 Validate VAT mappings before reporting and filing. The goal is that invoice VAT, treatment codes, and reporting cadence are consistent enough that the VAT report can be produced without manual spreadsheet repair.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./invoice-markings">Invoice markings for VAT treatments</a></span>

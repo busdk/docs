@@ -11,8 +11,6 @@ A good note captures what was unusual and how it was handled, such as a private 
 
 Example values: `Split: 60% business, 40% private.`, `Reverse charge — EU supplier.`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./booked-by">booked_by</a></span>

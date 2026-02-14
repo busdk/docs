@@ -17,8 +17,6 @@ CLI-first also shapes extensibility. Modules should be able to add focused comma
 
 BusDK may also be offered as a commercial web application and API product. That is an interface and packaging choice, not the definition of the goal: the CLI remains the reference surface for workflows, validation, and dataset transformations. BusDK is distributed as free, ready-to-run CLI binaries, so anyone can download and use the tools immediately, while full source code and documentation are available to subscribers during an active subscription. Subscriber-accessible code and documentation are provided under the MIT License, and subscriptions fund ongoing development, maintenance, and timely updates as the simplest official way to stay current with BusDK releases. Any web UI or API must stay aligned with the same deterministic behavior and the same schema-driven data contract, so that a repository workspace can be operated directly via the CLI without loss of capability or integrity.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./append-only-auditability">Auditability through append-only changes</a></span>

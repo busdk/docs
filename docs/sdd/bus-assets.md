@@ -85,8 +85,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Fixed-asset register: the dataset set describing asset acquisitions, disposals, and schedules.  
 Depreciation schedule: derived entries that allocate asset cost over time.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-reconcile">bus-reconcile</a></span>

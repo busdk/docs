@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"BusDK is modular from the start.","headline":"Modularity as a first-class requirement","url":"http://localhost:4000/design-goals/modularity.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1183,8 +1196,6 @@
 <p>Modularity is also required inside each module. A module’s domain logic should depend on stable interfaces for reading and writing tabular data and for validating it against the schema contract, while file formats and persistence details remain swappable implementations. This keeps the module’s behavior defined in terms of tables, schemas, and deterministic transformations of workspace data — not in terms of “CSV files on disk” — and it enables alternative backends (for example a SQL store) without rewriting module logic or changing the interoperability contract described in <a href="./schema-contract">Schema-driven data contract (Frictionless Table Schema)</a>, <a href="./plaintext-csv-longevity">Plain-text CSV for longevity</a>, and <a href="./git-as-source-of-truth">Git as the canonical, append-only source of truth</a>.</p>
 
 <p>A particular packaging model for modules (separate executables, subcommands of a single CLI, or a plugin system) is a delivery convention rather than the goal. The invariant is that the workspace datasets and their change history remain reviewable and exportable, and that module interoperability is defined by the schema contract rather than by shared code.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

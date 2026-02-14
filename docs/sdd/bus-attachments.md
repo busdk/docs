@@ -85,8 +85,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Attachment: an evidence file registered in `attachments.csv` and referenced by stable identifier.  
 Attachment metadata: immutable details such as filename, media type, and hash.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-period">bus-period</a></span>

@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Double-entry ledger accounting is a core requirement for BusDK.","headline":"Double-entry ledger accounting","url":"http://localhost:4000/design-goals/double-entry-ledger.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1196,8 +1209,6 @@
 <p>In BusDK terms, a business event is posted as a balanced set. A single event may contain many lines (splits), but it must be balanced overall. Postings remain traceable to a voucher and to the originating record that explains why the posting exists (invoice, bank record, payroll run, depreciation event), so the audit chain holds end-to-end. Reporting remains reproducible: the ledger can produce the chronological and account-based views expected in Finnish practice when needed, without manual “fix-ups” to restore ordering or traceability. Corrections preserve history by being represented as additional postings that reference what they correct (reversal/adjustment), rather than editing away earlier records.</p>
 
 <p>The compliance requirements for Finnish audit trail, vouchers, and retention live in <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>. The storage-level rules for append-only correction workflows live in <a href="../data/append-only-and-soft-deletion">Append-only updates and soft deletion</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Triage means setting a review state and evidence completeness so the bookkeeping inbox stays actionable. The bookkeeping meaning comes from the underlying invoice or transaction, but the workflow fields control what needs attention.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Bookkeeping status and review workflow</a></span>

@@ -15,8 +15,6 @@ Modules MUST NOT invoke other `bus-*` CLIs as internal dependencies for core beh
 
 This layout preserves multi-language module support because the data contract remains the universal integration surface. The Go library is a reference implementation and a convenience for Go modules, while other languages can implement the same module behavior as long as they read and write the same datasets and schemas.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Implementation and development status</a></span>

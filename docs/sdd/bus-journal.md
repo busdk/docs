@@ -87,8 +87,6 @@ Journal entry: a ledger posting row associated with a transaction and voucher.
 Journal index: the root-level dataset `journals.csv` that records which period journal files exist and where they live; all bus-journal owned filenames include “journal” or “journals” so journal data is unambiguous.  
 Transaction identifier: a stable identifier that groups journal entries for a posting.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-invoices">bus-invoices</a></span>

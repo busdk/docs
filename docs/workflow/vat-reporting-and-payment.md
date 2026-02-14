@@ -47,8 +47,6 @@ If she prefers to treat the bank statement row as the primary evidence, she can 
 
 4. Alice records the VAT close as a new revision using her version control tooling.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./scenario-introduction">Scenario introduction</a></span>

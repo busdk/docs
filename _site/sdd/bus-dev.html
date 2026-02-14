@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Bus Dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/ — module scaffolding, commit workflows, planning, agent-runner workflows, AGENTS.md refinement, and e2e test scaffolding.","headline":"bus-dev — developer workflows: commit, work, spec, e2e (SDD)","url":"http://localhost:4000/sdd/bus-dev.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1762,8 +1775,6 @@ FR-DEV-008a Cursor rules refactor. When running <code class="language-plaintext 
   <li>
 <strong>E2E test script (Bus module):</strong> A Bash script that runs the module’s compiled binary to exercise end-to-end behavior. It MUST live under <code class="language-plaintext highlighter-rouge">tests/</code> and MUST be named <code class="language-plaintext highlighter-rouge">e2e_bus_&lt;name&gt;.sh</code> where <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code> is the module name with the <code class="language-plaintext highlighter-rouge">bus-</code> prefix stripped (e.g. <code class="language-plaintext highlighter-rouge">bus-accounts</code> → <code class="language-plaintext highlighter-rouge">tests/e2e_bus_accounts.sh</code>). See KD-DEV-006 and FR-DEV-009.</li>
 </ul>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

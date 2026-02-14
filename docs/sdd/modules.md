@@ -38,8 +38,6 @@ For the architectural rationale behind independent modules and the design goals 
 - [`bus filing prh`](./bus-filing-prh): Converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes.
 - [`bus filing vero`](./bus-filing-vero): Converts validated workspace data into Vero-ready export bundles with deterministic packaging, manifests, and hashes.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">SDD index</a></span>

@@ -11,8 +11,6 @@ The exact storage scheme can vary, but the bookkeeping requirement is that the l
 
 Example values: `attachments/2026/02/20260215-PI-2026-000045.pdf`, `attachments/2026/01/20260115-INV-1001.pdf` (path pattern `attachments/yyyy/mm/yyyymmdd-filename...`).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./content-type">content_type</a></span>

@@ -11,8 +11,6 @@ Service periods matter for costs such as rent, insurance, hosting, and subscript
 
 Example values: `2026-02-01`, `2026-01-01`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./currency">currency</a></span>

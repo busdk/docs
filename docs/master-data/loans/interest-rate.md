@@ -9,8 +9,6 @@ description: interest_rate is part of the loans master data.
 
 Example values: `0.045`, `0.02`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Loans</a></span>

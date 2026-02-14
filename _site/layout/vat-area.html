@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"VAT datasets can generally be generated from invoices and journal entries, but reference data such as vat-rates.csv is useful to track VAT percentages over…","headline":"VAT area (reference data and filed summaries)","url":"http://localhost:4000/layout/vat-area.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1179,8 +1192,6 @@
 <p>VAT datasets can generally be generated from invoices and journal entries, but reference data such as <code class="language-plaintext highlighter-rouge">vat-rates.csv</code> is useful to track VAT percentages over time. When VAT reports or filed returns are committed to preserve what was computed or submitted, keep the index tables in the repository root (for example <code class="language-plaintext highlighter-rouge">vat-reports.csv</code> and <code class="language-plaintext highlighter-rouge">vat-returns.csv</code>) and store the actual files directly in the repository root with a period prefix such as <code class="language-plaintext highlighter-rouge">202603-vat-report.csv</code> and <code class="language-plaintext highlighter-rouge">202603-vat-return.csv</code>.</p>
 
 <p>For Finnish compliance, VAT summaries MUST retain links to the postings and vouchers that produced each reported amount. See <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

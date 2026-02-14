@@ -85,8 +85,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Entity: a counterparty or reference subject represented as a stable identifier in workspace datasets.  
 Entity registry: the dataset storing entity identifiers and metadata.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-accounts">bus-accounts</a></span>

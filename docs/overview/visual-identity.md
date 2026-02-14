@@ -13,8 +13,6 @@ All customer-facing documents must be template-driven and branding-configurable 
 
 BusDK branding is therefore limited to BusDK’s own tools and BusDK’s own documentation artifacts; workspace outputs are branded only by the workspace configuration and templates.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./purpose-and-scope">Purpose and scope</a></span>

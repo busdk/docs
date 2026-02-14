@@ -88,8 +88,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Period control dataset: the repository dataset that records period boundaries and locks.  
 Period lock: a state that prevents edits to closed period data.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-entities">bus-entities</a></span>

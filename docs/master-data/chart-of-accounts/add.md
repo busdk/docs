@@ -11,8 +11,6 @@ Owner: [bus accounts](../../modules/bus-accounts).
 
 Add an account when you need a stable target for debits and credits that will appear in journal postings, exports, and reports. Account identity should be stable, because changing it later makes historical review and reconciliation harder.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Chart of accounts</a></span>

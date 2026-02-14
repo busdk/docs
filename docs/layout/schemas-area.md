@@ -9,8 +9,6 @@ Each dataset stores its Table Schema JSON file directly beside the dataset file 
 
 For Finnish compliance, schemas MUST declare primary and foreign keys for audit-trail references. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./repository-readme-expectations">Repository-level README expectations</a></span>

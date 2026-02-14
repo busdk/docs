@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Classify purchases by recording the intended posting split and VAT handling. This captures the decision in structured form so automation becomes validation and review rather than ad hoc spreadsheets.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./record">Record a purchase invoice</a></span>

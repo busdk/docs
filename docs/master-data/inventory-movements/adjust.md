@@ -11,8 +11,6 @@ Owner: [bus inventory](../../modules/bus-inventory).
 
 This action is required in bookkeeping so the register can be used as a deterministic input for posting, period-based review, and audit navigation.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

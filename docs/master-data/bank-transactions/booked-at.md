@@ -11,8 +11,6 @@ This is the same workflow field as [`booked_at` in bookkeeping status and review
 
 Example values: `2026-02-10T15:04:05Z`, `2026-02-11T10:00:00Z`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./accounting-status">accounting_status</a></span>

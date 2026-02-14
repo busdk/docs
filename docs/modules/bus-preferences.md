@@ -131,8 +131,6 @@ When `get` is called for a key that is not present, the command exits with a non
 
 See [Development status](../implementation/development-status).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-config">bus-config</a></span>

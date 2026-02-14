@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"BusDK treats the workspace datasets and schemas as a versioned, append-only source of truth with a tamper-evident change history.","headline":"Git as the canonical, append-only source of truth","url":"http://localhost:4000/design-goals/git-as-source-of-truth.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1181,8 +1194,6 @@
 <p>Git is an implementation choice, not the definition of the design goal. BusDK can operate when the canonical change history is maintained by other storage or versioning systems, as long as they preserve an append-only, reviewable trail of changes. Storage may also be split by concern over time — for example, schemas may remain versioned as files in Git while transactional tables are stored in a SQL database — without changing the meaning of “canonical” in BusDK: the source of truth is the authoritative revision history and the authoritative current dataset contents, regardless of the underlying mechanism.</p>
 
 <p>BusDK does not execute Git commands or create commits; it relies on external tooling or orchestration to record revisions and enforce repository policy. When Git is used, its object model (content-addressed objects and parent-linked commits) provides the concrete mechanism for the tamper-evident audit log. See <a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects">Git Internals: Git Objects</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

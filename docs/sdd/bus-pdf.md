@@ -79,8 +79,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Render model: the JSON input that describes the content to be rendered into a PDF.  
 Derived artifact: a file output generated from canonical datasets without modifying them.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-vat">bus-vat</a></span>

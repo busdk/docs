@@ -75,8 +75,6 @@ This distinction is mostly about period reporting and closing, not about debit a
 
 Choose the type based on the economic meaning of what the account represents. An account is an asset when it represents something the business controls, a liability when it represents an obligation, and equity when it represents the owners’ stake or accumulated result. Income represents earned value, and expenses represent the costs of operating or earning that value.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../data/index">BusDK Design Spec: Data format and storage</a></span>

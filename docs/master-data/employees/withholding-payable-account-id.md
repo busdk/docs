@@ -9,8 +9,6 @@ description: withholding_payable_account_id is part of the employees master data
 
 Example values: `acc-2930`, `acc-2940`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Employees</a></span>

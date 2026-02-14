@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Create the sales invoice as the evidence-backed record that drives revenue recognition and receivables. The invoice becomes an open item for matching until it is paid.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Sales invoices</a></span>

@@ -13,8 +13,6 @@ Human-readable formatting is allowed to optimize terminal readability, but it mu
 
 Reporting commands SHOULD support audit-trail exports and period-scoped output suitable for tax-audit packs. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./interactive-and-scripting-parity">Interactive use and scripting parity</a></span>

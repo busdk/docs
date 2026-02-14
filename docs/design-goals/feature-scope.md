@@ -32,8 +32,6 @@ Corrections are represented as additional bookkeeping that preserves history rat
 
 BusDK is intended to grow into a broader suite of tools for running a business, but the initial scope defined here is deliberately limited to the bookkeeping workflow and its supporting datasets, evidence, validation, and reporting.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./extensibility">Extensibility as a first-class goal</a></span>

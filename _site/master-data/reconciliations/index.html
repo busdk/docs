@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"A reconciliation record links a bank transaction to the bookkeeping record it settles, such as an invoice or a journal transaction.","headline":"Reconciliations (bank-to-open-item links)","url":"http://localhost:4000/master-data/reconciliations/"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1235,8 +1248,6 @@
 <p>A bank transaction can have one or more reconciliation records when a cash movement is allocated across multiple targets. Each reconciliation record points to exactly one target, identified by <a href="./target-kind"><code class="language-plaintext highlighter-rouge">target_kind</code></a> and <a href="./target-id"><code class="language-plaintext highlighter-rouge">target_id</code></a>.</p>
 
 <p>When <code class="language-plaintext highlighter-rouge">target_kind</code> is <code class="language-plaintext highlighter-rouge">invoice</code>, the target is either a <a href="../sales-invoices/index">sales invoice</a> or a <a href="../purchase-invoices/index">purchase invoice</a>. When <code class="language-plaintext highlighter-rouge">target_kind</code> is <code class="language-plaintext highlighter-rouge">journal</code>, the target is a journal transaction.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

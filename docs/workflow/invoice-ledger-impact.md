@@ -29,8 +29,6 @@ bus reports trial-balance --help
 bus reports trial-balance ...
 ```
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./initialize-repo">Initialize a new repository</a></span>

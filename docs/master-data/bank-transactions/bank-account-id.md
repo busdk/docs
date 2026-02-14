@@ -11,8 +11,6 @@ This is a reference to [`bank_account_id` on bank accounts](../bank-accounts/ban
 
 Example values: `bankacct-001`, `bankacct-002`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bank-transaction-id">bank_transaction_id</a></span>

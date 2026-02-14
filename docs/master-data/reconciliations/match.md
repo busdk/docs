@@ -13,8 +13,6 @@ Owner: [bus reconcile](../../modules/bus-reconcile).
 
 This action writes records in [Reconciliations](./index).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Reconciliations</a></span>

@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings.","headline":"bus-payroll — run payroll and generate postings","url":"http://localhost:4000/modules/bus-payroll.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1228,7 +1241,7 @@
 
 <p><strong>Value:</strong> Run payroll and produce postings so salary and related entries can feed the <a href="./bus-journal">bus-journal</a>; validate and export support a focused payroll scope.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (optional accounting — payroll).</p>
+<p><strong>Use cases:</strong> <a href="../workflow/finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a>.</p>
 
 <p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — validate and export implemented; unit tests cover flags and run. No e2e for full payroll run.</p>
 
@@ -1243,8 +1256,6 @@
 <p><strong>Used by:</strong> Standalone payroll runs; postings feed <a href="./bus-journal">bus-journal</a>.</p>
 
 <p>See <a href="../implementation/development-status">Development status</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>
@@ -1264,6 +1275,7 @@
   <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
   <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
   <li><a href="../sdd/bus-payroll">Module SDD: bus-payroll</a></li>
+  <li><a href="../workflow/finnish-payroll-monthly-pay-run">Workflow: Finnish payroll handling (monthly pay run)</a></li>
   <li><a href="../workflow/accounting-workflow-overview">Workflow: Accounting workflow overview</a></li>
 </ul>
 

@@ -11,8 +11,6 @@ Keeping RF references explicit improves reconciliation accuracy for cross-border
 
 Example values: `RF18539007547034`, `RF4712345600000001`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./reference">reference</a></span>

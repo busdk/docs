@@ -11,8 +11,6 @@ The implementation can vary, but the bookkeeping requirement is that the linkage
 
 Example values: `PI-2026-000045`, `SI-2026-000123`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./evidence-status">evidence_status</a></span>

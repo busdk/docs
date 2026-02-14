@@ -71,8 +71,6 @@ Financial statement output requirements for reports reference Kirjanpitoasetus (
 
 Re-check Finlex and Verohallinto sources at least annually and whenever legislation changes, update citations and requirements when source sections move or are amended, and treat temporary exceptions as historical context only rather than as MUST-level requirements unless they are currently in force.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../testing/testing-strategy">Testing strategy</a></span>

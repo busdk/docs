@@ -38,8 +38,6 @@ A bank account can have zero or more [bank transactions](../bank-transactions/in
 
 A bank account maps to one [ledger account](../chart-of-accounts/index) via [`ledger_account_id`](./ledger-account-id) so that cash movement can be posted consistently.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../documents/index">Documents (evidence)</a></span>

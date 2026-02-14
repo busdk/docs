@@ -61,8 +61,6 @@ When the bank transaction represents a direct, non-invoice bookkeeping event, it
 
 A bank transaction can have zero or more [documents (evidence)](../documents/index) linked to it for audit navigation.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../bank-accounts/index">Bank accounts</a></span>

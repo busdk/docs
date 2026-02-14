@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Preparing postings turns invoice line intent into a balanced proposal for the journal. This separates classification work (done at invoice/row level) from journal posting and period controls.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./correct">Correct a sales invoice</a></span>

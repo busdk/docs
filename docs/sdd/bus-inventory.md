@@ -85,8 +85,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Inventory item: a master data record describing a stock item.  
 Stock movement: an append-only record of inventory quantity changes.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-loans">bus-loans</a></span>

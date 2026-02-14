@@ -11,8 +11,6 @@ Even when you currently operate only in EUR, explicit currency prevents silent a
 
 Example values: `EUR`, `SEK`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bic">bic</a></span>

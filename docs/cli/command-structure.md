@@ -25,8 +25,6 @@ BusDK is CLI-first. Commands are organized by module and generally follow a verb
 
 See [Development status](../implementation/development-status) for the project-wide snapshot.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./automated-git-commits">Git commit conventions per operation (external Git)</a></span>

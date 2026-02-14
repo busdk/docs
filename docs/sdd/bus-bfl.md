@@ -593,8 +593,6 @@ Range is a `ref_start:ref_end` expression that resolves to an array via a consum
 
 Array value is a 2D, row-major matrix of `Value` elements carried as a first-class runtime kind.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-dev">bus-dev</a></span>

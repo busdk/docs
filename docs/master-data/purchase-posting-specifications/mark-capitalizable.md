@@ -11,8 +11,6 @@ Owner: [bus invoices](../../modules/bus-invoices).
 
 Mark lines as capitalizable to capture asset intent early. This reduces ambiguity at year-end when fixed-asset workflows depend on consistent classification decisions.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./decide-vat">Decide purchase VAT handling</a></span>

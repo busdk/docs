@@ -43,8 +43,6 @@ A bank transaction can have one or more reconciliation records when a cash movem
 
 When `target_kind` is `invoice`, the target is either a [sales invoice](../sales-invoices/index) or a [purchase invoice](../purchase-invoices/index). When `target_kind` is `journal`, the target is a journal transaction.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../bank-transactions/index">Bank transactions</a></span>

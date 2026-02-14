@@ -11,8 +11,6 @@ Owner: [bus bank](../../modules/bus-bank).
 
 Map the bank account to a ledger account so cash movement can be posted systematically. The mapping is the bridge between statement data and the chart of accounts.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./register">Register a bank account</a></span>

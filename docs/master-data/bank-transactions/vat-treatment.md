@@ -11,8 +11,6 @@ This uses the same value set as [`vat_treatment` in VAT treatment](../vat-treatm
 
 Example values: `domestic_standard`, `reverse_charge`, `intra_eu_supply`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ledger-account-id">ledger_account_id</a></span>

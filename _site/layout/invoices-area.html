@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"The invoices area contains invoicing data.","headline":"Invoices area (headers and lines)","url":"http://localhost:4000/layout/invoices-area.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1179,8 +1192,6 @@
 <p>The invoices area contains invoicing data. Sales and purchase invoices are separated for clarity. A typical structure includes <code class="language-plaintext highlighter-rouge">sales-invoices.csv</code> for invoice headers and <code class="language-plaintext highlighter-rouge">sales-invoice-lines.csv</code> for line items, and similarly <code class="language-plaintext highlighter-rouge">purchase-invoices.csv</code> and <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.csv</code> for purchases. Header records include invoice number, date, counterparty identifier, due date, total amount, VAT amount, and status such as unpaid or paid. Line items include invoice number as a foreign key, description, quantity, unit price, line total, VAT rate, and ledger account mapping. Schemas enforce referential integrity and numeric constraints such as non-negative totals. A combined <code class="language-plaintext highlighter-rouge">invoices.csv</code> with a type column is possible, but separation is preferred to simplify VAT handling differences.</p>
 
 <p>For Finnish compliance, invoice headers and lines MUST carry identifiers and references that make the voucher trail verifiable. At minimum: unique invoice identifier, invoice number, invoice date, counterparty, totals, VAT breakdown, and links to attachments and voucher/posting references. See <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

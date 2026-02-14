@@ -11,8 +11,6 @@ The descriptor is also the home for workspace-level BusDK metadata that is not n
 
 For Finnish compliance, a Data Package descriptor SHOULD be used as the manifest inside tax-audit export packs to make datasets and schemas self-describing. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./csv-conventions">CSV conventions</a></span>

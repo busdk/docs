@@ -9,8 +9,6 @@ description: unit_cost is part of the inventory movements master data.
 
 Example values: `5.90`, `12.50`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Inventory movements</a></span>

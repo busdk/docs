@@ -11,8 +11,6 @@ Owner: [bus bank](../../modules/bus-bank).
 
 Classify statement items that are not invoice payments by recording the target ledger account and any relevant VAT intent. This is essential for fees, taxes, and settlement movements.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./match">Match a bank transaction</a></span>

@@ -25,8 +25,6 @@ bus reports trial-balance ...
 
 If Alice hires an assistant, the same sequence is executed through standard version control collaboration outside BusDK. If new taxes or reporting obligations appear, she adds the appropriate module and runs its commands against the same datasets, because “CSV plus schemas” remains the stable interface between modules and workflows.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./create-sales-invoice">Add a sales invoice (interactive workflow)</a></span>

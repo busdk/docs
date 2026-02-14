@@ -39,8 +39,6 @@ A document belongs to the workspace’s [accounting entity](../accounting-entity
 
 A document can be linked to one or more bookkeeping records using [`linked_entity_reference`](./linked-entity-reference). In practice the primary targets are [sales invoices](../sales-invoices/index), [purchase invoices](../purchase-invoices/index), and [bank transactions](../bank-transactions/index), so that reviewers can navigate from postings and open items back to evidence.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../purchase-posting-specifications/index">Purchase posting specifications</a></span>

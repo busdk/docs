@@ -11,8 +11,6 @@ Owner: [bus entities](../../modules/bus-entities).
 
 Deduplicate parties when the same legal entity exists multiple times due to naming variations or imports. Bookkeeping benefits because reports and audits then refer to one counterparty consistently.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./register">Register a party</a></span>

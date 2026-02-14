@@ -42,8 +42,6 @@ Bank transactions can reference VAT treatment directly when the cash movement is
 
 Parties can carry a default VAT treatment via [`default_vat_treatment`](../parties/default-vat-treatment) to make classification and validation deterministic.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../chart-of-accounts/index">Chart of accounts</a></span>

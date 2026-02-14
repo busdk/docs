@@ -13,8 +13,6 @@ busdk journal add --date 2026-01-15 --debit Cash=500 --credit Sales=500 --desc "
 
 is expected to append new ledger rows to the journal file. The corresponding Git commit, when used, is created outside BusDK with a descriptive message such as “Add journal entry: 2026-01-15 Invoice 1001 payment.” This makes the CLI the gatekeeper of data integrity and reduces the risk of user error compared with manual CSV editing.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./architectural-overview">Architectural overview</a></span>

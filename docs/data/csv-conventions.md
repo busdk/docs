@@ -15,8 +15,6 @@ To satisfy Finnish audit-trail expectations, tabular datasets MUST be determinis
 
 Each dataset MUST include a stable primary identifier column (`*_id`) that never changes once written, and cross-dataset references MUST be explicit as foreign key columns (for example: `voucher_id`, `entry_id`, `attachment_id`, `bank_txn_id`). Row ordering MUST be reproducible using date + sequence columns so that independent tools can produce the same time-ordered view.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./append-only-and-soft-deletion">Append-only updates and soft deletion</a></span>

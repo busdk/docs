@@ -37,8 +37,6 @@ Period boundaries affect when postings can be finalized and locked, and they are
 
 Budgets reference accounting periods via [`period`](../budgets/period) and `year`. Payroll runs reference months and rely on period control to keep month-close workflows deterministic.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

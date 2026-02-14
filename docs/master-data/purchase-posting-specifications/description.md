@@ -11,8 +11,6 @@ Clear descriptions also preserve context for later audits and year-end work, whe
 
 Example values: `Office rent, Feb 2026`, `Laptop purchase`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./amount">amount</a></span>

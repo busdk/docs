@@ -11,8 +11,6 @@ When the year start is explicit, period-based views and validations can be gener
 
 Example values: `2026-01-01`, `2025-04-01`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./base-currency">base_currency</a></span>

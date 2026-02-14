@@ -39,8 +39,6 @@ If you need architectural background on why modules are independent and how they
 - [`bus filing prh`](./bus-filing-prh): Produce PRH export bundles.
 - [`bus filing vero`](./bus-filing-vero): Produce Vero export bundles.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../workflow/year-end-close">Year-end close (closing entries)</a></span>

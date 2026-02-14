@@ -144,8 +144,6 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 **Module-owned initialization:** each module creates its own datasets during bootstrap; bus-init only orchestrates which modules run.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./modules">Modules (SDD)</a></span>

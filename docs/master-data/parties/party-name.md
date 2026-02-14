@@ -11,8 +11,6 @@ Names also matter for bank transaction matching when references are missing or n
 
 Example values: `Acme Oy`, `Example Supplier AB`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Parties (customers and suppliers)</a></span>

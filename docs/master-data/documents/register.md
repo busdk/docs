@@ -11,8 +11,6 @@ Owner: [bus attachments](../../modules/bus-attachments).
 
 Register evidence so it can be retrieved deterministically during review and audits. Evidence metadata keeps attachments searchable by period, counterparty, and role.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Documents (evidence)</a></span>

@@ -13,8 +13,6 @@ Example values: `domestic_standard`, `reverse_charge`.
 
 For cross-border counterparties, a treatment such as `intra_eu_supply` can be used as a default to make EU vs domestic validation deterministic, while still allowing line-level overrides.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./default-expense-account-id">default_expense_account_id</a></span>

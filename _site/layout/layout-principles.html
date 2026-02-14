@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"BusDK organizes data so commands operate directly in the current working directory.","headline":"Data directory layout (principles)","url":"http://localhost:4000/layout/layout-principles.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1181,8 +1194,6 @@
 <p>When a module needs multiple files over time, the repository root still contains a single index table (for example <code class="language-plaintext highlighter-rouge">journals.csv</code>, <code class="language-plaintext highlighter-rouge">attachments.csv</code>, or <code class="language-plaintext highlighter-rouge">vat-reports.csv</code>) that records which files exist, which period each file covers, and where they live in the repository. Period-scoped files are kept directly in the repository root with a date or period prefix for disambiguation — for example period journal files use names like <code class="language-plaintext highlighter-rouge">journal-2026.csv</code> and <code class="language-plaintext highlighter-rouge">journal-2025.csv</code>, not subdirectories such as <code class="language-plaintext highlighter-rouge">2026/journals/</code>. The only exception is attachment evidence files: they are stored under <code class="language-plaintext highlighter-rouge">./attachments/yyyy/mm/yyyymmdd-filename...</code> (see <a href="../modules/bus-attachments">bus attachments</a> and <a href="./invoice-pdf-storage">Invoice PDF storage</a>).</p>
 
 <p>For Finnish compliance, the layout MUST support audit-trail review and long-term readability, and it MUST be documented in the repository methods description. See <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

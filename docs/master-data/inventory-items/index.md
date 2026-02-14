@@ -39,8 +39,6 @@ Inventory movements reference items via [`item_id`](../inventory-movements/item-
 
 Inventory items reference [ledger accounts](../chart-of-accounts/index) via [`inventory_account_id`](./inventory-account-id) and [`cogs_account_id`](./cogs-account-id) so valuation and COGS postings can be produced consistently.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">Master data (business objects)</a></span>

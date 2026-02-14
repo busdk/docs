@@ -13,8 +13,6 @@ Set defaults to reduce repeated classification work. Defaults should pre-fill li
 
 In the current CLI surface, defaults are maintained by editing the corresponding columns in `entities.csv` directly and then validating with `bus validate`, because `bus entities add` currently only writes the stable identifier and display name.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./deduplicate">Deduplicate parties</a></span>

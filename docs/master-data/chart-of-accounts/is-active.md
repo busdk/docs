@@ -11,8 +11,6 @@ Bookkeeping automation should avoid selecting inactive accounts for new items, b
 
 Example values: `true`, `false`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ledger-category-id">ledger_category_id</a></span>

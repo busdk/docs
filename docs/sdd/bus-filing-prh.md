@@ -82,8 +82,6 @@ OQ-PRH-001 PRH export parameters. Define the complete parameter set for `bus fil
 PRH bundle: an export package formatted for Finnish PRH filing requirements.  
 Manifest: a deterministic listing and checksum set for bundle contents.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing">bus-filing</a></span>

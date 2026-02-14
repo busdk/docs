@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"BusDK defines the workspace store (storage backend) interface as the boundary between domain modules and persistence.","headline":"Storage backends and workspace store interface","url":"http://localhost:4000/data/storage-backends.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -131,6 +131,19 @@
 
             <li class="busdk-sidebar-item">
               <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/finnish-payroll-monthly-pay-run">Finnish payroll (monthly pay run)</a>
               
             </li>
             
@@ -1185,8 +1198,6 @@
 <p>When modules are implemented in Go, a shared library implementation of the workspace store interface is allowed and recommended to keep behavior consistent, such as <a href="../modules/bus-data"><code class="language-plaintext highlighter-rouge">bus-data</code></a>. Cross-language interoperability is still guaranteed by the table-and-schema contract and by the requirement that any non-file backend can export and import the canonical CSV plus schema form.</p>
 
 <p>Repository layout and dependency rules remain separate from the storage interface: modules must not depend on invoking other <code class="language-plaintext highlighter-rouge">bus-*</code> CLIs as internal APIs, and shared implementation is limited to mechanical libraries like the workspace store. The canonical repository structure and dependency rules are defined in <a href="../implementation/module-repository-structure">Module repository structure and dependency rules</a>.</p>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">

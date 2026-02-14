@@ -19,8 +19,6 @@ This section is split into **single-concept** documents:
 - [Schemas beside datasets (Table Schema JSON files)](./schemas-area)
 - [VAT area (reference data and filed summaries)](./vat-area)
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../data/table-schema-contract">Frictionless Table Schema as the contract</a></span>

@@ -11,8 +11,6 @@ Row identity keeps the audit trail precise when an invoice contains multiple lin
 
 Example values: `SI-2026-000123-1`, `SI-2026-000123-2`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Sales invoice rows</a></span>

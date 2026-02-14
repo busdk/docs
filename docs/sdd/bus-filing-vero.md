@@ -82,8 +82,6 @@ OQ-VERO-001 Vero export parameters. Define the complete parameter set for `bus f
 Vero bundle: an export package formatted for Finnish Vero filing requirements.  
 Manifest: a deterministic listing and checksum set for bundle contents.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing-prh">bus-filing-prh</a></span>

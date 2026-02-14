@@ -11,8 +11,6 @@ Owner: [bus bank](../../modules/bus-bank).
 
 Register bank accounts so imports and reconciliation can attach transactions to the correct statement source. Bank account identity should be stable across repeated imports.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Bank accounts</a></span>

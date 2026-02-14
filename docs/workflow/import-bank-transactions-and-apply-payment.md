@@ -52,8 +52,6 @@ bus invoices list
 
 Until reconciliation is implemented as a first-class module, invoice “paid” status should be treated as a reporting convenience rather than the definition of correctness. The authoritative outcome is that the ledger is updated via an append-only journal entry whose provenance remains reviewable in the revision history.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./evolution-over-time">Evolution over time (extending the model)</a></span>

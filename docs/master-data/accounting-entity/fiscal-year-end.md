@@ -11,8 +11,6 @@ When year boundaries are explicit, period-based reporting and validations do not
 
 Example values: `2026-12-31`, `2026-03-31`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./fiscal-year-start">fiscal_year_start</a></span>

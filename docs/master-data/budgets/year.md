@@ -9,8 +9,6 @@ description: year is part of the budgets master data.
 
 Example values: `2026`, `2027`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Budgets</a></span>

@@ -11,8 +11,6 @@ BusDK examples use the current Finnish VAT rate set as the canonical sample valu
 
 Older Finnish rates such as `24` and `14` can still appear in historical rows and must remain valid as data, but they should not be treated as defaults for new records.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./vat-rate">vat_rate</a></span>

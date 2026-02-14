@@ -1,6 +1,6 @@
 ---
 title: Development status — BusDK modules
-description: Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case and derived from tests and PLAN.md in each repository.
+description: Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case (accounting, workbook UI, compliance, developer workflow, payroll, orphans), derived from tests and PLAN.md in each repository.
 ---
 
 ## Development status
@@ -10,9 +10,12 @@ This page summarizes the implementation state of each BusDK module using test ev
 ### Use cases
 
 - [Accounting workflow](#accounting-workflow) — [Accounting workflow overview](../workflow/accounting-workflow-overview): End-to-end bookkeeping from repo init through master data, attachments, invoices and journal, bank import and reconcile, to period close (validate, VAT, close, lock, reports). Delivers a reviewable audit trail and script-friendly flow.
+- [Inventory valuation and COGS postings](#inventory-valuation-and-cogs-postings) — [bus-inventory](../modules/bus-inventory): Inventory register, append-only stock movements, and deterministic as-of valuation outputs suitable for reporting and later posting.
+- [Workbook and validated tabular editing](#workbook-and-validated-tabular-editing) — [bus-sheets](../modules/bus-sheets): Lightweight, local, web-based workbook that shows workspace datasets as spreadsheet-like tables, supports create and edit with strict schema validation, and can use formulas and scripted operations for reproducible, auditable calculations. The workbook is the generic entry point; Bus modules can later provide dedicated, task-specific screens that write to the same validated workspace data.
 - [Finnish bookkeeping and tax-audit compliance](#finnish-bookkeeping-and-tax-audit-compliance) — [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): Audit trail, retention, VAT returns, and tax-audit pack. Delivers compliance with Finnish legal and tax-audit expectations.
 - [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) — [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): Audit-ready evidence pack from accounting data (statements or equivalents, interim snapshot, significant assets, creditor/debt and loan registry, budgets and cashflow); BusDK delivers a reviewable, deterministic audit trail in a Git workspace.
 - [Developer module workflow](#developer-module-workflow) — [bus-dev](../modules/bus-dev): Scaffold modules, commit/work/spec/e2e, set agent and run-config. Delivers consistent developer workflows for BusDK module contributors.
+- [Finnish payroll handling (monthly pay run)](#finnish-payroll-handling-monthly-pay-run) — [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): Run monthly payroll from employee register to balanced posting intent; postings feed the journal and later bank reconciliation. Delivers traceable salary and withholding bookkeeping for a small company.
 - [Orphan modules](#orphan-modules): Modules not yet mapped to a documented use case.
 
 ### Accounting workflow
@@ -36,6 +39,28 @@ The [Accounting workflow overview](../workflow/accounting-workflow-overview) des
 | [bus-vat](../modules/bus-vat#development-state) | 70% (Broadly usable) | Init, validate, report, export; deterministic report/export; e2e covers VAT workflow. | Index update; dry-run; rate validation; journal input. | None known. |
 | [bus-reports](../modules/bus-reports#development-state) | 50% (Primary journey) | Trial balance, account-ledger; unit tests for run, workspace load, report. No e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
 | [bus-pdf](../modules/bus-pdf#development-state) | 60% (Stable for one use case) | Render from JSON (file); unit tests for run, render, templates. | Command-level test for `render --data @-`. | None known. |
+
+### Inventory valuation and COGS postings
+
+Define inventory items, record stock movements (purchases, sales or consumption, adjustments) as append-only rows with voucher references, and compute deterministic valuation outputs (FIFO or weighted-average) for an as-of date or period end that can feed reports and later journal postings for cost of goods sold.
+
+| Module | Readiness | Value | Planned next | Blocker |
+|--------|-----------|-------|--------------|---------|
+| [bus-inventory](../modules/bus-inventory#development-state) | 30% (Some basic commands) | Inventory register and append-only stock movements with voucher traceability; deterministic, auditable as-of valuation outputs for reporting and COGS postings. Run/flags and property tests; init/add/move/valuation not verified. | Add or extend e2e and unit tests to verify init, add, move, valuation and determinism; voucher traceability. | None known. |
+
+### Workbook and validated tabular editing
+
+As a BusDK workspace user you get a lightweight, local, web-based “workbook” that shows workspace datasets as spreadsheet-like tables and lets you create and edit rows with strict schema validation, so you can maintain reliable typed tabular data without accidentally breaking formats. Simple automation hooks — formula-projected fields and, when enabled, an agent that can run Bus CLI tools — support reproducible, auditable calculations and transformations. The workbook is the generic entry point; Bus modules can provide dedicated, task-specific screens that guide you through common workflows and still write to the same validated workspace data. The [bus-sheets](../modules/bus-sheets) module is the canonical implementation of this journey; it embeds [bus-api](../modules/bus-api) in-process and relies on [bus-data](../modules/bus-data) and [bus-bfl](../modules/bus-bfl) for schema, row operations, and formula semantics.
+
+| Module | Readiness | Value | Planned next | Blocker |
+|--------|-----------|-------|--------------|---------|
+| [bus-sheets](../modules/bus-sheets#development-state) | 20% (Basic structure) | Local web UI over workspace; serve and capability URL verified by e2e. Workbook tabs, grid CRUD, schema panel, and validation UI not yet test-backed. | Embed Bus API in-process; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI; optional agent chat; read-only mode; integration tests. | bus-api embed and UI assets required before the main user value (grid over workspace) is real. |
+| [bus-api](../modules/bus-api#development-state) | 50% (Primary journey) | REST API over workspace; help, version, openapi, serve with token/port. Backend for bus-sheets and tools; row and schema endpoints. | Event stream; module endpoints; row CRUD and validation tests. | None known. |
+| [bus-data](../modules/bus-data#development-state) | 60% (Stable for one use case) | Schema, package, table, and row operations; deterministic I/O; e2e and unit tests. Authoritative backend for bus-api (and thus bus-sheets). | Formula projection; range resolution for BFL. | None known. |
+| [bus-bfl](../modules/bus-bfl#development-state) | 60% (Stable for one use case) | Parse, eval, render BFL; CLI and conformance verified by e2e and unit tests. Formula engine for bus-data formula-projected fields. | Range and array semantics in bus-data; formula source in API responses. | None known. |
+| [bus-agent](../modules/bus-agent#development-state) | 40% (Meaningful task, partial verification) | Detect runtimes, render prompts; help and version; global flags. When enabled in bus-sheets, optional chat so the user can ask the agent to run Bus CLI tools in the workspace. | Order/config; AGENTS.md; adapters; bus-sheets integration. | None known. |
+
+The full journey — open workbook, edit rows with schema validation, see formula-projected values, and optionally run agent-driven operations — is not yet covered end-to-end by tests. Today you can start the bus-sheets server and receive a capability URL; the workbook grid, schema panel, and validation actions depend on the embedded API and UI assets that are planned next.
 
 ### Finnish bookkeeping and tax-audit compliance
 
@@ -79,18 +104,27 @@ The [bus-dev](../modules/bus-dev) module is the canonical entry for developer wo
 | [bus-agent](../modules/bus-agent#development-state) | 40% (Meaningful task, partial verification) | Detect runtimes, render prompts; help and version; global flags. | Order/config; AGENTS.md; adapters; bus-sheets integration. | None known. |
 | [bus-preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) | Get, set, set-json, unset, list preferences; key-path and format verified by e2e. | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
+### Finnish payroll handling (monthly pay run)
+
+The [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run) page describes the journey from prerequisites (accounts, entity, periods) and employee register through a monthly pay run with pay date to balanced posting intent and onward into the journal and bank reconciliation. The table below lists the modules a user touches in this story and their readiness for it; test evidence in each module repository is the basis for the readiness claims.
+
+| Module | Readiness | Value | Planned next | Blocker |
+|--------|-----------|-------|--------------|---------|
+| [bus-payroll](../modules/bus-payroll#development-state) | 40% (Meaningful task, partial verification) | Validate and export: integration tests in `run_test.go` prove validation of payroll datasets and deterministic export CSV for a run. Data layout is `payroll/` (employees, payruns, payments, posting_accounts). init, run, list, employee add/list are specified in CLI reference and SDD but not implemented; no e2e for full pay-run journey. | Align CLI and layout with docs (init, run, list, employee); e2e for run → export → journal. | None known. |
+| [bus-accounts](../modules/bus-accounts#development-state) | 60% (Stable for one use case) | Chart of accounts for wage expense, withholding payable, net payable; e2e covers full workflow. | Init contract when both files exist; help `--type`. | None known. |
+| [bus-entities](../modules/bus-entities#development-state) | 50% (Primary journey) | Party references for employees; e2e proves init, add, list. | add flags; interactive parity. | None known. |
+| [bus-period](../modules/bus-period#development-state) | 70% (Broadly usable) | Period open/close/lock for payroll month and pay date; e2e verifies close and state. | Append-only balance; locked-period integrity. | None known. |
+| [bus-journal](../modules/bus-journal#development-state) | 60% (Stable for one use case) | Append payroll posting output; init, add, balance verified by e2e. | Period integrity; layout; audit fields. | bus-period closed-period checks for full workflow. |
+| [bus-bank](../modules/bus-bank#development-state) | 60% (Stable for one use case) | Import bank statements for pay-day transfers; e2e covers init and import. | Schema validation before append; dry-run. | None known. |
+| [bus-reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) | Match bank rows to payroll-related journal entries; match/allocate/list not verified. | match, allocate, list; journal linking; tests. | Missing verified match/allocate blocks reconciliation step. |
+
+The full journey from empty workspace through employee register and `bus payroll run` to journal append is not yet covered by e2e tests. In practice, users can today maintain payroll data under `payroll/`, run `bus payroll validate` and `bus payroll export <run-id>`, and append the export output to the journal manually or via script; the automated run and employee add path remains planned.
+
 ### Orphan modules
 
-These modules are not yet mapped to a documented use case, or they are infrastructure used by multiple journeys. Shown with overall completeness and value promise.
+These modules are not yet mapped to a documented use case. Bus-sheets, bus-api, bus-data, and bus-bfl are mapped to [Workbook and validated tabular editing](#workbook-and-validated-tabular-editing) above. Shown with overall completeness and value promise.
 
-| Module | Completeness | Value | New use case? |
-|--------|--------------|-------|---------------|
-| [bus-data](../modules/bus-data#development-state) | 60% (Stable for one use case) | Schema/package/table/row operations; deterministic I/O; e2e and unit tests. | No; infra for bus-api and bus-sheets. |
-| [bus-api](../modules/bus-api#development-state) | 50% (Primary journey) | REST API over workspace; help, version, openapi, serve with token/port. | No; used by bus-sheets and tools. |
-| [bus-sheets](../modules/bus-sheets#development-state) | 20% (Basic structure) | Start server and capability URL; global flags and version. e2e proves serve and version. | No; spreadsheet UI over workspace. |
-| [bus-bfl](../modules/bus-bfl#development-state) | 60% (Stable for one use case) | Parse, eval, render BFL; CLI and conformance verified by e2e and unit tests. | No; formula engine for bus-data. |
-| [bus-inventory](../modules/bus-inventory#development-state) | 30% (Some basic commands) | Run/flags and property tests; no e2e. Init/add/move/valuation not verified. | Optional accounting (inventory). |
-| [bus-payroll](../modules/bus-payroll#development-state) | 40% (Meaningful task, partial verification) | Validate, export; unit tests for flags and run. No e2e for full payroll. | Optional accounting (payroll). |
+No orphan modules exist at the moment.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -104,7 +138,9 @@ These modules are not yet mapped to a documented use case, or they are infrastru
 
 - [BusDK SDD](../sdd)
 - [Module CLI reference](../modules/index)
+- [bus-sheets](../modules/bus-sheets) and [bus-sheets SDD](../sdd/bus-sheets)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 - [Module repository structure and dependency rules](./module-repository-structure)
 - Each module repository’s PLAN.md and tests in the BusDK superproject

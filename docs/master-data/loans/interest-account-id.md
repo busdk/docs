@@ -9,8 +9,6 @@ description: interest_account_id is part of the loans master data.
 
 Example values: `acc-8400`, `acc-8410`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Loans</a></span>

@@ -11,8 +11,6 @@ Names also help link transactions to known parties when account identifiers are 
 
 Example values: `Acme Oy`, `Example Customer AB`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./rf-reference">rf_reference</a></span>

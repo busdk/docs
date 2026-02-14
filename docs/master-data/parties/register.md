@@ -13,8 +13,6 @@ Register parties so invoices and bank transactions can link to a stable counterp
 
 In the current CLI surface, `bus entities add` records the stable entity identifier and display name. If your workspace captures additional party fields (such as business identifiers, VAT numbers, country codes, payment identifiers, or default bookkeeping fields), those columns are maintained by editing `entities.csv` directly and then validating with `bus validate`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Parties (customers and suppliers)</a></span>

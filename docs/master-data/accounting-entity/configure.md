@@ -13,8 +13,6 @@ Configure accounting entity settings by running [bus init configure](../../modul
 
 The canonical reference for supported keys and their meaning is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration).
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./create">Create an accounting entity</a></span>

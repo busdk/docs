@@ -11,8 +11,6 @@ Account identifiers also help detect suspicious or unexpected counterparties in 
 
 Example values: `FI2112345600000785`, `FI5544443333222211`.
 
----
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./creditor-name">creditor_name</a></span>
