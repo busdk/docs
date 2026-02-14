@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Bus API provides a local REST JSON API over the BusDK workspace in the selected root.","headline":"bus-api","url":"http://localhost:4000/modules/bus-api.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1335,15 +1335,17 @@
 
 <p><strong>Value:</strong> Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (used by <a href="./bus-sheets">bus-sheets</a> and tools).</p>
+<p><strong>Use cases:</strong> <a href="../implementation/development-status#workbook-and-validated-tabular-editing">Workbook and validated tabular editing</a>.</p>
 
 <p><strong>Completeness:</strong> 50% (Primary journey) — help, version, openapi, and serve with token and port verified; full resource/row semantics depend on bus-data integration not yet covered by e2e.</p>
 
+<p><strong>Use case readiness:</strong> Workbook and validated tabular editing: 50% — help, version, openapi, serve with token/port verified; row and schema endpoints; event stream and row CRUD tests would complete.</p>
+
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_api.sh</code> proves exact global help output, serve-specific help, version line, invalid color/quiet+verbose exit 2, serve with fixed token and port prints capability URL, and missing chdir exits 1. Unit tests in <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/cli/run_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/server/server_test.go</code> cover flags and run. No e2e exercises API endpoints against bus-data.</p>
 
-<p><strong>Planned next:</strong> Full bus-data integration for resources, rows, schema, validation; security boundary; read-only 403; TLS, CORS, enable-module; e2e against API.</p>
+<p><strong>Planned next:</strong> Full <a href="./bus-data">bus-data</a> integration for resources, rows, schema, validation; event stream; module endpoints; row CRUD and validation tests; e2e against API.</p>
 
-<p><strong>Blockers:</strong> bus-data integration required for full API semantics; bus-sheets needs this module embedded.</p>
+<p><strong>Blockers:</strong> None known.</p>
 
 <p><strong>Depends on:</strong> <a href="./bus-data">bus-data</a>, <a href="./bus-bfl">bus-bfl</a> (formula). Implement bus-data first.</p>
 

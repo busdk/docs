@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus inventory maintains item master data and stock movement ledgers as schema-validated repository data.","headline":"bus-inventory — manage inventory items and movements","url":"http://localhost:4000/modules/bus-inventory.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1238,13 +1238,15 @@
 
 <p><strong>Value:</strong> Manage inventory items and movements so valuation and COGS can feed <a href="./bus-reports">bus-reports</a> and the workspace has a single source for stock and movements.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (optional accounting — inventory).</p>
+<p><strong>Use cases:</strong> <a href="../implementation/development-status#inventory-valuation-and-cogs-postings">Inventory valuation and COGS postings</a>.</p>
 
 <p><strong>Completeness:</strong> 30% (Some basic commands) — run and flags have unit and property tests; no e2e. Init, add, move, and valuation not verified.</p>
 
+<p><strong>Use case readiness:</strong> Inventory valuation and COGS postings: 30% — run/flags and property tests verified; init, add, move, valuation not verified.</p>
+
 <p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/inventory/inventory_prop_test.go</code> prove run dispatch, flags, and inventory logic. No e2e; init, add, move, and valuation are not covered by tests.</p>
 
-<p><strong>Planned next:</strong> quiet/verbose mutual exclusion (exit 2); root layout; init, add, move, valuation per SDD.</p>
+<p><strong>Planned next:</strong> quiet/verbose mutual exclusion (exit 2); root layout; init, add, move, valuation per SDD; e2e and unit tests for init, add, move, valuation and determinism.</p>
 
 <p><strong>Blockers:</strong> None known.</p>
 

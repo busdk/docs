@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case (accounting, workbook UI, compliance, developer workflow, payroll, orphans), derived from tests and PLAN.md in each repository.","headline":"Development status — BusDK modules","url":"http://localhost:4000/implementation/development-status.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1207,7 +1207,13 @@
   <li>
 <a href="#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a> — <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>: Audit-ready evidence pack from accounting data (statements or equivalents, interim snapshot, significant assets, creditor/debt and loan registry, budgets and cashflow); BusDK delivers a reviewable, deterministic audit trail in a Git workspace.</li>
   <li>
-<a href="#developer-module-workflow">Developer module workflow</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config. Delivers consistent developer workflows for BusDK module contributors.</li>
+<a href="#developer-module-workflow-with-cursor-cli">Developer module workflow with Cursor CLI</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config with Cursor CLI; <strong>only developer runtime with e2e coverage</strong> (init, flags, set, agent detect and run stub).</li>
+  <li>
+<a href="#developer-module-workflow-with-gemini-cli">Developer module workflow with Gemini CLI</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config with Gemini CLI; repo-local <code class="language-plaintext highlighter-rouge">.gemini</code> context. Not exercised in e2e.</li>
+  <li>
+<a href="#developer-module-workflow-with-claude-cli">Developer module workflow with Claude CLI</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config with Claude Code; per-run AGENTS.md injection. Not exercised in e2e.</li>
+  <li>
+<a href="#developer-module-workflow-with-codex-cli">Developer module workflow with Codex CLI</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config with Codex; repo-local CODEX_HOME. Not exercised in e2e.</li>
   <li>
 <a href="#finnish-payroll-handling-monthly-pay-run">Finnish payroll handling (monthly pay run)</a> — <a href="../workflow/finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a>: Run monthly payroll from employee register to balanced posting intent; postings feed the journal and later bank reconciliation. Delivers traceable salary and withholding bookkeeping for a small company.</li>
   <li>
@@ -1224,114 +1230,100 @@
     <tr>
       <th>Module</th>
       <th>Readiness</th>
-      <th>Value</th>
-      <th>Planned next</th>
-      <th>Blocker</th>
+      <th>Biggest next</th>
+      <th>Biggest blocker</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><a href="../modules/bus#development-state">bus</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Single entrypoint; delegates to <code class="language-plaintext highlighter-rouge">bus-&lt;module&gt;</code>; no-args and missing-subcommand verified.</td>
+      <td>50% (Primary journey) – single entrypoint; no-args and missing-subcommand verified; e2e for dispatch would raise confidence.</td>
       <td>E2E for dispatch; <code class="language-plaintext highlighter-rouge">bus help</code> when bus-help missing.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-init#development-state">bus-init</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Config-only or full baseline (config + 13 module inits); e2e proves step order and exclusions.</td>
+      <td><a href="../modules/bus-init#development-state">init</a></td>
+      <td>70% (Broadly usable) – config-only or full baseline (config + 13 inits); e2e proves step order and exclusions.</td>
       <td>Follow-up e2e/unit refinements.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-config#development-state">bus-config</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Create/update <code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting-entity settings; idempotent init.</td>
+      <td><a href="../modules/bus-config#development-state">config</a></td>
+      <td>70% (Broadly usable) – create/update datapackage and entity settings; idempotent init verified.</td>
       <td>Config library; set/get agent; E2E extensions.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-accounts#development-state">bus-accounts</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, add (all types), list, validate chart of accounts; e2e covers full workflow.</td>
+      <td><a href="../modules/bus-accounts#development-state">accounts</a></td>
+      <td>60% (Stable) – init, add (all types), list, validate; e2e covers full chart workflow.</td>
       <td>Init contract when both files exist; help <code class="language-plaintext highlighter-rouge">--type</code>.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-entities#development-state">bus-entities</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Init, add, list, validate counterparties; e2e proves init (incl. dry-run), add, list.</td>
+      <td><a href="../modules/bus-entities#development-state">entities</a></td>
+      <td>50% (Primary journey) – init, add, list verified; e2e covers init (incl. dry-run), add, list.</td>
       <td>add flags; interactive parity.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Init, list, validate, close, lock; close artifacts and state transitions verified by e2e.</td>
+      <td><a href="../modules/bus-period#development-state">period</a></td>
+      <td>70% (Broadly usable) – init, list, validate, close, lock; close artifacts and state transitions verified by e2e.</td>
       <td>Append-only balance; init help; locked-period integrity.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-attachments#development-state">bus-attachments</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, add, list; idempotent init; evidence layout; e2e covers full workflow.</td>
+      <td><a href="../modules/bus-attachments#development-state">attachments</a></td>
+      <td>60% (Stable) – init, add, list; idempotent init and evidence layout; e2e covers full workflow.</td>
       <td>Workspace-relative paths in diagnostics.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-journal#development-state">bus-journal</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, add, balance; idempotent init; deterministic balance; e2e covers init/add/balance.</td>
+      <td><a href="../modules/bus-journal#development-state">journal</a></td>
+      <td>60% (Stable) – init, add, balance; e2e covers init/add/balance; period integrity not yet verified.</td>
       <td>Period integrity; layout; audit fields; interactive add.</td>
-      <td>bus-period closed-period checks for full workflow.</td>
+      <td>
+<a href="../modules/bus-period">period</a> closed-period checks for full workflow.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-invoices#development-state">bus-invoices</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, validate, list; init dry-run; e2e covers init, validate, list.</td>
+      <td><a href="../modules/bus-invoices#development-state">invoices</a></td>
+      <td>60% (Stable) – init, validate, list; e2e covers init, validate, list; add/pdf not verified.</td>
       <td>add (header/lines); pdf; totals validation; E2E for add/pdf.</td>
-      <td>bus-pdf for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
+      <td>
+<a href="../modules/bus-pdf">pdf</a> for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-bank#development-state">bus-bank</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, import, list; idempotent init; e2e covers init and import.</td>
+      <td><a href="../modules/bus-bank#development-state">bank</a></td>
+      <td>60% (Stable) – init, import, list; e2e covers init and import.</td>
       <td>Schema validation before append; counterparty_id; dry-run.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reconcile#development-state">bus-reconcile</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Help, version, flags; unit tests for run/flags. match/allocate/list not verified.</td>
-      <td>match, allocate, list; journal linking; tests.</td>
+      <td><a href="../modules/bus-reconcile#development-state">reconcile</a></td>
+      <td>30% (Some basic commands) – help, version, flags verified; match/allocate/list not verified.</td>
+      <td>match, allocate, list; journal linking; command-level tests.</td>
       <td>Missing verified match/allocate blocks reconciliation step.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Workspace and resource validation; unit tests for run and type/constraint checks.</td>
-      <td>format; stdout/–output; help; min/max; audit and closed-period.</td>
+      <td><a href="../modules/bus-validate#development-state">validate</a></td>
+      <td>50% (Primary journey) – workspace and resource validation; unit tests for run and type/constraint checks.</td>
+      <td>format; stdout/–output; audit and closed-period checks.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-vat#development-state">bus-vat</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Init, validate, report, export; deterministic report/export; e2e covers VAT workflow.</td>
+      <td><a href="../modules/bus-vat#development-state">vat</a></td>
+      <td>70% (Broadly usable) – init, validate, report, export; e2e covers VAT workflow; deterministic output.</td>
       <td>Index update; dry-run; rate validation; journal input.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Trial balance, account-ledger; unit tests for run, workspace load, report. No e2e.</td>
+      <td><a href="../modules/bus-reports#development-state">reports</a></td>
+      <td>50% (Primary journey) – trial balance, account-ledger; unit tests for run and report; no e2e.</td>
       <td>general-ledger; period; stable format; budget; KPA/PMA.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-pdf#development-state">bus-pdf</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Render from JSON (file); unit tests for run, render, templates.</td>
+      <td><a href="../modules/bus-pdf#development-state">pdf</a></td>
+      <td>60% (Stable) – render from JSON (file); unit tests for run, render, templates.</td>
       <td>Command-level test for <code class="language-plaintext highlighter-rouge">render --data @-</code>.</td>
       <td>None known.</td>
     </tr>
@@ -1348,17 +1340,15 @@
     <tr>
       <th>Module</th>
       <th>Readiness</th>
-      <th>Value</th>
-      <th>Planned next</th>
-      <th>Blocker</th>
+      <th>Biggest next</th>
+      <th>Biggest blocker</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><a href="../modules/bus-inventory#development-state">bus-inventory</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Inventory register and append-only stock movements with voucher traceability; deterministic, auditable as-of valuation outputs for reporting and COGS postings. Run/flags and property tests; init/add/move/valuation not verified.</td>
-      <td>Add or extend e2e and unit tests to verify init, add, move, valuation and determinism; voucher traceability.</td>
+      <td><a href="../modules/bus-inventory#development-state">inventory</a></td>
+      <td>30% (Some basic commands) – run/flags and property tests verified; init, add, move, valuation not verified.</td>
+      <td>e2e and unit tests for init, add, move, valuation and determinism; voucher traceability.</td>
       <td>None known.</td>
     </tr>
   </tbody>
@@ -1374,45 +1364,40 @@
     <tr>
       <th>Module</th>
       <th>Readiness</th>
-      <th>Value</th>
-      <th>Planned next</th>
-      <th>Blocker</th>
+      <th>Biggest next</th>
+      <th>Biggest blocker</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><a href="../modules/bus-sheets#development-state">bus-sheets</a></td>
-      <td>20% (Basic structure)</td>
-      <td>Local web UI over workspace; serve and capability URL verified by e2e. Workbook tabs, grid CRUD, schema panel, and validation UI not yet test-backed.</td>
-      <td>Embed Bus API in-process; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI; optional agent chat; read-only mode; integration tests.</td>
-      <td>bus-api embed and UI assets required before the main user value (grid over workspace) is real.</td>
+      <td><a href="../modules/bus-sheets#development-state">sheets</a></td>
+      <td>20% (Basic structure) – serve and capability URL verified by e2e; grid, schema panel, validation UI not test-backed.</td>
+      <td>Embed API in-process; UI assets; workbook tabs; grid CRUD and schema panel; validation UI.</td>
+      <td>
+<a href="../modules/bus-api">api</a> embed and UI assets required before grid over workspace is real.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-api#development-state">bus-api</a></td>
-      <td>50% (Primary journey)</td>
-      <td>REST API over workspace; help, version, openapi, serve with token/port. Backend for bus-sheets and tools; row and schema endpoints.</td>
+      <td><a href="../modules/bus-api#development-state">api</a></td>
+      <td>50% (Primary journey) – help, version, openapi, serve with token/port; row and schema endpoints.</td>
       <td>Event stream; module endpoints; row CRUD and validation tests.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-data#development-state">bus-data</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Schema, package, table, and row operations; deterministic I/O; e2e and unit tests. Authoritative backend for bus-api (and thus bus-sheets).</td>
+      <td><a href="../modules/bus-data#development-state">data</a></td>
+      <td>60% (Stable) – schema, package, table, row operations; e2e and unit tests; backend for api and sheets.</td>
       <td>Formula projection; range resolution for BFL.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-bfl#development-state">bus-bfl</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Parse, eval, render BFL; CLI and conformance verified by e2e and unit tests. Formula engine for bus-data formula-projected fields.</td>
-      <td>Range and array semantics in bus-data; formula source in API responses.</td>
+      <td><a href="../modules/bus-bfl#development-state">bfl</a></td>
+      <td>60% (Stable) – parse, eval, render BFL; CLI and conformance verified by e2e and unit tests.</td>
+      <td>Range and array semantics in data; formula source in API responses.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-agent#development-state">bus-agent</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Detect runtimes, render prompts; help and version; global flags. When enabled in bus-sheets, optional chat so the user can ask the agent to run Bus CLI tools in the workspace.</td>
-      <td>Order/config; AGENTS.md; adapters; bus-sheets integration.</td>
+      <td><a href="../modules/bus-agent#development-state">agent</a></td>
+      <td>40% (Meaningful task, partial verification) – detect runtimes, render prompts; help, version, global flags verified.</td>
+      <td>Order/config; AGENTS.md; adapters; sheets integration.</td>
       <td>None known.</td>
     </tr>
   </tbody>
@@ -1430,60 +1415,54 @@
     <tr>
       <th>Module</th>
       <th>Readiness</th>
-      <th>Value</th>
-      <th>Planned next</th>
-      <th>Blocker</th>
+      <th>Biggest next</th>
+      <th>Biggest blocker</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Close and lock periods; close artifacts; prevents post-close drift.</td>
+      <td><a href="../modules/bus-period#development-state">period</a></td>
+      <td>70% (Broadly usable) – close and lock periods; close artifacts; prevents post-close drift.</td>
       <td>Append-only balance; locked-period integrity.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-vat#development-state">bus-vat</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>VAT report and export from invoice (and optionally journal) data; period returns.</td>
+      <td><a href="../modules/bus-vat#development-state">vat</a></td>
+      <td>70% (Broadly usable) – VAT report and export from invoice (and optionally journal) data.</td>
       <td>Index update; journal input; posting/voucher refs.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Workspace and resource validation for coherence before close/filing.</td>
+      <td><a href="../modules/bus-validate#development-state">validate</a></td>
+      <td>50% (Primary journey) – workspace and resource validation for coherence before close/filing.</td>
       <td>format; audit and closed-period checks.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Trial balance and account-ledger; basis for statements and audit pack.</td>
+      <td><a href="../modules/bus-reports#development-state">reports</a></td>
+      <td>50% (Primary journey) – trial balance and account-ledger; basis for statements and audit pack.</td>
       <td>general-ledger; period; traceable line items (NFR-REP-001).</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-filing#development-state">bus-filing</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Delegate to targets (prh, vero); unit tests for run, list_targets, flags.</td>
+      <td><a href="../modules/bus-filing#development-state">filing</a></td>
+      <td>50% (Primary journey) – delegate to targets (prh, vero); unit tests for run, list_targets, flags.</td>
       <td>Bundle assembly; tax-audit-pack; pass-through args test.</td>
       <td>Stable bundle contract for filing targets.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-filing-prh#development-state">bus-filing-prh</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Bundle and validate for PRH; unit tests for run, bundle, sanitize. No e2e.</td>
+      <td><a href="../modules/bus-filing-prh#development-state">filing-prh</a></td>
+      <td>40% (Meaningful task, partial verification) – bundle and validate for PRH; unit tests for run, bundle, sanitize; no e2e.</td>
       <td>PRH content; SBR taxonomy; e2e; README links.</td>
-      <td>bus-filing bundle contract.</td>
+      <td>
+<a href="../modules/bus-filing">filing</a> bundle contract.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-filing-vero#development-state">bus-filing-vero</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Bundle for Vero; unit tests for app, bundle, output. No e2e.</td>
+      <td><a href="../modules/bus-filing-vero#development-state">filing-vero</a></td>
+      <td>40% (Meaningful task, partial verification) – bundle for Vero; unit tests for app, bundle, output; no e2e.</td>
       <td>E2E; source refs; prerequisites diagnostics.</td>
-      <td>bus-filing bundle contract.</td>
+      <td>
+<a href="../modules/bus-filing">filing</a> bundle contract.</td>
     </tr>
   </tbody>
 </table>
@@ -1498,86 +1477,76 @@
     <tr>
       <th>Module</th>
       <th>Readiness</th>
-      <th>Value</th>
-      <th>Planned next</th>
-      <th>Blocker</th>
+      <th>Biggest next</th>
+      <th>Biggest blocker</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Close and lock for snapshots; prevents post-review drift; baseline and interim cut-off.</td>
+      <td><a href="../modules/bus-period#development-state">period</a></td>
+      <td>70% (Broadly usable) – close and lock for snapshots; baseline and interim cut-off.</td>
       <td>Append-only balance; init help; locked-period integrity.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Trial balance and ledger lines as audit evidence; basis for statements and schedules. No e2e.</td>
+      <td><a href="../modules/bus-reports#development-state">reports</a></td>
+      <td>50% (Primary journey) – trial balance and ledger as audit evidence; no e2e.</td>
       <td>general-ledger; period; stable format; budget; KPA/PMA.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Workspace and resource validation before assembling the evidence pack.</td>
-      <td>format; stdout/–output; help; min/max; audit and closed-period.</td>
+      <td><a href="../modules/bus-validate#development-state">validate</a></td>
+      <td>50% (Primary journey) – workspace and resource validation before assembling evidence pack.</td>
+      <td>format; stdout/–output; audit and closed-period.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-attachments#development-state">bus-attachments</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Link source documents to records; traceability for audit.</td>
+      <td><a href="../modules/bus-attachments#development-state">attachments</a></td>
+      <td>60% (Stable) – link source documents to records; traceability for audit.</td>
       <td>Workspace-relative paths in diagnostics.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-journal#development-state">bus-journal</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Postings and balancing; audit trail for bookkeeping evidence.</td>
+      <td><a href="../modules/bus-journal#development-state">journal</a></td>
+      <td>60% (Stable) – postings and balancing; audit trail for bookkeeping evidence.</td>
       <td>Period integrity; layout; audit fields; interactive add.</td>
-      <td>bus-period closed-period checks for full workflow.</td>
+      <td>
+<a href="../modules/bus-period">period</a> closed-period checks for full workflow.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-invoices#development-state">bus-invoices</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Source transaction documents and validation for evidence pack.</td>
+      <td><a href="../modules/bus-invoices#development-state">invoices</a></td>
+      <td>60% (Stable) – source transaction documents and validation for evidence pack.</td>
       <td>add (header/lines); pdf; totals validation; E2E for add/pdf.</td>
-      <td>bus-pdf for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
+      <td>
+<a href="../modules/bus-pdf">pdf</a> for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-bank#development-state">bus-bank</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Import statements and transactions; basis for reconciliation evidence.</td>
+      <td><a href="../modules/bus-bank#development-state">bank</a></td>
+      <td>60% (Stable) – import statements and transactions; basis for reconciliation evidence.</td>
       <td>Schema validation before append; counterparty_id; dry-run.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reconcile#development-state">bus-reconcile</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Bank reconciliation as audit-critical evidence; match/allocate/list not verified.</td>
+      <td><a href="../modules/bus-reconcile#development-state">reconcile</a></td>
+      <td>30% (Some basic commands) – match/allocate/list not verified; blocks reconciliation evidence.</td>
       <td>match, allocate, list; journal linking; tests.</td>
       <td>Missing verified match/allocate blocks reconciliation step.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-loans#development-state">bus-loans</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Loan registry as auditable schedule; roll-forward concept for creditor/debt visibility. Init/add verified; event/amortize not verified.</td>
+      <td><a href="../modules/bus-loans#development-state">loans</a></td>
+      <td>40% (Meaningful task, partial verification) – loan registry; init/add verified; event/amortize not verified.</td>
       <td>event, amortize; e2e.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-budget#development-state">bus-budget</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Budget and variance as plausibility and going-concern evidence; init/report/add/set not verified.</td>
+      <td><a href="../modules/bus-budget#development-state">budget</a></td>
+      <td>30% (Some basic commands) – init/report/add/set not verified.</td>
       <td>Init, report, add, set; e2e.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-assets#development-state">bus-assets</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Asset schedule for significant-assets list; validate and post support traceability. No e2e for init/add.</td>
+      <td><a href="../modules/bus-assets#development-state">assets</a></td>
+      <td>50% (Primary journey) – asset schedule for significant-assets list; validate and post; no e2e for init/add.</td>
       <td>e2e for init/add.</td>
       <td>None known.</td>
     </tr>
@@ -1585,9 +1554,9 @@
 </table>
 
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
-<h3 id="developer-module-workflow">Developer module workflow</h3>
+<h3 id="developer-module-workflow-with-cursor-cli">Developer module workflow with Cursor CLI</h3>
 
-<p>The <a href="../modules/bus-dev">bus-dev</a> module is the canonical entry for developer workflows: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. It supports contributors and automation working inside BusDK module repositories.</p>
+<p>The <a href="../modules/bus-dev">bus-dev</a> module is the canonical entry for developer workflows with Cursor CLI: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Cursor runs from the repository root so its native AGENTS.md loading applies. <strong>E2e coverage:</strong> <code class="language-plaintext highlighter-rouge">bus-dev</code> <code class="language-plaintext highlighter-rouge">tests/e2e_bus_dev.sh</code> proves init (Makefile, <code class="language-plaintext highlighter-rouge">.cursor/rules</code>, stubs), flags, set, invalid <code class="language-plaintext highlighter-rouge">--agent</code>; <code class="language-plaintext highlighter-rouge">bus-agent</code> <code class="language-plaintext highlighter-rouge">tests/e2e_bus_agent.sh</code> proves detect, render, help, version, and <strong>run with Cursor</strong> (stub executable in PATH; stderr mentions cursor). Work/spec/e2e with a real Cursor CLI are not run in e2e. Runtime behavior is defined in the <a href="../modules/bus-agent">bus-agent</a> CLI reference under “Project instructions (AGENTS.md)”.</p>
 
 <table>
   <thead>
@@ -1601,23 +1570,143 @@
   </thead>
   <tbody>
     <tr>
-      <td><a href="../modules/bus-dev#development-state">bus-dev</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>commit, work, spec, e2e, set; init creates Makefile, .cursor/rules, stubs; e2e proves flags and init.</td>
+      <td><a href="../modules/bus-dev#development-state">dev</a></td>
+      <td>60% (Stable)</td>
+      <td>commit, work, spec, e2e, set; init creates Makefile, .cursor/rules, stubs; e2e proves flags and init (Cursor-oriented scaffold).</td>
       <td>Per-directory lock; remove -f; AGENTS.md assert; README.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-agent#development-state">bus-agent</a></td>
+      <td><a href="../modules/bus-agent#development-state">agent</a></td>
       <td>40% (Meaningful task, partial verification)</td>
-      <td>Detect runtimes, render prompts; help and version; global flags.</td>
-      <td>Order/config; AGENTS.md; adapters; bus-sheets integration.</td>
+      <td>Detect, render, run with Cursor (stub) verified by e2e; Cursor invoked from repo root; no global Cursor config edits; optional additive <code class="language-plaintext highlighter-rouge">.cursor/rules</code> support.</td>
+      <td>Order/config; AGENTS.md; adapters; sheets integration.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-preferences#development-state">bus-preferences</a></td>
+      <td><a href="../modules/bus-preferences#development-state">preferences</a></td>
       <td>70% (Broadly usable)</td>
       <td>Get, set, set-json, unset, list preferences; key-path and format verified by e2e.</td>
+      <td>Key-path validation for list; canonical JSON; path resolution tests.</td>
+      <td>None known.</td>
+    </tr>
+  </tbody>
+</table>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="developer-module-workflow-with-gemini-cli">Developer module workflow with Gemini CLI</h3>
+
+<p>The <a href="../modules/bus-dev">bus-dev</a> module is the canonical entry for developer workflows with Gemini CLI: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Gemini may rely on repo-local <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> and <code class="language-plaintext highlighter-rouge">.geminiignore</code> so AGENTS.md is discovered as intended (additive merges only; no user-global Gemini edits). <strong>Not exercised in e2e:</strong> no test runs bus-dev or bus-agent with Gemini; only the generic detect/selection contract is tested (e2e uses stubs; run with real Gemini is untested).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Readiness</th>
+      <th>Value</th>
+      <th>Planned next</th>
+      <th>Blocker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../modules/bus-dev#development-state">dev</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Same CLI as Cursor workflow; init and flags verified only for Cursor-oriented e2e. Run/work/spec/e2e with Gemini not tested.</td>
+      <td>E2e that runs work/spec/e2e with Gemini; per-directory lock; AGENTS.md assert.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-agent#development-state">agent</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Detect/selection contract only (e2e stub in PATH); set runtime gemini and BUS_AGENT=gemini tested. Run with real Gemini CLI not exercised in e2e.</td>
+      <td>E2e that runs <code class="language-plaintext highlighter-rouge">run --agent gemini</code> with real or hermetic Gemini; order/config; adapters.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-preferences#development-state">preferences</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic).</td>
+      <td>Key-path validation for list; canonical JSON; path resolution tests.</td>
+      <td>None known.</td>
+    </tr>
+  </tbody>
+</table>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="developer-module-workflow-with-claude-cli">Developer module workflow with Claude CLI</h3>
+
+<p>The <a href="../modules/bus-dev">bus-dev</a> module is the canonical entry for developer workflows with Claude Code: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Claude prefers per-run injection of AGENTS.md (with a clearly marked, additive repo-local shim as fallback). <strong>Not exercised in e2e:</strong> no test runs bus-dev or bus-agent with Claude; only the generic detect/selection contract is tested; run with real Claude CLI is untested.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Readiness</th>
+      <th>Value</th>
+      <th>Planned next</th>
+      <th>Blocker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../modules/bus-dev#development-state">dev</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Same CLI as Cursor workflow; init and flags verified only for Cursor-oriented e2e. Run/work/spec/e2e with Claude not tested.</td>
+      <td>E2e that runs work/spec/e2e with Claude; per-directory lock; AGENTS.md assert.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-agent#development-state">agent</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Detect/selection contract only; run with real Claude CLI not exercised in e2e.</td>
+      <td>E2e that runs <code class="language-plaintext highlighter-rouge">run --agent claude</code> with real or hermetic Claude; order/config; adapters.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-preferences#development-state">preferences</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic).</td>
+      <td>Key-path validation for list; canonical JSON; path resolution tests.</td>
+      <td>None known.</td>
+    </tr>
+  </tbody>
+</table>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="developer-module-workflow-with-codex-cli">Developer module workflow with Codex CLI</h3>
+
+<p>The <a href="../modules/bus-dev">bus-dev</a> module is the canonical entry for developer workflows with Codex: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Codex runs with repo-local state (e.g. CODEX_HOME set to a repo-local directory) so no global state is used or mutated; AGENTS.md is discovered natively when the workdir is the repo root. <strong>Not exercised in e2e:</strong> no test runs bus-dev or bus-agent with Codex; only the generic detect/selection contract is tested; run with real Codex CLI is untested.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Readiness</th>
+      <th>Value</th>
+      <th>Planned next</th>
+      <th>Blocker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../modules/bus-dev#development-state">dev</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Same CLI as Cursor workflow; init and flags verified only for Cursor-oriented e2e. Run/work/spec/e2e with Codex not tested.</td>
+      <td>E2e that runs work/spec/e2e with Codex; per-directory lock; AGENTS.md assert.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-agent#development-state">agent</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Detect/selection contract only; run with real Codex CLI not exercised in e2e.</td>
+      <td>E2e that runs <code class="language-plaintext highlighter-rouge">run --agent codex</code> with real or hermetic Codex; order/config; adapters.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-preferences#development-state">preferences</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic).</td>
       <td>Key-path validation for list; canonical JSON; path resolution tests.</td>
       <td>None known.</td>
     </tr>
@@ -1634,58 +1723,51 @@
     <tr>
       <th>Module</th>
       <th>Readiness</th>
-      <th>Value</th>
-      <th>Planned next</th>
-      <th>Blocker</th>
+      <th>Biggest next</th>
+      <th>Biggest blocker</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><a href="../modules/bus-payroll#development-state">bus-payroll</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Validate and export: integration tests in <code class="language-plaintext highlighter-rouge">run_test.go</code> prove validation of payroll datasets and deterministic export CSV for a run. Data layout is <code class="language-plaintext highlighter-rouge">payroll/</code> (employees, payruns, payments, posting_accounts). init, run, list, employee add/list are specified in CLI reference and SDD but not implemented; no e2e for full pay-run journey.</td>
+      <td><a href="../modules/bus-payroll#development-state">payroll</a></td>
+      <td>40% (Meaningful task, partial verification) – validate and export verified by integration tests; init, run, list, employee not implemented; no e2e for full pay-run.</td>
       <td>Align CLI and layout with docs (init, run, list, employee); e2e for run → export → journal.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-accounts#development-state">bus-accounts</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Chart of accounts for wage expense, withholding payable, net payable; e2e covers full workflow.</td>
+      <td><a href="../modules/bus-accounts#development-state">accounts</a></td>
+      <td>60% (Stable) – chart of accounts for wage expense, withholding, net payable; e2e covers full workflow.</td>
       <td>Init contract when both files exist; help <code class="language-plaintext highlighter-rouge">--type</code>.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-entities#development-state">bus-entities</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Party references for employees; e2e proves init, add, list.</td>
+      <td><a href="../modules/bus-entities#development-state">entities</a></td>
+      <td>50% (Primary journey) – party references for employees; e2e proves init, add, list.</td>
       <td>add flags; interactive parity.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Period open/close/lock for payroll month and pay date; e2e verifies close and state.</td>
+      <td><a href="../modules/bus-period#development-state">period</a></td>
+      <td>70% (Broadly usable) – period open/close/lock for payroll month and pay date; e2e verifies close and state.</td>
       <td>Append-only balance; locked-period integrity.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-journal#development-state">bus-journal</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Append payroll posting output; init, add, balance verified by e2e.</td>
+      <td><a href="../modules/bus-journal#development-state">journal</a></td>
+      <td>60% (Stable) – append payroll posting output; init, add, balance verified by e2e.</td>
       <td>Period integrity; layout; audit fields.</td>
-      <td>bus-period closed-period checks for full workflow.</td>
+      <td>
+<a href="../modules/bus-period">period</a> closed-period checks for full workflow.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-bank#development-state">bus-bank</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Import bank statements for pay-day transfers; e2e covers init and import.</td>
+      <td><a href="../modules/bus-bank#development-state">bank</a></td>
+      <td>60% (Stable) – import bank statements for pay-day transfers; e2e covers init and import.</td>
       <td>Schema validation before append; dry-run.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reconcile#development-state">bus-reconcile</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Match bank rows to payroll-related journal entries; match/allocate/list not verified.</td>
+      <td><a href="../modules/bus-reconcile#development-state">reconcile</a></td>
+      <td>30% (Some basic commands) – match/allocate/list not verified; blocks payroll bank reconciliation.</td>
       <td>match, allocate, list; journal linking; tests.</td>
       <td>Missing verified match/allocate blocks reconciliation step.</td>
     </tr>
@@ -1697,9 +1779,9 @@
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h3 id="orphan-modules">Orphan modules</h3>
 
-<p>These modules are not yet mapped to a documented use case. Bus-sheets, bus-api, bus-data, and bus-bfl are mapped to <a href="#workbook-and-validated-tabular-editing">Workbook and validated tabular editing</a> above. Shown with overall completeness and value promise.</p>
+<p>Modules not mapped to any documented use case appear here with overall completeness, value promise, and whether a new use case document should be added. Module names are shown without the <code class="language-plaintext highlighter-rouge">bus-</code> prefix and linked to the module CLI reference.</p>
 
-<p>No orphan modules exist at the moment.</p>
+<p>No orphan modules at present; every module is mapped to at least one use case above.</p>
 
 <!-- busdk-docs-nav start -->
 </div></section>

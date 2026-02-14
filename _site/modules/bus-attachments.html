@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"CLI reference for bus attachments: register evidence files, store metadata in attachments.csv, and let other modules link to evidence without embedding paths.","headline":"bus attachments — register and list evidence files","url":"http://localhost:4000/modules/bus-attachments.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1235,11 +1235,11 @@
 
 <p><strong>Value:</strong> Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the <a href="../workflow/accounting-workflow-overview">accounting workflow</a> treats evidence as first-class.</p>
 
-<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>.</p>
+<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
-<p><strong>Completeness:</strong> 60% (Stable for one use case) — init, add, and list verified by e2e; idempotent init and evidence file layout test-backed.</p>
+<p><strong>Completeness:</strong> 60% (Stable) — init, add, and list verified by e2e; idempotent init and evidence file layout test-backed.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 60% — init, add, list verified; workspace-relative paths in diagnostics would improve UX.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 60% — init, add, list verified; workspace-relative paths in diagnostics would improve UX. Finnish company reorganisation: 60% — link source documents to records; traceability for audit.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_attachments.sh</code> proves exact help/version, global flags, init creating attachments.csv and schema, idempotent init warning, add with file and –desc, list with deterministic TSV. Unit tests in <code class="language-plaintext highlighter-rouge">cmd/bus-attachments/run_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/attachments/validate_test.go</code> cover run and validate.</p>
 

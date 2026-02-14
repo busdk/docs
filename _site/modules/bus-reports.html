@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus reports computes financial reports from journal entries and reference data.","headline":"bus-reports","url":"http://localhost:4000/modules/bus-reports.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1238,11 +1238,11 @@
 
 <p><strong>Value:</strong> Produce trial balance, account-ledger, and statement-style reports from journal and period data so the <a href="../workflow/accounting-workflow-overview">accounting workflow</a> can generate financial output after close.</p>
 
-<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
+<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>, <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
 <p><strong>Completeness:</strong> 50% (Primary journey) — trial balance and account-ledger implemented; unit tests cover run, workspace load, and report logic. No e2e.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 50% — trial balance and account-ledger verified by unit tests; general-ledger and period support would complete. Finnish compliance: 50% — reports support statements; traceable line items (NFR-REP-001) and KPA/PMA would complete.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 50% — trial balance and account-ledger verified by unit tests; general-ledger and period support would complete. Finnish bookkeeping and tax-audit compliance: 50% — reports support statements; traceable line items (NFR-REP-001) and KPA/PMA would complete. Finnish company reorganisation: 50% — trial balance and ledger as audit evidence; no e2e.</p>
 
 <p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/workspace/load_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/report/report_test.go</code> prove run dispatch, workspace loading, and report generation. No e2e; report output shape is not asserted end-to-end.</p>
 

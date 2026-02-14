@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus entities maintains counterparty reference datasets with stable entity identifiers used by invoices, bank imports, reconciliation, and other modules.","headline":"bus-entities — manage counterparty reference data","url":"http://localhost:4000/modules/bus-entities.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1242,11 +1242,11 @@
 
 <p><strong>Value:</strong> Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.</p>
 
-<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>.</p>
+<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../workflow/finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a>.</p>
 
 <p><strong>Completeness:</strong> 50% (Primary journey) — init, add, list, and validate implemented; e2e proves init (including dry-run and idempotent), add, and list with deterministic output.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 50% — init, add, list verified; add flags alignment and interactive parity would complete master-data step.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 50% — init, add, list verified; add flags alignment and interactive parity would complete master-data step. Finnish payroll handling: 50% — party references for employees; e2e proves init, add, list.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_entities.sh</code> proves help, version, invalid usage (quiet+verbose, color, format, chdir), init –dry-run (no files), init creating entities.csv and schema, idempotent init warning, add, and list with expected columns. Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/entities/validator_test.go</code> cover run, validator, and flags.</p>
 

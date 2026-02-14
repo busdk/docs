@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…","headline":"bus-invoices","url":"http://localhost:4000/modules/bus-invoices.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1259,17 +1259,17 @@ bus invoices list <span class="nt">--status</span> unpaid
 
 <p><strong>Value:</strong> Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the <a href="../workflow/accounting-workflow-overview">accounting workflow</a>.</p>
 
-<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>.</p>
+<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
-<p><strong>Completeness:</strong> 60% (Stable for one use case) — init, validate, and list verified by e2e; init dry-run and list output shape test-backed. add and pdf not yet covered by e2e.</p>
+<p><strong>Completeness:</strong> 60% (Stable) — init, validate, and list verified by e2e; init dry-run and list output shape test-backed. add and pdf not yet covered by e2e.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 60% — init, validate, list verified; add and pdf would complete invoice recording and PDF generation step.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 60% — init, validate, list verified; add and pdf would complete invoice recording and PDF step. Finnish company reorganisation: 60% — source transaction documents and validation for evidence pack.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_invoices.sh</code> proves help, version, invalid usage, validate when datasets missing, init creating sales/purchase CSV and schema, validate after init, init –dry-run (no files), list with deterministic TSV. Unit tests in <code class="language-plaintext highlighter-rouge">cmd/bus-invoices/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/validate/</code>, and <code class="language-plaintext highlighter-rouge">internal/initarea/initarea_test.go</code> cover run, validate, initarea, and list.</p>
 
-<p><strong>Planned next:</strong> <code class="language-plaintext highlighter-rouge">bus invoices add</code> (header/lines); <code class="language-plaintext highlighter-rouge">&lt;invoice-id&gt; validate</code>; <code class="language-plaintext highlighter-rouge">bus invoices pdf</code> delegating to bus-pdf; E2E for add and pdf.</p>
+<p><strong>Planned next:</strong> <code class="language-plaintext highlighter-rouge">bus invoices add</code> (header/lines); <code class="language-plaintext highlighter-rouge">&lt;invoice-id&gt; validate</code>; <code class="language-plaintext highlighter-rouge">bus invoices pdf</code> delegating to <a href="./bus-pdf">bus-pdf</a>; E2E for add and pdf.</p>
 
-<p><strong>Blockers:</strong> bus-pdf required for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</p>
+<p><strong>Blockers:</strong> <a href="./bus-pdf">bus-pdf</a> required for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</p>
 
 <p><strong>Depends on:</strong> <a href="./bus-pdf">bus-pdf</a> (for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>).</p>
 

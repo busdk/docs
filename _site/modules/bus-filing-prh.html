@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus filing prh converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes.","headline":"bus-filing-prh — produce PRH export bundles","url":"http://localhost:4000/modules/bus-filing-prh.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1225,13 +1225,13 @@
 
 <p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — bundle and validate workflows implemented; unit tests cover run, bundle, and sanitize. No e2e.</p>
 
-<p><strong>Use case readiness:</strong> Finnish compliance: 40% — bundle and sanitize verified; PRH content and SBR taxonomy would unlock PRH filing.</p>
+<p><strong>Use case readiness:</strong> Finnish bookkeeping and tax-audit compliance: 40% — bundle and sanitize verified; PRH content and SBR taxonomy would unlock PRH filing.</p>
 
 <p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/bundle/bundle_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/bundle/sanitize_test.go</code> prove run dispatch, bundle building, and sanitization. No e2e against fixture; PRH content and SBR taxonomy are in PLAN.</p>
 
 <p><strong>Planned next:</strong> PRH-required content in bundles; full PRH SBR taxonomy in iXBRL; e2e against fixture; README links.</p>
 
-<p><strong>Blockers:</strong> bus-filing bundle contract must be stable for target consumption.</p>
+<p><strong>Blockers:</strong> <a href="./bus-filing">bus-filing</a> bundle contract must be stable for target consumption.</p>
 
 <p><strong>Depends on:</strong> <a href="./bus-filing">bus-filing</a> (invoked as target); <a href="./bus-period">bus-period</a> closed.</p>
 

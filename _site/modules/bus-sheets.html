@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Local web UI for BusDK workspaces: multi-tab workbook over CSV resources, view and edit rows and schemas, run validation; delegates to bus-api in-process.","headline":"bus sheets — local spreadsheet-like web UI for workspaces","url":"http://localhost:4000/modules/bus-sheets.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1307,15 +1307,17 @@
 
 <p><strong>Value:</strong> Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (spreadsheet UI over workspace).</p>
+<p><strong>Use cases:</strong> <a href="../implementation/development-status#workbook-and-validated-tabular-editing">Workbook and validated tabular editing</a>.</p>
 
 <p><strong>Completeness:</strong> 20% (Basic structure) — only serve and capability URL verified by e2e; workbook, grid, and API embed not yet test-backed.</p>
 
+<p><strong>Use case readiness:</strong> Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; grid, schema panel, validation UI not test-backed.</p>
+
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_sheets.sh</code> proves help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), and that serve prints the expected capability URL with a fixed token and port. Unit tests in <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/serve/serve_test.go</code> cover flags and run. No test covers embedded API, workbook tabs, or grid CRUD.</p>
 
-<p><strong>Planned next:</strong> Embed Bus API in-process; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI; optional agent chat; read-only mode; integration tests.</p>
+<p><strong>Planned next:</strong> Embed <a href="./bus-api">bus-api</a> in-process; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI; optional agent chat; read-only mode; integration tests.</p>
 
-<p><strong>Blockers:</strong> bus-api embed and UI assets required before the main user value (grid over workspace) is real.</p>
+<p><strong>Blockers:</strong> <a href="./bus-api">bus-api</a> embed and UI assets required before the main user value (grid over workspace) is real.</p>
 
 <p><strong>Depends on:</strong> <a href="./bus-api">bus-api</a> (and transitively <a href="./bus-data">bus-data</a>).</p>
 

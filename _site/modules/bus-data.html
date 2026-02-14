@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus-data is the workspace dataset tool for BusDK repositories.","headline":"bus-data","url":"http://localhost:4000/modules/bus-data.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1447,9 +1447,11 @@ bus-data --quiet --output out_list.tsv table list
 
 <p><strong>Value:</strong> Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (infrastructure for <a href="./bus-api">bus-api</a> and <a href="./bus-sheets">bus-sheets</a>).</p>
+<p><strong>Use cases:</strong> <a href="../implementation/development-status#workbook-and-validated-tabular-editing">Workbook and validated tabular editing</a>.</p>
 
-<p><strong>Completeness:</strong> 60% (Stable for one use case) — schema init/show, package init/validate, table and row operations, and validation verified by e2e and unit tests.</p>
+<p><strong>Completeness:</strong> 60% (Stable) — schema init/show, package init/validate, table and row operations, and validation verified by e2e and unit tests.</p>
+
+<p><strong>Use case readiness:</strong> Workbook and validated tabular editing: 60% — schema, package, table, row operations; e2e and unit tests; backend for <a href="./bus-api">bus-api</a> and <a href="./bus-sheets">bus-sheets</a>.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_data.sh</code> proves schema init creates table and schema files, schema show prints exact schema bytes, package init and validate, row add/update/delete, table read with filters and key, and deterministic I/O. Unit tests in <code class="language-plaintext highlighter-rouge">pkg/data/</code> and <code class="language-plaintext highlighter-rouge">internal/cli/</code> cover mutate, patch, validate, formula, and workspace behavior.</p>
 

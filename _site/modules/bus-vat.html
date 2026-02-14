@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings.","headline":"bus-vat — compute VAT reports and exports","url":"http://localhost:4000/modules/bus-vat.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1239,7 +1239,7 @@
 
 <p><strong>Completeness:</strong> 70% (Broadly usable) — init, validate, report, and export verified by e2e; deterministic report and export output and dry-run test-backed.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 70% — init, validate, report, export verified; journal input and posting/voucher refs would complete. Finnish compliance: 70% — VAT report and export support returns; voucher refs in output would strengthen audit trail.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 70% — init, validate, report, export verified; journal input and posting/voucher refs would complete. Finnish bookkeeping and tax-audit compliance: 70% — VAT report and export support returns; voucher refs in output would strengthen audit trail.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_vat.sh</code> proves help, version, invalid color/format/quiet+verbose, init creating vat-rates, vat-reports, vat-returns CSV and schema, idempotent init warning, validate with minimal invoice fixture, report –period with exact TSV diff, export –dry-run (no file), export writing vat-returns-{period}.csv, missing –period exit 2. Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/vat/</code> cover run, init, report, export, rounding.</p>
 

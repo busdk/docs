@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus assets maintains the fixed-asset register and produces depreciation and disposal postings for the journal.","headline":"bus-assets","url":"http://localhost:4000/modules/bus-assets.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1238,9 +1238,11 @@
 
 <p><strong>Value:</strong> Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset accounts appear in <a href="./bus-reports">bus-reports</a>.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (optional accounting — fixed assets).</p>
+<p><strong>Use cases:</strong> <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
 <p><strong>Completeness:</strong> 50% (Primary journey) — validate, schedule, and post implemented and covered by unit tests; init and add not yet verified by e2e.</p>
+
+<p><strong>Use case readiness:</strong> Finnish company reorganisation: 50% — asset schedule for significant-assets list; validate and post verified; no e2e for init/add.</p>
 
 <p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">cmd/bus-assets/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/assets/schedule_property_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/assets/post_property_test.go</code> prove run, schedule, and post logic and flags. No e2e; init and add workflows are not test-backed.</p>
 

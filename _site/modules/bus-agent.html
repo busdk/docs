@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"CLI reference for bus agent: detect enabled runtimes, render prompt templates, run an agent with a prompt, format NDJSON output; for diagnostics and development only.","headline":"bus agent — diagnostics and development helper for the agent runner","url":"http://localhost:4000/modules/bus-agent.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1347,11 +1347,11 @@
 
 <p><strong>Value:</strong> Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and bus-dev can use a configured default runtime without hard-coding it.</p>
 
-<p><strong>Use cases:</strong> <a href="../implementation/development-status#developer-module-workflow">Developer module workflow</a>.</p>
+<p><strong>Use cases:</strong> <a href="../implementation/development-status#developer-module-workflow">Developer module workflow</a>, <a href="../implementation/development-status#workbook-and-validated-tabular-editing">Workbook and validated tabular editing</a>.</p>
 
 <p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — detect and render verified by e2e; help, version, and global flags test-backed; run implemented but e2e does not prove full run flow.</p>
 
-<p><strong>Use case readiness:</strong> Developer module workflow: 40% — detect and render verified; order/config and run e2e would complete agent support for bus-dev.</p>
+<p><strong>Use case readiness:</strong> Developer module workflow: 40% — detect and render verified; order/config and run e2e would complete agent support for <a href="./bus-dev">bus-dev</a>. Workbook and validated tabular editing: 40% — when enabled in <a href="./bus-sheets">bus-sheets</a>, optional chat so user can ask agent to run Bus CLI tools; not yet test-backed in sheets.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_agent.sh</code> proves help, version, subcommand help (detect), color and format validation, quiet+verbose exit 2, and detect listing enabled runtimes. Unit tests in <code class="language-plaintext highlighter-rouge">internal/runner/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/template/render_test.go</code>, and <code class="language-plaintext highlighter-rouge">agent/prefs_test.go</code> cover runner resolve/detect, template render, format, and prefs. No e2e proves <code class="language-plaintext highlighter-rouge">run</code> end-to-end with a real agent.</p>
 

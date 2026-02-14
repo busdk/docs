@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus period manages period open, close, and lock state as schema-validated repository data.","headline":"bus-period — open, close, and lock accounting periods","url":"http://localhost:4000/modules/bus-period.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1238,11 +1238,11 @@
 
 <p><strong>Value:</strong> Manage period control (open, close, lock) and period-scoped balance so the <a href="../workflow/accounting-workflow-overview">accounting workflow</a> can close and lock periods and downstream modules can rely on closed state for reporting and filing.</p>
 
-<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
+<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>, <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
 <p><strong>Completeness:</strong> 70% (Broadly usable) — init, list, validate, close, and lock verified by e2e; close artifacts and state transitions test-backed.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 70% — init, list, validate, close, lock verified; append-only balance and init help would complete. Finnish compliance: 70% — close and lock support period boundary and audit; locked-period integrity would strengthen.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 70% — init, list, validate, close, lock verified; append-only balance and init help would complete. Finnish bookkeeping and tax-audit compliance: 70% — close and lock support period boundary and audit; locked-period integrity would strengthen. Finnish company reorganisation: 70% — close and lock for snapshots; baseline and interim cut-off.</p>
 
 <p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_period.sh</code> proves init creates periods.csv and schema; list output deterministic (tsv); validate on complete workspace; close requires –period (missing or positional rejected); close –dry-run does not change files; close writes period state and close_entries; lock behavior. Unit tests in <code class="language-plaintext highlighter-rouge">internal/period/period_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code> cover period logic, storage, and app run.</p>
 

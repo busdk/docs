@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings.","headline":"bus-payroll — run payroll and generate postings","url":"http://localhost:4000/modules/bus-payroll.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1243,11 +1243,13 @@
 
 <p><strong>Use cases:</strong> <a href="../workflow/finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a>.</p>
 
-<p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — validate and export implemented; unit tests cover flags and run. No e2e for full payroll run.</p>
+<p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — validate and export implemented; integration and unit tests cover flags and run. No e2e for full payroll run.</p>
 
-<p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code> and <code class="language-plaintext highlighter-rouge">run_test.go</code> prove flag parsing and run behavior. Full payroll workflow is not covered by e2e.</p>
+<p><strong>Use case readiness:</strong> Finnish payroll handling (monthly pay run): 40% — validate and export verified by integration tests; init, run, list, employee not implemented; no e2e for full pay-run journey.</p>
 
-<p><strong>Planned next:</strong> Align or document scope and layout vs docs; README <code class="language-plaintext highlighter-rouge">make check</code>; test that <code class="language-plaintext highlighter-rouge">--no-color</code> disables color on stderr.</p>
+<p><strong>Current:</strong> Integration tests in <code class="language-plaintext highlighter-rouge">run_test.go</code> prove validation of payroll datasets and deterministic export CSV for a run; unit tests in <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code> cover flag parsing and global flags. No e2e for full pay-run journey.</p>
+
+<p><strong>Planned next:</strong> Align CLI and layout with docs (init, run, list, employee); e2e for run → export → journal; README <code class="language-plaintext highlighter-rouge">make check</code>; test that <code class="language-plaintext highlighter-rouge">--no-color</code> disables color on stderr.</p>
 
 <p><strong>Blockers:</strong> None known.</p>
 

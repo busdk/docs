@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus loans maintains loan contracts and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions…","headline":"bus-loans — manage loans and amortization schedules","url":"http://localhost:4000/modules/bus-loans.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1238,11 +1238,13 @@
 
 <p><strong>Value:</strong> Maintain loan register and events so amortization and event postings feed the <a href="./bus-journal">bus-journal</a> and loan accounts appear in <a href="./bus-reports">bus-reports</a>.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (optional accounting — loans).</p>
+<p><strong>Use cases:</strong> <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
 <p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — init and add implemented; unit tests cover run and flags. No e2e; event and amortize not verified.</p>
 
-<p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code> prove run dispatch and flag parsing. Init and add exist in code but are not covered by e2e; event and amortize are planned, not tested.</p>
+<p><strong>Use case readiness:</strong> Finnish company reorganisation: 40% — loan registry; init/add verified by unit tests; event, amortize not verified.</p>
+
+<p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code> (including <code class="language-plaintext highlighter-rouge">TestRunInitSuccessAndIdempotency</code>, <code class="language-plaintext highlighter-rouge">TestRunAddSuccess</code>, <code class="language-plaintext highlighter-rouge">TestRunAddDuplicateLoanID</code>) and <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code> prove init, add, run dispatch, and flag parsing. No e2e; event and amortize are not verified.</p>
 
 <p><strong>Planned next:</strong> event (disbursement, repayment, interest, fee, adjustment with postings); amortize (period, optional loan-id); idempotent init; root layout; add flags; ref validation; command-level tests.</p>
 

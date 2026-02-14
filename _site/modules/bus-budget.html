@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"CLI reference for bus budget: maintain budget datasets by account and period, add or set amounts, and emit budget vs actual variance from journal data.","headline":"bus budget — record budgets and run budget vs actual reports","url":"http://localhost:4000/modules/bus-budget.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1238,9 +1238,11 @@
 
 <p><strong>Value:</strong> Maintain budget dataset so <a href="./bus-reports">bus-reports</a> can produce budget-vs-actual and optional planning workflows have a single source for budget figures.</p>
 
-<p><strong>Use cases:</strong> Orphan: no documented use case yet (optional accounting — <a href="../workflow/budgeting-and-budget-vs-actual">budgeting workflow</a> exists).</p>
+<p><strong>Use cases:</strong> <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>.</p>
 
 <p><strong>Completeness:</strong> 30% (Some basic commands) — unit tests for flags and variance logic exist; no e2e. Init, report, add, and set not verified.</p>
+
+<p><strong>Use case readiness:</strong> Finnish company reorganisation: 30% — budget and variance as plausibility evidence; init/report/add/set not verified.</p>
 
 <p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">cmd/bus-budget/main_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/validate/validate_property_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/budget/variance_property_test.go</code> prove flags and variance behavior. No e2e; init, report, add, set are not covered by tests.</p>
 

@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"bus reconcile links bank transactions to invoices or journal entries and records allocations for partials, splits, and fees.","headline":"bus-reconcile","url":"http://localhost:4000/modules/bus-reconcile.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cdba0e2ead6413fb4c7bbfb0aa089ff8b0b2dea1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=ca3245ff7b028fba394d1017a65123d2ee31c49d">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1235,17 +1235,17 @@
 
 <p><strong>Value:</strong> Link bank transactions to invoices or journal entries (match and allocate) so the <a href="../workflow/accounting-workflow-overview">accounting workflow</a> can reconcile bank activity and keep an explicit reconciliation history.</p>
 
-<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>.</p>
+<p><strong>Use cases:</strong> <a href="../workflow/accounting-workflow-overview">Accounting workflow</a>, <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>, <a href="../workflow/finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a>.</p>
 
 <p><strong>Completeness:</strong> 30% (Some basic commands) — help, version, and global flags implemented; unit tests cover run and flags. No e2e; match, allocate, and list not verified.</p>
 
-<p><strong>Use case readiness:</strong> Accounting workflow: 30% — only flags and run verified; match, allocate, and list are missing and block the reconcile step.</p>
+<p><strong>Use case readiness:</strong> Accounting workflow: 30% — only flags and run verified; match, allocate, list missing and block reconcile step. Finnish company reorganisation: 30% — match/allocate/list not verified; blocks reconciliation evidence. Finnish payroll handling: 30% — match/allocate/list not verified; blocks payroll bank reconciliation.</p>
 
 <p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code> and <code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code> prove run dispatch and flag parsing. No e2e script; match, allocate, and list behavior are not covered by tests.</p>
 
 <p><strong>Planned next:</strong> match (bank-id plus invoice-id or journal-id); allocate (bank-id with allocations); list with output/format; command-level tests.</p>
 
-<p><strong>Blockers:</strong> Missing verified match/allocate blocks the reconciliation workflow step.</p>
+<p><strong>Blockers:</strong> Missing verified match/allocate blocks the reconciliation step in accounting, reorganisation, and payroll.</p>
 
 <p><strong>Depends on:</strong> <a href="./bus-bank">bus-bank</a>, <a href="./bus-invoices">bus-invoices</a>, <a href="./bus-journal">bus-journal</a>.</p>
 
