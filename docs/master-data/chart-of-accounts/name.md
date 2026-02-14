@@ -1,5 +1,5 @@
 ---
-title: `name` (account label for review)
+title: "`name` (account label for review)"
 description: name is the account’s human-readable label.
 ---
 

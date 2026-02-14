@@ -1,5 +1,5 @@
 ---
-title: `bank_account_id` (bank account link)
+title: "`bank_account_id` (bank account link)"
 description: bank_account_id links the bank transaction to the bank account it belongs to.
 ---
 

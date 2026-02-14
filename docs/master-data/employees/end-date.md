@@ -1,5 +1,5 @@
 ---
-title: `end_date` (employment end date)
+title: "`end_date` (employment end date)"
 description: end_date is part of the employees master data.
 ---
 

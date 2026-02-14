@@ -1,5 +1,5 @@
 ---
-title: `booked_at` (booking timestamp)
+title: "`booked_at` (booking timestamp)"
 description: booked_at records when the bank transaction was considered booked for bookkeeping purposes.
 ---
 

@@ -49,22 +49,91 @@ module Jekyll
           i += 1
           while i < nodes.size
             n = nodes[i]
-            break unless n.element?
-            l = heading_level(n)
-            break if l && l <= level
-            break if level == 2 && n["class"].to_s.include?("busdk-prev-next")
-
+            # Include non-elements (e.g. text/whitespace) in the section; only stop at section boundaries.
+            if n.element?
+              l = heading_level(n)
+              break if l && l <= level
+              break if level == 2 && n["class"].to_s.include?("busdk-prev-next")
+            end
             section.add_child(n)
             i += 1
           end
           section_children = section.children.to_a
           section.children.each(&:remove)
           grouped = group_by_heading(section_children, level + 1, document)
-          grouped.each { |c| section.add_child(c) }
+          # Top-level chapters use a full-width chapter-inner. Non-section content is grouped into
+          # .busdk-content-inner blocks, while level-3 chapter sections stay full-width.
+          if level == 2
+            inner = Nokogiri::XML::Node.new("div", document)
+            inner["class"] = "busdk-chapter-inner"
+            content_block = Nokogiri::XML::Node.new("div", document)
+            content_block["class"] = "busdk-chapter-section-inner busdk-content-inner"
+            flush_content_block = lambda do
+              next if content_block.children.empty?
+              content_section = Nokogiri::XML::Node.new("section", document)
+              content_section["class"] = "busdk-chapter busdk-chapter--level-3 busdk-chapter--title"
+              content_section.add_child(content_block)
+              inner.add_child(content_section)
+              content_block = Nokogiri::XML::Node.new("div", document)
+              content_block["class"] = "busdk-chapter-section-inner busdk-content-inner"
+            end
+            grouped.each do |c|
+              if c.element? && c.name == "section" && c["class"].to_s.include?("busdk-chapter--level-3")
+                flush_content_block.call
+                inner.add_child(c)
+              else
+                content_block.add_child(c)
+              end
+            end
+            flush_content_block.call
+            section.add_child(inner)
+          elsif level == 3
+            section_inner = Nokogiri::XML::Node.new("div", document)
+            section_inner["class"] = "busdk-chapter-section-inner busdk-content-inner"
+            grouped.each { |c| section_inner.add_child(c) }
+            section.add_child(section_inner)
+          else
+            grouped.each { |c| section.add_child(c) }
+          end
           output << section
         else
-          output << node
-          i += 1
+          # Wrap .busdk-prev-next in a full-width bar with content-inner so background spans the page.
+          if node.element? && node["class"].to_s.include?("busdk-prev-next")
+            bar = Nokogiri::XML::Node.new("div", document)
+            bar["class"] = "busdk-prev-next-bar"
+            inner = Nokogiri::XML::Node.new("div", document)
+            inner["class"] = "busdk-content-inner"
+            inner.add_child(node)
+            bar.add_child(inner)
+            output << bar
+            i += 1
+          elsif level == 2 && node.element? && node.name == "h3" && %w[sources document-control].include?(node["id"].to_s)
+            # Wrap Sources and Document control (and any following meta h3s) in .busdk-meta-block > .busdk-meta-section for card layout.
+            wrapper = Nokogiri::XML::Node.new("div", document)
+            wrapper["class"] = "busdk-meta-block busdk-content-inner"
+            loop do
+              section_div = Nokogiri::XML::Node.new("div", document)
+              section_div["class"] = "busdk-meta-section"
+              section_div.add_child(node)
+              i += 1
+              while i < nodes.size
+                n = nodes[i]
+                l = heading_level(n)
+                break if n.element? && l && l <= 3
+                section_div.add_child(n)
+                i += 1
+              end
+              wrapper.add_child(section_div)
+              break if i >= nodes.size
+              node = nodes[i]
+              break unless node.element? && node.name == "h3" && %w[sources document-control].include?(node["id"].to_s)
+            end
+            output << wrapper
+            # i already advanced; do not increment again
+          else
+            output << node
+            i += 1
+          end
         end
       end
 

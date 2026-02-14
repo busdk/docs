@@ -3,11 +3,7 @@ title: bus-reconcile
 description: bus reconcile links bank transactions to invoices or journal entries and records allocations for partials, splits, and fees.
 ---
 
-## bus-reconcile
-
-### Name
-
-`bus reconcile` — match bank transactions to invoices or journal entries.
+## `bus-reconcile` — match bank transactions to invoices or journal entries
 
 ### Synopsis
 

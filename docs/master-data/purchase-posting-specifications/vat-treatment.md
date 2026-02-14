@@ -1,5 +1,5 @@
 ---
-title: `vat_treatment` (VAT handling code)
+title: "`vat_treatment` (VAT handling code)"
 description: vat_treatment is the VAT handling category for the purchase posting line.
 ---
 

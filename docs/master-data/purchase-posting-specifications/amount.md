@@ -1,5 +1,5 @@
 ---
-title: `amount` (posted amount)
+title: "`amount` (posted amount)"
 description: amount is the amount intended to be posted for this purchase line.
 ---
 

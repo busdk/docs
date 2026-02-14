@@ -1,5 +1,5 @@
 ---
-title: `is_active` (operational control)
+title: "`is_active` (operational control)"
 description: is_active indicates whether an account is available for new postings.
 ---
 

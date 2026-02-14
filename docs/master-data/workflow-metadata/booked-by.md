@@ -1,5 +1,5 @@
 ---
-title: `booked_by` (booking actor)
+title: "`booked_by` (booking actor)"
 description: booked_by records who confirmed that a record was booked for bookkeeping purposes.
 ---
 

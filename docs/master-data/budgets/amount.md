@@ -1,5 +1,5 @@
 ---
-title: `amount` (budget amount)
+title: "`amount` (budget amount)"
 description: amount is part of the budgets master data.
 ---
 

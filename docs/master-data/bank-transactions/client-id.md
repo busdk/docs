@@ -1,5 +1,5 @@
 ---
-title: `client_id` (party link, customer-side)
+title: "`client_id` (party link, customer-side)"
 description: client_id links a bank transaction to a customer party when the transaction relates to that party but is not necessarily tied to a specific invoice.
 ---
 

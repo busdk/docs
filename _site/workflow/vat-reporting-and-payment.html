@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>VAT reporting and payment | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="VAT reporting and payment" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then…" />
+<meta property="og:description" content="VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then…" />
+<link rel="canonical" href="http://localhost:4000/workflow/vat-reporting-and-payment.html" />
+<meta property="og:url" content="http://localhost:4000/workflow/vat-reporting-and-payment.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="VAT reporting and payment" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then…","headline":"VAT reporting and payment","url":"http://localhost:4000/workflow/vat-reporting-and-payment.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="vat-reporting-and-payment">VAT reporting and payment</h2>
+
+<p>VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then record the payment as a normal ledger transaction. The goal is that both the computed VAT numbers and the evidence used to file them remain reviewable in the revision history.</p>
+
+<ol>
+  <li>Alice computes the VAT summary for the reporting period:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus vat report <span class="nt">--period</span> 2026Q1
+</code></pre></div></div>
+
+<p>The VAT module scans invoices and/or journal entries from Jan–Mar 2026, separates output VAT on sales from input VAT on purchases, and prints a summary such as:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>VAT Summary Q1 2026:
+Sales (taxable) total: €1000
+Output VAT (@25.5%): €255
+Purchases (tax-deductible) total: €200
+Input VAT (@25.5%): €51
+----------------------------
+VAT payable: €204
+</code></pre></div></div>
+
+<ol>
+  <li>Alice exports the VAT output files she will archive alongside the workspace data:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus vat <span class="nb">export</span> <span class="nt">--help</span>
+bus vat <span class="nb">export</span> <span class="nt">--period</span> 2026Q1
+</code></pre></div></div>
+
+<p>The module writes period-specific artifacts (for example under <code class="language-plaintext highlighter-rouge">2026/vat-reports/</code> and <code class="language-plaintext highlighter-rouge">2026/vat-returns/</code>) and updates any index tables used to make those artifacts discoverable as part of the repository data.</p>
+
+<ol>
+  <li>After filing, Alice records the VAT payment as a normal journal transaction:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus journal add <span class="nt">--date</span> 2026-04-12 <span class="se">\</span>
+<span class="nt">--desc</span> <span class="s2">"VAT payment for 2026Q1"</span> <span class="se">\</span>
+<span class="nt">--debit</span> <span class="s2">"VAT Payable"</span><span class="o">=</span>180 <span class="se">\</span>
+<span class="nt">--credit</span> <span class="s2">"Cash"</span><span class="o">=</span>180
+</code></pre></div></div>
+
+<p>If she prefers to treat the bank statement row as the primary evidence, she can import the next bank statement with <code class="language-plaintext highlighter-rouge">bus bank import</code>, identify the VAT payment row with <code class="language-plaintext highlighter-rouge">bus bank list</code>, and then record the same journal posting with a description that carries the bank statement reference.</p>
+
+<ol>
+  <li>Alice records the VAT close as a new revision using her version control tooling.</li>
+</ol>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./scenario-introduction">Scenario introduction</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./workflow-takeaways">Workflow takeaways (transparency, control, automation)</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/workflow/vat-reporting-and-payment.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

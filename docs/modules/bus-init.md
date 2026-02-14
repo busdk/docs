@@ -3,11 +3,7 @@ title: bus-init — initialize a new BusDK workspace
 description: bus init creates workspace configuration (datapackage.json) by default; domain module inits run only when you pass per-module flags.
 ---
 
-## bus-init
-
-### Name
-
-`bus init` — initialize a new BusDK workspace.
+## `bus-init` — initialize a new BusDK workspace
 
 ### Synopsis
 

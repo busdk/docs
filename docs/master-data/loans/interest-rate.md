@@ -1,5 +1,5 @@
 ---
-title: `interest_rate` (nominal interest rate)
+title: "`interest_rate` (nominal interest rate)"
 description: interest_rate is part of the loans master data.
 ---
 

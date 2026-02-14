@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Accounting periods | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Accounting periods" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Accounting periods are canonical records used for bookkeeping review, posting, and period-based reporting." />
+<meta property="og:description" content="Accounting periods are canonical records used for bookkeeping review, posting, and period-based reporting." />
+<link rel="canonical" href="http://localhost:4000/master-data/accounting-periods/" />
+<meta property="og:url" content="http://localhost:4000/master-data/accounting-periods/" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Accounting periods" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Accounting periods are canonical records used for bookkeeping review, posting, and period-based reporting.","headline":"Accounting periods","url":"http://localhost:4000/master-data/accounting-periods/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="accounting-periods">Accounting periods</h2>
+
+<p>Accounting periods are canonical records used for bookkeeping review, posting, and period-based reporting. The goal is that the register remains stable and audit-friendly while automation depends on deterministic identifiers and references.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="ownership">Ownership</h3>
+
+<p>Owner: <a href="../../modules/bus-period">bus period</a>. This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it. The canonical dataset is <code class="language-plaintext highlighter-rouge">periods.csv</code> (and <code class="language-plaintext highlighter-rouge">periods.schema.json</code>) at the workspace root; paths are root-level only, not under a subdirectory such as <code class="language-plaintext highlighter-rouge">periods/</code>.</p>
+
+<p>Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:</p>
+
+<ul>
+  <li>
+<a href="../../modules/bus-journal">bus journal</a>: respects period close and lock boundaries for postings.</li>
+  <li>
+<a href="../../modules/bus-validate">bus validate</a>: checks period integrity as part of workspace validation.</li>
+  <li>
+<a href="../../modules/bus-filing">bus filing</a>: consumes closed-period data for filing bundles.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="actions">Actions</h3>
+
+<ul>
+  <li>
+<a href="./open">Open an accounting period</a>: Mark a period open so bookkeeping work can proceed for that period.</li>
+  <li>
+<a href="./close">Close an accounting period</a>: Generate closing entries and mark the period closed for review.</li>
+  <li>
+<a href="./lock">Lock an accounting period</a>: Prevent further changes to closed period data.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="properties">Properties</h3>
+
+<ul>
+  <li>
+<a href="./period"><code class="language-plaintext highlighter-rouge">period</code></a>: Period identifier.</li>
+  <li>
+<a href="./status"><code class="language-plaintext highlighter-rouge">status</code></a>: Period status.</li>
+  <li>
+<a href="./post-date"><code class="language-plaintext highlighter-rouge">post_date</code></a>: Closing post date.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="relations">Relations</h3>
+
+<p>Accounting periods belong to the workspace’s <a href="../accounting-entity/index">accounting entity</a>. Scope is derived from the workspace root directory rather than from a per-row key.</p>
+
+<p>Period boundaries affect when postings can be finalized and locked, and they are referenced by workflows that are period-based by definition, such as budget variance and month-based payroll.</p>
+
+<p>Budgets reference accounting periods via <a href="../budgets/period"><code class="language-plaintext highlighter-rouge">period</code></a> and <code class="language-plaintext highlighter-rouge">year</code>. Payroll runs reference months and rely on period control to keep month-close workflows deterministic.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="../index">Master data (business objects)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Accounting periods</a></span>
+  <span class="busdk-prev-next-item busdk-next">—</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../../workflow/year-end-close">Workflow: Year-end close (closing entries)</a></li>
+  <li><a href="../../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></li>
+</ul>
+
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/master-data/accounting-periods/index.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

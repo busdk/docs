@@ -1,5 +1,5 @@
 ---
-title: `content_type` (file type)
+title: "`content_type` (file type)"
 description: content_type records the document’s file type, such as a PDF or an image.
 ---
 

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-filing-prh — produce PRH export bundles | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-filing-prh — produce PRH export bundles" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="bus filing prh converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes." />
+<meta property="og:description" content="bus filing prh converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes." />
+<link rel="canonical" href="http://localhost:4000/modules/bus-filing-prh.html" />
+<meta property="og:url" content="http://localhost:4000/modules/bus-filing-prh.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-filing-prh — produce PRH export bundles" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"bus filing prh converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes.","headline":"bus-filing-prh — produce PRH export bundles","url":"http://localhost:4000/modules/bus-filing-prh.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-filing-prh--produce-prh-export-bundles">
+<code class="language-plaintext highlighter-rouge">bus-filing-prh</code> — produce PRH export bundles</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="synopsis">Synopsis</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bus filing prh [module-specific parameters] [-C &lt;dir&gt;] [-o &lt;file&gt;] [--color &lt;mode&gt;] [-v] [-q] [-h] [-V]</code></p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="description">Description</h3>
+
+<p>Command names follow <a href="../cli/command-naming">CLI command naming</a>. <code class="language-plaintext highlighter-rouge">bus filing prh</code> converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes. It is invoked via <code class="language-plaintext highlighter-rouge">bus filing prh</code> and consumes outputs from <code class="language-plaintext highlighter-rouge">bus reports</code>, <code class="language-plaintext highlighter-rouge">bus vat</code>, and closed-period data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="options">Options</h3>
+
+<p>Module-specific parameters are documented in the tool help. Global flags are defined in <a href="../cli/global-flags">Standard global flags</a>. For the full list, run <code class="language-plaintext highlighter-rouge">bus filing prh --help</code>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="files">Files</h3>
+
+<p>Reads validated datasets and report outputs; writes PRH-specific bundle directories or archives with manifests and hashes.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-status">Exit status</h3>
+
+<p><code class="language-plaintext highlighter-rouge">0</code> on success. Non-zero on invalid usage or missing prerequisites.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="development-state">Development state</h3>
+
+<p><strong>Value:</strong> Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the <code class="language-plaintext highlighter-rouge">prh</code> target of <a href="./bus-filing">bus-filing</a>.</p>
+
+<p><strong>Completeness:</strong> 40% (Meaningful task, partial verification) — bundle and validate workflows are implemented; unit tests cover run, bundle, and sanitize. No e2e.</p>
+
+<p><strong>Current:</strong> Unit tests in <code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/bundle/bundle_test.go</code>, and <code class="language-plaintext highlighter-rouge">internal/bundle/sanitize_test.go</code> prove run dispatch, bundle building, and sanitization. No e2e against a fixture workspace; PRH content and SBR taxonomy are in PLAN.</p>
+
+<p><strong>Planned next:</strong> PRH-required content in bundles; full PRH SBR taxonomy in iXBRL; e2e against fixture; README links.</p>
+
+<p><strong>Blockers:</strong> bus-filing bundle contract must be stable for target consumption.</p>
+
+<p><strong>Depends on:</strong> <a href="./bus-filing">bus-filing</a> (invoked as target); <a href="./bus-period">bus-period</a> closed.</p>
+
+<p><strong>Used by:</strong> <a href="./bus-filing">bus-filing</a> invokes this module when the target is prh.</p>
+
+<p>See <a href="../implementation/development-status">Development status</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-filing">bus-filing</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-filing-vero">bus-filing-vero</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/index">Master data: Master data (business objects)</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
+  <li><a href="../master-data/documents/index">Master data: Documents (evidence)</a></li>
+  <li><a href="../sdd/bus-filing-prh">Module SDD: bus-filing-prh</a></li>
+  <li><a href="../compliance/fi-bookkeeping-and-tax-audit">Compliance: Finnish bookkeeping and tax-audit compliance</a></li>
+</ul>
+
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/modules/bus-filing-prh.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

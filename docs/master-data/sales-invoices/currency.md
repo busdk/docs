@@ -1,5 +1,5 @@
 ---
-title: `currency` (invoice currency)
+title: "`currency` (invoice currency)"
 description: currency is the sales invoice currency.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: `life_months` (depreciation life in months)
+title: "`life_months` (depreciation life in months)"
 description: life_months is part of the fixed assets master data.
 ---
 

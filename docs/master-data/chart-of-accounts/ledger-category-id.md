@@ -1,5 +1,5 @@
 ---
-title: `ledger_category_id` (reporting structure link)
+title: "`ledger_category_id` (reporting structure link)"
 description: ledger_category_id links an account to the reporting structure used for profit and loss and balance sheet views.
 ---
 

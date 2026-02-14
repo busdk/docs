@@ -3,11 +3,7 @@ title: bus-bfl
 description: BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets.
 ---
 
-## bus-bfl
-
-### Name
-
-`bus bfl` — developer CLI for BusDK Formula Language expressions.
+## `bus-bfl` — developer CLI for BusDK Formula Language expressions
 
 ### Synopsis
 

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-reports — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-reports — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Reports computes financial reports from journal entries and reference data, verifies integrity and balances, and emits deterministic report outputs." />
+<meta property="og:description" content="Bus Reports computes financial reports from journal entries and reference data, verifies integrity and balances, and emits deterministic report outputs." />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-reports.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-reports.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-reports — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Reports computes financial reports from journal entries and reference data, verifies integrity and balances, and emits deterministic report outputs.","headline":"bus-reports — Software Design Document","url":"http://localhost:4000/sdd/bus-reports.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-reports">bus-reports</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Reports computes financial reports from journal entries and reference data, verifies integrity and balances, and emits deterministic report outputs.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-REP-001 Report outputs. The module MUST generate trial balance, general ledger, profit and loss, and balance sheet outputs. Acceptance criteria: each report command emits deterministic outputs with stable ordering.</p>
+
+<p>FR-REP-002 Integrity checks. The module MUST verify ledger integrity before emitting reports. Acceptance criteria: integrity failures are reported with deterministic diagnostics and non-zero exit codes.</p>
+
+<p>NFR-REP-001 Auditability. Report outputs MUST be fully derivable from repository data and traceable to postings and vouchers. Acceptance criteria: report outputs reference stable identifiers or are reproducible from the same datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Reports reads journal and account datasets and optionally budget datasets to compute reports. It produces report outputs used for filing and management reporting.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-REP-001 Reports are derived outputs. Reports are computed from canonical datasets and do not modify them.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-REP-001 (module CLI). The module exposes <code class="language-plaintext highlighter-rouge">bus reports</code> with subcommands <code class="language-plaintext highlighter-rouge">trial-balance</code>, <code class="language-plaintext highlighter-rouge">general-ledger</code>, <code class="language-plaintext highlighter-rouge">profit-and-loss</code>, and <code class="language-plaintext highlighter-rouge">balance-sheet</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>Report scoping is explicit and deterministic. <code class="language-plaintext highlighter-rouge">trial-balance</code> and <code class="language-plaintext highlighter-rouge">balance-sheet</code> require <code class="language-plaintext highlighter-rouge">--as-of &lt;YYYY-MM-DD&gt;</code> and include postings on or before the as-of date. <code class="language-plaintext highlighter-rouge">general-ledger</code> and <code class="language-plaintext highlighter-rouge">profit-and-loss</code> require <code class="language-plaintext highlighter-rouge">--period &lt;period&gt;</code> using the same period identifier form as <code class="language-plaintext highlighter-rouge">bus period</code> and <code class="language-plaintext highlighter-rouge">bus vat</code>. <code class="language-plaintext highlighter-rouge">general-ledger</code> accepts an optional <code class="language-plaintext highlighter-rouge">--account &lt;account-id&gt;</code> to emit a single-account ledger; when omitted it emits all accounts in deterministic order.</p>
+
+<p>All report commands accept <code class="language-plaintext highlighter-rouge">--format &lt;format&gt;</code> with supported values <code class="language-plaintext highlighter-rouge">text</code> and <code class="language-plaintext highlighter-rouge">csv</code>. The default is <code class="language-plaintext highlighter-rouge">text</code>, which emits a plain, non-aligned table with a stable column order and a literal <code class="language-plaintext highlighter-rouge">|</code> separator so output does not vary by terminal width. The <code class="language-plaintext highlighter-rouge">csv</code> format emits UTF-8 CSV with a header row and the same deterministic row ordering as the text output.</p>
+
+<p>Usage example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus reports trial-balance <span class="nt">--as-of</span> 2026-03-31 <span class="nt">--format</span> csv
+bus reports profit-and-loss <span class="nt">--period</span> 2026Q1
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The module reads journal data from <code class="language-plaintext highlighter-rouge">bus journal</code>, accounts from <code class="language-plaintext highlighter-rouge">bus accounts</code>, and optional budgets from <code class="language-plaintext highlighter-rouge">bus budget</code>, all as schema-validated datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Reports depends on valid journal and account datasets and on the workspace layout and schema conventions. Missing datasets or schemas result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Report outputs may contain sensitive financial data and should be protected by repository access controls. Derived outputs must not alter canonical datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Integrity failures exit non-zero without modifying datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover report calculations and integrity checks, and command-level tests exercise each report command against fixture workspaces.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Report schema changes are handled by updating the module and documenting new output expectations.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic report outputs.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Trial balance: a report summarizing balances by account.<br>
+General ledger: a report listing detailed postings by account.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-budget">bus-budget</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-validate">bus-validate</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../modules/bus-reports">End user documentation: bus-reports CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-reports">Repository</a></li>
+  <li><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a></li>
+  <li><a href="../data/append-only-and-soft-deletion">Append-only and soft deletion</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-reports module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-REPORTS</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-07<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-reports.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

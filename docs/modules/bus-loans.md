@@ -3,11 +3,7 @@ title: bus-loans — manage loans and amortization schedules
 description: bus loans maintains loan contracts and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions…
 ---
 
-## bus-loans
-
-### Name
-
-`bus loans` — manage loans and amortization schedules.
+## `bus-loans` — manage loans and amortization schedules
 
 ### Synopsis
 

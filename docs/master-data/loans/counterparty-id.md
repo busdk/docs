@@ -1,5 +1,5 @@
 ---
-title: `counterparty_id` (lender or borrower party reference)
+title: "`counterparty_id` (lender or borrower party reference)"
 description: counterparty_id is part of the loans master data.
 ---
 

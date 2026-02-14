@@ -1,5 +1,5 @@
 ---
-title: `name` (asset name)
+title: "`name` (asset name)"
 description: name is part of the fixed assets master data.
 ---
 

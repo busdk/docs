@@ -1,5 +1,5 @@
 ---
-title: `principal_account_id` (principal account)
+title: "`principal_account_id` (principal account)"
 description: principal_account_id is part of the loans master data.
 ---
 

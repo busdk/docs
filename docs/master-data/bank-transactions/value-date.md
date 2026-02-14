@@ -1,5 +1,5 @@
 ---
-title: `value_date` (value date)
+title: "`value_date` (value date)"
 description: value_date is the value date for the bank transaction.
 ---
 

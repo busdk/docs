@@ -1,5 +1,5 @@
 ---
-title: `discount_percent` (discount impact)
+title: "`discount_percent` (discount impact)"
 description: discount_percent records the discount applied to the invoice row, expressed as a percentage of the row price.
 ---
 

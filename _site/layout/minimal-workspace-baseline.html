@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Minimal workspace baseline (after initialization) | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Minimal workspace baseline (after initialization)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without…" />
+<meta property="og:description" content="This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without…" />
+<link rel="canonical" href="http://localhost:4000/layout/minimal-workspace-baseline.html" />
+<meta property="og:url" content="http://localhost:4000/layout/minimal-workspace-baseline.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Minimal workspace baseline (after initialization)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without…","headline":"Minimal workspace baseline (after initialization)","url":"http://localhost:4000/layout/minimal-workspace-baseline.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="minimal-workspace-baseline-after-initialization">Minimal workspace baseline (after initialization)</h2>
+
+<p>This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without relying on implicit dataset creation. It is the contract that makes workspace initialization testable and reviewable as repository data.</p>
+
+<p>The baseline is derived from the initialization workflow in <a href="../workflow/initialize-repo">Initialize a new repository</a>, the workflow narrative in <a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a>, and the layout invariants in <a href="./layout-principles">Data directory layout (principles)</a> and <a href="./schemas-area">Schemas beside datasets</a>. The full baseline below is produced when <code class="language-plaintext highlighter-rouge">bus init</code> is run with all module-include flags (see <a href="../modules/bus-init">bus-init</a>); running <code class="language-plaintext highlighter-rouge">bus init</code> with no flags creates only <code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting entity settings.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="baseline-layout-invariants">Baseline layout invariants</h3>
+
+<p>Canonical module datasets live in the workspace root as plain files. Every module that owns master data stores its datasets and schemas in the workspace root only — never under a subdirectory (for example, no <code class="language-plaintext highlighter-rouge">accounts/</code>, <code class="language-plaintext highlighter-rouge">entities/</code>, or <code class="language-plaintext highlighter-rouge">invoices/</code> folders for those datasets). Each dataset has a beside-the-dataset Table Schema JSON file with the same base name (for example <code class="language-plaintext highlighter-rouge">accounts.csv</code> beside <code class="language-plaintext highlighter-rouge">accounts.schema.json</code>). BusDK does not require a dedicated <code class="language-plaintext highlighter-rouge">schemas/</code> directory.</p>
+
+<p>When a dataset is split across multiple files over time, the workspace root still contains a single index table for that dataset family (for example <code class="language-plaintext highlighter-rouge">journals.csv</code> or <code class="language-plaintext highlighter-rouge">vat-reports.csv</code>). The index table records which period-scoped files exist and where they live in the repository. Period-scoped files are stored in the workspace root with a date or period prefix — for example period journal files use names like <code class="language-plaintext highlighter-rouge">journal-2026.csv</code> (with a beside-the-table schema), not a subdirectory such as <code class="language-plaintext highlighter-rouge">2026/journals/</code>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="baseline-workspace-configuration">Baseline workspace configuration</h3>
+
+<p>After initialization, the workspace MUST include <code class="language-plaintext highlighter-rouge">datapackage.json</code> at the workspace root. This file serves as a deterministic manifest of datasets and schemas, and it stores accounting entity settings (base currency, fiscal year boundaries, and VAT reporting expectations) as workspace-level configuration rather than as per-row fields in operational datasets. See <a href="../data/workspace-configuration">Workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> extension)</a>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="baseline-datasets-and-schemas">Baseline datasets and schemas</h3>
+
+<p>After initialization, the following root-level datasets and their beside-the-dataset schemas MUST exist. Files may be empty baseline tables, but they must be present and schema-valid so that later commands can operate deterministically.</p>
+
+<ul>
+  <li>Chart of accounts: <code class="language-plaintext highlighter-rouge">accounts.csv</code> and <code class="language-plaintext highlighter-rouge">accounts.schema.json</code> (see <a href="./accounts-area">Accounts area</a>)</li>
+  <li>Counterparties: <code class="language-plaintext highlighter-rouge">entities.csv</code> and <code class="language-plaintext highlighter-rouge">entities.schema.json</code> (see <a href="./accounts-area">Accounts area</a>)</li>
+  <li>Evidence index: <code class="language-plaintext highlighter-rouge">attachments.csv</code> and <code class="language-plaintext highlighter-rouge">attachments.schema.json</code> (see <a href="../modules/bus-attachments"><code class="language-plaintext highlighter-rouge">bus attachments</code></a> and <a href="./invoice-pdf-storage">Invoice PDF storage</a>)</li>
+  <li>Journal index: <code class="language-plaintext highlighter-rouge">journals.csv</code> and <code class="language-plaintext highlighter-rouge">journals.schema.json</code> (see <a href="./journal-area">Journal area</a>)</li>
+  <li>Sales invoices: <code class="language-plaintext highlighter-rouge">sales-invoices.csv</code> and <code class="language-plaintext highlighter-rouge">sales-invoices.schema.json</code> (see <a href="./invoices-area">Invoices area</a>)</li>
+  <li>Sales invoice lines: <code class="language-plaintext highlighter-rouge">sales-invoice-lines.csv</code> and <code class="language-plaintext highlighter-rouge">sales-invoice-lines.schema.json</code> (see <a href="./invoices-area">Invoices area</a>)</li>
+  <li>Purchase invoices: <code class="language-plaintext highlighter-rouge">purchase-invoices.csv</code> and <code class="language-plaintext highlighter-rouge">purchase-invoices.schema.json</code> (see <a href="./invoices-area">Invoices area</a>)</li>
+  <li>Purchase invoice lines: <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.csv</code> and <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.schema.json</code> (see <a href="./invoices-area">Invoices area</a>)</li>
+  <li>VAT reference data: <code class="language-plaintext highlighter-rouge">vat-rates.csv</code> and <code class="language-plaintext highlighter-rouge">vat-rates.schema.json</code> (see <a href="./vat-area">VAT area</a>)</li>
+  <li>VAT return index: <code class="language-plaintext highlighter-rouge">vat-returns.csv</code> and <code class="language-plaintext highlighter-rouge">vat-returns.schema.json</code> (see <a href="./vat-area">VAT area</a>)</li>
+  <li>VAT report index: <code class="language-plaintext highlighter-rouge">vat-reports.csv</code> and <code class="language-plaintext highlighter-rouge">vat-reports.schema.json</code> (see <a href="./vat-area">VAT area</a>)</li>
+  <li>Period control: <code class="language-plaintext highlighter-rouge">periods.csv</code> and <code class="language-plaintext highlighter-rouge">periods.schema.json</code> at the workspace root — not under a subdirectory such as <code class="language-plaintext highlighter-rouge">periods/</code> (see <a href="../modules/bus-period"><code class="language-plaintext highlighter-rouge">bus period</code></a>)</li>
+  <li>
+    <p>Normalized bank imports and transactions:</p>
+
+    <p><code class="language-plaintext highlighter-rouge">bank-imports.csv</code> and <code class="language-plaintext highlighter-rouge">bank-imports.schema.json</code>, and <code class="language-plaintext highlighter-rouge">bank-transactions.csv</code> and <code class="language-plaintext highlighter-rouge">bank-transactions.schema.json</code> (see <a href="../modules/bus-bank"><code class="language-plaintext highlighter-rouge">bus bank</code></a>)</p>
+  </li>
+</ul>
+
+<p>Budgeting is optional for the end-to-end statutory bookkeeping chain. If budgeting is enabled in a workspace, it MUST follow the same conventions (root-level datasets with beside-the-dataset schemas). A minimal example is <code class="language-plaintext highlighter-rouge">budgets.csv</code> beside <code class="language-plaintext highlighter-rouge">budgets.schema.json</code> (see <a href="./budget-area">Budgeting area</a>).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="workspace-manifest">Workspace manifest</h3>
+
+<p>The workspace’s Frictionless Data Package descriptor (<code class="language-plaintext highlighter-rouge">datapackage.json</code>) is the manifest of datasets, paths, and schema references for whole-workspace validation and deterministic exports. It must list every baseline dataset and its schema reference so whole-workspace validation and exports can be performed deterministically. See <a href="../data/data-package-organization">Data Package organization</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./layout-principles">Data directory layout (principles)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../layout/index">BusDK Design Spec: Data directory layout</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./minimal-example-layout">Minimal example layout</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/layout/minimal-workspace-baseline.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

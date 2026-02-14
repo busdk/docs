@@ -1,5 +1,5 @@
 ---
-title: `description` (movement description)
+title: "`description` (movement description)"
 description: description is part of the inventory movements master data.
 ---
 

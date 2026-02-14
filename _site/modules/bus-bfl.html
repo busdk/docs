@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-bfl | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-bfl" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets." />
+<meta property="og:description" content="BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets." />
+<link rel="canonical" href="http://localhost:4000/modules/bus-bfl.html" />
+<meta property="og:url" content="http://localhost:4000/modules/bus-bfl.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-bfl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets.","headline":"bus-bfl","url":"http://localhost:4000/modules/bus-bfl.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-bfl--developer-cli-for-busdk-formula-language-expressions">
+<code class="language-plaintext highlighter-rouge">bus-bfl</code> — developer CLI for BusDK Formula Language expressions</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="synopsis">Synopsis</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bus bfl &lt;command&gt; [options]</code><br>
+<code class="language-plaintext highlighter-rouge">bus-bfl &lt;command&gt; [options]</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">bus-bfl funcset list [-f &lt;format&gt;] [-o &lt;file&gt;] [--chdir &lt;dir&gt;] [--color &lt;mode&gt;] [-v] [-q] [-h] [-V]</code><br>
+<code class="language-plaintext highlighter-rouge">bus-bfl parse --expr &lt;expression&gt; [--dialect &lt;name&gt;] [--source-name &lt;name&gt;] [-f &lt;format&gt;] [-o &lt;file&gt;] [--chdir &lt;dir&gt;] [global flags]</code><br>
+<code class="language-plaintext highlighter-rouge">bus-bfl format [--expr &lt;expression&gt;] [--dialect &lt;name&gt;] [-f &lt;format&gt;] [-o &lt;file&gt;] [--chdir &lt;dir&gt;] [global flags]</code><br>
+<code class="language-plaintext highlighter-rouge">bus-bfl validate --expr &lt;expression&gt; --schema &lt;file&gt; [-f &lt;format&gt;] [-o &lt;file&gt;] [--chdir &lt;dir&gt;] [global flags]</code><br>
+<code class="language-plaintext highlighter-rouge">bus-bfl eval --expr &lt;expression&gt; --context &lt;file&gt; [--schema &lt;file&gt;] [-f &lt;format&gt;] [-o &lt;file&gt;] [--chdir &lt;dir&gt;] [global flags]</code></p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="description">Description</h3>
+
+<p>Command names follow <a href="../cli/command-naming">CLI command naming</a>. BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. It supports spreadsheet-style references and ranges and can return array values from ranges or registered functions. The <code class="language-plaintext highlighter-rouge">bus-bfl</code> CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output unless redirected, and diagnostics go to standard error. Colored output only applies to human-facing text on stderr.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="getting-started">Getting started</h3>
+
+<p>Install the BusDK toolchain and run <code class="language-plaintext highlighter-rouge">bus-bfl</code> from your PATH, or invoke the binary directly (for example <code class="language-plaintext highlighter-rouge">./bin/bus-bfl</code>). The tool accepts the <a href="../cli/global-flags">standard global flags</a>. To see available commands and flags, run <code class="language-plaintext highlighter-rouge">bus-bfl --help</code>. To see the tool version, run <code class="language-plaintext highlighter-rouge">bus-bfl --version</code>. Both help and version exit immediately and ignore any other flags or arguments.</p>
+
+<p>You can control colored output for help and error messages with <code class="language-plaintext highlighter-rouge">--color auto</code>, <code class="language-plaintext highlighter-rouge">--color always</code>, or <code class="language-plaintext highlighter-rouge">--color never</code>. The default is <code class="language-plaintext highlighter-rouge">auto</code> (color when stderr is a terminal). <code class="language-plaintext highlighter-rouge">--color always</code> forces ANSI color escapes on stderr diagnostics, while <code class="language-plaintext highlighter-rouge">--color never</code> disables them. The <code class="language-plaintext highlighter-rouge">--no-color</code> flag is an alias for <code class="language-plaintext highlighter-rouge">--color never</code>, and if both are provided, color is disabled. If you pass an invalid color mode, the tool prints a usage error to stderr and exits with status 2. The flags <code class="language-plaintext highlighter-rouge">--quiet</code> and <code class="language-plaintext highlighter-rouge">--verbose</code> cannot be used together; combining them is invalid usage and exits with status 2.</p>
+
+<p>Structured command output can be requested with <code class="language-plaintext highlighter-rouge">--format json</code>. The default format is plain text. If you specify an unsupported format, the tool reports invalid usage and exits with status 2. The short form <code class="language-plaintext highlighter-rouge">--json</code> is an alias for <code class="language-plaintext highlighter-rouge">--format json</code>. Format selection affects only command result output and never changes validation behavior or diagnostics.</p>
+
+<p>To send command output to a file instead of stdout, use <code class="language-plaintext highlighter-rouge">--output &lt;file&gt;</code>. The file is created or truncated. If you also use <code class="language-plaintext highlighter-rouge">--quiet</code>, the command still runs but nothing is written to the output file or to stdout. If the file cannot be created or written, the tool prints an error to stderr and exits with status 1. Errors are always written to stderr.</p>
+
+<p>When your schema or context files live in another directory, use <code class="language-plaintext highlighter-rouge">--chdir &lt;dir&gt;</code> so that relative paths are resolved from that directory. The working directory is changed before any file reads. If the directory does not exist or is not accessible, the tool prints an error to stderr and exits with status 1.</p>
+
+<p>If you need to pass arguments that look like flags to a subcommand, use <code class="language-plaintext highlighter-rouge">--</code> to stop global flag parsing. Everything after <code class="language-plaintext highlighter-rouge">--</code> is passed to the subcommand as positional arguments and is not interpreted as a global flag, even if it begins with <code class="language-plaintext highlighter-rouge">-</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">--help</code> and <code class="language-plaintext highlighter-rouge">--version</code> flags are immediate-exit flags. They ignore all other flags and arguments and return status 0. The short forms <code class="language-plaintext highlighter-rouge">-h</code> and <code class="language-plaintext highlighter-rouge">-V</code> behave the same way. When a subcommand name is present, help output is for that subcommand and includes its usage, options, and which global flags affect it. The version output is a single line in the form <code class="language-plaintext highlighter-rouge">bus-bfl &lt;version&gt;</code>. The <code class="language-plaintext highlighter-rouge">--verbose</code> flag (<code class="language-plaintext highlighter-rouge">-v</code>) can be repeated and accumulates (<code class="language-plaintext highlighter-rouge">-vv</code> is verbosity level 2 and <code class="language-plaintext highlighter-rouge">--verbose --verbose</code> is also level 2); verbose output goes to stderr and does not change the command result on stdout or in <code class="language-plaintext highlighter-rouge">--output</code>. The <code class="language-plaintext highlighter-rouge">--quiet</code> flag (<code class="language-plaintext highlighter-rouge">-q</code>) suppresses normal output to stdout or <code class="language-plaintext highlighter-rouge">--output</code> but still performs the command work.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="listing-function-sets">Listing function sets</h3>
+
+<p>The compiled-in function sets determine which functions are available in expressions. To list them, run <code class="language-plaintext highlighter-rouge">funcset list</code>. The default output is one name per line (for example <code class="language-plaintext highlighter-rouge">basic</code> and <code class="language-plaintext highlighter-rouge">none</code>). With <code class="language-plaintext highlighter-rouge">--format json</code> you get a JSON object with a <code class="language-plaintext highlighter-rouge">funcsets</code> array. The order is deterministic. The default build currently reports <code class="language-plaintext highlighter-rouge">basic</code> and <code class="language-plaintext highlighter-rouge">none</code>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="parsing-expressions">Parsing expressions</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">parse</code> to see how the tool interprets an expression. Give the expression with <code class="language-plaintext highlighter-rouge">--expr</code> and optionally set a dialect or source name for diagnostics:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus-bfl parse <span class="nt">--expr</span> <span class="s2">"1 + 2"</span>
+</code></pre></div></div>
+
+<p>The output is a single line showing the abstract syntax tree, for example <code class="language-plaintext highlighter-rouge">(binary + (literal 1) (literal 2))</code>. With <code class="language-plaintext highlighter-rouge">--format json</code> you get a JSON object with an <code class="language-plaintext highlighter-rouge">ast</code> field whose <code class="language-plaintext highlighter-rouge">expr</code> property is that same string. The parse command accepts <code class="language-plaintext highlighter-rouge">--dialect &lt;name&gt;</code> (default <code class="language-plaintext highlighter-rouge">dialect.spreadsheet</code>) and <code class="language-plaintext highlighter-rouge">--source-name &lt;name&gt;</code> for diagnostics. If the expression is invalid, the tool prints diagnostics to stderr and exits with a non-zero status; stdout is left empty.</p>
+
+<p>Range expressions are supported using Excel-like A1 notation and the colon operator. Examples include <code class="language-plaintext highlighter-rouge">A1:B10</code>, <code class="language-plaintext highlighter-rouge">A1:A</code>, and <code class="language-plaintext highlighter-rouge">A:A</code>. Parsing a range yields a deterministic AST like <code class="language-plaintext highlighter-rouge">(range A1:B2)</code>. Range expressions evaluate to array values and can only be used where the language expects an array, such as a function parameter. The core language has no array literals, so arrays are only produced by ranges, by registered functions, or by array-typed symbols supplied through the evaluation context.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="formatting-expressions">Formatting expressions</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">format</code> to rewrite an expression into canonical form (spacing and structure normalized). Pass the expression with <code class="language-plaintext highlighter-rouge">--expr</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus-bfl format <span class="nt">--expr</span> <span class="s2">"1+2"</span>
+</code></pre></div></div>
+
+<p>The result is printed to stdout, for example <code class="language-plaintext highlighter-rouge">1 + 2</code>. With <code class="language-plaintext highlighter-rouge">--format json</code> (or <code class="language-plaintext highlighter-rouge">--json</code>) you get a JSON object with an <code class="language-plaintext highlighter-rouge">expression</code> field. You can also omit <code class="language-plaintext highlighter-rouge">--expr</code> and supply the expression on standard input, which is useful in pipelines:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">printf</span> <span class="s1">'%s'</span> <span class="s1">'1+2'</span> | bus-bfl format
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">--dialect</code> option selects a formatting profile (for example <code class="language-plaintext highlighter-rouge">dialect.sheets_like</code>). Supported profiles include <code class="language-plaintext highlighter-rouge">dialect.spreadsheet</code>, <code class="language-plaintext highlighter-rouge">dialect.excel_like</code>, <code class="language-plaintext highlighter-rouge">dialect.sheets_like</code>, and <code class="language-plaintext highlighter-rouge">dialect.programmer</code>. The default is <code class="language-plaintext highlighter-rouge">dialect.spreadsheet</code>. Range expressions are preserved in canonical form, so <code class="language-plaintext highlighter-rouge">A1:B2</code> formats as <code class="language-plaintext highlighter-rouge">A1:B2</code>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="validating-expressions">Validating expressions</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">validate</code> to check that an expression parses and typechecks against a schema. You must supply the expression with <code class="language-plaintext highlighter-rouge">--expr</code> and the schema with <code class="language-plaintext highlighter-rouge">--schema</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus-bfl validate <span class="nt">--expr</span> <span class="s2">"price * qty"</span> <span class="nt">--schema</span> schema.json
+</code></pre></div></div>
+
+<p>On success the default output is the single line <code class="language-plaintext highlighter-rouge">ok</code>. With <code class="language-plaintext highlighter-rouge">--format json</code> you get <code class="language-plaintext highlighter-rouge">{ "status": "ok" }</code>. If you omit <code class="language-plaintext highlighter-rouge">--schema</code>, the tool prints an error to stderr and exits with a non-zero status. Range expressions are accepted when the schema provides a compatible typing environment. Array-typed symbols are accepted when declared in the schema.</p>
+
+<p>The schema file is a JSON object that defines identifiers and their types. For example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"symbols"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"number"</span><span class="p">,</span><span class="w"> </span><span class="nl">"nullable"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"qty"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w"> </span><span class="nl">"nullable"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Valid <code class="language-plaintext highlighter-rouge">kind</code> values are <code class="language-plaintext highlighter-rouge">null</code>, <code class="language-plaintext highlighter-rouge">bool</code>, <code class="language-plaintext highlighter-rouge">string</code>, <code class="language-plaintext highlighter-rouge">integer</code>, <code class="language-plaintext highlighter-rouge">number</code>, <code class="language-plaintext highlighter-rouge">date</code>, <code class="language-plaintext highlighter-rouge">datetime</code>, <code class="language-plaintext highlighter-rouge">array</code>, and <code class="language-plaintext highlighter-rouge">any</code>. Each symbol can have <code class="language-plaintext highlighter-rouge">nullable</code> set to <code class="language-plaintext highlighter-rouge">true</code> or <code class="language-plaintext highlighter-rouge">false</code>. Array symbols use <code class="language-plaintext highlighter-rouge">kind: "array"</code> with an <code class="language-plaintext highlighter-rouge">elem</code> definition describing the element type.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="evaluating-expressions">Evaluating expressions</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">eval</code> to evaluate an expression against a concrete context. You must supply the expression with <code class="language-plaintext highlighter-rouge">--expr</code> and the context with <code class="language-plaintext highlighter-rouge">--context</code>. You may optionally supply a schema with <code class="language-plaintext highlighter-rouge">--schema</code>; if you omit it, the tool infers types from the context.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus-bfl <span class="nb">eval</span> <span class="nt">--expr</span> <span class="s2">"price * qty"</span> <span class="nt">--context</span> context.json <span class="nt">--schema</span> schema.json
+</code></pre></div></div>
+
+<p>The default output is a typed value on one line, for example <code class="language-plaintext highlighter-rouge">number 59.85</code>. Array values are rendered as a shape plus a flattened item list, for example <code class="language-plaintext highlighter-rouge">array 2x2 [integer 1, integer 2, integer 3, integer 4]</code>. With <code class="language-plaintext highlighter-rouge">--format json</code> you get a JSON object with <code class="language-plaintext highlighter-rouge">type</code> and <code class="language-plaintext highlighter-rouge">value</code> (for example <code class="language-plaintext highlighter-rouge">{ "type": "number", "value": "59.85" }</code>, or an array value with <code class="language-plaintext highlighter-rouge">rows</code>, <code class="language-plaintext highlighter-rouge">cols</code>, and <code class="language-plaintext highlighter-rouge">items</code>). If you omit <code class="language-plaintext highlighter-rouge">--context</code>, the tool prints an error to stderr and exits with a non-zero status.</p>
+
+<p>Range evaluation requires a runtime context that can resolve ranges deterministically. If you evaluate an expression containing a range and the context does not provide range resolution, evaluation fails with a deterministic error. Array values in the context must have a consistent <code class="language-plaintext highlighter-rouge">rows</code>, <code class="language-plaintext highlighter-rouge">cols</code>, and <code class="language-plaintext highlighter-rouge">items</code> length; if the shape does not match the item count, evaluation fails with an error.</p>
+
+<p>The context file is a JSON object that supplies values for the symbols used in the expression. Numbers and integers are encoded as strings to preserve precision:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"values"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"number"</span><span class="p">,</span><span class="w"> </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"19.95"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"qty"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w"> </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Date values use <code class="language-plaintext highlighter-rouge">YYYY-MM-DD</code>; datetime values use RFC3339 with an explicit time zone. A null value uses <code class="language-plaintext highlighter-rouge">{ "type": "null", "value": null }</code>. Array values use <code class="language-plaintext highlighter-rouge">type: "array"</code> with a <code class="language-plaintext highlighter-rouge">value</code> object containing <code class="language-plaintext highlighter-rouge">rows</code>, <code class="language-plaintext highlighter-rouge">cols</code>, and a row-major <code class="language-plaintext highlighter-rouge">items</code> array of typed values.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-status">Exit status</h3>
+
+<p>The tool exits with status 0 on success. It exits with status 2 on invalid usage such as invalid <code class="language-plaintext highlighter-rouge">--color</code>, unknown <code class="language-plaintext highlighter-rouge">--format</code>, both <code class="language-plaintext highlighter-rouge">--quiet</code> and <code class="language-plaintext highlighter-rouge">--verbose</code>, or a subcommand invoked without required arguments after <code class="language-plaintext highlighter-rouge">--</code> terminates global flag parsing. It exits with status 1 when a required file or directory is missing or unreadable, or when an output file cannot be written. It exits with a non-zero status on parse errors, validation failures, or evaluation failures. Error messages are always written to standard error.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="development-state">Development state</h3>
+
+<p><strong>Value:</strong> Parse, evaluate, and render BFL (Bus Formula Language) expressions so bus-data and spreadsheets can use formula-enabled fields with deterministic, testable semantics.</p>
+
+<p><strong>Completeness:</strong> 60% (Stable for one use case) — parse, eval, render CLI and conformance are verified by e2e and unit tests; formula evaluation and dialect behavior are test-backed.</p>
+
+<p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_bfl.sh</code> proves help, version, color flags, subcommand help (parse), parse with expr and dialect, eval with context, and render. Unit tests in <code class="language-plaintext highlighter-rouge">pkg/bfl/</code> cover expr, parse, eval, decimal, datetime, range_array, conformance, and fuzz. <code class="language-plaintext highlighter-rouge">internal/cli/run_test.go</code> and related cover CLI behavior.</p>
+
+<p><strong>Planned next:</strong> CI workflow; make <code class="language-plaintext highlighter-rouge">eval</code> exit 2 when <code class="language-plaintext highlighter-rouge">--context</code> is omitted.</p>
+
+<p><strong>Blockers:</strong> None known.</p>
+
+<p><strong>Depends on:</strong> None.</p>
+
+<p><strong>Used by:</strong> <a href="./bus-data">bus-data</a> uses this library for formula validation and projection.</p>
+
+<p>See <a href="../implementation/development-status">Development status</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-agent">bus-agent</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-accounts">bus-accounts</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/index">Master data: Master data (business objects)</a></li>
+  <li><a href="../sdd/bus-bfl">Module SDD: bus-bfl</a></li>
+  <li><a href="../data/table-schema-contract">Data model: Table Schema contract</a></li>
+</ul>
+
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/modules/bus-bfl.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

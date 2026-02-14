@@ -1,5 +1,5 @@
 ---
-title: `ledger_account_id` (account reference)
+title: "`ledger_account_id` (account reference)"
 description: ledger_account_id is part of the budgets master data.
 ---
 

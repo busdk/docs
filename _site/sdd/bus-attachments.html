@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-attachments — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-attachments — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Attachments stores evidence files and maintains attachment metadata as schema-validated repository data so other modules can link to evidence without…" />
+<meta property="og:description" content="Bus Attachments stores evidence files and maintains attachment metadata as schema-validated repository data so other modules can link to evidence without…" />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-attachments.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-attachments.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-attachments — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Attachments stores evidence files and maintains attachment metadata as schema-validated repository data so other modules can link to evidence without…","headline":"bus-attachments — Software Design Document","url":"http://localhost:4000/sdd/bus-attachments.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-attachments">bus-attachments</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Attachments stores evidence files and maintains attachment metadata as schema-validated repository data so other modules can link to evidence without embedding file paths directly in domain datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-ATT-001 Attachment metadata registry. The module MUST write stable attachment identifiers and immutable metadata to <code class="language-plaintext highlighter-rouge">attachments.csv</code> with schema validation. Acceptance criteria: each added attachment has a stable identifier and hash metadata, and invalid inputs fail without modifying datasets.</p>
+
+<p>FR-ATT-002 CLI surface for evidence registration. The module MUST provide commands to initialize, add, and list attachments. Acceptance criteria: <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">bus attachments add</code>, and <code class="language-plaintext highlighter-rouge">bus attachments list</code> are available and emit deterministic outputs.</p>
+
+<p>FR-ATT-003 Init behavior. The module MUST provide an <code class="language-plaintext highlighter-rouge">init</code> command that creates the attachments metadata dataset and schema when they are absent. When they already exist in full, <code class="language-plaintext highlighter-rouge">init</code> MUST print a warning to standard error and exit 0 without modifying anything. When they exist only partially, <code class="language-plaintext highlighter-rouge">init</code> MUST fail with a clear error and not write any file (see <a href="../sdd/bus-init">bus-init</a> FR-INIT-004). Acceptance criteria: <code class="language-plaintext highlighter-rouge">bus attachments init</code> is available; idempotent and partial-state behavior as specified.</p>
+
+<p>NFR-ATT-001 Auditability. Attachment metadata MUST remain in the repository even if files are stored outside Git. Acceptance criteria: metadata rows are retained and list outputs remain deterministic.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Attachments owns the repository-root attachments metadata dataset and manages references to files stored under a predictable directory structure. It integrates with invoices, journal entries, bank data, and reconciliation by providing stable attachment identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-ATT-001 Attachment evidence is recorded as repository data. Attachment metadata remains in the workspace datasets for the full retention period.</p>
+
+<p>KD-ATT-002 Attachments are a special case for file layout. Evidence files are stored under a dedicated subdirectory <code class="language-plaintext highlighter-rouge">./attachments/yyyy/mm/yyyymmdd-filename...</code> (relative to the workspace root), where <code class="language-plaintext highlighter-rouge">yyyy</code> is the four-digit year, <code class="language-plaintext highlighter-rouge">mm</code> is the two-digit month, and the filename is prefixed with an eight-digit date. The metadata dataset and schema remain at the workspace root; only the evidence files use this subdirectory.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-ATT-001 (module CLI). The module exposes <code class="language-plaintext highlighter-rouge">bus attachments</code> with subcommands <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, and <code class="language-plaintext highlighter-rouge">list</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">init</code> command creates the baseline attachments metadata dataset and schema (<code class="language-plaintext highlighter-rouge">attachments.csv</code> and <code class="language-plaintext highlighter-rouge">attachments.schema.json</code>) when they are absent. If both already exist and are consistent, <code class="language-plaintext highlighter-rouge">init</code> prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, <code class="language-plaintext highlighter-rouge">init</code> fails with a clear error to standard error, does not write any file, and exits non-zero (see <a href="../sdd/bus-init">bus-init</a> FR-INIT-004).</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">add</code> command accepts a positional file path plus a description parameter. Documented parameters are <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> as a positional argument and <code class="language-plaintext highlighter-rouge">--desc &lt;text&gt;</code> for the attachment description.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus attachments add tmp/INV-1001.pdf <span class="nt">--desc</span> <span class="s2">"Invoice INV-1001 (PDF)"</span>
+bus attachments list
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The module reads and writes <code class="language-plaintext highlighter-rouge">attachments.csv</code> in the repository root with a beside-the-table schema file. Master data (the metadata dataset and its schema) lives in the workspace root only. Evidence files are stored under <code class="language-plaintext highlighter-rouge">./attachments/yyyy/mm/yyyymmdd-filename...</code> — for example <code class="language-plaintext highlighter-rouge">attachments/2026/01/20260115-INV-1001.pdf</code> — where <code class="language-plaintext highlighter-rouge">yyyy</code> is the four-digit year, <code class="language-plaintext highlighter-rouge">mm</code> is the two-digit month, and the filename begins with an eight-digit date. This is the only BusDK layout that places operational files in a subdirectory; the path is deterministic so the metadata can reference it reliably. Each <code class="language-plaintext highlighter-rouge">attachment_id</code> is a standard UUID string in canonical form so integrations can generate or validate identifiers without guessing; the expected representation is lowercase hex with hyphens in 8-4-4-4-12 grouping.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Attachments depends on the workspace layout and schema conventions and assumes the file path provided exists and is readable. Missing files or inaccessible paths result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Attachment files may contain sensitive evidence and should be protected by repository access controls. Hashes and metadata are stored to keep the audit trail verifiable.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Missing files or schema violations exit non-zero without modifying datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover metadata validation and hashing, and command-level tests exercise <code class="language-plaintext highlighter-rouge">add</code> and <code class="language-plaintext highlighter-rouge">list</code> against fixture workspaces with sample files.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly evidence handling.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Attachment: an evidence file registered in <code class="language-plaintext highlighter-rouge">attachments.csv</code> and referenced by stable identifier.<br>
+Attachment metadata: immutable details such as filename, media type, and hash.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-period">bus-period</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-invoices">bus-invoices</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/documents/index">Owns master data: Documents (evidence)</a></li>
+  <li><a href="../master-data/workflow-metadata/index">Master data: Bookkeeping status and review workflow</a></li>
+  <li><a href="../modules/bus-attachments">End user documentation: bus-attachments CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-attachments">Repository</a></li>
+  <li><a href="../layout/invoice-pdf-storage">Invoice PDF storage</a></li>
+  <li><a href="../data/append-only-and-soft-deletion">Append-only and soft deletion</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-attachments module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-ATTACHMENTS</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-07<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-attachments.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

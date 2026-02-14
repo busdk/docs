@@ -1,5 +1,5 @@
 ---
-title: `vat_rate` (applied percentage)
+title: "`vat_rate` (applied percentage)"
 description: The VAT rate applied to a sale or purchase must be stored per line, or otherwise derivable without ambiguity, because rates can differ by item and can…
 ---
 

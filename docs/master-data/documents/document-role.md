@@ -1,5 +1,5 @@
 ---
-title: `document_role` (purpose classification)
+title: "`document_role` (purpose classification)"
 description: document_role classifies what the document represents, such as purchase invoice PDF, sales invoice PDF, receipt, contract, or statement.
 ---
 

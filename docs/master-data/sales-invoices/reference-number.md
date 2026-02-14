@@ -1,5 +1,5 @@
 ---
-title: `reference_number` (payment matching key)
+title: "`reference_number` (payment matching key)"
 description: reference_number is the payment reference used for matching incoming bank payments to the invoice.
 ---
 

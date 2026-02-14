@@ -1,5 +1,5 @@
 ---
-title: `status` (period status)
+title: "`status` (period status)"
 description: status is part of the accounting periods master data.
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: bus-agent — Software Design Document
-description: Design spec for the BusDK agent runner: shared abstraction for Cursor, Codex, Gemini, Claude; prompt templating, timeout handling, script-safe execution; no bookkeeping or workflow logic.
+description: "Design spec for the BusDK agent runner: shared abstraction for Cursor, Codex, Gemini, Claude; prompt templating, timeout handling, script-safe execution; no bookkeeping or workflow logic."
 ---
 
 ## bus-agent
@@ -53,7 +53,7 @@ FR-AGT-005a Agent order and enable/disable. The library MUST support optional us
 
 FR-AGT-005b Disabled-agent skip and warning. At each step of resolution (FR-AGT-005), if the runtime indicated by that step is disabled by user configuration (excluded from the available set per FR-AGT-005a), the implementation MUST NOT select that runtime. It MUST print a warning to stderr that the configured runtime is disabled and resolution is continuing with the next source. Resolution then continues as if that source had not been set. This applies to every source: per-call selection (e.g. `--agent`), environment variables, and preferences. Unknown or malformed runtime names remain invalid usage (exit 2); a known but disabled runtime triggers warning and fall-through only. Acceptance criteria: when any config source names a disabled runtime, tests verify a warning is emitted and the next source is used; when all sources name disabled runtimes or none are set and no runtime is available, resolution fails with a clear diagnostic.
 
-FR-AGT-006 Prompt-template rendering contract. Prompt templates MUST support `{{VARIABLE}}` placeholders. Rendering MUST be deterministic. Missing required variables MUST fail before any agent invocation with an error categorized as invalid usage. Any unresolved `{{...}}` token remaining after substitution MUST fail before invocation with an invalid-usage error. Acceptance criteria: unit tests cover missing variable, unresolved placeholder, repeated placeholder replacement, and a “no placeholders” pass-through case.
+FR-AGT-006 Prompt-template rendering contract. Prompt templates MUST support {% raw %}`{{VARIABLE}}`{% endraw %} placeholders. Rendering MUST be deterministic. Missing required variables MUST fail before any agent invocation with an error categorized as invalid usage. Any unresolved {% raw %}`{{...}}`{% endraw %} token remaining after substitution MUST fail before invocation with an invalid-usage error. Acceptance criteria: unit tests cover missing variable, unresolved placeholder, repeated placeholder replacement, and a “no placeholders” pass-through case.
 
 FR-AGT-007 Timeout enforcement. The runner MUST support timeouts per invocation and return a deterministic error when the timeout is exceeded. Acceptance criteria: tests can simulate a long-running stub executable and verify timeout handling and exit code mapping.
 
@@ -91,7 +91,7 @@ Bus Agent is a library-first module with an optional thin CLI wrapper.
 
 High-level components:
 
-* **Template renderer.** Deterministic renderer for `{{VARIABLE}}` placeholders with strict pre-invocation validation (FR-AGT-006).
+* **Template renderer.** Deterministic renderer for {% raw %}`{{VARIABLE}}`{% endraw %} placeholders with strict pre-invocation validation (FR-AGT-006).
 * **Backend interface.** A small interface implemented by each runtime backend (Cursor/Codex/Gemini/Claude) to provide executable discovery, command construction, and any backend-specific environment defaults.
 * **Runner.** The core executor that applies selection resolution, builds the command, sets workdir and environment, enforces timeout, and routes output to capture/stream handlers.
 * **Formatters (optional).** Pure functions to normalize agent output (e.g. NDJSON-to-text) without depending on external processes.
@@ -162,7 +162,7 @@ This module MAY expose a thin CLI as `bus agent` primarily for diagnostics and d
 
 * **`bus agent detect [-1|--first]`** — List available runtimes in the same effective order used for automatic default selection (user-configured order if present, otherwise alphabetical by runtime ID), so the first line is the runtime that would be selected for `bus agent run` when no `--agent` or preference override is set. One runtime identifier per line. With `-1` or `--first`, output only that default runtime as a single line; if no runtime is available, exit with code 1.
 * **`bus agent set runtime <runtime>`** — Set `bus-agent.runtime` (e.g. `cursor`, `gemini`) via the [bus-preferences](./bus-preferences) Go library. **`bus agent set model <value>`** — Set `bus-agent.model` (default when unset: `auto`). **`bus agent set output-format <ndjson|text>`** — Set `bus-agent.output_format` (default when unset: `text`). **`bus agent set timeout <duration>`** — Set `bus-agent.timeout` (e.g. `60m`). Each uses the bus-preferences library directly (no shell-out to `bus preferences`). Invalid value yields exit 2.
-* **`bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]`** — Render a prompt template with the supplied variables and print the result to stdout. Exactly one of `--template` or `--text` is required. If a required variable is missing or any `{{...}}` token remains after substitution, the command MUST fail with invalid usage (exit 2) and MUST NOT run any external process.
+* **`bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]`** — Render a prompt template with the supplied variables and print the result to stdout. Exactly one of `--template` or `--text` is required. If a required variable is missing or any {% raw %}`{{...}}`{% endraw %} token remains after substitution, the command MUST fail with invalid usage (exit 2) and MUST NOT run any external process.
 * **`bus agent run [--agent <runtime>] [--timeout <duration>] [--workdir <dir>] (--prompt <file> | --text <text>)`** — Run the selected agent runtime with a prompt and stream its output. Exactly one of `--prompt` or `--text` is required. Which runtime is used is determined by the resolution order (FR-AGT-005): for the bus-agent CLI, (1) `--agent`, (2) `BUS_AGENT`, (3) `bus-agent.runtime` from bus-preferences, (4) first available in the effective order; at any step, if the configured runtime is disabled, the tool prints a warning to stderr and continues with the next source. Effective working directory for the agent is the current directory unless `--workdir` is set. The run is subject to a timeout (default or `--timeout`, e.g. `30s`, `5m`). At the start of the run, the CLI MUST print to stderr which agent and model are in use (per FR-AGT-011). Output is streamed in a script-safe, non-interactive manner. If the selected runtime is not installed or not in PATH, the command MUST fail with a clear diagnostic and the canonical installation URL for that runtime (exit 1).
 * **`bus agent format [--runtime <runtime>]`** — Read raw agent output (e.g. NDJSON) from stdin and write formatted, human-readable text to stdout. Use `--runtime <runtime>` to select the formatter for the given backend; if omitted, the tool may use a default or infer from the input (behavior documented in CLI help).
 
@@ -180,14 +180,14 @@ CLI (if implemented): stdout is reserved for command results (e.g. detect list, 
 * **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, could not execute the agent CLI, or no runtime available when using `detect --first`. When the selected runtime is missing, the tool MUST include the canonical installation URL for that runtime in the diagnostic.
 * **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render, `--prompt` or `--text` for run), unresolved template placeholder, invalid runtime name, invalid `set` value, or invalid `--timeout` or path.
 
-Template rendering failures (missing variable, unresolved `{{...}}`) MUST occur before any external execution and always result in exit 2.
+Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% endraw %}) MUST occur before any external execution and always result in exit 2.
 
 ### Error Handling
 
 * **Missing selected runtime executable:** Return execution failure (exit 1) with a diagnostic that includes the runtime’s canonical installation URL (FR-AGT-010). Do not run any external process.
 * **No runtime available when using `detect --first`:** Exit 1 with a clear diagnostic; when automatic default selection is requested for `run` and no runtime is available, exit with a clear failure that lists supported runtimes and install references.
 * **Disabled runtime in a config source (FR-AGT-005b):** Print a warning to stderr and continue resolution with the next source; do not select the disabled runtime.
-* **Template rendering failures (missing variable, unresolved `{{...}}`):** Invalid usage (exit 2); MUST occur before any external execution.
+* **Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% endraw %}):** Invalid usage (exit 2); MUST occur before any external execution.
 * **Invalid usage (unknown command or flag, missing required argument, invalid runtime name, invalid `set` value, invalid `--timeout` or path):** Exit 2 with a clear message.
 
 ### Data Design
@@ -234,7 +234,7 @@ Bus Agent aligns with BusDK’s library-first, deterministic, non-interactive pr
 * **Enabled runtime:** A runtime whose executable is found in PATH and is executable.
 * **Available runtime:** A runtime that is eligible for automatic default selection. By default this is the set of enabled runtimes; it can be restricted by user configuration (disable list excludes runtimes, enable list restricts to a subset). See FR-AGT-005a.
 * **Agent order:** Optional user-configured ordering of runtime IDs. When set, the automatic default is the first available runtime in this order; when not set, the order is alphabetical by runtime ID.
-* **Prompt template:** A UTF-8 string containing `{{VARIABLE}}` placeholders rendered deterministically before invocation.
+* **Prompt template:** A UTF-8 string containing {% raw %}`{{VARIABLE}}`{% endraw %} placeholders rendered deterministically before invocation.
 * **Formatter:** A pure transformation of raw agent output into readable, normalized text.
 * **Installation reference:** The canonical URL for installing a given runtime, used in diagnostics when the runtime is not found (see Runtime installation references under Component Design; FR-AGT-010).
 * **BUS_AGENT:** Environment variable for session default agent (value: `cursor`, `codex`, `gemini`, or `claude`). Consulted during resolution when no explicit per-call selection is given; used by both bus-agent CLI and bus-dev (after BUS_DEV_AGENT when caller is bus-dev). See FR-AGT-005.

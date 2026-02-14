@@ -1,5 +1,5 @@
 ---
-title: `principal_amount` (principal amount)
+title: "`principal_amount` (principal amount)"
 description: principal_amount is part of the loans master data.
 ---
 

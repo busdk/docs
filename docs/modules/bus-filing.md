@@ -3,11 +3,7 @@ title: bus-filing — build deterministic filing bundles
 description: bus filing produces deterministic filing bundles from validated, closed-period workspace data.
 ---
 
-## bus-filing
-
-### Name
-
-`bus filing` — build deterministic filing bundles.
+## `bus-filing` — build deterministic filing bundles
 
 ### Synopsis
 

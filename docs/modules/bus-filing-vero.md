@@ -3,11 +3,7 @@ title: bus-filing-vero — produce Vero export bundles
 description: bus filing vero converts validated workspace data into Vero-ready export bundles with deterministic packaging, manifests, and hashes.
 ---
 
-## bus-filing-vero
-
-### Name
-
-`bus filing vero` — produce Vero export bundles.
+## `bus-filing-vero` — produce Vero export bundles
 
 ### Synopsis
 

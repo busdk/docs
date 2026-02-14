@@ -1,5 +1,5 @@
 ---
-title: `target_kind` (reconciliation target kind)
+title: "`target_kind` (reconciliation target kind)"
 description: target_kind tells which kind of record the reconciliation references.
 ---
 

@@ -3,11 +3,7 @@ title: bus-dev
 description: "bus dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/: module scaffolding, AGENTS.md creation and refinement, commit workflows, planning, agent-runner workflows, and e2e test scaffolding."
 ---
 
-## bus-dev
-
-### Name
-
-`bus dev` — developer workflows for BusDK module repositories.
+## `bus-dev` — developer workflows for BusDK module repositories
 
 ### Synopsis
 

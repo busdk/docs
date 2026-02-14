@@ -1,0 +1,51 @@
+# Sidebar navigation for inner pages (GitHub Docs style).
+# Used by _includes/sidebar.html and the home page card grid.
+
+- title: Get started
+  links:
+    - label: Overview
+      url: /overview/
+    - label: Design goals and requirements
+      url: /design-goals/
+    - label: Development status
+      url: /implementation/development-status
+
+- title: Design
+  links:
+    - label: Software Design Documents (SDD)
+      url: /sdd/
+    - label: System architecture
+      url: /architecture/
+    - label: Data formats and storage
+      url: /data/
+    - label: Data directory layout
+      url: /layout/
+
+- title: Workflows
+  links:
+    - label: Accounting workflow overview
+      url: /workflow/accounting-workflow-overview
+    - label: Example end-to-end workflow
+      url: /workflow/
+    - label: CLI tooling and workflow
+      url: /cli/
+
+- title: Reference
+  links:
+    - label: Master data (business objects)
+      url: /master-data/
+    - label: Modules
+      url: /modules/
+    - label: Integration and future interfaces
+      url: /integration/
+    - label: Extensibility model
+      url: /extensibility/
+    - label: Testing
+      url: /testing/
+    - label: References and foundations
+      url: /references/
+
+- title: Compliance
+  links:
+    - label: Finnish bookkeeping and tax-audit
+      url: /compliance/fi-bookkeeping-and-tax-audit

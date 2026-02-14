@@ -1,0 +1,36 @@
+---
+# Home page: GitHub Docs–style hero + section cards. Uses nav from _data/nav.yml.
+layout: default
+---
+
+<div class="busdk-home">
+  <section class="busdk-home-hero">
+    <div class="busdk-content-inner">
+      <h1 class="busdk-home-hero-title">{{ page.title | default: site.title }}</h1>
+      <p class="busdk-home-hero-desc">{{ page.description | default: site.description }}</p>
+    </div>
+  </section>
+
+  <section class="busdk-home-cards">
+    <div class="busdk-content-inner">
+      <div class="busdk-home-cards-grid">
+        {% for section in site.data.nav %}
+        <div class="busdk-home-card">
+          <h2 class="busdk-home-card-title">{{ section.title }}</h2>
+          <ul class="busdk-home-card-links">
+            {% for link in section.links %}
+            <li><a href="{{ link.url | relative_url }}">{{ link.label }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="busdk-home-more">
+    <div class="busdk-content-inner markdown-body">
+      {{ content }}
+    </div>
+  </section>
+</div>

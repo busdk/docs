@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-budget — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-budget — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus…" />
+<meta property="og:description" content="Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus…" />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-budget.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-budget.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-budget — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus…","headline":"bus-budget — Software Design Document","url":"http://localhost:4000/sdd/bus-budget.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-budget">bus-budget</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus actual variance outputs.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-BUD-001 Budget datasets. The module MUST store budgets as schema-validated repository data keyed by account and period. Acceptance criteria: budgets validate against schemas and reference valid account identifiers.</p>
+
+<p>FR-BUD-002 Variance reporting. The module MUST compute budget versus actual variance outputs from budgets and journal data. Acceptance criteria: <code class="language-plaintext highlighter-rouge">bus budget report</code> emits deterministic output with stable ordering.</p>
+
+<p>NFR-BUD-001 Reproducibility. Budget outputs MUST be reproducible from stored budgets and journal actuals. Acceptance criteria: variance results are derived from repository data without external dependencies.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Budget owns the budgeting area datasets and produces variance outputs by reading journal actuals and accounts. It integrates with <code class="language-plaintext highlighter-rouge">bus reports</code> and management reporting workflows.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-BUD-001 Budgets are stored as repository datasets. Budget intent is recorded as data so variance outputs remain deterministic and reviewable.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-BUD-001 (module CLI). The module exposes <code class="language-plaintext highlighter-rouge">bus budget</code> with subcommands <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, <code class="language-plaintext highlighter-rouge">set</code>, and <code class="language-plaintext highlighter-rouge">report</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">init</code> command creates the baseline budget dataset and schema when they are absent. If both the budget dataset and its schema already exist and are consistent, <code class="language-plaintext highlighter-rouge">init</code> prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, <code class="language-plaintext highlighter-rouge">init</code> fails with a clear error to standard error, does not write any file, and exits non-zero (see <a href="../sdd/bus-init">bus-init</a> FR-INIT-004).</p>
+
+<p>Documented parameters include <code class="language-plaintext highlighter-rouge">bus budget report --year &lt;YYYY&gt;</code> and <code class="language-plaintext highlighter-rouge">bus budget report --period &lt;period&gt;</code>. Documented parameters for <code class="language-plaintext highlighter-rouge">bus budget add</code> are <code class="language-plaintext highlighter-rouge">--account &lt;account-id&gt;</code>, <code class="language-plaintext highlighter-rouge">--year &lt;YYYY&gt;</code>, <code class="language-plaintext highlighter-rouge">--period &lt;MM|Qn&gt;</code>, and <code class="language-plaintext highlighter-rouge">--amount &lt;decimal&gt;</code>, with no positional arguments. Documented parameters for <code class="language-plaintext highlighter-rouge">bus budget set</code> are the same, and <code class="language-plaintext highlighter-rouge">set</code> is defined as an upsert keyed by <code class="language-plaintext highlighter-rouge">(account, year, period)</code> that replaces the existing row for that key or inserts a new row when none exists.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus budget init
+bus budget report <span class="nt">--year</span> 2026
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The module reads and writes budget datasets in the budgeting area, such as <code class="language-plaintext highlighter-rouge">budgets.csv</code>, with JSON Table Schemas stored beside each dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a <code class="language-plaintext highlighter-rouge">budgets/</code> or other subdirectory for its datasets and schemas.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Budget depends on valid account references from <code class="language-plaintext highlighter-rouge">bus accounts</code> and actuals from <code class="language-plaintext highlighter-rouge">bus journal</code>. If referenced datasets or schemas are missing, the module fails with deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Budget datasets are repository data and should be protected by the same access controls as the rest of the workspace. Budgets remain separate from statutory records but still require audit-friendly handling.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Schema or reference violations exit non-zero without modifying datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover budget validation and variance calculation, and command-level tests exercise <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, <code class="language-plaintext highlighter-rouge">set</code>, and <code class="language-plaintext highlighter-rouge">report</code> against fixture workspaces.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly budget data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Budget dataset: the repository table that records planned amounts by account and period.<br>
+Variance report: derived output comparing budgeted and actual amounts.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-payroll">bus-payroll</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-reports">bus-reports</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/budgets/index">Owns master data: Budgets</a></li>
+  <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../modules/bus-budget">End user documentation: bus-budget CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-budget">Repository</a></li>
+  <li><a href="../layout/budget-area">Budget area</a></li>
+  <li><a href="../workflow/budgeting-and-budget-vs-actual">Budgeting and budget vs actual</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-budget module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-BUDGET</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-07<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-budget.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

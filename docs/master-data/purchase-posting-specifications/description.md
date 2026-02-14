@@ -1,5 +1,5 @@
 ---
-title: `description` (review aid)
+title: "`description` (review aid)"
 description: description explains the intent of a purchase posting line, especially when the invoice is split across multiple accounts.
 ---
 

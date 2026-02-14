@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-filing-vero — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-filing-vero — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Filing Vero converts validated workspace data into Vero export bundles, applying Vero-specific packaging rules and metadata while keeping bundle…" />
+<meta property="og:description" content="Bus Filing Vero converts validated workspace data into Vero export bundles, applying Vero-specific packaging rules and metadata while keeping bundle…" />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-filing-vero.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-filing-vero.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-filing-vero — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Filing Vero converts validated workspace data into Vero export bundles, applying Vero-specific packaging rules and metadata while keeping bundle…","headline":"bus-filing-vero — Software Design Document","url":"http://localhost:4000/sdd/bus-filing-vero.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-filing-vero">bus-filing-vero</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Filing Vero converts validated workspace data into Vero export bundles, applying Vero-specific packaging rules and metadata while keeping bundle structure deterministic and auditable.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-VERO-001 Vero bundle generation. The module MUST produce Vero-ready bundle directories or archives from validated data and VAT outputs. Acceptance criteria: outputs include manifests and hashes and validate internal consistency.</p>
+
+<p>FR-VERO-002 VAT traceability. The module MUST retain references to underlying postings, vouchers, and VAT summaries. Acceptance criteria: bundles include VAT summaries and reference identifiers back to source datasets.</p>
+
+<p>NFR-VERO-001 Deterministic export. Bundle contents MUST be deterministic so exports remain verifiable. Acceptance criteria: manifests and hashes are stable for identical inputs.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Filing Vero is invoked through <code class="language-plaintext highlighter-rouge">bus filing vero</code> and consumes validated datasets, VAT outputs, and reports produced by other modules. It produces a Vero-specific export bundle.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-VERO-001 Vero export is a target-specific specialization. The module focuses only on Vero packaging and relies on shared validation and reporting outputs.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-VERO-001 (module CLI). The module is invoked as <code class="language-plaintext highlighter-rouge">bus filing vero</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>Module-specific parameters are not defined in the current design spec and must be provided by the module help output for a pinned version.</p>
+
+<p>Usage example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus filing vero
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The module reads validated datasets, VAT outputs, and report outputs and writes Vero-specific bundle directories or archives with manifests and hashes.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Filing Vero depends on <code class="language-plaintext highlighter-rouge">bus filing</code> orchestration, <code class="language-plaintext highlighter-rouge">bus period</code> closed data, and outputs from <code class="language-plaintext highlighter-rouge">bus vat</code> and <code class="language-plaintext highlighter-rouge">bus reports</code>. Missing prerequisites result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Vero bundles contain sensitive financial data and must be protected by repository access controls. Manifests and hashes must remain intact for verifiability.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to bundle paths and missing prerequisites.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Missing prerequisites or invalid bundles exit non-zero without partial output.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover bundle assembly rules, and command-level tests exercise Vero exports against fixture workspaces with known outputs.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Bundle structure changes are handled by updating the module and documenting the new bundle format.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly exports.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="open-questions">Open Questions</h3>
+
+<p>OQ-VERO-001 Vero export parameters. Define the complete parameter set for <code class="language-plaintext highlighter-rouge">bus filing vero</code> so the command surface is deterministic.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Vero bundle: an export package formatted for Finnish Vero filing requirements.<br>
+Manifest: a deterministic listing and checksum set for bundle contents.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-filing-prh">bus-filing-prh</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../integration/index">Integration and future interfaces</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../master-data/vat-treatment/index">Master data: VAT treatment</a></li>
+  <li><a href="../master-data/sales-invoices/index">Master data: Sales invoices</a></li>
+  <li><a href="../master-data/purchase-invoices/index">Master data: Purchase invoices</a></li>
+  <li><a href="../modules/bus-filing-vero">End user documentation: bus-filing-vero CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-filing-vero">Repository</a></li>
+  <li><a href="../workflow/vat-reporting-and-payment">VAT reporting and payment</a></li>
+  <li><a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-filing-vero module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-FILING-VERO</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-07<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-filing-vero.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

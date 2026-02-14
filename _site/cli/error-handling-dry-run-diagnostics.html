@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Error handling, dry-run, and diagnostics | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Error handling, dry-run, and diagnostics" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The CLI is expected to fail gracefully and provide clear error messages." />
+<meta property="og:description" content="The CLI is expected to fail gracefully and provide clear error messages." />
+<link rel="canonical" href="http://localhost:4000/cli/error-handling-dry-run-diagnostics.html" />
+<meta property="og:url" content="http://localhost:4000/cli/error-handling-dry-run-diagnostics.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Error handling, dry-run, and diagnostics" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"The CLI is expected to fail gracefully and provide clear error messages.","headline":"Error handling, dry-run, and diagnostics","url":"http://localhost:4000/cli/error-handling-dry-run-diagnostics.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="error-handling-dry-run-and-diagnostics">Error handling, dry-run, and diagnostics</h2>
+
+<p>The CLI is expected to fail gracefully and provide clear error messages. BusDK does not require a Git repository to run and does not execute any Git commands or commit changes. When users choose to track the workspace datasets in Git, merge conflicts caused by concurrent edits or manual file modifications must be detected and surfaced, with guidance for resolution. A <code class="language-plaintext highlighter-rouge">--dry-run</code> flag should be available to preview file changes without committing. Optional logging should provide visibility into validation steps and planned file changes, supporting trust and diagnosability.</p>
+
+<p>BusDK’s CLI contract follows Unix-style conventions to keep behavior script-friendly. Command results are written to standard output, and diagnostics are written to standard error. When help text, warnings, or other human-facing diagnostics use styled terminal output, that styling applies only to standard error and only when standard error is a terminal. Structured outputs intended for downstream tooling must not include terminal control sequences.</p>
+
+<p>Exit codes are part of the public contract. A successful command exits with status code 0. Invalid usage (unknown command, missing required arguments in non-interactive use, invalid flag values) exits with status code 2 and prints a concise usage error to standard error. Failures caused by repository contents, filesystem I/O, schema or invariant violations, or unsafe operations exit with a non-zero status code and include diagnostics sufficient to identify the dataset and identifiers involved.</p>
+
+<p>Diagnostics must be deterministic and citeable. Error messages should name the dataset (table) and field involved and should point to stable identifiers (for example primary keys) rather than relying on unstable row numbers. When file paths are included, they should be shown relative to the workspace root so that diagnostics remain stable across machines.</p>
+
+<p>For Finnish compliance, missing audit-trail references or retention-critical metadata MUST be treated as hard errors with diagnostics that point to the missing identifiers and datasets. See <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">bus-loans</code> is intentionally minimal and omits Git-related helpers and the <code class="language-plaintext highlighter-rouge">--dry-run</code> preview; it writes data files only, leaving version control and previews to external tooling.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./minimum-command-surface">Minimum required command surface (end-to-end workflow)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./interactive-and-scripting-parity">Interactive use and scripting parity</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/cli/error-handling-dry-run-diagnostics.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

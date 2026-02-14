@@ -1,5 +1,5 @@
 ---
-title: `client_id` (counterparty link)
+title: "`client_id` (counterparty link)"
 description: client_id links a sales invoice to the party it was issued to.
 ---
 

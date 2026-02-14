@@ -1,5 +1,5 @@
 ---
-title: `service_end_date` (service period end)
+title: "`service_end_date` (service period end)"
 description: service_end_date records when the purchased service period ends.
 ---
 

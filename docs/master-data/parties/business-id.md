@@ -1,5 +1,5 @@
 ---
-title: `business_id` (strong national identifier)
+title: "`business_id` (strong national identifier)"
 description: business_id is a strong identifier for a legal entity, such as a Finnish Y-tunnus.
 ---
 

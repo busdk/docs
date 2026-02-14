@@ -1,5 +1,5 @@
 ---
-title: `vat_registered` (VAT registration)
+title: "`vat_registered` (VAT registration)"
 description: vat_registered indicates whether the workspace’s accounting entity is VAT registered.
 ---
 

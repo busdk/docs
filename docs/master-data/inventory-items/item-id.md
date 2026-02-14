@@ -1,5 +1,5 @@
 ---
-title: `item_id` (item identity)
+title: "`item_id` (item identity)"
 description: item_id is part of the inventory items master data.
 ---
 

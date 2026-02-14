@@ -1,5 +1,5 @@
 ---
-title: `total_sum_including_vat` (invoice total, gross)
+title: "`total_sum_including_vat` (invoice total, gross)"
 description: total_sum_including_vat is the gross total for the purchase invoice.
 ---
 

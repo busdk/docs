@@ -3,11 +3,7 @@ title: bus-filing-prh — produce PRH export bundles
 description: bus filing prh converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes.
 ---
 
-## bus-filing-prh
-
-### Name
-
-`bus filing prh` — produce PRH export bundles.
+## `bus-filing-prh` — produce PRH export bundles
 
 ### Synopsis
 

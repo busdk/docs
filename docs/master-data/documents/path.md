@@ -1,5 +1,5 @@
 ---
-title: `path` (file locator)
+title: "`path` (file locator)"
 description: path is the locator used to retrieve the evidence file.
 ---
 

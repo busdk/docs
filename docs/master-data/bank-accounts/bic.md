@@ -1,5 +1,5 @@
 ---
-title: `bic` (bank account BIC)
+title: "`bic` (bank account BIC)"
 description: bic identifies the bank and branch for the bank account.
 ---
 

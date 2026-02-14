@@ -1,5 +1,5 @@
 ---
-title: `default_expense_account_id` (classification default for purchases)
+title: "`default_expense_account_id` (classification default for purchases)"
 description: default_expense_account_id is the party’s default expense or asset account suggestion for purchase classification.
 ---
 

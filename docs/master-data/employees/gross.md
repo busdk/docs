@@ -1,5 +1,5 @@
 ---
-title: `gross` (gross pay amount)
+title: "`gross` (gross pay amount)"
 description: gross is part of the employees master data.
 ---
 

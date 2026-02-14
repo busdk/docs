@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-vat — compute VAT reports and exports | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-vat — compute VAT reports and exports" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings." />
+<meta property="og:description" content="bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings." />
+<link rel="canonical" href="http://localhost:4000/modules/bus-vat.html" />
+<meta property="og:url" content="http://localhost:4000/modules/bus-vat.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-vat — compute VAT reports and exports" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings.","headline":"bus-vat — compute VAT reports and exports","url":"http://localhost:4000/modules/bus-vat.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-vat--compute-vat-reports-and-exports">
+<code class="language-plaintext highlighter-rouge">bus-vat</code> — compute VAT reports and exports</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="synopsis">Synopsis</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bus vat init [-C &lt;dir&gt;] [global flags]</code><br>
+<code class="language-plaintext highlighter-rouge">bus vat report --period &lt;period&gt; [-C &lt;dir&gt;] [global flags]</code><br>
+<code class="language-plaintext highlighter-rouge">bus vat export --period &lt;period&gt; [-C &lt;dir&gt;] [global flags]</code></p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="description">Description</h3>
+
+<p>Command names follow <a href="../cli/command-naming">CLI command naming</a>. <code class="language-plaintext highlighter-rouge">bus vat</code> computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data for archiving and filing. Period selection uses the same <code class="language-plaintext highlighter-rouge">--period</code> form as other period-scoped commands.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="commands">Commands</h3>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">init</code> creates the baseline VAT datasets and schemas (e.g. <code class="language-plaintext highlighter-rouge">vat-rates.csv</code>, <code class="language-plaintext highlighter-rouge">vat-reports.csv</code>, <code class="language-plaintext highlighter-rouge">vat-returns.csv</code> and their schemas). If they already exist in full, <code class="language-plaintext highlighter-rouge">init</code> prints a warning to stderr and exits 0 without changing anything. If they exist only partially, <code class="language-plaintext highlighter-rouge">init</code> fails with an error and does not modify any file.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">report</code> computes and emits VAT summary for a period.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">export</code> writes VAT export output for a period (e.g. for filing).</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="options">Options</h3>
+
+<p><code class="language-plaintext highlighter-rouge">report</code> and <code class="language-plaintext highlighter-rouge">export</code> require <code class="language-plaintext highlighter-rouge">--period &lt;period&gt;</code>. Global flags are defined in <a href="../cli/global-flags">Standard global flags</a>. For command-specific help, run <code class="language-plaintext highlighter-rouge">bus vat --help</code>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="files">Files</h3>
+
+<p>Reads invoice and journal data and VAT reference datasets (e.g. <code class="language-plaintext highlighter-rouge">vat-rates.csv</code>). Writes VAT summaries and exports as root-level datasets with schemas. When period-specific report or return data is saved to its own file, it is stored at the workspace root with a date prefix (e.g. <code class="language-plaintext highlighter-rouge">vat-reports-2026Q1.csv</code>, <code class="language-plaintext highlighter-rouge">vat-returns-2026Q1.csv</code>), not in a subdirectory. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not use a subdirectory for that data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-status">Exit status</h3>
+
+<p><code class="language-plaintext highlighter-rouge">0</code> on success. Non-zero on invalid usage or VAT mapping violations.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="development-state">Development state</h3>
+
+<p><strong>Value:</strong> Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the <a href="../workflow/accounting-workflow-overview">accounting workflow</a> and archive returns for filing.</p>
+
+<p><strong>Completeness:</strong> 70% (Broadly usable) — init, validate, report, and export are verified by e2e; deterministic report and export output and dry-run are test-backed.</p>
+
+<p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_vat.sh</code> proves help, version, invalid color/format/quiet+verbose, init creating vat-rates, vat-reports, vat-returns CSV and schema, idempotent init warning, validate with minimal invoice fixture, report –period with exact TSV diff, export –dry-run (no file), export writing vat-returns-{period}.csv, and missing –period exit 2. Unit tests cover run, init, report, export, rounding (<code class="language-plaintext highlighter-rouge">internal/app/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/vat/</code>).</p>
+
+<p><strong>Planned next:</strong> Update vat-returns index on export; dry-run for init; rate validation; journal input; posting/voucher refs in output.</p>
+
+<p><strong>Blockers:</strong> None known.</p>
+
+<p><strong>Depends on:</strong> <a href="./bus-period">bus-period</a>, <a href="./bus-journal">bus-journal</a>, <a href="./bus-invoices">bus-invoices</a> (data sources for report/export).</p>
+
+<p><strong>Used by:</strong> End users for reporting and export; no other module invokes it.</p>
+
+<p>See <a href="../implementation/development-status">Development status</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-validate">bus-validate</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-pdf">bus-pdf</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/vat-treatment/index">Master data: VAT treatment</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../master-data/sales-invoices/index">Master data: Sales invoices</a></li>
+  <li><a href="../master-data/purchase-invoices/index">Master data: Purchase invoices</a></li>
+  <li><a href="../sdd/bus-vat">Module SDD: bus-vat</a></li>
+  <li><a href="../layout/vat-area">Layout: VAT area</a></li>
+  <li><a href="../workflow/vat-reporting-and-payment">Workflow: VAT reporting and payment</a></li>
+</ul>
+
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/modules/bus-vat.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 ---
-title: `accounting_note` (exception explanation)
+title: "`accounting_note` (exception explanation)"
 description: accounting_note records why a bank transaction was booked in a particular way when the decision is not obvious from the statement evidence alone.
 ---
 

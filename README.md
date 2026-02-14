@@ -14,12 +14,13 @@ This site uses the upstream `jekyll-theme-primer` theme as the base and layers B
 
 Light and dark appearance is automatic and follows the reader’s system preference via `prefers-color-scheme`. The BusDK brand token layer lives in `docs/_sass/busdk/_tokens.scss` as CSS custom properties, and the rest of the overrides map Primer-visible surfaces to those tokens. When adjusting colors, change token values in one place rather than introducing new literal color values across selectors.
 
-For local preview, use Bundler with the GitHub Pages gem set. On macOS you typically need Xcode Command Line Tools available so native extensions can compile:
+This project uses **Ruby 3.3** and **Jekyll 4.4**. A `.ruby-version` file is included for rbenv or asdf; install Ruby 3.3 if needed (e.g. `rbenv install` or `asdf install`). For local preview, run from the repo root:
 
 ```bash
-bundle install
-bundle exec jekyll serve -s docs
+./start.sh
 ```
+
+The script enables rbenv (so the correct Ruby is used), runs `bundle install` if needed, then starts `bundle exec jekyll serve -s docs`. You can pass extra arguments to Jekyll (e.g. `./start.sh --livereload`). Alternatively, run `bundle install` and `bundle exec jekyll serve -s docs` yourself.
 
 ## GitHub Pages
 

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-journal — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-journal — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Journal maintains append-only journal entries as schema-validated repository data, enforces balanced transaction invariants, and serves as the…" />
+<meta property="og:description" content="Bus Journal maintains append-only journal entries as schema-validated repository data, enforces balanced transaction invariants, and serves as the…" />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-journal.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-journal.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-journal — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Journal maintains append-only journal entries as schema-validated repository data, enforces balanced transaction invariants, and serves as the…","headline":"bus-journal — Software Design Document","url":"http://localhost:4000/sdd/bus-journal.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-journal">bus-journal</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Journal maintains append-only journal entries as schema-validated repository data, enforces balanced transaction invariants, and serves as the authoritative ledger.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-JRN-001 Journal datasets. The module MUST store journal entries as append-only datasets with stable entry and transaction identifiers. Acceptance criteria: entries validate against schemas and maintain balance invariants.</p>
+
+<p>FR-JRN-002 CLI surface for ledger postings. The module MUST provide commands to initialize, add entries, and compute balances. Acceptance criteria: <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, and <code class="language-plaintext highlighter-rouge">balance</code> are available under <code class="language-plaintext highlighter-rouge">bus journal</code>.</p>
+
+<p>NFR-JRN-001 Period integrity. The module MUST respect period close and lock boundaries. Acceptance criteria: postings that would break closed periods are rejected with deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Journal owns the journal index and period journal datasets and accepts postings from other modules. It relies on account references from <code class="language-plaintext highlighter-rouge">bus accounts</code> and serves as the foundation for reporting and VAT computation.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-JRN-001 Append-only ledger. Journal corrections are expressed as new entries that reference prior records rather than overwriting them.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-JRN-001 (module CLI). The module exposes <code class="language-plaintext highlighter-rouge">bus journal</code> with subcommands <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, and <code class="language-plaintext highlighter-rouge">balance</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">init</code> command creates the baseline journal index and schema (and any required structure for period journals) when they are absent. If the module’s owned journal data already exists in full and is consistent, <code class="language-plaintext highlighter-rouge">init</code> prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially (e.g. journal index without schema or vice versa), <code class="language-plaintext highlighter-rouge">init</code> fails with a clear error to standard error, does not write any file, and exits non-zero (see <a href="../sdd/bus-init">bus-init</a> FR-INIT-004).</p>
+
+<p>Documented parameters for <code class="language-plaintext highlighter-rouge">bus journal add</code> are <code class="language-plaintext highlighter-rouge">--date &lt;YYYY-MM-DD&gt;</code>, <code class="language-plaintext highlighter-rouge">--desc &lt;text&gt;</code>, <code class="language-plaintext highlighter-rouge">--debit &lt;account&gt;=&lt;amount&gt;</code>, and <code class="language-plaintext highlighter-rouge">--credit &lt;account&gt;=&lt;amount&gt;</code>. Documented parameters for <code class="language-plaintext highlighter-rouge">bus journal balance</code> include <code class="language-plaintext highlighter-rouge">--as-of &lt;YYYY-MM-DD&gt;</code>.</p>
+
+<p>Each <code class="language-plaintext highlighter-rouge">--debit</code> and <code class="language-plaintext highlighter-rouge">--credit</code> flag represents one journal line and uses the syntax <code class="language-plaintext highlighter-rouge">&lt;account&gt;=&lt;amount&gt;</code>, where <code class="language-plaintext highlighter-rouge">&lt;account&gt;</code> is the account name as stored in the accounts dataset and should be quoted when it contains spaces. The flags are repeatable, and multiple debit and credit lines may be provided in any order to form a single transaction. At least one debit and one credit line are required, and the module sums all debit amounts and all credit amounts and requires them to balance before it writes the entry.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus journal add <span class="nt">--date</span> 2026-01-10 <span class="nt">--desc</span> <span class="s2">"Bought new laptop"</span> <span class="nt">--debit</span> <span class="s2">"Office Equipment"</span><span class="o">=</span>2500 <span class="nt">--credit</span> <span class="s2">"Cash"</span><span class="o">=</span>2500
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus journal balance <span class="nt">--as-of</span> 2026-03-31
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>All files owned by Bus Journal include “journal” or “journals” in the filename so that journal data is unambiguous at the workspace root. The module reads and writes the journal index <code class="language-plaintext highlighter-rouge">journals.csv</code> in the repository root and period journal files at the workspace root with a date prefix, for example <code class="language-plaintext highlighter-rouge">journal-2026.csv</code> (and its beside-the-table schema <code class="language-plaintext highlighter-rouge">journal-2026.schema.json</code>). The journal index, its schema, and all period journal files live in the workspace root only; the module does not create or use a subdirectory such as <code class="language-plaintext highlighter-rouge">2026/journals/</code> for journal data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Journal depends on account references from <code class="language-plaintext highlighter-rouge">bus accounts</code> and on workspace layout and schema conventions. Missing datasets or schemas result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Journal data is repository data and should be protected by repository access controls. Voucher references and attachments must remain intact for auditability.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Schema or balance violations exit non-zero without modifying datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover balance validation and posting logic, and command-level tests exercise <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, and <code class="language-plaintext highlighter-rouge">balance</code> against fixture workspaces.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic ledger data handling.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Journal entry: a ledger posting row associated with a transaction and voucher.<br>
+Journal index: the root-level dataset <code class="language-plaintext highlighter-rouge">journals.csv</code> that records which period journal files exist and where they live; all bus-journal owned filenames include “journal” or “journals” so journal data is unambiguous.<br>
+Transaction identifier: a stable identifier that groups journal entries for a posting.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-invoices">bus-invoices</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bank">bus-bank</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../master-data/documents/index">Master data: Documents (evidence)</a></li>
+  <li><a href="../modules/bus-journal">End user documentation: bus-journal CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-journal">Repository</a></li>
+  <li><a href="../layout/journal-area">Journal area</a></li>
+  <li><a href="../design-goals/double-entry-ledger">Double-entry ledger</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-journal module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-JOURNAL</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-07<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-journal.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

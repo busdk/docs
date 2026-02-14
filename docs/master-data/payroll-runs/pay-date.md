@@ -1,5 +1,5 @@
 ---
-title: `pay_date` (pay date)
+title: "`pay_date` (pay date)"
 description: pay_date is part of the payroll runs master data.
 ---
 

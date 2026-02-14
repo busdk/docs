@@ -1,5 +1,5 @@
 ---
-title: `vat_treatment` (VAT handling code)
+title: "`vat_treatment` (VAT handling code)"
 description: vat_treatment is a short code that explains the VAT handling category behind the percentage.
 ---
 

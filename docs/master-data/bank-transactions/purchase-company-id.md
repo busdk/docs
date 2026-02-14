@@ -1,5 +1,5 @@
 ---
-title: `purchase_company_id` (party link, supplier-side)
+title: "`purchase_company_id` (party link, supplier-side)"
 description: purchase_company_id links a bank transaction to a supplier party when the transaction relates to that supplier but is not necessarily tied to a specific…
 ---
 

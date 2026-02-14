@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Standard global flags | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Standard global flags" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Most BusDK module CLIs accept a common set of global flags before the subcommand." />
+<meta property="og:description" content="Most BusDK module CLIs accept a common set of global flags before the subcommand." />
+<link rel="canonical" href="http://localhost:4000/cli/global-flags.html" />
+<meta property="og:url" content="http://localhost:4000/cli/global-flags.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Standard global flags" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Most BusDK module CLIs accept a common set of global flags before the subcommand.","headline":"Standard global flags","url":"http://localhost:4000/cli/global-flags.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="standard-global-flags">Standard global flags</h2>
+
+<p>Most BusDK module CLIs accept a common set of global flags before the subcommand. These flags behave the same across modules that support them: help and version exit immediately, working directory and output redirection are applied before any module logic, and color and verbosity affect only human-facing diagnostics. In module synopsis lines this set is referred to as <strong>[global flags]</strong>; the list below is the canonical definition.</p>
+
+<p>Global flags are accepted in any order before the subcommand name. A lone <code class="language-plaintext highlighter-rouge">--</code> ends flag parsing; everything after it is passed to the subcommand as positional arguments and is not interpreted as a flag, even if it starts with <code class="language-plaintext highlighter-rouge">-</code>. Short flags such as <code class="language-plaintext highlighter-rouge">-v</code> and <code class="language-plaintext highlighter-rouge">-V</code> are distinct; combining them (e.g. <code class="language-plaintext highlighter-rouge">-vV</code>) is only valid if a module explicitly documents that behavior. Repeated <code class="language-plaintext highlighter-rouge">-v</code> or <code class="language-plaintext highlighter-rouge">--verbose</code> accumulates: <code class="language-plaintext highlighter-rouge">-vv</code> is verbosity level 2, <code class="language-plaintext highlighter-rouge">-vvv</code> is 3, and so on. Quiet and verbose are mutually exclusive; providing both is invalid usage and exits with status 2.</p>
+
+<ul>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-h</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--help</code></strong> — Print help to standard output and exit 0. When a subcommand is present, help is for that subcommand; otherwise it is global help. When help is requested, all other flags and arguments are ignored.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-V</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--version</code></strong> — Print the tool name and version to standard output as a single line (e.g. <code class="language-plaintext highlighter-rouge">bus-accounts &lt;version&gt;</code>) and exit 0. All other flags and arguments are ignored when version is requested.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-v</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--verbose</code></strong> — Enable verbose informational output. Verbose output is written to standard error so that standard output stays reserved for command results. Verbosity can be repeated (<code class="language-plaintext highlighter-rouge">-vv</code>, <code class="language-plaintext highlighter-rouge">--verbose --verbose</code>) and accumulates. Verbose output must not alter structured output written to stdout or to the file given by <code class="language-plaintext highlighter-rouge">--output</code>, and must never be required for correctness.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-q</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--quiet</code></strong> — Suppress all normal non-error output. When quiet is set, the tool must not print command result output to stdout and must not print informational or verbose messages; only error messages may go to standard error. Exit codes are unchanged. If both <code class="language-plaintext highlighter-rouge">--quiet</code> and <code class="language-plaintext highlighter-rouge">--verbose</code> are provided, the tool prints a short error to stderr and exits with status 2.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-C &lt;dir&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--chdir &lt;dir&gt;</code></strong> — Use <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code> as the effective working directory for the command. All module paths (e.g. dataset and schema paths) are resolved relative to this directory. If the directory does not exist or is not accessible, the tool prints a clear error to stderr and exits with status 1.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-o &lt;file&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--output &lt;file&gt;</code></strong> — Redirect normal command output to <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> instead of standard output. Errors and diagnostics still go to stderr. The file is created if it does not exist and truncated if it exists. If the file cannot be created or written, the tool prints a clear error to stderr and exits with status 1. If <code class="language-plaintext highlighter-rouge">--output</code> is used together with <code class="language-plaintext highlighter-rouge">--quiet</code>, quiet wins: no output is written to the file or to stdout; the command still runs and exits with the correct status.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-f &lt;format&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--format &lt;format&gt;</code></strong> — Select the output format for commands that produce structured results. The default is stable and documented per command (e.g. <code class="language-plaintext highlighter-rouge">tsv</code> or <code class="language-plaintext highlighter-rouge">text</code>). Supported formats are listed in the command’s help. An unknown format is invalid usage: the tool prints a short error to stderr and exits with status 2. Format selection affects only command result output, not validation or other behavior. Commands that do not produce a result set (e.g. <code class="language-plaintext highlighter-rouge">validate</code>) either ignore <code class="language-plaintext highlighter-rouge">--format</code> safely or treat it as invalid usage, as documented per module.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--color &lt;mode&gt;</code></strong> — Control colored output for human-facing messages. <code class="language-plaintext highlighter-rouge">&lt;mode&gt;</code> must be one of <code class="language-plaintext highlighter-rouge">auto</code>, <code class="language-plaintext highlighter-rouge">always</code>, or <code class="language-plaintext highlighter-rouge">never</code>. <code class="language-plaintext highlighter-rouge">auto</code> enables color only when stderr is a terminal and the environment supports it; <code class="language-plaintext highlighter-rouge">always</code> forces color; <code class="language-plaintext highlighter-rouge">never</code> disables it. Color applies only to text on standard error (help, diagnostics). Structured output on stdout or in <code class="language-plaintext highlighter-rouge">--output</code> must not contain color control sequences unless the selected format explicitly requires it. An invalid mode is invalid usage and exits with status 2.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--no-color</code></strong> — Alias for <code class="language-plaintext highlighter-rouge">--color=never</code>. If both <code class="language-plaintext highlighter-rouge">--color</code> and <code class="language-plaintext highlighter-rouge">--no-color</code> are present, color is disabled.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--</code></strong> — Terminate global flag parsing. All following tokens are positional arguments for the subcommand and are passed through unchanged.</li>
+</ul>
+
+<p>Some modules add their own global flags (e.g. <code class="language-plaintext highlighter-rouge">bus dev --agent</code>). Those are documented on the module’s CLI reference page. To see the full set of flags for a module, run <code class="language-plaintext highlighter-rouge">bus &lt;module&gt; --help</code>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./command-structure">Command structure and discoverability</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Spec: CLI tooling and workflow</a></span>
+  <span class="busdk-prev-next-item busdk-next">→ <a href="./command-naming">CLI command naming</a></span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li>
+<a href="../modules/index">Module CLI reference</a> (synopsis convention for [global flags])</li>
+  <li><a href="./command-structure">Command structure and discoverability</a></li>
+</ul>
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/cli/global-flags.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

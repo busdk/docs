@@ -3,11 +3,7 @@ title: bus-entities — manage counterparty reference data
 description: bus entities maintains counterparty reference datasets with stable entity identifiers used by invoices, bank imports, reconciliation, and other modules.
 ---
 
-## bus-entities
-
-### Name
-
-`bus entities` — manage counterparty reference data.
+## `bus-entities` — manage counterparty reference data
 
 ### Synopsis
 

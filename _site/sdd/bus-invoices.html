@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-invoices — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-invoices — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…" />
+<meta property="og:description" content="Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…" />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-invoices.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-invoices.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-invoices — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…","headline":"bus-invoices — Software Design Document","url":"http://localhost:4000/sdd/bus-invoices.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-invoices">bus-invoices</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the journal. The module provides CLI commands to initialize invoice datasets, add headers and lines, list and filter invoices, validate line totals, and render PDFs. Intended users are operators and tooling that maintain or query invoice data in a BusDK workspace. This document specifies the module’s requirements, interfaces, and data layout for implementers and reviewers. Out of scope: rendering layout or branding of PDFs (handled by <a href="./bus-pdf">bus-pdf</a>), and storage of evidence files (handled by <a href="./bus-attachments">bus-attachments</a>).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-INV-001 Invoice datasets. The module MUST store invoice headers and lines as schema-validated datasets with stable invoice identifiers. Acceptance criteria: invoice rows validate against schemas and reject inconsistent totals.</p>
+
+<p>FR-INV-002 CLI surface for invoice lifecycle. The module MUST provide commands to initialize, add, list, validate, and render invoices. Acceptance criteria: <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, <code class="language-plaintext highlighter-rouge">list</code>, and <code class="language-plaintext highlighter-rouge">pdf</code> are available and fail deterministically on invalid inputs.</p>
+
+<p>FR-INV-003 Invoice master data in workspace root only. The module MUST place all invoice master data datasets and their JSON Table Schema files in the workspace root (the effective working directory). It MUST NOT create or use an <code class="language-plaintext highlighter-rouge">invoices/</code> or any other invoice-specific subdirectory for those files. File locations MUST conform to the <a href="../layout/minimal-example-layout">minimal example layout</a>. Acceptance criteria: <code class="language-plaintext highlighter-rouge">bus invoices init</code> creates only the eight owned files (four CSVs and four schema files) directly in the workspace root; no directory named <code class="language-plaintext highlighter-rouge">invoices</code> (or equivalent) is created for master data; all read/write paths for invoice datasets and schemas resolve to the workspace root.</p>
+
+<p>NFR-INV-001 Auditability. Invoice corrections MUST be recorded as new records and linked to attachments and journal postings. Acceptance criteria: corrections do not overwrite existing records and references remain traceable.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Invoices owns invoice header and line datasets and integrates with the ledger by optionally writing journal postings. It relies on entities, accounts, VAT reference data, and attachments for traceability.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-INV-001 Invoice data is canonical repository data. Invoice headers and lines are stored as datasets so they remain reviewable and exportable.</p>
+
+<p>KD-INV-002 Invoice master data lives in the project root only. All invoice datasets and their schemas are stored in the workspace root directory; the module does not create or use an <code class="language-plaintext highlighter-rouge">invoices/</code> subdirectory for master data. This satisfies FR-INV-003.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-INV-001 (module CLI). The module exposes <code class="language-plaintext highlighter-rouge">bus invoices</code> with subcommands <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">add</code>, <code class="language-plaintext highlighter-rouge">list</code>, and <code class="language-plaintext highlighter-rouge">pdf</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">init</code> command creates the baseline invoice datasets and schemas (sales and purchase headers and lines, and related schemas) when they are absent. All of these files MUST be created in the workspace root only — the effective working directory after applying <code class="language-plaintext highlighter-rouge">-C</code>/<code class="language-plaintext highlighter-rouge">--chdir</code>. The canonical paths, all relative to the workspace root, are: <code class="language-plaintext highlighter-rouge">sales-invoices.csv</code>, <code class="language-plaintext highlighter-rouge">sales-invoices.schema.json</code>, <code class="language-plaintext highlighter-rouge">sales-invoice-lines.csv</code>, <code class="language-plaintext highlighter-rouge">sales-invoice-lines.schema.json</code>, <code class="language-plaintext highlighter-rouge">purchase-invoices.csv</code>, <code class="language-plaintext highlighter-rouge">purchase-invoices.schema.json</code>, <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.csv</code>, <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.schema.json</code>. The module MUST NOT create an <code class="language-plaintext highlighter-rouge">invoices/</code> subdirectory or place any of these datasets or schemas under it; layout conforms to the <a href="../layout/minimal-example-layout">minimal example layout</a>. If all owned invoice datasets and schemas already exist and are consistent, <code class="language-plaintext highlighter-rouge">init</code> prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, <code class="language-plaintext highlighter-rouge">init</code> fails with a clear error to standard error, does not write any file, and exits non-zero (see <a href="../sdd/bus-init">bus-init</a> FR-INIT-004).</p>
+
+<p>Invoice-line operations are <code class="language-plaintext highlighter-rouge">bus invoices &lt;invoice-id&gt; add</code> and <code class="language-plaintext highlighter-rouge">bus invoices &lt;invoice-id&gt; validate</code>, which append and validate line items for a specific invoice.</p>
+
+<p>Documented parameters for <code class="language-plaintext highlighter-rouge">bus invoices add</code> are <code class="language-plaintext highlighter-rouge">--type &lt;sales|purchase&gt;</code>, <code class="language-plaintext highlighter-rouge">--invoice-id &lt;id&gt;</code>, <code class="language-plaintext highlighter-rouge">--invoice-date &lt;YYYY-MM-DD&gt;</code>, <code class="language-plaintext highlighter-rouge">--due-date &lt;YYYY-MM-DD&gt;</code>, and <code class="language-plaintext highlighter-rouge">--customer &lt;name&gt;</code>. Documented parameters for <code class="language-plaintext highlighter-rouge">bus invoices &lt;invoice-id&gt; add</code> are <code class="language-plaintext highlighter-rouge">--desc &lt;text&gt;</code>, <code class="language-plaintext highlighter-rouge">--quantity &lt;number&gt;</code>, <code class="language-plaintext highlighter-rouge">--unit-price &lt;number&gt;</code>, <code class="language-plaintext highlighter-rouge">--revenue-account &lt;account-name&gt;</code>, and <code class="language-plaintext highlighter-rouge">--vat-rate &lt;percent&gt;</code>. Documented parameters for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code> are <code class="language-plaintext highlighter-rouge">&lt;invoice-id&gt;</code> as a positional argument and <code class="language-plaintext highlighter-rouge">--out &lt;path&gt;</code>. Documented parameters for <code class="language-plaintext highlighter-rouge">bus invoices list</code> include a deterministic filter surface: <code class="language-plaintext highlighter-rouge">--type &lt;sales|purchase&gt;</code>, <code class="language-plaintext highlighter-rouge">--status &lt;status&gt;</code>, <code class="language-plaintext highlighter-rouge">--month &lt;YYYY-M&gt;</code>, <code class="language-plaintext highlighter-rouge">--from &lt;YYYY-MM-DD&gt;</code>, <code class="language-plaintext highlighter-rouge">--to &lt;YYYY-MM-DD&gt;</code>, <code class="language-plaintext highlighter-rouge">--due-from &lt;YYYY-MM-DD&gt;</code>, <code class="language-plaintext highlighter-rouge">--due-to &lt;YYYY-MM-DD&gt;</code>, <code class="language-plaintext highlighter-rouge">--counterparty &lt;entity-id&gt;</code>, and <code class="language-plaintext highlighter-rouge">--invoice-id &lt;id&gt;</code>. Date filters apply to the invoice date in the header dataset, while <code class="language-plaintext highlighter-rouge">--due-from</code> and <code class="language-plaintext highlighter-rouge">--due-to</code> apply to the due date. <code class="language-plaintext highlighter-rouge">--month</code> selects the calendar month and is mutually exclusive with <code class="language-plaintext highlighter-rouge">--from</code> or <code class="language-plaintext highlighter-rouge">--to</code>. <code class="language-plaintext highlighter-rouge">--from</code> and <code class="language-plaintext highlighter-rouge">--to</code> may be used together or independently and are inclusive bounds, and the same inclusivity applies to <code class="language-plaintext highlighter-rouge">--due-from</code> and <code class="language-plaintext highlighter-rouge">--due-to</code>. <code class="language-plaintext highlighter-rouge">--status</code> matches the header status value exactly as stored, typically values like unpaid or paid. <code class="language-plaintext highlighter-rouge">--counterparty</code> matches the invoice header counterparty identifier exactly as stored, typically aligned with <code class="language-plaintext highlighter-rouge">bus entities</code> identifiers. <code class="language-plaintext highlighter-rouge">--invoice-id</code> matches the stable invoice identifier exactly. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus invoices add <span class="nt">--type</span> sales <span class="nt">--invoice-id</span> 1001 <span class="nt">--invoice-date</span> 2026-01-15 <span class="nt">--due-date</span> 2026-02-14 <span class="nt">--customer</span> <span class="s2">"Acme Corp"</span>
+bus invoices 1001 add <span class="nt">--desc</span> <span class="s2">"Consulting, 10h @ EUR 100/h"</span> <span class="nt">--quantity</span> 10 <span class="nt">--unit-price</span> 100 <span class="nt">--revenue-account</span> <span class="s2">"Consulting Revenue"</span> <span class="nt">--vat-rate</span> 25.5
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus invoices pdf 1001 <span class="nt">--out</span> tmp/INV-1001.pdf
+bus invoices list <span class="nt">--status</span> unpaid
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>Invoice master data file locations conform to the <a href="../layout/minimal-example-layout">minimal example layout</a>: all owned files reside in the workspace root only, as required by the <a href="../layout/layout-principles">data directory layout principles</a>. The header datasets <code class="language-plaintext highlighter-rouge">sales-invoices.csv</code> and <code class="language-plaintext highlighter-rouge">purchase-invoices.csv</code>, the line datasets <code class="language-plaintext highlighter-rouge">sales-invoice-lines.csv</code> and <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.csv</code>, and each dataset’s JSON Table Schema file (e.g. <code class="language-plaintext highlighter-rouge">sales-invoices.schema.json</code>) are stored with paths relative to the workspace root. The module MUST NOT create or use an <code class="language-plaintext highlighter-rouge">invoices/</code> or other invoice-specific subdirectory for master data. The module reads and writes these files in place so that invoice data remains reviewable and exportable as canonical repository data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Invoices depends on reference data from <code class="language-plaintext highlighter-rouge">bus entities</code>, <code class="language-plaintext highlighter-rouge">bus accounts</code>, and VAT reference datasets. Missing datasets or schemas result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Invoice datasets and rendered PDFs may contain sensitive information and should be protected by repository access controls. Evidence links are preserved through attachments metadata.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Schema or reference violations exit non-zero without modifying datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover invoice validation and posting integration, and command-level tests exercise <code class="language-plaintext highlighter-rouge">add</code>, line item additions, <code class="language-plaintext highlighter-rouge">list</code>, <code class="language-plaintext highlighter-rouge">validate</code>, and <code class="language-plaintext highlighter-rouge">pdf</code> against fixture workspaces. Tests MUST verify that <code class="language-plaintext highlighter-rouge">init</code> creates the eight owned files (four CSVs and four schema files) only in the workspace root and does not create an <code class="language-plaintext highlighter-rouge">invoices/</code> directory for master data (FR-INV-003).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic invoice data handling.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Invoice header: the dataset row describing invoice metadata and totals.<br>
+Invoice line: the dataset row describing a line item linked to an invoice header.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-attachments">bus-attachments</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-journal">bus-journal</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../layout/minimal-example-layout">Minimal example layout</a></li>
+  <li><a href="../layout/layout-principles">Data directory layout (principles)</a></li>
+  <li><a href="../master-data/sales-invoices/index">Owns master data: Sales invoices</a></li>
+  <li><a href="../master-data/sales-invoice-rows/index">Owns master data: Sales invoice rows</a></li>
+  <li><a href="../master-data/purchase-invoices/index">Owns master data: Purchase invoices</a></li>
+  <li><a href="../master-data/purchase-posting-specifications/index">Owns master data: Purchase posting specifications</a></li>
+  <li><a href="../master-data/documents/index">Master data: Documents (evidence)</a></li>
+  <li><a href="../master-data/parties/index">Master data: Parties (customers and suppliers)</a></li>
+  <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
+  <li><a href="../master-data/vat-treatment/index">Master data: VAT treatment</a></li>
+  <li><a href="../master-data/workflow-metadata/index">Owns master data: Bookkeeping status and review workflow</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../modules/bus-invoices">End user documentation: bus-invoices CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-invoices">Repository</a></li>
+  <li><a href="../layout/invoices-area">Invoices area</a></li>
+  <li><a href="../workflow/create-sales-invoice">Add a sales invoice</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-invoices module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-INVOICES</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-12<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-invoices.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

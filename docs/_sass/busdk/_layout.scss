@@ -1,0 +1,167 @@
+// Docs shell: full-width wrapper, header, sidebar + main (GitHub Docs style).
+// Margins live on .busdk-main-inner so chapter backgrounds can span the content column.
+
+.busdk-docs {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--busdk-bg);
+}
+
+.busdk-site-header {
+  flex-shrink: 0;
+  background: var(--busdk-header-bg);
+  border-bottom: 1px solid var(--busdk-border);
+}
+
+.busdk-site-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+}
+
+.busdk-site-header-logo {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--busdk-fg);
+  text-decoration: none;
+}
+
+.busdk-site-header-logo:hover,
+.busdk-site-header-logo:focus-visible {
+  color: var(--busdk-link);
+  text-decoration: underline;
+}
+
+.busdk-docs-body {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+// Sidebar: fixed width, sticky, left border (inner pages only).
+.busdk-sidebar {
+  flex-shrink: 0;
+  width: 260px;
+  border-right: 1px solid var(--busdk-border);
+  background: var(--busdk-bg);
+  overflow-y: auto;
+}
+
+.busdk-sidebar-inner {
+  padding: 1rem 0 2rem 1rem;
+  position: sticky;
+  top: 0;
+}
+
+.busdk-sidebar-home {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--busdk-muted);
+  text-decoration: none;
+  padding: 0 0.75rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--busdk-border);
+}
+
+.busdk-sidebar-home:hover,
+.busdk-sidebar-home:focus-visible {
+  color: var(--busdk-link);
+}
+
+.busdk-sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.busdk-sidebar-section {
+  margin-top: 1rem;
+}
+
+.busdk-sidebar-section:first-of-type {
+  margin-top: 0.5rem;
+}
+
+.busdk-sidebar-section-title {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--busdk-muted);
+  padding: 0 0.75rem 0.35rem;
+}
+
+.busdk-sidebar-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.busdk-sidebar-link {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--busdk-fg);
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  margin: 0 0.25rem 0 0;
+}
+
+.busdk-sidebar-link:hover,
+.busdk-sidebar-link:focus-visible {
+  color: var(--busdk-link);
+  background: var(--busdk-surface-1);
+}
+
+.busdk-sidebar-link--current {
+  font-weight: 600;
+  color: var(--busdk-link);
+  background: var(--busdk-surface-1);
+}
+
+// Main content column: takes remaining space; inner has max-width + padding.
+.busdk-main {
+  flex: 1;
+  min-width: 0;
+}
+
+// No horizontal margin/padding here; each section (chapter, header, prev-next) has its own inner for content width.
+.busdk-main-inner {
+  padding: 0 0 2rem;
+}
+
+.busdk-main--home .busdk-main-inner {
+  padding: 0 0 3rem;
+}
+
+// Shared content-width constraint for section inners (chapters, page header, prev-next).
+.busdk-content-inner {
+  max-width: 1012px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.busdk-main--home .busdk-content-inner {
+  max-width: 960px;
+}
+
+@media (max-width: 768px) {
+  .busdk-sidebar {
+    display: none;
+  }
+
+  .busdk-main-inner {
+    padding: 0 0 1.5rem;
+  }
+
+  .busdk-content-inner {
+    padding: 0 1rem;
+  }
+
+  .busdk-footer-inner {
+    padding: 1rem;
+  }
+}

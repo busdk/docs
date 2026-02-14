@@ -3,11 +3,7 @@ title: bus-bank — import and list bank transactions
 description: bus bank normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows..
 ---
 
-## bus-bank
-
-### Name
-
-`bus bank` — import and list bank transactions.
+## `bus-bank` — import and list bank transactions
 
 ### Synopsis
 

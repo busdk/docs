@@ -1,5 +1,5 @@
 ---
-title: `accounting_status` (review state)
+title: "`accounting_status` (review state)"
 description: accounting_status is a short status that expresses where a record is in the bookkeeping workflow, such as new, ready, booked, locked, matched, or ignored.
 ---
 

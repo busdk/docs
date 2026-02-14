@@ -1,5 +1,5 @@
 ---
-title: `vat_deductible_percent` (VAT deductibility, when relevant)
+title: "`vat_deductible_percent` (VAT deductibility, when relevant)"
 description: vat_deductible_percent records how much of the input VAT is deductible when a bank transaction is booked as a purchase-like event directly from the statement.
 ---
 

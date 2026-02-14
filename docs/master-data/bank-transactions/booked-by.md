@@ -1,5 +1,5 @@
 ---
-title: `booked_by` (booking actor)
+title: "`booked_by` (booking actor)"
 description: booked_by records who confirmed the bank transaction booking decision.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: `cash_account_id` (cash or bank account)
+title: "`cash_account_id` (cash or bank account)"
 description: cash_account_id is part of the loans master data.
 ---
 

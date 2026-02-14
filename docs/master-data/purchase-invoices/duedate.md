@@ -1,5 +1,5 @@
 ---
-title: `duedate` (due date)
+title: "`duedate` (due date)"
 description: duedate records when the purchase invoice is due for payment.
 ---
 

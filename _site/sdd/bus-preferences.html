@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-preferences — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-preferences — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Preferences owns user-level, cross-workspace preference storage for BusDK via an extensible, namespaced key-value configuration file." />
+<meta property="og:description" content="Bus Preferences owns user-level, cross-workspace preference storage for BusDK via an extensible, namespaced key-value configuration file." />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-preferences.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-preferences.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-preferences — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Preferences owns user-level, cross-workspace preference storage for BusDK via an extensible, namespaced key-value configuration file.","headline":"bus-preferences — Software Design Document","url":"http://localhost:4000/sdd/bus-preferences.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-preferences">bus-preferences</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Preferences owns user-level BusDK configuration stored in a dedicated preferences file located in the user’s config directory (platform-appropriate; e.g. XDG on Linux/macOS and AppData on Windows). The preferences file is explicitly not part of any workspace repository and is not used to store accounting data or workspace configuration. Instead, it stores optional defaults and runtime/UX preferences that apply across invocations and contexts, such as default tool selections, output formatting defaults, and module-specific user preferences. Bus Preferences is designed to be extensible without coupling: it provides a generic namespaced key-value store (similar in spirit to Git’s global configuration), where any BusDK module may persist and read its own preferences under its own namespace without bus-preferences needing knowledge of those modules or introducing dependencies on them. Bus Preferences is library-first and exposes a thin CLI surface for deterministic inspection and mechanical updates; it performs no Git or network operations.</p>
+
+<p>Scope boundaries are strict. Bus Preferences owns only the user-level preferences file and its access semantics. It does not own <a href="../data/workspace-configuration">workspace configuration</a> (e.g. <code class="language-plaintext highlighter-rouge">datapackage.json</code>), master data, domain datasets, or any domain validation rules. It does not interpret module semantics or enforce module-specific schemas beyond key-path and storage invariants; each consumer module documents and validates its own preference keys and values. The intended users are developers integrating BusDK modules and end users running the <code class="language-plaintext highlighter-rouge">bus preferences</code> CLI. This document is the single source of truth for implementation and review; the audience includes human reviewers and implementation agents.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-PRF-001 User-level preferences storage. The module MUST define and own a user-level preferences file stored outside repositories in a deterministic location. Acceptance criteria: the library resolves the same path for all consumers on a given machine/user; the file persists across process invocations; the file is not created in the workspace.</p>
+
+<p>FR-PRF-002 Namespaced, extensible key-value model. The module MUST support storing arbitrary module-specific preferences under namespaced keys without requiring bus-preferences to know those modules. Acceptance criteria: a module can set and read keys under its namespace without any code changes in bus-preferences; unknown namespaces are accepted.</p>
+
+<p>FR-PRF-003 Deterministic read/write behavior. The module MUST read and write the preferences file deterministically and atomically. Acceptance criteria: writes are atomic (temp file + rename); encoding is canonical so the same in-memory content yields byte-for-byte identical output; listing keys returns a deterministic order.</p>
+
+<p>FR-PRF-004 Non-invasive operation. The module MUST not perform Git or network operations. Acceptance criteria: commands and library functions only read and write the preferences file at the resolved location.</p>
+
+<p>FR-PRF-005 CLI surface for mechanical management. The module MUST provide a CLI surface to set, get, unset, and list preferences deterministically. Acceptance criteria: <code class="language-plaintext highlighter-rouge">set</code> creates the file as needed; <code class="language-plaintext highlighter-rouge">get</code> exits non-zero when the key is missing; <code class="language-plaintext highlighter-rouge">list</code> returns keys in sorted order; invalid usage yields exit code 2 with a deterministic message.</p>
+
+<p>FR-PRF-006 Library-first integration. The module MUST provide a Go package that other modules can import to read and write preferences. The library MUST not import other BusDK domain modules. Acceptance criteria: a module can depend only on the bus-preferences Go package to persist and read its preferences.</p>
+
+<p>NFR-PRF-001 Key-path validation. The module MUST validate preference keys against a canonical key-path grammar to avoid ambiguity and ensure cross-platform safety. Acceptance criteria: invalid keys are rejected with deterministic usage error and exit code 2.</p>
+
+<p>NFR-PRF-002 No secrets by design. The module SHOULD document that preferences are not intended for secrets and SHOULD provide guidance for consumers to avoid storing credentials. Acceptance criteria: documentation explains that secrets belong in OS credential storage or external secret managers, not in preferences.</p>
+
+<p>NFR-PRF-003 Performance. Read and write operations MUST complete in time acceptable for interactive CLI use. Acceptance criteria: get/set/list against the preferences file complete without perceptible delay under normal file size; no blocking network or external process calls.</p>
+
+<p>NFR-PRF-004 Scalability. The storage model is a single file; document size is bounded by practical limits. Acceptance criteria: the design and documentation state that the preferences file is the only store and that unbounded growth is a consumer responsibility to avoid.</p>
+
+<p>NFR-PRF-005 Maintainability. Key-path grammar and namespacing conventions MUST be documented so that new consumers can add preferences without changing bus-preferences code. Acceptance criteria: key-path rules and namespace convention are specified in this SDD and in the module’s user-facing documentation.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Preferences is a small CLI module with a Go library that resolves the user-level preferences path (IF-PRF-001, FR-PRF-001), loads and validates the preferences document, and performs atomic, deterministic updates (FR-PRF-003). Consumer modules import the library (IF-PRF-003, FR-PRF-006) to store and retrieve values under their own namespaces (FR-PRF-002). The CLI (IF-PRF-002) satisfies FR-PRF-005 for mechanical management. Bus Preferences remains agnostic of consumer semantics: it only provides generic operations and does not depend on or validate against other module definitions. Key-path validation (IF-PRF-004) satisfies NFR-PRF-001. The <code class="language-plaintext highlighter-rouge">bus</code> dispatcher and other modules MAY read preferences to apply defaults, but preference use is always optional and must not replace auditable workspace configuration for domain-critical behavior.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-PRF-001 Separate ownership for user-level preferences. User-level preferences are owned by bus-preferences to keep workspace configuration ownership (e.g. <code class="language-plaintext highlighter-rouge">datapackage.json</code>) separate and to avoid coupling workspace semantics with per-user behavior.</p>
+
+<p>KD-PRF-002 Namespaces over schemas. The store is schema-light and namespace-based: bus-preferences enforces only key-path and encoding invariants, while consumer modules define and validate their own keys and values. This prevents dependency edges from bus-preferences to other modules.</p>
+
+<p>KD-PRF-003 Canonical JSON document with reserved metadata. The file format is JSON with a reserved metadata envelope and a generic map of key paths to JSON values to allow typed values when needed while keeping the storage model simple and extensible.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<section class="busdk-chapter busdk-chapter--level-4"><h4 id="interface-if-prf-001-preferences-file-location">Interface IF-PRF-001 (preferences file location)</h4>
+
+<p>Satisfies FR-PRF-001. The library resolves the user-level preferences file path as follows:</p>
+
+<ol>
+  <li>If <code class="language-plaintext highlighter-rouge">BUS_PREFERENCES_PATH</code> environment variable is set, use that exact path.</li>
+  <li>Else on Windows, use <code class="language-plaintext highlighter-rouge">%APPDATA%\BusDK\preferences.json</code>.</li>
+  <li>Else on Unix-like systems, use <code class="language-plaintext highlighter-rouge">$XDG_CONFIG_HOME/busdk/preferences.json</code>, falling back to <code class="language-plaintext highlighter-rouge">~/.config/busdk/preferences.json</code>.</li>
+</ol>
+
+<p>The resolved directory MUST be created as needed on write. Consumers MUST use the library rather than re-implement path resolution.</p>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="interface-if-prf-002-cli">Interface IF-PRF-002 (CLI)</h4>
+
+<p>Satisfies FR-PRF-005. The module is invoked under the dispatcher as <code class="language-plaintext highlighter-rouge">bus preferences ...</code> and follows BusDK conventions for deterministic output and diagnostics.</p>
+
+<p>Commands:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">bus preferences set &lt;key&gt; &lt;value&gt;</code><br>
+Sets <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> to a string value (stored as JSON string).</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">bus preferences set-json &lt;key&gt; &lt;json&gt;</code><br>
+Sets <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> to an arbitrary JSON value (object/array/string/number/bool/null), validated as JSON.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">bus preferences get &lt;key&gt;</code><br>
+Prints the value to stdout. If the stored value is a JSON string, prints the raw string (no quotes). Otherwise prints canonical JSON.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">bus preferences unset &lt;key&gt;</code><br>
+Removes <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> if it exists; exits 0 whether or not it existed.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">bus preferences list [&lt;prefix&gt;]</code><br>
+Lists all keys (optionally filtered by prefix match on key-path segments) in lexicographic order. Output is deterministic; the default output is line-oriented <code class="language-plaintext highlighter-rouge">key=&lt;canonical-json&gt;</code>.</p>
+  </li>
+</ul>
+
+<p>Key-path validation failures and invalid JSON for <code class="language-plaintext highlighter-rouge">set-json</code> MUST exit with code 2.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus preferences <span class="nb">set </span>bus-agent.runtime gemini
+bus preferences set-json bus-dev.ui <span class="s1">'{"theme":"dark","density":"compact"}'</span>
+bus preferences get bus-agent.runtime
+bus preferences list bus-dev
+bus preferences <span class="nb">unset </span>bus-agent.runtime
+</code></pre></div></div>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="interface-if-prf-003-go-library">Interface IF-PRF-003 (Go library)</h4>
+
+<p>Satisfies FR-PRF-006. The module exposes a Go package that provides at least:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Get(ctx, key) (value json.RawMessage, ok bool, err error)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">GetString(ctx, key) (string, ok bool, err error)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">SetString(ctx, key, value string) error</code></li>
+  <li><code class="language-plaintext highlighter-rouge">SetJSON(ctx, key, raw json.RawMessage) error</code></li>
+  <li><code class="language-plaintext highlighter-rouge">Unset(ctx, key) error</code></li>
+  <li>
+<code class="language-plaintext highlighter-rouge">List(ctx, prefix string) (items []Item, err error)</code> where <code class="language-plaintext highlighter-rouge">Item</code> includes <code class="language-plaintext highlighter-rouge">Key string</code> and <code class="language-plaintext highlighter-rouge">Value json.RawMessage</code>
+</li>
+</ul>
+
+<p>The library enforces key-path validation, canonical encoding, deterministic ordering, and atomic writes. The library MUST not import consumer modules and MUST not require compile-time knowledge of module namespaces.</p>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="interface-if-prf-004-key-path-grammar">Interface IF-PRF-004 (key-path grammar)</h4>
+
+<p>Satisfies NFR-PRF-001. Keys are canonical “paths” using dot-separated segments:</p>
+
+<ul>
+  <li>Grammar (informal): <code class="language-plaintext highlighter-rouge">segment("." segment)*</code>
+</li>
+  <li>Segment allowed characters: <code class="language-plaintext highlighter-rouge">a-z</code>, <code class="language-plaintext highlighter-rouge">0-9</code>, <code class="language-plaintext highlighter-rouge">-</code>, <code class="language-plaintext highlighter-rouge">_</code> (lowercase only)</li>
+  <li>Recommended convention: first segment is a module namespace (e.g. <code class="language-plaintext highlighter-rouge">bus-agent</code>, <code class="language-plaintext highlighter-rouge">bus-dev</code>, <code class="language-plaintext highlighter-rouge">bus</code>), followed by module-defined subkeys (e.g. <code class="language-plaintext highlighter-rouge">runtime</code>, <code class="language-plaintext highlighter-rouge">ui.theme</code>).</li>
+</ul>
+
+<p>Keys MUST be treated as case-sensitive at the storage layer; the CLI and library MUST reject keys containing uppercase characters to maintain a single canonical form.</p>
+
+</section>
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The preferences file is a JSON document with an envelope and a values map:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"values"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"bus-agent.runtime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gemini"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"bus-dev.ui"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"theme"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dark"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Rules:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">version</code> is reserved for migration.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">values</code> is a map from validated key paths to JSON values.</li>
+  <li>
+    <p>Writes MUST serialize JSON canonically:</p>
+
+    <ul>
+      <li>Object keys sorted lexicographically at every object level.</li>
+      <li>Stable indentation and newline rules (implementation-defined but fixed).</li>
+    </ul>
+  </li>
+  <li>Updates MUST be atomic and resilient against partial writes.</li>
+</ul>
+
+<p>bus-preferences does not define schemas for the contents of <code class="language-plaintext highlighter-rouge">values</code> beyond key-path validation. Each consumer module defines its own semantics and validation for the keys it uses.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Preferences assumes a writable user-level config directory exists (or can be created) and that filesystem permissions control access. Impact if false: writes fail with a clear error; the module does not fall back to an alternate location. The module depends on the <code class="language-plaintext highlighter-rouge">bus</code> dispatcher for invocation conventions but does not depend on other BusDK modules. Impact if the dispatcher is absent: the CLI is not invoked as <code class="language-plaintext highlighter-rouge">bus preferences</code>; the library remains usable. Consumer modules depend on bus-preferences to persist cross-invocation defaults; those modules remain responsible for validating preference values and defining precedence rules between flags, environment variables, and stored preferences. Impact if a consumer misuses the API: invalid or conflicting values are a consumer bug; bus-preferences does not enforce module-specific semantics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p><strong>Preferences file:</strong> the user-level JSON file owned by bus-preferences, stored in the platform config directory (or at <code class="language-plaintext highlighter-rouge">BUS_PREFERENCES_PATH</code> when set), containing the <code class="language-plaintext highlighter-rouge">version</code> envelope and the <code class="language-plaintext highlighter-rouge">values</code> map. Resolved by IF-PRF-001.</p>
+
+<p><strong>User-level preferences:</strong> configuration stored outside repositories that applies across invocations and contexts for a single user/machine; stored in the preferences file.</p>
+
+<p><strong>Namespace:</strong> the first key-path segment conventionally matching a module or subsystem (e.g. <code class="language-plaintext highlighter-rouge">bus-agent</code>, <code class="language-plaintext highlighter-rouge">bus-dev</code>), used to prevent key collisions.</p>
+
+<p><strong>Key-path:</strong> the canonical dot-separated identifier used to store and retrieve a preference value.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Preferences are user-local and may include sensitive operational defaults (paths, toggles), but they are not intended to store secrets. The documentation MUST advise consumers not to store credentials in preferences and to use OS credential storage or external secret managers for secrets. File access is controlled by filesystem permissions; the module should create directories/files with user-only permissions where supported.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Commands print results to stdout and deterministic diagnostics to stderr. The library returns deterministic error messages for invalid keys, invalid JSON, and I/O failures.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<ul>
+  <li>Missing key on <code class="language-plaintext highlighter-rouge">get</code> results in a non-zero exit code and a concise error on stderr.</li>
+  <li>Invalid key-path or invalid JSON for <code class="language-plaintext highlighter-rouge">set-json</code> exits with code 2.</li>
+  <li>Atomic write strategy prevents corruption on interruption.</li>
+  <li>If the file is malformed JSON, commands fail deterministically with a parse error and a non-zero exit code.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<ul>
+  <li>Unit tests for key-path validation and canonical encoding.</li>
+  <li>Command-level tests that set/get/unset/list in a temporary config directory using <code class="language-plaintext highlighter-rouge">BUS_PREFERENCES_PATH</code>.</li>
+  <li>Tests for deterministic output ordering and atomic write behavior (e.g. write + reload + compare bytes).</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and a Go library.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable initially. The <code class="language-plaintext highlighter-rouge">version</code> field enables future migrations. If migrating from an older location or format, the library MAY implement a deterministic one-time migration strategy documented in release notes.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<ul>
+  <li>Unbounded extensibility may lead to inconsistent consumer conventions. This is mitigated by enforcing a strict key grammar and encouraging module namespaces and documented keys.</li>
+  <li>Storing non-string JSON values may complicate consumer parsing. This is mitigated by providing string-first convenience APIs (<code class="language-plaintext highlighter-rouge">GetString</code>/<code class="language-plaintext highlighter-rouge">SetString</code>) and keeping typed JSON optional.</li>
+</ul>
+
+<hr>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../layout/layout-principles">Layout principles</a></li>
+  <li><a href="../data/workspace-configuration">Workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> extension)</a></li>
+  <li><a href="./bus-config">bus-config module SDD</a></li>
+  <li><a href="./bus">bus module SDD</a></li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-preferences module SDD
+Project: BusDK
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-PRF</code>
+Version: 2026-02-13
+Status: Draft
+Last updated: 2026-02-13
+Owner: BusDK development team</p>
+</div></section>
+</div></section>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-preferences.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

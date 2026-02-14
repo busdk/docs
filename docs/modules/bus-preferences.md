@@ -3,11 +3,7 @@ title: bus preferences — user-level preference storage
 description: Set, get, list, and unset user-level BusDK preferences in a namespaced key-value file outside any workspace; no Git or network.
 ---
 
-## bus-preferences
-
-### Name
-
-`bus preferences` — user-level, cross-workspace preference storage for BusDK.
+## `bus-preferences` — user-level, cross-workspace preference storage for BusDK
 
 ### Synopsis
 

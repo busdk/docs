@@ -1,5 +1,5 @@
 ---
-title: `date` (invoice date)
+title: "`date` (invoice date)"
 description: date is the sales invoice date.
 ---
 

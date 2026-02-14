@@ -3,11 +3,7 @@ title: bus-reports
 description: bus reports computes financial reports from journal entries and reference data.
 ---
 
-## bus-reports
-
-### Name
-
-`bus reports` — generate trial balance, ledger, and statement reports.
+## `bus-reports` — generate trial balance, ledger, and statement reports
 
 ### Synopsis
 

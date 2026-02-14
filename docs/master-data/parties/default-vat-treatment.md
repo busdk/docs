@@ -1,5 +1,5 @@
 ---
-title: `default_vat_treatment` (VAT handling default)
+title: "`default_vat_treatment` (VAT handling default)"
 description: default_vat_treatment is the party’s default VAT handling suggestion.
 ---
 

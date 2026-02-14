@@ -1,5 +1,5 @@
 ---
-title: `creditor_name` (counterparty name, creditor)
+title: "`creditor_name` (counterparty name, creditor)"
 description: creditor_name records the creditor party name from the bank transaction.
 ---
 

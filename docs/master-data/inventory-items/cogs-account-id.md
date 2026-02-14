@@ -1,5 +1,5 @@
 ---
-title: `cogs_account_id` (cogs account)
+title: "`cogs_account_id` (cogs account)"
 description: cogs_account_id is part of the inventory items master data.
 ---
 

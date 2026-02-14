@@ -1,5 +1,5 @@
 ---
-title: `linked_entity_reference` (navigable evidence trail)
+title: "`linked_entity_reference` (navigable evidence trail)"
 description: linked_entity_reference is the reference that links the evidence document to the invoice, bank transaction, or other bookable record it supports.
 ---
 

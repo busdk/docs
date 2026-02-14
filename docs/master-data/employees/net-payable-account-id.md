@@ -1,5 +1,5 @@
 ---
-title: `net_payable_account_id` (net wages payable account)
+title: "`net_payable_account_id` (net wages payable account)"
 description: net_payable_account_id is part of the employees master data.
 ---
 

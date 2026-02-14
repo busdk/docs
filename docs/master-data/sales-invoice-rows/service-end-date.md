@@ -1,5 +1,5 @@
 ---
-title: `service_end_date` (line-level service period end)
+title: "`service_end_date` (line-level service period end)"
 description: service_end_date records when the service period ends for this invoice row.
 ---
 

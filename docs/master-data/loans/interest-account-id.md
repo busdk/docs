@@ -1,5 +1,5 @@
 ---
-title: `interest_account_id` (interest expense account)
+title: "`interest_account_id` (interest expense account)"
 description: interest_account_id is part of the loans master data.
 ---
 

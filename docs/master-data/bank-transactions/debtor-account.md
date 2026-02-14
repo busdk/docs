@@ -1,5 +1,5 @@
 ---
-title: `debtor_account` (counterparty account, debtor)
+title: "`debtor_account` (counterparty account, debtor)"
 description: debtor_account records the debtor account identifier from the bank transaction, such as an IBAN when available.
 ---
 

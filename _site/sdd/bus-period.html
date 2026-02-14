@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-period — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-period — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Period opens and closes accounting periods, generates closing and opening balance entries, and locks periods to prevent changes after close." />
+<meta property="og:description" content="Bus Period opens and closes accounting periods, generates closing and opening balance entries, and locks periods to prevent changes after close." />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-period.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-period.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-period — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Period opens and closes accounting periods, generates closing and opening balance entries, and locks periods to prevent changes after close.","headline":"bus-period — Software Design Document","url":"http://localhost:4000/sdd/bus-period.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-period">bus-period</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Period opens and closes accounting periods, generates closing and opening balance entries, and locks periods to prevent changes after close.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-PER-001 Period control datasets. The module MUST store period open, close, and lock states as schema-validated repository data. Acceptance criteria: period rows validate against schemas and are append-only.</p>
+
+<p>FR-PER-002 Close and lock operations. The module MUST generate closing entries and enforce period locks. Acceptance criteria: close outputs are deterministic and locked periods reject writes.</p>
+
+<p>NFR-PER-001 Auditability. Period transitions MUST remain reviewable in repository history. Acceptance criteria: period control datasets preserve open and close boundaries without overwrites.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Period owns the period control datasets and uses journal data to generate closing entries. It integrates with validation, VAT, and reporting workflows that precede filing and exports.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-PER-001 Period control is recorded as repository data. Period transitions are stored in datasets so close and lock boundaries remain reviewable.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-PER-001 (module CLI). The module exposes <code class="language-plaintext highlighter-rouge">bus period</code> with subcommands <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">open</code>, <code class="language-plaintext highlighter-rouge">close</code>, and <code class="language-plaintext highlighter-rouge">lock</code> and follows BusDK CLI conventions for deterministic output and diagnostics.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">init</code> command creates the baseline period control dataset and schema when they are absent. If both <code class="language-plaintext highlighter-rouge">periods.csv</code> and <code class="language-plaintext highlighter-rouge">periods.schema.json</code> already exist and are consistent, <code class="language-plaintext highlighter-rouge">init</code> prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, <code class="language-plaintext highlighter-rouge">init</code> fails with a clear error to standard error, does not write any file, and exits non-zero (see <a href="../sdd/bus-init">bus-init</a> FR-INIT-004).</p>
+
+<p>Period selection is always explicit and flag-based. The <code class="language-plaintext highlighter-rouge">open</code>, <code class="language-plaintext highlighter-rouge">close</code>, and <code class="language-plaintext highlighter-rouge">lock</code> commands accept <code class="language-plaintext highlighter-rouge">--period &lt;period&gt;</code> as a required parameter and do not use positional period arguments. A period identifier is a stable string in one of three forms: <code class="language-plaintext highlighter-rouge">YYYY</code> for a full-year period, <code class="language-plaintext highlighter-rouge">YYYY-MM</code> for a calendar month, or <code class="language-plaintext highlighter-rouge">YYYYQn</code> for a quarter (where <code class="language-plaintext highlighter-rouge">n</code> is 1 through 4). This mirrors period usage in other modules such as <code class="language-plaintext highlighter-rouge">bus vat</code>, <code class="language-plaintext highlighter-rouge">bus loans</code>, and <code class="language-plaintext highlighter-rouge">bus payroll</code>, which also use <code class="language-plaintext highlighter-rouge">--period</code> and <code class="language-plaintext highlighter-rouge">YYYY-MM</code> or <code class="language-plaintext highlighter-rouge">YYYYQn</code> formats rather than positional arguments.</p>
+
+<p>Close generates posting output and therefore accepts one additional optional flag: <code class="language-plaintext highlighter-rouge">--post-date &lt;YYYY-MM-DD&gt;</code>. When <code class="language-plaintext highlighter-rouge">--post-date</code> is omitted, the closing entry date defaults to the last date of the selected period, matching the default behavior of other posting-generating commands that accept <code class="language-plaintext highlighter-rouge">--post-date</code>.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus period open <span class="nt">--period</span> 2026-02
+bus period close <span class="nt">--period</span> 2026-02
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus period close <span class="nt">--period</span> 2026Q1 <span class="nt">--post-date</span> 2026-03-31
+bus period lock <span class="nt">--period</span> 2026Q1
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The module reads and writes the period control dataset at the workspace root as <code class="language-plaintext highlighter-rouge">periods.csv</code>, with a beside-the-table schema file <code class="language-plaintext highlighter-rouge">periods.schema.json</code>. Paths are root-level only: there is no subdirectory (for example, the data is not under <code class="language-plaintext highlighter-rouge">periods/periods.csv</code>). Period operations append records so period boundaries remain reviewable.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Period depends on journal datasets and on the workspace layout and schema conventions. Missing datasets or schemas result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Period locks are a control boundary and must be enforced in the module to prevent edits to closed periods. Repository access controls protect underlying data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Close or lock violations exit non-zero without modifying datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Unit tests cover period state transitions and close calculations, and command-level tests exercise <code class="language-plaintext highlighter-rouge">open</code>, <code class="language-plaintext highlighter-rouge">close</code>, and <code class="language-plaintext highlighter-rouge">lock</code> against fixture workspaces.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic period control.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p>Period control dataset: the repository dataset that records period boundaries and locks.<br>
+Period lock: a state that prevents edits to closed period data.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-entities">bus-entities</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../master-data/accounting-periods/index">Owns master data: Accounting periods</a></li>
+  <li><a href="../master-data/accounting-entity/index">Master data: Accounting entity</a></li>
+  <li><a href="../master-data/workflow-metadata/index">Master data: Bookkeeping status and review workflow</a></li>
+  <li><a href="../modules/bus-period">End user documentation: bus-period CLI reference</a></li>
+  <li><a href="https://github.com/busdk/bus-period">Repository</a></li>
+  <li><a href="../workflow/year-end-close">Year-end close (closing entries)</a></li>
+  <li><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-period module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-PERIOD</code><br>
+Version: 2026-02-07<br>
+Status: Draft<br>
+Last updated: 2026-02-07<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-period.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

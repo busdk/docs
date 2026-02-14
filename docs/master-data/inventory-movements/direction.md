@@ -1,5 +1,5 @@
 ---
-title: `direction` (movement direction)
+title: "`direction` (movement direction)"
 description: direction is part of the inventory movements master data.
 ---
 

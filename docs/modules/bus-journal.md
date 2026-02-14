@@ -3,11 +3,7 @@ title: bus-journal — post and query ledger journal entries
 description: bus journal maintains the authoritative ledger as append-only journal entries.
 ---
 
-## bus-journal
-
-### Name
-
-`bus journal` — post and query ledger journal entries.
+## `bus-journal` — post and query ledger journal entries
 
 ### Synopsis
 

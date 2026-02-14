@@ -1,5 +1,5 @@
 ---
-title: `bank_transaction_id` (bank transaction reference)
+title: "`bank_transaction_id` (bank transaction reference)"
 description: bank_transaction_id references the bank transaction being reconciled.
 ---
 

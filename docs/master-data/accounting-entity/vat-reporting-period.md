@@ -1,5 +1,5 @@
 ---
-title: `vat_reporting_period` (VAT reporting cadence)
+title: "`vat_reporting_period` (VAT reporting cadence)"
 description: vat_reporting_period records the VAT reporting cadence for the workspace, such as monthly, quarterly, or yearly.
 ---
 

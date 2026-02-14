@@ -1,5 +1,5 @@
 ---
-title: `number` (human-facing account number)
+title: "`number` (human-facing account number)"
 description: number is the human-facing account number used in exports, reporting, and review.
 ---
 

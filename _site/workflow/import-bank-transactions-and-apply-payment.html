@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Import bank transactions and apply payments | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Import bank transactions and apply payments" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records…" />
+<meta property="og:description" content="When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records…" />
+<link rel="canonical" href="http://localhost:4000/workflow/import-bank-transactions-and-apply-payment.html" />
+<meta property="og:url" content="http://localhost:4000/workflow/import-bank-transactions-and-apply-payment.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Import bank transactions and apply payments" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records…","headline":"Import bank transactions and apply payments","url":"http://localhost:4000/workflow/import-bank-transactions-and-apply-payment.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="import-bank-transactions-and-apply-payments">Import bank transactions and apply payments</h2>
+
+<p>When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records the ledger impact by appending an explicit journal entry. This keeps the workflow deterministic and reviewable while BusDK is still missing dedicated reconciliation logic.</p>
+
+<ol>
+  <li>Alice imports the raw bank statement evidence with Bus Bank:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus bank import <span class="nt">--file</span> 202602-bank-statement.csv
+</code></pre></div></div>
+
+<p>Bus Bank writes schema-validated bank datasets and preserves source statement identifiers so each imported transaction remains traceable back to the original evidence.</p>
+
+<ol>
+  <li>Alice reviews the imported bank transactions and finds the February payment row that corresponds to invoice INV-1001:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus bank list <span class="nt">--month</span> 2026-2
+</code></pre></div></div>
+
+<p>If the module supports filters, she narrows the output to the February date range or to rows that contain the invoice number or counterparty reference. The exact filtering flags are part of the module surface area, so she uses <code class="language-plaintext highlighter-rouge">bus bank list --help</code> to see what is available in her pinned version.</p>
+
+<ol>
+  <li>Alice identifies the accounts she will post against by listing the chart of accounts:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus accounts list
+</code></pre></div></div>
+
+<p>For a simple incoming payment with no fees, she needs the bank asset account that received the money and the Accounts Receivable account used by the original invoice posting. In BusDK terms, the payment entry clears receivables rather than changing invoice rows in place.</p>
+
+<ol>
+  <li>Alice records the ledger impact as an append-only journal entry:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus journal add <span class="nt">--date</span> 2026-02-14 <span class="se">\</span>
+<span class="nt">--desc</span> <span class="s2">"Payment received for INV-1001 (bank statement 202602)"</span> <span class="se">\</span>
+<span class="nt">--debit</span> <span class="s2">"Bank"</span><span class="o">=</span>1255 <span class="se">\</span>
+<span class="nt">--credit</span> <span class="s2">"Accounts Receivable"</span><span class="o">=</span>1255
+</code></pre></div></div>
+
+<p>The journal entry date comes from the bank transaction date, and the description carries the invoice number and enough evidence context to make later review straightforward. If a bank transaction identifier is available in the normalized bank dataset, Alice includes it in the description so the posting remains easy to trace back to the imported statement row.</p>
+
+<p>If she is unsure about the available flags in her pinned version, she uses <code class="language-plaintext highlighter-rouge">bus journal add --help</code>.</p>
+
+<ol>
+  <li>Alice verifies the result by reviewing the bank list output and the resulting journal postings, then uses invoice listing as a cross-check:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus invoices list
+</code></pre></div></div>
+
+<p>Until reconciliation is implemented as a first-class module, invoice “paid” status should be treated as a reporting convenience rather than the definition of correctness. The authoritative outcome is that the ledger is updated via an append-only journal entry whose provenance remains reviewable in the revision history.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./evolution-over-time">Evolution over time (extending the model)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./initialize-repo">Initialize a new repository</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/workflow/import-bank-transactions-and-apply-payment.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

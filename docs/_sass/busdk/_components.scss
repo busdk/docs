@@ -1,12 +1,17 @@
-// Components (header/nav/footer and chapter stripes) — keep structure intact, only restyle.
+// Components (page header, footer, chapter stripes, home, prev/next).
 
-// Page header: title block at top of content.
+// Page header: full-width background; content width from .busdk-content-inner inside.
 .busdk-page-header {
   background: var(--busdk-header-bg);
   border-bottom: 1px solid var(--busdk-border);
-  margin: 0 -1rem 1.5rem -1rem;
-  padding: 1rem 1rem 1.25rem;
-  border-radius: 0 0 8px 8px;
+  margin: 0 0 1.5rem;
+  padding: 1rem 0 1.25rem;
+  border-radius: 0;
+}
+
+.busdk-page-header .busdk-content-inner {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .busdk-page-header h1 {
@@ -25,28 +30,80 @@
   text-decoration: underline;
 }
 
-// Page footer: open-source edit link block.
+// Site footer: full-width bar at bottom, matches site header (open source + edit link).
 .busdk-footer {
+  flex-shrink: 0;
   background: var(--busdk-footer-bg);
-  border-radius: 8px 8px 0 0;
-  margin-top: 2rem;
-  margin-left: -1rem;
-  margin-right: -1rem;
-  margin-bottom: -1rem;
-  padding: 1rem 1rem 1.25rem;
   border-top: 1px solid var(--busdk-border);
 }
 
-// Chapters: alternating backgrounds (build-time plugin wraps h2–h6 blocks).
-.busdk-chapter {
-  margin-left: -1rem;
-  margin-right: -1rem;
-  padding: 0.75rem 1rem 1.5rem;
-  border-radius: 8px;
+.busdk-footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  color: var(--busdk-muted);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
-.busdk-chapter + .busdk-chapter {
-  margin-top: 0.5rem;
+.busdk-footer-copyright {
+  color: var(--busdk-muted);
+}
+
+.busdk-footer-copyright a {
+  color: var(--busdk-link);
+  text-decoration: none;
+}
+
+.busdk-footer-copyright a:hover,
+.busdk-footer-copyright a:focus-visible {
+  color: var(--busdk-link-hover);
+  text-decoration: underline;
+}
+
+.busdk-footer-edit {
+  color: var(--busdk-muted);
+}
+
+.busdk-footer-edit a {
+  color: var(--busdk-link);
+  text-decoration: none;
+}
+
+.busdk-footer-edit a:hover,
+.busdk-footer-edit a:focus-visible {
+  color: var(--busdk-link-hover);
+  text-decoration: underline;
+}
+
+// Chapters: full-width background; content width from .busdk-chapter-inner (.busdk-content-inner) inside.
+.busdk-main-inner > .busdk-chapter {
+  padding: 1.5rem 0 2rem;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.busdk-main-inner > .busdk-chapter + .busdk-chapter {
+  margin-top: 1.5rem;
+}
+
+.busdk-chapter-inner {
+  padding-top: 1.25rem;
+  padding-bottom: 0;
+}
+
+.busdk-chapter-inner > .busdk-chapter > .busdk-chapter-section-inner {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.busdk-chapter {
+  padding: 0.75rem 1rem 1.5rem;
+  border-radius: 8px;
 }
 
 .busdk-chapter:nth-of-type(odd) {
@@ -57,15 +114,174 @@
   background: var(--busdk-chapter-even-bg);
 }
 
-// Nested chapters (h3–h6): sit inside parent, no full-width pull.
-.busdk-chapter .busdk-chapter {
+// Level-3 chapter sections: full-width stripe, text constrained by section-inner.
+.busdk-chapter-inner > .busdk-chapter {
   margin-left: 0;
   margin-right: 0;
-  padding: 0.5rem 0 0.75rem;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  width: auto;
+  max-width: none;
+  box-sizing: border-box;
+  border-radius: 0;
 }
 
-.busdk-chapter .busdk-chapter + .busdk-chapter {
-  margin-top: 0.5rem;
+.busdk-chapter-section-inner {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+// Section headings: accent color so chapter headings stand out clearly.
+// Support both wrappers used by the chapter plugin:
+// - .busdk-chapter-section-inner (nested chapter sections)
+// - .busdk-chapter-inner (top-level chapter title/content blocks)
+.busdk-chapter-inner > h2,
+.busdk-chapter-inner > h3,
+.busdk-chapter-section-inner > h2,
+.busdk-chapter-section-inner > h3 {
+  color: var(--busdk-link);
+  border-bottom: 1px solid var(--busdk-border);
+  padding-bottom: 0.2rem;
+}
+
+.busdk-chapter-inner > h2,
+.busdk-chapter-inner > h3,
+.busdk-chapter-section-inner > h2,
+.busdk-chapter-section-inner > h3 {
+  margin-top: 0;
+}
+
+// Deeper nested chapter sections (h4+) live inside .busdk-chapter-section-inner.
+.busdk-chapter-section-inner > .busdk-chapter {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.75rem 0 1rem;
+  width: auto;
+  max-width: none;
+}
+
+.busdk-chapter-section-inner > .busdk-chapter + .busdk-chapter {
+  margin-top: 0;
+}
+
+// Home page: hero + section cards (GitHub Docs style).
+.busdk-home {
+  padding-top: 0.75rem;
+}
+
+.busdk-home-hero {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 0 0.5rem;
+}
+
+.busdk-home-hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--busdk-fg);
+  line-height: 1.25;
+}
+
+.busdk-home-hero-desc {
+  font-size: 1.125rem;
+  color: var(--busdk-muted);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 42em;
+}
+
+.busdk-home-cards {
+  margin-bottom: 2rem;
+}
+
+.busdk-home-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.busdk-home-card {
+  background: var(--busdk-surface-1);
+  border: 1px solid var(--busdk-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.busdk-home-card-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--busdk-muted);
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--busdk-border);
+}
+
+.busdk-home-card-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.busdk-home-card-links li {
+  margin: 0;
+}
+
+.busdk-home-card-links a {
+  display: block;
+  font-size: 0.9375rem;
+  color: var(--busdk-link);
+  text-decoration: none;
+  padding: 0.35rem 0;
+  border-radius: 4px;
+}
+
+.busdk-home-card-links a:hover,
+.busdk-home-card-links a:focus-visible {
+  color: var(--busdk-link-hover);
+  text-decoration: underline;
+}
+
+.busdk-home-more {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--busdk-border);
+}
+
+.busdk-home-more h2,
+.busdk-home-more h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--busdk-link);
+  border-bottom: 1px solid var(--busdk-border);
+  padding-bottom: 0.2rem;
+}
+
+.busdk-home-more h2:first-child,
+.busdk-home-more h3:first-child {
+  margin-top: 0;
+}
+
+.busdk-home-more > .busdk-content-inner {
+  max-width: 1012px;
+  padding-top: 1.25rem;
+}
+
+// Home layout section backgrounds should span the full visible content area,
+// while text remains constrained by .busdk-content-inner.
+.busdk-home > section {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.busdk-home > section:nth-of-type(odd) {
+  background: var(--busdk-chapter-odd-bg);
+}
+
+.busdk-home > section:nth-of-type(even) {
+  background: var(--busdk-chapter-even-bg);
 }
 
 // Primer theme uses a `.masthead` header with nav links.
@@ -99,31 +315,118 @@
   color: var(--busdk-muted);
 }
 
+// Prev / index / next: full-width bar; content width from .busdk-content-inner inside (from plugin).
+.busdk-prev-next-bar {
+  margin-top: 2rem;
+  margin-bottom: 0;
+  padding: 1rem 0;
+  background: var(--busdk-surface-1);
+  border-top: 1px solid var(--busdk-border);
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.busdk-prev-next-bar .busdk-content-inner {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.busdk-main-inner .busdk-prev-next {
+  margin: 0;
+  padding: 0;
+}
+
 .busdk-prev-next {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.75rem;
-  font-size: 0.95rem;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9375rem;
 }
 
 .busdk-prev-next-item {
   display: block;
+  min-width: 0;
 }
 
 .busdk-prev-next-item a {
+  color: var(--busdk-link);
   text-decoration: none;
+  font-weight: 500;
+}
+
+.busdk-prev-next-item a:hover,
+.busdk-prev-next-item a:focus-visible {
+  color: var(--busdk-link-hover);
+  text-decoration: underline;
 }
 
 .busdk-prev-next-item.busdk-prev {
   text-align: left;
 }
 
+.busdk-prev-next-item.busdk-prev:not(:has(a)) {
+  color: var(--busdk-muted);
+}
+
 .busdk-prev-next-item.busdk-index {
   text-align: center;
 }
 
+.busdk-prev-next-item.busdk-index a {
+  color: var(--busdk-fg);
+}
+
+.busdk-prev-next-item.busdk-index a:hover,
+.busdk-prev-next-item.busdk-index a:focus-visible {
+  color: var(--busdk-link);
+}
+
 .busdk-prev-next-item.busdk-next {
   text-align: right;
+}
+
+// Chapter inner: full-width content flow.
+.busdk-chapter-inner {
+  display: block;
+}
+
+// Sources and Document control: after prev-next, in .busdk-meta-block (plugin). Card layout, side by side when two.
+.busdk-meta-block {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.busdk-meta-section {
+  flex: 1 1 280px;
+  max-width: 400px;
+  padding: 1rem 1.25rem;
+  background: var(--busdk-surface-1);
+  border: 1px solid var(--busdk-border);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.busdk-meta-section h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--busdk-muted);
+}
+
+.busdk-meta-section ul,
+.busdk-meta-section p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.busdk-meta-section li,
+.busdk-meta-section br + * {
+  margin: 0.25rem 0 0;
 }
 
 // 404 page: clear hierarchy so the main message, path, and action stand out.

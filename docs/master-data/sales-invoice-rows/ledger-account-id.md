@@ -1,5 +1,5 @@
 ---
-title: `ledger_account_id` (revenue account intent)
+title: "`ledger_account_id` (revenue account intent)"
 description: ledger_account_id records which revenue account the invoice row belongs to.
 ---
 

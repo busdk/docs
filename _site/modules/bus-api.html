@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-api | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-api" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus API provides a local REST JSON API over the BusDK workspace in the selected root." />
+<meta property="og:description" content="Bus API provides a local REST JSON API over the BusDK workspace in the selected root." />
+<link rel="canonical" href="http://localhost:4000/modules/bus-api.html" />
+<meta property="og:url" content="http://localhost:4000/modules/bus-api.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-api" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus API provides a local REST JSON API over the BusDK workspace in the selected root.","headline":"bus-api","url":"http://localhost:4000/modules/bus-api.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-api--local-rest-json-api-gateway-for-busdk-workspaces">
+<code class="language-plaintext highlighter-rouge">bus-api</code> — local REST JSON API gateway for BusDK workspaces</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="synopsis">Synopsis</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bus api [global flags] [serve | openapi | version]</code><br>
+<code class="language-plaintext highlighter-rouge">bus-api [global flags] [serve | openapi | version]</code></p>
+
+<p>With no subcommand, <code class="language-plaintext highlighter-rouge">bus api</code> runs <strong>serve</strong>. Global flags follow <a href="../cli/command-naming">CLI command naming</a> and the <a href="../cli/global-flags">standard global flags</a>; the workspace root is set with <code class="language-plaintext highlighter-rouge">-C</code> / <code class="language-plaintext highlighter-rouge">--chdir</code> and is used as the API’s working context.</p>
+
+<p>Serve (default):</p>
+
+<p><code class="language-plaintext highlighter-rouge">bus-api serve [--listen &lt;addr&gt;] [--port &lt;n&gt;] [--token &lt;string&gt;] [--token-bytes &lt;n&gt;] [--base-path &lt;path&gt;] [--cors-origin &lt;origin&gt;] ... [--tls-cert &lt;file&gt;] [--tls-key &lt;file&gt;] [--read-only] [--enable-module &lt;name&gt; ...] [global flags]</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">bus-api openapi</code> — Print the OpenAPI document (JSON) to stdout.<br>
+<code class="language-plaintext highlighter-rouge">bus-api version</code> — Print the tool name and version to stdout and exit 0.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="description">Description</h3>
+
+<p>Command names follow <a href="../cli/command-naming">CLI command naming</a>. Bus API provides a local REST JSON API over the BusDK workspace in the selected root. When you start the server, it serves a CRUD API over the workspace datasets by delegating all dataset semantics to the <a href="./bus-data">bus-data</a> library (Table Schema, Data Package, CSV operations, mutation policies, and validation). No Bus module CLI is ever executed; the server calls only Go libraries. The API supports the same operations as bus-data — row CRUD, schema and resource mutation, package and validation — so that system administrators and tools can manage tables and schemas over HTTP and maintain custom data outside of Bus domain modules. Optional operation gating (e.g. <code class="language-plaintext highlighter-rouge">--read-only</code>) lets you start a restricted API when needed; by default all operations are enabled.</p>
+
+<p>Intended users are system administrators, developers, and tools that integrate with BusDK via HTTP. The server binds to localhost by default and prints a <strong>capability URL</strong> that includes an unguessable random path prefix. Clients must use that full URL to access the API; requests outside the prefix return 404. The server can optionally serve HTTPS when you supply certificate and key via <code class="language-plaintext highlighter-rouge">--tls-cert</code> and <code class="language-plaintext highlighter-rouge">--tls-key</code>; in many deployments TLS is handled by a reverse proxy in front of the API. User accounts, session management, and OAuth are out of scope for this module. To support change detection without polling, the API exposes an event stream: clients can subscribe to a long-lived stream and receive events whenever mutations are performed through the API (row create/update/delete, schema changes, resource and package changes). Events are emitted only for mutations that occur via this API instance.</p>
+
+<p>Domain modules (e.g. bus-accounts) can expose their data through the API when enabled with <code class="language-plaintext highlighter-rouge">--enable-module</code>. Module endpoints live under <code class="language-plaintext highlighter-rouge">/{token}/v1/modules/{module}/...</code> and are served by the module’s Go library only. The <a href="../sdd/bus-api">bus-api SDD</a> defines the full API contract, security model, and integration points.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="commands">Commands</h3>
+
+<p><strong><code class="language-plaintext highlighter-rouge">serve</code></strong> (default) — Start the HTTP server. The effective workspace root is the current directory or the directory given by <code class="language-plaintext highlighter-rouge">-C</code> / <code class="language-plaintext highlighter-rouge">--chdir</code>. The server generates an unguessable token (unless you pass <code class="language-plaintext highlighter-rouge">--token</code>), binds to the address and port given by <code class="language-plaintext highlighter-rouge">--listen</code> and <code class="language-plaintext highlighter-rouge">--port</code>, and prints the capability base URL to <strong>stdout</strong>. All diagnostics and logs go to <strong>stderr</strong>. You must use the printed URL (including the token path segment) for every API request; there is no separate login or session. The server does not mutate workspace data until a mutating endpoint is called. If the workspace root is not readable, startup fails with a deterministic diagnostic and a non-zero exit code.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">openapi</code></strong> — Emit the OpenAPI 3.1 document (JSON) to stdout. The document describes the versioned API paths and models the token path prefix so clients can generate bindings. No server is started. Diagnostics go to stderr.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">version</code></strong> — Print the tool name and version to stdout and exit 0. Other flags and arguments are ignored when version is requested.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="serve-flags">Serve flags</h3>
+
+<p>These flags apply only to <code class="language-plaintext highlighter-rouge">serve</code>. They can appear in any order before or after the subcommand name.</p>
+
+<ul>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--listen &lt;addr&gt;</code></strong> — Bind address. Default <code class="language-plaintext highlighter-rouge">127.0.0.1</code>. The server listens only on this address; use an explicit non-loopback address only when you intend the API to be reachable from other hosts.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--port &lt;n&gt;</code></strong> — Port number. Default <code class="language-plaintext highlighter-rouge">0</code> (choose a free port). The printed capability URL includes the actual port in use.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--token &lt;string&gt;</code></strong> — Use this token instead of generating one. Useful for scripts or tests that need a stable URL. If omitted, a random token is generated.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--token-bytes &lt;n&gt;</code></strong> — Length of the generated token in bytes when <code class="language-plaintext highlighter-rouge">--token</code> is not set. Default <code class="language-plaintext highlighter-rouge">32</code> (256 bits of entropy).</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--base-path &lt;path&gt;</code></strong> — Path prefix template. Default <code class="language-plaintext highlighter-rouge">/{token}/v1</code>. All API endpoints are rooted under this prefix with the token substituted.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--cors-origin &lt;origin&gt;</code></strong> — Allow the given CORS origin. Repeatable to allow multiple origins. Default: none (CORS disabled).</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--tls-cert &lt;file&gt;</code></strong> — Path to the TLS certificate file. When provided together with <code class="language-plaintext highlighter-rouge">--tls-key</code>, the server serves HTTPS instead of HTTP on the same listen address and port.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--tls-key &lt;file&gt;</code></strong> — Path to the TLS private key file. When provided together with <code class="language-plaintext highlighter-rouge">--tls-cert</code>, the server serves HTTPS.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--read-only</code></strong> — Disable all mutating endpoints. When set, create/update/delete and schema or package mutation requests return 403. By default all operations are enabled.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--enable-module &lt;name&gt;</code></strong> — Enable the module with the given identifier (e.g. <code class="language-plaintext highlighter-rouge">accounts</code> for bus-accounts). Repeatable. Only enabled modules are mounted under <code class="language-plaintext highlighter-rouge">/{token}/v1/modules/{module}/...</code>. When no <code class="language-plaintext highlighter-rouge">--enable-module</code> is given, no module endpoints are exposed.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="global-flags">Global flags</h3>
+
+<p>These flags apply to all subcommands and match the <a href="../cli/global-flags">standard global flags</a>. They can appear in any order before the subcommand. A lone <code class="language-plaintext highlighter-rouge">--</code> ends flag parsing; any following tokens are passed to the subcommand.</p>
+
+<ul>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-h</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--help</code></strong> — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-V</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--version</code></strong> — Print the tool name and version to stdout and exit 0.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-v</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--verbose</code></strong> — Send verbose diagnostics to stderr. You can repeat the flag (e.g. <code class="language-plaintext highlighter-rouge">-vv</code>) to increase verbosity. Verbose output does not change what is written to stdout.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-q</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--quiet</code></strong> — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine <code class="language-plaintext highlighter-rouge">--quiet</code> with <code class="language-plaintext highlighter-rouge">--verbose</code>; doing so is invalid usage (exit 2).</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-C &lt;dir&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--chdir &lt;dir&gt;</code></strong> — Use <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code> as the effective workspace root. All dataset and schema paths are resolved relative to this directory. The server treats this as the filesystem security boundary and rejects path traversal outside it. If the directory does not exist or is not accessible, the command exits with code 1.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-o &lt;file&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--output &lt;file&gt;</code></strong> — Redirect normal command output to <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> instead of stdout. For <code class="language-plaintext highlighter-rouge">serve</code>, the capability URL is still printed to stdout unless you redirect it; for <code class="language-plaintext highlighter-rouge">openapi</code>, the document is written to the file when this flag is set. Errors and diagnostics still go to stderr.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--color &lt;mode&gt;</code></strong> — Control colored output on stderr. <code class="language-plaintext highlighter-rouge">&lt;mode&gt;</code> must be <code class="language-plaintext highlighter-rouge">auto</code>, <code class="language-plaintext highlighter-rouge">always</code>, or <code class="language-plaintext highlighter-rouge">never</code>. Invalid value is usage error (exit 2).</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--no-color</code></strong> — Same as <code class="language-plaintext highlighter-rouge">--color=never</code>.</li>
+</ul>
+
+<p>Command results (capability URL, OpenAPI JSON, version) are written to stdout when produced. Diagnostics and logs are written to stderr.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="using-the-api">Using the API</h3>
+
+<p>After starting the server with <code class="language-plaintext highlighter-rouge">bus api serve</code> (or <code class="language-plaintext highlighter-rouge">bus-api serve</code>), use the capability URL printed to stdout as the base for all requests. For example if the server prints <code class="language-plaintext highlighter-rouge">http://127.0.0.1:38472/abc123def/v1</code>, then:</p>
+
+<ul>
+  <li>
+<strong>Health:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/healthz</code> returns <code class="language-plaintext highlighter-rouge">{ "status": "ok" }</code>.</li>
+  <li>
+<strong>OpenAPI:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/openapi.json</code> returns the OpenAPI document from the running server.</li>
+  <li>
+<strong>Events:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/events</code> returns a Server-Sent Events stream of mutation events (row create/update/delete, schema changes, resource and package changes). Events are emitted only for mutations performed through this API instance. Optional query parameters <code class="language-plaintext highlighter-rouge">resource</code> and <code class="language-plaintext highlighter-rouge">type</code> filter the stream.</li>
+  <li>
+<strong>Resources:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/resources</code> returns a deterministically ordered list of workspace resources.</li>
+  <li>
+<strong>Package:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/package</code> returns <code class="language-plaintext highlighter-rouge">datapackage.json</code> when present (404 otherwise). <code class="language-plaintext highlighter-rouge">PATCH {base}/package</code> applies a merge patch (delegates to bus-data).</li>
+  <li>
+<strong>Schema:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/resources/{name}/schema</code> returns the Table Schema for a resource. Schema mutation is available via <code class="language-plaintext highlighter-rouge">PATCH {base}/resources/{name}/schema</code> (merge patch) and via fine-grained endpoints: <code class="language-plaintext highlighter-rouge">POST .../schema/fields</code>, <code class="language-plaintext highlighter-rouge">PATCH .../schema/fields/{field}</code>, <code class="language-plaintext highlighter-rouge">DELETE .../schema/fields/{field}</code>, <code class="language-plaintext highlighter-rouge">PUT .../schema/primaryKey</code>, <code class="language-plaintext highlighter-rouge">POST .../schema/foreignKeys</code>, <code class="language-plaintext highlighter-rouge">DELETE .../schema/foreignKeys/{index}</code>. All delegate to bus-data semantics.</li>
+  <li>
+<strong>Rows:</strong> <code class="language-plaintext highlighter-rouge">GET {base}/resources/{name}/rows</code> supports query parameters such as <code class="language-plaintext highlighter-rouge">row</code>, <code class="language-plaintext highlighter-rouge">key</code>, <code class="language-plaintext highlighter-rouge">filter</code>, <code class="language-plaintext highlighter-rouge">column</code>, and <code class="language-plaintext highlighter-rouge">include_formula_source</code>. Single-row read uses <code class="language-plaintext highlighter-rouge">GET {base}/resources/{name}/row/{pk}</code> where <code class="language-plaintext highlighter-rouge">{pk}</code> is the percent-encoded JSON array of primary key values in schema order.</li>
+  <li>
+<strong>Validation:</strong> <code class="language-plaintext highlighter-rouge">POST {base}/resources/{name}/validate</code> returns a validation report for a single resource; <code class="language-plaintext highlighter-rouge">POST {base}/validate</code> returns a workspace-wide validation report.</li>
+  <li>
+<strong>Mutate:</strong> <code class="language-plaintext highlighter-rouge">POST {base}/resources/{name}/rows</code>, <code class="language-plaintext highlighter-rouge">PATCH {base}/resources/{name}/row/{pk}</code>, and <code class="language-plaintext highlighter-rouge">DELETE {base}/resources/{name}/row/{pk}</code> perform row add, update, and delete subject to schema constraints and update/delete policies. Resource add/remove/rename and package patch also delegate to bus-data. When <code class="language-plaintext highlighter-rouge">--read-only</code> is in effect, all mutating endpoints return 403.</li>
+</ul>
+
+<p>All mutation operations are atomic and leave the workspace unchanged on failure. Error responses use a stable JSON shape with at least <code class="language-plaintext highlighter-rouge">code</code>, and when applicable <code class="language-plaintext highlighter-rouge">resource</code>, <code class="language-plaintext highlighter-rouge">field</code> or <code class="language-plaintext highlighter-rouge">fields</code>, and <code class="language-plaintext highlighter-rouge">row</code> or <code class="language-plaintext highlighter-rouge">rowKey</code>. The <a href="../sdd/bus-api">bus-api SDD</a> specifies the full HTTP API surface and error contract.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="openapi-document">OpenAPI document</h3>
+
+<p>You can obtain the OpenAPI document in two ways. From the CLI without starting a server, run <code class="language-plaintext highlighter-rouge">bus-api openapi</code>; the JSON is printed to stdout (or to the file given by <code class="language-plaintext highlighter-rouge">--output</code>). From a running server, request <code class="language-plaintext highlighter-rouge">GET /{token}/v1/openapi.json</code> using the capability base URL. The document is valid OpenAPI 3.1 and describes the versioned API paths and the token path prefix so clients can discover and generate bindings.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-and-binding">Security and binding</h3>
+
+<p>By default the server binds only to <code class="language-plaintext highlighter-rouge">127.0.0.1</code> and is reachable from the local machine. To listen on a non-loopback interface you must set <code class="language-plaintext highlighter-rouge">--listen</code> explicitly. The random token in the capability URL is treated as a bearer capability: anyone who has the full URL can access the API. The server does not implement user accounts, sessions, or stored credentials. All filesystem paths are confined to the workspace root; path traversal outside that root is rejected. When you supply <code class="language-plaintext highlighter-rouge">--tls-cert</code> and <code class="language-plaintext highlighter-rouge">--tls-key</code>, the server serves HTTPS on the same address and port; otherwise it serves HTTP. Many deployments use an external reverse proxy or load balancer for TLS and keep the API on HTTP behind it.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-status-and-errors">Exit status and errors</h3>
+
+<ul>
+  <li>
+<strong>0</strong> — Success. For <code class="language-plaintext highlighter-rouge">serve</code>, the server is running until interrupted; for <code class="language-plaintext highlighter-rouge">openapi</code> and <code class="language-plaintext highlighter-rouge">version</code>, the command completed and wrote result to stdout (or <code class="language-plaintext highlighter-rouge">--output</code>).</li>
+  <li>
+<strong>1</strong> — Execution failure: workspace root not readable or not accessible, or TLS files missing/invalid when HTTPS is requested.</li>
+  <li>
+<strong>2</strong> — Invalid usage: unknown subcommand, invalid flag value (e.g. invalid <code class="language-plaintext highlighter-rouge">--listen</code> or <code class="language-plaintext highlighter-rouge">--port</code>), or conflicting flags (e.g. <code class="language-plaintext highlighter-rouge">--quiet</code> and <code class="language-plaintext highlighter-rouge">--verbose</code>).</li>
+</ul>
+
+<p>Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="development-state">Development state</h3>
+
+<p><strong>Value:</strong> Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.</p>
+
+<p><strong>Completeness:</strong> 50% (Primary journey) — help, version, openapi, and serve with token and port are verified; full resource/row semantics depend on bus-data integration not yet covered by e2e.</p>
+
+<p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_api.sh</code> proves exact global help output, serve-specific help, version line, invalid color/quiet+verbose exit 2, serve with fixed token and port prints capability URL, and missing chdir exits 1. Unit tests cover flags and run (<code class="language-plaintext highlighter-rouge">internal/cli/flags_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/cli/run_test.go</code>, <code class="language-plaintext highlighter-rouge">internal/server/server_test.go</code>). No e2e yet exercises API endpoints against bus-data.</p>
+
+<p><strong>Planned next:</strong> Full bus-data integration for resources, rows, schema, validation; security boundary; read-only 403; TLS, CORS, enable-module; e2e against API.</p>
+
+<p><strong>Blockers:</strong> bus-data integration is required for full API semantics; bus-sheets needs this module embedded.</p>
+
+<p><strong>Depends on:</strong> <a href="./bus-data">bus-data</a>, <a href="./bus-bfl">bus-bfl</a> (formula). Implement bus-data first.</p>
+
+<p><strong>Used by:</strong> <a href="./bus-sheets">bus-sheets</a> embeds this API in-process for the spreadsheet UI.</p>
+
+<p>See <a href="../implementation/development-status">Development status</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-data">bus-data</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-dev">bus-dev</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../sdd/bus-api">Module SDD: bus-api</a></li>
+  <li><a href="./bus-data">bus-data CLI reference</a></li>
+  <li><a href="../cli/global-flags">Standard global flags</a></li>
+  <li><a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI Specification (OAS) 3.1</a></li>
+</ul>
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/modules/bus-api.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 ---
-title: `bank_account_id` (bank account identity)
+title: "`bank_account_id` (bank account identity)"
 description: bank_account_id is the stable identity of the bank account as a transaction source in your bank feed or bank integration.
 ---
 

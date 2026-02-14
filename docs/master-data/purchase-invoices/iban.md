@@ -1,5 +1,5 @@
 ---
-title: `iban` (supplier payment account)
+title: "`iban` (supplier payment account)"
 description: iban records the supplier’s payment account for the invoice.
 ---
 

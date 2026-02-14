@@ -1,5 +1,5 @@
 ---
-title: `purchase_invoice_id` (invoice identity)
+title: "`purchase_invoice_id` (invoice identity)"
 description: purchase_invoice_id is the stable identity of a purchase invoice.
 ---
 

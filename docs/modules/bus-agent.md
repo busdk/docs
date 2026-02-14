@@ -1,13 +1,9 @@
 ---
 title: bus agent — diagnostics and development helper for the agent runner
-description: CLI reference for bus agent: detect enabled runtimes, render prompt templates, run an agent with a prompt, format NDJSON output; for diagnostics and development only.
+description: "CLI reference for bus agent: detect enabled runtimes, render prompt templates, run an agent with a prompt, format NDJSON output; for diagnostics and development only."
 ---
 
-## bus-agent
-
-### Name
-
-`bus agent` — diagnostics and development helper for the BusDK agent runner layer.
+## `bus-agent` — diagnostics and development helper for the BusDK agent runner layer
 
 ### Synopsis
 
@@ -20,7 +16,7 @@ Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These 
 `bus agent set model <value>` — set the default model (default when unset is `auto`).  
 `bus agent set output-format <ndjson|text>` — set the default output format (default when unset: `text`).  
 `bus agent set timeout <duration>` — set the default run timeout (e.g. `60m`).  
-`bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]` — render a prompt template with the given variables and fail if any `{{PLACEHOLDER}}` remains unresolved.  
+`bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]` — render a prompt template with the given variables and fail if any {% raw %}`{{PLACEHOLDER}}`{% endraw %} remains unresolved.  
 `bus agent run [--agent <runtime>] [--timeout <duration>] [--workdir <dir>] (--prompt <file> | --text <text>)` — run the selected agent with the given prompt and stream output in a deterministic, script-safe way.  
 `bus agent format [--runtime <runtime>]` — read raw agent output (e.g. NDJSON) from stdin and write formatted, human-readable text to stdout.
 
@@ -32,7 +28,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus agent` is
 
 **`detect`** — List the agent runtimes that are currently available. A runtime is available if its CLI executable is found in PATH and is executable and not disabled by user configuration. Output is one runtime identifier per line, in the same effective order used for automatic default selection (user-configured order if present, otherwise alphabetical by runtime ID), so the first line is always the runtime that would be selected for `bus agent run` when no `--agent` or preference override is set. Use this to verify that at least one runtime is available before running workflow commands in [bus dev](./bus-dev), or to see at a glance which agent would be used by default. With **`--first`** (or **`-1`**), output only that default runtime as a single line; if no runtime is available, the command exits with code 1. Scripts can use `bus agent detect --first` to obtain the default agent ID without parsing the full list.
 
-**`render`** — Render a prompt template with the supplied variables and print the result to stdout. You must supply either `--template <file>` (path to a UTF-8 file containing the template) or `--text <text>` (the template string). Variables are passed with `--var KEY=VALUE`; you can repeat `--var` for multiple keys. Templates use `{{VARIABLE}}` placeholders. Rendering is deterministic; every placeholder must be supplied. If a required variable is missing or any `{{...}}` token remains after substitution, the command fails with invalid usage (exit 2) and no external process is run. Use this to test template expansion or to produce a final prompt for inspection before passing it to `bus agent run`.
+**`render`** — Render a prompt template with the supplied variables and print the result to stdout. You must supply either `--template <file>` (path to a UTF-8 file containing the template) or `--text <text>` (the template string). Variables are passed with `--var KEY=VALUE`; you can repeat `--var` for multiple keys. Templates use {% raw %}`{{VARIABLE}}`{% endraw %} placeholders. Rendering is deterministic; every placeholder must be supplied. If a required variable is missing or any {% raw %}`{{...}}`{% endraw %} token remains after substitution, the command fails with invalid usage (exit 2) and no external process is run. Use this to test template expansion or to produce a final prompt for inspection before passing it to `bus agent run`.
 
 **`run`** — Run the selected agent runtime with a prompt and stream its output. You must supply either `--prompt <file>` (path to a UTF-8 file whose contents are the prompt) or `--text <text>` (the prompt string). The effective working directory for the agent is the current directory unless you set `--workdir <dir>`. The run is subject to a timeout; use `--timeout <duration>` (e.g. `30s`, `5m`) or rely on the default. Which runtime is used is determined by the resolution order: `--agent`, then `BUS_AGENT`, then `bus-agent.runtime`, then first available in the effective order (see Agent runtimes and installation below). If a configured runtime is disabled, the tool prints a warning and uses the next source. At the start of the run, the tool prints to stderr which agent and model are in use. Output is streamed in a script-safe, non-interactive manner. If the selected runtime is not installed or not in PATH, the command fails with a clear diagnostic and the canonical installation URL for that runtime.
 
@@ -107,7 +103,7 @@ You can change which agent is used first by configuring the order: supply an ord
 - **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, could not execute the agent CLI, or no runtime available when using `detect --first`.
 - **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render), unresolved template placeholder, invalid runtime name, invalid `set` value, or invalid `--timeout` or path.
 
-Template rendering failures (missing variable, unresolved `{{...}}`) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.
+Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% endraw %}) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.
 
 ### Development state
 

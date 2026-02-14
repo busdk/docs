@@ -1,5 +1,5 @@
 ---
-title: `ledger_account_id` (ledger mapping)
+title: "`ledger_account_id` (ledger mapping)"
 description: ledger_account_id maps the bank account to exactly one ledger account in the chart of accounts, such as a bank or cash account.
 ---
 

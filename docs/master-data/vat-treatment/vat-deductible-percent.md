@@ -1,5 +1,5 @@
 ---
-title: `vat_deductible_percent` (purchase-side deductibility)
+title: "`vat_deductible_percent` (purchase-side deductibility)"
 description: vat_deductible_percent expresses how much of the input VAT is deductible for the purchase.
 ---
 

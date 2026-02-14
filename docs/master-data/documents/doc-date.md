@@ -1,5 +1,5 @@
 ---
-title: `doc_date` (document date)
+title: "`doc_date` (document date)"
 description: doc_date is the document’s own date.
 ---
 

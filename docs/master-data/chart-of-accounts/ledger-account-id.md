@@ -1,5 +1,5 @@
 ---
-title: `ledger_account_id` (account identity)
+title: "`ledger_account_id` (account identity)"
 description: ledger_account_id is the stable identity of a ledger account in the chart of accounts.
 ---
 

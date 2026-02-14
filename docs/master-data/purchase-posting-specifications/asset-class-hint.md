@@ -1,5 +1,5 @@
 ---
-title: `asset_class_hint` (asset class hint)
+title: "`asset_class_hint` (asset class hint)"
 description: asset_class_hint is a short hint describing what kind of asset a capitalizable line represents, such as software, computer, license, or leasehold improvement.
 ---
 

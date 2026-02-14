@@ -1,5 +1,5 @@
 ---
-title: `evidence_status` (evidence completeness signal)
+title: "`evidence_status` (evidence completeness signal)"
 description: evidence_status expresses whether the evidence document is present and acceptable for booking, such as missing, ok, or needs_review.
 ---
 

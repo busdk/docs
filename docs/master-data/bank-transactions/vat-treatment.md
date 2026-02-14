@@ -1,5 +1,5 @@
 ---
-title: `vat_treatment` (VAT handling code, when relevant)
+title: "`vat_treatment` (VAT handling code, when relevant)"
 description: vat_treatment records the VAT handling category when a bank transaction is booked as a purchase-like event directly from the statement.
 ---
 

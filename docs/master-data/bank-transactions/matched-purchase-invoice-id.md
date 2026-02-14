@@ -1,5 +1,5 @@
 ---
-title: `matched_purchase_invoice_id` (purchase invoice match)
+title: "`matched_purchase_invoice_id` (purchase invoice match)"
 description: matched_purchase_invoice_id links a bank transaction to a purchase invoice when the transaction represents payment of that vendor invoice.
 ---
 

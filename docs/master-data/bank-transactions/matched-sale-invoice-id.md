@@ -1,5 +1,5 @@
 ---
-title: `matched_sale_invoice_id` (sales invoice match)
+title: "`matched_sale_invoice_id` (sales invoice match)"
 description: matched_sale_invoice_id links a bank transaction to a sales invoice when the transaction represents payment of that invoice.
 ---
 

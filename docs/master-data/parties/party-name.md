@@ -1,5 +1,5 @@
 ---
-title: `party_name` (counterparty label)
+title: "`party_name` (counterparty label)"
 description: party_name is the primary human-facing identifier for a counterparty.
 ---
 

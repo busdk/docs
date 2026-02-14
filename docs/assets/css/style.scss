@@ -2,18 +2,12 @@
 ---
 
 // BusDK styling layer on top of jekyll-theme-primer.
-//
-// Primer’s recommended override mechanism is:
-// 1) Jekyll front matter (so Jekyll processes Sass),
-// 2) import the base theme stylesheet,
-// 3) apply local overrides.
-//
-// Note: We hardcode the gem name to keep builds stable and deterministic.
-// Some GitHub Pages builds resolve site.theme to "primer" instead of the gem name.
+// All @use rules must appear first (Dart Sass). Order: theme, then our overrides.
+// We hardcode the gem name to keep builds stable (some GitHub Pages resolve theme to "primer").
 
-@import "jekyll-theme-primer";
-
-@import "busdk/tokens";
-@import "busdk/typography";
-@import "busdk/components";
-@import "busdk/code-and-tables";
+@use "jekyll-theme-primer";
+@use "busdk/tokens";
+@use "busdk/typography";
+@use "busdk/layout";
+@use "busdk/components";
+@use "busdk/code-and-tables";

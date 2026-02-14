@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-init — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-init — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Init creates workspace configuration by default (datapackage.json only); domain module inits run only when the user supplies per-module flags." />
+<meta property="og:description" content="Bus Init creates workspace configuration by default (datapackage.json only); domain module inits run only when the user supplies per-module flags." />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-init.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-init.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-init — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Init creates workspace configuration by default (datapackage.json only); domain module inits run only when the user supplies per-module flags.","headline":"bus-init — Software Design Document","url":"http://localhost:4000/sdd/bus-init.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-init">bus-init</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Init bootstraps a new BusDK workspace by creating or ensuring workspace-level configuration and, when requested, by orchestrating domain module <code class="language-plaintext highlighter-rouge">init</code> commands. By default it runs only <a href="./bus-config">bus-config</a> <code class="language-plaintext highlighter-rouge">init</code>, so that <code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting entity settings exist without creating any domain datasets. Domain module inits run only when the user explicitly includes them via per-module flags. Each Bus module that owns workspace data has its own flag; when one or more of these flags are present, bus-init runs <code class="language-plaintext highlighter-rouge">bus config init</code> first, then each selected module’s <code class="language-plaintext highlighter-rouge">init</code> in a deterministic order. Bus Init does not write configuration or domain data itself; it delegates to bus-config for the descriptor and to each domain module for its baseline data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-INIT-001 Workspace bootstrap. The module MUST run <code class="language-plaintext highlighter-rouge">bus config init</code> so that workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> and <code class="language-plaintext highlighter-rouge">busdk.accounting_entity</code>) exists. When no module-include flags are supplied, the module MUST run only <code class="language-plaintext highlighter-rouge">bus config init</code> and MUST NOT invoke any domain module’s <code class="language-plaintext highlighter-rouge">init</code>. When one or more module-include flags are supplied, the module MUST run <code class="language-plaintext highlighter-rouge">bus config init</code> first, then each selected domain module’s <code class="language-plaintext highlighter-rouge">init</code> in the deterministic order defined for IF-INIT-001, and MUST NOT invoke any domain module whose flag was not supplied. Acceptance criteria: running <code class="language-plaintext highlighter-rouge">bus init</code> with no module flags results in only <code class="language-plaintext highlighter-rouge">datapackage.json</code> (and accounting entity) at the workspace root; running <code class="language-plaintext highlighter-rouge">bus init --accounts --entities</code> results in config plus accounts and entities baseline datasets and schemas; the workspace never contains baseline files for a module whose flag was not supplied.</p>
+
+<p>FR-INIT-002 Non-invasive initialization. The module MUST not perform Git or network operations. Acceptance criteria: initialization only affects workspace datasets and metadata.</p>
+
+<p>FR-INIT-003 Module init contract. Every module invoked during bootstrap (including bus-config for workspace configuration and each domain module that owns master data) MUST provide an <code class="language-plaintext highlighter-rouge">init</code> command that creates the module’s baseline datasets and schemas when they are absent. When the module’s data already exists in full (all owned datasets and schemas present and consistent), <code class="language-plaintext highlighter-rouge">init</code> MUST print a warning to standard error and exit with code 0 without modifying any file. When the module’s data exists only partially (one or more owned datasets or schemas missing or inconsistent), <code class="language-plaintext highlighter-rouge">init</code> MUST fail with a clear error to standard error, MUST NOT modify any file, and MUST exit with a non-zero code. Acceptance criteria: running <code class="language-plaintext highlighter-rouge">init</code> on an empty workspace creates the baseline; running <code class="language-plaintext highlighter-rouge">init</code> again after a successful bootstrap yields a warning and exit 0; running <code class="language-plaintext highlighter-rouge">init</code> when some but not all owned files exist yields an error and no writes.</p>
+
+<p>NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostics and stop on the first failure. Acceptance criteria: failures identify the module command that failed.</p>
+
+<p>FR-INIT-004 Owned paths only. The module MUST NOT require or verify the presence of files owned by other modules (e.g. <code class="language-plaintext highlighter-rouge">journals.csv</code>, <code class="language-plaintext highlighter-rouge">accounts.csv</code>). Success MUST be determined solely by the exit codes of the commands it invokes (<code class="language-plaintext highlighter-rouge">bus config init</code> and, when selected, each domain module’s <code class="language-plaintext highlighter-rouge">init</code>). Acceptance criteria: the implementation does not perform a post-hoc check against a fixed list of baseline paths; running <code class="language-plaintext highlighter-rouge">bus init</code> never fails with a “missing required path X” error for any path X owned by bus-config or a domain module.</p>
+
+<p>FR-INIT-005 Per-module flags. For each Bus module that owns workspace datasets (see the table in “Module-include flags (data-owning modules)”), the module MUST provide a corresponding boolean flag. When that flag is set, the module’s <code class="language-plaintext highlighter-rouge">init</code> is included in the sequence run after <code class="language-plaintext highlighter-rouge">bus config init</code>. The set of flags MUST be: <code class="language-plaintext highlighter-rouge">--accounts</code>, <code class="language-plaintext highlighter-rouge">--entities</code>, <code class="language-plaintext highlighter-rouge">--period</code>, <code class="language-plaintext highlighter-rouge">--journal</code>, <code class="language-plaintext highlighter-rouge">--invoices</code>, <code class="language-plaintext highlighter-rouge">--vat</code>, <code class="language-plaintext highlighter-rouge">--attachments</code>, <code class="language-plaintext highlighter-rouge">--bank</code>, <code class="language-plaintext highlighter-rouge">--budget</code>, <code class="language-plaintext highlighter-rouge">--assets</code>, <code class="language-plaintext highlighter-rouge">--inventory</code>, <code class="language-plaintext highlighter-rouge">--loans</code>, <code class="language-plaintext highlighter-rouge">--payroll</code>. When multiple flags are supplied, the corresponding module inits MUST run in the order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll. The module MUST accept an optional subcommand that selects a named module set. Two subcommands are defined: <code class="language-plaintext highlighter-rouge">defaults</code> (initialize only workspace configuration; same as omitting the subcommand and supplying no module-include flags) and <code class="language-plaintext highlighter-rouge">all</code> (initialize config plus all thirteen data-owning modules). When the subcommand is <code class="language-plaintext highlighter-rouge">all</code>, the module MUST also accept <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flags: for each module that has a per-module include flag, the corresponding boolean <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flag (e.g. <code class="language-plaintext highlighter-rouge">--no-accounts</code>, <code class="language-plaintext highlighter-rouge">--no-payroll</code>) excludes that module from the set of inits run; the effective set is all thirteen minus any for which <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> was supplied. When the subcommand is not <code class="language-plaintext highlighter-rouge">all</code>, <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flags have no effect. Additional named sets (e.g. <code class="language-plaintext highlighter-rouge">sheets</code> for a future bus-sheets–related set) MAY be added as further subcommands; using subcommands for sets avoids name clashes with module names (e.g. a <code class="language-plaintext highlighter-rouge">--sheets</code> flag would conflict with bus-sheets). Acceptance criteria: help output lists subcommands <code class="language-plaintext highlighter-rouge">defaults</code> and <code class="language-plaintext highlighter-rouge">all</code>, each per-module flag, and the <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> exclusions for <code class="language-plaintext highlighter-rouge">all</code>; invoking <code class="language-plaintext highlighter-rouge">bus init</code> or <code class="language-plaintext highlighter-rouge">bus init defaults</code> runs only <code class="language-plaintext highlighter-rouge">bus config init</code>; invoking <code class="language-plaintext highlighter-rouge">bus init --accounts</code> runs only <code class="language-plaintext highlighter-rouge">bus config init</code> and <code class="language-plaintext highlighter-rouge">bus accounts init</code>; invoking <code class="language-plaintext highlighter-rouge">bus init all</code> runs config init then all thirteen module inits in order; invoking <code class="language-plaintext highlighter-rouge">bus init all --no-payroll</code> runs config init then all twelve module inits other than payroll, in the same deterministic order.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Init is an orchestrator that always runs <code class="language-plaintext highlighter-rouge">bus config init</code> and, when the user supplies one or more module-include flags, invokes each selected domain module’s <code class="language-plaintext highlighter-rouge">init</code> in a fixed order. By default it runs only <code class="language-plaintext highlighter-rouge">bus config init</code>, so the workspace gets <code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting entity settings without any domain datasets. It does not own workspace configuration (bus-config owns <code class="language-plaintext highlighter-rouge">datapackage.json</code>) or domain datasets; it only coordinates the sequence and relies on exit codes for success.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-INIT-001 Module-owned initialization. The bootstrap workflow delegates dataset creation to each module to preserve ownership boundaries.</p>
+
+<p>KD-INIT-002 Init idempotency and partial-state safety. Each module’s <code class="language-plaintext highlighter-rouge">init</code> obeys the contract in FR-INIT-003: it creates baseline data only when absent, warns and does nothing when data already exists in full, and fails without writing when data exists only partially.</p>
+
+<p>KD-INIT-003 No verification of other modules’ paths. Per FR-INIT-004, bus-init does not require or verify the presence of files owned by other modules. Success is determined solely by the orchestration: <code class="language-plaintext highlighter-rouge">bus config init</code> and, when run, each selected domain module’s <code class="language-plaintext highlighter-rouge">init</code> exit successfully. Each module is responsible for creating its own datasets and for failing its init when it cannot; bus-init does not perform a post-hoc check against a fixed list of baseline paths. This avoids bus-init failing with “missing required path X” when X is owned by a module that was not run, failed earlier, or is not installed.</p>
+
+<p>KD-INIT-004 Config-only default; module init opt-in. By default, <code class="language-plaintext highlighter-rouge">bus init</code> (or <code class="language-plaintext highlighter-rouge">bus init defaults</code>) initializes only workspace configuration so that new or partial workspaces can have a valid <code class="language-plaintext highlighter-rouge">datapackage.json</code> without committing to every domain dataset. Users who want the full baseline use the <code class="language-plaintext highlighter-rouge">all</code> subcommand (<code class="language-plaintext highlighter-rouge">bus init all</code>); they can exclude specific modules with <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code>. Users who want a subset use per-module include flags without a set subcommand. The set of per-module flags corresponds to the Bus modules that own workspace datasets; if new data-owning modules are added to BusDK, each receives its own flag and a place in the deterministic execution order.</p>
+
+<p>KD-INIT-005 Module sets as subcommands. Named module sets (e.g. <code class="language-plaintext highlighter-rouge">all</code>, and in future <code class="language-plaintext highlighter-rouge">sheets</code> or others) are exposed as subcommands rather than as flags so that set names never conflict with module names. A flag such as <code class="language-plaintext highlighter-rouge">--sheets</code> would clash with the bus-sheets module; a subcommand <code class="language-plaintext highlighter-rouge">bus init sheets</code> does not.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="module-include-flags-data-owning-modules">Module-include flags (data-owning modules)</h3>
+
+<p>A Bus module receives a module-include flag if and only if it owns some kind of master data in the current workspace: it has datasets and/or schemas in the workspace root that it creates or ensures via its <code class="language-plaintext highlighter-rouge">init</code> command. The following modules meet that criterion and MUST each have a corresponding boolean flag. The execution order when multiple flags are supplied is the order listed below.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Module</th>
+      <th>Owned workspace data (baseline)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--accounts</code></td>
+      <td>bus-accounts</td>
+      <td>Chart of accounts: <code class="language-plaintext highlighter-rouge">accounts.csv</code>, <code class="language-plaintext highlighter-rouge">accounts.schema.json</code>
+</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--entities</code></td>
+      <td>bus-entities</td>
+      <td>Counterparties: <code class="language-plaintext highlighter-rouge">entities.csv</code>, <code class="language-plaintext highlighter-rouge">entities.schema.json</code>
+</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--period</code></td>
+      <td>bus-period</td>
+      <td>Period control: <code class="language-plaintext highlighter-rouge">periods.csv</code>, <code class="language-plaintext highlighter-rouge">periods.schema.json</code>
+</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--journal</code></td>
+      <td>bus-journal</td>
+      <td>Journal index: <code class="language-plaintext highlighter-rouge">journals.csv</code>, <code class="language-plaintext highlighter-rouge">journals.schema.json</code> (and period-scoped journal files when used)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--invoices</code></td>
+      <td>bus-invoices</td>
+      <td>Sales and purchase invoices and lines: <code class="language-plaintext highlighter-rouge">sales-invoices.csv</code>, <code class="language-plaintext highlighter-rouge">sales-invoice-lines.csv</code>, <code class="language-plaintext highlighter-rouge">purchase-invoices.csv</code>, <code class="language-plaintext highlighter-rouge">purchase-invoice-lines.csv</code> and their schemas</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--vat</code></td>
+      <td>bus-vat</td>
+      <td>VAT reference and reports: <code class="language-plaintext highlighter-rouge">vat-rates.csv</code>, <code class="language-plaintext highlighter-rouge">vat-returns.csv</code>, <code class="language-plaintext highlighter-rouge">vat-reports.csv</code> and their schemas</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--attachments</code></td>
+      <td>bus-attachments</td>
+      <td>Evidence index: <code class="language-plaintext highlighter-rouge">attachments.csv</code>, <code class="language-plaintext highlighter-rouge">attachments.schema.json</code>
+</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--bank</code></td>
+      <td>bus-bank</td>
+      <td>Bank imports and transactions: <code class="language-plaintext highlighter-rouge">bank-imports.csv</code>, <code class="language-plaintext highlighter-rouge">bank-transactions.csv</code> and their schemas</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--budget</code></td>
+      <td>bus-budget</td>
+      <td>Budget dataset: <code class="language-plaintext highlighter-rouge">budgets.csv</code>, <code class="language-plaintext highlighter-rouge">budgets.schema.json</code> (optional for statutory bookkeeping)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--assets</code></td>
+      <td>bus-assets</td>
+      <td>Fixed-asset register and depreciation datasets and schemas in the workspace root</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--inventory</code></td>
+      <td>bus-inventory</td>
+      <td>Item master and movement datasets and schemas in the workspace root</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--loans</code></td>
+      <td>bus-loans</td>
+      <td>Loan register and event datasets and schemas in the workspace root</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--payroll</code></td>
+      <td>bus-payroll</td>
+      <td>Employee and payroll run datasets and schemas in the workspace root</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>No other Bus modules own workspace master data in this sense. bus-config owns only <code class="language-plaintext highlighter-rouge">datapackage.json</code> (workspace configuration), which is always initialized by <code class="language-plaintext highlighter-rouge">bus config init</code> before any module-include step; bus-validate, bus-reports, bus-reconcile, bus-filing, bus-agent, bus-dev, bus-preferences, and similar modules do not own workspace datasets and therefore do not have a module-include flag.</p>
+
+<p><strong>Subcommands for module sets.</strong> The command accepts an optional subcommand that selects a named module set. Using subcommands (instead of flags like <code class="language-plaintext highlighter-rouge">--all</code> or <code class="language-plaintext highlighter-rouge">--sheets</code>) keeps set names from clashing with module names—e.g. a future <code class="language-plaintext highlighter-rouge">bus init sheets</code> can denote a sheets-related set without conflicting with the bus-sheets module.</p>
+
+<ul>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">defaults</code></strong> (or no subcommand with no module-include flags): run only <code class="language-plaintext highlighter-rouge">bus config init</code>. Equivalent to config-only initialization. Explicitly run <code class="language-plaintext highlighter-rouge">bus init defaults</code> or plain <code class="language-plaintext highlighter-rouge">bus init</code> with no flags.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">all</code></strong>: run config init then all thirteen data-owning module inits in the deterministic order. You can exclude specific modules with the corresponding <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flag (e.g. <code class="language-plaintext highlighter-rouge">--no-accounts</code>, <code class="language-plaintext highlighter-rouge">--no-payroll</code>). Example: <code class="language-plaintext highlighter-rouge">bus init all --no-payroll</code> initializes config and all data-owning modules except payroll. When the subcommand is not <code class="language-plaintext highlighter-rouge">all</code>, <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flags are ignored.</li>
+</ul>
+
+<p>Additional named sets (e.g. <code class="language-plaintext highlighter-rouge">sheets</code>) may be added later as further subcommands; they are not defined in this document.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-INIT-001 (bootstrap). The module is invoked as <code class="language-plaintext highlighter-rouge">bus init</code> and follows BusDK CLI conventions for deterministic output and diagnostics. The command always runs <code class="language-plaintext highlighter-rouge">bus config init</code> first. When no subcommand or subcommand is <code class="language-plaintext highlighter-rouge">defaults</code>, and no module-include flags are supplied, it runs only <code class="language-plaintext highlighter-rouge">bus config init</code> and exits; no domain module inits are invoked. When subcommand is <code class="language-plaintext highlighter-rouge">all</code>, the set of modules to run is all thirteen data-owning modules minus any for which a <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flag was supplied (e.g. <code class="language-plaintext highlighter-rouge">--no-payroll</code> excludes payroll); those module inits run after config init in the same deterministic order. When one or more module-include flags are present (and subcommand is not <code class="language-plaintext highlighter-rouge">all</code>), it then runs each selected module’s <code class="language-plaintext highlighter-rouge">init</code> in this deterministic order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only those whose flag was supplied are run, in this order). It does not accept layout selection flags and uses the standard workspace layout with deterministic dataset and schema filenames. An optional subcommand (<code class="language-plaintext highlighter-rouge">defaults</code> or <code class="language-plaintext highlighter-rouge">all</code>) may be supplied. Module-include flags are those listed in the table in “Module-include flags (data-owning modules)”; each has a corresponding <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> that excludes that module when subcommand is <code class="language-plaintext highlighter-rouge">all</code>. To change accounting entity settings after bootstrap, use <a href="../modules/bus-config">bus config configure</a>.</p>
+
+<p>Usage examples:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus init
+</code></pre></div></div>
+
+<p>Initializes only workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting entity). No domain datasets are created.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus init <span class="nt">--accounts</span> <span class="nt">--entities</span> <span class="nt">--journal</span>
+</code></pre></div></div>
+
+<p>Initializes workspace configuration, then accounts, entities, and journal baseline datasets and schemas in that order.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus init all
+</code></pre></div></div>
+
+<p>Initializes the full baseline (config plus all thirteen data-owning modules). To initialize only a subset of modules, use per-module flags without the <code class="language-plaintext highlighter-rouge">all</code> subcommand (e.g. <code class="language-plaintext highlighter-rouge">bus init --accounts --entities</code>).</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus init all <span class="nt">--no-payroll</span>
+</code></pre></div></div>
+
+<p>Initializes config and all data-owning modules except payroll. Use any combination of <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flags with <code class="language-plaintext highlighter-rouge">bus init all</code> to exclude specific modules.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>The module does not create or own any workspace files directly. It always invokes <code class="language-plaintext highlighter-rouge">bus config init</code>, which creates or ensures <code class="language-plaintext highlighter-rouge">datapackage.json</code> and the <code class="language-plaintext highlighter-rouge">busdk.accounting_entity</code> subtree at the workspace root. When the user has supplied one or more module-include flags, it then invokes each selected domain module’s <code class="language-plaintext highlighter-rouge">init</code>, which create that module’s baseline datasets and schemas. With no module flags, the workspace after <code class="language-plaintext highlighter-rouge">bus init</code> contains only <code class="language-plaintext highlighter-rouge">datapackage.json</code> (and accounting entity settings); no accounts, entities, journal, or other domain files are created. Success is determined only by the orchestration: when every invoked command (<code class="language-plaintext highlighter-rouge">bus config init</code> and, when run, each selected module’s <code class="language-plaintext highlighter-rouge">init</code>) exits with code 0, the operation is successful. Bus-init does not verify a fixed list of baseline paths afterward; each module owns its outputs and is responsible for failing its init if it cannot create them. Bus-init must not fail with a “missing required path” error for any file owned by another module (see KD-INIT-003).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>Bus Init depends on the presence of the <code class="language-plaintext highlighter-rouge">bus</code> dispatcher and <a href="./bus-config">bus-config</a> for workspace configuration. When a module-include flag is supplied, the corresponding domain module CLI (e.g. bus-accounts for <code class="language-plaintext highlighter-rouge">--accounts</code>, bus-entities for <code class="language-plaintext highlighter-rouge">--entities</code>) must be available; if that module is not installed or not in PATH, the invoked step fails and bus-init reports it. The standard workspace layout conventions apply to any datasets created by the selected modules. Missing or unavailable module commands result in deterministic diagnostics.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-considerations">Security Considerations</h3>
+
+<p>Initialization only creates baseline datasets and does not perform network or version control operations. Access controls are handled at the repository level.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="observability-and-logging">Observability and Logging</h3>
+
+<p>Command results are written to standard output, and diagnostics are written to standard error with deterministic references to the module command that failed.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<p>Invalid usage exits with a non-zero status and a concise usage error. Module failures are surfaced directly without partial completion.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>Command-level tests exercise <code class="language-plaintext highlighter-rouge">bus init</code> against fixture workspaces. Tests verify that with no module flags only <code class="language-plaintext highlighter-rouge">datapackage.json</code> (and accounting entity) is created; with one or more module-include flags, config plus the selected modules’ baseline datasets and schemas are created; that the deterministic order of module inits is respected when multiple flags are supplied; that <code class="language-plaintext highlighter-rouge">bus init all</code> runs config init then all thirteen module inits in order; and that <code class="language-plaintext highlighter-rouge">bus init all --no-&lt;name&gt;</code> (e.g. <code class="language-plaintext highlighter-rouge">bus init all --no-payroll</code>) runs config init then the remaining modules in the same order, excluding the specified module(s).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="deployment-and-operations">Deployment and Operations</h3>
+
+<p>Not Applicable. The module ships as a BusDK CLI component and relies on the standard workspace layout.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="migrationrollout">Migration/Rollout</h3>
+
+<p>Not Applicable. Changes to the bootstrap baseline are handled by updating module <code class="language-plaintext highlighter-rouge">init</code> behavior and documentation.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="risks">Risks</h3>
+
+<p>Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and repeatable initialization.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<p><strong>Workspace bootstrap:</strong> the initial creation of baseline datasets and schemas in a new repository. When used in the context of bus-init, “full bootstrap” means running <code class="language-plaintext highlighter-rouge">bus init</code> with all thirteen module-include flags (or <code class="language-plaintext highlighter-rouge">bus init all</code>, optionally with <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> to exclude specific modules) so that config and every desired data-owning module’s baseline exist.</p>
+
+<p><strong>Module-include flag:</strong> a boolean flag (e.g. <code class="language-plaintext highlighter-rouge">--accounts</code>, <code class="language-plaintext highlighter-rouge">--journal</code>) that, when set, causes bus-init to run that module’s <code class="language-plaintext highlighter-rouge">init</code> after <code class="language-plaintext highlighter-rouge">bus config init</code>. With no module-include flags, only workspace configuration is initialized.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flag:</strong> for each module with a module-include flag, the corresponding exclusion flag (e.g. <code class="language-plaintext highlighter-rouge">--no-payroll</code>, <code class="language-plaintext highlighter-rouge">--no-accounts</code>). When the subcommand is <code class="language-plaintext highlighter-rouge">all</code>, each <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> excludes that module from the set of inits run; when the subcommand is not <code class="language-plaintext highlighter-rouge">all</code>, <code class="language-plaintext highlighter-rouge">--no-&lt;name&gt;</code> flags are ignored.</p>
+
+<p><strong>Module-owned initialization:</strong> each module creates its own datasets during bootstrap; bus-init only orchestrates which modules run.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./modules">Modules (SDD)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-config">bus-config</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="./bus-config">bus-config module SDD</a></li>
+  <li><a href="../modules/bus-init">End user documentation: bus-init CLI reference</a></li>
+  <li><a href="../modules/bus-config">End user documentation: bus-config CLI reference</a></li>
+  <li><a href="../layout/layout-principles">Layout principles</a></li>
+  <li><a href="../workflow/initialize-repo">Initialize repo</a></li>
+  <li><a href="../master-data/chart-of-accounts/index">Master data: Chart of accounts</a></li>
+  <li><a href="../master-data/parties/index">Master data: Parties (customers and suppliers)</a></li>
+  <li><a href="https://github.com/busdk/bus-init">Repository</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-init module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-INIT</code><br>
+Version: 2026-02-14<br>
+Status: Draft<br>
+Last updated: 2026-02-14<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-init.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

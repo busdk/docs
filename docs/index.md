@@ -1,4 +1,5 @@
 ---
+layout: default
 title: BusDK design spec
 description: Canonical design documentation for BusDK — modular CLI-first toolkit, workspace datasets, and auditable workflows.
 ---

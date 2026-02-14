@@ -1,5 +1,5 @@
 ---
-title: `qty` (quantity moved)
+title: "`qty` (quantity moved)"
 description: qty is part of the inventory movements master data.
 ---
 

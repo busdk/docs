@@ -11,9 +11,12 @@ body {
 .markdown-body {
   color: var(--busdk-fg);
   line-height: 1.65;
+}
 
-  // Comfortable reading width for prose without forcing horizontal scrolling.
-  max-width: 78ch;
+// Main inner is full width so section backgrounds (chapters, header) span the content area.
+// Content width is enforced by .busdk-content-inner / .busdk-chapter-inner inside each section.
+.busdk-main-inner.markdown-body {
+  max-width: none;
 }
 
 .markdown-body p,

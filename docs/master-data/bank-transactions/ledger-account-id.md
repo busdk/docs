@@ -1,5 +1,5 @@
 ---
-title: `ledger_account_id` (classification target for non-invoice events)
+title: "`ledger_account_id` (classification target for non-invoice events)"
 description: ledger_account_id is the classification target used when a bank transaction is not a direct invoice payment, such as fees, taxes, loan repayments, and…
 ---
 

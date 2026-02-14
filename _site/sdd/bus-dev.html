@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus-dev — Software Design Document | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus-dev — Software Design Document" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Bus Dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/ — module scaffolding, commit workflows, planning, agent-runner workflows, AGENTS.md refinement, and e2e test scaffolding." />
+<meta property="og:description" content="Bus Dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/ — module scaffolding, commit workflows, planning, agent-runner workflows, AGENTS.md refinement, and e2e test scaffolding." />
+<link rel="canonical" href="http://localhost:4000/sdd/bus-dev.html" />
+<meta property="og:url" content="http://localhost:4000/sdd/bus-dev.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus-dev — Software Design Document" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Bus Dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/ — module scaffolding, commit workflows, planning, agent-runner workflows, AGENTS.md refinement, and e2e test scaffolding.","headline":"bus-dev — Software Design Document","url":"http://localhost:4000/sdd/bus-dev.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-dev">bus-dev</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="introduction-and-overview">Introduction and Overview</h3>
+
+<p>Bus Dev is a developer-only companion module that centralizes the workflow logic that module repositories would otherwise duplicate in <code class="language-plaintext highlighter-rouge">scripts/</code>: module scaffolding, commit workflows, planning from documentation coverage gaps, agent-runner workflows, AGENTS.md refinement, and end-to-end test scaffolding. It provides a single entry point so behavior and prompts stay consistent and maintainable in one place, and module repositories can rely on <code class="language-plaintext highlighter-rouge">bus dev</code> instead of copying and maintaining per-repo scripts. Bus Dev does not implement agentic operations itself: it depends on the <a href="./bus-agent">bus-agent</a> module through Go library access for all agent runtime execution, prompt-template rendering, runtime detection, and installation references. Bus Dev owns workflow semantics, embedded prompt content, repository and module resolution, and the commit workflow; bus-agent owns the runner abstraction, backends, and execution contract.</p>
+
+<p>The problem it solved was duplication and drift: each BusDK module used to ship its own <code class="language-plaintext highlighter-rouge">scripts/commit.sh</code>, <code class="language-plaintext highlighter-rouge">scripts/work.sh</code>, <code class="language-plaintext highlighter-rouge">scripts/refine-agents.sh</code>, and <code class="language-plaintext highlighter-rouge">scripts/e2e.sh</code> (or equivalents), with slightly different behavior and prompts. Bus Dev consolidates that logic into one binary, <code class="language-plaintext highlighter-rouge">bus-dev</code>, invoked through the dispatcher as <code class="language-plaintext highlighter-rouge">bus dev …</code>, with embedded prompts and deterministic behavior.</p>
+
+<p>Scope and boundaries are unambiguous. Bus Dev operates on source code repositories and developer workflows only. It does not operate on accounting datasets, workspace CSV, or schemas. It is not part of the end-user bookkeeping command surface. End users running <code class="language-plaintext highlighter-rouge">bus accounts</code>, <code class="language-plaintext highlighter-rouge">bus journal</code>, or <code class="language-plaintext highlighter-rouge">bus validate</code> never need <code class="language-plaintext highlighter-rouge">bus dev</code>; it exists for contributors and automation that work inside BusDK module Git repositories.</p>
+
+<p>This module is an explicit exception to the BusDK-wide non-goal NG-001: “BusDK does not execute Git commands or commit changes.” That non-goal applies to the accounting and workspace toolchain. Bus Dev is isolated to developer tooling and enforces strict safety constraints: no remote Git operations (no push, pull, fetch, clone, or submodule update that contacts a remote), no history rewriting (no amend, rebase, or squash), deterministic behavior, and clear diagnostics. The exception is justified by isolating Git use to a single, well-defined developer-only module and by making the constraints normative in this SDD.</p>
+
+<p>The intended users are developers and automation (including AI agents) working inside a BusDK module repository. The document’s purpose is to serve as the single source of truth for implementation and review; the audience includes human reviewers and implementation agents.</p>
+
+<p>Out of scope for this SDD: implementing accounting logic, modifying workspace datasets, providing end-user CLI commands for bookkeeping, and any workflow that pushes to or pulls from a remote.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="goals">Goals</h3>
+
+<p>G-DEV-001 Centralize developer workflow logic. Replace per-repo scripts with a single <code class="language-plaintext highlighter-rouge">bus dev</code> command set so behavior and prompts are consistent and maintainable in one place.</p>
+
+<p>G-DEV-002 Developer-only, repository-scoped operations. All operations run in the context of the current working directory as a Git repository and affect only source code, agent instructions (AGENTS.md), and developer artifacts — never workspace datasets or end-user data.</p>
+
+<p>G-DEV-003 Safety and determinism. No remote Git operations, no history rewriting, and deterministic output and exit codes so scripts and CI can rely on <code class="language-plaintext highlighter-rouge">bus dev</code> behavior.</p>
+
+<p>G-DEV-004 Agent-friendly integration via bus-agent. Subcommands that invoke an external agent runtime use embedded prompts (owned by bus-dev) and depend on the bus-agent Go library for execution. The tool exposes consistent defaults for model and timeout and a well-defined contract for stdout/stderr and exit codes by using bus-agent’s runner, templating, and backend support; at least Cursor CLI, Codex, Gemini CLI, and Claude CLI are supported as selectable options through bus-agent.</p>
+
+<p>G-DEV-005 Deterministic module root initialization. A single subcommand (<code class="language-plaintext highlighter-rouge">bus dev init [DIR]</code>) MUST initialize a module root in the current working directory by default, or in an explicitly provided target directory when <code class="language-plaintext highlighter-rouge">DIR</code> is given, without performing any Git operations. By default it initializes directory structure and baseline files only (including a single <a href="https://agents.md/">AGENTS.md</a> at the project root and a root <code class="language-plaintext highlighter-rouge">Makefile</code> from an embedded sample when missing). Workflow operations (<code class="language-plaintext highlighter-rouge">plan</code>, <code class="language-plaintext highlighter-rouge">spec</code>, <code class="language-plaintext highlighter-rouge">work</code>, <code class="language-plaintext highlighter-rouge">e2e</code>) run only when the user explicitly appends them in any order or combination (for example <code class="language-plaintext highlighter-rouge">bus dev init plan spec work</code> or <code class="language-plaintext highlighter-rouge">bus dev init DIR work plan e2e</code>), and they execute in the exact order provided. Init is not required to obtain AGENTS.md: <code class="language-plaintext highlighter-rouge">bus dev spec</code> creates it from online SDD and module end-user documentation when the file is missing (FR-DEV-008), so a repository may get AGENTS.md by running spec without having run init.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="non-goals">Non-goals</h3>
+
+<p>NG-DEV-001 Bus Dev does not perform remote Git operations. Push, pull, fetch, clone, submodule update/init that contacts a remote, or any operation that could contact a remote is out of scope and must never be implemented.</p>
+
+<p>NG-DEV-002 Bus Dev does not rewrite history. Amend, rebase, squash, or any operation that changes existing commit SHAs is out of scope.</p>
+
+<p>NG-DEV-003 Bus Dev does not operate on workspace accounting datasets. Reading or writing workspace CSV, schemas, or datapackage.json for bookkeeping purposes is out of scope; that remains the domain of other BusDK modules.</p>
+
+<p>NG-DEV-004 Bus Dev does not replace the bus dispatcher or module discovery. It is one module among many; the dispatcher continues to route <code class="language-plaintext highlighter-rouge">bus dev …</code> to the <code class="language-plaintext highlighter-rouge">bus-dev</code> binary.</p>
+
+<p>NG-DEV-005 Bus Dev must never modify user-global Gemini configuration or memory. Any file under the user’s home Gemini config directory (e.g. <code class="language-plaintext highlighter-rouge">~/.gemini/</code>), including <code class="language-plaintext highlighter-rouge">~/.gemini/GEMINI.md</code>, and any global memory managed via interactive Gemini CLI commands (e.g. <code class="language-plaintext highlighter-rouge">/memory add</code>) are strictly off limits. Bus Dev may read global context only insofar as the Gemini CLI loads it by default when it runs; Bus Dev itself does not write, create, or edit anything outside the current repository. Developers who want global Gemini memory or user-level Gemini config must manage it manually outside Bus Dev.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="requirements">Requirements</h3>
+
+<p>FR-DEV-001 CLI integration and naming. The binary MUST be named <code class="language-plaintext highlighter-rouge">bus-dev</code> and MUST be invoked through the dispatcher as <code class="language-plaintext highlighter-rouge">bus dev &lt;operation&gt; [args]</code>. Acceptance criteria: the dispatcher routes <code class="language-plaintext highlighter-rouge">bus dev init</code>, <code class="language-plaintext highlighter-rouge">bus dev commit</code>, <code class="language-plaintext highlighter-rouge">bus dev stage</code>, <code class="language-plaintext highlighter-rouge">bus dev plan</code>, <code class="language-plaintext highlighter-rouge">bus dev work</code>, <code class="language-plaintext highlighter-rouge">bus dev spec</code>, and <code class="language-plaintext highlighter-rouge">bus dev e2e</code> to the same binary; when multiple operations (plan, spec, work, e2e, stage, commit) are passed in any order or combination (e.g. <code class="language-plaintext highlighter-rouge">bus dev plan spec work</code> or <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit</code>), the binary receives all of them as positional arguments and executes them in the order given.</p>
+
+<p>FR-DEV-001a Multiple workflow operations. The CLI MUST accept one or more consecutive operation names from the set {plan, spec, work, e2e, stage, commit} in a single invocation, in any order and any combination (including repeating an operation, e.g. <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit plan work stage commit</code>). When two or more of these operations are given, the tool MUST execute them in the order given, one at a time, in the same process and effective working directory. If an operation exits non-zero, the run MUST stop immediately and the tool MUST exit with that operation’s exit code; subsequent operations in the list MUST NOT run. The <strong>stage</strong> operation invokes the agent to prepare the working tree (see FR-DEV-006a), then stages remaining changes so that <strong>commit</strong> can be combined with workflow operations in one invocation without a manual staging step. When <strong>init</strong> is used, only operations from the set {plan, spec, work, e2e} MAY follow init (stage and commit are not accepted after init). Acceptance criteria: <code class="language-plaintext highlighter-rouge">bus dev plan spec work</code> and <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit</code> and <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit plan work stage commit</code> run the listed operations in the order given; if one fails, the run stops with that exit code; <code class="language-plaintext highlighter-rouge">bus dev init [DIR] plan spec work e2e</code> runs init first, then the workflow operations in the order provided; stage and commit are combinable with plan, spec, work, and e2e in the same invocation.</p>
+
+<p>FR-DEV-002 Repository discovery. For operations that require a repository context (commit, stage, plan, work, spec, e2e when run standalone), the tool MUST determine the current working repository from the effective working directory (after applying <code class="language-plaintext highlighter-rouge">-C</code>/<code class="language-plaintext highlighter-rouge">--chdir</code> if present). It MUST NOT require configuration files or environment variables to locate the repo. Acceptance criteria: when run from inside a Git repository root or any subdirectory, the tool uses that repository as the scope for repository-scoped operations; when the effective working directory is not a Git repository, repository-scoped operations exit with a clear diagnostic and a non-zero exit code, while <code class="language-plaintext highlighter-rouge">init</code> remains valid because it operates on directory initialization rather than repository discovery.</p>
+
+<p>FR-DEV-003 Module identity for spec and e2e. When a repository-scoped subcommand needs the current module name (e.g. for docs URLs or e2e script naming), the tool MUST derive it deterministically from the repository. The module name is the base name of the repository root directory (the last path component of the absolute path to the repo root). For <code class="language-plaintext highlighter-rouge">init</code>, which may run without a repository, the module name is derived from the base name of the resolved target directory. Acceptance criteria: the same repository always yields the same module name for repository-scoped operations; the same init target path always yields the same module name for initialization; no other derivation rule (e.g. canonical file) is used.</p>
+
+<p>FR-DEV-004 Embedded prompts. All prompts used to drive agent runs MUST be embedded as Go string constants or templates inside the bus-dev binary. The tool MUST NOT load prompts from external prompt files on disk. Acceptance criteria: a fresh clone of the bus-dev repo builds a binary that runs all subcommands without requiring any external prompt files; prompts may still be overridden or extended by flags or environment variables when explicitly documented.</p>
+
+<p>FR-DEV-004a Prompt-template rendering contract. Embedded prompts that use placeholders MUST use the <code class="language-plaintext highlighter-rouge">{{VARIABLE}}</code> syntax. Bus-dev MUST use the bus-agent library’s template renderer (or a contract-compatible implementation) so that rendering is deterministic and satisfies the same strict guarantees as bus-agent’s FR-AGT-006: missing or unresolved placeholders MUST cause the command to fail before any agent invocation, with a clear diagnostic and exit code 2. Rendering a template with no placeholders is a pass-through. This contract is part of the determinism and safety guarantees (NFR-DEV-001, NFR-DEV-005): the tool MUST NOT invoke an agent with partially substituted or ambiguous prompt text. Acceptance criteria: unit tests cover missing variable, unresolved variable, repeated placeholder replacement, and expected placeholder set per prompt template; the agent is never invoked when substitution fails.</p>
+
+<p>FR-DEV-004b Configurable docs base URL. The documentation base URL used to derive links in prompts and diagnostics MUST be configurable via the environment variable <code class="language-plaintext highlighter-rouge">BUS_DEV_DOCS_BASE_URL</code>. The default MUST be <code class="language-plaintext highlighter-rouge">https://docs.busdk.com</code>. The value MUST be normalized by trimming any trailing slash before use. This value is used to derive documentation links (including the main SDD URL and module-specific SDD and module-docs URLs) that appear in embedded prompts and in diagnostics. The main SDD URL is a first-class derived value: <code class="language-plaintext highlighter-rouge">MAIN_SDD_URL = &lt;DOCS_BASE_URL&gt;/sdd</code>. The module SDD URL is <code class="language-plaintext highlighter-rouge">&lt;DOCS_BASE_URL&gt;/sdd/&lt;module&gt;</code> and the module docs URL is <code class="language-plaintext highlighter-rouge">&lt;DOCS_BASE_URL&gt;/modules/&lt;module&gt;</code>, where <code class="language-plaintext highlighter-rouge">&lt;module&gt;</code> is the module name (base name of the repository root directory, per FR-DEV-003). Acceptance criteria: when unset, derived URLs use the default base; when set, they use the normalized value; trailing slash is removed; tests verify override effects on derived URLs.</p>
+
+<p>FR-DEV-005 Dependence on bus-agent for agent execution. The implementation MUST depend on the bus-agent Go library for invoking the configured external agent runtime. Bus-dev MUST use bus-agent’s runner interface, template renderer, runtime detection, and installation references rather than reimplementing them. Model, output format, and timeout remain configurable via flags or environment variables; resolution order for these options MUST follow the same logic as agent selection (see Run-config resolution in Component Design). Defaults are documented and deterministic. Acceptance criteria: bus-dev imports and uses the bus-agent package for all agent invocations; model, output format, and timeout are configurable via flags or environment; the integration is testable in isolation (e.g. by stubbing or mocking the bus-agent dependency or the executable in PATH as supported by bus-agent).</p>
+
+<p>FR-DEV-005a Supported agent runtimes via bus-agent. The implementation MUST use bus-agent’s supported runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI). Bus-dev MUST NOT implement its own agent backends; it MUST delegate to the bus-agent library for backend selection and execution. The active runtime MUST be selectable via a documented flag or environment variable (e.g. <code class="language-plaintext highlighter-rouge">--agent cursor|codex|gemini|claude</code> or equivalent) that bus-dev passes through to bus-agent’s selection resolution. Acceptance criteria: the user can select any of the four runtimes; switching runtime does not change subcommand semantics or embedded prompts; bus-agent’s backends and installation references are the single source of truth; documentation lists all runtimes and selection mechanism and references the bus-agent SDD where appropriate.</p>
+
+<p>FR-DEV-005b Agent selection configuration. The implementation MUST expose configuration so that the user can choose which agent runtime to use, and that choice MUST be easy to change both per command and for the session. Bus-dev MUST invoke the bus-agent library with caller context so that resolution follows the bus-dev order (FR-AGT-005): (1) per-command override (<code class="language-plaintext highlighter-rouge">--agent &lt;runtime&gt;</code>), (2) <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code> (bus-dev only), (3) <code class="language-plaintext highlighter-rouge">BUS_AGENT</code>, (4) bus-dev persistent preference (e.g. <code class="language-plaintext highlighter-rouge">bus-dev.agent</code> read via <a href="./bus-preferences">bus-preferences</a>), (5) bus-agent persistent preference (<code class="language-plaintext highlighter-rouge">bus-agent.runtime</code>), (6) first available runtime in the effective order. At any step, if the indicated runtime is disabled by user configuration, bus-agent prints a warning and resolution continues with the next source (FR-AGT-005b). The user sets bus-dev’s persistent default with <code class="language-plaintext highlighter-rouge">bus preferences set bus-dev.agent &lt;runtime&gt;</code> and the shared default with <code class="language-plaintext highlighter-rouge">bus preferences set bus-agent.runtime &lt;runtime&gt;</code>. Acceptance criteria: the user can set a session default via <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code> or <code class="language-plaintext highlighter-rouge">BUS_AGENT</code> and run multiple <code class="language-plaintext highlighter-rouge">bus dev</code> commands without re-specifying; the user can override for a single command with <code class="language-plaintext highlighter-rouge">--agent</code>; the resolution order is documented; invalid runtime names yield a clear usage error (exit 2); when a configured runtime is disabled, a warning is printed and the next source is used.</p>
+
+<p>FR-DEV-005d Agent detection and automatic default. The implementation MUST use bus-agent’s runtime detection and automatic-default selection rather than implementing its own. When no per-command flag, no session-stored preference, and (if supported) no persistent preference specify a runtime, bus-dev MUST call bus-agent’s resolution so that the automatic default is chosen from available runtimes in bus-agent’s documented order (alphabetic by runtime ID when no user order is configured; see bus-agent FR-AGT-005, FR-AGT-005a). Bus-dev MUST pass through to bus-agent any user-configured agent order and enable/disable settings so that the available set and selection order match bus-agent’s contract. If no agent is available, the tool MUST exit with a clear diagnostic and non-zero exit code and MUST direct the user to install or enable at least one supported agent using the installation references provided by the bus-agent library. Acceptance criteria: running <code class="language-plaintext highlighter-rouge">bus dev work</code> with no <code class="language-plaintext highlighter-rouge">--agent</code> and no <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code> results in bus-agent selecting an available agent when at least one is available; when none is available, the tool exits with a clear message and does not proceed; tests can verify behavior by controlling PATH or by using bus-agent’s testability guarantees (stub executables, hermetic tests).</p>
+
+<p>FR-DEV-005e Agent and model disclosure on each step. When the tool executes an agent-invoking step (plan, work, spec, e2e, or stage), it MUST print to stderr, at the start of that step and before streaming or capturing agent output, which internal agent runtime and which model are in use.</p>
+
+<p>FR-DEV-005f Set agent subcommand. The implementation MUST provide a subcommand <code class="language-plaintext highlighter-rouge">bus dev set agent &lt;runtime&gt;</code> that writes the bus-dev persistent default agent (e.g. <code class="language-plaintext highlighter-rouge">bus-dev.agent</code>) via the <a href="./bus-preferences">bus-preferences</a> Go library. The implementation MUST use the library directly and MUST NOT shell out to the <code class="language-plaintext highlighter-rouge">bus preferences</code> CLI. Acceptance criteria: running <code class="language-plaintext highlighter-rouge">bus dev set agent gemini</code> persists the preference; a subsequent <code class="language-plaintext highlighter-rouge">bus dev work</code> (with no <code class="language-plaintext highlighter-rouge">--agent</code>, no BUS_DEV_AGENT, no BUS_AGENT) uses that default when resolution reaches the bus-dev preference step; invalid runtime yields exit 2.</p>
+
+<p>FR-DEV-005g Set run-config subcommands (bus-dev namespace only). The implementation MUST provide subcommands <code class="language-plaintext highlighter-rouge">bus dev set model &lt;value&gt;</code>, <code class="language-plaintext highlighter-rouge">bus dev set output-format &lt;ndjson|text&gt;</code>, and <code class="language-plaintext highlighter-rouge">bus dev set timeout &lt;duration&gt;</code> that write <strong>only</strong> the bus-dev preference keys <code class="language-plaintext highlighter-rouge">bus-dev.model</code>, <code class="language-plaintext highlighter-rouge">bus-dev.output_format</code>, and <code class="language-plaintext highlighter-rouge">bus-dev.timeout</code> respectively via the <a href="./bus-preferences">bus-preferences</a> Go library. The implementation MUST use the library directly and MUST NOT shell out to the <code class="language-plaintext highlighter-rouge">bus preferences</code> or <code class="language-plaintext highlighter-rouge">bus agent</code> CLI. Bus-dev MUST NOT write to any other namespace (e.g. <code class="language-plaintext highlighter-rouge">bus-agent.*</code>); when the user runs <code class="language-plaintext highlighter-rouge">bus dev set model</code>, <code class="language-plaintext highlighter-rouge">bus dev set output-format</code>, or <code class="language-plaintext highlighter-rouge">bus dev set timeout</code>, only the corresponding <code class="language-plaintext highlighter-rouge">bus-dev.*</code> key is written. Valid values for output-format are <code class="language-plaintext highlighter-rouge">ndjson</code> and <code class="language-plaintext highlighter-rouge">text</code>. Invalid value for any subcommand MUST yield exit 2. Acceptance criteria: each subcommand persists only the corresponding bus-dev key; a subsequent agent-invoking command uses the new value when resolution reaches the bus-dev preference step; invalid value yields exit 2; no bus-agent namespace key is ever written by bus-dev.</p>
+
+<p>FR-DEV-005c Gemini integration is repository-local only. When the selected agent runtime is Gemini CLI, Bus Dev MUST create, edit, and rely only on repository-scoped files: a repo-root <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, optional directory-scoped <code class="language-plaintext highlighter-rouge">GEMINI.md</code> files, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> (for context discovery, ignore behavior, tool policy, and MCP configuration), and <code class="language-plaintext highlighter-rouge">.geminiignore</code> (for excluding files from context ingestion). Bus Dev MUST NOT modify any user-global Gemini configuration or memory (see NG-DEV-005). Acceptance criteria: no code path writes to <code class="language-plaintext highlighter-rouge">~/.gemini/</code> or any path outside the current repository; documentation describes the repo-local Gemini files and their roles; tests verify that the tool never invokes Gemini CLI in a way that would add or change global memory (e.g. no <code class="language-plaintext highlighter-rouge">/memory add</code> or equivalent).</p>
+
+<p>FR-DEV-006 Commit subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev commit</code> subcommand MUST implement behavior equivalent to the normative commit workflow specified in the Command Surface section below, including: do nothing and exit success when there is nothing staged (or working tree clean in the staged-set sense); operate strictly on the Git index; no file modification, no staging, no amend/rebase, no remote operations; depth-first submodule commits when submodules have staged changes; clear report and stop when a submodule commit causes an unstaged gitlink in the superproject; and enforce the commit message quality rules, atomicity guidance, and failure/hook handling rules as normative requirements. Acceptance criteria: the SDD defines these rules; the implementation enforces them; tests verify behavior with a fixture repo (including submodules when applicable).</p>
+
+<p>FR-DEV-006a Stage subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev stage</code> subcommand MUST prepare the working tree so that only intended files are staged. The tool MUST invoke the configured agent runtime with an embedded prompt that instructs the agent to: (1) review the working tree and identify files that should not be tracked by Git (for example temporary files, e2e test leftovers, build artifacts, or other files that do not belong in version control); (2) for each such file or pattern, either add it (or a matching pattern) to <code class="language-plaintext highlighter-rouge">.gitignore</code> so it is not staged, or remove the file from the project if it is purely temporary and should not exist in the working tree; (3) leave the working tree in a state where only intended, trackable changes remain. After the agent has completed successfully, the tool MUST stage all remaining changes at the repository root (e.g. the equivalent of <code class="language-plaintext highlighter-rouge">git add .</code> from the resolved repository root). The tool MUST NOT commit, amend, rebase, or perform any remote Git operation. Only the working tree of the current repository is in scope; the tool MUST NOT recursively stage inside submodules. Acceptance criteria: the stage subcommand invokes the agent with the embedded stage prompt; the agent may update <code class="language-plaintext highlighter-rouge">.gitignore</code> and may remove temporary files; after the agent exits successfully, the tool runs local <code class="language-plaintext highlighter-rouge">git add</code> to stage remaining changes; no remote operations; tests verify behavior with a fixture repo (including stubbed agent when hermetic tests are required).</p>
+
+<p>FR-DEV-007 Work subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev work</code> subcommand MUST implement the canonical “do the work in this repo now” agent-runner workflow equivalent to the provided work script: operate only inside the current module repository, follow the module’s AGENTS.md and design docs, implement concrete code changes, add tests, run the Makefile checks, and update README.md before finishing. The agent MUST be allowed to read the repository’s own docs and AGENTS.md as the authoritative specs for that repo. When <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists at repository root, the embedded work prompt MUST instruct the agent to read it first and prioritize unchecked items in <code class="language-plaintext highlighter-rouge">PLAN.md</code> before proposing or executing additional work. When work completes an item from <code class="language-plaintext highlighter-rouge">PLAN.md</code>, the workflow MUST check off that item in <code class="language-plaintext highlighter-rouge">PLAN.md</code> (for example as <code class="language-plaintext highlighter-rouge">- [x]</code>). <code class="language-plaintext highlighter-rouge">bus dev work</code> MUST NOT remove already checked items from <code class="language-plaintext highlighter-rouge">PLAN.md</code>; pruning completed checked items is owned by <code class="language-plaintext highlighter-rouge">bus dev plan</code> (FR-DEV-011). When the selected runtime is Gemini CLI, the agent MUST also be able to use repository-local Gemini context (e.g. repo-root and directory-scoped <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>, <code class="language-plaintext highlighter-rouge">.geminiignore</code>) as documented in the Gemini CLI integration subsection; Bus Dev supports AGENTS.md and Gemini context in parallel without changing core workflow contracts. In headless or script mode, the workflow MUST remain non-interactive and MUST NOT perform prohibited actions (especially network operations); see Headless and script mode below. Acceptance criteria: the workflow is driven by an embedded prompt template; no external prompt file is required; when <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists the prompt consumes it before other task discovery; completed plan items are checked off by work; checked plan items are never removed by work; behavior is documented and testable via a stubbed agent; headless invocation does not trigger interactive or network operations.</p>
+
+<p>FR-DEV-008 Spec subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev spec</code> subcommand MUST refine only the current repository’s AGENTS.md and nothing else. The tool MUST use the path <code class="language-plaintext highlighter-rouge">AGENTS.md</code> at the repository root (no module-derived path). The file is the single, open-format agent-instruction file per the <a href="https://agents.md/">AGENTS.md</a> convention. If AGENTS.md does not exist, the tool MUST create it before refining: the embedded spec prompt MUST instruct the agent to produce an initial AGENTS.md from the online BusDK SDD (main SDD, module SDD, module end-user documentation) and related documents, so that the resulting file is a compact but detailed local spec describing how to implement this tool. If AGENTS.md already exists, the tool MUST run an embedded refinement prompt that instructs the agent to update only that file and to align it with the latest BusDK specs and the AGENTS.md format. In both cases the agent MUST use the documentation URLs derived from the docs base URL and prompt variables (e.g. <code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code>). The written AGENTS.md MUST be a compact but detailed local spec for implementing the current module — grounded in the module’s SDD and end-user docs, not a generic template. Acceptance criteria: no refinement of source code, tests, or README; the path is always repository-root <code class="language-plaintext highlighter-rouge">AGENTS.md</code>; when AGENTS.md is missing it is created from online docs then refined in the same run; when it exists it is refined in place; created or refined content is module-specific implementation guidance.
+FR-DEV-008a Cursor rules refactor. When running <code class="language-plaintext highlighter-rouge">bus dev spec</code>, if a Cursor rule file exists at <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> (where <code class="language-plaintext highlighter-rouge">&lt;MODULE_NAME&gt;</code> is the module name per FR-DEV-003, e.g. <code class="language-plaintext highlighter-rouge">bus-accounts</code>), the tool MUST include that file’s content in the refinement context. The embedded spec prompt MUST instruct the agent to refactor the substantive content from that Cursor rule into AGENTS.md so that agent instructions are consolidated in AGENTS.md. After the agent has written the updated AGENTS.md, the tool MUST remove the file <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code>. This is the only permitted case where bus-dev (or the shared instruction contract used by bus-agent) may replace or remove existing repo content for instruction standardization; all other repo-local file changes MUST be additive only per NFR-DEV-008. If <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> does not exist, no Cursor rule file is read or deleted. Acceptance criteria: when the Cursor rule file exists, its content is merged into AGENTS.md and the file is deleted; when it does not exist, spec behavior is unchanged; no other files under <code class="language-plaintext highlighter-rouge">.cursor/rules/</code> are modified; the MDC exception is documented and testable.</p>
+
+<p>FR-DEV-009 E2E subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev e2e</code> subcommand MUST provide a guided workflow to detect missing end-to-end tests for the current module repository and scaffold them in a hermetic way, consistent with BusDK testing conventions and the module’s SDD and end-user documentation. E2E tests are Bash shell scripts that run the module’s compiled binary; they MUST live under the <code class="language-plaintext highlighter-rouge">tests/</code> directory and MUST be named <code class="language-plaintext highlighter-rouge">e2e_bus_&lt;name&gt;.sh</code> where <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code> is the module name with the <code class="language-plaintext highlighter-rouge">bus-</code> prefix stripped (e.g. module <code class="language-plaintext highlighter-rouge">bus-accounts</code> → <code class="language-plaintext highlighter-rouge">tests/e2e_bus_accounts.sh</code>). Each bus module MUST also implement complete unit tests; e2e and unit-test conventions are described in agent instructions (e.g. <a href="https://agents.md/">AGENTS.md</a>) and agent-specific configuration. The tool MUST use the module’s SDD and end-user documentation to determine which tests are needed and MUST produce scaffolds that cover the behavior described there; language- and module-specific details are defined in agent rules. When <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists at repository root, the embedded e2e prompt MUST instruct the agent to read it first, verify that each checked item is fully covered by e2e tests, and prioritize unchecked test-related items from the plan before proposing additional test scope. Independently of <code class="language-plaintext highlighter-rouge">PLAN.md</code>, the command MUST continue discovering other untested behavior required by the module SDD and end-user docs. <code class="language-plaintext highlighter-rouge">bus dev e2e</code> MUST NOT remove already checked items from <code class="language-plaintext highlighter-rouge">PLAN.md</code>; pruning completed checked items is owned by <code class="language-plaintext highlighter-rouge">bus dev plan</code> (FR-DEV-011). Acceptance criteria: the command detects missing e2e tests by consulting the module SDD and end-user docs; when <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists the prompt consumes it before additional discovery; checked plan items are validated against e2e coverage; other untested documented behavior is still discovered; checked plan items are never removed by e2e; scaffold output uses the <code class="language-plaintext highlighter-rouge">tests/e2e_bus_&lt;name&gt;.sh</code> layout and naming; scaffold content is deterministic and aligned with those sources and with agent rules; the command has defined preconditions and safety constraints.</p>
+
+<p>FR-DEV-010 Init subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev init [DIR] [--lang go] [plan|spec|work|e2e ...]</code> subcommand MUST initialize module-root files without performing any Git operations, and MUST run workflow operations only when they are explicitly appended after init. Behavior MUST be equivalent to: (1) resolve the target directory as current working directory when <code class="language-plaintext highlighter-rouge">DIR</code> is omitted, or as <code class="language-plaintext highlighter-rouge">DIR</code> when provided; (2) if <code class="language-plaintext highlighter-rouge">DIR</code> is provided and does not exist, create it; if the resolved target path exists but is not a directory, exit with code 2 and a clear error; (3) when init runs, ensure a single <code class="language-plaintext highlighter-rouge">AGENTS.md</code> exists at the target directory root (project root), with default content that MAY depend on <code class="language-plaintext highlighter-rouge">--lang</code> per the <a href="https://agents.md/">AGENTS.md</a> format; (4) ensure a root <code class="language-plaintext highlighter-rouge">Makefile</code> exists, creating it from an embedded sample Makefile when missing; (5) if one or more workflow operations (plan, spec, work, e2e) are appended after init in any order or combination, set the effective working directory to the target directory and execute those operations exactly in the order provided. The <code class="language-plaintext highlighter-rouge">--lang</code> flag MUST default to <code class="language-plaintext highlighter-rouge">go</code> and MUST control which kind of default AGENTS.md content the tool installs for future multi-language support. Init is not a prerequisite for AGENTS.md: repositories may obtain AGENTS.md by running <code class="language-plaintext highlighter-rouge">bus dev spec</code> when the file is missing (FR-DEV-008), without ever running init. Acceptance criteria: no Git commands are executed; running <code class="language-plaintext highlighter-rouge">bus dev init</code> initializes only the current directory and does not invoke plan/spec/work/e2e; running <code class="language-plaintext highlighter-rouge">bus dev init DIR</code> performs the same initialization in DIR; running <code class="language-plaintext highlighter-rouge">bus dev init [DIR] plan spec work e2e</code> (or any order/combination of plan, spec, work, e2e) runs all listed operations in that exact order and stops on first failure; initialization creates missing scaffold files and does not overwrite an existing <code class="language-plaintext highlighter-rouge">Makefile</code> by default; tests verify both default init-only behavior and ordered optional workflow execution.</p>
+
+<p>FR-DEV-011 Plan subcommand behavior. The <code class="language-plaintext highlighter-rouge">bus dev plan</code> subcommand MUST review online documentation and current repository content to produce a compact task plan in <code class="language-plaintext highlighter-rouge">PLAN.md</code> at repository root. The required documentation inputs are: the main SDD URL (<code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>), the current module SDD URL (<code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code>), the current module end-user docs URL (<code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code>), and any project SDD pages directly relevant to requirements found in those pages. The command MUST detect unimplemented features and other undone work by comparing documented requirements and expected behavior to the current repository. If <code class="language-plaintext highlighter-rouge">PLAN.md</code> already exists, the command MUST re-validate existing items against current repository state and current documentation, remove items that are already done (including previously checked items), retain items that are still undone, and then add any newly detected missing work. The command MUST write only <code class="language-plaintext highlighter-rouge">PLAN.md</code> and MUST NOT modify source files, tests, or other docs. <code class="language-plaintext highlighter-rouge">PLAN.md</code> content written by <code class="language-plaintext highlighter-rouge">bus dev plan</code> MUST be a compact unchecked Markdown task list, with one unchecked item per still-undone or newly detected unimplemented feature or undone work item, ordered from highest to lowest priority. Each item MUST be short and action-oriented, with enough context for an agent to choose the next task, and MUST avoid implementation details that belong in the project SDD and related docs. Acceptance criteria: <code class="language-plaintext highlighter-rouge">bus dev plan</code> creates or overwrites <code class="language-plaintext highlighter-rouge">PLAN.md</code> deterministically for the same repository and docs inputs; when <code class="language-plaintext highlighter-rouge">PLAN.md</code> existed before the run, completed items (including checked ones) are removed and still-valid undone items are preserved or rephrased compactly; newly detected missing work is appended into the same prioritized list; every listed item is unchecked (<code class="language-plaintext highlighter-rouge">- [ ]</code>); list ordering reflects priority; no implementation-level steps are included; no files other than <code class="language-plaintext highlighter-rouge">PLAN.md</code> are changed.</p>
+
+<p>FR-DEV-012 Working-directory lock. At most one <code class="language-plaintext highlighter-rouge">bus dev</code> invocation that operates on a given directory MAY run at a time. For subcommands that read or modify the effective operation directory (init, commit, stage, plan, work, spec, e2e), the tool MUST acquire an exclusive lock on that directory before performing any subcommand work and MUST release the lock when the process exits, whether the exit is normal or abnormal. A second invocation that targets the same effective operation directory MUST block until the first invocation releases the lock, then acquire the lock and proceed. Subcommands that only write preferences (e.g. <code class="language-plaintext highlighter-rouge">bus dev set agent</code>, <code class="language-plaintext highlighter-rouge">bus dev set model</code>, <code class="language-plaintext highlighter-rouge">bus dev set output-format</code>, <code class="language-plaintext highlighter-rouge">bus dev set timeout</code>) do not require the lock because they do not touch the working directory. The lock scope is the effective operation directory: for <code class="language-plaintext highlighter-rouge">bus dev init [DIR]</code> it is the resolved init target directory (effective working directory when DIR is omitted, or DIR when provided); for commit, stage, plan, work, spec, and e2e it is the repository root derived from the effective working directory. Acceptance criteria: two concurrent <code class="language-plaintext highlighter-rouge">bus dev work</code> (or plan, spec, e2e, stage, commit, or init targeting the same directory) run one after the other; the second blocks until the first exits; the lock is released on success, on failure, and on interrupt; <code class="language-plaintext highlighter-rouge">bus dev set …</code> does not participate in locking; tests can verify serialization and lock release.</p>
+
+<p>NFR-DEV-001 Determinism. Output and exit codes MUST be deterministic for the same inputs and repository state. Acceptance criteria: repeated runs with the same staged set and same repo state yield the same exit code and consistent diagnostics.</p>
+
+<p>NFR-DEV-002 No remote operations. The implementation MUST NOT perform any Git operation that contacts a remote. Acceptance criteria: no code path may call push, pull, fetch, clone, or submodule update/init in a way that touches a remote; tests and code review can verify this.</p>
+
+<p>NFR-DEV-003 Hermetic tests. Tests MUST be hermetic: no network, no real external services, no reliance on a real agent runtime (e.g. Cursor CLI, Codex, Gemini CLI, or Claude CLI) or remote. Acceptance criteria: unit tests and fixture-based tests run in CI without network; agent invocation is tested by stubbing the agent binary in PATH and feeding deterministic NDJSON or output to exercise parsing, filtering, and error handling.</p>
+
+<p>NFR-DEV-004 Cross-platform. Behavior and tests MUST be defined so they can run on Linux and macOS in line with the project’s CI. Acceptance criteria: no OS-specific assumptions are left unspecified; where behavior differs by platform, it is documented.</p>
+
+<p>NFR-DEV-005 Security. The tool MUST NOT execute arbitrary code from repository content. The only permitted external execution is: the configured agent runtime (with embedded prompts) and local <code class="language-plaintext highlighter-rouge">git</code> for the commit and stage workflows (NFR-DEV-002 covers the no-remote constraint). Acceptance criteria: no execution of repository-provided scripts or binaries; agent and Git usage are the only defined execution boundaries.</p>
+
+<p>NFR-DEV-006 Maintainability. The bus-agent integration and subcommand handlers MUST be testable in isolation with stubbed dependencies (e.g. stub agent in PATH as supported by bus-agent, fixture repositories). Prompts and derivation rules MUST be documented in this SDD so that behavior can be verified without reading source. Acceptance criteria: unit tests cover repo resolution, flag parsing, and subcommand flow with bus-agent stubbed or stub executable in PATH; design docs are the single source of truth for derivation and command semantics.</p>
+
+<p>NFR-DEV-007 No user configuration outside project. Bus-dev MUST NOT edit any user configuration outside the project working directory (the repository or init target directory). Bus-dev MAY set environment variables and command-line options for the child agent process; it MUST NOT create, modify, or delete files outside the project working directory for configuration or instruction discovery. This aligns with the same constraint in <a href="./bus-agent">bus-agent</a> (NFR-AGT-005). Acceptance criteria: no code path writes to paths outside the effective project workdir for config or instruction setup; tests verify workdir-scoped behavior.</p>
+
+<p>NFR-DEV-008 Additive-only repo file changes. When bus-dev creates or modifies files inside the repository to enable instruction discovery or runtime adapter support (e.g. Gemini repo-local files, Cursor rules), changes MUST be additive only: existing user content MUST NOT be removed or rewritten. The only permitted exception is the legacy Cursor rule file at <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> (module name per FR-DEV-003), which MAY be replaced or migrated as part of standardizing on AGENTS.md (see FR-DEV-008a). Any other repo-local file creation or merge MUST use append-only Bus-owned blocks with explicit markers. This aligns with <a href="./bus-agent">bus-agent</a> NFR-AGT-006 and FR-AGT-014. Acceptance criteria: repo-local file creation or merge uses append-only Bus-owned blocks with clear markers; existing user content is never deleted or overwritten except for the documented .cursor/rules/<module_name>.mdc exception; behavior is testable.</module_name></p>
+
+<p>Bus-dev uses the same instruction model as bus-agent for its developer workflows (commit, work, spec, e2e): AGENTS.md at the repository root is the canonical, vendor-neutral instruction source; per-runtime adapters (Codex, Cursor, Gemini CLI, Claude Code) follow the contract defined in the bus-agent SDD (“Project instructions (AGENTS.md) and per-runtime adapters”), so the agent instruction contract is shared across modules and can be implemented and tested consistently.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="system-architecture">System Architecture</h3>
+
+<p>Bus Dev is a thin CLI that delegates to testable packages. The main entrypoint is <code class="language-plaintext highlighter-rouge">Run(args, workdir, stdout, stderr) int</code>; the <code class="language-plaintext highlighter-rouge">main</code> package calls it and exits with its return value. No <code class="language-plaintext highlighter-rouge">os.Exit</code> is used outside <code class="language-plaintext highlighter-rouge">main</code>, so behavior is testable without process exit.</p>
+
+<p>High-level components:</p>
+
+<ul>
+  <li>
+    <p><strong>CLI layer.</strong> Parses global flags (including BusDK-standard <code class="language-plaintext highlighter-rouge">-C</code>, <code class="language-plaintext highlighter-rouge">-o</code>, <code class="language-plaintext highlighter-rouge">-v</code>, <code class="language-plaintext highlighter-rouge">-q</code>, <code class="language-plaintext highlighter-rouge">--help</code>, <code class="language-plaintext highlighter-rouge">--version</code>) and the <code class="language-plaintext highlighter-rouge">bus dev</code> operation(s), resolves the effective working directory, and resolves the agent runtime selection: per-command flag overrides session-stored preference; when neither is set, the implementation delegates to bus-agent for the automatic default from available runtimes in bus-agent’s order (alphabetic when no user order is configured; user can configure order and enable/disable per bus-agent FR-AGT-005a) (FR-DEV-005b, FR-DEV-005d). For subcommands that operate on a directory (init, commit, stage, plan, work, spec, e2e), the CLI acquires an exclusive working-directory lock on the effective operation directory before running any handler and releases it when the process exits; a concurrent invocation for the same directory blocks until the lock is available (FR-DEV-012). When an agent step runs, the tool prints to stderr which agent and model are in use (FR-DEV-005e). When multiple workflow operations (plan, spec, work, e2e) are given in any order or combination, it runs them in the order given, delegating to each handler in sequence and stopping on first failure (FR-DEV-001a); otherwise it delegates to the single operation’s handler.</p>
+  </li>
+  <li>
+    <p><strong>Repository and module resolution.</strong> A small package (or internal function set) that, given a workdir, detects whether it is inside a Git repository, finds the repository root, and derives the module name when needed (e.g. for <code class="language-plaintext highlighter-rouge">bus dev plan</code>, <code class="language-plaintext highlighter-rouge">bus dev spec</code>, and <code class="language-plaintext highlighter-rouge">bus dev e2e</code>). The module name is the base name of the repository root directory (FR-DEV-003). This layer does not perform any Git write operations; it only reads repository metadata.</p>
+  </li>
+  <li>
+    <p><strong>bus-agent library dependency.</strong> Bus Dev does not implement an agent runner itself. It depends on the <a href="./bus-agent">bus-agent</a> Go library for runtime selection, prompt-template rendering, command construction, timeout enforcement, and output capture or streaming. Subcommand handlers (plan, work, spec, e2e) pass workflow-specific prompt content and variables to bus-agent, which invokes the configured external agent (Cursor CLI, Codex, Gemini CLI, or Claude CLI) in the given workdir. Bus Dev supports both AGENTS.md and Gemini context in parallel: workflow contracts do not change based on which backend is selected; the agent reads the repo’s Cursor rules and, when Gemini CLI is selected, the repo’s repository-local Gemini context as documented in the Gemini CLI integration subsection. In headless or script mode, bus-dev invokes bus-agent in a way that keeps workflows non-interactive and prevents prohibited actions (especially network operations); bus-agent’s script-safe contract supports this.</p>
+  </li>
+  <li>
+    <p><strong>Subcommand handlers.</strong> One logical component per operation: init, commit, stage, plan, work, spec, e2e. Each handler receives parsed flags, the resolved workdir (and repo root and module name when relevant), and stdout/stderr writers, and returns an exit code. When the user invokes multiple workflow operations in any order or combination (e.g. <code class="language-plaintext highlighter-rouge">bus dev plan spec work</code>, <code class="language-plaintext highlighter-rouge">bus dev work plan</code>, or <code class="language-plaintext highlighter-rouge">bus dev init [DIR] plan work e2e</code>), the CLI layer invokes each handler in the order given and stops on first non-zero exit (FR-DEV-001a). Init resolves the target directory (current directory by default), creates missing scaffold files (repository-root <code class="language-plaintext highlighter-rouge">AGENTS.md</code> and root <code class="language-plaintext highlighter-rouge">Makefile</code> from an embedded sample if missing), and by default does not invoke agent workflows; it invokes plan/spec/work/e2e only when those operations are explicitly present after init (stage and commit are not accepted after init). The plan handler derives documentation URLs, reads existing <code class="language-plaintext highlighter-rouge">PLAN.md</code> when present, drives the embedded planning prompt via bus-agent to re-validate prior items and discover new missing work, prunes completed checked items, and enforces that only repository-root <code class="language-plaintext highlighter-rouge">PLAN.md</code> is written. The spec handler creates repository-root <code class="language-plaintext highlighter-rouge">AGENTS.md</code> from online SDD and user docs when missing, then refines it (or refines it in place when it exists); when <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> exists, the handler includes its content in the refinement context and removes that file after the agent has merged it into AGENTS.md (FR-DEV-008, FR-DEV-008a). The work handler checks off completed plan items but does not delete checked items. The e2e handler validates checked plan items against e2e coverage and does not delete checked items. The stage handler invokes the agent with the embedded stage prompt (FR-DEV-006a); after the agent completes successfully, the handler stages all remaining changes at the repository root (e.g. <code class="language-plaintext highlighter-rouge">git add .</code>). Commit may use Git only for read operations plus <code class="language-plaintext highlighter-rouge">git commit</code> with already-staged content; it must not stage, amend, or touch remotes.</p>
+  </li>
+  <li>
+    <p><strong>Embedded prompts.</strong> Prompts for commit, plan, work, spec, stage, and (when applicable) e2e are compiled into the binary as string constants or templates. Templates use <code class="language-plaintext highlighter-rouge">{{VARIABLE}}</code> placeholders; variables are derived at runtime from the repository resolution layer and the docs base URL (see Prompt variable catalog and FR-DEV-004a). Bus-dev uses the bus-agent library for template rendering (or a contract-compatible implementation) so that rendering is deterministic and fails fast on missing or unresolved placeholders before any agent invocation. No prompts are loaded from the filesystem.</p>
+  </li>
+  <li>
+    <p><strong>Log formatting (optional).</strong> The NDJSON-to-text style formatter (equivalent to the provided format-cursor-log / ndjson-to-text behavior) may be provided by the bus-agent library or implemented locally when bus-dev streams agent output to stderr. The SDD treats this as the desired direction; whether it is a separate subcommand or only internal is left as an implementation detail, with the initial scope kept minimal and deterministic.</p>
+  </li>
+</ul>
+
+<p>Data flow: user invokes <code class="language-plaintext highlighter-rouge">bus dev &lt;subcommand&gt;</code>; dispatcher runs <code class="language-plaintext highlighter-rouge">bus-dev &lt;subcommand&gt; [args]</code>; CLI parses args and workdir; repo resolution checks Git repo and optionally module name; subcommand handler runs (Git for commit; agent then Git for stage; agent for plan/work/spec/e2e, or scaffold/detect for e2e). When an agent is used, the handler supplies embedded prompt template and variables to the bus-agent library, which renders the prompt and invokes the selected external agent; output is captured or streamed per bus-agent’s contract. All diagnostics to stderr, deterministic result/exit code.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-decisions">Key Decisions</h3>
+
+<p>KD-DEV-001 Git exception scoped to bus-dev. BusDK’s NG-001 (no Git execution) is relaxed only for the bus-dev module, and only for local, non-remote, non-rewriting operations, to support developer workflows without embedding Git logic in every other module.</p>
+
+<p>KD-DEV-002 Prompts embedded in binary. Prompts are not loaded from the repository or from external files so that behavior is versioned with the binary and consistent across all module repos that use the same bus-dev version.</p>
+
+<p>KD-DEV-003 Agent execution via bus-agent. The tool does not implement its own agent runner; it depends on the bus-agent Go library to invoke external agent runtimes. This keeps bus-dev focused on workflow semantics and prompts while bus-agent owns the runner abstraction, backends, and execution contract.</p>
+
+<p>KD-DEV-004 Modular agent backends from bus-agent. Cursor CLI, Codex, Gemini CLI, and Claude CLI are supported as selectable backends through the bus-agent library. Bus-dev passes the user’s selection (or automatic default) to bus-agent, which provides the backend abstraction and preference order (FR-DEV-005d). Adding or changing runtimes is done in bus-agent; bus-dev’s subcommand semantics and embedded prompts do not change.</p>
+
+<p>KD-DEV-005 Thin CLI, testable core. The CLI parses arguments and delegates to packages that take workdir and I/O writers; <code class="language-plaintext highlighter-rouge">Run(...) int</code> allows full unit and integration tests without spawning processes or calling <code class="language-plaintext highlighter-rouge">os.Exit</code>.</p>
+
+<p>KD-DEV-006 E2E test convention. Bus module e2e tests are Bash scripts under <code class="language-plaintext highlighter-rouge">tests/</code> named <code class="language-plaintext highlighter-rouge">e2e_bus_&lt;name&gt;.sh</code>, running the compiled binary. Detection of missing tests and scaffold content are driven by the module’s SDD and end-user documentation; agent instructions (e.g. <a href="https://agents.md/">AGENTS.md</a>) define language and module-specific testing expectations. Modules also implement full unit tests in addition to e2e.</p>
+
+<p>KD-DEV-007 Single-instance per directory via file lock. To prevent two <code class="language-plaintext highlighter-rouge">bus dev</code> invocations from running concurrently on the same working directory (which would risk conflicting edits to PLAN.md, AGENTS.md, staging, and agent context), the tool acquires an exclusive lock on the effective operation directory and blocks a second invocation until the first exits. Locking is implemented with a lock file and exclusive file lock (e.g. flock) so behavior is deterministic and script-friendly: the next command waits rather than failing. The <code class="language-plaintext highlighter-rouge">set</code> subcommands are excluded because they only write preferences and do not touch the directory.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="component-design-and-interfaces">Component Design and Interfaces</h3>
+
+<p>Interface IF-DEV-001 (dispatcher). The <code class="language-plaintext highlighter-rouge">bus</code> dispatcher invokes the <code class="language-plaintext highlighter-rouge">bus-dev</code> binary with the remaining arguments after <code class="language-plaintext highlighter-rouge">dev</code>: global flags and one or more operation names. For <code class="language-plaintext highlighter-rouge">bus dev init [DIR]</code>, the first positional after flags is <code class="language-plaintext highlighter-rouge">init</code>; the next positional is optional and, when present and not one of <code class="language-plaintext highlighter-rouge">plan|spec|work|e2e</code>, is treated as the target directory; any following operation tokens from <code class="language-plaintext highlighter-rouge">plan|spec|work|e2e</code> are executed in the order given (stage and commit are not accepted after init). For a single operation, e.g. <code class="language-plaintext highlighter-rouge">bus dev plan</code>, <code class="language-plaintext highlighter-rouge">bus dev work</code>, <code class="language-plaintext highlighter-rouge">bus dev stage</code>, or <code class="language-plaintext highlighter-rouge">bus dev commit</code>, the binary runs that operation. For multiple operations (e.g. <code class="language-plaintext highlighter-rouge">bus dev plan spec work</code>, <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit</code>, or <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit plan work stage commit</code>), the binary receives those operation names in the order given and executes them in sequence (FR-DEV-001a). Standard global flags (<code class="language-plaintext highlighter-rouge">-C</code>, <code class="language-plaintext highlighter-rouge">-o</code>, <code class="language-plaintext highlighter-rouge">-v</code>, <code class="language-plaintext highlighter-rouge">-q</code>, <code class="language-plaintext highlighter-rouge">--help</code>, <code class="language-plaintext highlighter-rouge">--version</code>, etc.) follow BusDK CLI conventions. An agent selection flag (e.g. <code class="language-plaintext highlighter-rouge">--agent &lt;runtime&gt;</code>) and the session-stored preference (e.g. <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code>) are resolved as per FR-DEV-005b; see traceability links.</p>
+
+<p>Interface IF-DEV-002 (Run entrypoint). The program exposes a single entrypoint <code class="language-plaintext highlighter-rouge">Run(args []string, workdir string, stdout, stderr io.Writer) int</code>. <code class="language-plaintext highlighter-rouge">main</code> passes <code class="language-plaintext highlighter-rouge">os.Args[1:]</code>, the effective working directory (from <code class="language-plaintext highlighter-rouge">-C</code> or current process), <code class="language-plaintext highlighter-rouge">os.Stdout</code>, and <code class="language-plaintext highlighter-rouge">os.Stderr</code>, and exits with the returned code. No other package calls <code class="language-plaintext highlighter-rouge">os.Exit</code>.</p>
+
+<p>Interface IF-DEV-003 (bus-agent integration). Bus-dev invokes the bus-agent library’s runner interface (see <a href="./bus-agent">bus-agent</a> IF-AGT-001) with: selected runtime (or leave resolution to bus-agent), prompt text (after rendering the embedded template with the prompt variable catalog), workdir, timeout, and output mode (capture/stream). Bus-agent returns an exit code and streams or captures output per its contract. Bus-dev does not implement this interface; it is a caller of the bus-agent package. Tests may stub the agent executable in PATH (as supported by bus-agent) or mock the bus-agent dependency to verify bus-dev’s workflow and prompt wiring without running a real agent.</p>
+
+<p>Interface IF-DEV-004 (repo resolution). Given a directory path, the resolver returns: whether the path is inside a Git repository, the repository root path, and (when requested) the module name. For repository-scoped operations, module name MUST be the base name of the repository root directory (see FR-DEV-003). If not inside a repo, the resolver returns an error suitable for a clear user-facing message. <code class="language-plaintext highlighter-rouge">init</code> target naming is deterministic but does not require repo resolution; it uses the base name of the resolved target directory.</p>
+
+<p>Interface IF-DEV-005 (working-directory lock). For subcommands that operate on a directory (init, commit, stage, plan, work, spec, e2e), the implementation MUST acquire an exclusive lock keyed by the effective operation directory before performing any subcommand work. The lock MUST be implemented so that only one process holds it at a time per directory; a second process attempting to acquire the lock for the same directory MUST block until the first releases it. The lock MUST be released when the process exits (normal exit, non-zero exit, or signal). Lock scope: for <code class="language-plaintext highlighter-rouge">bus dev init [DIR]</code>, the resolved init target directory; for commit, stage, plan, work, spec, and e2e, the repository root. The <code class="language-plaintext highlighter-rouge">set</code> subcommands do not acquire the lock. If the lock cannot be acquired (e.g. the directory is not writable or the lock file cannot be created), the tool MUST exit with a clear diagnostic and a non-zero exit code. See FR-DEV-012 and Data Design (lock file).</p>
+
+<p><strong>Prompt variable catalog.</strong> The following variables are available for substitution in embedded prompt templates (FR-DEV-004, FR-DEV-004a). All are derived at runtime from repository resolution, the configured docs base URL (FR-DEV-004b), or the operation context. Each prompt template documents which of these it uses; substitution MUST be complete before agent invocation (FR-DEV-004a).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Description</th>
+      <th>Source / derivation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">DOCS_BASE_URL</code></td>
+      <td>Base URL for documentation; used to build all doc links.</td>
+      <td>
+<code class="language-plaintext highlighter-rouge">BUS_DEV_DOCS_BASE_URL</code> env (default <code class="language-plaintext highlighter-rouge">https://docs.busdk.com</code>), trailing slash trimmed.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code></td>
+      <td>URL of the main BusDK SDD index.</td>
+      <td><code class="language-plaintext highlighter-rouge">&lt;DOCS_BASE_URL&gt;/sdd</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">MODULE_NAME</code></td>
+      <td>Current module name (e.g. <code class="language-plaintext highlighter-rouge">bus-accounts</code>).</td>
+      <td>Base name of repository root directory (FR-DEV-003).</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">MODULE_SUFFIX</code></td>
+      <td>Module name with <code class="language-plaintext highlighter-rouge">bus-</code> prefix stripped (e.g. <code class="language-plaintext highlighter-rouge">accounts</code>).</td>
+      <td>Derived from <code class="language-plaintext highlighter-rouge">MODULE_NAME</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code></td>
+      <td>URL of this module’s SDD page.</td>
+      <td><code class="language-plaintext highlighter-rouge">&lt;DOCS_BASE_URL&gt;/sdd/&lt;MODULE_NAME&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code></td>
+      <td>URL of this module’s end-user docs page.</td>
+      <td><code class="language-plaintext highlighter-rouge">&lt;DOCS_BASE_URL&gt;/modules/&lt;MODULE_NAME&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">E2E_SCRIPT</code></td>
+      <td>E2E script filename (e.g. <code class="language-plaintext highlighter-rouge">e2e_bus_accounts.sh</code>).</td>
+      <td><code class="language-plaintext highlighter-rouge">e2e_bus_&lt;MODULE_SUFFIX&gt;.sh</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">E2E_SCRIPT_PATH</code></td>
+      <td>Path to the E2E script under the repo (e.g. <code class="language-plaintext highlighter-rouge">tests/e2e_bus_accounts.sh</code>).</td>
+      <td><code class="language-plaintext highlighter-rouge">tests/&lt;E2E_SCRIPT&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">E2E_WORKSPACE_DIR</code></td>
+      <td>Absolute path to the repository root used as e2e workspace.</td>
+      <td>Resolved repo root.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENTS_FILE_PATH</code></td>
+      <td>Path to the repository-root AGENTS.md (e.g. <code class="language-plaintext highlighter-rouge">&lt;repo-root&gt;/AGENTS.md</code>).</td>
+      <td>Repository root + <code class="language-plaintext highlighter-rouge">AGENTS.md</code>. Spec-subcommand prompts only.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">PLAN_FILE</code></td>
+      <td>Repository-local planning file used by plan/work/e2e (<code class="language-plaintext highlighter-rouge">PLAN.md</code>).</td>
+      <td>Literal value <code class="language-plaintext highlighter-rouge">PLAN.md</code> at repository root.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">PLAN_FILE_PATH</code></td>
+      <td>Absolute path to <code class="language-plaintext highlighter-rouge">PLAN.md</code> in the current repository.</td>
+      <td><code class="language-plaintext highlighter-rouge">&lt;repo-root&gt;/PLAN.md</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code class="language-plaintext highlighter-rouge">AGENTS_FILE_PATH</code> is used only in the spec subcommand’s prompt context. <code class="language-plaintext highlighter-rouge">PLAN_FILE</code> and <code class="language-plaintext highlighter-rouge">PLAN_FILE_PATH</code> are used by plan, and are also available to work and e2e so those prompts can read <code class="language-plaintext highlighter-rouge">PLAN.md</code> when present. The implementation MUST supply the expected placeholder set per template so that missing or unresolved placeholders are detected before agent invocation (FR-DEV-004a).</p>
+
+<p><strong>Supported agent runtimes and installation references.</strong> The set of supported runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI), their executable detection, and the canonical installation URLs for diagnostics are defined in the <a href="./bus-agent">bus-agent</a> SDD (Component Design: Runtime installation references; FR-AGT-003, FR-AGT-010). Bus-dev MUST use the bus-agent library for execution and therefore uses the same runtimes and installation references; bus-dev does not duplicate this table or implement its own backends. When the selected agent is not installed or not in PATH, bus-dev surfaces the failure and installation reference as provided by bus-agent.</p>
+
+<p><strong>Agent selection configuration.</strong> Resolution order when bus-dev invokes the bus-agent library is (FR-AGT-005, FR-DEV-005b): (1) <strong>Per-command override:</strong> <code class="language-plaintext highlighter-rouge">--agent cursor|codex|gemini|claude</code> for that invocation only. (2) <strong>BUS_DEV_AGENT:</strong> bus-dev-only session default; when set, used for every <code class="language-plaintext highlighter-rouge">bus dev</code> command in that session until unset or overridden by <code class="language-plaintext highlighter-rouge">--agent</code>. (3) <strong>BUS_AGENT:</strong> shared session default; when set and BUS_DEV_AGENT is not, used for bus-dev and for <code class="language-plaintext highlighter-rouge">bus agent</code> CLI. (4) <strong>bus-dev persistent preference:</strong> e.g. <code class="language-plaintext highlighter-rouge">bus-dev.agent</code> read via bus-preferences; affects only bus-dev’s agent use (e.g. plan, work, spec, e2e). (5) <strong>bus-agent persistent preference:</strong> <code class="language-plaintext highlighter-rouge">bus-agent.runtime</code> read via bus-preferences. (6) <strong>First available runtime</strong> in the effective order (user-configured order or alphabetical by runtime ID; see bus-agent FR-AGT-005a). At any step, if the indicated runtime is disabled by user configuration, bus-agent prints a warning to stderr and resolution continues with the next source (FR-AGT-005b). Bus-dev MUST invoke bus-agent with caller context so bus-agent consults BUS_DEV_AGENT and bus-dev preference in the correct place. Bus-dev MUST pass through to bus-agent any user-configured agent order and enable/disable settings. Invalid runtime names (e.g. <code class="language-plaintext highlighter-rouge">--agent unknown</code>) MUST produce a clear usage error and exit 2. If no agent is available when resolution reaches step (6), the tool MUST exit with a clear diagnostic and direct the user to install or enable at least one supported agent (see Error Handling). The executable name(s) used to detect each runtime are defined in the bus-agent SDD (IF-AGT-002). At the start of each agent step (plan, work, spec, e2e), the tool MUST print to stderr which internal agent and model are in use (FR-DEV-005e).</p>
+
+<p><strong>Run-config resolution (model, timeout, output-format).</strong> For model, output format, and timeout, bus-dev MUST use the same resolution logic and order as for agent, so that each option has a consistent precedence and bus-dev never writes outside the <code class="language-plaintext highlighter-rouge">bus-dev</code> namespace. When bus-dev invokes the bus-agent library, it MUST resolve run-config in this order: (1) per-command override (e.g. <code class="language-plaintext highlighter-rouge">--model</code>, <code class="language-plaintext highlighter-rouge">--timeout</code>, <code class="language-plaintext highlighter-rouge">--output-format</code> if implemented as flags); (2) bus-dev session environment: <code class="language-plaintext highlighter-rouge">BUS_DEV_MODEL</code>, <code class="language-plaintext highlighter-rouge">BUS_DEV_TIMEOUT</code>, <code class="language-plaintext highlighter-rouge">BUS_DEV_OUTPUT_FORMAT</code> (bus-dev only; when set, used for every <code class="language-plaintext highlighter-rouge">bus dev</code> command in that session until unset or overridden); (3) bus-dev persistent preference: <code class="language-plaintext highlighter-rouge">bus-dev.model</code>, <code class="language-plaintext highlighter-rouge">bus-dev.timeout</code>, <code class="language-plaintext highlighter-rouge">bus-dev.output_format</code> read via bus-preferences; (4) bus-agent persistent preference: <code class="language-plaintext highlighter-rouge">bus-agent.model</code>, <code class="language-plaintext highlighter-rouge">bus-agent.timeout</code>, <code class="language-plaintext highlighter-rouge">bus-agent.output_format</code> read via bus-preferences (fallback when bus-dev has no value); (5) bus-agent documented default (e.g. <code class="language-plaintext highlighter-rouge">auto</code> for model, <code class="language-plaintext highlighter-rouge">text</code> for output_format). The implementation MUST read preferences via the bus-preferences library only; when the user runs <code class="language-plaintext highlighter-rouge">bus dev set model</code>, <code class="language-plaintext highlighter-rouge">bus dev set output-format</code>, or <code class="language-plaintext highlighter-rouge">bus dev set timeout</code>, the implementation MUST write only the corresponding <code class="language-plaintext highlighter-rouge">bus-dev.*</code> key and MUST NOT write to any key under another namespace (e.g. <code class="language-plaintext highlighter-rouge">bus-agent.*</code>). This ensures that configuration set through bus-dev affects only bus-dev’s defaults and never changes the bus-agent namespace.</p>
+
+<p><strong>Gemini CLI integration.</strong> When the user selects Gemini CLI as the agent runtime, Bus Dev supports the same workflow as for Cursor (plan, work, spec, e2e) without changing core workflow contracts. In Gemini terms, project-level agent-instruction configuration means the use of project-level context and settings files that play a role analogous to Cursor’s <code class="language-plaintext highlighter-rouge">.cursor/rules/*.mdc</code> and project settings: the Gemini CLI loads context from markdown files (by default <code class="language-plaintext highlighter-rouge">GEMINI.md</code>) and respects a project <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> and <code class="language-plaintext highlighter-rouge">.geminiignore</code>. Instruction loading for Gemini follows the <a href="./bus-agent">bus-agent</a> per-runtime adapter: AGENTS.md is the canonical instruction source; repo-local <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> (e.g. context.fileName to prefer or include AGENTS.md) and <code class="language-plaintext highlighter-rouge">.geminiignore</code> are used as documented there, with additive-only merges and Bus-owned markers when bus-dev or bus-agent touches those files. Bus Dev documents and, where applicable, creates or updates only the repository-local layer so that both AGENTS.md and Gemini context can be used in parallel for the same repo.</p>
+
+<p>Hard boundary: Bus Dev MUST NOT modify any user-global Gemini configuration or memory. That includes <code class="language-plaintext highlighter-rouge">~/.gemini/GEMINI.md</code>, any other file under the user’s home Gemini config directory, and any global memory managed via interactive Gemini CLI commands such as <code class="language-plaintext highlighter-rouge">/memory add</code>. Bus Dev may read global context only if the Gemini CLI loads it by default when the agent is invoked; Bus Dev itself does not write, create, or edit anything outside the current repository (NG-DEV-005, FR-DEV-005c). Developers who want global Gemini memory or user-level Gemini config must manage it manually outside Bus Dev.</p>
+
+<p>Repository-local files that Bus Dev may create, edit, or rely on are: (1) a repo-root <code class="language-plaintext highlighter-rouge">GEMINI.md</code> that supplies project-level instructions and context for the agent; (2) optional directory-scoped <code class="language-plaintext highlighter-rouge">GEMINI.md</code> files for subdirectory-specific context; (3) <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> for context discovery, ignore behavior, tool policy, and MCP configuration; and (4) <code class="language-plaintext highlighter-rouge">.geminiignore</code> for excluding files from context ingestion. The intended precedence and scoping model when the Gemini CLI runs is: global user context (loaded by the CLI from <code class="language-plaintext highlighter-rouge">~/.gemini/</code> and any user-managed memory) is applied first; then repository context from the repo-root <code class="language-plaintext highlighter-rouge">GEMINI.md</code> and <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>; then directory context from any <code class="language-plaintext highlighter-rouge">GEMINI.md</code> in the current or ancestor directories. Bus Dev’s responsibility is limited to documenting and managing the repository-local layer only; it does not configure or alter the global layer.</p>
+
+<p>Example narrative of repo-local files and responsibilities: The repo-root <code class="language-plaintext highlighter-rouge">GEMINI.md</code> typically holds project-wide instructions, conventions, and links to design docs so that when <code class="language-plaintext highlighter-rouge">bus dev work</code> or <code class="language-plaintext highlighter-rouge">bus dev spec</code> invokes the Gemini CLI, the agent receives consistent project context. Directory-level <code class="language-plaintext highlighter-rouge">GEMINI.md</code> files (e.g. under <code class="language-plaintext highlighter-rouge">internal/</code> or <code class="language-plaintext highlighter-rouge">docs/</code>) can narrow scope for that subtree. The <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> file controls how the Gemini CLI discovers context files, which paths to ignore, tool usage policy, and MCP server configuration for that repo. The <code class="language-plaintext highlighter-rouge">.geminiignore</code> file lists patterns of files or directories to exclude from context ingestion, analogous to <code class="language-plaintext highlighter-rouge">.cursorignore</code> for Cursor. Bus Dev may scaffold or update these files during <code class="language-plaintext highlighter-rouge">bus dev init</code> or when documenting the layout; it never touches <code class="language-plaintext highlighter-rouge">~/.gemini/</code> or global memory.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="command-surface">Command Surface</h3>
+
+<p><strong>Invocation.</strong> The CLI is invoked as <code class="language-plaintext highlighter-rouge">bus dev [global-flags] &lt;operation&gt; [operation ...]</code>. Operations are: <strong>init</strong>, <strong>commit</strong>, <strong>stage</strong>, <strong>plan</strong>, <strong>spec</strong>, <strong>work</strong>, <strong>e2e</strong>, <strong>set</strong>. Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e) runs at a time for that directory; a second invocation for the same directory waits until the first exits (see FR-DEV-012). The operations <strong>plan</strong>, <strong>spec</strong>, <strong>work</strong>, <strong>e2e</strong>, <strong>stage</strong>, and <strong>commit</strong> MAY be combined in one invocation in any order and any combination (including repeating one, e.g. <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit plan work stage commit</code>); when multiple are given, they run in the order given, one at a time, and the run stops on first failure (see FR-DEV-001a). <strong>stage</strong> invokes the agent to prepare the working tree (identify and ignore or remove unintended files), then stages remaining changes so that <strong>commit</strong> can be used in the same invocation without a manual staging step. <code class="language-plaintext highlighter-rouge">init</code> accepts an optional target directory and may be followed by zero or more workflow operations from the set {plan, spec, work, e2e} only: <code class="language-plaintext highlighter-rouge">bus dev init [DIR] [plan|spec|work|e2e ...]</code>. <strong><code class="language-plaintext highlighter-rouge">set</code></strong> is a preference-setting operation (see below) and does not participate in the working-directory lock. Global flags apply as per BusDK CLI conventions. The agent runtime is selected by the resolution order in Agent selection configuration above: <code class="language-plaintext highlighter-rouge">--agent</code>, then <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code>, then <code class="language-plaintext highlighter-rouge">BUS_AGENT</code>, then bus-dev and bus-agent preferences, then first available enabled agent.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev set agent &lt;runtime&gt;</code></strong></p>
+
+<p>Intent: Set the bus-dev persistent default agent (e.g. <code class="language-plaintext highlighter-rouge">bus-dev.agent</code>) via the <a href="./bus-preferences">bus-preferences</a> Go library so that every <code class="language-plaintext highlighter-rouge">bus dev</code> command in future sessions uses that runtime when no <code class="language-plaintext highlighter-rouge">--agent</code>, <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code>, or <code class="language-plaintext highlighter-rouge">BUS_AGENT</code> is set. The implementation MUST use the bus-preferences library to write the preference; it MUST NOT shell out to <code class="language-plaintext highlighter-rouge">bus preferences</code>. <code class="language-plaintext highlighter-rouge">&lt;runtime&gt;</code> MUST be one of <code class="language-plaintext highlighter-rouge">cursor</code>, <code class="language-plaintext highlighter-rouge">codex</code>, <code class="language-plaintext highlighter-rouge">gemini</code>, or <code class="language-plaintext highlighter-rouge">claude</code>. Invalid key or value yields exit 2. Success MAY be confirmed by a short message to stderr or by exiting 0 with no required stdout output.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev set model &lt;value&gt;</code></strong> — Set the bus-dev persistent default model (<code class="language-plaintext highlighter-rouge">bus-dev.model</code>) via the bus-preferences library. Only the <code class="language-plaintext highlighter-rouge">bus-dev</code> namespace is written; no other namespace (e.g. <code class="language-plaintext highlighter-rouge">bus-agent</code>) is modified. Invalid value yields exit 2.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev set output-format &lt;ndjson|text&gt;</code></strong> — Set the bus-dev persistent default output format (<code class="language-plaintext highlighter-rouge">bus-dev.output_format</code>) via the bus-preferences library. Valid values: <code class="language-plaintext highlighter-rouge">ndjson</code>, <code class="language-plaintext highlighter-rouge">text</code>. Only the <code class="language-plaintext highlighter-rouge">bus-dev</code> namespace is written. Invalid value yields exit 2.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev set timeout &lt;duration&gt;</code></strong> — Set the bus-dev persistent default timeout (<code class="language-plaintext highlighter-rouge">bus-dev.timeout</code>) via the bus-preferences library (e.g. <code class="language-plaintext highlighter-rouge">60m</code>). Only the <code class="language-plaintext highlighter-rouge">bus-dev</code> namespace is written. Invalid value yields exit 2.</p>
+
+<p><strong>Headless and script mode.</strong> When <code class="language-plaintext highlighter-rouge">bus dev</code> invokes an agent (plan, work, spec, e2e, stage) from a non-interactive environment — for example from a script, CI, or a headless runner — the workflow MUST remain non-interactive and MUST NOT perform prohibited actions. Prohibited actions include network operations (e.g. the agent must not be instructed or allowed to push, pull, fetch, or call external APIs as part of the workflow), modifying user-global configuration or memory (see NG-DEV-005 and Gemini CLI integration), and any operation that would block waiting for user input. The implementation MUST invoke the selected agent with flags or environment that enforce non-interactive, script-safe behavior so that <code class="language-plaintext highlighter-rouge">bus dev plan</code>, <code class="language-plaintext highlighter-rouge">bus dev work</code>, <code class="language-plaintext highlighter-rouge">bus dev spec</code>, <code class="language-plaintext highlighter-rouge">bus dev e2e</code>, and <code class="language-plaintext highlighter-rouge">bus dev stage</code> can be used in automation without requiring a TTY or user interaction. Exit codes and stderr output remain deterministic as specified elsewhere in this SDD.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev init [DIR] [--lang go] [plan|spec|work|e2e ...]</code></strong></p>
+
+<p>Intent: Initialize a BusDK module root in place, in the current working directory by default or in an explicitly provided target directory, without performing any Git operations. By default, init performs initialization only; it does not run spec, work, or e2e unless those operations are explicitly appended after init.</p>
+
+<p>Preconditions: The effective working directory need not be a Git repository. If <code class="language-plaintext highlighter-rouge">DIR</code> is omitted, the target directory is the effective current working directory and must exist. If <code class="language-plaintext highlighter-rouge">DIR</code> is provided and does not exist, init creates it. If the target path exists but is not a directory, the command exits with code 2 and a clear message. Agent runtime availability is required only when appended operations (plan/spec/work/e2e) are requested.</p>
+
+<p>Reads: Existing repository files in the target directory (to detect whether scaffold files are already present), embedded init templates (including the sample Makefile), and BusDK documentation and embedded prompts only when appended operations are run. No workspace datasets.</p>
+
+<p>Writes: Ensures a single <code class="language-plaintext highlighter-rouge">AGENTS.md</code> exists at the target directory root (project root), with default content controlled by <code class="language-plaintext highlighter-rouge">--lang</code> (default <code class="language-plaintext highlighter-rouge">go</code>) per the <a href="https://agents.md/">AGENTS.md</a> format. Ensures a root <code class="language-plaintext highlighter-rouge">Makefile</code> exists by writing an embedded sample Makefile when missing. If appended workflow operations are present, sets effective working directory to the target directory and runs them in the exact order provided by the command line.</p>
+
+<p>Allowed mutations: Creating the target directory when needed, creating missing initialization files, and optionally writing changes produced by explicitly requested workflow operations under the target directory. No mutations outside the target directory. No Git operations.</p>
+
+<p>Must never do: Run any Git command (no <code class="language-plaintext highlighter-rouge">git init</code>, no add, no commit). Run plan/spec/work/e2e unless explicitly requested after init. Overwrite an existing <code class="language-plaintext highlighter-rouge">Makefile</code> by default during initialization. Create or modify anything outside the resolved target directory (except stderr and any documented stdout).</p>
+
+<p>Language flag: <code class="language-plaintext highlighter-rouge">--lang</code> defaults to <code class="language-plaintext highlighter-rouge">go</code>. It controls which default or language-specific AGENTS.md content init installs at the project root, so init can scaffold modules for different programming languages. The set of supported values and their exact effect on installed content is implementation-defined and MUST be documented in the CLI reference.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev commit</code></strong></p>
+
+<p>Intent: Create one or more commits from the currently staged changes only, with high-quality messages and strict safety rules, without touching remotes or history.</p>
+
+<p>Preconditions: Effective working directory is the root of a Git repository (or a subdirectory of one). Optional: repository may contain submodules.</p>
+
+<p>Reads: Git index and repository metadata (e.g. <code class="language-plaintext highlighter-rouge">git status</code>, <code class="language-plaintext highlighter-rouge">git diff --cached</code>). Does not read workspace datasets or accounting files for bookkeeping.</p>
+
+<p>Writes: Only new commits created from the existing staging area (via <code class="language-plaintext highlighter-rouge">git commit</code>). Does not write to working tree files, does not create or modify files outside Git’s normal commit operation.</p>
+
+<p>Allowed mutations: Creating new commit(s) from already-staged content. Committing in submodules first (depth-first), then the superproject only if it has staged changes. No other mutations.</p>
+
+<p>Must never do: Modify files; stage anything (<code class="language-plaintext highlighter-rouge">git add</code>); amend, rebase, or rewrite history; push, pull, fetch, clone, or any remote operation; run hooks that are not the standard Git commit hooks (the tool may run <code class="language-plaintext highlighter-rouge">git commit</code>, which may run commit-msg/pre-commit etc.; the tool must not bypass or suppress hooks).</p>
+
+<p>Behavior when nothing to commit: If there is nothing staged (and no staged changes in submodules that need committing), the command does nothing and exits with code 0. No commit is created, no error.</p>
+
+<p>Submodules: If the repository has submodules and a submodule has staged changes, commit inside that submodule first (recursively depth-first). After all submodules with staged changes are committed, if the superproject has staged changes (including gitlink updates), commit the superproject. If a submodule commit resulted in an unstaged gitlink change in the superproject, the tool MUST report that clearly (e.g. to stderr) and STOP without staging that gitlink; the user must stage it manually if desired.</p>
+
+<p>Commit message quality (normative): For every commit, the message MUST have a concise, action-oriented subject line in the imperative mood. A body MAY follow, separated by a blank line. The message SHOULD explain what changed and why, mention user-visible impact or risk when relevant, and include traceability (issue IDs or URLs) when helpful. Vague summaries are not acceptable. Conventional prefixes (feat, fix, docs, refactor, test, chore) MAY be used when they improve clarity but MUST NOT replace a precise subject.</p>
+
+<p>Atomicity: Before creating each commit, the implementation (or the agent it invokes) MUST review the staged set at a high level. If the staged set contains multiple logical changes, the implementation/agent MUST propose an atomic commit split plan. By default, the tool commits exactly what is currently staged and MUST NOT alter the staging area to perform a split unless explicitly instructed.</p>
+
+<p>Failures and hooks: If a commit is rejected by hooks (e.g. pre-commit, commit-msg), the tool MUST report the exact failure reason and output and suggest the minimal correction. The tool MUST NOT retry the commit automatically unless explicitly instructed.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev stage</code></strong></p>
+
+<p>Intent: Prepare the working tree for commit so that only intended files are staged. The agent identifies temporary files, e2e test leftovers, build artifacts, and other files that should not be tracked; adds them (or patterns) to <code class="language-plaintext highlighter-rouge">.gitignore</code> or removes them from the project; then the tool stages all remaining changes. Enables combined invocations such as <code class="language-plaintext highlighter-rouge">bus dev plan work stage commit</code> without manually cleaning and staging.</p>
+
+<p>Preconditions: Effective working directory is the root of a Git repository (or a subdirectory of one). The tool MUST resolve the repository root from the effective working directory. The agent runtime MUST be available (same resolution as for plan, work, spec, e2e).</p>
+
+<p>Reads: Repository metadata to resolve the repository root. The agent reads the working tree, existing <code class="language-plaintext highlighter-rouge">.gitignore</code>, and (when present) AGENTS.md or project conventions to decide which files should not be tracked. Does not read workspace accounting datasets.</p>
+
+<p>Writes: Determined by the agent under the embedded prompt: updates to <code class="language-plaintext highlighter-rouge">.gitignore</code> (add patterns or paths for files that should not be tracked), and optional removal of temporary files that should not exist in the working tree. After the agent completes, the tool updates the Git index (staging area) by staging all remaining changes at the repository root.</p>
+
+<p>Allowed mutations: The agent may add entries to <code class="language-plaintext highlighter-rouge">.gitignore</code> and may remove files from the working tree that are purely temporary. The tool may then run local <code class="language-plaintext highlighter-rouge">git add</code> to stage all remaining changes at the repository root. No recursive staging inside submodules. No commit, amend, rebase, or remote operations.</p>
+
+<p>Must never do: Commit; amend, rebase, or rewrite history; push, pull, fetch, clone, or any remote operation; stage inside submodules (only the current repository’s working tree is in scope). The agent must not stage files that the prompt defines as unintended (temporary, e2e leftovers, etc.); it must ignore or remove them first.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev work</code></strong></p>
+
+<p>Intent: Run the canonical “do the work in this repo now” agent workflow: implement code changes, add/update tests, run Makefile checks, and update README in the current module repository, following the module’s AGENTS.md and design docs.</p>
+
+<p>Preconditions: Effective working directory is inside a BusDK module Git repository. The repository contains AGENTS.md and design docs that the agent will read. When the selected runtime is Gemini CLI, repository-local Gemini context (e.g. repo-root <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>, <code class="language-plaintext highlighter-rouge">.geminiignore</code>) may also be present; Bus Dev supports AGENTS.md and Gemini context in parallel without changing this workflow.</p>
+
+<p>Reads: Repository source code, repository-root <code class="language-plaintext highlighter-rouge">AGENTS.md</code>, design docs (e.g. SDD, CLI reference) as referenced by AGENTS.md, and <code class="language-plaintext highlighter-rouge">PLAN.md</code> when it exists. When <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists, the prompt requires the agent to review it first and prioritize its unchecked items while retaining checked items as completed history until plan pruning. When Gemini CLI is selected, the agent also reads repo-root and directory-scoped <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>, and respects <code class="language-plaintext highlighter-rouge">.geminiignore</code> for context ingestion. The agent is allowed to read these as the authoritative specs for that repo. Bus Dev does not read or modify user-global Gemini config or memory; developers who want global Gemini memory must manage it manually outside Bus Dev.</p>
+
+<p>Writes: Determined by the agent under the constraints of the embedded prompt (code, tests, README, and <code class="language-plaintext highlighter-rouge">PLAN.md</code> item check-offs when applicable). The tool itself does not write repository files directly; it only invokes the agent with the embedded prompt.</p>
+
+<p>Allowed mutations: Whatever the embedded prompt permits (code, tests, README, and checking off completed <code class="language-plaintext highlighter-rouge">PLAN.md</code> items), under the rule that the agent operates only in the current module and follows the module’s rules.</p>
+
+<p>Must never do: Invoke remote Git operations; operate outside the current module repository; change workspace accounting datasets; remove already checked items from <code class="language-plaintext highlighter-rouge">PLAN.md</code>; modify user-global Gemini configuration or memory (see Headless and script mode and Gemini CLI integration). In headless or script mode, the agent MUST NOT perform network operations or other prohibited actions.</p>
+
+<p>Implementation note: The workflow is executed via an embedded prompt template shipped inside bus-dev. Documentation links in the prompt (e.g. main SDD, module SDD, module end-user docs) are derived from the configurable docs base URL (FR-DEV-004b) and the prompt variable catalog (<code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code>). The agent runtime reads the repository’s own docs, AGENTS.md, and (when Gemini is selected) repository-local Gemini context as part of doing the work; those are the authoritative specs for that repo. For a concrete picture of repo-local files and what each is responsible for, see the Gemini CLI integration subsection.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev plan</code></strong></p>
+
+<p>Intent: Build a compact prioritized implementation plan for the current module repository by comparing documented requirements to repository reality, then write that plan to <code class="language-plaintext highlighter-rouge">PLAN.md</code>.</p>
+
+<p>Preconditions: Effective working directory is inside a BusDK module Git repository. The agent runtime is available. Documentation URLs derived from the docs base URL are reachable to the selected runtime.</p>
+
+<p>Reads: Repository files, current tests, current docs in the repository, existing <code class="language-plaintext highlighter-rouge">PLAN.md</code> when present, the main SDD URL (<code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>), the current module SDD URL (<code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code>), the current module end-user docs URL (<code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code>), and other project SDD pages relevant to requirement coverage. The prompt uses these sources to re-validate existing plan items and to detect unimplemented features and other undone work.</p>
+
+<p>Writes: <code class="language-plaintext highlighter-rouge">PLAN.md</code> at repository root only. The file is a compact Markdown checklist with unchecked items ordered by priority.</p>
+
+<p>Allowed mutations: Creating or overwriting repository-root <code class="language-plaintext highlighter-rouge">PLAN.md</code>.</p>
+
+<p>Must never do: Modify source code, tests, README, AGENTS.md, or any file other than <code class="language-plaintext highlighter-rouge">PLAN.md</code>. Include implementation-level instructions that duplicate or override project SDD details.</p>
+
+<p>Plan format contract: <code class="language-plaintext highlighter-rouge">PLAN.md</code> contains one unchecked item (<code class="language-plaintext highlighter-rouge">- [ ]</code>) per still-undone or newly detected unimplemented feature or undone work item that the command determines from documented sources and repository state. If <code class="language-plaintext highlighter-rouge">PLAN.md</code> already exists, its prior items are treated as candidates: items now completed are removed, and items still undone are retained and reprioritized with newly discovered items in one combined list. Items are concise and action-oriented, with enough context for the next execution step, and avoid implementation details because implementation must come from project SDD and related documentation. If no undone work is detected after re-validation, the file still exists and states that no open items were found.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev spec</code></strong></p>
+
+<p>Intent: Ensure the current repository has a compact but detailed local spec in AGENTS.md that reflects the latest BusDK specifications and describes how to implement this tool; create AGENTS.md from online SDD and user documentation when missing; no changes to source code, tests, or README.</p>
+
+<p>Preconditions: Effective working directory is inside a BusDK module Git repository. When the selected runtime is Gemini CLI, Bus Dev uses repository-local Gemini context in parallel with AGENTS.md; headless and script mode constraints apply as in Headless and script mode.</p>
+
+<p>Reads: The current AGENTS.md when it exists (subject of refinement); when it does not exist, the agent produces it from online docs. If <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> exists (module name per FR-DEV-003), the tool reads it and includes its content in the refinement context so the agent can merge it into AGENTS.md. BusDK documentation is referenced via the embedded prompt; links are derived from the docs base URL and prompt variables such as <code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code>, and <code class="language-plaintext highlighter-rouge">AGENTS_FILE_PATH</code> per the prompt variable catalog. When Gemini CLI is selected, the agent may also use repo-local <code class="language-plaintext highlighter-rouge">GEMINI.md</code> and <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>. The agent may read the spec pages and the AGENTS.md format to align the file.</p>
+
+<p>Writes: The single file <code class="language-plaintext highlighter-rouge">AGENTS.md</code> at the repository root (created when missing, otherwise updated). After a successful refinement that incorporated Cursor rule content, the tool MUST remove <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> if it existed. Bus Dev does not write to any user-global Gemini config or memory.</p>
+
+<p>Allowed mutations: Creating or updating AGENTS.md; deleting <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> only after its content has been refactored into AGENTS.md (FR-DEV-008a).</p>
+
+<p>Must never do: Modify source code, tests, README, or any file other than repository-root <code class="language-plaintext highlighter-rouge">AGENTS.md</code> and the single Cursor rule file specified above; perform Git operations other than those implied by the user saving the file (if the agent writes the file, the user may then commit).</p>
+
+<p>AGENTS.md path: The tool MUST use the path <code class="language-plaintext highlighter-rouge">AGENTS.md</code> at the repository root (no module-derived path). When AGENTS.md does not exist, the tool MUST create it in the same run by having the agent produce it from the online SDD and module end-user documentation, so the result is a compact but detailed local implementation spec for the current module.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">bus dev e2e</code></strong></p>
+
+<p>Intent: Guided workflow to detect missing end-to-end tests for the current module and scaffold them in a hermetic way, consistent with BusDK testing conventions and the module’s SDD and end-user documentation.</p>
+
+<p>Preconditions: Effective working directory is inside a BusDK module Git repository. The module has (or the tool can resolve) an SDD and end-user documentation so that required test coverage can be determined.</p>
+
+<p>Reads: Repository layout, existing tests under <code class="language-plaintext highlighter-rouge">tests/</code>, the module’s SDD document, end-user documentation (e.g. CLI reference) for the current module, and <code class="language-plaintext highlighter-rouge">PLAN.md</code> when it exists. When <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists, the prompt requires the agent to review it first, validate that each checked item is fully covered by e2e tests, and prioritize unchecked test-related items. Documentation links in the prompt are derived from the docs base URL (FR-DEV-004b) and the prompt variable catalog (<code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_SDD_URL</code>, <code class="language-plaintext highlighter-rouge">MODULE_DOCS_URL</code>, <code class="language-plaintext highlighter-rouge">E2E_SCRIPT</code>, <code class="language-plaintext highlighter-rouge">E2E_SCRIPT_PATH</code>, <code class="language-plaintext highlighter-rouge">E2E_WORKSPACE_DIR</code>, <code class="language-plaintext highlighter-rouge">PLAN_FILE</code>, <code class="language-plaintext highlighter-rouge">PLAN_FILE_PATH</code>). The tool uses these inputs both to verify checked-item coverage and to discover other untested behavior from the SDD and end-user docs. Agent-specific rules (e.g. AGENTS.md) define language and module-specific testing expectations and are used when generating or refining scaffolds.</p>
+
+<p>Writes: New or updated test files under <code class="language-plaintext highlighter-rouge">tests/</code> only. E2E scripts MUST be named <code class="language-plaintext highlighter-rouge">e2e_bus_&lt;name&gt;.sh</code> where <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code> is the module name with the <code class="language-plaintext highlighter-rouge">bus-</code> prefix stripped (e.g. <code class="language-plaintext highlighter-rouge">bus-accounts</code> → <code class="language-plaintext highlighter-rouge">tests/e2e_bus_accounts.sh</code>). Scaffold content MUST align with the behavior described in the SDD and end-user docs and with agent rules. No modification of production code.</p>
+
+<p>Allowed mutations: Adding or updating files under <code class="language-plaintext highlighter-rouge">tests/</code> (e.g. <code class="language-plaintext highlighter-rouge">e2e_bus_&lt;name&gt;.sh</code> and any agreed boilerplate) as defined by the subcommand’s acceptance criteria. If <code class="language-plaintext highlighter-rouge">PLAN.md</code> is touched by this workflow, checked items MUST be preserved and must not be removed.</p>
+
+<p>Must never do: Remote Git operations; history rewriting; modifying workspace accounting datasets; removing already checked items from <code class="language-plaintext highlighter-rouge">PLAN.md</code>; non-hermetic or network-dependent test scaffolding.</p>
+
+<p>Detection and scaffold: The tool detects missing e2e tests by comparing required coverage (derived from the module’s SDD and end-user documentation, with URLs supplied via the prompt variable catalog) to existing tests under <code class="language-plaintext highlighter-rouge">tests/</code>. When <code class="language-plaintext highlighter-rouge">PLAN.md</code> exists, checked items are treated as completed feature commitments and MUST be verified as fully covered by existing or newly scaffolded e2e tests; coverage gaps for checked items are reported and scaffolded. The command also continues discovering other untested documented behavior that may not appear in <code class="language-plaintext highlighter-rouge">PLAN.md</code>. The exact scaffold (file names, boilerplate, and suggested cases) is deterministic: it follows the <code class="language-plaintext highlighter-rouge">tests/e2e_bus_&lt;name&gt;.sh</code> naming and directory layout, and the content is generated to cover the behavior and CLI surface described in the SDD and end-user docs. Language- and module-specific details (e.g. how to build or invoke the binary, Go test layout) are defined in agent instructions (e.g. AGENTS.md) and are used when the agent runs or when the tool produces guidance. When <code class="language-plaintext highlighter-rouge">bus dev e2e</code> invokes an agent, Headless and script mode and repository-local-only Gemini rules apply; the agent must not perform network operations or modify user-global Gemini config or memory.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="io-conventions">I/O Conventions</h3>
+
+<p>Standard output: Reserved for deterministic, machine-readable command results when a subcommand produces them. For subcommands that only invoke an agent and stream human-readable output, stdout may be unused or used for a final success message in a documented format.</p>
+
+<p>Standard error: All diagnostics, progress, and human-readable agent output (e.g. NDJSON formatted to text) MUST go to stderr. This preserves the BusDK convention that stdout is for results and stderr for diagnostics. At the start of each agent-invoking step (plan, work, spec, e2e, stage), the tool MUST write a single line to stderr that identifies the internal agent runtime and model in use for that step (FR-DEV-005e), so that logs and scripts can see which agent and model were used.</p>
+
+<p>When an external agent is invoked, the agent’s raw output (e.g. NDJSON) may be piped through an internal formatter that writes readable text to stderr. The tool MUST NOT inject color or control sequences into stdout when the output is intended to be machine-readable.</p>
+
+<p>Determinism: Given the same repository state, same staged set, and same flags, the tool MUST produce the same exit code and consistent stderr output (up to timing or non-deterministic agent output when an agent is used; the tool’s own messages and exit code must still be deterministic for the “no agent” and “stub agent” cases).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-codes">Exit Codes</h3>
+
+<ul>
+  <li>0: Success. For <code class="language-plaintext highlighter-rouge">bus dev commit</code>, “nothing to commit” is success (0).</li>
+  <li>1: Execution failure (e.g. Git command failed, hook failed, agent failed or timed out, selected agent runtime not found or not executable, or no agent enabled when the automatic default would apply).</li>
+  <li>2: Invalid usage (e.g. unknown subcommand, invalid flag including invalid <code class="language-plaintext highlighter-rouge">--agent</code> or <code class="language-plaintext highlighter-rouge">set agent</code> runtime name, missing required argument, or precondition not met — e.g. not in a Git repository for repo-scoped commands, or init target path is not a directory).</li>
+</ul>
+
+<p>The distinction between invalid usage (2) and execution failure (1) follows BusDK CLI conventions: usage errors are 2; failures during an otherwise valid invocation are 1.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="error-handling-and-resilience">Error Handling and Resilience</h3>
+
+<ul>
+  <li>
+<strong>Configured agent runtime not installed or not in PATH:</strong> When the user has selected an agent (via flag or session preference) and that agent’s CLI is not found or not executable, the tool MUST surface the failure from the bus-agent library and MUST exit with a clear diagnostic to stderr and a non-zero exit code (1). The message MUST indicate that the selected agent runtime could not be found or executed and MUST direct the user to the canonical installation URL for that runtime; bus-agent provides the installation reference (FR-AGT-010) and bus-dev uses it in the diagnostic.</li>
+  <li>
+<strong>No agent available (automatic default):</strong> When no runtime is selected via flag or session preference and the automatic default would apply, but no agent is available (no enabled CLI in PATH, or all are disabled, or enable list excludes all), the tool MUST exit with a clear diagnostic to stderr and a non-zero exit code (1 or 2). The message MUST state that at least one supported agent runtime must be installed or enabled and MUST direct the user to the canonical installation URLs; bus-dev uses the installation references provided by the bus-agent library to build this message.</li>
+  <li>
+<strong>git not installed or not in PATH:</strong> When a subcommand needs Git, the tool MUST detect failure to run <code class="language-plaintext highlighter-rouge">git</code> and MUST exit with a clear diagnostic and non-zero exit code (1).</li>
+  <li>
+<strong>Working directory not a Git repo:</strong> For subcommands that require a Git repository (commit, stage, plan, work, spec, e2e when run standalone), exit with code 2 and a clear message. For <code class="language-plaintext highlighter-rouge">bus dev init</code>, the effective working directory need not be a Git repository; init targets the current directory by default or the provided <code class="language-plaintext highlighter-rouge">DIR</code> path and initializes missing files there.</li>
+  <li>
+<strong>No staged changes (commit):</strong> Exit 0 and do nothing; optionally print a short message to stderr that there was nothing to commit.</li>
+  <li>
+<strong>Hooks fail (commit):</strong> Exit 1 and report the hook failure output; do not retry.</li>
+  <li>
+    <p><strong>Timeouts (agent subcommands):</strong> When the agent run (via the bus-agent library) exceeds the configured timeout, the tool MUST exit with a non-zero code (1) and MUST report that the run timed out.</p>
+  </li>
+  <li>
+<strong>Lock acquisition failure:</strong> When a subcommand requires the working-directory lock (init, commit, stage, plan, work, spec, e2e) and the lock cannot be acquired because the directory is not writable, the lock file cannot be created, or the platform does not support the required locking primitive, the tool MUST exit with a clear diagnostic to stderr and a non-zero exit code (1). The message MUST indicate that the working-directory lock could not be acquired and SHOULD suggest checking directory permissions or concurrent <code class="language-plaintext highlighter-rouge">bus dev</code> usage.</li>
+</ul>
+
+<p>All error messages MUST be written to stderr. The tool MUST NOT crash or exit with an ambiguous code when the above conditions occur; behavior MUST be as specified.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="data-design">Data Design</h3>
+
+<p>Bus Dev does not own or read workspace datasets (CSV, schemas, datapackage.json) for bookkeeping. It operates on:</p>
+
+<ul>
+  <li>
+    <p><strong>Working-directory lock file.</strong> To enforce single-instance execution per directory (FR-DEV-012, IF-DEV-005), the tool uses an exclusive lock keyed by the effective operation directory. The lock MUST be implemented using a lock file at a deterministic path within that directory (e.g. <code class="language-plaintext highlighter-rouge">&lt;effective-operation-dir&gt;/.bus-dev.lock</code>). The implementation MUST use an exclusive file lock (e.g. <code class="language-plaintext highlighter-rouge">flock</code> or equivalent) so that only one process holds the lock at a time; blocking until the lock is acquired when another process holds it. The lock file MAY be created if missing; it MUST be released when the process exits. For <code class="language-plaintext highlighter-rouge">bus dev init</code> when the target directory does not exist, the directory is created first per FR-DEV-010, then the lock is acquired in that directory. The lock file is an implementation detail and may be left on disk after a normal run; it does not contain user data and is used only for mutual exclusion.</p>
+  </li>
+  <li>The Git repository (metadata and index) for the current working directory.</li>
+  <li>The repository’s working tree (source files, repository-root <code class="language-plaintext highlighter-rouge">AGENTS.md</code>) when the agent is run, so the agent can read and optionally write files under the repo. When Gemini CLI is selected, Bus Dev only creates, edits, or relies on repository-scoped Gemini files: repo-root and optional directory-scoped <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>, and <code class="language-plaintext highlighter-rouge">.geminiignore</code>. Bus Dev never writes to the user’s home Gemini config directory (e.g. <code class="language-plaintext highlighter-rouge">~/.gemini/</code>) or to global memory (FR-DEV-005c, NG-DEV-005).</li>
+  <li>Repository-root <code class="language-plaintext highlighter-rouge">PLAN.md</code> for planning continuity. <code class="language-plaintext highlighter-rouge">bus dev plan</code> creates or refreshes it as a compact unchecked priority list by re-validating existing items, removing completed checked items, and adding newly detected missing work. <code class="language-plaintext highlighter-rouge">bus dev work</code> reads it when present, prioritizes unchecked items, and checks off completed items without deleting checked items. <code class="language-plaintext highlighter-rouge">bus dev e2e</code> reads it when present, validates checked items against e2e coverage, prioritizes unchecked test-related items, and does not delete checked items.</li>
+  <li>No persistent data store beyond what Git and the filesystem provide for bus-dev’s own state. Agent selection follows the order in FR-DEV-005b and FR-AGT-005: per-command <code class="language-plaintext highlighter-rouge">--agent</code>, then <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code>, then <code class="language-plaintext highlighter-rouge">BUS_AGENT</code>, then bus-dev persistent preference (<code class="language-plaintext highlighter-rouge">bus-dev.agent</code>), then bus-agent preference (<code class="language-plaintext highlighter-rouge">bus-agent.runtime</code>), then first available runtime. Run-config (model, timeout, output-format) follows the same logic: per-command override if present, then <code class="language-plaintext highlighter-rouge">BUS_DEV_MODEL</code>, <code class="language-plaintext highlighter-rouge">BUS_DEV_TIMEOUT</code>, <code class="language-plaintext highlighter-rouge">BUS_DEV_OUTPUT_FORMAT</code>, then bus-dev persistent preferences (<code class="language-plaintext highlighter-rouge">bus-dev.model</code>, <code class="language-plaintext highlighter-rouge">bus-dev.timeout</code>, <code class="language-plaintext highlighter-rouge">bus-dev.output_format</code>), then bus-agent preferences as fallback, then bus-agent defaults. Bus-dev writes only to the <code class="language-plaintext highlighter-rouge">bus-dev</code> namespace when the user runs <code class="language-plaintext highlighter-rouge">bus dev set</code> (agent, model, output-format, timeout); it never writes to <code class="language-plaintext highlighter-rouge">bus-agent.*</code> or any other namespace via the bus-preferences library. Preferences are read via the <a href="./bus-preferences">bus-preferences</a> library; the user sets bus-dev defaults with <code class="language-plaintext highlighter-rouge">bus dev set agent|model|output-format|timeout</code> or with <code class="language-plaintext highlighter-rouge">bus preferences set bus-dev.&lt;key&gt; &lt;value&gt;</code> (e.g. <code class="language-plaintext highlighter-rouge">bus preferences set bus-dev.agent gemini</code>). When a configured runtime is disabled, bus-agent prints a warning and resolution continues with the next source (FR-AGT-005b). User-configured agent order and enable/disable are passed through to bus-agent. No bus-dev-specific config file is required; configuration is via flags, environment, and bus-preferences.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="assumptions-and-dependencies">Assumptions and Dependencies</h3>
+
+<p>AD-DEV-001 Git is available. The commit workflow and repository resolution depend on <code class="language-plaintext highlighter-rouge">git</code> being in PATH and the repository being a valid Git repo. If Git is missing or the directory is not a repo, the tool fails with a clear error.</p>
+
+<p>AD-DEV-002 Agent runtime availability. Subcommands that invoke an agent (plan, work, spec, e2e, and stage) require the chosen agent runtime (Cursor CLI, Codex, Gemini CLI, or Claude CLI) to be installed and in PATH when those subcommands are run. The chosen runtime is either explicitly selected (flag or session preference) or the automatic default (first available agent in bus-agent’s effective order, alphabetic when no user order is set). If the explicitly selected agent is missing, the tool reports that and exits non-zero; it does not silently fall back. If no agent is selected and none are available, the tool exits with a clear message directing the user to install or enable at least one supported agent (FR-DEV-005d).</p>
+
+<p>AD-DEV-003 Repository layout. For <code class="language-plaintext highlighter-rouge">bus dev spec</code>, the agent-instruction file is <code class="language-plaintext highlighter-rouge">AGENTS.md</code> at the repository root (per the <a href="https://agents.md/">AGENTS.md</a> convention). If the project adopts a different convention, this assumption will be updated in the SDD.</p>
+
+<p>AD-DEV-004 Operating environment. Same as BusDK: Linux and macOS. Tests and behavior are defined for these environments; Windows is out of scope unless otherwise stated.</p>
+
+<p>AD-DEV-005 bus-agent dependency. Bus Dev depends on the bus-agent Go module for agent execution. The bus-agent library provides the runner interface, supported runtimes (Cursor, Codex, Gemini, Claude), runtime detection, selection resolution, prompt-template rendering contract, timeout enforcement, output capture/streaming, and installation references for diagnostics. If bus-agent is unavailable or its interface changes in an incompatible way, bus-dev’s agent-invoking subcommands (plan, work, spec, e2e, and stage) are affected; bus-dev does not implement a fallback agent runner.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<ul>
+  <li>
+    <p><strong>Unit tests.</strong> All library-style code (repo resolution, argument parsing including multiple operations (FR-DEV-001a), init target resolution and scaffold creation, prompt template expansion, and agent invocation via bus-agent with stub) MUST have unit tests. Tests MUST be hermetic: no network, no real Git remotes, no real agent. Parsing and execution of multi-op invocations (e.g. spec, work, e2e in one call, and init with appended operations) MUST be covered; when a stub agent returns non-zero for the second operation, the third MUST not run and the exit code MUST be that of the failed operation. Tests MUST verify that plain <code class="language-plaintext highlighter-rouge">bus dev init</code> does not invoke any agent operation and that a missing root <code class="language-plaintext highlighter-rouge">Makefile</code> is created from the embedded sample while an existing <code class="language-plaintext highlighter-rouge">Makefile</code> is preserved. Plan-specific tests MUST verify that <code class="language-plaintext highlighter-rouge">bus dev plan</code> writes only <code class="language-plaintext highlighter-rouge">PLAN.md</code>, produces only unchecked checklist items, orders them by priority, and keeps item text compact and non-implementation-specific. Plan-specific tests MUST also verify rerun behavior when <code class="language-plaintext highlighter-rouge">PLAN.md</code> already exists: completed checked items are removed, still-undone items remain, and newly detected missing work is added. Work-specific tests MUST verify that completed plan items are checked off and that checked items are never removed by work. E2E-specific tests MUST verify checked-item coverage validation and additional untested-feature discovery from SDD/docs while preserving checked plan items. Spec-specific tests MUST verify that when AGENTS.md is missing, the command creates it (via stubbed agent) from online SDD and user docs so the result is a compact local implementation spec, and that when <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> exists, its content is merged into AGENTS.md and the file is then removed (FR-DEV-008, FR-DEV-008a).</p>
+  </li>
+  <li>
+    <p><strong>Prompt rendering tests.</strong> Unit tests MUST cover the prompt-template rendering contract (FR-DEV-004a): (1) missing variable — when a required variable is not supplied, the command MUST fail with a clear diagnostic and exit code 2 before any agent invocation; (2) unresolved variable — when any <code class="language-plaintext highlighter-rouge">{{...}}</code> token remains after substitution, the command MUST fail with a clear diagnostic and exit code 2 before agent invocation; (3) repeated placeholder replacement — the same variable MAY appear multiple times in a template and each occurrence MUST be replaced consistently; (4) expected placeholder set per prompt template — each template’s required variables MUST be documented and tests MUST verify that supplying that set yields a fully resolved prompt; (5) docs base override — when <code class="language-plaintext highlighter-rouge">BUS_DEV_DOCS_BASE_URL</code> is set (and when unset), derived URLs (<code class="language-plaintext highlighter-rouge">MAIN_SDD_URL</code>, module SDD URL, module docs URL) MUST match the specified formulas and normalization (trailing slash trimmed). Tests for work and e2e prompts MUST verify that <code class="language-plaintext highlighter-rouge">PLAN.md</code> is included in prompt context when present and omitted cleanly when absent, and that prompt instructions enforce the checked-item lifecycle rules.</p>
+  </li>
+  <li>
+    <p><strong>Fixture repository.</strong> At least one end-to-end style test MUST use a fixture Git repository in a temporary directory (e.g. a repo with a few commits and optionally a submodule) to verify commit behavior: nothing to commit exits 0, staged change leads to commit with message, submodule ordering, unstaged gitlink handling, etc. This test MUST not push or pull; it may run <code class="language-plaintext highlighter-rouge">git commit</code> only.</p>
+  </li>
+  <li>
+    <p><strong>Agent runner tests.</strong> When the agent is involved, the test strategy MUST stub the agent binary in PATH (or inject a fake path). The stub MUST feed deterministic NDJSON (or plain output) to stdout and exit with a chosen code so that parsing, filtering, and error handling are exercised without calling a real agent or network. Agent detection and automatic default selection (FR-DEV-005d) MUST be testable by controlling PATH so that zero, one, or multiple agent CLIs appear to exist; tests MUST verify that the chosen default is deterministic and that “no agent enabled” yields a clear exit and diagnostic.</p>
+  </li>
+  <li>
+    <p><strong>Locking tests.</strong> Tests MUST verify working-directory lock behavior (FR-DEV-012): (1) two concurrent invocations that target the same effective operation directory run one after the other — the second blocks until the first exits; (2) the lock is released on normal exit, on non-zero exit, and on process termination so that a subsequent invocation can acquire it; (3) <code class="language-plaintext highlighter-rouge">bus dev set …</code> does not acquire the lock and does not block on a running init/plan/work/spec/e2e/stage/commit in the same directory. Tests MAY use a helper process that holds the lock while a second process blocks, or use a fixture that asserts serialized execution; hermetic tests MUST NOT rely on real wall-clock timing for correctness.</p>
+  </li>
+  <li>
+    <p><strong>Definition of Done.</strong> For any implementation of this SDD, the following are required: unit tests for the new or touched code paths, at least one end-to-end style test using a fixture repo as above, locking tests as above, and README updates that document the subcommands and link to this SDD and the canonical BusDK design spec where relevant.</p>
+  </li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="traceability-to-busdk-spec">Traceability to BusDK Spec</h3>
+
+<p>This module intentionally deviates from the following BusDK design spec elements, and is constrained by the following:</p>
+
+<ul>
+  <li>
+    <p><strong>NG-001 (BusDK does not execute Git commands).</strong> Bus Dev is the defined exception: it may run local Git commands (status, diff, commit) under the strict constraints in this SDD (no remote, no history rewrite, no staging). Rationale: developer workflow centralization without putting Git into every module.</p>
+  </li>
+  <li>
+    <p><strong>CLI conventions.</strong> Bus Dev follows the same global CLI conventions as other modules (e.g. <a href="../cli/error-handling-dry-run-diagnostics">Error handling, dry-run, and diagnostics</a>, <a href="../cli/command-structure">Command structure and discoverability</a>) for flags, stdout/stderr, and exit codes. Where it invokes an external agent, it still obeys the convention that machine-readable output (if any) is on stdout and diagnostics on stderr.</p>
+  </li>
+  <li>
+    <p><strong>Module structure.</strong> Bus Dev is implemented as a library-first, thin-CLI module consistent with <a href="../implementation/module-repository-structure">Module repository structure and dependency rules</a> and <a href="../architecture/independent-modules">Independent modules</a>. It depends on the <a href="./bus-agent">bus-agent</a> Go library for agent execution and does not implement its own agent runner; it does not invoke other <code class="language-plaintext highlighter-rouge">bus-*</code> binaries as subprocesses.</p>
+  </li>
+  <li>
+    <p><strong>Testing.</strong> The testing strategy aligns with the BusDK <a href="../testing/testing-strategy">Testing strategy</a>: hermetic, no network, deterministic, and with command-level or fixture-based tests where appropriate.</p>
+  </li>
+</ul>
+
+<p>The most relevant BusDK spec pages for implementors are: the <a href="../sdd">BusDK Software Design Document (SDD)</a> (goals and non-goals, especially NG-001), <a href="../cli/index">CLI tooling and workflow</a>, <a href="../cli/error-handling-dry-run-diagnostics">Error handling, dry-run, and diagnostics</a>, <a href="../implementation/module-repository-structure">Module repository structure and dependency rules</a>, and <a href="../testing/testing-strategy">Testing strategy</a>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="glossary-and-terminology">Glossary and Terminology</h3>
+
+<ul>
+  <li>
+    <p><strong>Module name:</strong> The identifier used for the current repository when a subcommand needs it (e.g. for docs URLs or e2e script naming). It is derived deterministically as the base name of the repository root directory (the last path component of the absolute path to the repo root). See FR-DEV-003 and IF-DEV-004.</p>
+  </li>
+  <li>
+<strong>Staging area / Git index:</strong> The set of changes that have been <code class="language-plaintext highlighter-rouge">git add</code>ed and will be included in the next <code class="language-plaintext highlighter-rouge">git commit</code>. Bus Dev commit operates only on this set; it does not add or remove from it.</li>
+  <li>
+<strong>Gitlink:</strong> The Git submodule pointer (commit SHA) stored in the superproject tree for a submodule. When you commit inside a submodule, the superproject’s view of that submodule becomes an unstaged gitlink change until the user stages it.</li>
+  <li>
+<strong>AGENTS.md:</strong> The single repository-root file that provides agent instructions per the <a href="https://agents.md/">AGENTS.md</a> open format. It MUST be a compact but detailed local spec for implementing the current module, grounded in the module’s SDD and end-user documentation. Bus Dev spec creates AGENTS.md from online SDD and user docs when missing, then refines it; when it exists, spec refines it in place. Init ensures AGENTS.md exists at the project root, creating default content when missing; that content may depend on <code class="language-plaintext highlighter-rouge">--lang</code>.</li>
+  <li>
+<strong>Cursor rule file (spec refactor):</strong> For <code class="language-plaintext highlighter-rouge">bus dev spec</code>, the optional file at <code class="language-plaintext highlighter-rouge">.cursor/rules/&lt;MODULE_NAME&gt;.mdc</code> (where <code class="language-plaintext highlighter-rouge">&lt;MODULE_NAME&gt;</code> is the module name, e.g. <code class="language-plaintext highlighter-rouge">bus-accounts</code>). When present, the tool includes its content in the refinement context, the agent refactors that content into AGENTS.md, and the tool then removes the file so agent instructions live only in AGENTS.md. This is the only permitted exception where bus-dev may remove or replace existing repo content for instruction standardization (FR-DEV-008a, NFR-DEV-008). See FR-DEV-008a.</li>
+  <li>
+<strong>Bus-owned block:</strong> A contiguous block of content in a repo-local file (e.g. CLAUDE.md, .gemini/settings.json) added by BusDK with an explicit marker so it can be identified and updated without touching existing user content. All such changes are append-only; user content is never removed or rewritten except the legacy .cursor/rules/<module_name>.mdc exception. See NFR-DEV-008 and the [bus-agent](./bus-agent) SDD.</module_name>
+</li>
+  <li>
+    <p><strong>Agent runner:</strong> The abstraction that invokes the configured external agent runtime (Cursor CLI, Codex, Gemini CLI, or Claude CLI) with a prompt, timeout, and output formatting. In bus-dev this is provided by the <a href="./bus-agent">bus-agent</a> Go library; bus-dev does not implement the runner itself. The active runtime is selectable via a flag or environment variable; supported runtimes and backends are defined in the bus-agent SDD.</p>
+  </li>
+  <li>
+    <p><strong>Cursor CLI:</strong> One of the supported agent runtimes. The Cursor CLI backend invokes the cursor-agent (or equivalent) executable. Used when the user selects the Cursor CLI option.</p>
+  </li>
+  <li>
+    <p><strong>Codex:</strong> One of the supported agent runtimes. The Codex backend invokes the Codex CLI (or equivalent) executable. Used when the user selects the Codex option. Integration is modular so that prompt, workdir, and I/O contract are the same across all backends.</p>
+  </li>
+  <li>
+    <p><strong>Gemini CLI:</strong> One of the supported agent runtimes. The Gemini CLI backend invokes the Gemini CLI (or equivalent) executable. Used when the user selects the Gemini CLI option. Integration is modular so that prompt, workdir, and I/O contract are the same as for other backends. Bus Dev supports repository-local Gemini context (e.g. <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>, <code class="language-plaintext highlighter-rouge">.geminiignore</code>) in parallel with AGENTS.md and never modifies user-global Gemini configuration or memory (see Gemini CLI integration and NG-DEV-005).</p>
+  </li>
+  <li>
+    <p><strong>MDC-style configuration (Gemini):</strong> In Gemini CLI terms, the use of project-level context and settings files that play a role analogous to Cursor’s <code class="language-plaintext highlighter-rouge">.cursor/rules/*.mdc</code> and project settings: the Gemini CLI loads context from markdown files (by default <code class="language-plaintext highlighter-rouge">GEMINI.md</code>) and respects a project <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code> and <code class="language-plaintext highlighter-rouge">.geminiignore</code>. Bus Dev documents and manages only the repository-local layer of this configuration.</p>
+  </li>
+  <li>
+    <p><strong>PLAN.md:</strong> Repository-root compact priority task list generated by <code class="language-plaintext highlighter-rouge">bus dev plan</code>. Each task written by <code class="language-plaintext highlighter-rouge">bus dev plan</code> is an unchecked item for one still-undone or newly detected unimplemented feature or other undone work item from documentation and repository state. <code class="language-plaintext highlighter-rouge">bus dev work</code> checks off items it completes and preserves previously checked items. <code class="language-plaintext highlighter-rouge">bus dev e2e</code> uses checked items as completed-feature coverage obligations and preserves checked items. On rerun, <code class="language-plaintext highlighter-rouge">bus dev plan</code> is the only command that prunes completed checked items and merges newly detected missing work into the prioritized unchecked list.</p>
+  </li>
+  <li>
+    <p><strong>Repository-local (Gemini):</strong> The set of Gemini-related files that Bus Dev may create, edit, or rely on, all under the current repository: repo-root <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, optional directory-scoped <code class="language-plaintext highlighter-rouge">GEMINI.md</code>, <code class="language-plaintext highlighter-rouge">.gemini/settings.json</code>, and <code class="language-plaintext highlighter-rouge">.geminiignore</code>. Contrast with user-global Gemini config (e.g. <code class="language-plaintext highlighter-rouge">~/.gemini/GEMINI.md</code>) and global memory, which Bus Dev must never modify.</p>
+  </li>
+  <li>
+    <p><strong>Headless and script mode:</strong> Invocation of <code class="language-plaintext highlighter-rouge">bus dev</code> (and thus of the agent) from a non-interactive environment (script, CI, headless runner). In this mode workflows MUST remain non-interactive and MUST NOT perform prohibited actions such as network operations or modifying user-global Gemini config or memory.</p>
+  </li>
+  <li>
+    <p><strong>Claude CLI:</strong> One of the supported agent runtimes. The Claude CLI backend invokes the Claude CLI (or equivalent) executable. Used when the user selects the Claude CLI option. Integration is modular so that prompt, workdir, and I/O contract are the same as for other backends.</p>
+  </li>
+  <li>
+    <p><strong>Enabled agent:</strong> An agent runtime whose CLI command exists at resolution time (e.g. the corresponding executable is found in PATH and is executable). The <strong>available</strong> set for automatic default is determined by bus-agent and may be restricted by user-configured enable/disable (FR-AGT-005a). When the user does not specify a runtime, bus-dev delegates to bus-agent for the automatic default from available runtimes in bus-agent’s order (alphabetic when no user order is set) (FR-DEV-005d).</p>
+  </li>
+  <li>
+    <p><strong>Session-stored preference:</strong> The user’s default choice of agent runtime for the current session. Stored in an environment variable (e.g. <code class="language-plaintext highlighter-rouge">BUS_DEV_AGENT</code>) so that every <code class="language-plaintext highlighter-rouge">bus dev</code> command in that shell session uses that runtime unless overridden by the <code class="language-plaintext highlighter-rouge">--agent</code> flag. Easy to change by re-exporting the variable or by using the flag for a single command.</p>
+  </li>
+  <li>
+    <p><strong>Working-directory lock:</strong> An exclusive lock keyed by the effective operation directory so that only one <code class="language-plaintext highlighter-rouge">bus dev</code> invocation (init, commit, stage, plan, work, spec, or e2e) runs at a time per directory. A second invocation for the same directory blocks until the first exits and releases the lock. Implemented via a lock file (e.g. <code class="language-plaintext highlighter-rouge">.bus-dev.lock</code>) and an exclusive file lock. See FR-DEV-012 and IF-DEV-005.</p>
+  </li>
+  <li>
+    <p><strong>Embedded prompt:</strong> A prompt string or template compiled into the bus-dev binary, not loaded from the filesystem.</p>
+  </li>
+  <li>
+    <p><strong>DOCS_BASE_URL:</strong> The base URL for BusDK documentation used to build all documentation links in prompts and diagnostics. Configurable via <code class="language-plaintext highlighter-rouge">BUS_DEV_DOCS_BASE_URL</code> (default <code class="language-plaintext highlighter-rouge">https://docs.busdk.com</code>); normalized by trimming a trailing slash. See FR-DEV-004b and the prompt variable catalog.</p>
+  </li>
+  <li>
+    <p><strong>MAIN_SDD_URL:</strong> The URL of the main BusDK SDD index page. Derived as <code class="language-plaintext highlighter-rouge">&lt;DOCS_BASE_URL&gt;/sdd</code>. Used in prompts and diagnostics when referring to the design spec. See FR-DEV-004b and the prompt variable catalog.</p>
+  </li>
+  <li>
+    <p><strong>Prompt-template variable rendering contract:</strong> The normative behavior for substituting <code class="language-plaintext highlighter-rouge">{{VARIABLE}}</code> placeholders in embedded prompts: rendering MUST be deterministic; missing or unresolved placeholders MUST cause the command to fail before agent invocation (exit code 2). Ensures the agent never receives partially substituted text. See FR-DEV-004a, NFR-DEV-001, NFR-DEV-005.</p>
+  </li>
+  <li>
+<strong>E2E test script (Bus module):</strong> A Bash script that runs the module’s compiled binary to exercise end-to-end behavior. It MUST live under <code class="language-plaintext highlighter-rouge">tests/</code> and MUST be named <code class="language-plaintext highlighter-rouge">e2e_bus_&lt;name&gt;.sh</code> where <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code> is the module name with the <code class="language-plaintext highlighter-rouge">bus-</code> prefix stripped (e.g. <code class="language-plaintext highlighter-rouge">bus-accounts</code> → <code class="language-plaintext highlighter-rouge">tests/e2e_bus_accounts.sh</code>). See KD-DEV-006 and FR-DEV-009.</li>
+</ul>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-data">bus-data</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner">
+<div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="./bus-agent">bus-agent module SDD</a></li>
+  <li><a href="./bus-preferences">bus-preferences module SDD</a></li>
+  <li><a href="./bus-config">bus-config module SDD</a></li>
+  <li><a href="../sdd">BusDK Software Design Document (SDD)</a></li>
+  <li><a href="../cli/index">CLI tooling and workflow</a></li>
+  <li><a href="../cli/error-handling-dry-run-diagnostics">Error handling, dry-run, and diagnostics</a></li>
+  <li><a href="../implementation/module-repository-structure">Module repository structure and dependency rules</a></li>
+  <li><a href="../testing/testing-strategy">Testing strategy</a></li>
+  <li><a href="../modules/bus-dev">End user documentation: bus-dev CLI reference</a></li>
+  <li><a href="https://geminicli.com/">Gemini CLI — install</a></li>
+  <li><a href="https://cursor.com/docs/cli/overview">Cursor CLI — overview and install</a></li>
+  <li><a href="https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started">Claude Code — get started / install</a></li>
+  <li><a href="https://developers.openai.com/codex/cli/">Codex CLI — install</a></li>
+  <li><a href="https://agents.md/">AGENTS.md — open format for guiding coding agents</a></li>
+</ul>
+
+</div>
+<div class="busdk-meta-section">
+<h3 id="document-control">Document control</h3>
+
+<p>Title: bus-dev module SDD<br>
+Project: BusDK<br>
+Document ID: <code class="language-plaintext highlighter-rouge">BUSDK-MOD-DEV</code><br>
+Version: 2026-02-13<br>
+Status: Draft<br>
+Last updated: 2026-02-13<br>
+Owner: BusDK development team</p>
+</div>
+</div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/sdd/bus-dev.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

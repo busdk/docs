@@ -1,5 +1,5 @@
 ---
-title: `date` (movement date)
+title: "`date` (movement date)"
 description: date is part of the inventory movements master data.
 ---
 

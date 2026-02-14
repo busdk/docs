@@ -1,5 +1,5 @@
 ---
-title: `total_vat` (invoice total VAT)
+title: "`total_vat` (invoice total VAT)"
 description: total_vat is the VAT total for the purchase invoice.
 ---
 

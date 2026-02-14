@@ -1,5 +1,5 @@
 ---
-title: `vat_amount` (VAT amount)
+title: "`vat_amount` (VAT amount)"
 description: vat_amount is the VAT amount for the purchase posting line.
 ---
 

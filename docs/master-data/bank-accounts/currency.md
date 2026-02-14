@@ -1,5 +1,5 @@
 ---
-title: `currency` (account currency)
+title: "`currency` (account currency)"
 description: currency is the bank account currency.
 ---
 

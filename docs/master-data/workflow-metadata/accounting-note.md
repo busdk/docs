@@ -1,5 +1,5 @@
 ---
-title: `accounting_note` (exception explanation)
+title: "`accounting_note` (exception explanation)"
 description: accounting_note is a free-text explanation for booking decisions that are not obvious from the evidence alone.
 ---
 

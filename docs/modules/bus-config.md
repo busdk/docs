@@ -3,11 +3,7 @@ title: bus-config — create and update workspace configuration
 description: bus config owns workspace-level configuration stored in datapackage.json at the workspace root.
 ---
 
-## bus-config
-
-### Name
-
-`bus config` — create and update workspace configuration.
+## `bus-config` — create and update workspace configuration
 
 ### Synopsis
 

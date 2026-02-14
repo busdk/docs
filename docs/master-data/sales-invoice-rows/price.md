@@ -1,5 +1,5 @@
 ---
-title: `price` (unit price)
+title: "`price` (unit price)"
 description: price is the unit price for the invoice row.
 ---
 

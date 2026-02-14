@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Accounting workflow overview (current planned modules) | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Accounting workflow overview (current planned modules)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules." />
+<meta property="og:description" content="This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules." />
+<link rel="canonical" href="http://localhost:4000/workflow/accounting-workflow-overview.html" />
+<meta property="og:url" content="http://localhost:4000/workflow/accounting-workflow-overview.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Accounting workflow overview (current planned modules)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules.","headline":"Accounting workflow overview (current planned modules)","url":"http://localhost:4000/workflow/accounting-workflow-overview.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="accounting-workflow-overview-current-planned-modules">Accounting workflow overview (current planned modules)</h2>
+
+<p>This is the intended, end-to-end bookkeeping flow for BusDK based on the current planned modules. It assumes a dedicated repository workspace for the accounting year, with the workspace datasets (tables plus schemas) and supporting evidence living side-by-side as repository data. Version control is an implementation choice, not the definition of the workflow’s invariants — the invariant is that the workspace datasets and their revision history remain reviewable and exportable.</p>
+
+<ol>
+  <li>Create the bookkeeping repository and scaffold baseline datasets:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus init
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">bus init</code> orchestrates module-owned init commands so each module remains the authoritative owner of its datasets and schemas.</p>
+
+<ol>
+  <li>Define master data that other modules depend on:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus accounts add ...
+bus entities add ...
+bus period open ...
+</code></pre></div></div>
+
+<p>The chart of accounts maintained by <a href="../modules/bus-accounts"><code class="language-plaintext highlighter-rouge">bus accounts</code></a> becomes the shared reference for postings and reports. Durable counterparties maintained by <a href="../modules/bus-entities"><code class="language-plaintext highlighter-rouge">bus entities</code></a> keep names and identifiers consistent across invoices, bank imports, and filings. Period control managed by <a href="../modules/bus-period"><code class="language-plaintext highlighter-rouge">bus period</code></a> establishes the close and lock boundaries that prevent later drift.</p>
+
+<ol>
+  <li>Treat evidence as first-class repository data by registering attachments:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus attachments add ...
+</code></pre></div></div>
+
+<p>Receipts, invoice PDFs, bank exports, VAT filings, and other documents are archived through <a href="../modules/bus-attachments"><code class="language-plaintext highlighter-rouge">bus attachments</code></a>, and other datasets reference attachment identifiers so provenance remains attached to the records that rely on it.</p>
+
+<ol>
+  <li>Record day-to-day activity as explicit invoice and journal records:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus invoices add ...
+bus journal add ...
+</code></pre></div></div>
+
+<p>Invoicing via <a href="../modules/bus-invoices"><code class="language-plaintext highlighter-rouge">bus invoices</code></a> writes validated invoice rows and can produce postings by appending to the shared journal dataset. Direct ledger postings via <a href="../modules/bus-journal"><code class="language-plaintext highlighter-rouge">bus journal</code></a> remain balanced and append-only, because the journal is authoritative for the financial statements.</p>
+
+<ol>
+  <li>Import bank activity and reconcile it against invoices and postings:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus bank import ...
+bus reconcile match ...
+</code></pre></div></div>
+
+<p><a href="../modules/bus-bank"><code class="language-plaintext highlighter-rouge">bus bank</code></a> normalizes and validates bank statement data, and <a href="../modules/bus-reconcile"><code class="language-plaintext highlighter-rouge">bus reconcile</code></a> links bank transactions to invoices or journal entries. When reconciliation reveals missing bookkeeping (fees, partial payments, unrecorded purchases), Alice records the missing source data with <code class="language-plaintext highlighter-rouge">bus invoices add</code> or posts directly with <code class="language-plaintext highlighter-rouge">bus journal add</code>, then re-runs matching so the reconciliation history remains explicit.</p>
+
+<ol>
+  <li>Close each period with a repeatable, script-friendly sequence:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus validate
+bus vat report ...
+bus vat <span class="nb">export</span> ...
+bus period close ...
+bus period lock ...
+bus reports trial-balance ...
+</code></pre></div></div>
+
+<p>Validation via <a href="../modules/bus-validate"><code class="language-plaintext highlighter-rouge">bus validate</code></a> ensures schemas and invariants are still satisfied. VAT is computed and exported via <a href="../modules/bus-vat"><code class="language-plaintext highlighter-rouge">bus vat</code></a> as repository data for archiving and filing. The period is closed and locked via <a href="../modules/bus-period"><code class="language-plaintext highlighter-rouge">bus period</code></a>, and the financial output set is generated via <a href="../modules/bus-reports"><code class="language-plaintext highlighter-rouge">bus reports</code></a>.</p>
+
+<ol>
+  <li>Record close boundaries as revisions:</li>
+</ol>
+
+<p>After the close outputs are generated and reviewed, Alice records a revision using her version control tooling so the period boundary is easy to return to later.</p>
+
+<p>At year end, the same pattern applies to the final period, producing a reproducible, audit-friendly year-end revision for long-term retention.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="../workflow/index">BusDK Design Spec: Example end-to-end workflow</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../workflow/index">BusDK Design Spec: Example end-to-end workflow</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./ai-assisted-classification-review">AI-assisted classification (review before external commit)</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/workflow/accounting-workflow-overview.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

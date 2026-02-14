@@ -1,5 +1,5 @@
 ---
-title: `total_sum` (invoice total, net)
+title: "`total_sum` (invoice total, net)"
 description: total_sum is the net total for the purchase invoice.
 ---
 

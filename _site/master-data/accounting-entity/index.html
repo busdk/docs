@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Accounting entity | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Accounting entity" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for." />
+<meta property="og:description" content="An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for." />
+<link rel="canonical" href="http://localhost:4000/master-data/accounting-entity/" />
+<meta property="og:url" content="http://localhost:4000/master-data/accounting-entity/" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Accounting entity" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for.","headline":"Accounting entity","url":"http://localhost:4000/master-data/accounting-entity/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="accounting-entity">Accounting entity</h2>
+
+<p>An accounting entity is the bookkeeping scope you keep separate journals, VAT, and reports for. In BusDK, that scope is defined by the workspace directory: one BusDK workspace represents exactly one internal business entity, and all datasets inside that workspace belong to that entity by construction.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="ownership">Ownership</h3>
+
+<p>Owner: <a href="../../modules/bus-init">bus init</a>. This module creates a new workspace and writes the workspace-level accounting entity settings into the workspace <code class="language-plaintext highlighter-rouge">datapackage.json</code> as a BusDK extension (see <a href="../../data/workspace-configuration">Workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> extension)</a>).</p>
+
+<p>Other modules consume the accounting entity settings as read-only workspace configuration when they validate, post, reconcile, report, or produce filings:</p>
+
+<ul>
+  <li>
+<a href="../../modules/bus-accounts">bus accounts</a>: reads workspace scope and entity settings to keep charts and validations consistent.</li>
+  <li>
+<a href="../../modules/bus-invoices">bus invoices</a>: reads entity settings to interpret invoice dates, currency, and VAT context.</li>
+  <li>
+<a href="../../modules/bus-vat">bus vat</a>: reads VAT registration and reporting cadence for period reporting.</li>
+  <li>
+<a href="../../modules/bus-journal">bus journal</a>: posts and reports per entity scope.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="actions">Actions</h3>
+
+<ul>
+  <li>
+<a href="./create">Create an accounting entity</a>: Create a new workspace directory so journals and VAT never mix across business entities.</li>
+  <li>
+<a href="./configure">Configure accounting entity settings</a>: Edit workspace configuration that controls currency, fiscal year boundaries, and VAT reporting expectations.</li>
+</ul>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="properties">Properties</h3>
+
+<p>Accounting entity settings are workspace-level configuration stored in <code class="language-plaintext highlighter-rouge">datapackage.json</code> at the workspace root as BusDK metadata. The settings include base currency (<a href="./base-currency">base_currency</a>), fiscal year boundaries (<a href="./fiscal-year-start">fiscal_year_start</a> and <a href="./fiscal-year-end">fiscal_year_end</a>), VAT registration (<a href="./vat-registered">vat_registered</a>), and VAT reporting cadence (<a href="./vat-reporting-period">vat_reporting_period</a>). The canonical reference for keys and semantics is <a href="../../data/workspace-configuration">Workspace configuration (<code class="language-plaintext highlighter-rouge">datapackage.json</code> extension)</a>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="relations">Relations</h3>
+
+<p>An accounting entity is the shared scope for all master data and bookkeeping records in a workspace. Scope is derived from the workspace root directory, not from a per-row key, and entity-wide settings are resolved from <code class="language-plaintext highlighter-rouge">datapackage.json</code> rather than being referenced on row-level in operational datasets.</p>
+
+<p>Within a workspace, there is one <a href="../chart-of-accounts/index">chart of accounts</a> (and therefore many ledger accounts) and one set of <a href="../accounting-periods/index">accounting periods</a> that define when bookkeeping is open, closed, and locked.</p>
+
+<p>Multi-company workflows are expressed as multi-workspace operations; see <a href="../../architecture/workspace-scope-and-multi-workspace">Workspace scope and multi-workspace workflows</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="../index">Master data (business objects)</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">Master data (business objects)</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../chart-of-accounts/index">Chart of accounts</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></li>
+  <li><a href="../../workflow/accounting-workflow-overview">Accounting workflow overview</a></li>
+  <li><a href="../../workflow/year-end-close">Year-end close (closing entries)</a></li>
+  <li><a href="../../workflow/vat-reporting-and-payment">VAT reporting and payment</a></li>
+</ul>
+
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/master-data/accounting-entity/index.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

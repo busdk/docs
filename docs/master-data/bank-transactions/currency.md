@@ -1,5 +1,5 @@
 ---
-title: `currency` (money movement currency)
+title: "`currency` (money movement currency)"
 description: currency is the bank transaction currency.
 ---
 

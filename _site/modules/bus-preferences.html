@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus preferences — user-level preference storage | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus preferences — user-level preference storage" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Set, get, list, and unset user-level BusDK preferences in a namespaced key-value file outside any workspace; no Git or network." />
+<meta property="og:description" content="Set, get, list, and unset user-level BusDK preferences in a namespaced key-value file outside any workspace; no Git or network." />
+<link rel="canonical" href="http://localhost:4000/modules/bus-preferences.html" />
+<meta property="og:url" content="http://localhost:4000/modules/bus-preferences.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus preferences — user-level preference storage" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Set, get, list, and unset user-level BusDK preferences in a namespaced key-value file outside any workspace; no Git or network.","headline":"bus preferences — user-level preference storage","url":"http://localhost:4000/modules/bus-preferences.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus-preferences--user-level-cross-workspace-preference-storage-for-busdk">
+<code class="language-plaintext highlighter-rouge">bus-preferences</code> — user-level, cross-workspace preference storage for BusDK</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="synopsis">Synopsis</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bus preferences [-h] [-V] [-v] [-q] [-C &lt;dir&gt;] [-o &lt;file&gt;] [--color &lt;auto|always|never&gt;] [--no-color] &lt;command&gt; [&lt;args&gt;]</code></p>
+
+<p>Commands: <strong><code class="language-plaintext highlighter-rouge">set</code></strong>, <strong><code class="language-plaintext highlighter-rouge">set-json</code></strong>, <strong><code class="language-plaintext highlighter-rouge">get</code></strong>, <strong><code class="language-plaintext highlighter-rouge">unset</code></strong>, <strong><code class="language-plaintext highlighter-rouge">list</code></strong>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">bus preferences set &lt;key&gt; &lt;value&gt;</code> — store a string value for <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code>.<br>
+<code class="language-plaintext highlighter-rouge">bus preferences set-json &lt;key&gt; &lt;json&gt;</code> — store an arbitrary JSON value for <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code>.<br>
+<code class="language-plaintext highlighter-rouge">bus preferences get &lt;key&gt;</code> — print the value for <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> to stdout.<br>
+<code class="language-plaintext highlighter-rouge">bus preferences unset &lt;key&gt;</code> — remove <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> if present.<br>
+<code class="language-plaintext highlighter-rouge">bus preferences list [&lt;prefix&gt;]</code> — list all keys, optionally filtered by key prefix, in sorted order.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="description">Description</h3>
+
+<p>Command names follow <a href="../cli/command-naming">CLI command naming</a>. <code class="language-plaintext highlighter-rouge">bus preferences</code> owns user-level BusDK configuration stored in a single preferences file on your machine. That file lives outside any workspace repository and is not used for accounting data or <a href="../data/workspace-configuration">workspace configuration</a> (such as <code class="language-plaintext highlighter-rouge">datapackage.json</code>). Instead it holds optional defaults and runtime preferences that apply across invocations and contexts: for example default tool selections, output formatting defaults, or module-specific options that you want to persist once and reuse everywhere. Other BusDK modules may read and write preferences under their own namespaces so that behavior stays consistent without you re‑specifying the same options in every workspace.</p>
+
+<p>The store is a generic namespaced key-value file. Each key is a dot-separated path; the first segment is typically a module namespace (e.g. <code class="language-plaintext highlighter-rouge">bus-agent</code>, <code class="language-plaintext highlighter-rouge">bus-dev</code>) and the rest are module-defined subkeys. Bus preferences does not interpret what those keys mean — it only enforces a canonical key grammar and stores values. Individual modules document and validate the preference keys they use. The module performs no Git or network operations; it only reads and writes the preferences file at a deterministic location.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="commands">Commands</h3>
+
+<p><strong><code class="language-plaintext highlighter-rouge">set &lt;key&gt; &lt;value&gt;</code></strong> — Set <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> to the string <code class="language-plaintext highlighter-rouge">&lt;value&gt;</code>. The value is stored as a JSON string. The preferences file is created if it does not exist. If the key is invalid (see Key-path grammar below), the command exits with code 2.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">set-json &lt;key&gt; &lt;json&gt;</code></strong> — Set <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> to an arbitrary JSON value. <code class="language-plaintext highlighter-rouge">&lt;json&gt;</code> must be valid JSON (object, array, string, number, boolean, or null). The module validates the input as JSON before writing. Invalid JSON or an invalid key yields exit code 2.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">get &lt;key&gt;</code></strong> — Print the stored value for <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> to stdout. If the stored value is a JSON string, the raw string is printed without surrounding quotes. For other JSON types, canonical JSON is printed. If the key is missing, the command exits with a non-zero status and a concise error on stderr. Invalid key exits with code 2.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">unset &lt;key&gt;</code></strong> — Remove <code class="language-plaintext highlighter-rouge">&lt;key&gt;</code> from the preferences file if it exists. Exits 0 whether or not the key was present. Invalid key exits with code 2.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">list [&lt;prefix&gt;]</code></strong> — List all stored keys in lexicographic order. If <code class="language-plaintext highlighter-rouge">&lt;prefix&gt;</code> is given, only keys whose path matches the prefix are listed. Output is deterministic and line-oriented: each line is <code class="language-plaintext highlighter-rouge">key=&lt;canonical-json&gt;</code>. Invalid prefix (e.g. invalid key grammar) exits with code 2.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="where-the-preferences-file-lives">Where the preferences file lives</h3>
+
+<p>The preferences file path is resolved in this order:</p>
+
+<ol>
+  <li>If the environment variable <strong><code class="language-plaintext highlighter-rouge">BUS_PREFERENCES_PATH</code></strong> is set, that path is used exactly.</li>
+  <li>On Windows, the default is <strong><code class="language-plaintext highlighter-rouge">%APPDATA%\BusDK\preferences.json</code></strong>.</li>
+  <li>On Unix-like systems, the default is <strong><code class="language-plaintext highlighter-rouge">$XDG_CONFIG_HOME/busdk/preferences.json</code></strong>, or <strong><code class="language-plaintext highlighter-rouge">~/.config/busdk/preferences.json</code></strong> if <code class="language-plaintext highlighter-rouge">XDG_CONFIG_HOME</code> is not set.</li>
+</ol>
+
+<p>The directory for the file is created automatically when you first write a preference. All consumers should use this same resolution so that every BusDK tool sees the same file; the <a href="../sdd/bus-preferences">module SDD</a> defines the contract for implementations.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="key-path-grammar">Key-path grammar</h3>
+
+<p>Keys are dot-separated paths. Each segment may contain only lowercase letters (<code class="language-plaintext highlighter-rouge">a-z</code>), digits (<code class="language-plaintext highlighter-rouge">0-9</code>), hyphens (<code class="language-plaintext highlighter-rouge">-</code>), and underscores (<code class="language-plaintext highlighter-rouge">_</code>). Uppercase characters are not allowed so that keys have a single canonical form. Invalid keys (e.g. empty segment, disallowed character, or leading/trailing dot) are rejected with a usage error and exit code 2.</p>
+
+<p>The recommended convention is to use the first segment as a module namespace (e.g. <code class="language-plaintext highlighter-rouge">bus-agent</code>, <code class="language-plaintext highlighter-rouge">bus-dev</code>, <code class="language-plaintext highlighter-rouge">bus</code>) and the rest as module-defined subkeys. For example <code class="language-plaintext highlighter-rouge">bus-agent.runtime</code> and <code class="language-plaintext highlighter-rouge">bus-dev.ui.theme</code> keep different modules’ preferences from colliding. Bus preferences does not enforce what namespaces mean; it only enforces the key grammar and storage invariants.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="global-flags">Global flags</h3>
+
+<p>These flags apply to all subcommands and match the <a href="../cli/global-flags">standard global flags</a>. They can appear in any order before the command. A lone <code class="language-plaintext highlighter-rouge">--</code> ends flag parsing; any following tokens are passed to the subcommand.</p>
+
+<ul>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-h</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--help</code></strong> — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-V</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--version</code></strong> — Print the tool name and version to stdout and exit 0.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-v</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--verbose</code></strong> — Send verbose diagnostics to stderr. You can repeat the flag (e.g. <code class="language-plaintext highlighter-rouge">-vv</code>) to increase verbosity. Verbose output does not change what is written to stdout.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-q</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--quiet</code></strong> — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine <code class="language-plaintext highlighter-rouge">--quiet</code> with <code class="language-plaintext highlighter-rouge">--verbose</code>; doing so is invalid usage (exit 2).</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-C &lt;dir&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--chdir &lt;dir&gt;</code></strong> — Use <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code> as the effective working directory. For <code class="language-plaintext highlighter-rouge">bus preferences</code> this mainly affects any module that might resolve paths relative to the current directory; the preferences file itself is always at the resolved user-level path above.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">-o &lt;file&gt;</code></strong>, <strong><code class="language-plaintext highlighter-rouge">--output &lt;file&gt;</code></strong> — Redirect normal command output to <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> instead of stdout. The file is created or truncated. Errors and diagnostics still go to stderr.</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--color &lt;mode&gt;</code></strong> — Control colored output on stderr. <code class="language-plaintext highlighter-rouge">&lt;mode&gt;</code> must be <code class="language-plaintext highlighter-rouge">auto</code>, <code class="language-plaintext highlighter-rouge">always</code>, or <code class="language-plaintext highlighter-rouge">never</code>. Invalid value is usage error (exit 2).</li>
+  <li>
+<strong><code class="language-plaintext highlighter-rouge">--no-color</code></strong> — Same as <code class="language-plaintext highlighter-rouge">--color=never</code>.</li>
+</ul>
+
+<p>Command results (e.g. <code class="language-plaintext highlighter-rouge">get</code> output or <code class="language-plaintext highlighter-rouge">list</code> lines) are written to stdout when produced. Diagnostics and errors are written to stderr.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="examples">Examples</h3>
+
+<p>Set a string preference and read it back:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus preferences <span class="nb">set </span>bus-agent.runtime gemini
+bus preferences get bus-agent.runtime
+</code></pre></div></div>
+
+<p>Store a JSON object for a module that expects structured options:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus preferences set-json bus-dev.ui <span class="s1">'{"theme":"dark","density":"compact"}'</span>
+</code></pre></div></div>
+
+<p>List all keys under the <code class="language-plaintext highlighter-rouge">bus-dev</code> namespace:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus preferences list bus-dev
+</code></pre></div></div>
+
+<p>Remove a preference:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bus preferences <span class="nb">unset </span>bus-agent.runtime
+</code></pre></div></div>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="files">Files</h3>
+
+<p>The module reads and writes exactly one file: the user-level preferences file at the path resolved as described above. That file is a JSON document with a reserved <code class="language-plaintext highlighter-rouge">version</code> field and a <code class="language-plaintext highlighter-rouge">values</code> map from key paths to JSON values. Writes are atomic (temp file and rename) so that an interrupted write does not corrupt the file. The module does not read or write workspace files, Git state, or any network resource.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="security-and-secrets">Security and secrets</h3>
+
+<p>Preferences are stored in a user-local file and may contain operational defaults (paths, toggles, chosen runtimes). They are <strong>not</strong> intended for secrets. Do not store passwords, API keys, or other credentials in preferences. Use your operating system’s credential store or an external secret manager for sensitive values. The preferences file is created with user-only permissions where supported; access is controlled by filesystem permissions.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-status-and-errors">Exit status and errors</h3>
+
+<ul>
+  <li>
+<strong>0</strong> — Success. For <code class="language-plaintext highlighter-rouge">unset</code>, exit 0 even if the key was already absent.</li>
+  <li>
+<strong>1</strong> — Execution failure: the preferences file could not be read or written (e.g. directory not writable, disk error).</li>
+  <li>
+<strong>2</strong> — Invalid usage: invalid key path, invalid JSON for <code class="language-plaintext highlighter-rouge">set-json</code>, or other usage error. A deterministic message is printed to stderr.</li>
+</ul>
+
+<p>When <code class="language-plaintext highlighter-rouge">get</code> is called for a key that is not present, the command exits with a non-zero status and a concise error on stderr. Error messages are always on stderr.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="development-state">Development state</h3>
+
+<p><strong>Value:</strong> Store and retrieve user-level preferences (e.g. default agent runtime, output format) so bus-agent and other CLI callers get consistent defaults across invocations without workspace-specific config.</p>
+
+<p><strong>Completeness:</strong> 70% (Broadly usable) — get, set, set-json, unset, and list are verified by e2e; key-path and format behavior are test-backed.</p>
+
+<p><strong>Current:</strong> E2e script <code class="language-plaintext highlighter-rouge">tests/e2e_bus_preferences.sh</code> proves help, version, invalid color/format and quiet+verbose (exit 2), chdir and terminator, get (missing key exit 1), set and set-json, unset, list with prefix, and that quiet suppresses stdout. Unit tests cover run and store (<code class="language-plaintext highlighter-rouge">internal/run/run_test.go</code>, <code class="language-plaintext highlighter-rouge">pkg/preferences/store_test.go</code>, <code class="language-plaintext highlighter-rouge">keys_test.go</code>).</p>
+
+<p><strong>Planned next:</strong> Key-path validation for list; canonical JSON for get/list; unit tests for path resolution (BUS_PREFERENCES_PATH, XDG, Windows).</p>
+
+<p><strong>Blockers:</strong> None known.</p>
+
+<p><strong>Depends on:</strong> None.</p>
+
+<p><strong>Used by:</strong> <a href="./bus-agent">bus-agent</a> and the CLI read preferences for agent and output settings.</p>
+
+<p>See <a href="../implementation/development-status">Development status</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./bus-config">bus-config</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-data">bus-data</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../sdd/bus-preferences">Module SDD: bus-preferences</a></li>
+  <li><a href="../data/workspace-configuration">Workspace configuration</a></li>
+  <li><a href="../cli/global-flags">Standard global flags</a></li>
+</ul>
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/modules/bus-preferences.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

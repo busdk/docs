@@ -1,5 +1,5 @@
 ---
-title: `amount` (quantity)
+title: "`amount` (quantity)"
 description: amount is the quantity for the invoice row.
 ---
 

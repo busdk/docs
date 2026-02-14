@@ -1,5 +1,5 @@
 ---
-title: `accounting_status` (review state)
+title: "`accounting_status` (review state)"
 description: accounting_status expresses where the bank transaction is in the bookkeeping workflow, such as new, matched, ready, booked, or ignored.
 ---
 

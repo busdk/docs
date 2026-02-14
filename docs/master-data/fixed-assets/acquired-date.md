@@ -1,5 +1,5 @@
 ---
-title: `acquired_date` (acquisition date)
+title: "`acquired_date` (acquisition date)"
 description: acquired_date is part of the fixed assets master data.
 ---
 

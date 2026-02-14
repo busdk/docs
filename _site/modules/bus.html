@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>bus — top-level CLI dispatcher | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="bus — top-level CLI dispatcher" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The bus command is the single entrypoint that invokes bus- executables; run bus &lt;command&gt; [args…] to use any module." />
+<meta property="og:description" content="The bus command is the single entrypoint that invokes bus- executables; run bus &lt;command&gt; [args…] to use any module." />
+<link rel="canonical" href="http://localhost:4000/modules/bus.html" />
+<meta property="og:url" content="http://localhost:4000/modules/bus.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="bus — top-level CLI dispatcher" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"The bus command is the single entrypoint that invokes bus- executables; run bus &lt;command&gt; [args…] to use any module.","headline":"bus — top-level CLI dispatcher","url":"http://localhost:4000/modules/bus.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="bus--top-level-cli-dispatcher-for-busdk">
+<code class="language-plaintext highlighter-rouge">bus</code> — top-level CLI dispatcher for BusDK</h2>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="synopsis">Synopsis</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bus [&lt;command&gt; [args...]]</code></p>
+
+<p>With no arguments, <code class="language-plaintext highlighter-rouge">bus</code> prints usage and available commands to stderr and exits with code 2. With one or more arguments, the first argument is the <strong>command</strong> (subcommand); the dispatcher runs the executable <code class="language-plaintext highlighter-rouge">bus-&lt;command&gt;</code> from PATH and passes any remaining arguments to it. Standard input, output, and error and the environment are passed through unchanged. The exit code of the child process is the exit code of <code class="language-plaintext highlighter-rouge">bus</code>.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="description">Description</h3>
+
+<p>Command names follow <a href="../cli/command-naming">CLI command naming</a>. The <code class="language-plaintext highlighter-rouge">bus</code> binary does not implement domain logic. It delegates every invocation to a module binary: <code class="language-plaintext highlighter-rouge">bus init</code> runs <code class="language-plaintext highlighter-rouge">bus-init</code>, <code class="language-plaintext highlighter-rouge">bus accounts add</code> runs <code class="language-plaintext highlighter-rouge">bus-accounts add</code>, and so on. All modules are invoked the same way: ensure the <code class="language-plaintext highlighter-rouge">bus</code> and <code class="language-plaintext highlighter-rouge">bus-&lt;module&gt;</code> binaries are on your PATH (for example by running <code class="language-plaintext highlighter-rouge">make install</code> in the BusDK superproject and adding the install directory to PATH), then run <code class="language-plaintext highlighter-rouge">bus &lt;module&gt; [subcommand] [args...]</code>.</p>
+
+<p>When you run <code class="language-plaintext highlighter-rouge">bus</code> with no arguments, the dispatcher prints a short usage line and a list of available commands (discovered by scanning PATH for <code class="language-plaintext highlighter-rouge">bus-*</code> executables) and exits with code 2. When you run <code class="language-plaintext highlighter-rouge">bus &lt;command&gt;</code> and <code class="language-plaintext highlighter-rouge">bus-&lt;command&gt;</code> is not found on PATH, the dispatcher prints an error that includes the expected executable name and the same usage and command list, then exits with code 127. For successful invocations, the dispatcher does not consume or modify stdout or stderr; all output comes from the module binary.</p>
+
+<p>There are no global flags consumed by the dispatcher itself. Flags and arguments are passed through to the module; see each module’s page (e.g. <a href="./bus-init">bus init</a>, <a href="./bus-config">bus config</a>) for the flags and subcommands that module supports.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="commands">Commands</h3>
+
+<p>The first argument to <code class="language-plaintext highlighter-rouge">bus</code> is always the command (module) name. The set of available commands is determined at runtime by the executables named <code class="language-plaintext highlighter-rouge">bus-&lt;command&gt;</code> found on PATH. Typical commands include <code class="language-plaintext highlighter-rouge">init</code>, <code class="language-plaintext highlighter-rouge">config</code>, <code class="language-plaintext highlighter-rouge">accounts</code>, <code class="language-plaintext highlighter-rouge">journal</code>, <code class="language-plaintext highlighter-rouge">vat</code>, <code class="language-plaintext highlighter-rouge">reports</code>, and others; run <code class="language-plaintext highlighter-rouge">bus</code> with no arguments to see the full list for your installation.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="exit-status">Exit status</h3>
+
+<ul>
+  <li>
+<strong>0</strong> — The invoked module completed successfully (child exit 0).</li>
+  <li>
+<strong>1</strong> — The invoked module failed or the dispatcher could not run it (e.g. execution error).</li>
+  <li>
+<strong>2</strong> — Invalid usage: no arguments (no subcommand supplied). Usage and available commands are printed to stderr.</li>
+  <li>
+<strong>127</strong> — Missing subcommand: the requested <code class="language-plaintext highlighter-rouge">bus-&lt;command&gt;</code> executable was not found on PATH. An error message, usage, and available commands are printed to stderr.</li>
+</ul>
+
+<p>Any other non-zero exit code is the exit code returned by the module binary (e.g. 2 for usage errors in the module).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="development-state">Development state</h3>
+
+<p><strong>Value:</strong> Single entrypoint that delegates to <code class="language-plaintext highlighter-rouge">bus-&lt;module&gt;</code> binaries so users can run one command (<code class="language-plaintext highlighter-rouge">bus &lt;module&gt; …</code>) to set up or use any module without knowing individual binary names.</p>
+
+<p><strong>Completeness:</strong> 50% (Primary journey) — no-args and missing-subcommand behavior are verified by unit tests; successful dispatch and exit-code pass-through are tested. The planned behavior when the first argument is <code class="language-plaintext highlighter-rouge">help</code> and <code class="language-plaintext highlighter-rouge">bus-help</code> is not on PATH (show usage and exit 2) is not yet implemented.</p>
+
+<p><strong>Current:</strong> With no arguments the dispatcher prints usage and available commands and exits 2 (<code class="language-plaintext highlighter-rouge">internal/dispatch/run_test.go</code>). When the subcommand is missing or not on PATH it exits 127 and reports the missing command. Successful delegation and exit-code pass-through are covered by the same tests. PATH order (first matching directory wins) is tested.</p>
+
+<p><strong>Planned next:</strong> When the first argument is <code class="language-plaintext highlighter-rouge">help</code> and <code class="language-plaintext highlighter-rouge">bus-help</code> is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch; add CONTRIBUTING.md or update README.</p>
+
+<p><strong>Blockers:</strong> None known.</p>
+
+<p><strong>Depends on:</strong> None.</p>
+
+<p><strong>Used by:</strong> Every <a href="./index">module</a> is invoked through it when users run <code class="language-plaintext highlighter-rouge">bus &lt;module&gt; …</code> (e.g. <code class="language-plaintext highlighter-rouge">bus init</code>, <code class="language-plaintext highlighter-rouge">bus accounts add</code>).</p>
+
+<p>See <a href="../implementation/development-status">Development status</a>.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-init">bus-init</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../sdd/bus">Module SDD: bus (dispatcher)</a></li>
+  <li><a href="../cli/command-structure">CLI command structure</a></li>
+  <li><a href="../cli/global-flags">Standard global flags</a></li>
+  <li><a href="../implementation/development-status">Development status</a></li>
+</ul>
+</div></div>
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/modules/bus.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

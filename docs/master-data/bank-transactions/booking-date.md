@@ -1,5 +1,5 @@
 ---
-title: `booking_date` (posting period date)
+title: "`booking_date` (posting period date)"
 description: booking_date is the date typically used to select the accounting period for bank postings.
 ---
 

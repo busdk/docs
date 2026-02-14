@@ -1,5 +1,5 @@
 ---
-title: `cost` (acquisition cost)
+title: "`cost` (acquisition cost)"
 description: cost is part of the fixed assets master data.
 ---
 

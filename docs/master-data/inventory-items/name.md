@@ -1,5 +1,5 @@
 ---
-title: `name` (item name)
+title: "`name` (item name)"
 description: name is part of the inventory items master data.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: `valuation_method` (valuation method)
+title: "`valuation_method` (valuation method)"
 description: valuation_method is part of the inventory items master data.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: `amount` (money movement amount)
+title: "`amount` (money movement amount)"
 description: amount is the bank transaction amount.
 ---
 

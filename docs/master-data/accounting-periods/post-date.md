@@ -1,5 +1,5 @@
 ---
-title: `post_date` (closing post date)
+title: "`post_date` (closing post date)"
 description: post_date is part of the accounting periods master data.
 ---
 

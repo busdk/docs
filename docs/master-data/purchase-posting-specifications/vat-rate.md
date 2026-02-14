@@ -1,5 +1,5 @@
 ---
-title: `vat_rate` (VAT percentage)
+title: "`vat_rate` (VAT percentage)"
 description: vat_rate is the VAT percentage for the purchase posting line when it is not reliably derivable from other fields.
 ---
 

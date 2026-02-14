@@ -1,5 +1,5 @@
 ---
-title: `period` (period identifier)
+title: "`period` (period identifier)"
 description: period is part of the accounting periods master data.
 ---
 

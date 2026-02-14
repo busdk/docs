@@ -1,5 +1,5 @@
 ---
-title: `vat_number` (VAT identity for cross-border rules)
+title: "`vat_number` (VAT identity for cross-border rules)"
 description: vat_number identifies the counterparty in VAT contexts.
 ---
 

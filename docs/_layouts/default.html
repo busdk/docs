@@ -6,28 +6,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 {% seo %}
-    <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}{% if site.github.build_revision %}?v={{ site.github.build_revision }}{% endif %}">
     {% include head-custom.html %}
   </head>
-  <body>
-    <div class="container-lg px-3 my-5 markdown-body">
-      {% if page.permalink == "/404.html" or page.title == "Page not found" %}
-      <header class="busdk-page-header">
-        <h1><a href="{{ "/" | absolute_url }}">{{ page.title }}</a></h1>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="{{ "/" | relative_url }}">{{ site.title }}</a>
+        </div>
       </header>
-      {% elsif site.title and site.title != page.title %}
-      <header class="busdk-page-header">
-        <h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
-      </header>
-      {% endif %}
 
-      <main class="busdk-main">
-        {{ content | wrap_busdk_chapters }}
-      </main>
+      <div class="busdk-docs-body">
+        {% unless page.permalink == "/" or page.url == "/" or page.permalink == "/404.html" or page.title == "Page not found" %}
+        {% include sidebar.html %}
+        {% endunless %}
 
-      {% if site.github.private != true and site.github.license %}
-      <footer class="busdk-footer footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
-        This site is open source. {% github_edit_link "Improve this page" %}.
+        <main class="busdk-main {% if page.permalink == '/' or page.url == '/' %}busdk-main--home{% else %}busdk-main--with-sidebar{% endif %}">
+          <div class="busdk-main-inner markdown-body">
+            {% if page.permalink == "/404.html" or page.title == "Page not found" %}
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1>{{ page.title }}</h1>
+              </div>
+            </header>
+            {% elsif site.title and site.title != page.title and page.permalink != "/" and page.url != "/" %}
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
+              </div>
+            </header>
+            {% endif %}
+
+            {{ content | wrap_busdk_chapters }}
+          </div>
+        </main>
+      </div>
+
+      {% if site.github.private != true and site.github.license and page.permalink != "/404.html" %}
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. {% github_edit_link "Improve this page" %}.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
       </footer>
       {% endif %}
     </div>

@@ -1,5 +1,5 @@
 ---
-title: `maturity_date` (maturity date)
+title: "`maturity_date` (maturity date)"
 description: maturity_date is part of the loans master data.
 ---
 

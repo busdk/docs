@@ -1,5 +1,5 @@
 ---
-title: `depreciation_method` (depreciation method)
+title: "`depreciation_method` (depreciation method)"
 description: depreciation_method is part of the fixed assets master data.
 ---
 

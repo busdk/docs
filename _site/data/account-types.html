@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Account types in double-entry bookkeeping | BusDK Design Document</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Account types in double-entry bookkeeping" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In double-entry bookkeeping, every ledger account has an account type." />
+<meta property="og:description" content="In double-entry bookkeeping, every ledger account has an account type." />
+<link rel="canonical" href="http://localhost:4000/data/account-types.html" />
+<meta property="og:url" content="http://localhost:4000/data/account-types.html" />
+<meta property="og:site_name" content="BusDK Design Document" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Account types in double-entry bookkeeping" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"In double-entry bookkeeping, every ledger account has an account type.","headline":"Account types in double-entry bookkeeping","url":"http://localhost:4000/data/account-types.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <meta name="color-scheme" content="light dark">
+
+<!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+  </head>
+  <body class="busdk-docs-page">
+    <div class="busdk-docs">
+      <header class="busdk-site-header">
+        <div class="busdk-site-header-inner">
+          <a class="busdk-site-header-logo" href="/">BusDK Design Document</a>
+        </div>
+      </header>
+
+      <div class="busdk-docs-body">
+        
+        <nav class="busdk-sidebar" aria-label="Documentation">
+  <div class="busdk-sidebar-inner">
+    <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
+    <ul class="busdk-sidebar-nav">
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Get started</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/implementation/development-status">Development status</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Design</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/data/">Data formats and storage</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Workflows</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Reference</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+          </li>
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+      <li class="busdk-sidebar-section">
+        <span class="busdk-sidebar-section-title">Compliance</span>
+        <ul class="busdk-sidebar-links">
+          
+          
+          
+          
+          
+          <li>
+            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </div>
+</nav>
+
+        
+
+        <main class="busdk-main busdk-main--with-sidebar">
+          <div class="busdk-main-inner markdown-body">
+            
+            <header class="busdk-page-header">
+              <div class="busdk-content-inner">
+                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+              </div>
+            </header>
+            
+
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="account-types-in-double-entry-bookkeeping">Account types in double-entry bookkeeping</h2>
+
+<p>In double-entry bookkeeping, every ledger account has an account type. The type expresses the economic meaning of the account and determines its normal balance (debit-side or credit-side). In practice, this matters because the same posting direction has different effects depending on the account type: a debit increases an asset account but decreases a liability account.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="the-five-core-account-types">The five core account types</h3>
+
+<section class="busdk-chapter busdk-chapter--level-4"><h4 id="assets">Assets</h4>
+
+<p>Assets are resources the business controls that are expected to provide future economic benefit. Typical assets include cash, bank accounts, accounts receivable, inventory, equipment, and prepaid expenses.</p>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="liabilities">Liabilities</h4>
+
+<p>Liabilities are obligations the business owes to others. Typical liabilities include accounts payable, accrued expenses, loans, and VAT or payroll taxes payable.</p>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="equity">Equity</h4>
+
+<p>Equity is the owners’ residual interest in the business after liabilities. Typical equity accounts include share capital, invested capital, retained earnings, and the current-period result (profit or loss).</p>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="income-revenue">Income (Revenue)</h4>
+
+<p>Income accounts track value earned from providing goods or services, such as sales, service revenue, and interest income. Income increases profit.</p>
+
+</section><section class="busdk-chapter busdk-chapter--level-4"><h4 id="expenses">Expenses</h4>
+
+<p>Expenses track costs incurred to earn income, such as rent, wages, software subscriptions, and utilities. Expenses decrease profit.</p>
+
+</section>
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="normal-balance-and-how-debitscredits-affect-each-type">Normal balance and how debits/credits affect each type</h3>
+
+<p>“Normal balance” is the posting side where increases usually go for that type.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Account type</th>
+      <th style="text-align: right">Normal balance</th>
+      <th>Increases with</th>
+      <th>Decreases with</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Assets</td>
+      <td style="text-align: right">Debit</td>
+      <td>Debit</td>
+      <td>Credit</td>
+    </tr>
+    <tr>
+      <td>Expenses</td>
+      <td style="text-align: right">Debit</td>
+      <td>Debit</td>
+      <td>Credit</td>
+    </tr>
+    <tr>
+      <td>Liabilities</td>
+      <td style="text-align: right">Credit</td>
+      <td>Credit</td>
+      <td>Debit</td>
+    </tr>
+    <tr>
+      <td>Equity</td>
+      <td style="text-align: right">Credit</td>
+      <td>Credit</td>
+      <td>Debit</td>
+    </tr>
+    <tr>
+      <td>Income</td>
+      <td style="text-align: right">Credit</td>
+      <td>Credit</td>
+      <td>Debit</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A practical mental model is that assets and expenses grow on the debit side, while liabilities, equity, and income grow on the credit side.</p>
+
+<p>In BusDK, account type metadata is typically used as part of chart-of-accounts structure and for deterministic reporting. It is a compact way to express how balances should be interpreted in balance sheet and profit and loss views, without changing the underlying posting rule that total debits must equal total credits.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="common-subcategories-same-posting-rules-more-specific-meaning">Common subcategories (same posting rules, more specific meaning)</h3>
+
+<p>Many account lists use subcategories to improve reporting without changing posting behavior. Assets are commonly split into current (short-term) and non-current (long-term), and liabilities are split the same way.</p>
+
+<p>Typical asset subcategories include current assets (cash and bank, accounts receivable, inventory, prepaid expenses) and non-current assets (equipment, vehicles, intangible assets, long-term investments).</p>
+
+<p>Typical liability subcategories include current liabilities (accounts payable, accrued liabilities, VAT payable, short-term loan portions) and non-current liabilities (long-term loans).</p>
+
+<p>Income and expense accounts are often split by business meaning (operating versus other) and by presentation (for example, separating cost of goods sold from other operating expenses).</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="contra-accounts-important-exception">Contra accounts (important exception)</h3>
+
+<p>A contra account offsets another account while using the opposite normal balance of the main account it relates to. This preserves the “gross” amount in the main account while recording reductions separately.</p>
+
+<p>Common contra examples:</p>
+
+<ul>
+  <li>
+<strong>Accumulated depreciation</strong> (contra-asset): offsets equipment; normal balance is <strong>credit</strong>
+</li>
+  <li>
+<strong>Allowance for doubtful accounts</strong> (contra-asset): offsets receivables; normal balance is <strong>credit</strong>
+</li>
+  <li>
+<strong>Sales returns/allowances</strong> (contra-income): offsets revenue; normal balance is <strong>debit</strong>
+</li>
+</ul>
+
+<p>Contra accounts don’t break double-entry rules — they keep the economic meaning visible while reversing the “usual” side for increases.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="temporary-vs-permanent-accounts">Temporary vs permanent accounts</h3>
+
+<p>This distinction is mostly about period reporting and closing, not about debit and credit mechanics. Income and expense accounts are temporary in the sense that they are closed into equity when producing a period result, while assets, liabilities, and equity carry forward across periods.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="choosing-the-right-type">Choosing the right type</h3>
+
+<p>Choose the type based on the economic meaning of what the account represents. An account is an asset when it represents something the business controls, a liability when it represents an obligation, and equity when it represents the owners’ stake or accumulated result. Income represents earned value, and expenses represent the costs of operating or earning that value.</p>
+
+<hr>
+
+<!-- busdk-docs-nav start -->
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="../data/index">BusDK Design Spec: Data format and storage</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../data/index">BusDK Design Spec: Data format and storage</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./append-only-and-soft-deletion">Append-only updates and soft deletion</a> →</span>
+</p></div></div>
+<!-- busdk-docs-nav end -->
+
+          </div>
+        </main>
+      </div>
+
+      
+      <footer class="busdk-footer" role="contentinfo">
+        <div class="busdk-footer-inner">
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/data/account-types.md">Improve this page</a>.</span>
+          <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
+        </div>
+      </footer>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

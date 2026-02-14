@@ -1,5 +1,5 @@
 ---
-title: `wage_expense_account_id` (wage expense account)
+title: "`wage_expense_account_id` (wage expense account)"
 description: wage_expense_account_id is part of the employees master data.
 ---
 

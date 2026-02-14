@@ -1,5 +1,5 @@
 ---
-title: `dimension` (lightweight reporting tag)
+title: "`dimension` (lightweight reporting tag)"
 description: dimension is a lightweight tag used for internal grouping such as project, cost center, or product area.
 ---
 

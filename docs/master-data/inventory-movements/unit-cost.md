@@ -1,5 +1,5 @@
 ---
-title: `unit_cost` (unit cost (when relevant))
+title: "`unit_cost` (unit cost (when relevant))"
 description: unit_cost is part of the inventory movements master data.
 ---
 

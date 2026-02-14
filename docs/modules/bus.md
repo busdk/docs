@@ -3,11 +3,7 @@ title: bus — top-level CLI dispatcher
 description: The bus command is the single entrypoint that invokes bus-<command> executables; run bus &lt;command&gt; [args...] to use any module.
 ---
 
-## bus
-
-### Name
-
-`bus` — top-level CLI dispatcher for BusDK.
+## `bus` — top-level CLI dispatcher for BusDK
 
 ### Synopsis
 

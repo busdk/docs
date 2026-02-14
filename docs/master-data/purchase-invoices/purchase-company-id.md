@@ -1,5 +1,5 @@
 ---
-title: `purchase_company_id` (supplier link)
+title: "`purchase_company_id` (supplier link)"
 description: purchase_company_id links a purchase invoice to the supplier.
 ---
 

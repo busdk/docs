@@ -1,5 +1,5 @@
 ---
-title: `description` (what was sold)
+title: "`description` (what was sold)"
 description: description explains what the invoice row represents.
 ---
 

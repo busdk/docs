@@ -1,6 +1,6 @@
 ---
 title: bus-accounts — Software Design Document
-description: Design spec for the BusDK accounts module: chart of accounts as schema-validated repository data, CLI for init, list, add, validate, stable references for downstream modules.
+description: "Design spec for the BusDK accounts module: chart of accounts as schema-validated repository data, CLI for init, list, add, validate, stable references for downstream modules."
 ---
 
 ## bus-accounts

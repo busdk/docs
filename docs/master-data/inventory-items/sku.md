@@ -1,5 +1,5 @@
 ---
-title: `sku` (stock keeping unit)
+title: "`sku` (stock keeping unit)"
 description: sku is part of the inventory items master data.
 ---
 

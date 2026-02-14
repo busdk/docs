@@ -1,5 +1,5 @@
 ---
-title: `amount` (allocated amount)
+title: "`amount` (allocated amount)"
 description: amount is the amount assigned to a single reconciliation target.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: `depreciation_account_id` (accumulated depreciation account)
+title: "`depreciation_account_id` (accumulated depreciation account)"
 description: depreciation_account_id is part of the fixed assets master data.
 ---
 

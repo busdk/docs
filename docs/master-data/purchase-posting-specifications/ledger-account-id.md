@@ -1,5 +1,5 @@
 ---
-title: `ledger_account_id` (classification target)
+title: "`ledger_account_id` (classification target)"
 description: ledger_account_id identifies the expense or asset account the purchase line is intended to be posted to.
 ---
 

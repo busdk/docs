@@ -1,5 +1,5 @@
 ---
-title: `bank_transaction_id` (bank transaction identity)
+title: "`bank_transaction_id` (bank transaction identity)"
 description: bank_transaction_id is the stable identity of the bank transaction as imported from the bank statement source.
 ---
 

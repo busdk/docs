@@ -1,5 +1,5 @@
 ---
-title: `is_capitalizable` (asset vs expense intent)
+title: "`is_capitalizable` (asset vs expense intent)"
 description: is_capitalizable indicates whether the purchase line should be treated as an asset acquisition rather than an immediate expense.
 ---
 

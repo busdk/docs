@@ -3,11 +3,7 @@ title: bus-data
 description: bus-data is the workspace dataset tool for BusDK repositories.
 ---
 
-## bus-data
-
-### Name
-
-`bus-data` — inspect and maintain workspace datasets, schemas, and data packages.
+## `bus-data` — inspect and maintain workspace datasets, schemas, and data packages
 
 ### Synopsis
 

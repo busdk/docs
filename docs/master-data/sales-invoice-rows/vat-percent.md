@@ -1,5 +1,5 @@
 ---
-title: `vat_percent` (applied VAT percentage)
+title: "`vat_percent` (applied VAT percentage)"
 description: vat_percent is the VAT percentage applied to the invoice row.
 ---
 

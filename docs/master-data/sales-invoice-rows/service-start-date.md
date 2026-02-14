@@ -1,5 +1,5 @@
 ---
-title: `service_start_date` (line-level service period start)
+title: "`service_start_date` (line-level service period start)"
 description: service_start_date records when the service period begins for this invoice row.
 ---
 

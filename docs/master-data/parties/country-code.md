@@ -1,5 +1,5 @@
 ---
-title: `country_code` (jurisdiction hint)
+title: "`country_code` (jurisdiction hint)"
 description: country_code records the party’s country as a short code, such as FI.
 ---
 

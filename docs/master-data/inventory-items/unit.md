@@ -1,5 +1,5 @@
 ---
-title: `unit` (unit of measure)
+title: "`unit` (unit of measure)"
 description: unit is part of the inventory items master data.
 ---
 

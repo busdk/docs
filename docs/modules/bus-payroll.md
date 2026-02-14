@@ -3,11 +3,7 @@ title: bus-payroll — run payroll and generate postings
 description: bus payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings.
 ---
 
-## bus-payroll
-
-### Name
-
-`bus payroll` — run payroll and generate postings.
+## `bus-payroll` — run payroll and generate postings
 
 ### Synopsis
 

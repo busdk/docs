@@ -1,5 +1,5 @@
 ---
-title: `expense_account_id` (depreciation expense account)
+title: "`expense_account_id` (depreciation expense account)"
 description: expense_account_id is part of the fixed assets master data.
 ---
 

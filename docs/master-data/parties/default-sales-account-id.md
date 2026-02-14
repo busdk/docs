@@ -1,5 +1,5 @@
 ---
-title: `default_sales_account_id` (classification default for sales)
+title: "`default_sales_account_id` (classification default for sales)"
 description: default_sales_account_id is the party’s default revenue account suggestion.
 ---
 

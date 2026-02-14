@@ -1,6 +1,6 @@
 ---
 title: bus — Software Design Document (dispatcher)
-description: Design document for the bus top-level dispatcher: single entrypoint that invokes bus-<command> executables on PATH.
+description: "Design document for the bus top-level dispatcher: single entrypoint that invokes bus-<command> executables on PATH."
 ---
 
 ## bus (dispatcher)

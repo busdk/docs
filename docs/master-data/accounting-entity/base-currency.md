@@ -1,5 +1,5 @@
 ---
-title: `base_currency` (workspace base currency)
+title: "`base_currency` (workspace base currency)"
 description: base_currency is the workspace’s base currency used for reporting and review.
 ---
 
