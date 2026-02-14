@@ -7,6 +7,28 @@ description: Snapshot of implementation state for each BusDK module and the Bus 
 
 This page summarizes the implementation state of each BusDK module as tracked in each repository’s PLAN.md. Those plans list prioritized, unchecked work items verified against the module SDD and CLI reference; completed work is not listed. The snapshot below shows how much remains per module and where the focus lies. The authoritative source for up-to-date detail is each module’s PLAN.md in the superproject. Components that have no PLAN.md are listed separately as unknown state — they may be finished or may have untracked remaining work.
 
+### Priority and dependencies
+
+Some modules depend on others for implementation (Go library calls) or for correct end-to-end behavior (workflow and dataset contracts). Implementing or stabilizing the dependency first unblocks the dependent module and avoids rework.
+
+**Library implementation order.** [bus-data](../modules/bus-data) is the shared mechanical layer: it has no Go dependency on other bus-* modules and owns workspace dataset and schema semantics. [bus-api](../modules/bus-api) must call the bus-data library only (no CLI invocation) for all workspace endpoints; its PLAN explicitly adds bus-data as a Go dependency and implements endpoints by calling that library. So bus-data (and [bus-bfl](../modules/bus-bfl), which bus-data uses for formula validation and projection) should be implemented or stabilized before bus-api can deliver full parity. [bus-sheets](../modules/bus-sheets) embeds the Bus API in-process and delegates all data and schema operations to it; bus-sheets therefore depends on bus-api (and transitively bus-data). Implementing in the order bus-data → bus-api → bus-sheets allows each layer to build and test against a stable backend. [bus-config](../modules/bus-config) provides a Go library with GetDefaultAgent / SetDefaultAgent that [bus-agent](../modules/bus-agent) and the CLI use for default agent selection; finishing the bus-config library and `set agent` / `get agent` makes agent default behavior consistent across tools.
+
+**Workflow and dataset order.** Domain modules integrate through [shared datasets and schemas](../architecture/independent-modules), not through Go imports. For workflows to behave correctly, some ordering still helps. [bus-init](../modules/bus-init) orchestrates config init and then each module’s init; each module’s init contract (idempotent when both dataset and schema exist, clear failure when only one exists) should be in place so `bus init all` is reliable. [bus-period](../modules/bus-period) owns open/close/lock state; [bus-journal](../modules/bus-journal) enforces period integrity (reject postings in closed periods), and [bus-reports](../modules/bus-reports), [bus-vat](../modules/bus-vat), and the filing modules all assume period and journal data are present and, where relevant, periods closed. So stabilizing period and journal (including append-only period control and journal layout per SDD) unblocks reports, VAT, and filing. [bus-reconcile](../modules/bus-reconcile) match/allocate depends on [bus-bank](../modules/bus-bank) datasets and on [bus-invoices](../modules/bus-invoices) or journal data. [bus-filing](../modules/bus-filing) assembles bundles from validated closed-period data and delegates to [bus-filing-prh](../modules/bus-filing-prh) and [bus-filing-vero](../modules/bus-filing-vero); those target modules list prerequisites such as period closed and filing orchestration. [bus-invoices](../modules/bus-invoices) delegates PDF generation to [bus-pdf](../modules/bus-pdf). [bus-loans](../modules/bus-loans) validates counterparty and account IDs against [bus-accounts](../modules/bus-accounts) and [bus-entities](../modules/bus-entities) when those datasets exist. [bus-reports](../modules/bus-reports) optionally reads the budget dataset from [bus-budget](../modules/bus-budget). None of these are hard Go dependencies, but finishing the “upstream” module first (e.g. period and journal before filing) keeps feature completeness and tests aligned.
+
+| Dependent module | Depends on (library or workflow) |
+|------------------|----------------------------------|
+| bus-api | bus-data (Go library); formula features via bus-data’s use of bus-bfl |
+| bus-sheets | bus-api (embedded in-process); optionally bus-agent for chat UI |
+| bus-agent | bus-config (default agent store: GetDefaultAgent / SetDefaultAgent) |
+| bus-journal | bus-period (period integrity: reject postings in closed periods) |
+| bus-reports | bus-journal, bus-period; optionally bus-budget |
+| bus-vat | journal-area and invoice data; period semantics |
+| bus-reconcile | bus-bank; bus-invoices and/or bus-journal |
+| bus-filing | closed-period, validated data; delegates to bus-filing-prh, bus-filing-vero |
+| bus-filing-prh, bus-filing-vero | bus-filing orchestration; period closed and prerequisites |
+| bus-invoices | bus-pdf (for `bus invoices pdf`) |
+| bus-loans | bus-accounts, bus-entities (reference validation when datasets present) |
+
 ### By module
 
 | Module | Open items | Focus of remaining work |
@@ -67,4 +89,6 @@ Across the 27 modules there are roughly 150 open PLAN items. Recurring themes ar
 
 - [BusDK SDD](../sdd)
 - [Module CLI reference](../modules/index)
+- [Independent modules (integration through shared datasets)](../architecture/independent-modules)
+- [Module repository structure and dependency rules](./module-repository-structure)
 - Each module repository’s PLAN.md in the BusDK superproject
