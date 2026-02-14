@@ -45,19 +45,19 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 50% (Primary journey) — init, add, list implemented; e2e proves init (incl. dry-run and idempotent), add (incl. --id/--name aliases and --dry-run), and list with deterministic output; PLAN reports no open items.
+**Completeness:** 50% — Master-data step (init, add, list) is test-verified; e2e and unit tests prove the counterparty-definition journey step.
 
-**Use case readiness:** Accounting workflow: 50% — init, add, list verified; add flags and interactive/scripting parity implemented per PLAN. Finnish payroll handling: 50% — party references for employees; e2e proves init, add, list and add aliases.
+**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 50% — init, add, list verified; user can define counterparties for the workflow. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 50% — party references for employees verified; init, add, list and add aliases covered by e2e.
 
-**Current:** E2e script `tests/e2e_bus_entities.sh` proves help, version, invalid usage (quiet+verbose, color, format, chdir), init --dry-run (no files), init creating entities.csv and schema at workspace root, idempotent init warning, add (--entity-id/--display-name and --id/--name aliases), add --dry-run (no row written), list with deterministic TSV, --output, --quiet, -f tsv, and -- terminator. Unit tests in `internal/app/run_test.go` and `internal/entities/validator_test.go` cover run, validator, and flags.
+**Current:** Verified capabilities: help, version, global flags (invalid usage: quiet+verbose, color, format, chdir). Init: create entities.csv and schema at workspace root, idempotent warning when both exist, fail when only one exists, dry-run leaves no files (`tests/e2e_bus_entities.sh`). Add: required params and missing-param usage error, `--id`/`--name` aliases, dry-run does not append (`tests/e2e_bus_entities.sh`). List: empty and populated, deterministic TSV, `--output`, `--quiet`, `-f tsv`, `--` terminator, `-vv` stderr-only verbose (`tests/e2e_bus_entities.sh`). Unit: `internal/app/run_test.go` (init success, init partial-state fail, run), `internal/cli/flags_test.go` (verbosity, `--`, dry-run, color, parse), `internal/entities/validator_test.go` (schema and foreign-key validation).
 
-**Planned next:** None in PLAN; command surface, add flags, interactive parity, and init contract match docs. Optional follow-ups per SDD (e.g. validate subcommand if scoped).
+**Planned next:** None in PLAN; optional SDD follow-ups (e.g. validate subcommand if scoped). No use-case-specific next items.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist; [bus-invoices](./bus-invoices) and accounting workflow use entity data.
+**Used by:** [bus-invoices](./bus-invoices) and [bus-loans](./bus-loans) reference entity data; [bus-bank](./bus-bank) and reconciliation use counterparty identifiers.
 
 See [Development status](../implementation/development-status).
 

@@ -39,17 +39,17 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% (Stable) — init, add, and balance verified by e2e; idempotent init and deterministic balance output test-backed.
+**Completeness:** 60% (Stable) — init, add, balance and NFR-JRN-001 closed-period reject verified by e2e and unit tests; layout (journals.csv/journal-YYYY) and audit fields not yet verified.
 
-**Use case readiness:** Accounting workflow: 60% — init, add, balance verified; period integrity and audit fields missing for full close step. Finnish company reorganisation: 60% — postings and balancing; audit trail for bookkeeping evidence. Finnish payroll handling: 60% — append payroll posting output; init, add, balance verified by e2e.
+**Use case readiness:** Accounting workflow: 60% — init, add, balance and period integrity (reject in closed period) verified; layout and audit fields missing for full close. Finnish company reorganisation: 60% — postings and balancing; period reject verified; audit trail fields planned. Finnish payroll handling: 60% — append posting output; init, add, balance and closed-period reject verified.
 
-**Current:** E2e script `tests/e2e_bus_journal.sh` proves help, version, invalid color/format and quiet+verbose, chdir, init creating transactions/lines CSV and schema, idempotent init, dry-run add (no new rows), add with debit/credit pairs, balance with exact TSV and --as-of, --output and --quiet. Unit tests in `internal/journal/add_test.go` and `internal/app/run_test.go` cover journal add, validate, atomic write, and app run.
+**Current:** E2e `tests/e2e_bus_journal.sh` proves help, version, invalid color/format, quiet+verbose, chdir, init (transactions/lines CSV and schema), idempotent init, dry-run add, add with debit/credit, balance (TSV, --as-of, --output, --quiet), and NFR-JRN-001 (add to closed period exits 1 with deterministic stderr). Unit tests: `internal/journal/period_test.go` (closed-period reject, load, path), `internal/journal/add_test.go`, `internal/journal/validate_test.go`, `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go` cover add, balance, init, flags, and period integrity.
 
-**Planned next:** Period integrity (reject postings in closed periods); layout alignment; audit-trail fields; interactive add; account by name.
+**Planned next:** Layout alignment with SDD (journals.csv, journal-YYYY.csv); audit-trail fields; interactive add; account by name (PLAN.md). Layout and audit fields advance accounting and compliance use cases.
 
-**Blockers:** [bus-period](./bus-period) closed-period checks needed for full workflow integrity.
+**Blockers:** [bus-period](./bus-period) writing closed-period file for full workflow (journal rejects when file present; period module must provide it).
 
-**Depends on:** [bus-period](./bus-period) (period integrity: reject postings in closed periods).
+**Depends on:** [bus-period](./bus-period) (closed-period file for full period integrity).
 
 **Used by:** [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-reconcile](./bus-reconcile), and [bus-filing](./bus-filing) read journal data.
 
