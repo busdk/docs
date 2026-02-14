@@ -14,10 +14,8 @@ defaults:
     values:
       layout: default
 
-# Include .well-known so Chrome DevTools workspace stub is copied into the build.
-# The plugin overwrites or removes the built file depending on JEKYLL_ENV.
-include:
-  - .well-known
+# Chrome DevTools automatic workspace: the plugin writes .well-known/appspecific/com.chrome.devtools.json
+# in the build output only when JEKYLL_ENV=development; production build never contains it.
 
 # Sass: silence deprecation warnings from jekyll-theme-primer (we don't control the gem).
 # sourcemap: development — emit .css.map only when JEKYLL_ENV=development so Chrome DevTools

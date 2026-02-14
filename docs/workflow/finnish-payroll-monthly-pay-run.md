@@ -1,6 +1,6 @@
 ---
 title: Finnish payroll handling (monthly pay run)
-description: Run monthly payroll for a small company: prerequisites, employee register, pay run with pay date, balanced posting intent for wages and withholdings, and how postings feed the journal and bank reconciliation.
+description: "Run monthly payroll for a small company: prerequisites, employee register, pay run with pay date, balanced posting intent for wages and withholdings, and how postings feed the journal and bank reconciliation."
 ---
 
 ## Finnish payroll handling (monthly pay run)

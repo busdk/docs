@@ -47,6 +47,9 @@ jobs:
       - name: Remove source maps (do not publish to production)
         run: find _site -name '*.map' -delete
 
+      - name: Assert Chrome DevTools workspace not in production build
+        run: ./scripts/verify-devtools-workspace.sh prod _site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
