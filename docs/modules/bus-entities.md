@@ -49,7 +49,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 50% — init, add, list verified; user can define counterparties for the workflow. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 50% — party references for employees verified; init, add, list and add aliases covered by e2e.
 
-**Current:** Verified capabilities: help, version, global flags (invalid usage: quiet+verbose, color, format, chdir). Init: create entities.csv and schema at workspace root, idempotent warning when both exist, fail when only one exists, dry-run leaves no files (`tests/e2e_bus_entities.sh`). Add: required params and missing-param usage error, `--id`/`--name` aliases, dry-run does not append (`tests/e2e_bus_entities.sh`). List: empty and populated, deterministic TSV, `--output`, `--quiet`, `-f tsv`, `--` terminator, `-vv` stderr-only verbose (`tests/e2e_bus_entities.sh`). Unit: `internal/app/run_test.go` (init success, init partial-state fail, run), `internal/cli/flags_test.go` (verbosity, `--`, dry-run, color, parse), `internal/entities/validator_test.go` (schema and foreign-key validation).
+**Current:** Verified capabilities: help, version, global flags (invalid usage: quiet+verbose, color, format, chdir) (`tests/e2e_bus_entities.sh`). Init: create entities.csv and schema at workspace root, idempotent warning when both exist, fail when only CSV or only schema exists, dry-run leaves no files (`tests/e2e_bus_entities.sh`). Add: missing-param usage error, full add (entity-id, entity-type, display-name, business-id, email), duplicate entity_id reject, `--id`/`--name` aliases, dry-run does not append (`tests/e2e_bus_entities.sh`). List: empty and populated deterministic TSV, `--output`, `--quiet`, `-f tsv`, `--` terminator, `-vv` stderr-only verbose, `--no-color` (`tests/e2e_bus_entities.sh`). Unit: `internal/app/run_test.go` (init success, init partial-state fail, run), `internal/cli/flags_test.go` (verbosity, `--`, dry-run, color, parse), `internal/entities/validator_test.go` (schema and foreign-key validation).
 
 **Planned next:** None in PLAN; optional SDD follow-ups (e.g. validate subcommand if scoped). No use-case-specific next items.
 
@@ -57,7 +57,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Depends on:** None.
 
-**Used by:** [bus-invoices](./bus-invoices) and [bus-loans](./bus-loans) reference entity data; [bus-bank](./bus-bank) and reconciliation use counterparty identifiers.
+**Used by:** [bus-invoices](./bus-invoices) and [bus-loans](./bus-loans) reference entity data; [bus-bank](./bus-bank) and [bus-reconcile](./bus-reconcile) use counterparty identifiers.
 
 See [Development status](../implementation/development-status).
 
