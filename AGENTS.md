@@ -1,5 +1,12 @@
 # AGENTS
 
+The page heading contract: the layout outputs the front matter `title` as the
+single `<h1>` in the content area. The site header (`.busdk-site-header`)
+shows the site title and links to home; it is not repeated as the page h1. Each
+page should use a meaningful first `##` in the body (e.g. Overview, In this
+section) so that both h1 (page title) and h2 (first section) add meaning;
+avoid using the first `##` to repeat the page title.
+
 This repository has two documentation page layouts that must stay consistent.
 The front page is the home layout without the left navigation sidebar. Inner
 pages use the documentation layout with the left sidebar navigation.

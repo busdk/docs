@@ -1,9 +1,9 @@
 ---
-title: bus-validate — Software Design Document
+title: bus-validate — workspace-wide validation and integrity checks (SDD)
 description: Bus Validate validates all workspace datasets against their schemas, verifies cross-table integrity and double-entry invariants, and produces actionable…
 ---
 
-## bus-validate
+## bus-validate — workspace-wide validation and integrity checks
 
 ### Introduction and Overview
 

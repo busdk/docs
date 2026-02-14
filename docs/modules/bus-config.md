@@ -82,9 +82,13 @@ Exit 0 on success. Non-zero in these cases:
 
 **Value:** Create and update workspace configuration (`datapackage.json`) and accounting-entity settings so every BusDK workspace has a single, schema-valid source for currency, fiscal year, and VAT settings.
 
-**Completeness:** 70% (Broadly usable) — init and configure are fully verified by e2e; idempotent init and deterministic JSON shape are test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity (profile, base_currency, vat_reporting_period, etc.); init idempotent when entity already present; configure updates only given fields (e.g. base-currency, vat-registered) with deterministic diff; global flags (help, version, color, quiet, output, chdir, terminator) and invalid usage. Unit tests cover run and validation (`internal/run/run_test.go`, `internal/config/`).
+**Completeness:** 70% (Broadly usable) — init and configure fully verified by e2e; idempotent init and deterministic JSON shape test-backed.
+
+**Use case readiness:** Accounting workflow: 70% — init and configure verified; config library and set/get agent would extend usability.
+
+**Current:** E2e script `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity; init idempotent when entity already present; configure updates only given fields with deterministic diff; global flags and invalid usage. Unit tests in `internal/run/run_test.go` and `internal/config/` cover run and validation.
 
 **Planned next:** Config library; `set agent` / `get agent` with persistence; E2E for set/get and invalid runtime.
 

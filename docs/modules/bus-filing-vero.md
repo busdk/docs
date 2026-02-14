@@ -29,7 +29,11 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 **Value:** Produce Vero (Finnish Tax Administration) export bundles from closed-period data when invoked as the `vero` target of [bus-filing](./bus-filing).
 
-**Completeness:** 40% (Meaningful task, partial verification) — bundle workflows are implemented; unit tests cover app, bundle, and output. No e2e.
+**Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+
+**Completeness:** 40% (Meaningful task, partial verification) — bundle workflows implemented; unit tests cover app, bundle, and output. No e2e.
+
+**Use case readiness:** Finnish compliance: 40% — bundle and output verified; source refs and e2e would unlock Vero filing.
 
 **Current:** Unit tests in `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, and `internal/output/` prove app and bundle behavior. No e2e against fixture; source refs (FR-VERO-002) and prerequisites diagnostics are in PLAN.
 

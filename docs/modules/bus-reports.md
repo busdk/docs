@@ -39,9 +39,13 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 **Value:** Produce trial balance, account-ledger, and statement-style reports from journal and period data so the [accounting workflow](../workflow/accounting-workflow-overview) can generate financial output after close.
 
-**Completeness:** 50% (Primary journey) — trial balance and account-ledger are implemented; unit tests cover run, workspace load, and report logic. No e2e.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Current:** Unit tests in `internal/app/run_test.go`, `internal/workspace/load_test.go`, and `internal/report/report_test.go` prove run dispatch, workspace loading, and report generation. No e2e script; report output shape is not asserted end-to-end.
+**Completeness:** 50% (Primary journey) — trial balance and account-ledger implemented; unit tests cover run, workspace load, and report logic. No e2e.
+
+**Use case readiness:** Accounting workflow: 50% — trial balance and account-ledger verified by unit tests; general-ledger and period support would complete. Finnish compliance: 50% — reports support statements; traceable line items (NFR-REP-001) and KPA/PMA would complete.
+
+**Current:** Unit tests in `internal/app/run_test.go`, `internal/workspace/load_test.go`, and `internal/report/report_test.go` prove run dispatch, workspace loading, and report generation. No e2e; report output shape is not asserted end-to-end.
 
 **Planned next:** general-ledger with --period and --account; trial-balance --as-of; --period for P&amp;L; stable text format; traceability; optional budget; KPA/PMA.
 

@@ -1,9 +1,9 @@
 ---
-title: bus-entities — Software Design Document
+title: bus-entities — counterparty reference data and stable entity IDs (SDD)
 description: Bus Entities maintains counterparty reference datasets as schema-validated repository data, normalizes identity details, and provides stable entity…
 ---
 
-## bus-entities
+## bus-entities — counterparty reference data and stable entity IDs
 
 ### Introduction and Overview
 

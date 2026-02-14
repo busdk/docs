@@ -1,9 +1,9 @@
 ---
-title: bus — Software Design Document (dispatcher)
+title: bus — single CLI entrypoint for the BusDK toolchain (SDD)
 description: "Design document for the bus top-level dispatcher: single entrypoint that invokes bus-<command> executables on PATH."
 ---
 
-## bus (dispatcher)
+## bus — single CLI entrypoint for the BusDK toolchain
 
 ### Introduction and Overview
 

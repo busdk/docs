@@ -39,7 +39,9 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 
 **Value:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and optional planning workflows have a single source for budget figures.
 
-**Completeness:** 30% (Some basic commands) — unit tests for flags and variance logic exist; no e2e. Init, report, add, and set are not verified.
+**Use cases:** Orphan: no documented use case yet (optional accounting — [budgeting workflow](../workflow/budgeting-and-budget-vs-actual) exists).
+
+**Completeness:** 30% (Some basic commands) — unit tests for flags and variance logic exist; no e2e. Init, report, add, and set not verified.
 
 **Current:** Unit tests in `cmd/bus-budget/main_test.go`, `internal/validate/validate_property_test.go`, and `internal/budget/variance_property_test.go` prove flags and variance behavior. No e2e; init, report, add, set are not covered by tests.
 

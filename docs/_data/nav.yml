@@ -1,5 +1,6 @@
 # Sidebar navigation for inner pages (GitHub Docs style).
 # Used by _includes/sidebar.html and the home page card grid.
+# Optional third level: set link.children as an array of {label, url}.
 
 - title: Get started
   links:
@@ -10,17 +11,6 @@
     - label: Development status
       url: /implementation/development-status
 
-- title: Design
-  links:
-    - label: Software Design Documents (SDD)
-      url: /sdd/
-    - label: System architecture
-      url: /architecture/
-    - label: Data formats and storage
-      url: /data/
-    - label: Data directory layout
-      url: /layout/
-
 - title: Workflows
   links:
     - label: Accounting workflow overview
@@ -30,12 +20,149 @@
     - label: CLI tooling and workflow
       url: /cli/
 
+- title: Modules
+  links:
+    - label: Modules overview
+      url: /modules/
+    - label: bus
+      url: /modules/bus
+    - label: bus init
+      url: /modules/bus-init
+    - label: bus config
+      url: /modules/bus-config
+    - label: bus data
+      url: /modules/bus-data
+    - label: bus api
+      url: /modules/bus-api
+    - label: bus sheets
+      url: /modules/bus-sheets
+    - label: bus dev
+      url: /modules/bus-dev
+    - label: bus agent
+      url: /modules/bus-agent
+    - label: bus bfl
+      url: /modules/bus-bfl
+    - label: bus accounts
+      url: /modules/bus-accounts
+    - label: bus entities
+      url: /modules/bus-entities
+    - label: bus period
+      url: /modules/bus-period
+    - label: bus preferences
+      url: /modules/bus-preferences
+    - label: bus attachments
+      url: /modules/bus-attachments
+    - label: bus invoices
+      url: /modules/bus-invoices
+    - label: bus journal
+      url: /modules/bus-journal
+    - label: bus bank
+      url: /modules/bus-bank
+    - label: bus reconcile
+      url: /modules/bus-reconcile
+    - label: bus assets
+      url: /modules/bus-assets
+    - label: bus loans
+      url: /modules/bus-loans
+    - label: bus inventory
+      url: /modules/bus-inventory
+    - label: bus payroll
+      url: /modules/bus-payroll
+    - label: bus budget
+      url: /modules/bus-budget
+    - label: bus reports
+      url: /modules/bus-reports
+    - label: bus validate
+      url: /modules/bus-validate
+    - label: bus vat
+      url: /modules/bus-vat
+    - label: bus pdf
+      url: /modules/bus-pdf
+    - label: bus filing
+      url: /modules/bus-filing
+    - label: bus filing prh
+      url: /modules/bus-filing-prh
+    - label: bus filing vero
+      url: /modules/bus-filing-vero
+
+- title: Software Design Documents
+  links:
+    - label: SDD overview
+      url: /sdd/
+    - label: bus
+      url: /sdd/bus
+    - label: bus init
+      url: /sdd/bus-init
+    - label: bus config
+      url: /sdd/bus-config
+    - label: bus data
+      url: /sdd/bus-data
+    - label: bus api
+      url: /sdd/bus-api
+    - label: bus sheets
+      url: /sdd/bus-sheets
+    - label: bus dev
+      url: /sdd/bus-dev
+    - label: bus agent
+      url: /sdd/bus-agent
+    - label: bus bfl
+      url: /sdd/bus-bfl
+    - label: bus accounts
+      url: /sdd/bus-accounts
+    - label: bus entities
+      url: /sdd/bus-entities
+    - label: bus period
+      url: /sdd/bus-period
+    - label: bus preferences
+      url: /sdd/bus-preferences
+    - label: bus attachments
+      url: /sdd/bus-attachments
+    - label: bus invoices
+      url: /sdd/bus-invoices
+    - label: bus journal
+      url: /sdd/bus-journal
+    - label: bus bank
+      url: /sdd/bus-bank
+    - label: bus reconcile
+      url: /sdd/bus-reconcile
+    - label: bus assets
+      url: /sdd/bus-assets
+    - label: bus loans
+      url: /sdd/bus-loans
+    - label: bus inventory
+      url: /sdd/bus-inventory
+    - label: bus payroll
+      url: /sdd/bus-payroll
+    - label: bus budget
+      url: /sdd/bus-budget
+    - label: bus reports
+      url: /sdd/bus-reports
+    - label: bus validate
+      url: /sdd/bus-validate
+    - label: bus vat
+      url: /sdd/bus-vat
+    - label: bus pdf
+      url: /sdd/bus-pdf
+    - label: bus filing
+      url: /sdd/bus-filing
+    - label: bus filing prh
+      url: /sdd/bus-filing-prh
+    - label: bus filing vero
+      url: /sdd/bus-filing-vero
+
+- title: Design
+  links:
+    - label: System architecture
+      url: /architecture/
+    - label: Data formats and storage
+      url: /data/
+    - label: Data directory layout
+      url: /layout/
+
 - title: Reference
   links:
-    - label: Master data (business objects)
+    - label: Master data
       url: /master-data/
-    - label: Modules
-      url: /modules/
     - label: Integration and future interfaces
       url: /integration/
     - label: Extensibility model

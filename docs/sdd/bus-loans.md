@@ -1,9 +1,9 @@
 ---
-title: bus-loans — Software Design Document
+title: bus-loans — loan register, amortization, and posting outputs (SDD)
 description: Bus Loans maintains loan master data and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions…
 ---
 
-## bus-loans
+## bus-loans — loan register, amortization, and posting outputs
 
 ### Introduction and Overview
 

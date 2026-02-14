@@ -125,9 +125,13 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 **Value:** Developer tooling to scaffold and run standardized workflows (commit, work, spec, e2e, set) in BusDK module repos so contributors get a consistent Makefile, rules, and prompts.
 
-**Completeness:** 60% (Stable for one use case) — commit, work, spec, e2e, set and init scaffold are verified by e2e; global flags and error paths are test-backed.
+**Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow).
 
-**Current:** E2e script `tests/e2e_bus_dev.sh` proves help, version, subcommand help, terminator, invalid quiet+verbose and color, missing chdir, and init creating Makefile, `.cursor/rules`, and stubs in the target directory. Unit tests cover run, resolve, scaffold, prompts, and set (`run/run_test.go`, `internal/init/scaffold_test.go`, etc.).
+**Completeness:** 60% (Stable for one use case) — commit, work, spec, e2e, set and init scaffold verified by e2e; global flags and error paths test-backed.
+
+**Use case readiness:** Developer module workflow: 60% — init scaffold, set, and global flags verified; per-directory lock and AGENTS.md assert would complete.
+
+**Current:** E2e script `tests/e2e_bus_dev.sh` proves help, version, subcommand help, terminator, invalid quiet+verbose and color, missing chdir, and init creating Makefile, `.cursor/rules`, and stubs in the target directory. Unit tests in `run/run_test.go`, `internal/init/scaffold_test.go`, and related cover run, resolve, scaffold, prompts, and set.
 
 **Planned next:** Per-directory lock; remove `-f`/`--format`; e2e assert AGENTS.md at target root; README exit-codes and prompt names.
 

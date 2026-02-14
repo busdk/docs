@@ -1,9 +1,9 @@
 ---
-title: bus-bfl — Software Design Document
+title: bus-bfl — deterministic formula language for computed fields (SDD)
 description: BusDK Formula Language (BFL) is a deterministic expression language for BusDK workspaces that evaluates spreadsheet-style formulas and simple predicates…
 ---
 
-## bus-bfl
+## bus-bfl — deterministic formula language for computed fields
 
 ### Introduction and Overview
 

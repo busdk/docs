@@ -1,9 +1,9 @@
 ---
-title: Modules (Software Design Documents)
+title: Module design documents — requirements, interfaces, and data design
 description: List of BusDK module SDDs — requirements, interfaces, and data design for bus-init, bus-data, bus-accounts, and all modules.
 ---
 
-## Modules (Software Design Documents)
+## Module design documents — requirements, interfaces, and data design
 
 BusDK is organized as a set of independent modules that operate on workspace datasets. Each module is implemented as a CLI program that plugs into the `bus` dispatcher (for example `bus accounts`, `bus journal`, or `bus vat`). A module owns its datasets and schemas, provides commands to initialize and maintain them, and emits deterministic diagnostics so that workflows remain reviewable in the Git repository. BusDK includes both domain modules and a small number of infrastructure modules, and infrastructure modules may primarily exist to provide shared mechanical behavior as Go libraries.
 

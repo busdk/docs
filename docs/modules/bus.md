@@ -36,11 +36,15 @@ Any other non-zero exit code is the exit code returned by the module binary (e.g
 
 **Value:** Single entrypoint that delegates to `bus-<module>` binaries so users can run one command (`bus <module> …`) to set up or use any module without knowing individual binary names.
 
-**Completeness:** 50% (Primary journey) — no-args and missing-subcommand behavior are verified by unit tests; successful dispatch and exit-code pass-through are tested. The planned behavior when the first argument is `help` and `bus-help` is not on PATH (show usage and exit 2) is not yet implemented.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (dispatcher for all workflow steps).
 
-**Current:** With no arguments the dispatcher prints usage and available commands and exits 2 (`internal/dispatch/run_test.go`). When the subcommand is missing or not on PATH it exits 127 and reports the missing command. Successful delegation and exit-code pass-through are covered by the same tests. PATH order (first matching directory wins) is tested.
+**Completeness:** 50% (Primary journey) — no-args and missing-subcommand behavior verified by unit tests; successful dispatch and exit-code pass-through tested. `bus help` when bus-help is missing is not yet implemented.
 
-**Planned next:** When the first argument is `help` and `bus-help` is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch; add CONTRIBUTING.md or update README.
+**Use case readiness:** Accounting workflow: 50% — dispatch and exit codes verified; e2e for no-args and successful dispatch would raise confidence.
+
+**Current:** With no arguments the dispatcher prints usage and available commands and exits 2 (`internal/dispatch/run_test.go`). When the subcommand is missing or not on PATH it exits 127 and reports the missing command. Successful delegation and exit-code pass-through are covered by the same tests.
+
+**Planned next:** When the first argument is `help` and `bus-help` is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch.
 
 **Blockers:** None known.
 

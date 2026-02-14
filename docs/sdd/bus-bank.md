@@ -1,9 +1,9 @@
 ---
-title: bus-bank — Software Design Document
+title: bus-bank — bank statement import and reconciliation-ready data (SDD)
 description: Bus Bank imports bank statement evidence into schema-validated datasets, normalizes transactions, and provides review outputs that can be reconciled into…
 ---
 
-## bus-bank
+## bus-bank — bank statement import and reconciliation-ready data
 
 ### Introduction and Overview
 

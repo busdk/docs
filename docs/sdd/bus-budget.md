@@ -1,9 +1,9 @@
 ---
-title: bus-budget — Software Design Document
+title: bus-budget — budget datasets and variance reporting (SDD)
 description: Bus Budget maintains budget datasets keyed by account and period, validates them against schemas and the chart of accounts, and produces budget versus…
 ---
 
-## bus-budget
+## bus-budget — budget datasets and variance reporting
 
 ### Introduction and Overview
 

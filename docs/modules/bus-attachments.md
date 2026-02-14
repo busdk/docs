@@ -37,9 +37,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 **Value:** Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the [accounting workflow](../workflow/accounting-workflow-overview) treats evidence as first-class.
 
-**Completeness:** 60% (Stable for one use case) — init, add, and list are verified by e2e; idempotent init and evidence file layout are test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_bus_attachments.sh` proves exact help/version, global flags (color, format, quiet, output, chdir, terminator), init creating attachments.csv and schema, idempotent init warning, add with a file and --desc, list with deterministic TSV (id, date, desc, filename, relpath) and UUID/date format, and missing file for add. Unit tests cover run and validate (`cmd/bus-attachments/run_test.go`, `internal/attachments/validate_test.go`).
+**Completeness:** 60% (Stable for one use case) — init, add, and list verified by e2e; idempotent init and evidence file layout test-backed.
+
+**Use case readiness:** Accounting workflow: 60% — init, add, list verified; workspace-relative paths in diagnostics would improve UX.
+
+**Current:** E2e script `tests/e2e_bus_attachments.sh` proves exact help/version, global flags, init creating attachments.csv and schema, idempotent init warning, add with file and --desc, list with deterministic TSV. Unit tests in `cmd/bus-attachments/run_test.go` and `internal/attachments/validate_test.go` cover run and validate.
 
 **Planned next:** Workspace-relative paths in diagnostics.
 

@@ -1,9 +1,9 @@
 ---
-title: bus-config — Software Design Document
+title: bus-config — workspace and user configuration, accounting entity settings (SDD)
 description: Bus Config owns workspace-level configuration stored in datapackage.json at the workspace root.
 ---
 
-## bus-config
+## bus-config — workspace and user configuration, accounting entity settings
 
 ### Introduction and Overview
 

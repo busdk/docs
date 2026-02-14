@@ -1,9 +1,9 @@
 ---
-title: bus-reports — Software Design Document
+title: bus-reports — financial reports from journal and reference data (SDD)
 description: Bus Reports computes financial reports from journal entries and reference data, verifies integrity and balances, and emits deterministic report outputs.
 ---
 
-## bus-reports
+## bus-reports — financial reports from journal and reference data
 
 ### Introduction and Overview
 

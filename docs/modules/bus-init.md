@@ -84,9 +84,13 @@ Exit 0 on success. Non-zero in these cases:
 
 **Value:** Initialize a new BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits), so users can run `bus init` or `bus init all` and get a deterministic, script-friendly setup.
 
-**Completeness:** 70% (Broadly usable) — config-only and full-baseline init are fully covered by e2e; subcommands `defaults` and `all`, exclusions, global flags, and stub delegation are verified.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_bus_init.sh` proves config-only init (no subcommand or `defaults`) creates only `datapackage.json`; `all` runs config then all 13 module inits in order; `all --no-payroll` excludes payroll; per-module flags run only selected inits; invalid usage (color, format, quiet+verbose, extra positionals) and missing bus dispatcher yield correct exit codes. Unit tests in `internal/businit/run_test.go` and `internal/cli/flags_test.go` cover parsing and step order.
+**Completeness:** 70% (Broadly usable) — config-only and full-baseline init fully covered by e2e; subcommands defaults and all, exclusions, global flags, and stub delegation verified.
+
+**Use case readiness:** Accounting workflow: 70% — step order and exclusions verified; follow-up e2e/unit refinements only.
+
+**Current:** E2e script `tests/e2e_bus_init.sh` proves config-only init (no subcommand or `defaults`) creates only `datapackage.json`; `all` runs config then all 13 module inits in order; `all --no-payroll` excludes payroll; per-module flags run only selected inits; invalid usage and missing bus yield correct exit codes. Unit tests in `internal/businit/run_test.go` and `internal/cli/flags_test.go` cover parsing and step order.
 
 **Planned next:** Any follow-up unit or e2e refinements.
 

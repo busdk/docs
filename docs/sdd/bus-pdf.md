@@ -1,9 +1,9 @@
 ---
-title: bus-pdf — Software Design Document
+title: bus-pdf — deterministic PDF rendering from structured data (SDD)
 description: Bus PDF renders deterministic, template-based PDF documents from structured input data, enabling BusDK workspaces to produce archival-friendly artifacts…
 ---
 
-## bus-pdf
+## bus-pdf — deterministic PDF rendering from structured data
 
 ### Introduction and Overview
 

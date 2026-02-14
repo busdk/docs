@@ -3,7 +3,7 @@ title: bus accounts — manage the chart of accounts
 description: "CLI reference for bus accounts: init, list, add, and validate the chart of accounts; schema-validated repository data and stable identifiers for downstream modules."
 ---
 
-## `bus-accounts` — manage the chart of accounts
+## Overview
 
 ### Synopsis
 
@@ -45,9 +45,13 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Value:** Manage the chart of accounts as schema-validated workspace data so downstream modules and reports can rely on stable account identifiers and types.
 
-**Completeness:** 60% (Stable for one use case) — init, add (all types), list, and validate are verified by e2e; the full chart-of-accounts workflow is test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV matching expected order; validate succeeds after add. Unit tests cover storage, validation, flags, and help.
+**Completeness:** 60% (Stable for one use case) — init, add (all types), list, and validate verified by e2e; full chart-of-accounts workflow is test-backed.
+
+**Use case readiness:** Accounting workflow: 60% — init, add, list, validate verified; init contract when both files exist and help for `--type` would complete the step.
+
+**Current:** E2e script `tests/e2e_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV; validate succeeds after add. Unit tests in `run_test.go`, `storage_test.go`, `validate_test.go`, `flags_test.go` cover storage, validation, flags, and help.
 
 **Planned next:** Enforce full init contract when both files exist (validate then warn or fail); document allowed `--type` in add help; optional income/revenue alignment.
 
@@ -55,7 +59,7 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Depends on:** None.
 
-**Used by:** [bus-loans](./bus-loans) validates account IDs when reference datasets exist; [accounting workflow](../workflow/accounting-workflow-overview) uses accounts as master data.
+**Used by:** [bus-loans](./bus-loans) validates account IDs when reference datasets exist; accounting workflow uses accounts as master data.
 
 See [Development status](../implementation/development-status).
 

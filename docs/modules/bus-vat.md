@@ -37,9 +37,13 @@ Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`)
 
 **Value:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the [accounting workflow](../workflow/accounting-workflow-overview) and archive returns for filing.
 
-**Completeness:** 70% (Broadly usable) — init, validate, report, and export are verified by e2e; deterministic report and export output and dry-run are test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Current:** E2e script `tests/e2e_bus_vat.sh` proves help, version, invalid color/format/quiet+verbose, init creating vat-rates, vat-reports, vat-returns CSV and schema, idempotent init warning, validate with minimal invoice fixture, report --period with exact TSV diff, export --dry-run (no file), export writing vat-returns-{period}.csv, and missing --period exit 2. Unit tests cover run, init, report, export, rounding (`internal/app/run_test.go`, `internal/vat/`).
+**Completeness:** 70% (Broadly usable) — init, validate, report, and export verified by e2e; deterministic report and export output and dry-run test-backed.
+
+**Use case readiness:** Accounting workflow: 70% — init, validate, report, export verified; journal input and posting/voucher refs would complete. Finnish compliance: 70% — VAT report and export support returns; voucher refs in output would strengthen audit trail.
+
+**Current:** E2e script `tests/e2e_bus_vat.sh` proves help, version, invalid color/format/quiet+verbose, init creating vat-rates, vat-reports, vat-returns CSV and schema, idempotent init warning, validate with minimal invoice fixture, report --period with exact TSV diff, export --dry-run (no file), export writing vat-returns-{period}.csv, missing --period exit 2. Unit tests in `internal/app/run_test.go` and `internal/vat/` cover run, init, report, export, rounding.
 
 **Planned next:** Update vat-returns index on export; dry-run for init; rate validation; journal input; posting/voucher refs in output.
 

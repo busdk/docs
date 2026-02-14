@@ -37,7 +37,11 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 **Value:** Orchestrate filing by delegating to target executables (e.g. bus-filing-prh, bus-filing-vero) so users can run `bus filing <target>` and produce PRH/Vero bundles from closed-period data.
 
-**Completeness:** 50% (Primary journey) — delegation to targets and list_targets are implemented; unit tests cover run, list_targets, and flags. Bundle assembly and pass-through args are not fully verified.
+**Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+
+**Completeness:** 50% (Primary journey) — delegation to targets and list_targets implemented; unit tests cover run, list_targets, and flags. Bundle assembly and pass-through args not fully verified.
+
+**Use case readiness:** Finnish compliance: 50% — delegation and list_targets verified; bundle assembly and tax-audit-pack would unlock filing delivery.
 
 **Current:** Unit tests in `internal/busfiling/run_test.go`, `internal/busfiling/list_targets_test.go`, and `internal/cli/flags_test.go` prove run, list targets, and flag parsing. No e2e; bundle assembly (FR-FIL-001) and args pass-through are in PLAN.
 

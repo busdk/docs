@@ -1,9 +1,9 @@
 ---
-title: bus-filing — Software Design Document
+title: bus-filing — filing bundles from validated workspace data (SDD)
 description: Bus Filing produces deterministic filing bundles from validated workspace data, assembles manifests and checksums, and delegates target-specific formats to…
 ---
 
-## bus-filing
+## bus-filing — filing bundles from validated workspace data
 
 ### Introduction and Overview
 

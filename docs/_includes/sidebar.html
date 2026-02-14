@@ -3,27 +3,97 @@
     <a class="busdk-sidebar-home" href="{{ '/' | relative_url }}">{{ site.title }}</a>
     <ul class="busdk-sidebar-nav">
       {% for section in site.data.nav %}
+      {% assign section_open = false %}
+      {% for link in section.links %}
+      {% assign link_url = link.url | relative_url %}
+      {% assign link_current = false %}
+      {% if page.url == link_url %}
+        {% assign link_current = true %}
+      {% endif %}
+      {% if link_current == false and link_url != '/' and link_url != '' %}
+        {% assign link_len = link_url | size %}
+        {% assign page_prefix = page.url | slice: 0, link_len %}
+        {% if page_prefix == link_url %}
+          {% assign link_current = true %}
+        {% endif %}
+      {% endif %}
+      {% if link_current %}
+        {% assign section_open = true %}
+      {% endif %}
+
+      {% if link.children %}
+      {% for child in link.children %}
+      {% assign child_url = child.url | relative_url %}
+      {% assign child_current = false %}
+      {% if page.url == child_url %}
+        {% assign child_current = true %}
+      {% endif %}
+      {% if child_current == false and child_url != '/' and child_url != '' %}
+        {% assign child_len = child_url | size %}
+        {% assign child_page_prefix = page.url | slice: 0, child_len %}
+        {% if child_page_prefix == child_url %}
+          {% assign child_current = true %}
+        {% endif %}
+      {% endif %}
+      {% if child_current %}
+        {% assign section_open = true %}
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
       <li class="busdk-sidebar-section">
-        <span class="busdk-sidebar-section-title">{{ section.title }}</span>
-        <ul class="busdk-sidebar-links">
-          {% for link in section.links %}
-          {% assign link_url = link.url | relative_url %}
-          {% assign current = false %}
-          {% if page.url == link_url %}
-            {% assign current = true %}
-          {% endif %}
-          {% if current == false and link_url != '/' and link_url != '' %}
-            {% assign link_len = link_url | size %}
-            {% assign page_prefix = page.url | slice: 0, link_len %}
-            {% if page_prefix == link_url %}
-              {% assign current = true %}
+        <details class="busdk-sidebar-section-panel"{% if section_open %} open{% endif %}>
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">{{ section.title }}</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            {% for link in section.links %}
+            {% assign link_url = link.url | relative_url %}
+            {% assign link_current = false %}
+            {% if page.url == link_url %}
+              {% assign link_current = true %}
             {% endif %}
-          {% endif %}
-          <li>
-            <a class="busdk-sidebar-link{% if current %} busdk-sidebar-link--current{% endif %}" href="{{ link_url }}">{{ link.label }}</a>
-          </li>
-          {% endfor %}
-        </ul>
+            {% if link_current == false and link_url != '/' and link_url != '' %}
+              {% assign link_len = link_url | size %}
+              {% assign page_prefix = page.url | slice: 0, link_len %}
+              {% if page_prefix == link_url %}
+                {% assign link_current = true %}
+              {% endif %}
+            {% endif %}
+
+            {% assign has_children = false %}
+            {% if link.children and link.children.size > 0 %}
+              {% assign has_children = true %}
+            {% endif %}
+
+            <li class="busdk-sidebar-item{% if has_children %} busdk-sidebar-item--group{% endif %}">
+              <a class="busdk-sidebar-link{% if link_current %} busdk-sidebar-link--current{% endif %}" href="{{ link_url }}">{{ link.label }}</a>
+              {% if has_children %}
+              <ul class="busdk-sidebar-sub-links">
+                {% for child in link.children %}
+                {% assign child_url = child.url | relative_url %}
+                {% assign child_is_current = false %}
+                {% if page.url == child_url %}
+                  {% assign child_is_current = true %}
+                {% endif %}
+                {% if child_is_current == false and child_url != '/' and child_url != '' %}
+                  {% assign child_len = child_url | size %}
+                  {% assign child_page_prefix = page.url | slice: 0, child_len %}
+                  {% if child_page_prefix == child_url %}
+                    {% assign child_is_current = true %}
+                  {% endif %}
+                {% endif %}
+                <li>
+                  <a class="busdk-sidebar-sub-link{% if child_is_current %} busdk-sidebar-sub-link--current{% endif %}" href="{{ child_url }}">{{ child.label }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </details>
       </li>
       {% endfor %}
     </ul>

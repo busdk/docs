@@ -101,13 +101,15 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Value:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
 
-**Completeness:** 50% (Primary journey) — help, version, openapi, and serve with token and port are verified; full resource/row semantics depend on bus-data integration not yet covered by e2e.
+**Use cases:** Orphan: no documented use case yet (used by [bus-sheets](./bus-sheets) and tools).
 
-**Current:** E2e script `tests/e2e_bus_api.sh` proves exact global help output, serve-specific help, version line, invalid color/quiet+verbose exit 2, serve with fixed token and port prints capability URL, and missing chdir exits 1. Unit tests cover flags and run (`internal/cli/flags_test.go`, `internal/cli/run_test.go`, `internal/server/server_test.go`). No e2e yet exercises API endpoints against bus-data.
+**Completeness:** 50% (Primary journey) — help, version, openapi, and serve with token and port verified; full resource/row semantics depend on bus-data integration not yet covered by e2e.
+
+**Current:** E2e script `tests/e2e_bus_api.sh` proves exact global help output, serve-specific help, version line, invalid color/quiet+verbose exit 2, serve with fixed token and port prints capability URL, and missing chdir exits 1. Unit tests in `internal/cli/flags_test.go`, `internal/cli/run_test.go`, and `internal/server/server_test.go` cover flags and run. No e2e exercises API endpoints against bus-data.
 
 **Planned next:** Full bus-data integration for resources, rows, schema, validation; security boundary; read-only 403; TLS, CORS, enable-module; e2e against API.
 
-**Blockers:** bus-data integration is required for full API semantics; bus-sheets needs this module embedded.
+**Blockers:** bus-data integration required for full API semantics; bus-sheets needs this module embedded.
 
 **Depends on:** [bus-data](./bus-data), [bus-bfl](./bus-bfl) (formula). Implement bus-data first.
 

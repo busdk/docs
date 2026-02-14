@@ -1,9 +1,9 @@
 ---
-title: bus-preferences — Software Design Document
+title: bus-preferences — user-level, cross-workspace preferences (SDD)
 description: Bus Preferences owns user-level, cross-workspace preference storage for BusDK via an extensible, namespaced key-value configuration file.
 ---
 
-## bus-preferences
+## bus-preferences — user-level, cross-workspace preferences
 
 ### Introduction and Overview
 

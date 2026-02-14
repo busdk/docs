@@ -37,9 +37,13 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Value:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream for the [accounting workflow](../workflow/accounting-workflow-overview).
 
-**Completeness:** 60% (Stable for one use case) — init, add, and balance are verified by e2e; idempotent init and deterministic balance output are test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_bus_journal.sh` proves help, version, invalid color/format and quiet+verbose, chdir, init creating transactions/lines CSV and schema, idempotent init, dry-run add (no new rows), add with debit/credit pairs, balance with exact TSV and --as-of, --output and --quiet. Unit tests cover journal add, validate, atomic write, and app run (`internal/journal/add_test.go`, `internal/app/run_test.go`).
+**Completeness:** 60% (Stable for one use case) — init, add, and balance verified by e2e; idempotent init and deterministic balance output test-backed.
+
+**Use case readiness:** Accounting workflow: 60% — init, add, balance verified; period integrity (reject postings in closed periods) and audit-trail fields are missing for full close step.
+
+**Current:** E2e script `tests/e2e_bus_journal.sh` proves help, version, invalid color/format and quiet+verbose, chdir, init creating transactions/lines CSV and schema, idempotent init, dry-run add (no new rows), add with debit/credit pairs, balance with exact TSV and --as-of, --output and --quiet. Unit tests in `internal/journal/add_test.go` and `internal/app/run_test.go` cover journal add, validate, atomic write, and app run.
 
 **Planned next:** Period integrity (reject postings in closed periods); layout alignment; audit-trail fields; interactive add; account by name.
 

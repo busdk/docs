@@ -39,9 +39,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 **Value:** Manage period control (open, close, lock) and period-scoped balance so the [accounting workflow](../workflow/accounting-workflow-overview) can close and lock periods and downstream modules can rely on closed state for reporting and filing.
 
-**Completeness:** 70% (Broadly usable) — init, list, validate, close, and lock are verified by e2e; close artifacts and state transitions are test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Current:** E2e script `tests/e2e_bus_period.sh` proves init creates periods.csv and schema; list output is deterministic (tsv); validate succeeds on complete workspace; close requires --period (missing or positional rejected); close with --dry-run does not change files; close writes period state and close_entries; lock behavior. Unit tests cover period logic, storage, and app run (`internal/period/period_test.go`, `internal/app/run_test.go`).
+**Completeness:** 70% (Broadly usable) — init, list, validate, close, and lock verified by e2e; close artifacts and state transitions test-backed.
+
+**Use case readiness:** Accounting workflow: 70% — init, list, validate, close, lock verified; append-only balance and init help would complete. Finnish compliance: 70% — close and lock support period boundary and audit; locked-period integrity would strengthen.
+
+**Current:** E2e script `tests/e2e_bus_period.sh` proves init creates periods.csv and schema; list output deterministic (tsv); validate on complete workspace; close requires --period (missing or positional rejected); close --dry-run does not change files; close writes period state and close_entries; lock behavior. Unit tests in `internal/period/period_test.go` and `internal/app/run_test.go` cover period logic, storage, and app run.
 
 **Planned next:** Append-only period dataset; journal balance validation before close; init help when both files exist; locked-period integrity.
 

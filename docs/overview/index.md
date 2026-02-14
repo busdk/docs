@@ -16,6 +16,8 @@ This overview is split into **single-concept** documents:
 
 ### Navigation
 
+- [Software Design Documents (SDD)](../sdd/index)
+- [Modules](../modules/index)
 - [Design goals and requirements](../design-goals/index)
 - [System architecture](../architecture/index)
 - [Data format and storage](../data/index)

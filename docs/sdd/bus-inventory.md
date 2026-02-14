@@ -1,9 +1,9 @@
 ---
-title: bus-inventory — Software Design Document
+title: bus-inventory — inventory master data and valuation outputs (SDD)
 description: Bus Inventory maintains item master data and stock movement ledgers, validates inventory datasets with Table Schemas, and produces valuation outputs for…
 ---
 
-## bus-inventory
+## bus-inventory — inventory master data and valuation outputs
 
 ### Introduction and Overview
 

@@ -1,9 +1,9 @@
 ---
-title: bus-invoices — Software Design Document
+title: bus-invoices — sales and purchase invoices, validation, and postings (SDD)
 description: Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…
 ---
 
-## bus-invoices
+## bus-invoices — sales and purchase invoices, validation, and postings
 
 ### Introduction and Overview
 

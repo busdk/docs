@@ -30,10 +30,10 @@
                 <h1>{{ page.title }}</h1>
               </div>
             </header>
-            {% elsif site.title and site.title != page.title and page.permalink != "/" and page.url != "/" %}
+            {% elsif page.permalink != "/" and page.url != "/" %}
             <header class="busdk-page-header">
               <div class="busdk-content-inner">
-                <h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
+                <h1>{{ page.title }}</h1>
               </div>
             </header>
             {% endif %}

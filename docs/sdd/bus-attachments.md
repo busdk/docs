@@ -1,9 +1,9 @@
 ---
-title: bus-attachments — Software Design Document
+title: bus-attachments — evidence storage and attachment metadata (SDD)
 description: Bus Attachments stores evidence files and maintains attachment metadata as schema-validated repository data so other modules can link to evidence without…
 ---
 
-## bus-attachments
+## bus-attachments — evidence storage and attachment metadata
 
 ### Introduction and Overview
 

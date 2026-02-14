@@ -1,9 +1,9 @@
 ---
-title: bus-api — Software Design Document
+title: bus-api — REST API gateway for workspace data (SDD)
 description: Bus API provides a local REST JSON API gateway for BusDK workspaces.
 ---
 
-## bus-api
+## bus-api — REST API gateway for workspace data
 
 ### Introduction and Overview
 

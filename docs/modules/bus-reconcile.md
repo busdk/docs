@@ -37,9 +37,13 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 **Value:** Link bank transactions to invoices or journal entries (match and allocate) so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
 
-**Completeness:** 30% (Some basic commands) — help, version, and global flags are implemented; unit tests cover run and flags. No e2e; match, allocate, and list are not verified.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. No e2e script exists; match, allocate, and list behavior are not covered by tests.
+**Completeness:** 30% (Some basic commands) — help, version, and global flags implemented; unit tests cover run and flags. No e2e; match, allocate, and list not verified.
+
+**Use case readiness:** Accounting workflow: 30% — only flags and run verified; match, allocate, and list are missing and block the reconcile step.
+
+**Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. No e2e script; match, allocate, and list behavior are not covered by tests.
 
 **Planned next:** match (bank-id plus invoice-id or journal-id); allocate (bank-id with allocations); list with output/format; command-level tests.
 

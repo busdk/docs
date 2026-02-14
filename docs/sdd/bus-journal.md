@@ -1,9 +1,9 @@
 ---
-title: bus-journal — Software Design Document
+title: bus-journal — authoritative ledger and balanced postings (SDD)
 description: Bus Journal maintains append-only journal entries as schema-validated repository data, enforces balanced transaction invariants, and serves as the…
 ---
 
-## bus-journal
+## bus-journal — authoritative ledger and balanced postings
 
 ### Introduction and Overview
 

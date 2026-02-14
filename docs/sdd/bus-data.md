@@ -1,9 +1,9 @@
 ---
-title: bus-data — Software Design Document
+title: bus-data — shared tabular data layer and schema-validated I/O (SDD)
 description: Bus Data provides the shared tabular data layer for BusDK by implementing deterministic Frictionless Table Schema and Data Package handling for workspace…
 ---
 
-## bus-data
+## bus-data — shared tabular data layer and schema-validated I/O
 
 ### Introduction and Overview
 

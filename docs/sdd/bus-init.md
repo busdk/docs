@@ -1,9 +1,9 @@
 ---
-title: bus-init — Software Design Document
+title: bus-init — workspace bootstrap with optional domain datasets (SDD)
 description: Bus Init creates workspace configuration by default (datapackage.json only); domain module inits run only when the user supplies per-module flags.
 ---
 
-## bus-init
+## bus-init — workspace bootstrap with optional domain datasets
 
 ### Introduction and Overview
 

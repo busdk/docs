@@ -1,9 +1,9 @@
 ---
-title: bus-vat — Software Design Document
+title: bus-vat — VAT computation, reporting, and export (SDD)
 description: Bus VAT computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger…
 ---
 
-## bus-vat
+## bus-vat — VAT computation, reporting, and export
 
 ### Introduction and Overview
 

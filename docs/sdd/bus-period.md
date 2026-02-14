@@ -1,9 +1,9 @@
 ---
-title: bus-period — Software Design Document
+title: bus-period — accounting period open/close and locking (SDD)
 description: Bus Period opens and closes accounting periods, generates closing and opening balance entries, and locks periods to prevent changes after close.
 ---
 
-## bus-period
+## bus-period — accounting period open/close and locking
 
 ### Introduction and Overview
 

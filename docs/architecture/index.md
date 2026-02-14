@@ -3,7 +3,7 @@ title: "BusDK Design Spec: System architecture"
 description: System architecture section — CLI as primary interface, Git-backed data, independent modules, validation.
 ---
 
-## BusDK Design Spec: System architecture
+## In this section
 
 This section is split into **single-concept** documents:
 

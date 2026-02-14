@@ -43,9 +43,13 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Value:** Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.
 
-**Completeness:** 50% (Primary journey) — init, add, list, and validate are implemented; e2e proves init (including dry-run and idempotent), add, and list with deterministic output.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_bus_entities.sh` proves help, version, invalid usage (quiet+verbose, color, format, chdir), init --dry-run (no files), init creating entities.csv and schema, idempotent init warning, add, and list with expected columns. Unit tests cover run, validator, and flags (`internal/app/run_test.go`, `internal/entities/validator_test.go`).
+**Completeness:** 50% (Primary journey) — init, add, list, and validate implemented; e2e proves init (including dry-run and idempotent), add, and list with deterministic output.
+
+**Use case readiness:** Accounting workflow: 50% — init, add, list verified; add flags alignment and interactive parity would complete master-data step.
+
+**Current:** E2e script `tests/e2e_bus_entities.sh` proves help, version, invalid usage (quiet+verbose, color, format, chdir), init --dry-run (no files), init creating entities.csv and schema, idempotent init warning, add, and list with expected columns. Unit tests in `internal/app/run_test.go` and `internal/entities/validator_test.go` cover run, validator, and flags.
 
 **Planned next:** Align `add` flags with SDD; interactive parity; align surface with docs (validate/update).
 
@@ -53,7 +57,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Depends on:** None.
 
-**Used by:** [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist; [bus-invoices](./bus-invoices) and [accounting workflow](../workflow/accounting-workflow-overview) use entity data.
+**Used by:** [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist; [bus-invoices](./bus-invoices) and accounting workflow use entity data.
 
 See [Development status](../implementation/development-status).
 

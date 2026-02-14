@@ -59,9 +59,13 @@ bus invoices list --status unpaid
 
 **Value:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
 
-**Completeness:** 60% (Stable for one use case) — init, validate, and list are verified by e2e; init dry-run and list output shape are test-backed.
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Current:** E2e script `tests/e2e_bus_invoices.sh` proves help, version, invalid usage (format, color, quiet+verbose), validate failing when datasets missing, init creating sales/purchase CSV and schema, validate after init, init --dry-run (no files), list with deterministic TSV and --no-color. Unit tests cover run, validate, initarea, and list (`cmd/bus-invoices/run_test.go`, `internal/validate/`, `internal/initarea/initarea_test.go`). Add and pdf are not yet covered by e2e.
+**Completeness:** 60% (Stable for one use case) — init, validate, and list verified by e2e; init dry-run and list output shape test-backed. add and pdf not yet covered by e2e.
+
+**Use case readiness:** Accounting workflow: 60% — init, validate, list verified; add and pdf would complete invoice recording and PDF generation step.
+
+**Current:** E2e script `tests/e2e_bus_invoices.sh` proves help, version, invalid usage, validate when datasets missing, init creating sales/purchase CSV and schema, validate after init, init --dry-run (no files), list with deterministic TSV. Unit tests in `cmd/bus-invoices/run_test.go`, `internal/validate/`, and `internal/initarea/initarea_test.go` cover run, validate, initarea, and list.
 
 **Planned next:** `bus invoices add` (header/lines); `<invoice-id> validate`; `bus invoices pdf` delegating to bus-pdf; E2E for add and pdf.
 

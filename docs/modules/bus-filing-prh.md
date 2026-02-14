@@ -29,9 +29,13 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 **Value:** Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the `prh` target of [bus-filing](./bus-filing).
 
-**Completeness:** 40% (Meaningful task, partial verification) — bundle and validate workflows are implemented; unit tests cover run, bundle, and sanitize. No e2e.
+**Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Current:** Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, and `internal/bundle/sanitize_test.go` prove run dispatch, bundle building, and sanitization. No e2e against a fixture workspace; PRH content and SBR taxonomy are in PLAN.
+**Completeness:** 40% (Meaningful task, partial verification) — bundle and validate workflows implemented; unit tests cover run, bundle, and sanitize. No e2e.
+
+**Use case readiness:** Finnish compliance: 40% — bundle and sanitize verified; PRH content and SBR taxonomy would unlock PRH filing.
+
+**Current:** Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, and `internal/bundle/sanitize_test.go` prove run dispatch, bundle building, and sanitization. No e2e against fixture; PRH content and SBR taxonomy are in PLAN.
 
 **Planned next:** PRH-required content in bundles; full PRH SBR taxonomy in iXBRL; e2e against fixture; README links.
 

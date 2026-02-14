@@ -10,8 +10,8 @@
 <meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Development status — BusDK modules" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Evidence-based snapshot of what is usable today and what is missing across BusDK modules, derived from tests and PLAN.md in each repository." />
-<meta property="og:description" content="Evidence-based snapshot of what is usable today and what is missing across BusDK modules, derived from tests and PLAN.md in each repository." />
+<meta name="description" content="Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case and derived from tests and PLAN.md in each repository." />
+<meta property="og:description" content="Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case and derived from tests and PLAN.md in each repository." />
 <link rel="canonical" href="http://localhost:4000/implementation/development-status.html" />
 <meta property="og:url" content="http://localhost:4000/implementation/development-status.html" />
 <meta property="og:site_name" content="BusDK Design Document" />
@@ -19,10 +19,10 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Development status — BusDK modules" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Evidence-based snapshot of what is usable today and what is missing across BusDK modules, derived from tests and PLAN.md in each repository.","headline":"Development status — BusDK modules","url":"http://localhost:4000/implementation/development-status.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case and derived from tests and PLAN.md in each repository.","headline":"Development status — BusDK modules","url":"http://localhost:4000/implementation/development-status.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=d739a5c055683d9701ead80f9ac87dbed78e5d75">
+    <link rel="stylesheet" href="/assets/css/style.css?v=d0d9bdf2796f7f4cfd8e7b681d7cd81188df2206">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -45,175 +45,1103 @@
     <a class="busdk-sidebar-home" href="/">BusDK Design Document</a>
     <ul class="busdk-sidebar-nav">
       
-      <li class="busdk-sidebar-section">
-        <span class="busdk-sidebar-section-title">Get started</span>
-        <ul class="busdk-sidebar-links">
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/overview/">Overview</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/implementation/development-status">Development status</a>
-          </li>
-          
-        </ul>
-      </li>
+      
       
       <li class="busdk-sidebar-section">
-        <span class="busdk-sidebar-section-title">Design</span>
-        <ul class="busdk-sidebar-links">
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/sdd/">Software Design Documents (SDD)</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
-          </li>
-          
-        </ul>
+        <details class="busdk-sidebar-section-panel" open>
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Get started</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/overview/">Overview</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/implementation/development-status">Development status</a>
+              
+            </li>
+            
+          </ul>
+        </details>
       </li>
       
-      <li class="busdk-sidebar-section">
-        <span class="busdk-sidebar-section-title">Workflows</span>
-        <ul class="busdk-sidebar-links">
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
-          </li>
-          
-        </ul>
-      </li>
+      
       
       <li class="busdk-sidebar-section">
-        <span class="busdk-sidebar-section-title">Reference</span>
-        <ul class="busdk-sidebar-links">
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/master-data/">Master data (business objects)</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/modules/">Modules</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/testing/">Testing</a>
-          </li>
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
-          </li>
-          
-        </ul>
+        <details class="busdk-sidebar-section-panel">
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Workflows</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/accounting-workflow-overview">Accounting workflow overview</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/workflow/">Example end-to-end workflow</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/cli/">CLI tooling and workflow</a>
+              
+            </li>
+            
+          </ul>
+        </details>
       </li>
       
+      
+      
       <li class="busdk-sidebar-section">
-        <span class="busdk-sidebar-section-title">Compliance</span>
-        <ul class="busdk-sidebar-links">
-          
-          
-          
-          
-          
-          <li>
-            <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
-          </li>
-          
-        </ul>
+        <details class="busdk-sidebar-section-panel">
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Modules</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/">Modules overview</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus">bus</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-init">bus init</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-config">bus config</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-data">bus data</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-api">bus api</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-sheets">bus sheets</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-dev">bus dev</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-agent">bus agent</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-bfl">bus bfl</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-accounts">bus accounts</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-entities">bus entities</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-period">bus period</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-preferences">bus preferences</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-attachments">bus attachments</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-invoices">bus invoices</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-journal">bus journal</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-bank">bus bank</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-reconcile">bus reconcile</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-assets">bus assets</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-loans">bus loans</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-inventory">bus inventory</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-payroll">bus payroll</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-budget">bus budget</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-reports">bus reports</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-validate">bus validate</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-vat">bus vat</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-pdf">bus pdf</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-filing">bus filing</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-filing-prh">bus filing prh</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/modules/bus-filing-vero">bus filing vero</a>
+              
+            </li>
+            
+          </ul>
+        </details>
+      </li>
+      
+      
+      
+      <li class="busdk-sidebar-section">
+        <details class="busdk-sidebar-section-panel">
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Software Design Documents</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/">SDD overview</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus">bus</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-init">bus init</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-config">bus config</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-data">bus data</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-api">bus api</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-sheets">bus sheets</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-dev">bus dev</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-agent">bus agent</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-bfl">bus bfl</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-accounts">bus accounts</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-entities">bus entities</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-period">bus period</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-preferences">bus preferences</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-attachments">bus attachments</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-invoices">bus invoices</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-journal">bus journal</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-bank">bus bank</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-reconcile">bus reconcile</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-assets">bus assets</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-loans">bus loans</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-inventory">bus inventory</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-payroll">bus payroll</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-budget">bus budget</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-reports">bus reports</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-validate">bus validate</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-vat">bus vat</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-pdf">bus pdf</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-filing">bus filing</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-filing-prh">bus filing prh</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/sdd/bus-filing-vero">bus filing vero</a>
+              
+            </li>
+            
+          </ul>
+        </details>
+      </li>
+      
+      
+      
+      <li class="busdk-sidebar-section">
+        <details class="busdk-sidebar-section-panel">
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Design</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/architecture/">System architecture</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/data/">Data formats and storage</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/layout/">Data directory layout</a>
+              
+            </li>
+            
+          </ul>
+        </details>
+      </li>
+      
+      
+      
+      <li class="busdk-sidebar-section">
+        <details class="busdk-sidebar-section-panel">
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Reference</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/master-data/">Master data</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/integration/">Integration and future interfaces</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/extensibility/">Extensibility model</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/testing/">Testing</a>
+              
+            </li>
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/references/">References and foundations</a>
+              
+            </li>
+            
+          </ul>
+        </details>
+      </li>
+      
+      
+      
+      <li class="busdk-sidebar-section">
+        <details class="busdk-sidebar-section-panel">
+          <summary class="busdk-sidebar-section-toggle">
+            <span class="busdk-sidebar-section-title">Compliance</span>
+            <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
+          </summary>
+          <ul class="busdk-sidebar-links">
+            
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit</a>
+              
+            </li>
+            
+          </ul>
+        </details>
       </li>
       
     </ul>
@@ -227,7 +1155,7 @@
             
             <header class="busdk-page-header">
               <div class="busdk-content-inner">
-                <h1><a href="http://localhost:4000/">BusDK Design Document</a></h1>
+                <h1>Development status — BusDK modules</h1>
               </div>
             </header>
             
@@ -236,16 +1164,34 @@
 <section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h2 id="development-status">Development status</h2>
 
-<p>This page summarizes the implementation state of each BusDK module using test evidence as the primary proof of readiness. A capability is treated as verified only when it is covered by at least one test (Go unit test or e2e script) in the module repository. Per-module detail, including the specific test files that prove each claim, is in each module’s CLI reference under <strong>Development state</strong>. Implement modules in the <strong>Depends on</strong> column before the dependent.</p>
+<p>This page summarizes the implementation state of each BusDK module using test evidence as the primary proof of readiness. A capability is treated as verified only when it is covered by at least one test (Go unit test or e2e script) in the module repository. Readiness is grouped by documented use cases so you can see what works today for each journey. Per-module detail, including the specific test files that prove each claim, is in each module’s CLI reference under <strong>Development state</strong>. Implement modules in <strong>Depends on</strong> before the dependent.</p>
 
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
-<h3 id="by-module">By module</h3>
+<h3 id="use-cases">Use cases</h3>
+
+<ul>
+  <li>
+<a href="#accounting-workflow">Accounting workflow</a> — <a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a>: End-to-end bookkeeping from repo init through master data, attachments, invoices and journal, bank import and reconcile, to period close (validate, VAT, close, lock, reports). Delivers a reviewable audit trail and script-friendly flow.</li>
+  <li>
+<a href="#finnish-bookkeeping-and-tax-audit-compliance">Finnish bookkeeping and tax-audit compliance</a> — <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>: Audit trail, retention, VAT returns, and tax-audit pack. Delivers compliance with Finnish legal and tax-audit expectations.</li>
+  <li>
+<a href="#developer-module-workflow">Developer module workflow</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config. Delivers consistent developer workflows for BusDK module contributors.</li>
+  <li>
+<a href="#orphan-modules">Orphan modules</a>: Modules not yet mapped to a documented use case.</li>
+</ul>
+
+<hr>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="accounting-workflow">Accounting workflow</h3>
+
+<p>The <a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a> describes the intended end-to-end bookkeeping flow: create repo and baseline, define master data (accounts, entities, period), register attachments, record invoices and journal postings, import bank data and reconcile, then validate, run VAT report/export, close and lock the period, and produce reports.</p>
 
 <table>
   <thead>
     <tr>
       <th>Module</th>
-      <th>Completeness</th>
+      <th>Readiness</th>
       <th>Value</th>
       <th>Planned next</th>
       <th>Blocker</th>
@@ -255,51 +1201,204 @@
     <tr>
       <td><a href="../modules/bus#development-state">bus</a></td>
       <td>50% (Primary journey)</td>
-      <td>Dispatcher delegates to <code class="language-plaintext highlighter-rouge">bus-&lt;module&gt;</code> and orchestrates <code class="language-plaintext highlighter-rouge">bus init</code>; no-args and missing-subcommand behavior verified by unit tests.</td>
+      <td>Single entrypoint; delegates to <code class="language-plaintext highlighter-rouge">bus-&lt;module&gt;</code>; no-args and missing-subcommand verified.</td>
       <td>E2E for dispatch; <code class="language-plaintext highlighter-rouge">bus help</code> when bus-help missing.</td>
       <td>None known.</td>
     </tr>
     <tr>
       <td><a href="../modules/bus-init#development-state">bus-init</a></td>
       <td>70% (Broadly usable)</td>
-      <td>Initialize workspace config only or full baseline (config + 13 module inits) with optional exclusions.</td>
+      <td>Config-only or full baseline (config + 13 module inits); e2e proves step order and exclusions.</td>
       <td>Follow-up e2e/unit refinements.</td>
       <td>None known.</td>
     </tr>
     <tr>
       <td><a href="../modules/bus-config#development-state">bus-config</a></td>
       <td>70% (Broadly usable)</td>
-      <td>Create and update <code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting-entity settings; idempotent init.</td>
-      <td>Config library; <code class="language-plaintext highlighter-rouge">set</code>/<code class="language-plaintext highlighter-rouge">get agent</code>; E2E extensions.</td>
+      <td>Create/update <code class="language-plaintext highlighter-rouge">datapackage.json</code> and accounting-entity settings; idempotent init.</td>
+      <td>Config library; set/get agent; E2E extensions.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-data#development-state">bus-data</a></td>
+      <td><a href="../modules/bus-accounts#development-state">bus-accounts</a></td>
       <td>60% (Stable for one use case)</td>
-      <td>Schema and resource operations: init, show, patch; table and package validation; deterministic I/O.</td>
-      <td>
-<code class="language-plaintext highlighter-rouge">--resource</code>; extended resource ops; bus-api integration.</td>
+      <td>Init, add (all types), list, validate chart of accounts; e2e covers full workflow.</td>
+      <td>Init contract when both files exist; help <code class="language-plaintext highlighter-rouge">--type</code>.</td>
       <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-api#development-state">bus-api</a></td>
+      <td><a href="../modules/bus-entities#development-state">bus-entities</a></td>
       <td>50% (Primary journey)</td>
-      <td>Serve REST API over workspace; help, version, openapi; serve with token and port.</td>
-      <td>bus-data integration; security/TLS; E2E against API.</td>
-      <td>bus-data integration for full resource semantics.</td>
+      <td>Init, add, list, validate counterparties; e2e proves init (incl. dry-run), add, list.</td>
+      <td>add flags; interactive parity.</td>
+      <td>None known.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-sheets#development-state">bus-sheets</a></td>
-      <td>20% (Basic structure)</td>
-      <td>Start local web server and get capability URL; global flags and version.</td>
-      <td>Embed Bus API; workbook UI; grid CRUD; validation UI.</td>
-      <td>bus-api embed and UI assets.</td>
+      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Init, list, validate, close, lock; close artifacts and state transitions verified by e2e.</td>
+      <td>Append-only balance; init help; locked-period integrity.</td>
+      <td>None known.</td>
     </tr>
+    <tr>
+      <td><a href="../modules/bus-attachments#development-state">bus-attachments</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Init, add, list; idempotent init; evidence layout; e2e covers full workflow.</td>
+      <td>Workspace-relative paths in diagnostics.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-journal#development-state">bus-journal</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Init, add, balance; idempotent init; deterministic balance; e2e covers init/add/balance.</td>
+      <td>Period integrity; layout; audit fields; interactive add.</td>
+      <td>bus-period closed-period checks for full workflow.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-invoices#development-state">bus-invoices</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Init, validate, list; init dry-run; e2e covers init, validate, list.</td>
+      <td>add (header/lines); pdf; totals validation; E2E for add/pdf.</td>
+      <td>bus-pdf for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-bank#development-state">bus-bank</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Init, import, list; idempotent init; e2e covers init and import.</td>
+      <td>Schema validation before append; counterparty_id; dry-run.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-reconcile#development-state">bus-reconcile</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Help, version, flags; unit tests for run/flags. match/allocate/list not verified.</td>
+      <td>match, allocate, list; journal linking; tests.</td>
+      <td>Missing verified match/allocate blocks reconciliation step.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Workspace and resource validation; unit tests for run and type/constraint checks.</td>
+      <td>format; stdout/–output; help; min/max; audit and closed-period.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-vat#development-state">bus-vat</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Init, validate, report, export; deterministic report/export; e2e covers VAT workflow.</td>
+      <td>Index update; dry-run; rate validation; journal input.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Trial balance, account-ledger; unit tests for run, workspace load, report. No e2e.</td>
+      <td>general-ledger; period; stable format; budget; KPA/PMA.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-pdf#development-state">bus-pdf</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Render from JSON (file); unit tests for run, render, templates.</td>
+      <td>Command-level test for <code class="language-plaintext highlighter-rouge">render --data @-</code>.</td>
+      <td>None known.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="finnish-bookkeeping-and-tax-audit-compliance">Finnish bookkeeping and tax-audit compliance</h3>
+
+<p>The <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a> page defines requirements for audit trail, retention, VAT, and tax-audit delivery. Modules that contribute to this use case overlap with the accounting workflow; the table below highlights readiness for the compliance-facing parts (VAT, close/lock, filing, tax-audit pack).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Readiness</th>
+      <th>Value</th>
+      <th>Planned next</th>
+      <th>Blocker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Close and lock periods; close artifacts; prevents post-close drift.</td>
+      <td>Append-only balance; locked-period integrity.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-vat#development-state">bus-vat</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>VAT report and export from invoice (and optionally journal) data; period returns.</td>
+      <td>Index update; journal input; posting/voucher refs.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Workspace and resource validation for coherence before close/filing.</td>
+      <td>format; audit and closed-period checks.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Trial balance and account-ledger; basis for statements and audit pack.</td>
+      <td>general-ledger; period; traceable line items (NFR-REP-001).</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-filing#development-state">bus-filing</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Delegate to targets (prh, vero); unit tests for run, list_targets, flags.</td>
+      <td>Bundle assembly; tax-audit-pack; pass-through args test.</td>
+      <td>Stable bundle contract for filing targets.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-filing-prh#development-state">bus-filing-prh</a></td>
+      <td>40% (Meaningful task, partial verification)</td>
+      <td>Bundle and validate for PRH; unit tests for run, bundle, sanitize. No e2e.</td>
+      <td>PRH content; SBR taxonomy; e2e; README links.</td>
+      <td>bus-filing bundle contract.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-filing-vero#development-state">bus-filing-vero</a></td>
+      <td>40% (Meaningful task, partial verification)</td>
+      <td>Bundle for Vero; unit tests for app, bundle, output. No e2e.</td>
+      <td>E2E; source refs; prerequisites diagnostics.</td>
+      <td>bus-filing bundle contract.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="developer-module-workflow">Developer module workflow</h3>
+
+<p>The <a href="../modules/bus-dev">bus-dev</a> module is the canonical entry for developer workflows: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. It supports contributors and automation working inside BusDK module repositories.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Readiness</th>
+      <th>Value</th>
+      <th>Planned next</th>
+      <th>Blocker</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><a href="../modules/bus-dev#development-state">bus-dev</a></td>
       <td>60% (Stable for one use case)</td>
-      <td>Developer scaffold: commit, work, spec, e2e, set; init creates Makefile, .cursor/rules, stubs.</td>
-      <td>Per-directory lock; remove <code class="language-plaintext highlighter-rouge">-f</code>; AGENTS.md assert; README.</td>
+      <td>commit, work, spec, e2e, set; init creates Makefile, .cursor/rules, stubs; e2e proves flags and init.</td>
+      <td>Per-directory lock; remove -f; AGENTS.md assert; README.</td>
       <td>None known.</td>
     </tr>
     <tr>
@@ -312,166 +1411,86 @@
     <tr>
       <td><a href="../modules/bus-preferences#development-state">bus-preferences</a></td>
       <td>70% (Broadly usable)</td>
-      <td>Get, set, set-json, unset, list preferences; key-path and format behavior verified.</td>
+      <td>Get, set, set-json, unset, list preferences; key-path and format verified by e2e.</td>
       <td>Key-path validation for list; canonical JSON; path resolution tests.</td>
       <td>None known.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="orphan-modules">Orphan modules</h3>
+
+<p>These modules are not yet mapped to a documented use case, or they are infrastructure used by multiple journeys. Shown with overall completeness and value promise.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Completeness</th>
+      <th>Value</th>
+      <th>New use case?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../modules/bus-data#development-state">bus-data</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Schema/package/table/row operations; deterministic I/O; e2e and unit tests.</td>
+      <td>No; infra for bus-api and bus-sheets.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-api#development-state">bus-api</a></td>
+      <td>50% (Primary journey)</td>
+      <td>REST API over workspace; help, version, openapi, serve with token/port.</td>
+      <td>No; used by bus-sheets and tools.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-sheets#development-state">bus-sheets</a></td>
+      <td>20% (Basic structure)</td>
+      <td>Start server and capability URL; global flags and version. e2e proves serve and version.</td>
+      <td>No; spreadsheet UI over workspace.</td>
     </tr>
     <tr>
       <td><a href="../modules/bus-bfl#development-state">bus-bfl</a></td>
       <td>60% (Stable for one use case)</td>
-      <td>Parse, eval, render BFL expressions; CLI flags and help; conformance and eval behavior.</td>
-      <td>CI; <code class="language-plaintext highlighter-rouge">eval</code> exit 2 for missing <code class="language-plaintext highlighter-rouge">--context</code>.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-accounts#development-state">bus-accounts</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, add (all account types), list, validate chart of accounts; e2e covers full workflow.</td>
-      <td>Init contract when both files exist; help <code class="language-plaintext highlighter-rouge">--type</code>; income/revenue alignment.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-entities#development-state">bus-entities</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Init, add, list, validate counterparties; init idempotent and add/list verified by e2e.</td>
-      <td>
-<code class="language-plaintext highlighter-rouge">add</code> flags; interactive parity; workspace-root layout.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Init, list, validate, close, lock; balance and close artifacts; e2e covers period lifecycle.</td>
-      <td>Append-only balance; close/lock refinements; init help.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-journal#development-state">bus-journal</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, add, balance; idempotent init; deterministic balance output; e2e covers init/add/balance.</td>
-      <td>Period integrity; layout; audit fields; interactive add.</td>
-      <td>bus-period closed-period checks for full workflow.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-attachments#development-state">bus-attachments</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, add, list; idempotent init; evidence file layout; e2e covers full workflow.</td>
-      <td>Workspace-relative paths in diagnostics.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-invoices#development-state">bus-invoices</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, validate, list with filters; init dry-run; e2e covers init, validate, list.</td>
-      <td>
-<code class="language-plaintext highlighter-rouge">add</code> (header/lines); <code class="language-plaintext highlighter-rouge">pdf</code>; totals validation; E2E for add/pdf.</td>
-      <td>bus-pdf for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-vat#development-state">bus-vat</a></td>
-      <td>70% (Broadly usable)</td>
-      <td>Init, validate, report, export; deterministic report/export; e2e covers VAT workflow.</td>
-      <td>Index update; dry-run; rate validation; journal input.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-bank#development-state">bus-bank</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Init, import, list; idempotent init; e2e covers init and import.</td>
-      <td>Schema validation before append; counterparty_id; dry-run.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-reconcile#development-state">bus-reconcile</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Help, version, global flags; unit tests for run/flags. No e2e; match/allocate/list not verified.</td>
-      <td>match, allocate, list; journal linking; dataset location; tests.</td>
-      <td>Missing verified match/allocate blocks reconciliation workflow.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-assets#development-state">bus-assets</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Validate, schedule, post; unit tests for run, flags, schedule/post logic. No e2e for init/add.</td>
-      <td>Root layout; init, add, depreciate, dispose; dry-run.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-loans#development-state">bus-loans</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Init, add; unit tests for run and flags. No e2e; event/amortize not verified.</td>
-      <td>event, amortize; idempotent init; root layout; ref validation; tests.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-inventory#development-state">bus-inventory</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Run/flags and property tests; no e2e. Init/add/move/valuation not verified.</td>
-      <td>quiet/verbose; root layout; init, add, move, valuation.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-payroll#development-state">bus-payroll</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Validate, export; unit tests for flags and run. No e2e for full payroll run.</td>
-      <td>Scope vs docs; README; <code class="language-plaintext highlighter-rouge">--no-color</code> test.</td>
-      <td>None known.</td>
+      <td>Parse, eval, render BFL; CLI and conformance verified by e2e and unit tests.</td>
+      <td>No; formula engine for bus-data.</td>
     </tr>
     <tr>
       <td><a href="../modules/bus-budget#development-state">bus-budget</a></td>
       <td>30% (Some basic commands)</td>
       <td>Unit tests for flags and variance logic; no e2e. Init/report/add/set not verified.</td>
-      <td>Help; root layout; init; report, add, set.</td>
-      <td>None known.</td>
+      <td>Optional accounting; workflow doc exists.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
+      <td><a href="../modules/bus-assets#development-state">bus-assets</a></td>
       <td>50% (Primary journey)</td>
-      <td>Trial balance, account-ledger; unit tests for run, workspace load, report. No e2e.</td>
-      <td>general-ledger; period; stable format; budget; KPA/PMA.</td>
-      <td>None known.</td>
+      <td>validate, schedule, post; unit tests. No e2e for init/add.</td>
+      <td>Optional accounting (fixed assets).</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Workspace and resource validation; unit tests for run and type/constraint checks.</td>
-      <td>format; stdout/–output; help; min/max; audit and closed-period.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-pdf#development-state">bus-pdf</a></td>
-      <td>60% (Stable for one use case)</td>
-      <td>Render from JSON (file); unit tests for run, render, templates.</td>
-      <td>Command-level test for <code class="language-plaintext highlighter-rouge">render --data @-</code>.</td>
-      <td>None known.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-filing#development-state">bus-filing</a></td>
-      <td>50% (Primary journey)</td>
-      <td>Delegate to target executables; unit tests for run, list_targets, flags.</td>
-      <td>Bundle assembly; params; targets doc; pass-through args test.</td>
-      <td>Stable bundle contract for filing targets.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-filing-prh#development-state">bus-filing-prh</a></td>
+      <td><a href="../modules/bus-loans#development-state">bus-loans</a></td>
       <td>40% (Meaningful task, partial verification)</td>
-      <td>Bundle and validate workflows; unit tests for run, bundle, sanitize. No e2e.</td>
-      <td>PRH content; SBR taxonomy; e2e; README links.</td>
-      <td>bus-filing bundle contract.</td>
+      <td>Init, add; unit tests for run and flags. No e2e; event/amortize not verified.</td>
+      <td>Optional accounting (loans).</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-filing-vero#development-state">bus-filing-vero</a></td>
+      <td><a href="../modules/bus-inventory#development-state">bus-inventory</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Run/flags and property tests; no e2e. Init/add/move/valuation not verified.</td>
+      <td>Optional accounting (inventory).</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-payroll#development-state">bus-payroll</a></td>
       <td>40% (Meaningful task, partial verification)</td>
-      <td>Bundle workflows; unit tests for app, bundle, output. No e2e.</td>
-      <td>E2E; source refs; prerequisites diagnostics.</td>
-      <td>bus-filing bundle contract.</td>
+      <td>Validate, export; unit tests for flags and run. No e2e for full payroll.</td>
+      <td>Optional accounting (payroll).</td>
     </tr>
   </tbody>
 </table>
-
-</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
-<h3 id="overall-picture">Overall picture</h3>
-
-<p>Readiness is driven by what tests actually prove. Modules with e2e scripts that cover the main user flow (init, add, list, validate or equivalent) score in the 60–70% range; those with only unit tests for run/flags or partial flows score 30–50%. The spreadsheet UI (bus-sheets) and reconciliation (bus-reconcile) have the largest gap between documented scope and verified behavior. The accounting workflow in <a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a> is partially supported: init, master data (accounts, entities), period control, attachments, journal, invoices, bank, VAT, and reports have meaningful verified coverage; reconcile, filing targets, and bus-sheets need more test-backed work. The authoritative source for what remains per module is each repository’s PLAN.md.</p>
 
 <hr>
 
@@ -491,6 +1510,7 @@
   <li><a href="../sdd">BusDK SDD</a></li>
   <li><a href="../modules/index">Module CLI reference</a></li>
   <li><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a></li>
+  <li><a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></li>
   <li><a href="./module-repository-structure">Module repository structure and dependency rules</a></li>
   <li>Each module repository’s PLAN.md and tests in the BusDK superproject</li>
 </ul>

@@ -1,9 +1,9 @@
 ---
-title: bus-sheets — Software Design Document
+title: bus-sheets — spreadsheet-like web UI for workspace data (SDD)
 description: Bus Sheets provides a local, spreadsheet-like web user interface for BusDK workspaces.
 ---
 
-## bus-sheets
+## bus-sheets — spreadsheet-like web UI for workspace data
 
 ### Introduction and Overview
 

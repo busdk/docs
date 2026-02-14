@@ -1,9 +1,9 @@
 ---
-title: bus-payroll — Software Design Document
+title: bus-payroll — payroll datasets and journal postings (SDD)
 description: Bus Payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for salaries and taxes.
 ---
 
-## bus-payroll
+## bus-payroll — payroll datasets and journal postings
 
 ### Introduction and Overview
 

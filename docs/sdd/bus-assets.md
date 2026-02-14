@@ -1,9 +1,9 @@
 ---
-title: bus-assets — Software Design Document
+title: bus-assets — fixed-asset register and depreciation postings (SDD)
 description: Bus Assets maintains a fixed-asset register as schema-validated repository data, generates depreciation schedules with clear audit trails, and produces…
 ---
 
-## bus-assets
+## bus-assets — fixed-asset register and depreciation postings
 
 ### Introduction and Overview
 

@@ -1,9 +1,9 @@
 ---
-title: bus-filing-prh — Software Design Document
+title: bus-filing-prh — PRH export bundles from validated data (SDD)
 description: Bus Filing PRH converts validated workspace data into PRH export bundles, applying PRH-specific packaging rules and metadata while keeping bundle structure…
 ---
 
-## bus-filing-prh
+## bus-filing-prh — PRH export bundles from validated data
 
 ### Introduction and Overview
 

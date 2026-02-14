@@ -1,9 +1,9 @@
 ---
-title: bus-reconcile — Software Design Document
+title: bus-reconcile — bank reconciliation and allocation records (SDD)
 description: Bus Reconcile links bank transactions to invoices or journal entries, records allocations for partials, splits, and fees, and stores reconciliation records…
 ---
 
-## bus-reconcile
+## bus-reconcile — bank reconciliation and allocation records
 
 ### Introduction and Overview
 

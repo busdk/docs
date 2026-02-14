@@ -1,9 +1,9 @@
 ---
-title: bus-agent — Software Design Document
+title: bus-agent — shared agent runner for Cursor, Codex, Claude (SDD)
 description: "Design spec for the BusDK agent runner: shared abstraction for Cursor, Codex, Gemini, Claude; prompt templating, timeout handling, script-safe execution; no bookkeeping or workflow logic."
 ---
 
-## bus-agent
+## bus-agent — shared agent runner for Cursor, Codex, Claude
 
 ### Introduction and Overview
 

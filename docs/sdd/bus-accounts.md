@@ -1,9 +1,9 @@
 ---
-title: bus-accounts — Software Design Document
+title: bus-accounts — chart of accounts and stable references (SDD)
 description: "Design spec for the BusDK accounts module: chart of accounts as schema-validated repository data, CLI for init, list, add, validate, stable references for downstream modules."
 ---
 
-## bus-accounts
+## bus-accounts — chart of accounts and stable references
 
 ### Introduction and Overview
 

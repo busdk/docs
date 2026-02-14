@@ -113,9 +113,13 @@ When `get` is called for a key that is not present, the command exits with a non
 
 **Value:** Store and retrieve user-level preferences (e.g. default agent runtime, output format) so bus-agent and other CLI callers get consistent defaults across invocations without workspace-specific config.
 
-**Completeness:** 70% (Broadly usable) — get, set, set-json, unset, and list are verified by e2e; key-path and format behavior are test-backed.
+**Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow).
 
-**Current:** E2e script `tests/e2e_bus_preferences.sh` proves help, version, invalid color/format and quiet+verbose (exit 2), chdir and terminator, get (missing key exit 1), set and set-json, unset, list with prefix, and that quiet suppresses stdout. Unit tests cover run and store (`internal/run/run_test.go`, `pkg/preferences/store_test.go`, `keys_test.go`).
+**Completeness:** 70% (Broadly usable) — get, set, set-json, unset, and list verified by e2e; key-path and format behavior test-backed.
+
+**Use case readiness:** Developer module workflow: 70% — get, set, set-json, unset, list verified; key-path validation for list would complete.
+
+**Current:** E2e script `tests/e2e_bus_preferences.sh` proves help, version, invalid color/format and quiet+verbose (exit 2), chdir and terminator, get (missing key exit 1), set and set-json, unset, list with prefix, and that quiet suppresses stdout. Unit tests in `internal/run/run_test.go`, `pkg/preferences/store_test.go`, and `keys_test.go` cover run and store.
 
 **Planned next:** Key-path validation for list; canonical JSON for get/list; unit tests for path resolution (BUS_PREFERENCES_PATH, XDG, Windows).
 

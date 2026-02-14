@@ -84,6 +84,41 @@
   margin-top: 0.5rem;
 }
 
+.busdk-sidebar-section-panel[open] {
+  padding-bottom: 0.2rem;
+}
+
+.busdk-sidebar-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  cursor: pointer;
+  padding-right: 0.15rem;
+}
+
+.busdk-sidebar-section-toggle::marker {
+  content: "";
+}
+
+.busdk-sidebar-section-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.busdk-sidebar-section-chevron {
+  display: inline-block;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--busdk-muted);
+  transform-origin: center;
+  transition: transform 0.15s ease;
+  padding-right: 0.75rem;
+}
+
+.busdk-sidebar-section-panel[open] .busdk-sidebar-section-chevron {
+  transform: rotate(90deg);
+}
+
 .busdk-sidebar-section-title {
   display: block;
   font-size: 0.6875rem;
@@ -98,6 +133,14 @@
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.busdk-sidebar-item {
+  margin: 0;
+}
+
+.busdk-sidebar-item--group {
+  margin-bottom: 0.2rem;
 }
 
 .busdk-sidebar-link {
@@ -120,6 +163,33 @@
   font-weight: 600;
   color: var(--busdk-link);
   background: var(--busdk-surface-1);
+}
+
+.busdk-sidebar-sub-links {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0.2rem 1rem;
+}
+
+.busdk-sidebar-sub-link {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--busdk-muted);
+  text-decoration: none;
+  padding: 0.2rem 0.75rem;
+  border-radius: 6px;
+  margin: 0 0.25rem 0 0;
+}
+
+.busdk-sidebar-sub-link:hover,
+.busdk-sidebar-sub-link:focus-visible {
+  color: var(--busdk-link);
+  background: var(--busdk-surface-1);
+}
+
+.busdk-sidebar-sub-link--current {
+  font-weight: 600;
+  color: var(--busdk-link);
 }
 
 // Main content column: takes remaining space; inner has max-width + padding.
