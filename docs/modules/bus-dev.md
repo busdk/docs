@@ -184,11 +184,11 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 **Completeness:** 60% (Stable for Cursor workflow) — commit, work, spec, e2e, set and init scaffold verified by e2e; global flags and error paths test-backed.
 
-**Use case readiness:** Developer module workflow with Cursor CLI: 60% — init scaffold, set, flags verified; per-directory lock and AGENTS.md assert would complete. Developer module workflow with Gemini/Claude/Codex CLI: 30% — same CLI; run/work/spec/e2e with those runtimes not tested.
+**Use case readiness:** Developer module workflow with Cursor CLI: 60% — init scaffold, set, flags, per-directory lock, context, pipeline list builtin verified; AGENTS.md assert would complete. Developer module workflow with Gemini/Claude/Codex CLI: 30% — same CLI; run/work/spec/e2e with those runtimes not tested.
 
-**Current:** E2e script `tests/e2e_bus_dev.sh` proves help, version, subcommand help, terminator, invalid quiet+verbose and color, missing chdir, and init creating Makefile, `.cursor/rules`, and stubs in the target directory. Unit tests in `run/run_test.go`, `internal/init/scaffold_test.go`, and related cover run, resolve, scaffold, prompts, and set.
+**Current:** E2e script `tests/e2e_bus_dev.sh` proves help, version, subcommand help, terminator, invalid quiet+verbose and color, missing chdir, per-directory lock (init into read-only directory → exit 1), init creating AGENTS.md, Makefile, `.cursor/rules`, and stubs, context KEY=VALUE catalog and `--output`, after-init-only plan/spec/work/e2e (triage/stage/commit/round → exit 2), and pipeline list builtin. Unit tests in `run/run_test.go`, `internal/init/scaffold_test.go`, and related cover run, resolve, scaffold, prompts, and set.
 
-**Planned next:** Per-directory lock; remove `-f`/`--format`; e2e assert AGENTS.md at target root; README exit-codes and prompt names.
+**Planned next:** action generate and script generate: write agent-produced content to action/script files when bus-agent exposes stdout capture (currently placeholder). Optional: e2e assert AGENTS.md at target root; README exit-codes and prompt names.
 
 **Blockers:** None known.
 

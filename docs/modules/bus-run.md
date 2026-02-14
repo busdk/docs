@@ -102,6 +102,20 @@ Preferences that affect `bus run` are stored via the [bus-preferences](./bus-pre
 
 Deterministic results (context, pipeline list, action list, script list) are written to stdout. Diagnostics and errors are written to stderr.
 
+### Development state
+
+**Value promise:** Run user-defined prompt actions, script actions, and pipelines by name with a single entry point; no built-in developer workflows and no dependency on bus-dev.
+
+**Completeness:** 50% (Primary journey). Rationale: context, pipeline/action/script list and set/unset (repo), run script token, and global flags are verified by unit and e2e tests. Run with prompt (agent) and run sequence stop-on-first-failure are not yet covered by tests.
+
+**Use cases:** [Orphan modules](../implementation/development-status#orphan-modules) — not yet mapped to a documented use case.
+
+- **Current:** Help and version (`internal/run/run_test.go`, `tests/e2e_bus_run.sh`). Global flags: `-C`, `-o`, `-q`, `-v`, `--`, `--color`, `-f` (`internal/cli/flags_test.go`, `internal/run/run_test.go`, e2e). Quiet+verbose invalid, unknown format, invalid color (`flags_test.go`, e2e). Context output sorted and `-C` resolution (`run_test.go`, e2e). `--output` and quiet wins (e2e). Catalog build and `DOCS_BASE_URL` from env (`internal/catalog/catalog_test.go`). Name grammar (`internal/name/name_test.go`). Template render and missing/unresolved placeholder (`internal/template/render_test.go`). Token resolution and pipeline expansion: single prompt, unknown token, cycle, chain, prefs pipeline (`internal/expand/expand_test.go`). Pipeline list/set repo/unset repo, action set/list/unset (empty stdin → exit 2), script set/list/unset, run script token, set agent/model, unknown token → exit 2 (e2e).
+- **Planned next:** Unit test for run sequence stop-on-first-failure (mock/stub agent; assert exit code and no later step executed). See PLAN.md.
+- **Blockers:** None known.
+- **Depends on:** [bus-agent](../modules/bus-agent) (all agent runs), [bus-preferences](../modules/bus-preferences) (read/write `bus-run.*` only).
+- **Used by:** None (end-user module).
+
 ### Sources
 
 - [BusDK — installation and overview](https://busdk.com/)
