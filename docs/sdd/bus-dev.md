@@ -1,6 +1,6 @@
 ---
-title: bus-dev — developer workflows: commit, work, spec, e2e (SDD)
-description: Bus Dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/ — module scaffolding, commit workflows, planning, agent-runner workflows, AGENTS.md refinement, and e2e test scaffolding.
+title: "bus-dev — developer workflows: commit, work, spec, e2e (SDD)"
+description: "Bus Dev is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in scripts/ — module scaffolding, commit workflows, planning, agent-runner workflows, AGENTS.md refinement, and e2e test scaffolding."
 ---
 
 ## bus-dev — developer workflows: commit, work, spec, e2e

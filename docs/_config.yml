@@ -4,6 +4,8 @@
 title: BusDK Design Document
 description: Design documentation for BusDK, a modular CLI-first toolkit for running a business in a Git repository with reviewable workspace datasets and auditable workflows.
 theme: jekyll-theme-primer
+repository: busdk/docs
+url: https://docs.busdk.com
 
 # Force our default layout (with styles and structure) for all pages when building with -s docs.
 defaults:
