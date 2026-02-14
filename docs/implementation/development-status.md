@@ -11,36 +11,36 @@ This page summarizes the implementation state of each BusDK module as tracked in
 
 | Module | Open | Focus | Depends on |
 |--------|------|-------|------------|
-| [bus](../cli/command-structure) | 3 | `help` when bus-help missing; e2e tests; CONTRIBUTING/README | — |
-| [bus-init](../modules/bus-init) | 1 | Subcommands `defaults` / `all`; tests | — |
-| [bus-config](../modules/bus-config) | 4 | Config library; `set`/`get agent`; E2E | — |
-| [bus-data](../modules/bus-data) | 10 | Resource/schema ops; `--resource` | — |
-| [bus-api](../modules/bus-api) | 12 | bus-data integration; security; TLS; E2E | [data](../modules/bus-data#development-state), bfl |
-| [bus-sheets](../modules/bus-sheets) | 17 | Embed API; UI; grid; validation; agent | [api](../modules/bus-api#development-state) |
-| [bus-dev](../modules/bus-dev) | 4 | Lock; remove `-f`; E2E; README | — |
-| [bus-agent](../modules/bus-agent) | 7 | Order; config; AGENTS.md; adapters | [config](../modules/bus-config#development-state) |
-| [bus-preferences](../modules/bus-preferences) | 3 | Key-path validation; canonical JSON; tests | — |
-| [bus-bfl](../modules/bus-bfl) | 2 | CI; `eval` exit 2 for missing `--context` | — |
-| [bus-accounts](../modules/bus-accounts) | 3 | Init contract; help `--type`; income/revenue | — |
-| [bus-entities](../modules/bus-entities) | 3 | `add` flags; interactive parity; surface | — |
-| [bus-period](../modules/bus-period) | 5 | Append-only; balance; close/lock; init help | — |
-| [bus-journal](../modules/bus-journal) | 5 | Period integrity; layout; audit; interactive | [period](../modules/bus-period#development-state) |
-| [bus-attachments](../modules/bus-attachments) | 1 | Workspace-relative paths in diagnostics | — |
-| [bus-invoices](../modules/bus-invoices) | 7 | add; validate; pdf; totals; E2E | [pdf](../modules/bus-pdf#development-state) |
-| [bus-vat](../modules/bus-vat) | 5 | Index; dry-run; rate validation; journal input | period, journal |
-| [bus-bank](../modules/bus-bank) | 5 | Schema validation; counterparty_id; dry-run | — |
-| [bus-reconcile](../modules/bus-reconcile) | 7 | match; allocate; list; location; tests | [bank](../modules/bus-bank#development-state), invoices, journal |
-| [bus-assets](../modules/bus-assets) | 8 | Root layout; init/add/depreciate/dispose | — |
-| [bus-loans](../modules/bus-loans) | 8 | event; amortize; init; add; ref validation | [accounts](../modules/bus-accounts#development-state), [entities](../modules/bus-entities#development-state) |
-| [bus-inventory](../modules/bus-inventory) | 6 | Flags; root layout; init/add/move/valuation | — |
-| [bus-payroll](../modules/bus-payroll) | 3 | Scope vs docs; README; no-color test | — |
-| [bus-budget](../modules/bus-budget) | 6 | Help; root layout; init; report/add/set | — |
-| [bus-reports](../modules/bus-reports) | 7 | general-ledger; trial-balance; period; budget | [journal](../modules/bus-journal#development-state), [period](../modules/bus-period#development-state) |
-| [bus-validate](../modules/bus-validate) | 5 | format; stdout; help; min/max; audit | — |
-| [bus-pdf](../modules/bus-pdf) | 1 | Test `render --data @-` | — |
-| [bus-filing](../modules/bus-filing) | 5 | Bundle assembly; params; targets; tests | period, journal |
-| [bus-filing-prh](../modules/bus-filing-prh) | 4 | PRH content; SBR taxonomy; e2e; links | [filing](../modules/bus-filing#development-state) |
-| [bus-filing-vero](../modules/bus-filing-vero) | 3 | E2E; source refs; prerequisites | [filing](../modules/bus-filing#development-state) |
+| [bus](../cli/command-structure#development-state) | 3 | `help` when bus-help missing; e2e tests; CONTRIBUTING/README | — |
+| [bus-init](../modules/bus-init#development-state) | 1 | Subcommands `defaults` / `all`; tests | — |
+| [bus-config](../modules/bus-config#development-state) | 4 | Config library; `set`/`get agent`; E2E | — |
+| [bus-data](../modules/bus-data#development-state) | 10 | Resource/schema ops; `--resource` | — |
+| [bus-api](../modules/bus-api#development-state) | 12 | bus-data integration; security; TLS; E2E | [data](../modules/bus-data#development-state), [bfl](../modules/bus-bfl#development-state) |
+| [bus-sheets](../modules/bus-sheets#development-state) | 17 | Embed API; UI; grid; validation; agent | [api](../modules/bus-api#development-state) |
+| [bus-dev](../modules/bus-dev#development-state) | 4 | Lock; remove `-f`; E2E; README | — |
+| [bus-agent](../modules/bus-agent#development-state) | 7 | Order; config; AGENTS.md; adapters | [config](../modules/bus-config#development-state) |
+| [bus-preferences](../modules/bus-preferences#development-state) | 3 | Key-path validation; canonical JSON; tests | — |
+| [bus-bfl](../modules/bus-bfl#development-state) | 2 | CI; `eval` exit 2 for missing `--context` | — |
+| [bus-accounts](../modules/bus-accounts#development-state) | 3 | Init contract; help `--type`; income/revenue | — |
+| [bus-entities](../modules/bus-entities#development-state) | 3 | `add` flags; interactive parity; surface | — |
+| [bus-period](../modules/bus-period#development-state) | 5 | Append-only; balance; close/lock; init help | — |
+| [bus-journal](../modules/bus-journal#development-state) | 5 | Period integrity; layout; audit; interactive | [period](../modules/bus-period#development-state) |
+| [bus-attachments](../modules/bus-attachments#development-state) | 1 | Workspace-relative paths in diagnostics | — |
+| [bus-invoices](../modules/bus-invoices#development-state) | 7 | add; validate; pdf; totals; E2E | [pdf](../modules/bus-pdf#development-state) |
+| [bus-vat](../modules/bus-vat#development-state) | 5 | Index; dry-run; rate validation; journal input | [period](../modules/bus-period#development-state), [journal](../modules/bus-journal#development-state) |
+| [bus-bank](../modules/bus-bank#development-state) | 5 | Schema validation; counterparty_id; dry-run | — |
+| [bus-reconcile](../modules/bus-reconcile#development-state) | 7 | match; allocate; list; location; tests | [bank](../modules/bus-bank#development-state), [invoices](../modules/bus-invoices#development-state), [journal](../modules/bus-journal#development-state) |
+| [bus-assets](../modules/bus-assets#development-state) | 8 | Root layout; init/add/depreciate/dispose | — |
+| [bus-loans](../modules/bus-loans#development-state) | 8 | event; amortize; init; add; ref validation | [accounts](../modules/bus-accounts#development-state), [entities](../modules/bus-entities#development-state) |
+| [bus-inventory](../modules/bus-inventory#development-state) | 6 | Flags; root layout; init/add/move/valuation | — |
+| [bus-payroll](../modules/bus-payroll#development-state) | 3 | Scope vs docs; README; no-color test | — |
+| [bus-budget](../modules/bus-budget#development-state) | 6 | Help; root layout; init; report/add/set | — |
+| [bus-reports](../modules/bus-reports#development-state) | 7 | general-ledger; trial-balance; period; budget | [journal](../modules/bus-journal#development-state), [period](../modules/bus-period#development-state) |
+| [bus-validate](../modules/bus-validate#development-state) | 5 | format; stdout; help; min/max; audit | — |
+| [bus-pdf](../modules/bus-pdf#development-state) | 1 | Test `render --data @-` | — |
+| [bus-filing](../modules/bus-filing#development-state) | 5 | Bundle assembly; params; targets; tests | [period](../modules/bus-period#development-state), [journal](../modules/bus-journal#development-state) |
+| [bus-filing-prh](../modules/bus-filing-prh#development-state) | 4 | PRH content; SBR taxonomy; e2e; links | [filing](../modules/bus-filing#development-state) |
+| [bus-filing-vero](../modules/bus-filing-vero#development-state) | 3 | E2E; source refs; prerequisites | [filing](../modules/bus-filing#development-state) |
 
 ### Overall picture
 

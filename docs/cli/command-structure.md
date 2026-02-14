@@ -7,6 +7,10 @@ description: BusDK is CLI-first.
 
 BusDK is CLI-first. Commands are organized by module and generally follow a verb-noun structure. Subcommand names follow [CLI command naming](./command-naming). Most modules accept a common set of [standard global flags](./global-flags) (help, version, verbosity, working directory, output redirection, format, and color) before the subcommand. Examples include `bus accounts add` for chart-of-accounts changes; `bus journal add` for appending balanced journal entries; `bus invoices add` for adding invoice records; `bus invoices pdf` for rendering invoice PDFs from stored invoice data; `bus vat report` for VAT summaries; and `bus budget set` or `bus budget add` for budgeting operations. The top-level `bus` command or `bus help` is expected to list available modules and commands, while module-level help such as `bus journal --help` provides command usage details.
 
+### Development state
+
+The bus dispatcher has no dependency on other modules; it delegates to `bus-<module>` binaries. Remaining work is tracked in the dispatcher repository’s PLAN.md. See [Development status](../implementation/development-status) for the project-wide snapshot.
+
 ---
 
 <!-- busdk-docs-nav start -->
