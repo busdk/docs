@@ -98,7 +98,7 @@ Exit 0 on success. Non-zero in these cases:
 
 **Depends on:** None (orchestrates [bus-config](./bus-config) and each module’s init).
 
-**Used by:** The [bus](../cli/command-structure) dispatcher invokes this when users run `bus init`.
+**Used by:** The [bus](./bus) dispatcher invokes this when users run `bus init`.
 
 See [Development status](../implementation/development-status).
 

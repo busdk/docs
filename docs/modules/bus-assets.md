@@ -39,9 +39,11 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 **Value:** Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset accounts appear in [bus-reports](./bus-reports).
 
-**Use cases:** Orphan: no documented use case yet (optional accounting — fixed assets).
+**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
 **Completeness:** 50% (Primary journey) — validate, schedule, and post implemented and covered by unit tests; init and add not yet verified by e2e.
+
+**Use case readiness:** Finnish company reorganisation: 50% — asset schedule for significant-assets list; validate and post verified; no e2e for init/add.
 
 **Current:** Unit tests in `cmd/bus-assets/run_test.go`, `internal/assets/schedule_property_test.go`, and `internal/assets/post_property_test.go` prove run, schedule, and post logic and flags. No e2e; init and add workflows are not test-backed.
 

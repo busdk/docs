@@ -272,9 +272,11 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 **Value:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.
 
-**Use cases:** Orphan: no documented use case yet (infrastructure for [bus-api](./bus-api) and [bus-sheets](./bus-sheets)).
+**Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 
-**Completeness:** 60% (Stable for one use case) — schema init/show, package init/validate, table and row operations, and validation verified by e2e and unit tests.
+**Completeness:** 60% (Stable) — schema init/show, package init/validate, table and row operations, and validation verified by e2e and unit tests.
+
+**Use case readiness:** Workbook and validated tabular editing: 60% — schema, package, table, row operations; e2e and unit tests; backend for [bus-api](./bus-api) and [bus-sheets](./bus-sheets).
 
 **Current:** E2e script `tests/e2e_bus_data.sh` proves schema init creates table and schema files, schema show prints exact schema bytes, package init and validate, row add/update/delete, table read with filters and key, and deterministic I/O. Unit tests in `pkg/data/` and `internal/cli/` cover mutate, patch, validate, formula, and workspace behavior.
 

@@ -59,17 +59,17 @@ bus invoices list --status unpaid
 
 **Value:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% (Stable for one use case) — init, validate, and list verified by e2e; init dry-run and list output shape test-backed. add and pdf not yet covered by e2e.
+**Completeness:** 60% (Stable) — init, validate, and list verified by e2e; init dry-run and list output shape test-backed. add and pdf not yet covered by e2e.
 
-**Use case readiness:** Accounting workflow: 60% — init, validate, list verified; add and pdf would complete invoice recording and PDF generation step.
+**Use case readiness:** Accounting workflow: 60% — init, validate, list verified; add and pdf would complete invoice recording and PDF step. Finnish company reorganisation: 60% — source transaction documents and validation for evidence pack.
 
 **Current:** E2e script `tests/e2e_bus_invoices.sh` proves help, version, invalid usage, validate when datasets missing, init creating sales/purchase CSV and schema, validate after init, init --dry-run (no files), list with deterministic TSV. Unit tests in `cmd/bus-invoices/run_test.go`, `internal/validate/`, and `internal/initarea/initarea_test.go` cover run, validate, initarea, and list.
 
-**Planned next:** `bus invoices add` (header/lines); `<invoice-id> validate`; `bus invoices pdf` delegating to bus-pdf; E2E for add and pdf.
+**Planned next:** `bus invoices add` (header/lines); `<invoice-id> validate`; `bus invoices pdf` delegating to [bus-pdf](./bus-pdf); E2E for add and pdf.
 
-**Blockers:** bus-pdf required for `bus invoices pdf`.
+**Blockers:** [bus-pdf](./bus-pdf) required for `bus invoices pdf`.
 
 **Depends on:** [bus-pdf](./bus-pdf) (for `bus invoices pdf`).
 

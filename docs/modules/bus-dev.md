@@ -139,7 +139,7 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 **Depends on:** None.
 
-**Used by:** Developers in module repositories; no other bus module invokes it.
+**Used by:** Developers in module repositories; no other Bus module invokes it.
 
 See [Development status](../implementation/development-status).
 

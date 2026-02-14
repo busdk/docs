@@ -37,17 +37,17 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 **Value:** Link bank transactions to invoices or journal entries (match and allocate) so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
 **Completeness:** 30% (Some basic commands) — help, version, and global flags implemented; unit tests cover run and flags. No e2e; match, allocate, and list not verified.
 
-**Use case readiness:** Accounting workflow: 30% — only flags and run verified; match, allocate, and list are missing and block the reconcile step.
+**Use case readiness:** Accounting workflow: 30% — only flags and run verified; match, allocate, list missing and block reconcile step. Finnish company reorganisation: 30% — match/allocate/list not verified; blocks reconciliation evidence. Finnish payroll handling: 30% — match/allocate/list not verified; blocks payroll bank reconciliation.
 
 **Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. No e2e script; match, allocate, and list behavior are not covered by tests.
 
 **Planned next:** match (bank-id plus invoice-id or journal-id); allocate (bank-id with allocations); list with output/format; command-level tests.
 
-**Blockers:** Missing verified match/allocate blocks the reconciliation workflow step.
+**Blockers:** Missing verified match/allocate blocks the reconciliation step in accounting, reorganisation, and payroll.
 
 **Depends on:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-journal](./bus-journal).
 

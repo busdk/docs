@@ -43,11 +43,11 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Value:** Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
 **Completeness:** 50% (Primary journey) — init, add, list, and validate implemented; e2e proves init (including dry-run and idempotent), add, and list with deterministic output.
 
-**Use case readiness:** Accounting workflow: 50% — init, add, list verified; add flags alignment and interactive parity would complete master-data step.
+**Use case readiness:** Accounting workflow: 50% — init, add, list verified; add flags alignment and interactive parity would complete master-data step. Finnish payroll handling: 50% — party references for employees; e2e proves init, add, list.
 
 **Current:** E2e script `tests/e2e_bus_entities.sh` proves help, version, invalid usage (quiet+verbose, color, format, chdir), init --dry-run (no files), init creating entities.csv and schema, idempotent init warning, add, and list with expected columns. Unit tests in `internal/app/run_test.go` and `internal/entities/validator_test.go` cover run, validator, and flags.
 

@@ -124,9 +124,11 @@ The tool exits with status 0 on success. It exits with status 2 on invalid usage
 
 **Value:** Parse, evaluate, and render BFL (Bus Formula Language) expressions so bus-data and spreadsheets can use formula-enabled fields with deterministic, testable semantics.
 
-**Use cases:** Orphan: no documented use case yet (formula engine for [bus-data](./bus-data)).
+**Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 
-**Completeness:** 60% (Stable for one use case) — parse, eval, render CLI and conformance verified by e2e and unit tests; formula evaluation and dialect behavior test-backed.
+**Completeness:** 60% (Stable) — parse, eval, render CLI and conformance verified by e2e and unit tests; formula evaluation and dialect behavior test-backed.
+
+**Use case readiness:** Workbook and validated tabular editing: 60% — parse, eval, render BFL; CLI and conformance verified by e2e and unit tests; formula engine for [bus-data](./bus-data).
 
 **Current:** E2e script `tests/e2e_bus_bfl.sh` proves help, version, color flags, subcommand help (parse), parse with expr and dialect, eval with context, and render. Unit tests in `pkg/bfl/` cover expr, parse, eval, decimal, datetime, range_array, conformance, and fuzz; `internal/cli/run_test.go` covers CLI behavior.
 

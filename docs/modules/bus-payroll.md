@@ -43,11 +43,13 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 **Use cases:** [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 40% (Meaningful task, partial verification) — validate and export implemented; unit tests cover flags and run. No e2e for full payroll run.
+**Completeness:** 40% (Meaningful task, partial verification) — validate and export implemented; integration and unit tests cover flags and run. No e2e for full payroll run.
 
-**Current:** Unit tests in `internal/cli/flags_test.go` and `run_test.go` prove flag parsing and run behavior. Full payroll workflow is not covered by e2e.
+**Use case readiness:** Finnish payroll handling (monthly pay run): 40% — validate and export verified by integration tests; init, run, list, employee not implemented; no e2e for full pay-run journey.
 
-**Planned next:** Align or document scope and layout vs docs; README `make check`; test that `--no-color` disables color on stderr.
+**Current:** Integration tests in `run_test.go` prove validation of payroll datasets and deterministic export CSV for a run; unit tests in `internal/cli/flags_test.go` cover flag parsing and global flags. No e2e for full pay-run journey.
+
+**Planned next:** Align CLI and layout with docs (init, run, list, employee); e2e for run → export → journal; README `make check`; test that `--no-color` disables color on stderr.
 
 **Blockers:** None known.
 

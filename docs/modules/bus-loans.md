@@ -39,11 +39,13 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 **Value:** Maintain loan register and events so amortization and event postings feed the [bus-journal](./bus-journal) and loan accounts appear in [bus-reports](./bus-reports).
 
-**Use cases:** Orphan: no documented use case yet (optional accounting — loans).
+**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
 **Completeness:** 40% (Meaningful task, partial verification) — init and add implemented; unit tests cover run and flags. No e2e; event and amortize not verified.
 
-**Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. Init and add exist in code but are not covered by e2e; event and amortize are planned, not tested.
+**Use case readiness:** Finnish company reorganisation: 40% — loan registry; init/add verified by unit tests; event, amortize not verified.
+
+**Current:** Unit tests in `internal/app/run_test.go` (including `TestRunInitSuccessAndIdempotency`, `TestRunAddSuccess`, `TestRunAddDuplicateLoanID`) and `internal/cli/flags_test.go` prove init, add, run dispatch, and flag parsing. No e2e; event and amortize are not verified.
 
 **Planned next:** event (disbursement, repayment, interest, fee, adjustment with postings); amortize (period, optional loan-id); idempotent init; root layout; add flags; ref validation; command-level tests.
 

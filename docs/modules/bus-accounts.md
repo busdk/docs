@@ -45,11 +45,11 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Value:** Manage the chart of accounts as schema-validated workspace data so downstream modules and reports can rely on stable account identifiers and types.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% (Stable for one use case) — init, add (all types), list, and validate verified by e2e; full chart-of-accounts workflow is test-backed.
+**Completeness:** 60% (Stable) — init, add (all types), list, and validate verified by e2e; full chart-of-accounts workflow is test-backed.
 
-**Use case readiness:** Accounting workflow: 60% — init, add, list, validate verified; init contract when both files exist and help for `--type` would complete the step.
+**Use case readiness:** Accounting workflow: 60% — init, add (all types), list, validate verified; init contract when both files exist and help for `--type` would complete the step. Finnish payroll handling: 60% — chart of accounts for wage expense, withholding, net payable; e2e covers full workflow.
 
 **Current:** E2e script `tests/e2e_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV; validate succeeds after add. Unit tests in `run_test.go`, `storage_test.go`, `validate_test.go`, `flags_test.go` cover storage, validation, flags, and help.
 

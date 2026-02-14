@@ -33,13 +33,13 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 **Completeness:** 40% (Meaningful task, partial verification) — bundle workflows implemented; unit tests cover app, bundle, and output. No e2e.
 
-**Use case readiness:** Finnish compliance: 40% — bundle and output verified; source refs and e2e would unlock Vero filing.
+**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 40% — bundle and output verified; source refs and e2e would unlock Vero filing.
 
 **Current:** Unit tests in `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, and `internal/output/` prove app and bundle behavior. No e2e against fixture; source refs (FR-VERO-002) and prerequisites diagnostics are in PLAN.
 
 **Planned next:** E2e against fixture; FR-VERO-002 source refs in bundle; deterministic diagnostics for missing prerequisites.
 
-**Blockers:** bus-filing bundle contract must be stable for target consumption.
+**Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
 
 **Depends on:** [bus-filing](./bus-filing) (invoked as target); [bus-period](./bus-period) closed.
 

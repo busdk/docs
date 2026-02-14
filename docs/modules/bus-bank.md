@@ -37,11 +37,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 **Value:** Initialize bank transaction datasets and import normalized statement data so [bus-reconcile](./bus-reconcile) and the [accounting workflow](../workflow/accounting-workflow-overview) can match bank activity to invoices and journal entries.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% (Stable for one use case) — init, import, and list verified by e2e; idempotent init and list output shape test-backed.
+**Completeness:** 60% (Stable) — init, import, and list verified by e2e; idempotent init and list output shape test-backed.
 
-**Use case readiness:** Accounting workflow: 60% — init and import verified; schema validation before append and counterparty_id would complete bank step before reconcile.
+**Use case readiness:** Accounting workflow: 60% — init and import verified; schema validation before append and counterparty_id would complete bank step before reconcile. Finnish company reorganisation: 60% — import statements and transactions; basis for reconciliation evidence. Finnish payroll handling: 60% — import bank statements for pay-day transfers; e2e covers init and import.
 
 **Current:** E2e script `tests/e2e_bus_bank.sh` proves help, version, invalid quiet+verbose and color and format, init creating bank-imports and bank-transactions CSV and schema at workspace root, idempotent init warning, import --file appending from raw CSV with schema, and list with deterministic TSV. Unit tests in `internal/app/run_test.go` and `internal/bank/` cover app run, import, schema, validate, and output.
 

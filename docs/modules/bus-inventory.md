@@ -39,13 +39,15 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 **Value:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.
 
-**Use cases:** Orphan: no documented use case yet (optional accounting — inventory).
+**Use cases:** [Inventory valuation and COGS postings](../implementation/development-status#inventory-valuation-and-cogs-postings).
 
 **Completeness:** 30% (Some basic commands) — run and flags have unit and property tests; no e2e. Init, add, move, and valuation not verified.
 
+**Use case readiness:** Inventory valuation and COGS postings: 30% — run/flags and property tests verified; init, add, move, valuation not verified.
+
 **Current:** Unit tests in `internal/app/run_test.go`, `internal/cli/flags_test.go`, and `internal/inventory/inventory_prop_test.go` prove run dispatch, flags, and inventory logic. No e2e; init, add, move, and valuation are not covered by tests.
 
-**Planned next:** quiet/verbose mutual exclusion (exit 2); root layout; init, add, move, valuation per SDD.
+**Planned next:** quiet/verbose mutual exclusion (exit 2); root layout; init, add, move, valuation per SDD; e2e and unit tests for init, add, move, valuation and determinism.
 
 **Blockers:** None known.
 

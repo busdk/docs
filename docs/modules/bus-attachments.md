@@ -37,11 +37,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 **Value:** Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the [accounting workflow](../workflow/accounting-workflow-overview) treats evidence as first-class.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% (Stable for one use case) — init, add, and list verified by e2e; idempotent init and evidence file layout test-backed.
+**Completeness:** 60% (Stable) — init, add, and list verified by e2e; idempotent init and evidence file layout test-backed.
 
-**Use case readiness:** Accounting workflow: 60% — init, add, list verified; workspace-relative paths in diagnostics would improve UX.
+**Use case readiness:** Accounting workflow: 60% — init, add, list verified; workspace-relative paths in diagnostics would improve UX. Finnish company reorganisation: 60% — link source documents to records; traceability for audit.
 
 **Current:** E2e script `tests/e2e_bus_attachments.sh` proves exact help/version, global flags, init creating attachments.csv and schema, idempotent init warning, add with file and --desc, list with deterministic TSV. Unit tests in `cmd/bus-attachments/run_test.go` and `internal/attachments/validate_test.go` cover run and validate.
 

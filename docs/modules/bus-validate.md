@@ -33,11 +33,11 @@ Reads all workspace datasets and schemas. Does not write.
 
 **Value:** Validate workspace datasets and invariants so the [accounting workflow](../workflow/accounting-workflow-overview) can run a single check before period close and filing and get deterministic diagnostics.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
 **Completeness:** 50% (Primary journey) — workspace and resource validation implemented; unit tests cover run and type/constraint checks. No e2e; format and stdout behavior not fully verified.
 
-**Use case readiness:** Accounting workflow: 50% — run and type checks verified; format and success stdout would complete pre-close check. Finnish compliance: 50% — validation supports coherence; audit and closed-period checks would strengthen.
+**Use case readiness:** Accounting workflow: 50% — run and type checks verified; format and success stdout would complete pre-close check. Finnish bookkeeping and tax-audit compliance: 50% — validation supports coherence; audit and closed-period checks would strengthen. Finnish company reorganisation: 50% — workspace validation before assembling evidence pack.
 
 **Current:** Unit tests in `cmd/bus-validate/run_test.go`, `internal/validate/type_property_test.go`, and `internal/workspace/normalize_fuzz_test.go` prove run, type validation, and workspace normalization. No e2e; format and success stdout behavior are in PLAN.
 

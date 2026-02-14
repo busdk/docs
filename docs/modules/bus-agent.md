@@ -109,11 +109,11 @@ Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% e
 
 **Value:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and bus-dev can use a configured default runtime without hard-coding it.
 
-**Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow).
+**Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow), [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 
 **Completeness:** 40% (Meaningful task, partial verification) — detect and render verified by e2e; help, version, and global flags test-backed; run implemented but e2e does not prove full run flow.
 
-**Use case readiness:** Developer module workflow: 40% — detect and render verified; order/config and run e2e would complete agent support for bus-dev.
+**Use case readiness:** Developer module workflow: 40% — detect and render verified; order/config and run e2e would complete agent support for [bus-dev](./bus-dev). Workbook and validated tabular editing: 40% — when enabled in [bus-sheets](./bus-sheets), optional chat so user can ask agent to run Bus CLI tools; not yet test-backed in sheets.
 
 **Current:** E2e script `tests/e2e_bus_agent.sh` proves help, version, subcommand help (detect), color and format validation, quiet+verbose exit 2, and detect listing enabled runtimes. Unit tests in `internal/runner/run_test.go`, `internal/template/render_test.go`, and `agent/prefs_test.go` cover runner resolve/detect, template render, format, and prefs. No e2e proves `run` end-to-end with a real agent.
 
