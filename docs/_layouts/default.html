@@ -12,17 +12,23 @@
   <body>
     <div class="container-lg px-3 my-5 markdown-body">
       {% if page.permalink == "/404.html" or page.title == "Page not found" %}
-      <h1><a href="{{ "/" | absolute_url }}">{{ page.title }}</a></h1>
+      <header class="busdk-page-header">
+        <h1><a href="{{ "/" | absolute_url }}">{{ page.title }}</a></h1>
+      </header>
       {% elsif site.title and site.title != page.title %}
-      <h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
+      <header class="busdk-page-header">
+        <h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
+      </header>
       {% endif %}
 
-      {{ content }}
+      <main class="busdk-main">
+        {{ content | wrap_busdk_chapters }}
+      </main>
 
       {% if site.github.private != true and site.github.license %}
-      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+      <footer class="busdk-footer footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
         This site is open source. {% github_edit_link "Improve this page" %}.
-      </div>
+      </footer>
       {% endif %}
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>

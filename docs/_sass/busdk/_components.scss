@@ -1,4 +1,61 @@
-// Components (header/nav/footer) — keep structure intact, only restyle.
+// Components (header/nav/footer and chapter stripes) — keep structure intact, only restyle.
+
+// Page header: title block at top of content.
+.busdk-page-header {
+  background: var(--busdk-header-bg);
+  border-bottom: 1px solid var(--busdk-border);
+  margin: 0 -1rem 1.5rem -1rem;
+  padding: 1rem 1rem 1.25rem;
+  border-radius: 0 0 8px 8px;
+}
+
+.busdk-page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.busdk-page-header h1 a {
+  color: var(--busdk-fg);
+  text-decoration: none;
+}
+
+.busdk-page-header h1 a:hover,
+.busdk-page-header h1 a:focus-visible {
+  color: var(--busdk-link);
+  text-decoration: underline;
+}
+
+// Page footer: open-source edit link block.
+.busdk-footer {
+  background: var(--busdk-footer-bg);
+  border-radius: 8px 8px 0 0;
+  margin-top: 2rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  margin-bottom: -1rem;
+  padding: 1rem 1rem 1.25rem;
+  border-top: 1px solid var(--busdk-border);
+}
+
+// Chapters: alternating backgrounds (applied by JS that wraps each h2 block).
+.busdk-chapter {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding: 0.75rem 1rem 1.5rem;
+  border-radius: 8px;
+}
+
+.busdk-chapter + .busdk-chapter {
+  margin-top: 0.5rem;
+}
+
+.busdk-chapter:nth-of-type(odd) {
+  background: var(--busdk-chapter-odd-bg);
+}
+
+.busdk-chapter:nth-of-type(even) {
+  background: var(--busdk-chapter-even-bg);
+}
 
 // Primer theme uses a `.masthead` header with nav links.
 .masthead {
