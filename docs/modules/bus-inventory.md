@@ -39,6 +39,10 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+Inventory data can feed COGS and valuation reports. Planned next: enforce mutual exclusion of `--quiet` and `--verbose` (exit 2); store item and movement datasets at workspace root only; init, add, move, and valuation per SDD. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -45,7 +45,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist. See [Development status](../implementation/development-status).
+Init, list, and add work today; e2e tests cover init and list. Planned next: align `add` with SDD (e.g. `--id` / `--name` or document current `--entity-id` / `--display-name`); interactive and scripting parity (prompt when TTY, usage error otherwise); align public surface with docs (document or remove `validate` and `update`). [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist. See [Development status](../implementation/development-status).
 
 ---
 

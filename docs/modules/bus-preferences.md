@@ -113,6 +113,10 @@ Preferences are stored in a user-local file and may contain operational defaults
 
 When `get` is called for a key that is not present, the command exits with a non-zero status and a concise error on stderr. Error messages are always on stderr.
 
+### Development state
+
+Get, set, set-json, unset, and list work today; e2e tests cover preferences read and write. [bus-agent](./bus-agent) and the CLI read preferences for agent and output settings. Planned next: validate `list [prefix]` with key-path grammar (exit 2 for invalid); canonical JSON for get/list output; unit tests for preferences file path resolution (BUS_PREFERENCES_PATH, XDG, Windows). See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

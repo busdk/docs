@@ -31,7 +31,7 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 ### Development state
 
-Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
+Bundle workflows exist. [bus-filing](./bus-filing) invokes this module when the target is vero. Planned next: e2e tests against fixture workspace; confirm FR-VERO-002 (source dataset refs in bundle); deterministic diagnostics for missing prerequisites (period closed, filing orchestration). Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
 
 ---
 

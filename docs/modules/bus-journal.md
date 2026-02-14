@@ -39,7 +39,7 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 ### Development state
 
-This module enforces period integrity using [bus-period](./bus-period) state (reject postings in closed periods). Reports, VAT, and filing depend on journal data. See [Development status](../implementation/development-status).
+Init and add work today; e2e tests cover journal operations. [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-reconcile](./bus-reconcile), and the filing modules read journal data. Planned next: period integrity (reject postings in closed periods with clear diagnostics); align layout with SDD (journal index and period files at root); Finnish audit-trail fields (entry_id, voucher_id, entry_sequence); interactive prompts for `add` when params omitted; accept account by name. Depends on [bus-period](./bus-period). See [Development status](../implementation/development-status).
 
 ---
 

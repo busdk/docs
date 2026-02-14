@@ -88,7 +88,7 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ### Development state
 
-This module embeds [bus-api](./bus-api) in-process for all data and schema operations; optional chat UI uses [bus-agent](./bus-agent). Implement bus-api first. See [Development status](../implementation/development-status).
+E2E tests cover basic serve and capability URL. Used by users as the spreadsheet UI over the workspace; no other bus module invokes it. Planned next: embed the Bus API in-process (no CLI); embed UI assets; workbook tabs from resources; grid row CRUD and schema panel; validation UI; formula-projected display; SSE for mutation events; optional agent chat; read-only mode; integration tests. Depends on [bus-api](./bus-api) (and transitively [bus-data](./bus-data)). See [Development status](../implementation/development-status).
 
 ---
 

@@ -41,6 +41,10 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+Validate and export work today; the module uses a focused scope and `payroll/` layout. Used standalone for payroll runs; postings can feed the journal. Planned next: align or document scope and layout vs docs; mention `make check` in README; add test that `--no-color` disables color on stderr. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -39,7 +39,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-reconcile](./bus-reconcile) uses bank datasets for match and allocate. See [Development status](../implementation/development-status).
+Init and list (with filters) work today; e2e tests cover init and import. Planned next: validate bank datasets and new rows against Table Schema before append; add counterparty_id and filter by it; link imports to attachments metadata; `--dry-run` for init; e2e for partial init (some files exist). [bus-reconcile](./bus-reconcile) uses bank datasets. See [Development status](../implementation/development-status).
 
 ---
 

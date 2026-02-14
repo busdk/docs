@@ -41,7 +41,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-journal](./bus-journal), [bus-reports](./bus-reports), [bus-vat](./bus-vat), and the filing modules rely on period state. See [Development status](../implementation/development-status).
+Init, open, close, lock, and list work today; e2e tests cover init and period operations. Planned next: append-only period control dataset (state transitions without overwriting rows); journal debit-equals-credit validation; refuse close or fail validation when unbalanced; fix init help (warn when both files exist and consistent); locked-period integrity in validation. [bus-journal](./bus-journal), [bus-reports](./bus-reports), [bus-vat](./bus-vat), and filing rely on period state. See [Development status](../implementation/development-status).
 
 ---
 

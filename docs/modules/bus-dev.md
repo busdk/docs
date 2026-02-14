@@ -125,6 +125,10 @@ Because the specs are public and machine-readable, this flow lets you regenerate
 
 Error messages are always on stderr. If you are not in a Git repository when a subcommand requires one, the tool exits with code 2 and a clear message. If the selected agent runtime is missing or cannot be executed, or if no agent is enabled when the automatic default would apply, the tool exits with code 1 and directs you to the canonical installation URLs for the supported runtimes. If the working-directory lock cannot be acquired (e.g. the directory is not writable or the lock file cannot be created), the tool exits with code 1 and reports that the lock could not be acquired; check directory permissions or whether another `bus dev` process is running in that directory.
 
+### Development state
+
+Commit, work, spec, e2e, and set subcommands work today; e2e tests cover init (Makefile, .cursor/rules, and stubs). Used by developers in module repositories; no other bus module invokes it. Planned next: per-directory lock so only one bus dev run per directory; remove `-f`/`--format` to align with module CLI reference; e2e assert AGENTS.md at target root; README to include stage in exit-codes and prompt names. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

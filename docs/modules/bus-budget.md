@@ -39,6 +39,10 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+[bus-reports](./bus-reports) optionally reads the budget dataset for budget-vs-actual. Planned next: align help with standard global flags (stdout, exit 0); store at workspace root; idempotent init; report, add, and set subcommands. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

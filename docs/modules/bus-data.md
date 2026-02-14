@@ -274,7 +274,7 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 ### Development state
 
-This module has no Go dependency on other bus-* modules. [bus-api](./bus-api) and [bus-sheets](./bus-sheets) depend on it for workspace endpoints and the embedded UI backend. See [Development status](../implementation/development-status) for the project-wide snapshot.
+Today you can init schemas and packages, add and update rows, list tables and resources, run validation, and use formula-enabled fields (with [bus-bfl](./bus-bfl)). E2E tests cover table and package workflows. Planned next: resource add/remove/rename, schema key and foreign-key operations, field add/remove/rename/set-format, and `--resource` resolution for schema commands. This module has no Go dependency on other bus-* modules; [bus-api](./bus-api) and [bus-sheets](./bus-sheets) depend on it. See [Development status](../implementation/development-status).
 
 ---
 

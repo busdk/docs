@@ -41,7 +41,7 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 ### Development state
 
-This module reads [bus-journal](./bus-journal) and [bus-period](./bus-period) data; it optionally uses [bus-budget](./bus-budget). See [Development status](../implementation/development-status).
+Trial balance, account-ledger, and statement-style reports work today. Planned next: `general-ledger` subcommand with `--period` and optional `--account`; align trial-balance with `--as-of`; `--period` support (e.g. 2026Q1) for P&amp;L and general-ledger; stable text format (literal `|` separator); traceability to postings/vouchers; optional budget dataset; KPA/PMA when required. Reads [bus-journal](./bus-journal) and [bus-period](./bus-period); optionally [bus-budget](./bus-budget). See [Development status](../implementation/development-status).
 
 ---
 

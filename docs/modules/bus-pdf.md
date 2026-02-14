@@ -31,7 +31,7 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-invoices](./bus-invoices) uses it for `bus invoices pdf`. See [Development status](../implementation/development-status).
+Render from JSON (file or stdin) works today. Planned next: command-level test for `render` with `--data @-`. [bus-invoices](./bus-invoices) will use this for `bus invoices pdf`. See [Development status](../implementation/development-status).
 
 ---
 

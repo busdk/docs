@@ -41,7 +41,7 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 ### Development state
 
-When reference datasets exist, validation uses [bus-accounts](./bus-accounts) and [bus-entities](./bus-entities). See [Development status](../implementation/development-status).
+Init and add work today. Loan postings feed the journal; loan accounts appear in [bus-reports](./bus-reports). Planned next: `event` subcommand (disbursement, repayment, interest, fee, adjustment with posting output); `amortize` (period, optional loan-id, post-date); idempotent init (warn when all exist, fail when partial); workspace-root layout (no loans/ subdir); align `add` flags with SDD; validate counterparty and account IDs against [bus-accounts](./bus-accounts) and [bus-entities](./bus-entities) when present; command-level tests. See [Development status](../implementation/development-status).
 
 ---
 

@@ -39,7 +39,7 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ### Development state
 
-Match and allocate operations use [bus-bank](./bus-bank) datasets and [bus-invoices](./bus-invoices) or [bus-journal](./bus-journal) data. See [Development status](../implementation/development-status).
+Planned next: `match` (bank-id plus invoice-id or journal-id, single reconciliation row); `allocate` (bank-id with repeatable invoice/journal allocations, sum must equal bank amount); `list` with output/format; journal linking in match and allocate; align dataset location with SDD (root only or document variance); command-level tests. Depends on [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), and [bus-journal](./bus-journal). See [Development status](../implementation/development-status).
 
 ---
 

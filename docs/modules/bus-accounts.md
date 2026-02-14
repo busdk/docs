@@ -47,7 +47,7 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-loans](./bus-loans) validates account IDs when reference datasets exist. See [Development status](../implementation/development-status).
+Init, list, add, and validate work today; e2e tests cover init, add (multiple types), list, and validate. Planned next: when both `accounts.csv` and schema exist, enforce full init contract (validate then warn and exit 0, or fail without writing); document allowed `--type` values in add help; optional alignment of account type enum with docs (income vs revenue). [bus-loans](./bus-loans) validates account IDs when reference datasets exist. See [Development status](../implementation/development-status).
 
 ---
 

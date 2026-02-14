@@ -33,6 +33,10 @@ Reads all workspace datasets and schemas. Does not write.
 
 `0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found.
 
+### Development state
+
+Workspace and resource validation work today. Used before period close and filing, and by workflows that assume validation is available. Planned next: `--format text` (default) and `--format tsv` for diagnostics; empty stdout on success and `--output` no effect; update help for format; enforce Table Schema minimum/maximum; evaluate audit-trail invariants and closed-period protection. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

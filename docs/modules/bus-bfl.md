@@ -126,7 +126,7 @@ The tool exits with status 0 on success. It exits with status 2 on invalid usage
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-data](./bus-data) uses the bus-bfl library for formula validation and projection. See [Development status](../implementation/development-status).
+Parse, format, validate, and eval work today; tests include dialect and spreadsheet-style evaluation. Planned next: CI workflow for `go test` and e2e; make `eval` exit 2 when `--context` is omitted (invalid usage). [bus-data](./bus-data) uses this library for formula validation and projection. See [Development status](../implementation/development-status).
 
 ---
 

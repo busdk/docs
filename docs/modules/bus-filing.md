@@ -39,7 +39,7 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 ### Development state
 
-Bundle assembly uses validated closed-period data and delegates to [bus-filing-prh](./bus-filing-prh) and [bus-filing-vero](./bus-filing-vero). Depends on [bus-period](./bus-period) and [bus-journal](./bus-journal) state. See [Development status](../implementation/development-status).
+Delegation to target executables (e.g. bus-filing-prh, bus-filing-vero) works today. Invokes [bus-filing-prh](./bus-filing-prh) and [bus-filing-vero](./bus-filing-vero) as targets; users run `bus filing <target>` to build bundles. Planned next: clarify or implement FR-FIL-001 (bundle assembly from validated closed-period data); define parameter set for tax-audit-pack and targets; document standard targets and link module docs; test that args after target token are passed through; test tax-audit-pack delegation. Depends on [bus-period](./bus-period) and [bus-journal](./bus-journal). See [Development status](../implementation/development-status).
 
 ---
 

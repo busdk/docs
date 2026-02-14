@@ -83,6 +83,11 @@ Exit 0 on success. Non-zero in these cases:
 - **Missing bus dispatcher (exit 1)** — `bus` is not found in `PATH`. Message: “bus dispatcher not found in PATH”.
 - **Module init failure (exit non-zero)** — A module’s `init` command fails. The tool stops immediately after that step and reports “step failed: bus *module* init” (with the actual module name) on stderr. It does not run later steps.
 - **Module compatibility (exit non-zero)** — A module exits with code 2, indicating a version or compatibility issue. The tool reports that the module “must be upgraded” and stops.
+
+### Development state
+
+Config-only init (no subcommand or `defaults`) and full baseline init (`all` with optional `--no-<module>`) are implemented and covered by e2e tests. The bus dispatcher invokes this when users run `bus init`; it then runs `bus config init` and each selected module’s init. The PLAN is complete for subcommands `defaults` and `all`; remaining work is limited to any follow-up unit or e2e refinements. See [Development status](../implementation/development-status) for the project-wide snapshot.
+
 ---
 
 <!-- busdk-docs-nav start -->

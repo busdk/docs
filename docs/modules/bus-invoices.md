@@ -61,7 +61,7 @@ bus invoices list --status unpaid
 
 ### Development state
 
-PDF generation delegates to [bus-pdf](./bus-pdf). See [Development status](../implementation/development-status).
+Init, validate, and list work today; e2e tests cover init, validate, and list with filters. [bus-reconcile](./bus-reconcile) matches bank transactions to invoices; [bus-vat](./bus-vat) uses invoice data; [bus-pdf](./bus-pdf) is used for `bus invoices pdf`. Planned next: `bus invoices add` (type, dates, customer, dry-run); `<invoice-id> add` for lines; `<invoice-id> validate`; `bus invoices pdf` delegating to [bus-pdf](./bus-pdf); header/line totals validation; E2E for add and pdf; help updates. See [Development status](../implementation/development-status).
 
 ---
 

@@ -39,7 +39,7 @@ Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`)
 
 ### Development state
 
-This module uses journal-area and invoice data and [bus-period](./bus-period) semantics. See [Development status](../implementation/development-status).
+Init, report, and export work today; e2e tests cover vat workflows. Planned next: update vat-returns index when export writes a period file; `--dry-run` for init; validate invoice VAT rates against vat-rates reference; integrate journal-area data for computation; retain posting and voucher references in output for audit. Uses [bus-period](./bus-period) and journal data. See [Development status](../implementation/development-status).
 
 ---
 

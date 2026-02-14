@@ -31,7 +31,7 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 ### Development state
 
-Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
+Bundle and validate workflows exist. [bus-filing](./bus-filing) invokes this module when the target is prh. Planned next: ensure PRH-required content (journal, reports, voucher refs, attachments) is in bundles (manifest or auto-include); integrate full PRH SBR taxonomy into iXBRL output; e2e tests against fixture workspace; fix README links to BusDK docs. Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
 
 ---
 

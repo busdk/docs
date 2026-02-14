@@ -37,6 +37,10 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 `0` on success. Non-zero on errors, including missing files or schema violations.
 
+### Development state
+
+Init, add, and list work today; e2e tests cover attachments workflows. [bus-bank](./bus-bank) will link imports to attachment metadata; invoice PDFs and evidence are registered here; filing bundles may include attachment metadata. Planned next: use workspace-relative paths in CSV I/O diagnostics (e.g. report `attachments.csv` instead of absolute paths in error messages). See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

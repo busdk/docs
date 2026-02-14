@@ -9,7 +9,7 @@ BusDK is CLI-first. Commands are organized by module and generally follow a verb
 
 ### Development state
 
-The bus dispatcher has no dependency on other modules; it delegates to `bus-<module>` binaries. Remaining work is tracked in the dispatcher repository’s PLAN.md. See [Development status](../implementation/development-status) for the project-wide snapshot.
+The dispatcher runs today: it delegates to `bus-<module>` binaries on PATH and orchestrates `bus init` with config and module-include flags. Every module is invoked through it when users run `bus <module> …` or `bus init`. Planned next: when the first argument is `help` and `bus-help` is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch; add CONTRIBUTING.md or update README. The bus repo has no dependency on other modules. See [Development status](../implementation/development-status) for the project-wide snapshot.
 
 ---
 

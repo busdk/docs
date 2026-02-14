@@ -103,7 +103,7 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ### Development state
 
-This module depends on the [bus-data](./bus-data) Go library for all workspace endpoints (no CLI invocation); formula features rely on bus-data’s use of [bus-bfl](./bus-bfl). Implement bus-data first. See [Development status](../implementation/development-status).
+The server runs and can serve workspace data; current work is wiring all endpoints to the [bus-data](./bus-data) library only (no CLI invocation). [bus-sheets](./bus-sheets) embeds this API in-process for the spreadsheet UI. Planned next: full bus-data integration for resources, package, schema, rows, and validation; workspace root as security boundary and workspace-level lock; stable JSON error shape and 403 when read-only; serve flags (base-path, CORS, TLS, enable-module); OpenAPI and e2e tests. Implement [bus-data](./bus-data) and [bus-bfl](./bus-bfl) first. See [Development status](../implementation/development-status).
 
 ---
 

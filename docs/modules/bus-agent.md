@@ -111,7 +111,7 @@ Template rendering failures (missing variable, unresolved `{{...}}`) occur befor
 
 ### Development state
 
-Default agent selection uses the [bus-config](./bus-config) library (GetDefaultAgent / SetDefaultAgent). Implement bus-config for consistent default behavior. See [Development status](../implementation/development-status).
+Detect, render, run, and format work today; e2e tests cover detect and run. Planned next: alphabetical backend order and default output format `text`; order and enable/disable configuration; AGENTS.md discovery with root-to-cwd “closest wins”; per-runtime instruction adapters; deterministic fallback when AGENTS.md is missing or over-size. Default agent selection will use [bus-config](./bus-config) (GetDefaultAgent / SetDefaultAgent). See [Development status](../implementation/development-status).
 
 ---
 

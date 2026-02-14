@@ -39,6 +39,10 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+Validate, schedule, and post work today; schema validation and posting generation are implemented. Depreciation and disposal postings feed the journal; asset accounts appear in [bus-reports](./bus-reports). Planned next: store datasets and schemas at workspace root only (remove assets/ subdir); implement init, add, depreciate, dispose as primary CLI; `--dry-run` for file-writing commands; voucher refs in postings. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -84,7 +84,7 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-This module has no dependency on other bus-* modules. [bus-agent](./bus-agent) and the CLI use its default-agent store (GetDefaultAgent / SetDefaultAgent). See [Development status](../implementation/development-status).
+Config init and accounting-entity configure work today; e2e tests cover init. [bus-init](./bus-init) runs `bus config init` first; [bus-agent](./bus-agent) and the CLI will use the config library for default agent. Planned next: bus configuration Go library (user-level config file, GetDefaultAgent / SetDefaultAgent); `bus config set agent <runtime>` and `bus config get agent` with persistence; E2E for set/get and invalid runtime. [bus-agent](./bus-agent) and the CLI will use the same store for default agent. See [Development status](../implementation/development-status).
 
 ---
 
