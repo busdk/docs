@@ -29,6 +29,10 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 `0` on success. Non-zero on invalid usage or rendering failure.
 
+### Development state
+
+This module has no dependency on other bus-* modules. [bus-invoices](./bus-invoices) uses it for `bus invoices pdf`. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

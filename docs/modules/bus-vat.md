@@ -37,6 +37,10 @@ Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`)
 
 `0` on success. Non-zero on invalid usage or VAT mapping violations.
 
+### Development state
+
+This module uses journal-area and invoice data and [bus-period](./bus-period) semantics. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

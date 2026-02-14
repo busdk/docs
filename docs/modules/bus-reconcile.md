@@ -37,6 +37,10 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 `0` on success. Non-zero on invalid usage or when amounts or references are invalid.
 
+### Development state
+
+Match and allocate operations use [bus-bank](./bus-bank) datasets and [bus-invoices](./bus-invoices) or [bus-journal](./bus-journal) data. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

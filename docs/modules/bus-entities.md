@@ -43,6 +43,10 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+This module has no dependency on other bus-* modules. [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

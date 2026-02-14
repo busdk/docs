@@ -39,6 +39,10 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 `0` on success. Non-zero on invalid usage or close/lock violations.
 
+### Development state
+
+This module has no dependency on other bus-* modules. [bus-journal](./bus-journal), [bus-reports](./bus-reports), [bus-vat](./bus-vat), and the filing modules rely on period state. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

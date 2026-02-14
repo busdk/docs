@@ -29,6 +29,10 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.
 
+### Development state
+
+Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

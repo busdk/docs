@@ -29,6 +29,10 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.
 
+### Development state
+
+Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

@@ -37,6 +37,10 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 `0` on success. Non-zero on invalid usage or missing prerequisites (e.g. unvalidated or open period).
 
+### Development state
+
+Bundle assembly uses validated closed-period data and delegates to [bus-filing-prh](./bus-filing-prh) and [bus-filing-vero](./bus-filing-vero). Depends on [bus-period](./bus-period) and [bus-journal](./bus-journal) state. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

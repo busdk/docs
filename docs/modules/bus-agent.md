@@ -109,6 +109,10 @@ You can change which agent is used first by configuring the order: supply an ord
 
 Template rendering failures (missing variable, unresolved `{{...}}`) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.
 
+### Development state
+
+Default agent selection uses the [bus-config](./bus-config) library (GetDefaultAgent / SetDefaultAgent). Implement bus-config for consistent default behavior. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

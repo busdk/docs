@@ -37,6 +37,10 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 `0` on success. Non-zero on invalid usage, unbalanced postings, or schema or period violations.
 
+### Development state
+
+This module enforces period integrity using [bus-period](./bus-period) state (reject postings in closed periods). Reports, VAT, and filing depend on journal data. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

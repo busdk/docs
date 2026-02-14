@@ -101,6 +101,10 @@ By default the server binds only to `127.0.0.1` and is reachable from the local 
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 
+### Development state
+
+This module depends on the [bus-data](./bus-data) Go library for all workspace endpoints (no CLI invocation); formula features rely on bus-data’s use of [bus-bfl](./bus-bfl). Implement bus-data first. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

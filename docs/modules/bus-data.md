@@ -272,6 +272,10 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 `0` on success. `2` on invalid usage. Non-zero on missing files, schema validation failure, or foreign key integrity failure.
 
+### Development state
+
+This module has no Go dependency on other bus-* modules. [bus-api](./bus-api) and [bus-sheets](./bus-sheets) depend on it for workspace endpoints and the embedded UI backend. See [Development status](../implementation/development-status) for the project-wide snapshot.
+
 ---
 
 <!-- busdk-docs-nav start -->

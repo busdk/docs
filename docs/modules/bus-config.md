@@ -82,6 +82,10 @@ Exit 0 on success. Non-zero in these cases:
 - **Invalid usage (exit 2)** — Unknown or invalid flag value (e.g. invalid `--color`, invalid `--base-currency` or date or `--vat-reporting-period`), combining `--quiet` and `--verbose`, or extra positional arguments for `init` or `configure`. The tool prints a short usage-style error to stderr.
 - **Configure preconditions (exit non-zero)** — `configure` was run in a directory without `datapackage.json` or without `busdk.accounting_entity`; see above.
 
+### Development state
+
+This module has no dependency on other bus-* modules. [bus-agent](./bus-agent) and the CLI use its default-agent store (GetDefaultAgent / SetDefaultAgent). See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

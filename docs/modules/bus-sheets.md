@@ -86,6 +86,10 @@ By default the server binds only to `127.0.0.1` and is reachable from the local 
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 
+### Development state
+
+This module embeds [bus-api](./bus-api) in-process for all data and schema operations; optional chat UI uses [bus-agent](./bus-agent). Implement bus-api first. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

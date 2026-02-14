@@ -39,6 +39,10 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 `0` on success. Non-zero on invalid usage or integrity failures.
 
+### Development state
+
+This module reads [bus-journal](./bus-journal) and [bus-period](./bus-period) data; it optionally uses [bus-budget](./bus-budget). See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

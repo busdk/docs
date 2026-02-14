@@ -45,6 +45,10 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+This module has no dependency on other bus-* modules. [bus-loans](./bus-loans) validates account IDs when reference datasets exist. See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

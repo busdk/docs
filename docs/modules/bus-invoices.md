@@ -59,6 +59,10 @@ bus invoices list --status unpaid
 
 `0` on success. Non-zero on errors, including invalid usage, schema violations, or reference errors.
 
+### Development state
+
+PDF generation delegates to [bus-pdf](./bus-pdf). See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->

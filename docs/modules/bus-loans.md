@@ -39,6 +39,10 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+### Development state
+
+When reference datasets exist, validation uses [bus-accounts](./bus-accounts) and [bus-entities](./bus-entities). See [Development status](../implementation/development-status).
+
 ---
 
 <!-- busdk-docs-nav start -->
