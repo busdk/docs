@@ -7,7 +7,7 @@ description: This page defines the minimal workspace baseline that must exist af
 
 This page defines the minimal workspace baseline that must exist after a fresh initialization so that the end-to-end bookkeeping workflow can run without relying on implicit dataset creation. It is the contract that makes workspace initialization testable and reviewable as repository data.
 
-The baseline is derived from the initialization workflow in [Initialize a new repository](../workflow/initialize-repo), the workflow narrative in [Accounting workflow overview](../workflow/accounting-workflow-overview), and the layout invariants in [Data directory layout (principles)](./layout-principles) and [Schemas beside datasets](./schemas-area).
+The baseline is derived from the initialization workflow in [Initialize a new repository](../workflow/initialize-repo), the workflow narrative in [Accounting workflow overview](../workflow/accounting-workflow-overview), and the layout invariants in [Data directory layout (principles)](./layout-principles) and [Schemas beside datasets](./schemas-area). The full baseline below is produced when `bus init` is run with all module-include flags (see [bus-init](../modules/bus-init)); running `bus init` with no flags creates only `datapackage.json` and accounting entity settings.
 
 ### Baseline layout invariants
 
