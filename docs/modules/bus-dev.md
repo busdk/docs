@@ -125,11 +125,11 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 **Value:** Developer tooling to scaffold and run standardized workflows (commit, work, spec, e2e, set) in BusDK module repos so contributors get a consistent Makefile, rules, and prompts.
 
-**Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow).
+**Use cases:** [Developer module workflow with Cursor CLI](../implementation/development-status#developer-module-workflow-with-cursor-cli) (only runtime with e2e coverage); [Developer module workflow with Gemini / Claude / Codex CLI](../implementation/development-status#developer-module-workflow-with-gemini-cli) (same CLI; run/work/spec/e2e with those runtimes not exercised in e2e).
 
-**Completeness:** 60% (Stable for one use case) — commit, work, spec, e2e, set and init scaffold verified by e2e; global flags and error paths test-backed.
+**Completeness:** 60% (Stable for Cursor workflow) — commit, work, spec, e2e, set and init scaffold verified by e2e; global flags and error paths test-backed.
 
-**Use case readiness:** Developer module workflow: 60% — init scaffold, set, and global flags verified; per-directory lock and AGENTS.md assert would complete.
+**Use case readiness:** Developer module workflow with Cursor CLI: 60% — init scaffold, set, flags verified; per-directory lock and AGENTS.md assert would complete. Developer module workflow with Gemini/Claude/Codex CLI: 30% — same CLI; run/work/spec/e2e with those runtimes not tested.
 
 **Current:** E2e script `tests/e2e_bus_dev.sh` proves help, version, subcommand help, terminator, invalid quiet+verbose and color, missing chdir, and init creating Makefile, `.cursor/rules`, and stubs in the target directory. Unit tests in `run/run_test.go`, `internal/init/scaffold_test.go`, and related cover run, resolve, scaffold, prompts, and set.
 

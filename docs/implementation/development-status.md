@@ -101,41 +101,41 @@ The [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pac
 
 The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Cursor CLI: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Cursor runs from the repository root so its native AGENTS.md loading applies. **E2e coverage:** `bus-dev` `tests/e2e_bus_dev.sh` proves init (Makefile, `.cursor/rules`, stubs), flags, set, invalid `--agent`; `bus-agent` `tests/e2e_bus_agent.sh` proves detect, render, help, version, and **run with Cursor** (stub executable in PATH; stderr mentions cursor). Work/spec/e2e with a real Cursor CLI are not run in e2e. Runtime behavior is defined in the [bus-agent](../modules/bus-agent) CLI reference under “Project instructions (AGENTS.md)”.
 
-| Module | Readiness | Value | Planned next | Blocker |
-|--------|-----------|-------|--------------|---------|
-| [dev](../modules/bus-dev#development-state) | 60% (Stable) | commit, work, spec, e2e, set; init creates Makefile, .cursor/rules, stubs; e2e proves flags and init (Cursor-oriented scaffold). | Per-directory lock; remove -f; AGENTS.md assert; README. | None known. |
-| [agent](../modules/bus-agent#development-state) | 40% (Meaningful task, partial verification) | Detect, render, run with Cursor (stub) verified by e2e; Cursor invoked from repo root; no global Cursor config edits; optional additive `.cursor/rules` support. | Order/config; AGENTS.md; adapters; sheets integration. | None known. |
-| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) | Get, set, set-json, unset, list preferences; key-path and format verified by e2e. | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
+| Module | Readiness | Biggest next | Biggest blocker |
+|--------|-----------|--------------|-----------------|
+| [dev](../modules/bus-dev#development-state) | 60% (Stable) – commit, work, spec, e2e, set; init creates Makefile, .cursor/rules, stubs; e2e proves flags and init (Cursor-oriented scaffold). | Per-directory lock; remove -f; AGENTS.md assert; README. | None known. |
+| [agent](../modules/bus-agent#development-state) | 40% (Meaningful task, partial verification) – detect, render, run with Cursor (stub) verified by e2e; stderr mentions cursor. | Order/config; AGENTS.md; adapters; sheets integration. | None known. |
+| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e. | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
 ### Developer module workflow with Gemini CLI
 
 The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Gemini CLI: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Gemini may rely on repo-local `.gemini/settings.json` and `.geminiignore` so AGENTS.md is discovered as intended (additive merges only; no user-global Gemini edits). **Not exercised in e2e:** no test runs bus-dev or bus-agent with Gemini; only the generic detect/selection contract is tested (e2e uses stubs; run with real Gemini is untested).
 
-| Module | Readiness | Value | Planned next | Blocker |
-|--------|-----------|-------|--------------|---------|
-| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) | Same CLI as Cursor workflow; init and flags verified only for Cursor-oriented e2e. Run/work/spec/e2e with Gemini not tested. | E2e that runs work/spec/e2e with Gemini; per-directory lock; AGENTS.md assert. | None known. |
-| [agent](../modules/bus-agent#development-state) | 30% (Some basic commands) | Detect/selection contract only (e2e stub in PATH); set runtime gemini and BUS_AGENT=gemini tested. Run with real Gemini CLI not exercised in e2e. | E2e that runs `run --agent gemini` with real or hermetic Gemini; order/config; adapters. | None known. |
-| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) | Get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
+| Module | Readiness | Biggest next | Biggest blocker |
+|--------|-----------|--------------|-----------------|
+| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) – same CLI as Cursor; init and flags verified only for Cursor-oriented e2e; run/work/spec/e2e with Gemini not tested. | E2e that runs work/spec/e2e with Gemini; per-directory lock; AGENTS.md assert. | None known. |
+| [agent](../modules/bus-agent#development-state) | 30% (Some basic commands) – detect/selection contract only (e2e stub); set runtime gemini and BUS_AGENT=gemini tested; run with real Gemini not exercised. | E2e that runs `run --agent gemini` with real or hermetic Gemini; order/config; adapters. | None known. |
+| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
 ### Developer module workflow with Claude CLI
 
 The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Claude Code: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Claude prefers per-run injection of AGENTS.md (with a clearly marked, additive repo-local shim as fallback). **Not exercised in e2e:** no test runs bus-dev or bus-agent with Claude; only the generic detect/selection contract is tested; run with real Claude CLI is untested.
 
-| Module | Readiness | Value | Planned next | Blocker |
-|--------|-----------|-------|--------------|---------|
-| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) | Same CLI as Cursor workflow; init and flags verified only for Cursor-oriented e2e. Run/work/spec/e2e with Claude not tested. | E2e that runs work/spec/e2e with Claude; per-directory lock; AGENTS.md assert. | None known. |
-| [agent](../modules/bus-agent#development-state) | 30% (Some basic commands) | Detect/selection contract only; run with real Claude CLI not exercised in e2e. | E2e that runs `run --agent claude` with real or hermetic Claude; order/config; adapters. | None known. |
-| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) | Get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
+| Module | Readiness | Biggest next | Biggest blocker |
+|--------|-----------|--------------|-----------------|
+| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) – same CLI as Cursor; init and flags verified only for Cursor-oriented e2e; run/work/spec/e2e with Claude not tested. | E2e that runs work/spec/e2e with Claude; per-directory lock; AGENTS.md assert. | None known. |
+| [agent](../modules/bus-agent#development-state) | 30% (Some basic commands) – detect/selection contract only; run with real Claude CLI not exercised in e2e. | E2e that runs `run --agent claude` with real or hermetic Claude; order/config; adapters. | None known. |
+| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
 ### Developer module workflow with Codex CLI
 
 The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Codex: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Codex runs with repo-local state (e.g. CODEX_HOME set to a repo-local directory) so no global state is used or mutated; AGENTS.md is discovered natively when the workdir is the repo root. **Not exercised in e2e:** no test runs bus-dev or bus-agent with Codex; only the generic detect/selection contract is tested; run with real Codex CLI is untested.
 
-| Module | Readiness | Value | Planned next | Blocker |
-|--------|-----------|-------|--------------|---------|
-| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) | Same CLI as Cursor workflow; init and flags verified only for Cursor-oriented e2e. Run/work/spec/e2e with Codex not tested. | E2e that runs work/spec/e2e with Codex; per-directory lock; AGENTS.md assert. | None known. |
-| [agent](../modules/bus-agent#development-state) | 30% (Some basic commands) | Detect/selection contract only; run with real Codex CLI not exercised in e2e. | E2e that runs `run --agent codex` with real or hermetic Codex; order/config; adapters. | None known. |
-| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) | Get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
+| Module | Readiness | Biggest next | Biggest blocker |
+|--------|-----------|--------------|-----------------|
+| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) – same CLI as Cursor; init and flags verified only for Cursor-oriented e2e; run/work/spec/e2e with Codex not tested. | E2e that runs work/spec/e2e with Codex; per-directory lock; AGENTS.md assert. | None known. |
+| [agent](../modules/bus-agent#development-state) | 30% (Some basic commands) – detect/selection contract only; run with real Codex CLI not exercised in e2e. | E2e that runs `run --agent codex` with real or hermetic Codex; order/config; adapters. | None known. |
+| [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
 ### Finnish payroll handling (monthly pay run)
 

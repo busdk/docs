@@ -51,7 +51,7 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Use case readiness:** Accounting workflow: 60% — init, add (all types), list, validate verified; init contract when both files exist and help for `--type` would complete the step. Finnish payroll handling: 60% — chart of accounts for wage expense, withholding, net payable; e2e covers full workflow.
 
-**Current:** E2e script `tests/e2e_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV; validate succeeds after add. Unit tests in `run_test.go`, `storage_test.go`, `validate_test.go`, `flags_test.go` cover storage, validation, flags, and help.
+**Current:** E2e script `tests/e2e_bus_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV; validate succeeds after add. Unit tests in `run_test.go`, `storage_test.go`, `validate_test.go`, `flags_test.go` cover storage, validation, flags, and help.
 
 **Planned next:** Enforce full init contract when both files exist (validate then warn or fail); document allowed `--type` in add help; optional income/revenue alignment.
 
