@@ -41,7 +41,21 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 ### Development state
 
-Init, open, close, lock, and list work today; e2e tests cover init and period operations. Planned next: append-only period control dataset (state transitions without overwriting rows); journal debit-equals-credit validation; refuse close or fail validation when unbalanced; fix init help (warn when both files exist and consistent); locked-period integrity in validation. [bus-journal](./bus-journal), [bus-reports](./bus-reports), [bus-vat](./bus-vat), and filing rely on period state. See [Development status](../implementation/development-status).
+**Value:** Manage period control (open, close, lock) and period-scoped balance so the [accounting workflow](../workflow/accounting-workflow-overview) can close and lock periods and downstream modules can rely on closed state for reporting and filing.
+
+**Completeness:** 70% (Broadly usable) — init, list, validate, close, and lock are verified by e2e; close artifacts and state transitions are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_period.sh` proves init creates periods.csv and schema; list output is deterministic (tsv); validate succeeds on complete workspace; close requires --period (missing or positional rejected); close with --dry-run does not change files; close writes period state and close_entries; lock behavior. Unit tests cover period logic, storage, and app run (`internal/period/period_test.go`, `internal/app/run_test.go`).
+
+**Planned next:** Append-only period dataset; journal balance validation before close; init help when both files exist; locked-period integrity.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-journal](./bus-journal), [bus-reports](./bus-reports), [bus-vat](./bus-vat), and [bus-filing](./bus-filing) rely on period state.
+
+See [Development status](../implementation/development-status).
 
 ---
 

@@ -39,7 +39,21 @@ Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`)
 
 ### Development state
 
-Init, report, and export work today; e2e tests cover vat workflows. Planned next: update vat-returns index when export writes a period file; `--dry-run` for init; validate invoice VAT rates against vat-rates reference; integrate journal-area data for computation; retain posting and voucher references in output for audit. Uses [bus-period](./bus-period) and journal data. See [Development status](../implementation/development-status).
+**Value:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the [accounting workflow](../workflow/accounting-workflow-overview) and archive returns for filing.
+
+**Completeness:** 70% (Broadly usable) — init, validate, report, and export are verified by e2e; deterministic report and export output and dry-run are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_vat.sh` proves help, version, invalid color/format/quiet+verbose, init creating vat-rates, vat-reports, vat-returns CSV and schema, idempotent init warning, validate with minimal invoice fixture, report --period with exact TSV diff, export --dry-run (no file), export writing vat-returns-{period}.csv, and missing --period exit 2. Unit tests cover run, init, report, export, rounding (`internal/app/run_test.go`, `internal/vat/`).
+
+**Planned next:** Update vat-returns index on export; dry-run for init; rate validation; journal input; posting/voucher refs in output.
+
+**Blockers:** None known.
+
+**Depends on:** [bus-period](./bus-period), [bus-journal](./bus-journal), [bus-invoices](./bus-invoices) (data sources for report/export).
+
+**Used by:** End users for reporting and export; no other module invokes it.
+
+See [Development status](../implementation/development-status).
 
 ---
 

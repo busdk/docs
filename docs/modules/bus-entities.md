@@ -45,7 +45,21 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 ### Development state
 
-Init, list, and add work today; e2e tests cover init and list. Planned next: align `add` with SDD (e.g. `--id` / `--name` or document current `--entity-id` / `--display-name`); interactive and scripting parity (prompt when TTY, usage error otherwise); align public surface with docs (document or remove `validate` and `update`). [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist. See [Development status](../implementation/development-status).
+**Value:** Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.
+
+**Completeness:** 50% (Primary journey) — init, add, list, and validate are implemented; e2e proves init (including dry-run and idempotent), add, and list with deterministic output.
+
+**Current:** E2e script `tests/e2e_bus_entities.sh` proves help, version, invalid usage (quiet+verbose, color, format, chdir), init --dry-run (no files), init creating entities.csv and schema, idempotent init warning, add, and list with expected columns. Unit tests cover run, validator, and flags (`internal/app/run_test.go`, `internal/entities/validator_test.go`).
+
+**Planned next:** Align `add` flags with SDD; interactive parity; align surface with docs (validate/update).
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-loans](./bus-loans) validates counterparty IDs when reference datasets exist; [bus-invoices](./bus-invoices) and [accounting workflow](../workflow/accounting-workflow-overview) use entity data.
+
+See [Development status](../implementation/development-status).
 
 ---
 

@@ -127,7 +127,21 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 ### Development state
 
-Commit, work, spec, e2e, and set subcommands work today; e2e tests cover init (Makefile, .cursor/rules, and stubs). Used by developers in module repositories; no other bus module invokes it. Planned next: per-directory lock so only one bus dev run per directory; remove `-f`/`--format` to align with module CLI reference; e2e assert AGENTS.md at target root; README to include stage in exit-codes and prompt names. See [Development status](../implementation/development-status).
+**Value:** Developer tooling to scaffold and run standardized workflows (commit, work, spec, e2e, set) in BusDK module repos so contributors get a consistent Makefile, rules, and prompts.
+
+**Completeness:** 60% (Stable for one use case) — commit, work, spec, e2e, set and init scaffold are verified by e2e; global flags and error paths are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_dev.sh` proves help, version, subcommand help, terminator, invalid quiet+verbose and color, missing chdir, and init creating Makefile, `.cursor/rules`, and stubs in the target directory. Unit tests cover run, resolve, scaffold, prompts, and set (`run/run_test.go`, `internal/init/scaffold_test.go`, etc.).
+
+**Planned next:** Per-directory lock; remove `-f`/`--format`; e2e assert AGENTS.md at target root; README exit-codes and prompt names.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** Developers in module repositories; no other bus module invokes it.
+
+See [Development status](../implementation/development-status).
 
 ---
 

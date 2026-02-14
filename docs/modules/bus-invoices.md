@@ -61,7 +61,21 @@ bus invoices list --status unpaid
 
 ### Development state
 
-Init, validate, and list work today; e2e tests cover init, validate, and list with filters. [bus-reconcile](./bus-reconcile) matches bank transactions to invoices; [bus-vat](./bus-vat) uses invoice data; [bus-pdf](./bus-pdf) is used for `bus invoices pdf`. Planned next: `bus invoices add` (type, dates, customer, dry-run); `<invoice-id> add` for lines; `<invoice-id> validate`; `bus invoices pdf` delegating to [bus-pdf](./bus-pdf); header/line totals validation; E2E for add and pdf; help updates. See [Development status](../implementation/development-status).
+**Value:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
+
+**Completeness:** 60% (Stable for one use case) — init, validate, and list are verified by e2e; init dry-run and list output shape are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_invoices.sh` proves help, version, invalid usage (format, color, quiet+verbose), validate failing when datasets missing, init creating sales/purchase CSV and schema, validate after init, init --dry-run (no files), list with deterministic TSV and --no-color. Unit tests cover run, validate, initarea, and list (`cmd/bus-invoices/run_test.go`, `internal/validate/`, `internal/initarea/initarea_test.go`). Add and pdf are not yet covered by e2e.
+
+**Planned next:** `bus invoices add` (header/lines); `<invoice-id> validate`; `bus invoices pdf` delegating to bus-pdf; E2E for add and pdf.
+
+**Blockers:** bus-pdf required for `bus invoices pdf`.
+
+**Depends on:** [bus-pdf](./bus-pdf) (for `bus invoices pdf`).
+
+**Used by:** [bus-reconcile](./bus-reconcile) matches bank to invoices; [bus-vat](./bus-vat) uses invoice data.
+
+See [Development status](../implementation/development-status).
 
 ---
 

@@ -41,7 +41,21 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 
 ### Development state
 
-[bus-reports](./bus-reports) optionally reads the budget dataset for budget-vs-actual. Planned next: align help with standard global flags (stdout, exit 0); store at workspace root; idempotent init; report, add, and set subcommands. See [Development status](../implementation/development-status).
+**Value:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and optional planning workflows have a single source for budget figures.
+
+**Completeness:** 30% (Some basic commands) — unit tests for flags and variance logic exist; no e2e. Init, report, add, and set are not verified.
+
+**Current:** Unit tests in `cmd/bus-budget/main_test.go`, `internal/validate/validate_property_test.go`, and `internal/budget/variance_property_test.go` prove flags and variance behavior. No e2e; init, report, add, set are not covered by tests.
+
+**Planned next:** Help alignment; root layout; idempotent init; report, add, set subcommands.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-reports](./bus-reports) optionally reads the budget dataset for budget-vs-actual.
+
+See [Development status](../implementation/development-status).
 
 ---
 

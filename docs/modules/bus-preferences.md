@@ -115,7 +115,21 @@ When `get` is called for a key that is not present, the command exits with a non
 
 ### Development state
 
-Get, set, set-json, unset, and list work today; e2e tests cover preferences read and write. [bus-agent](./bus-agent) and the CLI read preferences for agent and output settings. Planned next: validate `list [prefix]` with key-path grammar (exit 2 for invalid); canonical JSON for get/list output; unit tests for preferences file path resolution (BUS_PREFERENCES_PATH, XDG, Windows). See [Development status](../implementation/development-status).
+**Value:** Store and retrieve user-level preferences (e.g. default agent runtime, output format) so bus-agent and other CLI callers get consistent defaults across invocations without workspace-specific config.
+
+**Completeness:** 70% (Broadly usable) — get, set, set-json, unset, and list are verified by e2e; key-path and format behavior are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_preferences.sh` proves help, version, invalid color/format and quiet+verbose (exit 2), chdir and terminator, get (missing key exit 1), set and set-json, unset, list with prefix, and that quiet suppresses stdout. Unit tests cover run and store (`internal/run/run_test.go`, `pkg/preferences/store_test.go`, `keys_test.go`).
+
+**Planned next:** Key-path validation for list; canonical JSON for get/list; unit tests for path resolution (BUS_PREFERENCES_PATH, XDG, Windows).
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-agent](./bus-agent) and the CLI read preferences for agent and output settings.
+
+See [Development status](../implementation/development-status).
 
 ---
 

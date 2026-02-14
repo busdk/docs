@@ -41,7 +41,21 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 ### Development state
 
-Inventory data can feed COGS and valuation reports. Planned next: enforce mutual exclusion of `--quiet` and `--verbose` (exit 2); store item and movement datasets at workspace root only; init, add, move, and valuation per SDD. See [Development status](../implementation/development-status).
+**Value:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.
+
+**Completeness:** 30% (Some basic commands) — run and flags have unit and property tests; no e2e. Init, add, move, and valuation are not verified.
+
+**Current:** Unit tests in `internal/app/run_test.go`, `internal/cli/flags_test.go`, and `internal/inventory/inventory_prop_test.go` prove run dispatch, flags, and inventory logic. No e2e script; init, add, move, and valuation are not covered by tests.
+
+**Planned next:** quiet/verbose mutual exclusion (exit 2); root layout; init, add, move, valuation per SDD.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** Inventory data feeds COGS and valuation in [bus-reports](./bus-reports).
+
+See [Development status](../implementation/development-status).
 
 ---
 

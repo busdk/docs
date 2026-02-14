@@ -88,7 +88,21 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ### Development state
 
-E2E tests cover basic serve and capability URL. Used by users as the spreadsheet UI over the workspace; no other bus module invokes it. Planned next: embed the Bus API in-process (no CLI); embed UI assets; workbook tabs from resources; grid row CRUD and schema panel; validation UI; formula-projected display; SSE for mutation events; optional agent chat; read-only mode; integration tests. Depends on [bus-api](./bus-api) (and transitively [bus-data](./bus-data)). See [Development status](../implementation/development-status).
+**Value:** Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.
+
+**Completeness:** 20% (Basic structure) — only serve and capability URL are verified; the workbook, grid, and API embed are not yet test-backed.
+
+**Current:** E2e script `tests/e2e_bus_sheets.sh` proves help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), and that serve prints the expected capability URL with a fixed token and port. Unit tests cover flags and run (`internal/cli/flags_test.go`, `internal/serve/serve_test.go`). No test yet covers embedded API, workbook tabs, or grid CRUD.
+
+**Planned next:** Embed Bus API in-process; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI; optional agent chat; read-only mode; integration tests.
+
+**Blockers:** bus-api embed and UI assets are required before the main user value (grid over workspace) is real.
+
+**Depends on:** [bus-api](./bus-api) (and transitively [bus-data](./bus-data)).
+
+**Used by:** End users as the spreadsheet UI; no other bus module invokes it.
+
+See [Development status](../implementation/development-status).
 
 ---
 

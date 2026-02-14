@@ -41,7 +41,21 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 ### Development state
 
-Validate, schedule, and post work today; schema validation and posting generation are implemented. Depreciation and disposal postings feed the journal; asset accounts appear in [bus-reports](./bus-reports). Planned next: store datasets and schemas at workspace root only (remove assets/ subdir); implement init, add, depreciate, dispose as primary CLI; `--dry-run` for file-writing commands; voucher refs in postings. See [Development status](../implementation/development-status).
+**Value:** Manage fixed-asset register and depreciation so schedule and post generate journal postings for the [accounting workflow](../workflow/accounting-workflow-overview) and asset accounts appear in [bus-reports](./bus-reports).
+
+**Completeness:** 50% (Primary journey) — validate, schedule, and post are implemented and covered by unit tests; init and add are not yet verified by e2e.
+
+**Current:** Unit tests in `cmd/bus-assets/run_test.go`, `internal/assets/schedule_property_test.go`, `internal/assets/post_property_test.go`, and related prove run, schedule, and post logic and flags. No e2e script; init and add workflows are not test-backed.
+
+**Planned next:** Root layout only; init, add, depreciate, dispose as primary CLI; --dry-run; voucher refs in postings.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** Depreciation and disposal postings feed [bus-journal](./bus-journal); asset accounts in [bus-reports](./bus-reports).
+
+See [Development status](../implementation/development-status).
 
 ---
 

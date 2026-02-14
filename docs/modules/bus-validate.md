@@ -35,7 +35,21 @@ Reads all workspace datasets and schemas. Does not write.
 
 ### Development state
 
-Workspace and resource validation work today. Used before period close and filing, and by workflows that assume validation is available. Planned next: `--format text` (default) and `--format tsv` for diagnostics; empty stdout on success and `--output` no effect; update help for format; enforce Table Schema minimum/maximum; evaluate audit-trail invariants and closed-period protection. See [Development status](../implementation/development-status).
+**Value:** Validate workspace datasets and invariants so the [accounting workflow](../workflow/accounting-workflow-overview) can run a single check before period close and filing and get deterministic diagnostics.
+
+**Completeness:** 50% (Primary journey) — workspace and resource validation are implemented; unit tests cover run and type/constraint checks. No e2e; format and stdout behavior not fully verified.
+
+**Current:** Unit tests in `cmd/bus-validate/run_test.go`, `internal/validate/type_property_test.go`, and `internal/workspace/normalize_fuzz_test.go` prove run, type validation, and workspace normalization. No e2e script; format and success stdout behavior are in PLAN.
+
+**Planned next:** --format text (default) and tsv; empty stdout on success; help; min/max; audit and closed-period protection.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** Run before [bus-period](./bus-period) close and [bus-filing](./bus-filing); workflows assume validation is available.
+
+See [Development status](../implementation/development-status).
 
 ---
 

@@ -31,7 +31,21 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 ### Development state
 
-Bundle and validate workflows exist. [bus-filing](./bus-filing) invokes this module when the target is prh. Planned next: ensure PRH-required content (journal, reports, voucher refs, attachments) is in bundles (manifest or auto-include); integrate full PRH SBR taxonomy into iXBRL output; e2e tests against fixture workspace; fix README links to BusDK docs. Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
+**Value:** Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the `prh` target of [bus-filing](./bus-filing).
+
+**Completeness:** 40% (Meaningful task, partial verification) — bundle and validate workflows are implemented; unit tests cover run, bundle, and sanitize. No e2e.
+
+**Current:** Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, and `internal/bundle/sanitize_test.go` prove run dispatch, bundle building, and sanitization. No e2e against a fixture workspace; PRH content and SBR taxonomy are in PLAN.
+
+**Planned next:** PRH-required content in bundles; full PRH SBR taxonomy in iXBRL; e2e against fixture; README links.
+
+**Blockers:** bus-filing bundle contract must be stable for target consumption.
+
+**Depends on:** [bus-filing](./bus-filing) (invoked as target); [bus-period](./bus-period) closed.
+
+**Used by:** [bus-filing](./bus-filing) invokes this module when the target is prh.
+
+See [Development status](../implementation/development-status).
 
 ---
 

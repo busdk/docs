@@ -86,7 +86,21 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-Config-only init (no subcommand or `defaults`) and full baseline init (`all` with optional `--no-<module>`) are implemented and covered by e2e tests. The bus dispatcher invokes this when users run `bus init`; it then runs `bus config init` and each selected module’s init. The PLAN is complete for subcommands `defaults` and `all`; remaining work is limited to any follow-up unit or e2e refinements. See [Development status](../implementation/development-status) for the project-wide snapshot.
+**Value:** Initialize a new BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits), so users can run `bus init` or `bus init all` and get a deterministic, script-friendly setup.
+
+**Completeness:** 70% (Broadly usable) — config-only and full-baseline init are fully covered by e2e; subcommands `defaults` and `all`, exclusions, global flags, and stub delegation are verified.
+
+**Current:** E2e script `tests/e2e_bus_init.sh` proves config-only init (no subcommand or `defaults`) creates only `datapackage.json`; `all` runs config then all 13 module inits in order; `all --no-payroll` excludes payroll; per-module flags run only selected inits; invalid usage (color, format, quiet+verbose, extra positionals) and missing bus dispatcher yield correct exit codes. Unit tests in `internal/businit/run_test.go` and `internal/cli/flags_test.go` cover parsing and step order.
+
+**Planned next:** Any follow-up unit or e2e refinements.
+
+**Blockers:** None known.
+
+**Depends on:** None (orchestrates [bus-config](./bus-config) and each module’s init).
+
+**Used by:** The [bus](../cli/command-structure) dispatcher invokes this when users run `bus init`.
+
+See [Development status](../implementation/development-status).
 
 ---
 

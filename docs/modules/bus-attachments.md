@@ -39,7 +39,21 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 ### Development state
 
-Init, add, and list work today; e2e tests cover attachments workflows. [bus-bank](./bus-bank) will link imports to attachment metadata; invoice PDFs and evidence are registered here; filing bundles may include attachment metadata. Planned next: use workspace-relative paths in CSV I/O diagnostics (e.g. report `attachments.csv` instead of absolute paths in error messages). See [Development status](../implementation/development-status).
+**Value:** Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the [accounting workflow](../workflow/accounting-workflow-overview) treats evidence as first-class.
+
+**Completeness:** 60% (Stable for one use case) — init, add, and list are verified by e2e; idempotent init and evidence file layout are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_attachments.sh` proves exact help/version, global flags (color, format, quiet, output, chdir, terminator), init creating attachments.csv and schema, idempotent init warning, add with a file and --desc, list with deterministic TSV (id, date, desc, filename, relpath) and UUID/date format, and missing file for add. Unit tests cover run and validate (`cmd/bus-attachments/run_test.go`, `internal/attachments/validate_test.go`).
+
+**Planned next:** Workspace-relative paths in diagnostics.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-bank](./bus-bank) links imports to attachment metadata; [bus-invoices](./bus-invoices) and [bus-filing](./bus-filing) use attachment metadata.
+
+See [Development status](../implementation/development-status).
 
 ---
 

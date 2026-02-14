@@ -47,7 +47,21 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 ### Development state
 
-Init, list, add, and validate work today; e2e tests cover init, add (multiple types), list, and validate. Planned next: when both `accounts.csv` and schema exist, enforce full init contract (validate then warn and exit 0, or fail without writing); document allowed `--type` values in add help; optional alignment of account type enum with docs (income vs revenue). [bus-loans](./bus-loans) validates account IDs when reference datasets exist. See [Development status](../implementation/development-status).
+**Value:** Manage the chart of accounts as schema-validated workspace data so downstream modules and reports can rely on stable account identifiers and types.
+
+**Completeness:** 60% (Stable for one use case) — init, add (all types), list, and validate are verified by e2e; the full chart-of-accounts workflow is test-backed.
+
+**Current:** E2e script `tests/e2e_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV matching expected order; validate succeeds after add. Unit tests cover storage, validation, flags, and help.
+
+**Planned next:** Enforce full init contract when both files exist (validate then warn or fail); document allowed `--type` in add help; optional income/revenue alignment.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-loans](./bus-loans) validates account IDs when reference datasets exist; [accounting workflow](../workflow/accounting-workflow-overview) uses accounts as master data.
+
+See [Development status](../implementation/development-status).
 
 ---
 

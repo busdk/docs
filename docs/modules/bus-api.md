@@ -103,7 +103,21 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ### Development state
 
-The server runs and can serve workspace data; current work is wiring all endpoints to the [bus-data](./bus-data) library only (no CLI invocation). [bus-sheets](./bus-sheets) embeds this API in-process for the spreadsheet UI. Planned next: full bus-data integration for resources, package, schema, rows, and validation; workspace root as security boundary and workspace-level lock; stable JSON error shape and 403 when read-only; serve flags (base-path, CORS, TLS, enable-module); OpenAPI and e2e tests. Implement [bus-data](./bus-data) and [bus-bfl](./bus-bfl) first. See [Development status](../implementation/development-status).
+**Value:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
+
+**Completeness:** 50% (Primary journey) — help, version, openapi, and serve with token and port are verified; full resource/row semantics depend on bus-data integration not yet covered by e2e.
+
+**Current:** E2e script `tests/e2e_bus_api.sh` proves exact global help output, serve-specific help, version line, invalid color/quiet+verbose exit 2, serve with fixed token and port prints capability URL, and missing chdir exits 1. Unit tests cover flags and run (`internal/cli/flags_test.go`, `internal/cli/run_test.go`, `internal/server/server_test.go`). No e2e yet exercises API endpoints against bus-data.
+
+**Planned next:** Full bus-data integration for resources, rows, schema, validation; security boundary; read-only 403; TLS, CORS, enable-module; e2e against API.
+
+**Blockers:** bus-data integration is required for full API semantics; bus-sheets needs this module embedded.
+
+**Depends on:** [bus-data](./bus-data), [bus-bfl](./bus-bfl) (formula). Implement bus-data first.
+
+**Used by:** [bus-sheets](./bus-sheets) embeds this API in-process for the spreadsheet UI.
+
+See [Development status](../implementation/development-status).
 
 ---
 

@@ -41,7 +41,21 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 ### Development state
 
-Init and add work today. Loan postings feed the journal; loan accounts appear in [bus-reports](./bus-reports). Planned next: `event` subcommand (disbursement, repayment, interest, fee, adjustment with posting output); `amortize` (period, optional loan-id, post-date); idempotent init (warn when all exist, fail when partial); workspace-root layout (no loans/ subdir); align `add` flags with SDD; validate counterparty and account IDs against [bus-accounts](./bus-accounts) and [bus-entities](./bus-entities) when present; command-level tests. See [Development status](../implementation/development-status).
+**Value:** Maintain loan register and events so amortization and event postings feed the [bus-journal](./bus-journal) and loan accounts appear in [bus-reports](./bus-reports).
+
+**Completeness:** 40% (Meaningful task, partial verification) — init and add are implemented; unit tests cover run and flags. No e2e; event and amortize are not verified.
+
+**Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. Init and add exist in code but are not covered by e2e; event and amortize are planned, not tested.
+
+**Planned next:** event (disbursement, repayment, interest, fee, adjustment with postings); amortize (period, optional loan-id); idempotent init; root layout; add flags; ref validation; command-level tests.
+
+**Blockers:** None known.
+
+**Depends on:** [bus-accounts](./bus-accounts), [bus-entities](./bus-entities) (reference validation when datasets exist).
+
+**Used by:** Loan postings feed [bus-journal](./bus-journal); loan accounts in [bus-reports](./bus-reports).
+
+See [Development status](../implementation/development-status).
 
 ---
 

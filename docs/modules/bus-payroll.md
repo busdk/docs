@@ -43,7 +43,21 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 ### Development state
 
-Validate and export work today; the module uses a focused scope and `payroll/` layout. Used standalone for payroll runs; postings can feed the journal. Planned next: align or document scope and layout vs docs; mention `make check` in README; add test that `--no-color` disables color on stderr. See [Development status](../implementation/development-status).
+**Value:** Run payroll and produce postings so salary and related entries can feed the [bus-journal](./bus-journal); validate and export support a focused payroll scope.
+
+**Completeness:** 40% (Meaningful task, partial verification) — validate and export are implemented; unit tests cover flags and run. No e2e for full payroll run.
+
+**Current:** Unit tests in `internal/cli/flags_test.go` and `run_test.go` prove flag parsing and run behavior. The module uses a focused scope and `payroll/` layout; full payroll workflow is not covered by e2e.
+
+**Planned next:** Align or document scope and layout vs docs; README `make check`; test that `--no-color` disables color on stderr.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** Standalone payroll runs; postings feed [bus-journal](./bus-journal).
+
+See [Development status](../implementation/development-status).
 
 ---
 

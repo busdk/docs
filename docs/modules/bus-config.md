@@ -84,7 +84,21 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-Config init and accounting-entity configure work today; e2e tests cover init. [bus-init](./bus-init) runs `bus config init` first; [bus-agent](./bus-agent) and the CLI will use the config library for default agent. Planned next: bus configuration Go library (user-level config file, GetDefaultAgent / SetDefaultAgent); `bus config set agent <runtime>` and `bus config get agent` with persistence; E2E for set/get and invalid runtime. [bus-agent](./bus-agent) and the CLI will use the same store for default agent. See [Development status](../implementation/development-status).
+**Value:** Create and update workspace configuration (`datapackage.json`) and accounting-entity settings so every BusDK workspace has a single, schema-valid source for currency, fiscal year, and VAT settings.
+
+**Completeness:** 70% (Broadly usable) — init and configure are fully verified by e2e; idempotent init and deterministic JSON shape are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity (profile, base_currency, vat_reporting_period, etc.); init idempotent when entity already present; configure updates only given fields (e.g. base-currency, vat-registered) with deterministic diff; global flags (help, version, color, quiet, output, chdir, terminator) and invalid usage. Unit tests cover run and validation (`internal/run/run_test.go`, `internal/config/`).
+
+**Planned next:** Config library; `set agent` / `get agent` with persistence; E2E for set/get and invalid runtime.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-init](./bus-init) runs `bus config init` first; [bus-agent](./bus-agent) and [bus-dev](./bus-dev) use or will use config for default agent.
+
+See [Development status](../implementation/development-status).
 
 ---
 

@@ -111,7 +111,21 @@ Template rendering failures (missing variable, unresolved `{{...}}`) occur befor
 
 ### Development state
 
-Detect, render, run, and format work today; e2e tests cover detect and run. Planned next: alphabetical backend order and default output format `text`; order and enable/disable configuration; AGENTS.md discovery with root-to-cwd “closest wins”; per-runtime instruction adapters; deterministic fallback when AGENTS.md is missing or over-size. Default agent selection will use [bus-config](./bus-config) (GetDefaultAgent / SetDefaultAgent). See [Development status](../implementation/development-status).
+**Value:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and bus-dev can use a configured default runtime without hard-coding it.
+
+**Completeness:** 40% (Meaningful task, partial verification) — detect and render are verified by e2e; help, version, and global flags are test-backed; run is implemented but e2e does not prove full run flow.
+
+**Current:** E2e script `tests/e2e_bus_agent.sh` proves help, version, subcommand help (detect), color and format validation, quiet+verbose exit 2, and detect listing enabled runtimes. Unit tests cover runner resolve/detect, template render, format, and prefs (`internal/runner/run_test.go`, `internal/template/render_test.go`, `agent/prefs_test.go`). No e2e yet proves `run` end-to-end with a real agent.
+
+**Planned next:** Order and enable/disable configuration; AGENTS.md discovery; per-runtime adapters; deterministic fallback when AGENTS.md missing or over-size.
+
+**Blockers:** None known.
+
+**Depends on:** [bus-config](./bus-config) (for default agent when set/get agent exist); [bus-preferences](./bus-preferences) (runtime and run-config defaults).
+
+**Used by:** [bus-sheets](./bus-sheets) (optional agent chat); [bus-dev](./bus-dev) (work, commit, etc.).
+
+See [Development status](../implementation/development-status).
 
 ---
 

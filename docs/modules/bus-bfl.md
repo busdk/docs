@@ -126,7 +126,21 @@ The tool exits with status 0 on success. It exits with status 2 on invalid usage
 
 ### Development state
 
-Parse, format, validate, and eval work today; tests include dialect and spreadsheet-style evaluation. Planned next: CI workflow for `go test` and e2e; make `eval` exit 2 when `--context` is omitted (invalid usage). [bus-data](./bus-data) uses this library for formula validation and projection. See [Development status](../implementation/development-status).
+**Value:** Parse, evaluate, and render BFL (Bus Formula Language) expressions so bus-data and spreadsheets can use formula-enabled fields with deterministic, testable semantics.
+
+**Completeness:** 60% (Stable for one use case) — parse, eval, render CLI and conformance are verified by e2e and unit tests; formula evaluation and dialect behavior are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_bfl.sh` proves help, version, color flags, subcommand help (parse), parse with expr and dialect, eval with context, and render. Unit tests in `pkg/bfl/` cover expr, parse, eval, decimal, datetime, range_array, conformance, and fuzz. `internal/cli/run_test.go` and related cover CLI behavior.
+
+**Planned next:** CI workflow; make `eval` exit 2 when `--context` is omitted.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-data](./bus-data) uses this library for formula validation and projection.
+
+See [Development status](../implementation/development-status).
 
 ---
 

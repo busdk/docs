@@ -39,7 +39,21 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 ### Development state
 
-Init and list (with filters) work today; e2e tests cover init and import. Planned next: validate bank datasets and new rows against Table Schema before append; add counterparty_id and filter by it; link imports to attachments metadata; `--dry-run` for init; e2e for partial init (some files exist). [bus-reconcile](./bus-reconcile) uses bank datasets. See [Development status](../implementation/development-status).
+**Value:** Initialize bank transaction datasets and import normalized statement data so [bus-reconcile](./bus-reconcile) and the [accounting workflow](../workflow/accounting-workflow-overview) can match bank activity to invoices and journal entries.
+
+**Completeness:** 60% (Stable for one use case) — init and import, list are verified by e2e; idempotent init and list output shape are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_bank.sh` proves help, version, invalid quiet+verbose and color and format, init creating bank-imports and bank-transactions CSV and schema at workspace root, idempotent init warning, import --file appending from raw CSV with schema, and list with deterministic TSV. Unit tests cover app run, import, schema, validate, and output (`internal/app/run_test.go`, `internal/bank/`).
+
+**Planned next:** Schema validation before append; counterparty_id and filter; link imports to attachments; --dry-run for init.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-reconcile](./bus-reconcile) uses bank datasets for match and allocate.
+
+See [Development status](../implementation/development-status).
 
 ---
 

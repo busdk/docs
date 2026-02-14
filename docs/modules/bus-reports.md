@@ -41,7 +41,21 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 ### Development state
 
-Trial balance, account-ledger, and statement-style reports work today. Planned next: `general-ledger` subcommand with `--period` and optional `--account`; align trial-balance with `--as-of`; `--period` support (e.g. 2026Q1) for P&amp;L and general-ledger; stable text format (literal `|` separator); traceability to postings/vouchers; optional budget dataset; KPA/PMA when required. Reads [bus-journal](./bus-journal) and [bus-period](./bus-period); optionally [bus-budget](./bus-budget). See [Development status](../implementation/development-status).
+**Value:** Produce trial balance, account-ledger, and statement-style reports from journal and period data so the [accounting workflow](../workflow/accounting-workflow-overview) can generate financial output after close.
+
+**Completeness:** 50% (Primary journey) — trial balance and account-ledger are implemented; unit tests cover run, workspace load, and report logic. No e2e.
+
+**Current:** Unit tests in `internal/app/run_test.go`, `internal/workspace/load_test.go`, and `internal/report/report_test.go` prove run dispatch, workspace loading, and report generation. No e2e script; report output shape is not asserted end-to-end.
+
+**Planned next:** general-ledger with --period and --account; trial-balance --as-of; --period for P&amp;L; stable text format; traceability; optional budget; KPA/PMA.
+
+**Blockers:** None known.
+
+**Depends on:** [bus-journal](./bus-journal), [bus-period](./bus-period); optionally [bus-budget](./bus-budget).
+
+**Used by:** End users for reporting; no other module invokes it.
+
+See [Development status](../implementation/development-status).
 
 ---
 

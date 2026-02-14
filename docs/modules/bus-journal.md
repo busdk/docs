@@ -39,7 +39,21 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 ### Development state
 
-Init and add work today; e2e tests cover journal operations. [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-reconcile](./bus-reconcile), and the filing modules read journal data. Planned next: period integrity (reject postings in closed periods with clear diagnostics); align layout with SDD (journal index and period files at root); Finnish audit-trail fields (entry_id, voucher_id, entry_sequence); interactive prompts for `add` when params omitted; accept account by name. Depends on [bus-period](./bus-period). See [Development status](../implementation/development-status).
+**Value:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream for the [accounting workflow](../workflow/accounting-workflow-overview).
+
+**Completeness:** 60% (Stable for one use case) — init, add, and balance are verified by e2e; idempotent init and deterministic balance output are test-backed.
+
+**Current:** E2e script `tests/e2e_bus_journal.sh` proves help, version, invalid color/format and quiet+verbose, chdir, init creating transactions/lines CSV and schema, idempotent init, dry-run add (no new rows), add with debit/credit pairs, balance with exact TSV and --as-of, --output and --quiet. Unit tests cover journal add, validate, atomic write, and app run (`internal/journal/add_test.go`, `internal/app/run_test.go`).
+
+**Planned next:** Period integrity (reject postings in closed periods); layout alignment; audit-trail fields; interactive add; account by name.
+
+**Blockers:** bus-period closed-period checks needed for full workflow integrity.
+
+**Depends on:** [bus-period](./bus-period) (period integrity: reject postings in closed periods).
+
+**Used by:** [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-reconcile](./bus-reconcile), and [bus-filing](./bus-filing) read journal data.
+
+See [Development status](../implementation/development-status).
 
 ---
 

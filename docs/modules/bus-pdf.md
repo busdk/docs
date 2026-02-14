@@ -31,7 +31,21 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 ### Development state
 
-Render from JSON (file or stdin) works today. Planned next: command-level test for `render` with `--data @-`. [bus-invoices](./bus-invoices) will use this for `bus invoices pdf`. See [Development status](../implementation/development-status).
+**Value:** Render PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
+
+**Completeness:** 60% (Stable for one use case) — render from file is implemented and covered by unit tests; stdin (`--data @-`) is not yet covered by a command-level test.
+
+**Current:** Unit tests in `cmd/bus-pdf/run_test.go`, `internal/render/render_test.go`, and `internal/templates/` prove run, render, and template behavior. No e2e; command-level test for `render --data @-` is in PLAN.
+
+**Planned next:** Command-level test for `render --data @-`.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-invoices](./bus-invoices) uses this for `bus invoices pdf`.
+
+See [Development status](../implementation/development-status).
 
 ---
 

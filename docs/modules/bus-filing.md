@@ -39,7 +39,21 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 ### Development state
 
-Delegation to target executables (e.g. bus-filing-prh, bus-filing-vero) works today. Invokes [bus-filing-prh](./bus-filing-prh) and [bus-filing-vero](./bus-filing-vero) as targets; users run `bus filing <target>` to build bundles. Planned next: clarify or implement FR-FIL-001 (bundle assembly from validated closed-period data); define parameter set for tax-audit-pack and targets; document standard targets and link module docs; test that args after target token are passed through; test tax-audit-pack delegation. Depends on [bus-period](./bus-period) and [bus-journal](./bus-journal). See [Development status](../implementation/development-status).
+**Value:** Orchestrate filing by delegating to target executables (e.g. bus-filing-prh, bus-filing-vero) so users can run `bus filing <target>` and produce PRH/Vero bundles from closed-period data.
+
+**Completeness:** 50% (Primary journey) — delegation to targets and list_targets are implemented; unit tests cover run, list_targets, and flags. Bundle assembly and pass-through args are not fully verified.
+
+**Current:** Unit tests in `internal/busfiling/run_test.go`, `internal/busfiling/list_targets_test.go`, and `internal/cli/flags_test.go` prove run, list targets, and flag parsing. No e2e; bundle assembly (FR-FIL-001) and args pass-through are in PLAN.
+
+**Planned next:** Bundle assembly from validated closed-period data; parameter set for tax-audit-pack; document targets; test args pass-through and tax-audit-pack delegation.
+
+**Blockers:** Stable bundle contract needed for filing targets to consume.
+
+**Depends on:** [bus-period](./bus-period), [bus-journal](./bus-journal) (closed-period, validated data).
+
+**Used by:** Invokes [bus-filing-prh](./bus-filing-prh) and [bus-filing-vero](./bus-filing-vero) as targets when users run `bus filing <target>`.
+
+See [Development status](../implementation/development-status).
 
 ---
 

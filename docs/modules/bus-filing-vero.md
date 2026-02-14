@@ -31,7 +31,21 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 ### Development state
 
-Bundle workflows exist. [bus-filing](./bus-filing) invokes this module when the target is vero. Planned next: e2e tests against fixture workspace; confirm FR-VERO-002 (source dataset refs in bundle); deterministic diagnostics for missing prerequisites (period closed, filing orchestration). Prerequisites: [bus-filing](./bus-filing) orchestration and period closed. See [Development status](../implementation/development-status).
+**Value:** Produce Vero (Finnish Tax Administration) export bundles from closed-period data when invoked as the `vero` target of [bus-filing](./bus-filing).
+
+**Completeness:** 40% (Meaningful task, partial verification) — bundle workflows are implemented; unit tests cover app, bundle, and output. No e2e.
+
+**Current:** Unit tests in `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, and `internal/output/` prove app and bundle behavior. No e2e against fixture; source refs (FR-VERO-002) and prerequisites diagnostics are in PLAN.
+
+**Planned next:** E2e against fixture; FR-VERO-002 source refs in bundle; deterministic diagnostics for missing prerequisites.
+
+**Blockers:** bus-filing bundle contract must be stable for target consumption.
+
+**Depends on:** [bus-filing](./bus-filing) (invoked as target); [bus-period](./bus-period) closed.
+
+**Used by:** [bus-filing](./bus-filing) invokes this module when the target is vero.
+
+See [Development status](../implementation/development-status).
 
 ---
 

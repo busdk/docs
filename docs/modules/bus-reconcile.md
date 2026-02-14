@@ -39,7 +39,21 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ### Development state
 
-Planned next: `match` (bank-id plus invoice-id or journal-id, single reconciliation row); `allocate` (bank-id with repeatable invoice/journal allocations, sum must equal bank amount); `list` with output/format; journal linking in match and allocate; align dataset location with SDD (root only or document variance); command-level tests. Depends on [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), and [bus-journal](./bus-journal). See [Development status](../implementation/development-status).
+**Value:** Link bank transactions to invoices or journal entries (match and allocate) so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
+
+**Completeness:** 30% (Some basic commands) — help, version, and global flags are implemented; unit tests cover run and flags. No e2e; match, allocate, and list are not verified.
+
+**Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. No e2e script exists; match, allocate, and list behavior are not covered by tests.
+
+**Planned next:** match (bank-id plus invoice-id or journal-id); allocate (bank-id with allocations); list with output/format; command-level tests.
+
+**Blockers:** Missing verified match/allocate blocks the reconciliation workflow step.
+
+**Depends on:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-journal](./bus-journal).
+
+**Used by:** End users for reconciliation; no other module invokes it.
+
+See [Development status](../implementation/development-status).
 
 ---
 

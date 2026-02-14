@@ -274,7 +274,21 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 ### Development state
 
-Today you can init schemas and packages, add and update rows, list tables and resources, run validation, and use formula-enabled fields (with [bus-bfl](./bus-bfl)). E2E tests cover table and package workflows. Planned next: resource add/remove/rename, schema key and foreign-key operations, field add/remove/rename/set-format, and `--resource` resolution for schema commands. This module has no Go dependency on other bus-* modules; [bus-api](./bus-api) and [bus-sheets](./bus-sheets) depend on it. See [Development status](../implementation/development-status).
+**Value:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.
+
+**Completeness:** 60% (Stable for one use case) — schema init/show, package init/validate, table and row operations, and validation are verified by e2e and unit tests.
+
+**Current:** E2e script `tests/e2e_bus_data.sh` proves schema init creates table and schema files, schema show prints exact schema bytes, package init and validate, row add/update/delete, table read with filters and key, and deterministic I/O. Unit tests in `pkg/data/` and `internal/cli/` cover mutate, patch, validate, formula, and workspace behavior.
+
+**Planned next:** Resource add/remove; schema key and foreign-key ops; field add/remove/rename; `--resource` resolution.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** [bus-api](./bus-api) and [bus-sheets](./bus-sheets) depend on it for workspace endpoints and the embedded UI backend.
+
+See [Development status](../implementation/development-status).
 
 ---
 

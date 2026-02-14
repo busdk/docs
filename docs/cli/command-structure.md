@@ -9,7 +9,21 @@ BusDK is CLI-first. Commands are organized by module and generally follow a verb
 
 ### Development state
 
-The dispatcher runs today: it delegates to `bus-<module>` binaries on PATH and orchestrates `bus init` with config and module-include flags. Every module is invoked through it when users run `bus <module> …` or `bus init`. Planned next: when the first argument is `help` and `bus-help` is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch; add CONTRIBUTING.md or update README. The bus repo has no dependency on other modules. See [Development status](../implementation/development-status) for the project-wide snapshot.
+**Value:** Single entrypoint that delegates to `bus-<module>` binaries and orchestrates `bus init` (config and optional module inits) so users can run one command to set up or run any module.
+
+**Completeness:** 50% (Primary journey) — no-args and missing-subcommand behavior are verified by unit tests; successful dispatch is tested; `bus help` when bus-help is missing and e2e are not yet in place.
+
+**Current:** With no arguments the dispatcher prints usage and available commands and exits 2 (`internal/dispatch/run_test.go`). When the subcommand is missing or not on PATH it exits 127 and reports the missing command. Successful delegation to a module binary is covered by the same tests.
+
+**Planned next:** When the first argument is `help` and `bus-help` is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch; add CONTRIBUTING.md or update README.
+
+**Blockers:** None known.
+
+**Depends on:** None.
+
+**Used by:** Every [module](../modules/index) is invoked through it when users run `bus <module> …` or `bus init`.
+
+See [Development status](../implementation/development-status) for the project-wide snapshot.
 
 ---
 
