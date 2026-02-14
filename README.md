@@ -20,7 +20,9 @@ This project uses **Ruby 3.3** and **Jekyll 4.4**. A `.ruby-version` file is inc
 ./start.sh
 ```
 
-The script enables rbenv (so the correct Ruby is used), runs `bundle install` if needed, then starts `bundle exec jekyll serve -s docs`. You can pass extra arguments to Jekyll (e.g. `./start.sh --livereload`). Alternatively, run `bundle install` and `bundle exec jekyll serve -s docs` yourself.
+The script enables rbenv (so the correct Ruby is used), runs `bundle install` if needed, then starts `bundle exec jekyll serve -s docs`. It sets `JEKYLL_ENV=development` so Sass emits source maps and the Chrome DevTools workspace file is generated; production builds do not include source maps or that file. You can pass extra arguments to Jekyll (e.g. `./start.sh --livereload`). Alternatively, run `bundle install` and `bundle exec jekyll serve -s docs` yourself (set `JEKYLL_ENV=development` for local source maps).
+
+Source maps and Chrome DevTools: when running locally with `./start.sh`, the built CSS is generated with source maps so DevTools can map rules back to the original `.scss` files. To verify CSS source maps, open the site in Chrome, open DevTools (F12 or Inspect), then in the Elements panel select an element and look at the Styles pane: the file name next to a rule should be a `.scss` path (e.g. `_sass/busdk/_tokens.scss`); clicking it should open the original source in the Sources panel. This site does not bundle or minify custom JavaScript; theme-provided JS is served as-is. If you add a JS build step later, enable source maps in that tool for development only (emit `.map` files and a `//# sourceMappingURL=` comment in the built JS), ensure Jekyll serves the `.map` files in dev, and configure production builds to omit or remove `.map` files; then in DevTools → Sources you can confirm you can navigate to the original JS source files.
 
 ## GitHub Pages
 

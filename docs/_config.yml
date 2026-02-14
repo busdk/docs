@@ -20,5 +20,8 @@ include:
   - .well-known
 
 # Sass: silence deprecation warnings from jekyll-theme-primer (we don't control the gem).
+# sourcemap: development — emit .css.map only when JEKYLL_ENV=development so Chrome DevTools
+# can map compiled CSS back to .scss sources locally; production builds do not publish source maps.
 sass:
   quiet_deps: true
+  sourcemap: development

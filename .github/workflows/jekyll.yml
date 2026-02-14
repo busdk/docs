@@ -44,6 +44,9 @@ jobs:
       - name: Remove Chrome DevTools well-known (safety net)
         run: rm -f _site/.well-known/appspecific/com.chrome.devtools.json
 
+      - name: Remove source maps (do not publish to production)
+        run: find _site -name '*.map' -delete
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 

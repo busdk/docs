@@ -21,8 +21,9 @@ if [[ ! -f Gemfile.lock ]] || [[ ! -d vendor/bundle ]]; then
   bundle install
 fi
 
-# Development env so the Chrome DevTools .well-known workspace file is written
-# with local root and stable UUID (not published in production).
+# Development env: Chrome DevTools workspace .well-known is written with local root
+# and stable UUID (not published in production), and Sass emits source maps so
+# DevTools can map compiled CSS back to .scss sources.
 export JEKYLL_ENV=development
 
 exec bundle exec jekyll serve -s docs "$@"
