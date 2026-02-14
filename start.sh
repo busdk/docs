@@ -21,4 +21,8 @@ if [[ ! -f Gemfile.lock ]] || [[ ! -d vendor/bundle ]]; then
   bundle install
 fi
 
+# Development env so the Chrome DevTools .well-known workspace file is written
+# with local root and stable UUID (not published in production).
+export JEKYLL_ENV=development
+
 exec bundle exec jekyll serve -s docs "$@"
