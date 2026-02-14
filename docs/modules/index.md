@@ -17,6 +17,7 @@ If you need architectural background on why modules are independent and how they
 - [`bus sheets`](./bus-sheets): Local spreadsheet-like web UI for workspaces (workbook, sheet tabs, optional agent chat).
 - [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping.
 - [`bus agent`](./bus-agent): Diagnostics and development helper for the agent runner (detect, render, run, format).
+- [`bus run`](./bus-run): Run user-defined prompts, pipelines, and scripts with agentic support; no built-in developer workflows. Optional `bux` shorthand for `bus run`.
 - [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.
 - [`bus accounts`](./bus-accounts): Manage the chart of accounts.
 - [`bus entities`](./bus-entities): Manage counterparty reference data.

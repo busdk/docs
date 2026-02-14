@@ -1,0 +1,126 @@
+---
+title: bus-run
+description: "bus run executes user-defined prompts, pipelines, and scripts with agentic support via the bus-agent library; no built-in developer workflows and no dependency on bus-dev. Optional bux shorthand for bus run."
+---
+
+## `bus-run` — run user-defined prompts, pipelines, and scripts
+
+### Synopsis
+
+`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | pipeline | action | script ) [options]`
+
+**Run:** `bus run <token> [<token> ...]` — Execute one or more user-defined prompt actions, script actions, or pipeline names. Tokens are resolved and pipeline names are expanded to a flat sequence of prompt and script steps; that sequence runs in order and the run stops on first failure. All agent execution uses the [bus-agent](./bus-agent) library; there are no built-in developer operations (no plan, work, spec, e2e, commit, or init).
+
+**Management:** **`set`** — persist bus-run defaults (agent, model, output-format, timeout) via the [bus-preferences](./bus-preferences) library. **`context`** — print the prompt-variable catalog and resolved values (one `KEY=VALUE` per line, sorted by key) for prompt and script authors; uses the effective working directory to build the catalog (no Git required). **`pipeline`** — define or list pipelines (directory-local `.bus/run/<NAME>.yml` or preference `bus-run.pipeline.<name>`). **`action`** — define or list directory-local prompt actions (`.bus/run/<NAME>.txt`). **`script`** — define or list directory-local script actions (`.bus/run/<NAME>.sh`, `.bat`, or `.ps1`).
+
+Directory-local content is under the effective working directory (project root); no Git is required. Paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. Diagnostics and agent output go to stderr; deterministic results (context, list output) go to stdout.
+
+### Description
+
+Command names follow [CLI command naming](../cli/command-naming). `bus run` is an end-user module for running your own prompts, pipelines, and scripts. It does not implement developer workflows: there are no built-in operations like plan, work, spec, e2e, triage, stage, or commit, and no dependency on [bus dev](./bus-dev). Agent execution is provided entirely by the [bus-agent](./bus-agent) Go library so that runtime selection, prompt templating, and timeout handling stay consistent across BusDK. The normative design (requirements, token resolution, and catalog) is in the [module SDD](../sdd/bus-run). You define prompts (`.bus/run/<name>.txt`), pipelines (`.bus/run/<name>.yml` or preference `bus-run.pipeline.<name>`), and scripts (`.bus/run/<name>.sh`, `.bat`, or `.ps1`), then run them by name with `bus run <name>` or by chaining multiple tokens in one invocation. Pipelines expand to a sequence of prompt and script steps; execution is in order with stop-on-first-failure. The tool uses a per-directory lock so only one run (or directory-writing management) operates on a given directory at a time; a second invocation for the same directory waits until the first exits.
+
+**Shorthand: `bux`.** You can add a short alias or wrapper so that `bux` invokes `bus run`, similar to how `npx` is used with `npm`. For example, define a shell alias `alias bux='bus run'` or install a small script named `bux` that runs `bus run "$@"`. Then `bux my-pipeline` or `bux my-action` runs the same as `bus run my-pipeline` or `bus run my-action`. The BusDK install does not create `bux` by default; adding it is optional and left to the user or their environment.
+
+### Commands
+
+**`bus run <token> [<token> ...]`** — Run one or more user-defined steps. Each token is a prompt action name, script action name, or pipeline name. Pipeline names expand to a sequence of prompt and script actions; there are no built-in operations or built-in pipelines. The expanded sequence runs in order; the first non-zero exit stops the run and becomes the process exit code. When any token resolves to directory-local content, `.bus/run/` is read from the effective working directory (project root); no Git is required. If the project root does not exist or is not accessible, exit 1. Takes the per-directory lock.
+
+**`bus run set agent <runtime>`** — Set the bus-run persistent default agent (`bus-run.agent`) via the bus-preferences library. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid value → exit 2.
+
+**`bus run set model <value>`** — Set the bus-run default model (`bus-run.model`). **`bus run set output-format <ndjson|text>`** — Set the bus-run default output format (`bus-run.output_format`). **`bus run set timeout <duration>`** — Set the bus-run default timeout (`bus-run.timeout`). Each writes only the corresponding `bus-run.*` key. Invalid value → exit 2.
+
+**`bus run context`** — Print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout. Use this when authoring prompt templates or scripts so you can see the same variables the tool injects. Uses the effective working directory to derive catalog values; no Git required. If the effective working directory does not exist or is not accessible, exit 1. Does not take the per-directory lock.
+
+**`bus run pipeline set repo NAME TOKEN...`** — Write or overwrite `.bus/run/NAME.yml` with a YAML sequence of tokens under the project root (effective workdir). Takes the lock. If the project root does not exist or is not writable, exit 1. **`bus run pipeline unset repo NAME`** — Remove `.bus/run/NAME.yml` if present; exit 0 if absent. **`bus run pipeline set prefs NAME TOKEN...`** — Write preference `bus-run.pipeline.NAME` as a JSON array via bus-preferences. **`bus run pipeline unset prefs NAME`** — Remove that preference key if present; exit 0 if absent. **`bus run pipeline list [all|repo|prefs]`** — Print a deterministic listing of pipelines and their source; output lexicographic by name then source.
+
+**`bus run action set NAME`** — Read content from stdin until EOF and write `.bus/run/NAME.txt`; stdin must be non-empty (empty → exit 2). **`bus run action unset NAME`** — Remove `.bus/run/NAME.txt` if present; exit 0 if absent. **`bus run action list`** — Print available directory-local prompt actions (from `.bus/run/`) by name.
+
+**`bus run script set NAME [--platform=unix|windows|windows-ps1|both]`** — Write `.bus/run/NAME.sh` (unix), `.bus/run/NAME.bat` (windows), and/or `.bus/run/NAME.ps1` (windows-ps1) from stdin; set the executable bit on `.sh` (chmod failure → exit 1). **`bus run script unset NAME [--platform=...]`** — Remove the selected script variant(s); exit 0 if absent. **`bus run script list`** — Print available directory-local scripts (from `.bus/run/`) by name with variant and enabled/disabled status.
+
+### User-defined extensions (`.bus/run/`)
+
+User-defined content lives under **`.bus/run/`** at the project root (effective working directory). Discovery is limited to that directory; paths must stay inside the project root (symlinks that point outside the project root are refused). No Git is required.
+
+**Prompt action:** a file **`.bus/run/<name>.txt`** is a UTF-8 prompt template using `{{VARIABLE}}` placeholders. When you invoke the token `<name>`, the tool loads that file, substitutes the prompt-variable catalog (e.g. `DOCS_BASE_URL`, `WORKDIR_ROOT`, `PROJECT_NAME`; see **bus run context**), and invokes the agent with the rendered text via the bus-agent library. Missing or unresolved placeholders cause the command to fail (exit 2) before any agent run.
+
+**Pipeline:** a file **`.bus/run/<name>.yml`** must be a YAML sequence of strings only. Each string is a token resolved with the same rules as command-line tokens; pipelines can reference other pipelines and actions. Invalid YAML or non-string scalars cause exit 2. Cycles and expansion limits are detected and reported with exit 2.
+
+**Script action:** **`.bus/run/<name>.sh`** (non-Windows) or **`.bus/run/<name>.bat`** or **`.bus/run/<name>.ps1`** (Windows) runs as a script when you invoke the token `<name>`. On non-Windows the `.sh` file must have at least one execute bit set; otherwise the script action is disabled and invoking the name yields exit 2. On Windows, when both `.bat` and `.ps1` exist for the same name, the tool uses `.ps1`. The tool runs `.sh` via exec of the file path (shebang respected) or a fixed shell; on Windows it runs `.bat` via `cmd.exe /C` and `.ps1` via PowerShell (e.g. `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <path>`). Scripts run with the project root (effective working directory) as the working directory and receive the prompt-variable catalog as environment variables; these override any existing variables of the same name. Use **bus run context** to see the exact KEY=VALUE set your scripts will see.
+
+Name grammar: names must start with a letter and contain only lowercase ASCII letters, digits, hyphens, and underscores. The same name cannot be used for more than one type (e.g. both a prompt and a pipeline); that ambiguity yields exit 2.
+
+**Token resolution.** When you pass one or more tokens to `bus run`, each token is resolved in this order: (1) directory-local prompt (`.bus/run/<name>.txt`), (2) directory-local script (platform-selected: non-Windows uses `.sh`; Windows uses `.ps1` if present, else `.bat`), (3) directory-local pipeline (`.bus/run/<name>.yml`), (4) preference pipeline (`bus-run.pipeline.<name>`). There are no built-in operations or built-in pipelines; unknown tokens and pipeline cycles or expansion limits yield exit 2 before any step runs. Having `.sh`, `.bat`, and/or `.ps1` for the same name is allowed (one script action, platform-specific variants; on Windows `.ps1` is preferred over `.bat` when both exist).
+
+**Prompt variable catalog.** The following variables are available in prompt templates and are injected as environment variables into script actions. Use **bus run context** to print the full catalog and current values (one `KEY=VALUE` per line, sorted by key).
+
+| Variable | Description | Source |
+|----------|-------------|--------|
+| `DOCS_BASE_URL` | Base URL for documentation | `BUS_RUN_DOCS_BASE_URL` (default `https://docs.busdk.com`), trailing slash trimmed |
+| `WORKDIR_ROOT` | Absolute path to the effective working directory (project root) | Effective workdir after `-C`/`--chdir` |
+| `PROJECT_NAME` | Base name of the effective working directory | Base name of the project root path |
+
+**Per-directory lock.** Only one run (or one directory-writing management command) operates on a given directory at a time. Commands that take the lock: **bus run** with one or more tokens, **pipeline set repo**, **action set**, **script set**, **pipeline unset repo**, **action unset**, and **script unset** when removing directory-local files. Commands that do not take the lock: **pipeline list**, **action list**, **script list**, **context**, **set** (preferences only), **pipeline unset prefs**, and **pipeline set prefs**. A second invocation that would need the lock for the same directory waits until the first exits.
+
+### Global flags
+
+These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). They can appear in any order before the subcommand. A lone `--` ends flag parsing.
+
+- **`-h`**, **`--help`** — Print help to stdout and exit 0.
+- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
+- **`-v`**, **`--verbose`** — Verbose progress and diagnostics to stderr; repeatable (e.g. `-vv`).
+- **`-q`**, **`--quiet`** — Suppress normal command result output; only errors to stderr. Cannot combine with `--verbose` (exit 2).
+- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective working directory. If it does not exist or is not accessible, exit 1.
+- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>`. Errors still go to stderr. If both `--output` and `--quiet` are used, quiet wins.
+- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. **`--no-color`** — Same as `--color=never`.
+- **`--agent <runtime>`** — Select the agent runtime for this invocation only. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Overrides the default from `BUS_RUN_AGENT`, `BUS_AGENT`, and persistent preferences.
+
+### Agent runtime selection
+
+Subcommands that invoke an agent (when a token resolves to a prompt action) use the [bus-agent](./bus-agent) library and one of its supported runtimes: Cursor CLI, Codex, Gemini CLI, and Claude CLI. Resolution order: (1) **`--agent`** for that invocation; (2) **`BUS_RUN_AGENT`** (bus-run session default); (3) **`BUS_AGENT`** (shared session default); (4) **bus-run persistent preference** (`bus-run.agent`); (5) **bus-agent persistent preference** (`bus-agent.runtime`); (6) **first available** runtime in the effective order. Set bus-run’s default with **`bus run set agent <runtime>`** or `bus preferences set bus-run.agent <runtime>`. At the start of each agent step, the tool prints to stderr which agent and model are in use. Invalid runtime name or missing selected runtime yields a clear error and exit 2 or 1; the diagnostic includes the canonical installation URL for the runtime when it is missing.
+
+### Preference settings (bus-run namespace)
+
+Preferences that affect `bus run` are stored via the [bus-preferences](./bus-preferences) library under the **`bus-run`** namespace only. **Bus run only ever writes `bus-run.*` keys.**
+
+| Key | Description |
+|-----|-------------|
+| `bus-run.agent` | Bus-run default agent runtime. Set with `bus run set agent <runtime>`. |
+| `bus-run.model` | Bus-run default model. Set with `bus run set model <value>`. |
+| `bus-run.output_format` | Bus-run default output format (`ndjson` or `text`). Set with `bus run set output-format <ndjson|text>`. |
+| `bus-run.timeout` | Bus-run default timeout (e.g. `60m`). Set with `bus run set timeout <duration>`. |
+| `bus-run.pipeline.<name>` | User-defined pipeline: a JSON array of tokens. Set with **`bus run pipeline set prefs <name> TOKEN...`** or `bus preferences set bus-run.pipeline.<name> '<json array>'`. Unset with **`bus run pipeline unset prefs <name>`**. |
+
+### Files
+
+`bus run` does not read or write workspace accounting datasets. It uses the effective working directory as the project root; `.bus/run/` is under that directory. No Git is required. To enforce a single run per directory, it uses an exclusive lock file (e.g. `.bus-run.lock`) in the effective operation directory; the lock is released when the command exits. No bus-run-specific config file is required; configuration is via flags, environment, and bus-preferences. User-defined pipelines are read from bus-preferences (keys `bus-run.pipeline.<name>`) when resolving tokens; directory-local definitions are read from `.bus/run/` only. Paths under `.bus/run/` must resolve inside the project root; symlinks that point outside the project root are refused.
+
+### Exit status and errors
+
+- **0** — Success.
+- **1** — Execution failure: agent run failed or timed out, selected agent runtime not found or not executable, script execution failed, no agent available when the automatic default would apply, working-directory lock could not be acquired, or effective working directory does not exist or is not accessible when required.
+- **2** — Invalid usage: unknown token or subcommand, invalid flag, invalid pipeline definition or name, pipeline recursion or expansion limit exceeded, ambiguity (same name in more than one definition), invalid name grammar, empty stdin for **action set**, or disabled script action invoked.
+
+Deterministic results (context, pipeline list, action list, script list) are written to stdout. Diagnostics and errors are written to stderr.
+
+### Sources
+
+- [BusDK — installation and overview](https://busdk.com/)
+- [Module SDD: bus-run](../sdd/bus-run)
+- [Module SDD: bus-agent](../sdd/bus-agent)
+- [Module SDD: bus-preferences](../sdd/bus-preferences)
+- [bus-preferences CLI reference](./bus-preferences)
+- [bus-agent CLI reference](./bus-agent)
+- [CLI: Error handling, dry-run, and diagnostics](../cli/error-handling-dry-run-diagnostics)
+- [Gemini CLI — install](https://geminicli.com/)
+- [Cursor CLI — overview and install](https://cursor.com/docs/cli/overview)
+- [Claude Code — get started / install](https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started)
+- [Codex CLI — install](https://developers.openai.com/codex/cli/)
+
+<!-- busdk-docs-nav start -->
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-agent">bus-agent</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
+</p>
+<!-- busdk-docs-nav end -->
+
