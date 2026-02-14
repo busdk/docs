@@ -11,10 +11,9 @@ description: bus init creates workspace configuration (datapackage.json) by defa
 
 ### Synopsis
 
-`bus init [--accounts] [--entities] [--period] [--journal] [--invoices] [--vat] [--attachments] [--bank] [--budget] [--assets] [--inventory] [--loans] [--payroll] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
-`bus init init [--accounts] [--entities] [--period] [--journal] [--invoices] [--vat] [--attachments] [--bank] [--budget] [--assets] [--inventory] [--loans] [--payroll] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
+`bus init [--accounts] [--entities] [--period] [--journal] [--invoices] [--vat] [--attachments] [--bank] [--budget] [--assets] [--inventory] [--loans] [--payroll] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
 
-Running `bus init` with no subcommand runs the bootstrap (same as `bus init init`). By default only workspace configuration is created (`datapackage.json` and [accounting entity](../master-data/accounting-entity/index) settings); no domain datasets are created. Pass one or more module flags to include that module’s baseline. All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`. To create or update accounting entity settings after init, use [bus config](./bus-config).
+Running `bus init` creates or ensures workspace configuration. By default only workspace configuration is created (`datapackage.json` and [accounting entity](../master-data/accounting-entity/index) settings); no domain datasets are created. Pass one or more module flags to include that module’s baseline. All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`. To create or update accounting entity settings after init, use [bus config](./bus-config).
 
 ### Description
 
@@ -22,7 +21,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus init` alw
 
 ### Commands
 
-`init` (or no subcommand) — Initialize the workspace. The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command always runs `bus config init` first. With no module-include flags, it runs only that step and exits; the workspace then has `datapackage.json` but no domain datasets. When one or more module flags are supplied, it then runs each selected module’s `init` in this order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed are run, in this order). Success is determined only by the exit codes of the steps that run. The command does not check for a fixed list of baseline paths afterward; each module is responsible for creating its own files and for failing its init if it cannot. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
+**Initialize the workspace.** The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command always runs `bus config init` first. With no module-include flags, it runs only that step and exits; the workspace then has `datapackage.json` but no domain datasets. When one or more module flags are supplied, it then runs each selected module’s `init` in this order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed are run, in this order). Success is determined only by the exit codes of the steps that run. The command does not check for a fixed list of baseline paths afterward; each module is responsible for creating its own files and for failing its init if it cannot. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
 
 ### Module-include flags
 
