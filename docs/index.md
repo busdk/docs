@@ -19,7 +19,7 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 - [Software Design Documents (SDD)](sdd/index)
 - [Design goals and requirements](design-goals/index)
 - [System architecture](architecture/index)
-- [Implementation conventions](implementation/index)
+- [Implementation and development status](implementation/index)
 - [Data formats and storage](data/index)
 - [Data directory layout](layout/index)
 - [Master data (business objects and properties)](master-data/index)

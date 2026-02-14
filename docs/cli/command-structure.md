@@ -21,7 +21,7 @@ BusDK is CLI-first. Commands are organized by module and generally follow a verb
 
 **Depends on:** None.
 
-**Used by:** Every [module](../modules/index) is invoked through it when users run `bus <module> …` or `bus init`.
+**Used by:** Every [module](../modules/index) is invoked through it when users run `bus <module> …` or `bus init`. Full dispatcher documentation: [bus module](../modules/bus) and [bus SDD](../sdd/bus).
 
 See [Development status](../implementation/development-status) for the project-wide snapshot.
 

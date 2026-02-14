@@ -11,6 +11,7 @@ This section collects the module Software Design Documents. For end user command
 
 For the architectural rationale behind independent modules and the design goals that shape their boundaries, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
+- [`bus`](./bus): Top-level dispatcher; runs `bus <command> [args...]` by invoking the corresponding `bus-<command>` executable on PATH.
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating `bus config init` and then module-owned `init` commands for the standard workspace layout.
 - [`bus config`](./bus-config): Owns workspace-level configuration (`datapackage.json`, accounting entity settings); provides `init` and `configure` so workspace settings can be created or updated without re-running full bootstrap.
 - [`bus data`](./bus-data): Tabular data layer: schema-validated dataset I/O and validation for BusDK workspaces (CSV + JSON Table Schema), providing a Go library (and a thin 'bus data ...' CLI) for deterministic CRUD-style table and schema handling without domain business logic or CLI-to-CLI dependencies.

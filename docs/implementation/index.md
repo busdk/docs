@@ -1,11 +1,11 @@
 ---
-title: "BusDK Design Spec: Implementation conventions"
-description: "This section is split into **single-concept** documents:"
+title: "BusDK Design Spec: Implementation and development status"
+description: "Module repository structure, dependency rules, and implementation state of each BusDK module."
 ---
 
-## BusDK Design Spec: Implementation conventions
+## BusDK Design Spec: Implementation and development status
 
-This section is split into **single-concept** documents:
+This section covers how modules are structured and their current implementation state:
 
 - [Module repository structure and dependency rules](./module-repository-structure)
 - [Development status](./development-status): implementation state of each BusDK module and the Bus as a whole, derived from each repository’s PLAN.md

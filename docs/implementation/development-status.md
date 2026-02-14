@@ -11,7 +11,7 @@ This page summarizes the implementation state of each BusDK module using test ev
 
 | Module | Completeness | Value | Planned next | Blocker |
 |--------|--------------|-------|--------------|---------|
-| [bus](../cli/command-structure#development-state) | 50% (Primary journey) | Dispatcher delegates to `bus-<module>` and orchestrates `bus init`; no-args and missing-subcommand behavior verified by unit tests. | E2E for dispatch; `bus help` when bus-help missing. | None known. |
+| [bus](../modules/bus#development-state) | 50% (Primary journey) | Dispatcher delegates to `bus-<module>` and orchestrates `bus init`; no-args and missing-subcommand behavior verified by unit tests. | E2E for dispatch; `bus help` when bus-help missing. | None known. |
 | [bus-init](../modules/bus-init#development-state) | 70% (Broadly usable) | Initialize workspace config only or full baseline (config + 13 module inits) with optional exclusions. | Follow-up e2e/unit refinements. | None known. |
 | [bus-config](../modules/bus-config#development-state) | 70% (Broadly usable) | Create and update `datapackage.json` and accounting-entity settings; idempotent init. | Config library; `set`/`get agent`; E2E extensions. | None known. |
 | [bus-data](../modules/bus-data#development-state) | 60% (Stable for one use case) | Schema and resource operations: init, show, patch; table and package validation; deterministic I/O. | `--resource`; extended resource ops; bus-api integration. | None known. |
@@ -51,7 +51,7 @@ Readiness is driven by what tests actually prove. Modules with e2e scripts that 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./module-repository-structure">Module repository structure and dependency rules</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation conventions</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation and development status</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../data/index">Data format and storage</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
