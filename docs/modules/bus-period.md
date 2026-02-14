@@ -41,13 +41,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 70% (Broadly usable) — init, list, validate, close, and lock verified by e2e; close artifacts and state transitions test-backed.
+**Completeness:** 70% (Broadly usable) — init, list, validate, close, and lock verified by e2e; append-only close/lock, balanced-journal check before close, and init idempotent/help test-backed.
 
-**Use case readiness:** Accounting workflow: 70% — init, list, validate, close, lock verified; append-only balance and init help would complete. Finnish bookkeeping and tax-audit compliance: 70% — close and lock support period boundary and audit; locked-period integrity would strengthen. Finnish company reorganisation: 70% — close and lock for snapshots; baseline and interim cut-off.
+**Use case readiness:** Accounting workflow: 70% — init (incl. idempotent and help when both files exist), list, validate, close (incl. refusal when unbalanced), lock verified; merge-conflict and non-Git hints would complete. Finnish bookkeeping and tax-audit compliance: 70% — close and lock support period boundary and audit; append-only and locked state verified. Finnish company reorganisation: 70% — close and lock for snapshots; baseline and interim cut-off verified.
 
-**Current:** E2e script `tests/e2e_bus_period.sh` proves init creates periods.csv and schema; list output deterministic (tsv); validate on complete workspace; close requires --period (missing or positional rejected); close --dry-run does not change files; close writes period state and close_entries; lock behavior. Unit tests in `internal/period/period_test.go` and `internal/app/run_test.go` cover period logic, storage, and app run.
+**Current:** E2e script `tests/e2e_bus_period.sh` proves init creates `periods.csv` and schema at workspace root; init idempotent (warning when already present and consistent); init help states warning when both files exist; list deterministic (tsv); validate on complete workspace and validate fails with clear diagnostics when journal unbalanced or schema missing; close requires `--period` (missing or positional rejected); close `--dry-run` does not change files; close writes period state (append-only), `periods/<period>/close_entries.csv`, and `periods/<period>/opening_balances.csv`; close refuses when period journal is unbalanced; lock requires `--period`, fails on open period, and transitions closed→locked (append-only). Unit tests in `internal/period/period_test.go` and `internal/app/run_test.go` cover period logic, storage, and app run.
 
-**Planned next:** Append-only period dataset; journal balance validation before close; init help when both files exist; locked-period integrity.
+**Planned next:** Surface merge conflicts in workspace datasets when Git-tracked (no Git commands); optional non-Git workspace detection and stderr hint.
 
 **Blockers:** None known.
 
