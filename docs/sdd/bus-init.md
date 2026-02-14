@@ -21,7 +21,7 @@ NFR-INIT-001 Deterministic output. The module MUST emit deterministic diagnostic
 
 FR-INIT-004 Owned paths only. The module MUST NOT require or verify the presence of files owned by other modules (e.g. `journals.csv`, `accounts.csv`). Success MUST be determined solely by the exit codes of the commands it invokes (`bus config init` and, when selected, each domain module’s `init`). Acceptance criteria: the implementation does not perform a post-hoc check against a fixed list of baseline paths; running `bus init` never fails with a “missing required path X” error for any path X owned by bus-config or a domain module.
 
-FR-INIT-005 Per-module flags. For each Bus module that owns workspace datasets (see the table in “Module-include flags (data-owning modules)”), the module MUST provide a corresponding boolean flag. When that flag is set, the module’s `init` is included in the sequence run after `bus config init`. The set of flags MUST be: `--accounts`, `--entities`, `--period`, `--journal`, `--invoices`, `--vat`, `--attachments`, `--bank`, `--budget`, `--assets`, `--inventory`, `--loans`, `--payroll`. When multiple flags are supplied, the corresponding module inits MUST run in the order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll. Acceptance criteria: help output lists each flag and states that with no module flags only workspace configuration is initialized; invoking `bus init --accounts` runs only `bus config init` and `bus accounts init`; invoking `bus init --journal --accounts` runs config init, then accounts init, then journal init (deterministic order among selected modules).
+FR-INIT-005 Per-module flags. For each Bus module that owns workspace datasets (see the table in “Module-include flags (data-owning modules)”), the module MUST provide a corresponding boolean flag. When that flag is set, the module’s `init` is included in the sequence run after `bus config init`. The set of flags MUST be: `--accounts`, `--entities`, `--period`, `--journal`, `--invoices`, `--vat`, `--attachments`, `--bank`, `--budget`, `--assets`, `--inventory`, `--loans`, `--payroll`. When multiple flags are supplied, the corresponding module inits MUST run in the order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll. The module MUST also provide a boolean `--all` flag. When `--all` is set, the command MUST run all thirteen data-owning module inits after `bus config init` (same effect as supplying all of the per-module flags), unless one or more `--no-<name>` flags are supplied (see below). When both `--all` and one or more per-module flags are supplied, `--all` takes precedence and all thirteen module inits run. For each module that has a per-module include flag, the module MUST provide a corresponding boolean `--no-<name>` flag (e.g. `--no-accounts`, `--no-payroll`). When `--all` is set, each `--no-<name>` flag excludes that module from the set of module inits to run; the effective set is all thirteen data-owning modules minus any module for which `--no-<name>` was supplied. When `--all` is not set, `--no-<name>` flags have no effect. Acceptance criteria: help output lists each flag, `--all`, and the `--no-<name>` exclusions and states that with no module flags only workspace configuration is initialized; invoking `bus init --accounts` runs only `bus config init` and `bus accounts init`; invoking `bus init --all` runs config init then all thirteen module inits in order; invoking `bus init --all --no-payroll` runs config init then all twelve module inits other than payroll, in the same deterministic order.
 
 ### System Architecture
 
@@ -59,9 +59,11 @@ A Bus module receives a module-include flag if and only if it owns some kind of 
 
 No other Bus modules own workspace master data in this sense. bus-config owns only `datapackage.json` (workspace configuration), which is always initialized by `bus config init` before any module-include step; bus-validate, bus-reports, bus-reconcile, bus-filing, bus-agent, bus-dev, bus-preferences, and similar modules do not own workspace datasets and therefore do not have a module-include flag.
 
+The `--all` flag is a shorthand: when set, it is equivalent to supplying all thirteen module-include flags above. Use `bus init --all` to initialize the full baseline (config plus every data-owning module) without listing each flag. You can exclude specific modules when using `--all` by adding the corresponding `--no-<name>` flag; for example, `--no-accounts`, `--no-entities`, `--no-period`, `--no-journal`, `--no-invoices`, `--no-vat`, `--no-attachments`, `--no-bank`, `--no-budget`, `--no-assets`, `--no-inventory`, `--no-loans`, `--no-payroll`. Example: `bus init --all --no-payroll` initializes config and all data-owning modules except payroll. When `--all` is not present, `--no-<name>` flags are ignored.
+
 ### Component Design and Interfaces
 
-Interface IF-INIT-001 (bootstrap). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command always runs `bus config init` first. When no module-include flags are present, it runs only `bus config init` and exits; no domain module inits are invoked. When one or more module-include flags are present, it then runs each selected module’s `init` in this deterministic order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only those whose flag was supplied are run, in this order). It does not accept layout selection flags and uses the standard workspace layout with deterministic dataset and schema filenames. `bus init` accepts no positional arguments. Module-include flags are those listed in the table in “Module-include flags (data-owning modules)”. To change accounting entity settings after bootstrap, use [bus config configure](../modules/bus-config).
+Interface IF-INIT-001 (bootstrap). The module is invoked as `bus init` and follows BusDK CLI conventions for deterministic output and diagnostics. The command always runs `bus config init` first. When no module-include flags and no `--all` are present, it runs only `bus config init` and exits; no domain module inits are invoked. When `--all` is present, the set of modules to run is all thirteen data-owning modules minus any for which a `--no-<name>` flag was supplied (e.g. `--no-payroll` excludes payroll); those module inits run after config init in the same deterministic order. When one or more module-include flags are present and `--all` is not present, it then runs each selected module’s `init` in this deterministic order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only those whose flag was supplied are run, in this order). It does not accept layout selection flags and uses the standard workspace layout with deterministic dataset and schema filenames. `bus init` accepts no positional arguments. Module-include flags are those listed in the table in “Module-include flags (data-owning modules)”; `--all` is the shorthand for all of them; each has a corresponding `--no-<name>` that excludes that module when used with `--all`. To change accounting entity settings after bootstrap, use [bus config configure](../modules/bus-config).
 
 Usage examples:
 
@@ -78,10 +80,16 @@ bus init --accounts --entities --journal
 Initializes workspace configuration, then accounts, entities, and journal baseline datasets and schemas in that order.
 
 ```bash
-bus init --accounts --entities --period --journal --invoices --vat --attachments --bank --budget --assets --inventory --loans --payroll
+bus init --all
 ```
 
-Initializes the full baseline (config plus all thirteen data-owning modules). Omit any flag to skip that module’s init.
+Initializes the full baseline (config plus all thirteen data-owning modules). Equivalent to passing all per-module flags. To initialize only a subset of modules, pass the desired flags instead of `--all`.
+
+```bash
+bus init --all --no-payroll
+```
+
+Initializes config and all data-owning modules except payroll. Use any combination of `--no-<name>` flags with `--all` to exclude specific modules.
 
 ### Data Design
 
@@ -105,7 +113,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Module fai
 
 ### Testing Strategy
 
-Command-level tests exercise `bus init` against fixture workspaces. Tests verify that with no module flags only `datapackage.json` (and accounting entity) is created; with one or more module-include flags, config plus the selected modules’ baseline datasets and schemas are created; and that the deterministic order of module inits is respected when multiple flags are supplied.
+Command-level tests exercise `bus init` against fixture workspaces. Tests verify that with no module flags only `datapackage.json` (and accounting entity) is created; with one or more module-include flags, config plus the selected modules’ baseline datasets and schemas are created; that the deterministic order of module inits is respected when multiple flags are supplied; that `bus init --all` runs config init then all thirteen module inits in order; and that `bus init --all --no-<name>` (e.g. `--all --no-payroll`) runs config init then the remaining modules in the same order, excluding the specified module(s).
 
 ### Deployment and Operations
 
@@ -121,9 +129,11 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 ### Glossary and Terminology
 
-**Workspace bootstrap:** the initial creation of baseline datasets and schemas in a new repository. When used in the context of bus-init, “full bootstrap” means running `bus init` with all thirteen module-include flags so that config and every data-owning module’s baseline exist.
+**Workspace bootstrap:** the initial creation of baseline datasets and schemas in a new repository. When used in the context of bus-init, “full bootstrap” means running `bus init` with all thirteen module-include flags (or `bus init --all`, optionally with `--no-<name>` to exclude specific modules) so that config and every desired data-owning module’s baseline exist.
 
 **Module-include flag:** a boolean flag (e.g. `--accounts`, `--journal`) that, when set, causes bus-init to run that module’s `init` after `bus config init`. With no module-include flags, only workspace configuration is initialized.
+
+**`--no-<name>` flag:** for each module with a module-include flag, the corresponding exclusion flag (e.g. `--no-payroll`, `--no-accounts`). When `--all` is set, each `--no-<name>` excludes that module from the set of inits run; when `--all` is not set, `--no-<name>` flags are ignored.
 
 **Module-owned initialization:** each module creates its own datasets during bootstrap; bus-init only orchestrates which modules run.
 
