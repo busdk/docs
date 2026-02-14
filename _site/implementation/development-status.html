@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case and derived from tests and PLAN.md in each repository.","headline":"Development status — BusDK modules","url":"http://localhost:4000/implementation/development-status.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=d0d9bdf2796f7f4cfd8e7b681d7cd81188df2206">
+    <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
     <meta name="color-scheme" content="light dark">
 
 <!-- Theme color for browser UI (light/dark). Keep in sync with busdk tokens. -->
@@ -1140,6 +1140,19 @@
               
             </li>
             
+            
+            
+            
+            
+
+            
+            
+
+            <li class="busdk-sidebar-item">
+              <a class="busdk-sidebar-link" href="/compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus)</a>
+              
+            </li>
+            
           </ul>
         </details>
       </li>
@@ -1175,12 +1188,12 @@
   <li>
 <a href="#finnish-bookkeeping-and-tax-audit-compliance">Finnish bookkeeping and tax-audit compliance</a> — <a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a>: Audit trail, retention, VAT returns, and tax-audit pack. Delivers compliance with Finnish legal and tax-audit expectations.</li>
   <li>
+<a href="#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a> — <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a>: Audit-ready evidence pack from accounting data (statements or equivalents, interim snapshot, significant assets, creditor/debt and loan registry, budgets and cashflow); BusDK delivers a reviewable, deterministic audit trail in a Git workspace.</li>
+  <li>
 <a href="#developer-module-workflow">Developer module workflow</a> — <a href="../modules/bus-dev">bus-dev</a>: Scaffold modules, commit/work/spec/e2e, set agent and run-config. Delivers consistent developer workflows for BusDK module contributors.</li>
   <li>
 <a href="#orphan-modules">Orphan modules</a>: Modules not yet mapped to a documented use case.</li>
 </ul>
-
-<hr>
 
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h3 id="accounting-workflow">Accounting workflow</h3>
@@ -1306,8 +1319,6 @@
   </tbody>
 </table>
 
-<hr>
-
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h3 id="finnish-bookkeeping-and-tax-audit-compliance">Finnish bookkeeping and tax-audit compliance</h3>
 
@@ -1376,7 +1387,101 @@
   </tbody>
 </table>
 
-<hr>
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</h3>
+
+<p>The <a href="../compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</a> page describes the use case and evidence-pack scope. This journey is about assembling an audit-ready evidence pack for a restructuring or reorganisation context. It emphasises correctness and traceability of bookkeeping, explicit separation of snapshot reporting (baseline and interim) from ongoing operational postings, loan registry roll-forward and debt visibility, and budget or forecast and liquidity evidence. In practice the application or assessment typically expects recent financial statements or equivalent bookkeeping-based summaries (where no formal statements are required), an interim snapshot, a list of significant assets, and where applicable an independent auditor or expert report in debtor-led filings.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Readiness</th>
+      <th>Value</th>
+      <th>Planned next</th>
+      <th>Blocker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../modules/bus-period#development-state">bus-period</a></td>
+      <td>70% (Broadly usable)</td>
+      <td>Close and lock for snapshots; prevents post-review drift; baseline and interim cut-off.</td>
+      <td>Append-only balance; init help; locked-period integrity.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-reports#development-state">bus-reports</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Trial balance and ledger lines as audit evidence; basis for statements and schedules. No e2e.</td>
+      <td>general-ledger; period; stable format; budget; KPA/PMA.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-validate#development-state">bus-validate</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Workspace and resource validation before assembling the evidence pack.</td>
+      <td>format; stdout/–output; help; min/max; audit and closed-period.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-attachments#development-state">bus-attachments</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Link source documents to records; traceability for audit.</td>
+      <td>Workspace-relative paths in diagnostics.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-journal#development-state">bus-journal</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Postings and balancing; audit trail for bookkeeping evidence.</td>
+      <td>Period integrity; layout; audit fields; interactive add.</td>
+      <td>bus-period closed-period checks for full workflow.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-invoices#development-state">bus-invoices</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Source transaction documents and validation for evidence pack.</td>
+      <td>add (header/lines); pdf; totals validation; E2E for add/pdf.</td>
+      <td>bus-pdf for <code class="language-plaintext highlighter-rouge">bus invoices pdf</code>.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-bank#development-state">bus-bank</a></td>
+      <td>60% (Stable for one use case)</td>
+      <td>Import statements and transactions; basis for reconciliation evidence.</td>
+      <td>Schema validation before append; counterparty_id; dry-run.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-reconcile#development-state">bus-reconcile</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Bank reconciliation as audit-critical evidence; match/allocate/list not verified.</td>
+      <td>match, allocate, list; journal linking; tests.</td>
+      <td>Missing verified match/allocate blocks reconciliation step.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-loans#development-state">bus-loans</a></td>
+      <td>40% (Meaningful task, partial verification)</td>
+      <td>Loan registry as auditable schedule; roll-forward concept for creditor/debt visibility. Init/add verified; event/amortize not verified.</td>
+      <td>event, amortize; e2e.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-budget#development-state">bus-budget</a></td>
+      <td>30% (Some basic commands)</td>
+      <td>Budget and variance as plausibility and going-concern evidence; init/report/add/set not verified.</td>
+      <td>Init, report, add, set; e2e.</td>
+      <td>None known.</td>
+    </tr>
+    <tr>
+      <td><a href="../modules/bus-assets#development-state">bus-assets</a></td>
+      <td>50% (Primary journey)</td>
+      <td>Asset schedule for significant-assets list; validate and post support traceability. No e2e for init/add.</td>
+      <td>e2e for init/add.</td>
+      <td>None known.</td>
+    </tr>
+  </tbody>
+</table>
 
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h3 id="developer-module-workflow">Developer module workflow</h3>
@@ -1418,8 +1523,6 @@
   </tbody>
 </table>
 
-<hr>
-
 </div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
 <h3 id="orphan-modules">Orphan modules</h3>
 
@@ -1460,24 +1563,6 @@
       <td>No; formula engine for bus-data.</td>
     </tr>
     <tr>
-      <td><a href="../modules/bus-budget#development-state">bus-budget</a></td>
-      <td>30% (Some basic commands)</td>
-      <td>Unit tests for flags and variance logic; no e2e. Init/report/add/set not verified.</td>
-      <td>Optional accounting; workflow doc exists.</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-assets#development-state">bus-assets</a></td>
-      <td>50% (Primary journey)</td>
-      <td>validate, schedule, post; unit tests. No e2e for init/add.</td>
-      <td>Optional accounting (fixed assets).</td>
-    </tr>
-    <tr>
-      <td><a href="../modules/bus-loans#development-state">bus-loans</a></td>
-      <td>40% (Meaningful task, partial verification)</td>
-      <td>Init, add; unit tests for run and flags. No e2e; event/amortize not verified.</td>
-      <td>Optional accounting (loans).</td>
-    </tr>
-    <tr>
       <td><a href="../modules/bus-inventory#development-state">bus-inventory</a></td>
       <td>30% (Some basic commands)</td>
       <td>Run/flags and property tests; no e2e. Init/add/move/valuation not verified.</td>
@@ -1491,8 +1576,6 @@
     </tr>
   </tbody>
 </table>
-
-<hr>
 
 <!-- busdk-docs-nav start -->
 </div></section>

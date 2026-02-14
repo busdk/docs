@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Design goals and requirements | BusDK Design Document</title>
+<title>Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack | BusDK Design Document</title>
 <meta name="generator" content="Jekyll v4.4.1" />
-<meta property="og:title" content="Design goals and requirements" />
+<meta property="og:title" content="Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="BusDK design goals — CLI-first, modularity, append-only auditability, schema contract, extensibility." />
-<meta property="og:description" content="BusDK design goals — CLI-first, modularity, append-only auditability, schema contract, extensibility." />
-<link rel="canonical" href="http://localhost:4000/design-goals/" />
-<meta property="og:url" content="http://localhost:4000/design-goals/" />
+<meta name="description" content="Use case and evidence-pack scope for court-supervised reorganisation — bookkeeping traceability, snapshots, loan registry, and budget/liquidity evidence in BusDK." />
+<meta property="og:description" content="Use case and evidence-pack scope for court-supervised reorganisation — bookkeeping traceability, snapshots, loan registry, and budget/liquidity evidence in BusDK." />
+<link rel="canonical" href="http://localhost:4000/compliance/fi-company-reorganisation-evidence-pack.html" />
+<meta property="og:url" content="http://localhost:4000/compliance/fi-company-reorganisation-evidence-pack.html" />
 <meta property="og:site_name" content="BusDK Design Document" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Design goals and requirements" />
+<meta property="twitter:title" content="Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"BusDK design goals — CLI-first, modularity, append-only auditability, schema contract, extensibility.","headline":"Design goals and requirements","url":"http://localhost:4000/design-goals/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Use case and evidence-pack scope for court-supervised reorganisation — bookkeeping traceability, snapshots, loan registry, and budget/liquidity evidence in BusDK.","headline":"Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack","url":"http://localhost:4000/compliance/fi-company-reorganisation-evidence-pack.html"}</script>
 <!-- End Jekyll SEO tag -->
 
     <link rel="stylesheet" href="/assets/css/style.css?v=75995bd36d97e180d883903e5860ec99f62566a0">
@@ -48,7 +48,7 @@
       
       
       <li class="busdk-sidebar-section">
-        <details class="busdk-sidebar-section-panel" open>
+        <details class="busdk-sidebar-section-panel">
           <summary class="busdk-sidebar-section-toggle">
             <span class="busdk-sidebar-section-title">Get started</span>
             <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
@@ -77,7 +77,7 @@
             
 
             <li class="busdk-sidebar-item">
-              <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/design-goals/">Design goals and requirements</a>
+              <a class="busdk-sidebar-link" href="/design-goals/">Design goals and requirements</a>
               
             </li>
             
@@ -1120,7 +1120,7 @@
       
       
       <li class="busdk-sidebar-section">
-        <details class="busdk-sidebar-section-panel">
+        <details class="busdk-sidebar-section-panel" open>
           <summary class="busdk-sidebar-section-toggle">
             <span class="busdk-sidebar-section-title">Compliance</span>
             <span class="busdk-sidebar-section-chevron" aria-hidden="true">▸</span>
@@ -1149,7 +1149,7 @@
             
 
             <li class="busdk-sidebar-item">
-              <a class="busdk-sidebar-link" href="/compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus)</a>
+              <a class="busdk-sidebar-link busdk-sidebar-link--current" href="/compliance/fi-company-reorganisation-evidence-pack">Finnish company reorganisation (yrityssaneeraus)</a>
               
             </li>
             
@@ -1168,40 +1168,44 @@
             
             <header class="busdk-page-header">
               <div class="busdk-content-inner">
-                <h1>Design goals and requirements</h1>
+                <h1>Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</h1>
               </div>
             </header>
             
 
-            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner"><section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
-<h2 id="busdk-design-spec-design-goals-and-requirements">BusDK Design Spec: Design goals and requirements</h2>
+            <section class="busdk-chapter busdk-chapter--level-2"><div class="busdk-chapter-inner">
+<section class="busdk-chapter busdk-chapter--level-3 busdk-chapter--title"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h2 id="overview">Overview</h2>
 
-<p>This section is split into <strong>single-concept</strong> documents:</p>
+<p>Court-supervised company reorganisation (yrityssaneeraus) aims to rehabilitate a viable business through a confirmed restructuring plan. The procedure typically requires an evidence pack built from accounting data: recent financial statements or equivalent bookkeeping-based summaries (where no formal statements are required), an interim snapshot, a list of significant assets, a creditor and debt picture including a loan registry, and forward-looking budgets and cashflow showing ability to cover procedure costs and post-commencement obligations. BusDK supports building this evidence in a reviewable, deterministic audit trail in a Git workspace.</p>
 
-<ul>
-  <li><a href="./ai-readiness">AI-readiness (objective, not dependency)</a></li>
-  <li><a href="./append-only-auditability">Auditability and append-only discipline</a></li>
-  <li><a href="./cli-first">CLI-first and human-friendly interfaces</a></li>
-  <li><a href="./double-entry-ledger">Double-entry ledger accounting</a></li>
-  <li><a href="./extensibility">Extensibility as a first-class goal</a></li>
-  <li><a href="./feature-scope">Initial feature scope (modules)</a></li>
-  <li><a href="./git-as-source-of-truth">Git as the canonical, append-only source of truth</a></li>
-  <li><a href="./modularity">Modularity as a first-class requirement</a></li>
-  <li><a href="./plaintext-csv-longevity">Plain-text CSV for longevity</a></li>
-  <li><a href="./schema-contract">Schema-driven data contract (Frictionless Table Schema)</a></li>
-  <li><a href="./unix-composability">Unix-style composability (micro-tools)</a></li>
-</ul>
+<p>This use case emphasises correctness and traceability of bookkeeping, explicit separation of snapshot reporting (baseline and interim) from ongoing operational postings, loan registry roll-forward and debt visibility, and budget or forecast and liquidity evidence. In practice the application or assessment often expects recent financial statements or equivalent bookkeeping summaries, an interim snapshot, a significant-assets list, and where applicable an independent auditor or expert report in debtor-led filings. BusDK does not provide legal or procedural advice; it provides the accounting and reporting primitives so that the evidence pack can be assembled and reviewed from workspace data.</p>
+
+</div></section><section class="busdk-chapter busdk-chapter--level-3"><div class="busdk-chapter-section-inner busdk-content-inner">
+<h3 id="module-readiness-for-this-journey">Module readiness for this journey</h3>
+
+<p>Which BusDK modules contribute to the evidence pack and what is verified today (by tests) is summarised in the <a href="../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack">Development status — BusDK modules</a> page under the section <strong>Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack</strong>. That section lists bus-period, bus-reports, bus-validate, bus-attachments, bus-journal, bus-invoices, bus-bank, bus-reconcile, bus-loans, bus-budget, and bus-assets with their readiness percentages, value for the evidence pack, planned next steps, and blockers.</p>
 
 <hr>
 
 <!-- busdk-docs-nav start -->
-</div></section></div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">← <a href="../overview/visual-identity">Visual identity and branding on outputs</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./ai-readiness">AI-readiness (objective, not dependency)</a> →</span>
+</div></section>
+</div></section><div class="busdk-prev-next-bar"><div class="busdk-content-inner"><p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">← <a href="./fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../implementation/development-status">Development status — BusDK modules</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a> →</span>
 </p></div></div>
 <!-- busdk-docs-nav end -->
 
+<div class="busdk-meta-block busdk-content-inner"><div class="busdk-meta-section">
+<h3 id="sources">Sources</h3>
+
+<ul>
+  <li><a href="../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack">Development status — BusDK modules</a></li>
+  <li><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a></li>
+  <li><a href="./fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></li>
+</ul>
+</div></div>
           </div>
         </main>
       </div>
@@ -1209,7 +1213,7 @@
       
       <footer class="busdk-footer" role="contentinfo">
         <div class="busdk-footer-inner">
-          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/design-goals/index.md">Improve this page</a>.</span>
+          <span class="busdk-footer-edit">This site is open source. <a href="https://github.com/busdk/docs/edit/gh-pages/compliance/fi-company-reorganisation-evidence-pack.md">Improve this page</a>.</span>
           <span class="busdk-footer-copyright">&copy; 2026 <a href="https://hg.fi">Heusala Group Ltd</a></span>
         </div>
       </footer>

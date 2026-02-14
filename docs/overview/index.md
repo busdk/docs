@@ -23,6 +23,7 @@ This overview is split into **single-concept** documents:
 - [Data format and storage](../data/index)
 - [CLI tooling and workflow](../cli/index)
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack)
 - [Integration and future interfaces](../integration/index)
 - [Extensibility model](../extensibility/index)
 - [Data directory layout](../layout/index)

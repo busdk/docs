@@ -11,10 +11,9 @@ This page summarizes the implementation state of each BusDK module using test ev
 
 - [Accounting workflow](#accounting-workflow) — [Accounting workflow overview](../workflow/accounting-workflow-overview): End-to-end bookkeeping from repo init through master data, attachments, invoices and journal, bank import and reconcile, to period close (validate, VAT, close, lock, reports). Delivers a reviewable audit trail and script-friendly flow.
 - [Finnish bookkeeping and tax-audit compliance](#finnish-bookkeeping-and-tax-audit-compliance) — [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): Audit trail, retention, VAT returns, and tax-audit pack. Delivers compliance with Finnish legal and tax-audit expectations.
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) — [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): Audit-ready evidence pack from accounting data (statements or equivalents, interim snapshot, significant assets, creditor/debt and loan registry, budgets and cashflow); BusDK delivers a reviewable, deterministic audit trail in a Git workspace.
 - [Developer module workflow](#developer-module-workflow) — [bus-dev](../modules/bus-dev): Scaffold modules, commit/work/spec/e2e, set agent and run-config. Delivers consistent developer workflows for BusDK module contributors.
 - [Orphan modules](#orphan-modules): Modules not yet mapped to a documented use case.
-
----
 
 ### Accounting workflow
 
@@ -38,8 +37,6 @@ The [Accounting workflow overview](../workflow/accounting-workflow-overview) des
 | [bus-reports](../modules/bus-reports#development-state) | 50% (Primary journey) | Trial balance, account-ledger; unit tests for run, workspace load, report. No e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
 | [bus-pdf](../modules/bus-pdf#development-state) | 60% (Stable for one use case) | Render from JSON (file); unit tests for run, render, templates. | Command-level test for `render --data @-`. | None known. |
 
----
-
 ### Finnish bookkeeping and tax-audit compliance
 
 The [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) page defines requirements for audit trail, retention, VAT, and tax-audit delivery. Modules that contribute to this use case overlap with the accounting workflow; the table below highlights readiness for the compliance-facing parts (VAT, close/lock, filing, tax-audit pack).
@@ -54,7 +51,23 @@ The [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-
 | [bus-filing-prh](../modules/bus-filing-prh#development-state) | 40% (Meaningful task, partial verification) | Bundle and validate for PRH; unit tests for run, bundle, sanitize. No e2e. | PRH content; SBR taxonomy; e2e; README links. | bus-filing bundle contract. |
 | [bus-filing-vero](../modules/bus-filing-vero#development-state) | 40% (Meaningful task, partial verification) | Bundle for Vero; unit tests for app, bundle, output. No e2e. | E2E; source refs; prerequisites diagnostics. | bus-filing bundle contract. |
 
----
+### Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack
+
+The [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack) page describes the use case and evidence-pack scope. This journey is about assembling an audit-ready evidence pack for a restructuring or reorganisation context. It emphasises correctness and traceability of bookkeeping, explicit separation of snapshot reporting (baseline and interim) from ongoing operational postings, loan registry roll-forward and debt visibility, and budget or forecast and liquidity evidence. In practice the application or assessment typically expects recent financial statements or equivalent bookkeeping-based summaries (where no formal statements are required), an interim snapshot, a list of significant assets, and where applicable an independent auditor or expert report in debtor-led filings.
+
+| Module | Readiness | Value | Planned next | Blocker |
+|--------|-----------|-------|--------------|---------|
+| [bus-period](../modules/bus-period#development-state) | 70% (Broadly usable) | Close and lock for snapshots; prevents post-review drift; baseline and interim cut-off. | Append-only balance; init help; locked-period integrity. | None known. |
+| [bus-reports](../modules/bus-reports#development-state) | 50% (Primary journey) | Trial balance and ledger lines as audit evidence; basis for statements and schedules. No e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
+| [bus-validate](../modules/bus-validate#development-state) | 50% (Primary journey) | Workspace and resource validation before assembling the evidence pack. | format; stdout/--output; help; min/max; audit and closed-period. | None known. |
+| [bus-attachments](../modules/bus-attachments#development-state) | 60% (Stable for one use case) | Link source documents to records; traceability for audit. | Workspace-relative paths in diagnostics. | None known. |
+| [bus-journal](../modules/bus-journal#development-state) | 60% (Stable for one use case) | Postings and balancing; audit trail for bookkeeping evidence. | Period integrity; layout; audit fields; interactive add. | bus-period closed-period checks for full workflow. |
+| [bus-invoices](../modules/bus-invoices#development-state) | 60% (Stable for one use case) | Source transaction documents and validation for evidence pack. | add (header/lines); pdf; totals validation; E2E for add/pdf. | bus-pdf for `bus invoices pdf`. |
+| [bus-bank](../modules/bus-bank#development-state) | 60% (Stable for one use case) | Import statements and transactions; basis for reconciliation evidence. | Schema validation before append; counterparty_id; dry-run. | None known. |
+| [bus-reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) | Bank reconciliation as audit-critical evidence; match/allocate/list not verified. | match, allocate, list; journal linking; tests. | Missing verified match/allocate blocks reconciliation step. |
+| [bus-loans](../modules/bus-loans#development-state) | 40% (Meaningful task, partial verification) | Loan registry as auditable schedule; roll-forward concept for creditor/debt visibility. Init/add verified; event/amortize not verified. | event, amortize; e2e. | None known. |
+| [bus-budget](../modules/bus-budget#development-state) | 30% (Some basic commands) | Budget and variance as plausibility and going-concern evidence; init/report/add/set not verified. | Init, report, add, set; e2e. | None known. |
+| [bus-assets](../modules/bus-assets#development-state) | 50% (Primary journey) | Asset schedule for significant-assets list; validate and post support traceability. No e2e for init/add. | e2e for init/add. | None known. |
 
 ### Developer module workflow
 
@@ -66,8 +79,6 @@ The [bus-dev](../modules/bus-dev) module is the canonical entry for developer wo
 | [bus-agent](../modules/bus-agent#development-state) | 40% (Meaningful task, partial verification) | Detect runtimes, render prompts; help and version; global flags. | Order/config; AGENTS.md; adapters; bus-sheets integration. | None known. |
 | [bus-preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) | Get, set, set-json, unset, list preferences; key-path and format verified by e2e. | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
----
-
 ### Orphan modules
 
 These modules are not yet mapped to a documented use case, or they are infrastructure used by multiple journeys. Shown with overall completeness and value promise.
@@ -78,13 +89,8 @@ These modules are not yet mapped to a documented use case, or they are infrastru
 | [bus-api](../modules/bus-api#development-state) | 50% (Primary journey) | REST API over workspace; help, version, openapi, serve with token/port. | No; used by bus-sheets and tools. |
 | [bus-sheets](../modules/bus-sheets#development-state) | 20% (Basic structure) | Start server and capability URL; global flags and version. e2e proves serve and version. | No; spreadsheet UI over workspace. |
 | [bus-bfl](../modules/bus-bfl#development-state) | 60% (Stable for one use case) | Parse, eval, render BFL; CLI and conformance verified by e2e and unit tests. | No; formula engine for bus-data. |
-| [bus-budget](../modules/bus-budget#development-state) | 30% (Some basic commands) | Unit tests for flags and variance logic; no e2e. Init/report/add/set not verified. | Optional accounting; workflow doc exists. |
-| [bus-assets](../modules/bus-assets#development-state) | 50% (Primary journey) | validate, schedule, post; unit tests. No e2e for init/add. | Optional accounting (fixed assets). |
-| [bus-loans](../modules/bus-loans#development-state) | 40% (Meaningful task, partial verification) | Init, add; unit tests for run and flags. No e2e; event/amortize not verified. | Optional accounting (loans). |
 | [bus-inventory](../modules/bus-inventory#development-state) | 30% (Some basic commands) | Run/flags and property tests; no e2e. Init/add/move/valuation not verified. | Optional accounting (inventory). |
 | [bus-payroll](../modules/bus-payroll#development-state) | 40% (Meaningful task, partial verification) | Validate, export; unit tests for flags and run. No e2e for full payroll. | Optional accounting (payroll). |
-
----
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

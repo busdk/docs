@@ -31,6 +31,7 @@ BusDK’s accounting workflow and its end-to-end bookkeeping sequence are define
 - [Extensibility model](extensibility/index)
 - [Testing](testing/index)
 - [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](compliance/fi-company-reorganisation-evidence-pack)
 - [References and external foundations](references/index)
 
 ---
