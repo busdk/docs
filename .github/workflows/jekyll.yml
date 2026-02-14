@@ -41,6 +41,9 @@ jobs:
         env:
           JEKYLL_ENV: production
 
+      - name: Remove Chrome DevTools well-known (safety net)
+        run: rm -f _site/.well-known/appspecific/com.chrome.devtools.json
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
