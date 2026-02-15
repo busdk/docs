@@ -54,5 +54,104 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
     <script>anchors.add();</script>
+    {% unless page.permalink == "/" or page.url == "/" or page.permalink == "/404.html" or page.title == "Page not found" %}
+    <script>
+(function () {
+  var sidebar = document.querySelector('.busdk-sidebar');
+  if (!sidebar) return;
+
+  var pathname = window.location.pathname.replace(/\/$/, '') || '/';
+
+  function norm(href) {
+    if (!href) return { path: '', hash: '' };
+    var i = href.indexOf('#');
+    if (i === -1) return { path: href.replace(/\/$/, '') || '/', hash: '' };
+    return { path: href.slice(0, i).replace(/\/$/, '') || '/', hash: href.slice(i + 1) };
+  }
+
+  function setActiveByHash(hash) {
+    var subLinks = sidebar.querySelectorAll('.busdk-sidebar-sub-link');
+    var anySubCurrent = false;
+    subLinks.forEach(function (a) {
+      a.classList.remove('busdk-sidebar-sub-link--current');
+      var n = norm(a.getAttribute('href'));
+      if (n.path === pathname && n.hash === hash) {
+        a.classList.add('busdk-sidebar-sub-link--current');
+        anySubCurrent = true;
+      }
+    });
+    if (anySubCurrent) {
+      sidebar.querySelectorAll('.busdk-sidebar-item').forEach(function (item) {
+        var sub = item.querySelector('.busdk-sidebar-sub-link--current');
+        if (sub) item.querySelector('.busdk-sidebar-link').classList.remove('busdk-sidebar-link--current');
+      });
+    }
+  }
+
+  function onHashChange() {
+    setActiveByHash(window.location.hash.slice(1));
+  }
+
+  window.addEventListener('hashchange', onHashChange);
+  onHashChange();
+
+  var main = document.querySelector('.busdk-main');
+  if (!main) return;
+  var subLinkHrefs = [];
+  sidebar.querySelectorAll('.busdk-sidebar-sub-link').forEach(function (a) {
+    var n = norm(a.getAttribute('href'));
+    if (n.path === pathname && n.hash) subLinkHrefs.push(n.hash);
+  });
+  if (subLinkHrefs.length === 0) return;
+
+  var headingIds = new Set(subLinkHrefs);
+  var headings = main.querySelectorAll('h2[id], h3[id], h4[id], h5[id], h6[id]');
+  var observed = [];
+  headings.forEach(function (h) {
+    if (headingIds.has(h.id)) observed.push(h);
+  });
+  if (observed.length === 0) return;
+
+  var ticking = false;
+  var currentId = '';
+
+  function setActiveFromScroll() {
+    var top = window.scrollY || document.documentElement.scrollTop;
+    var viewportMid = top + window.innerHeight * 0.35;
+    var active = null;
+    for (var i = observed.length - 1; i >= 0; i--) {
+      var rect = observed[i].getBoundingClientRect();
+      var elTop = rect.top + top;
+      if (elTop <= viewportMid) {
+        active = observed[i].id;
+        break;
+      }
+    }
+    if (!active && observed.length) active = observed[0].id;
+    if (active === currentId) return;
+    currentId = active;
+    history.replaceState(null, '', '#' + active);
+    setActiveByHash(active);
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(function () {
+        setActiveFromScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  var observer = new IntersectionObserver(
+    function () { onScroll(); },
+    { root: null, rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+  );
+  observed.forEach(function (h) { observer.observe(h); });
+  setActiveFromScroll();
+})();
+    </script>
+    {% endunless %}
   </body>
 </html>

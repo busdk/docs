@@ -39,10 +39,14 @@
   min-width: 0;
 }
 
-// Sidebar: fixed width, sticky, left border (inner pages only).
+// Sidebar: fixed width, sticks to viewport on scroll, left border (inner pages only).
 .busdk-sidebar {
   flex-shrink: 0;
+  align-self: flex-start;
   width: 260px;
+  max-height: 100vh;
+  position: sticky;
+  top: 0;
   border-right: 1px solid var(--busdk-border);
   background: var(--busdk-bg);
   overflow-y: auto;
@@ -190,6 +194,10 @@
 .busdk-sidebar-sub-link--current {
   font-weight: 600;
   color: var(--busdk-link);
+  background: var(--busdk-surface-1);
+  border-left: 3px solid var(--busdk-link);
+  margin-left: -3px;
+  padding-left: calc(0.75rem - 3px); // keep text aligned with other sub-links
 }
 
 // Main content column: takes remaining space; inner has max-width + padding.
