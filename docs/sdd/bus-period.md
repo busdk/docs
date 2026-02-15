@@ -41,6 +41,10 @@ KD-PER-003 Future periods. Periods can be created in advance in state **future**
 
 KD-PER-004 Append-only state model. The period control dataset is an **append-only event log**. The **effective state** of a period is the record with the greatest `recorded_at` for that `period_id` (latest wins). All CLI commands and validation MUST use this effective-record rule: `list`, precondition checks for `open`, `close`, `lock`, and `opening`, and any downstream reads MUST resolve the current state of a period by selecting the effective record only and MUST NOT scan "any row" or "first row" for that period. The dataset is always valid immediately after any successful command in the sense that the effective record for every period present in the dataset satisfies schema and business rules (including non-empty `retained_earnings_account` where required). The `list` subcommand MUST show only effective records by default; history (all records per period) MAY be exposed via an explicit flag (e.g. `--history`) if implemented.
 
+**Append-only and schema validity.** Periods.csv history is append-only and MUST remain schema-valid after every successful command, including the common fast sequence `bus period add …` immediately followed by `bus period open …`. No successful command may produce a duplicate primary key or leave the dataset in a state where `bus period validate` fails.
+
+**Row identity and monotonic recorded_at.** History rows are uniquely identified by the primary key of the period control dataset (see Data Design / Files). Every appended record for a given `period_id` MUST have a `recorded_at` strictly greater than the `recorded_at` of any existing row for that same `period_id`. The implementation MUST guarantee this: `recorded_at` is written in UTC using RFC3339Nano (or equivalent). If the generated time would collide with an existing history row key for that `period_id`, the implementation MUST deterministically bump the value forward (for example by 1ns) until it is strictly greater than the latest `recorded_at` for that `period_id`. Ties on `recorded_at` for the same `period_id` are invalid. If such ties exist (e.g. from hand edits or legacy data), `validate` MUST reject the dataset with a clear diagnostic, and `list` MUST refuse to produce an effective state for that period until the dataset is repaired using normal commands (not hand edits). Any duplicate primary key scenario produced by `recorded_at` collisions after a successful add and open is considered a bug; the implementation MUST prevent it by enforcing the monotonic `recorded_at` rule above.
+
 ### Component Design and Interfaces
 
 Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `add`, `open`, `close`, `lock`, `set`, `list`, `validate`, and `opening` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -74,6 +78,10 @@ Period selection is always explicit and flag-based. The `open`, `close`, and `lo
 
 **Close and lock (state transitions).** The `close` command transitions a period from **open** to **closed**. The period MUST exist and be in state open; otherwise the command MUST exit non-zero with a clear diagnostic. Close generates closing entries and then appends a new record (per KD-PER-004) with state **closed**; the new record MUST carry forward `retained_earnings_account` from the effective prior record. It accepts optional `--post-date <YYYY-MM-DD>` (when omitted, the closing entry date defaults to the last date of the selected period). The `lock` command transitions a period from **closed** to **locked**. The period MUST exist and be in state closed; if it is open or already locked, the command MUST exit non-zero with a clear diagnostic. Lock appends a new record with state **locked** and MUST carry forward `retained_earnings_account` from the effective prior record. Lock does not generate postings; it only updates state so that the period cannot be modified.
 
+#### Subcommand: validate
+
+The `validate` command loads the workspace period, accounts, and journal data and verifies schema and business rules. It MUST enforce that the period control dataset has no duplicate primary key: no two rows may share the same `(period_id, recorded_at)`. Duplicate `recorded_at` for the same `period_id` (ties) MUST be rejected with a clear diagnostic (e.g. that each history row must have strictly increasing `recorded_at` per `period_id`). After a successful `bus period add …` followed immediately by `bus period open …`, even when the two commands run within the same second, `bus period validate` and `bus period list` MUST succeed; any duplicate primary key scenario produced by `recorded_at` collisions in that case is considered a bug, and the implementation MUST prevent it by enforcing the monotonic `recorded_at` rule (KD-PER-004).
+
 #### Subcommand: set
 
 The `set` command repairs `retained_earnings_account` for an existing period in an append-only manner (FR-PER-005). It MUST NOT overwrite existing rows.
@@ -106,7 +114,7 @@ The `opening` subcommand generates the opening entry for a new fiscal year in th
 
 **Acceptance criteria and invariants.** The generated opening entry MUST be balanced to zero. Output MUST be deterministic for the same inputs (same `--from`, `--as-of`, `--post-date`, `--period`, `--equity-account`, `--include-zero`, and prior/current workspace contents). Validation of the resulting journal (e.g. `bus journal validate` or equivalent) MUST pass. The command MUST NOT perform network or interactive operations.
 
-**Example workflow (year rollover).** In the new workspace: run `bus accounts init` and populate the chart of accounts; run `bus period init`; run `bus period add --period 2024-01` (or add multiple future periods, e.g. 2024-01 through 2024-12); run `bus period open --period 2024-01`; run `bus journal init`; then run `bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 2024-01-01 --period 2024-01 --equity-account 3200`. VAT reporting period and other workspace configuration are handled by bus-config and are not modified by `bus period opening`.
+**Example workflow (year rollover).** In the new workspace: run `bus accounts init` and populate the chart of accounts; run `bus period init`; run `bus period add --period 2024-01` (or add multiple future periods, e.g. 2024-01 through 2024-12); run `bus period open --period 2024-01`; run `bus journal init`; then run `bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 2024-01-01 --period 2024-01 --equity-account 3200`. VAT reporting period and other workspace configuration are handled by bus-config and are not modified by `bus period opening`. **Opening your first period.** The sequence `bus period add --period <id>` immediately followed by `bus period open --period <id>` is a common fast sequence. The implementation MUST guarantee that after both commands succeed, `bus period validate` and `bus period list` succeed even when the two commands run within the same second. Duplicate primary key or validate failure due to `recorded_at` collision in that scenario is a bug; the implementation MUST prevent it via the monotonic `recorded_at` rule (KD-PER-004).
 
 Usage examples:
 
@@ -128,6 +136,8 @@ bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 
 ### Data Design
 
 The module reads and writes the period control dataset at the workspace root as `periods.csv`, with a beside-the-table schema file `periods.schema.json`. Paths are root-level only: there is no subdirectory (for example, the data is not under `periods/periods.csv`). Period operations append records so period boundaries remain reviewable (append-only event log per KD-PER-004); the effective state of a period is the record with the greatest `recorded_at` for that `period_id`.
+
+**Files and primary key.** The schema file `periods.schema.json` defines the table schema for `periods.csv`. The **primary key** MUST support append-only history and therefore MUST NOT be `period_id` alone. The primary key MUST be a composite that uniquely identifies each history row; it MUST include `recorded_at` (for example `primaryKey: [ "period_id", "recorded_at" ]`) or another explicit event-identity column if the schema uses that approach. Row identity is thus `(period_id, recorded_at)` (or equivalent). The effective-record rule is **greatest `recorded_at` wins** for each `period_id`. A **deterministic tie rule** applies: ties on the primary key (e.g. two rows with the same `period_id` and `recorded_at`) MUST NOT exist. If they do exist, `validate` MUST fail with a clear diagnostic and `list` MUST refuse to produce an effective state for that period until the dataset is repaired using normal CLI commands (not hand edits).
 
 The field `retained_earnings_account` is **required** for all period records written by the CLI. It is needed for deterministic close/opening workflows and for downstream modules that depend on a known equity account for balance carry-forward. Successful commands (`add`, `open`, `close`, `lock`, `set`) MUST never leave this field blank in any appended row; the dataset is always valid immediately after any successful command in the sense that every effective record has a non-empty `retained_earnings_account`.
 
@@ -155,7 +165,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Close, loc
 
 Unit tests cover period state transitions and close calculations, and command-level tests exercise `open`, `close`, `lock`, `set`, and `opening` against fixture workspaces.
 
-End-to-end invariant (required). The test suite MUST prove the following. After `bus period init`, `bus period add --period 2024-01`, and `bus period open --period 2024-01`, the workspace MUST be in a state where `bus period validate` and `bus period list` succeed. Regression: a scenario MUST cover legacy workspaces where the effective period record has a blank `retained_earnings_account`; repair MUST be achievable via `bus period set --period <period> --retained-earnings-account <code>` so that `validate` and `list` then succeed, with no manual file editing in the primary workflow.
+End-to-end invariant (required). The test suite MUST prove the following. After `bus period init`, `bus period add --period 2024-01`, and `bus period open --period 2024-01`, the workspace MUST be in a state where `bus period validate` and `bus period list` succeed. **Regression (add+open):** a test MUST run `bus period add --period <id>` then immediately `bus period open --period <id>` (back-to-back, same second) and assert that `periods.csv` ends up with two rows with distinct `recorded_at` values and that `bus period validate` passes. **Regression (duplicate key):** a test MUST verify that when two rows share the same `period_id` and `recorded_at`, `validate` detects and reports an explicit error (e.g. duplicate primary key or invalid `recorded_at` tie). Regression: a scenario MUST cover legacy workspaces where the effective period record has a blank `retained_earnings_account`; repair MUST be achievable via `bus period set --period <period> --retained-earnings-account <code>` so that `validate` and `list` then succeed, with no manual file editing in the primary workflow.
 
 ### Deployment and Operations
 
@@ -203,7 +213,7 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 Title: bus-period module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-PERIOD`  
-Version: 2026-02-15  
+Version: 2026-02-16  
 Status: Draft  
-Last updated: 2026-02-15  
+Last updated: 2026-02-16  
 Owner: BusDK development team  

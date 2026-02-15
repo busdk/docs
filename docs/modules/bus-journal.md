@@ -13,7 +13,7 @@ description: bus journal maintains the authoritative ledger as append-only journ
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus journal` maintains the authoritative ledger as append-only journal entries. It enforces balanced debits and credits and respects period close and lock boundaries. Other modules post into the journal; this CLI adds entries and reports balances.
+Command names follow [CLI command naming](../cli/command-naming). `bus journal` maintains the authoritative ledger as append-only journal entries. It enforces balanced debits and credits and respects period close and lock boundaries. Account names in `--debit` and `--credit` must exist in the workspace [chart of accounts](../master-data/chart-of-accounts/index) (maintained by [bus accounts](./bus-accounts)); postings to closed or locked periods are rejected (period state is maintained by [bus period](./bus-period)). Other modules post into the journal; this CLI adds entries and reports balances.
 
 ### Commands
 
@@ -23,11 +23,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus journal` 
 
 ### Options
 
-`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. At least one debit and one credit are required; total debits must equal total credits. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
+`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. The `<account>` value is the account code or name as stored in the workspace chart of accounts; use quotes when the name contains spaces. At least one debit and one credit are required; total debits must equal total credits. Unknown or invalid account names cause the command to fail. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
 
 ### Files
 
-Every file owned by `bus journal` includes “journal” or “journals” in the filename. The journal index is `journals.csv` at the repository root; period journal files sit at the workspace root with a date prefix (e.g. `journal-2026.csv`, `journal-2025.csv`), each with a beside-the-table schema (e.g. `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not use a subdirectory for journal data. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Every file owned by `bus journal` includes “journal” or “journals” in the filename. The journal index is `journals.csv` at the repository root; period journal files sit at the workspace root with a date prefix (e.g. `journal-2026.csv`, `journal-2025.csv`), each with a beside-the-table schema (e.g. `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not use a subdirectory for journal data. Path resolution for journal data is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)). When validating account names or period boundaries, the journal uses the workspace chart of accounts and period state from [bus accounts](./bus-accounts) and [bus period](./bus-period) respectively.
 
 ### Exit status
 
@@ -52,7 +52,7 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Blockers:** [bus-period](./bus-period) writing closed-period file so period integrity is enforceable in full workflow.
 
-**Depends on:** [bus-period](./bus-period) (closed-period file for NFR-JRN-001).
+**Depends on:** [bus-accounts](./bus-accounts) (chart of accounts for validating account names in `add` and `balance`); [bus-period](./bus-period) (period state for rejecting postings to closed or locked periods). The module resolves chart-of-accounts and period data via those modules' APIs; see [Module SDD](../sdd/bus-journal).
 
 **Used by:** [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-reconcile](./bus-reconcile), and [bus-filing](./bus-filing) read journal data.
 

@@ -11,7 +11,7 @@ Accounting periods are canonical records used for bookkeeping review, posting, a
 
 Owner: [bus period](../../modules/bus-period). This module is responsible for implementing write operations for this object and is the only module that should directly change the canonical datasets for it. The canonical dataset is `periods.csv` (and `periods.schema.json`) at the workspace root; paths are root-level only, not under a subdirectory such as `periods/`.
 
-Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
+Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the period control dataset (and effective state) via the [bus period](../../modules/bus-period) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../sdd/modules#data-path-contract-for-read-only-cross-module-access).
 
 - [bus journal](../../modules/bus-journal): respects period close and lock boundaries for postings.
 - [bus validate](../../modules/bus-validate): checks period integrity as part of workspace validation.

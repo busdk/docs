@@ -15,7 +15,7 @@ Owner: [bus accounts](../../modules/bus-accounts). This module is responsible fo
 
 In the current CLI surface, `bus accounts add` records the core account identity (`--code`), `name`, and `type`, and `bus accounts validate` checks schema and invariants. Reporting and control fields such as `ledger_category_id` and `is_active` are maintained by editing `accounts.csv` directly and then validating, so the documentation does not imply unsupported CLI flags exist.
 
-Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
+Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the chart (and schema) via the [bus accounts](../../modules/bus-accounts) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../sdd/modules#data-path-contract-for-read-only-cross-module-access).
 
 - [bus invoices](../../modules/bus-invoices): references accounts for invoice row classification.
 - [bus journal](../../modules/bus-journal): posts to accounts and reports balances.
