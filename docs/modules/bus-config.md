@@ -84,19 +84,19 @@ Exit 0 on success. Non-zero in these cases:
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Completeness:** 70% (Broadly usable) — init and configure fully verified by e2e; idempotent init and deterministic JSON shape test-backed.
+**Completeness:** 70% (Broadly usable) — init and configure verified by e2e and unit tests; idempotent init and deterministic entity updates; set agent / get agent and config library not implemented and not verified.
 
-**Use case readiness:** Accounting workflow: 70% — init and configure verified; config library and set/get agent would extend usability.
+**Use case readiness:** Accounting workflow: 70% — init and configure verified; user can complete workspace-config step (create/update datapackage and entity) before domain inits.
 
-**Current:** E2e script `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity; init idempotent when entity already present; configure updates only given fields with deterministic diff; global flags and invalid usage. Unit tests in `internal/run/run_test.go` and `internal/config/` cover run and validation.
+**Current:** `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity and exact JSON shape, init idempotent when entity already present (warn, no write), configure updates only given fields with deterministic diff, precondition failures (missing file or entity), and global flags (help, version, invalid color, quiet+verbose, --output, --quiet, -C, --). `internal/run/run_test.go` covers init, configure, chdir, output, quiet, and unknown subcommand. `internal/cli/flags_test.go` and `internal/config/validate_test.go` cover flag parsing and entity validation.
 
-**Planned next:** Config library; `set agent` / `get agent` with persistence; E2E for set/get and invalid runtime.
+**Planned next:** Config library and `set agent` / `get agent` with persistence and E2E (PLAN.md); advances developer workflow when consumed by [bus-agent](./bus-agent) and [bus-dev](./bus-dev).
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-init](./bus-init) runs `bus config init` first; [bus-agent](./bus-agent) and [bus-dev](./bus-dev) use or will use config for default agent.
+**Used by:** [bus-init](./bus-init) runs `bus config init` first; [bus-agent](./bus-agent) and [bus-dev](./bus-dev) will use config for default agent when set/get agent are implemented.
 
 See [Development status](../implementation/development-status).
 

@@ -274,13 +274,13 @@ Operates on any workspace CSV and its beside-the-table `.schema.json` (same dire
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 
-**Completeness:** 60% (Stable) — schema init/show, package init/validate, table and row operations, and validation verified by e2e and unit tests.
+**Completeness:** 60% (Stable) — schema, package, table, row, and formula projection verified by e2e and unit tests; resource add/remove/rename and schema key/foreign-key/field evolution not yet verified.
 
-**Use case readiness:** Workbook and validated tabular editing: 60% — schema, package, table, row operations; e2e and unit tests; backend for [bus-api](./bus-api) and [bus-sheets](./bus-sheets).
+**Use case readiness:** Workbook and validated tabular editing: 60% — user can init tables, add/update/delete rows, read with filters/key and formula projection; package and resource list/validate; backend for [bus-api](./bus-api) and [bus-sheets](./bus-sheets).
 
-**Current:** E2e script `tests/e2e_bus_data.sh` proves schema init creates table and schema files, schema show prints exact schema bytes, package init and validate, row add/update/delete, table read with filters and key, and deterministic I/O. Unit tests in `pkg/data/` and `internal/cli/` cover mutate, patch, validate, formula, and workspace behavior.
+**Current:** `tests/e2e_bus_data.sh` verifies schema init/show/infer, add-field, set-type, patch (including --resource), package init/show/patch/validate, resource list/validate and cross-resource foreign key failure then fix, table list/read (--row, --column, --filter, --key single and composite), row add/update/delete (in-place and soft-delete policy), inline and constant formula projection, --formula-source, range resolution, on_error=null, invalid formula rejection, global flags (--chdir, --output, --quiet, --dry-run, --), and deterministic I/O. `internal/cli/run_test.go`, `internal/cli/flags_test.go`, and `internal/cli/package_resource_test.go` verify help/version/quiet/format/chdir and package/resource commands. `pkg/data/*_test.go` and `internal/cli/write_commands_test.go` verify mutate, patch, validate, formula, workspace, and serialization.
 
-**Planned next:** Resource add/remove; schema key and foreign-key ops; field add/remove/rename; `--resource` resolution.
+**Planned next:** Resource add/remove/rename and schema key set, foreign-key add/remove, and field remove/rename/set-format/set-constraints/set-missing-values (PLAN.md); advances workbook use case when api/sheets need dynamic resource lifecycle.
 
 **Blockers:** None known.
 

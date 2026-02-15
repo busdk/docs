@@ -37,17 +37,17 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 ### Development state
 
-**Value promise:** Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset accounts appear in [bus-reports](./bus-reports).
+**Value promise:** Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset data supports the significant-assets list for the evidence pack.
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 50% (Primary journey) — validate, schedule, and post implemented and covered by unit tests; init and add not yet verified by e2e.
+**Completeness:** 50% — validate, schedule, and post verified by unit and e2e tests; init, add, depreciate, dispose not implemented so register creation and acquisition flow are not yet available.
 
-**Use case readiness:** Finnish company reorganisation: 50% — asset schedule for significant-assets list; validate and post verified; no e2e for init/add.
+**Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 50% — validate, schedule, post verified; posting output and schedule support evidence pack; init/add not implemented.
 
-**Current:** Unit tests in `cmd/bus-assets/run_test.go`, `internal/assets/schedule_property_test.go`, and `internal/assets/post_property_test.go` prove run, schedule, and post logic and flags. No e2e; init and add workflows are not test-backed.
+**Current:** Unit tests in `run_test.go`, `run_property_test.go`, `flags_test.go`, and `flags_property_test.go` prove Run (help, version, validate, schedule, post), global flags, and usage errors. Property tests in `schedule_property_test.go`, `post_property_test.go`, `period_property_test.go`, and `load_assets_property_test.go` prove schedule, post, period, and load logic. E2e script `tests/e2e_bus_assets.sh` proves validate, schedule, post, `-C`, `--output`, `-q`, `--format`, and invalid usage against the built binary.
 
-**Planned next:** Root layout only; init, add, depreciate, dispose as primary CLI; --dry-run; voucher refs in postings.
+**Planned next:** Implement init, add, depreciate, dispose as primary CLI (SDD); workspace-root layout only; `--dry-run` for write commands; voucher refs in postings (FR-AST-002). Advances Finnish company reorganisation (register creation and acquisition).
 
 **Blockers:** None known.
 

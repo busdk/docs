@@ -31,13 +31,13 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 40% (Meaningful task, partial verification) — bundle and validate workflows implemented; unit tests cover run, bundle, and sanitize. No e2e.
+**Completeness:** 50% — Validate and bundle from a fixture workspace are verified by e2e and unit tests; PRH-required content and SBR taxonomy would complete the filing journey.
 
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 40% — bundle and sanitize verified; PRH content and SBR taxonomy would unlock PRH filing.
+**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — validate and bundle verified by e2e; PRH content convention and SBR taxonomy would unlock PRH filing.
 
-**Current:** Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, and `internal/bundle/sanitize_test.go` prove run dispatch, bundle building, and sanitization. No e2e against fixture; PRH content and SBR taxonomy are in PLAN.
+**Current:** E2e `tests/e2e_bus_filing-prh.sh` proves help, version, subcommand help, invalid usage (quiet+verbose, unknown `--color`/`--format`), `--` stops parsing, validate success, bundle with fixture (manifest, iXBRL, inputs), `--output`, `--quiet`, `--format json`, `--dry-run`, `-C`, and errors on stderr. Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, `internal/bundle/sanitize_test.go`, and `internal/cli/flags_test.go` prove run dispatch and global flags, deterministic bundle and validation gating, path sanitization, and flag parsing.
 
-**Planned next:** PRH-required content in bundles; full PRH SBR taxonomy in iXBRL; e2e against fixture; README links.
+**Planned next:** PRH-required content in bundles (journal, reports, voucher refs, attachments metadata) per FR-PRH-002; full PRH SBR taxonomy in iXBRL; README links. Advances Finnish bookkeeping and tax-audit compliance.
 
 **Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
 

@@ -103,13 +103,13 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 
-**Completeness:** 50% (Primary journey) — help, version, openapi, and serve with token and port verified; full resource/row semantics depend on bus-data integration not yet covered by e2e.
+**Completeness:** 50% — Startup, capability URL, healthz, openapi, and event stream are test-verified; resources, package, row CRUD, schema, and validation endpoints have no test coverage (bus-data integration deferred per PLAN.md).
 
-**Use case readiness:** Workbook and validated tabular editing: 50% — help, version, openapi, serve with token/port verified; row and schema endpoints; event stream and row CRUD tests would complete.
+**Use case readiness:** Workbook and validated tabular editing: 50% — User can start the API and reach healthz/openapi/events; listing resources and reading or writing rows over HTTP are not verified by tests.
 
-**Current:** E2e script `tests/e2e_bus_api.sh` proves exact global help output, serve-specific help, version line, invalid color/quiet+verbose exit 2, serve with fixed token and port prints capability URL, and missing chdir exits 1. Unit tests in `internal/cli/flags_test.go`, `internal/cli/run_test.go`, and `internal/server/server_test.go` cover flags and run. No e2e exercises API endpoints against bus-data.
+**Current:** `tests/e2e_bus_api.sh` proves exact global help, serve-specific help, version line, global flags (chdir, output, quiet, color, format, `--`), openapi output and format behavior, invalid usage (quiet+verbose, unknown command, invalid color, unknown format) exit 2, serve with fixed token/port prints capability URL, and GET base URL and GET healthz return expected JSON. `internal/cli/flags_test.go` and `internal/cli/run_test.go` prove flag parsing and run behavior (help, version, quiet, output, openapi, serve missing workdir exit 1). `internal/server/server_test.go` proves token gating, healthz/openapi/api-base under token, wrong-token and no-prefix 404, OpenAPI doc validity and events path, serve-flag parsing, and event stream (200 + text/event-stream, optional query params, method not allowed, and delivery of a published event). No tests hit resources, package, schema, row, or validation endpoints.
 
-**Planned next:** Full [bus-data](./bus-data) integration for resources, rows, schema, validation; event stream; module endpoints; row CRUD and validation tests; e2e against API.
+**Planned next:** bus-data integration for resource discovery, package, schema, row CRUD, and validation (PLAN.md); e2e against those endpoints with a fixture workspace; optional serve flags (base-path, cors-origin, tls-cert/tls-key, enable-module) and module backends. Advances Workbook and validated tabular editing when data endpoints are verified.
 
 **Blockers:** None known.
 

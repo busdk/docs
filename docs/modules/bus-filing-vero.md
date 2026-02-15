@@ -31,13 +31,13 @@ Reads validated datasets, VAT outputs, and report outputs; writes Vero-specific 
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 40% (Meaningful task, partial verification) — bundle workflows implemented; unit tests cover app, bundle, and output. No e2e.
+**Completeness:** 50% (Primary journey) — export and verify from a minimal workspace are verified by e2e and unit tests; source refs (FR-VERO-002) and prerequisites diagnostics would complete the Vero filing step.
 
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 40% — bundle and output verified; source refs and e2e would unlock Vero filing.
+**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — user can produce and verify a Vero bundle from a fixture workspace; source refs and period/filing diagnostics planned.
 
-**Current:** Unit tests in `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, and `internal/output/` prove app and bundle behavior. No e2e against fixture; source refs (FR-VERO-002) and prerequisites diagnostics are in PLAN.
+**Current:** E2e `tests/e2e_bus_filing-vero.sh` proves help, version, export, verify, global flags (-C, -o, -f, --color, -q, --, --dry-run), prerequisite checks (missing dir, required directory), and bundle layout (manifest, checksums, data). Unit tests `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, and `internal/cli/flags_test.go` prove Run behavior, bundle export/verify/dry-run and validation (missing schema, conflict markers), and flag parsing (-vv, --, help).
 
-**Planned next:** E2e against fixture; FR-VERO-002 source refs in bundle; deterministic diagnostics for missing prerequisites.
+**Planned next:** FR-VERO-002 source refs in bundle (voucher/posting identifiers); deterministic diagnostics for period-closed or filing-orchestration state (PLAN.md). Advances Finnish bookkeeping and tax-audit compliance.
 
 **Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
 

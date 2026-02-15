@@ -27,23 +27,23 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 ### Development state
 
-**Value promise:** Render PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
+**Value promise:** Render deterministic PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (invoice PDF generation).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (invoice PDF generation; see [Generate invoice PDF and register it as evidence](../workflow/generate-invoice-pdf-and-register-attachment)).
 
-**Completeness:** 60% (Stable) — render from file implemented and covered by unit tests; stdin (`--data @-`) not yet covered by command-level test.
+**Completeness:** 70% (Broadly usable) — render from file and from stdin verified by e2e and unit tests; list-templates, global flags, overwrite, and chdir verified; user can produce PDFs from JSON for attachment or invoice use.
 
-**Use case readiness:** Accounting workflow: 60% — render from file verified; command-level test for `render --data @-` would complete the invoice-pdf step.
+**Use case readiness:** Accounting workflow: 70% — render from file and stdin verified by e2e; user can complete the render step; `bus invoices pdf` integration in [bus-invoices](./bus-invoices) is not yet implemented.
 
-**Current:** Unit tests in `cmd/bus-pdf/run_test.go`, `internal/render/render_test.go`, and `internal/templates/` prove run, render, and template behavior. No e2e; command-level test for `render --data @-` is in PLAN.
+**Current:** E2E `tests/e2e_bus_pdf.sh` proves help, version, no-args usage, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file and from stdin (`--data @-`), overwrite, and reject existing output without overwrite. Unit tests in `cmd/bus-pdf/run_test.go`, `internal/render/render_test.go`, and `internal/templates/` prove run, render determinism, template validation, and flag parsing.
 
-**Planned next:** Command-level test for `render --data @-`.
+**Planned next:** None in PLAN.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-invoices](./bus-invoices) uses this for `bus invoices pdf`.
+**Used by:** [bus-invoices](./bus-invoices) (for `bus invoices pdf`).
 
 See [Development status](../implementation/development-status).
 

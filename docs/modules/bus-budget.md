@@ -37,17 +37,17 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 
 ### Development state
 
-**Value promise:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and optional planning workflows have a single source for budget figures.
+**Value promise:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and planning workflows have a single source for budget figures.
 
-**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
+**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack). Workflow: [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual).
 
-**Completeness:** 30% (Some basic commands) — unit tests for flags and variance logic exist; no e2e. Init, report, add, and set not verified.
+**Completeness:** 30% (Some basic commands) — init, validate, and variance are test-verified; CLI still uses `validate`/`variance` and `budgets/` layout; add, set, and report per SDD are not implemented or verified.
 
-**Use case readiness:** Finnish company reorganisation: 30% — budget and variance as plausibility evidence; init/report/add/set not verified.
+**Use case readiness:** Finnish company reorganisation: 30% — user can init dataset, validate budgets, and run variance; add/set/report and root layout not verified.
 
-**Current:** Unit tests in `cmd/bus-budget/main_test.go`, `internal/validate/validate_property_test.go`, and `internal/budget/variance_property_test.go` prove flags and variance behavior. No e2e; init, report, add, set are not covered by tests.
+**Current:** E2E `tests/e2e_bus_budget.sh` verifies help, version, global flags (invalid color, unknown format, quiet+verbose, `--`, `-C`), init (creates `budgets/` with schema and CSV, second init fails when data exists), validate, and variance (deterministic output, `--output`, quiet suppresses output file). Unit tests in `cmd/bus-budget/main_test.go` cover usage/no-subcommand/unknown, init/validate/variance success and failure paths, `-q`/`--output`/chdir/color/format. `internal/cli/flags_test.go` and `internal/cli/flags_property_test.go` verify flag parsing (-vv, `--`, combined short). `internal/budget/variance_property_test.go` and `internal/validate/validate_property_test.go` verify variance logic and schema validation. Add, set, and report subcommands are not present in the current binary.
 
-**Planned next:** Help alignment; root layout; idempotent init; report, add, set subcommands.
+**Planned next:** Store budget dataset at workspace root per SDD; idempotent init (warn when both exist, fail when partial); implement report (--year/--period), add, and set; expose only init, add, set, report; e2e for report, add, set (PLAN.md). Advances Finnish reorganisation evidence-pack and [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual) workflow.
 
 **Blockers:** None known.
 

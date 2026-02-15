@@ -39,13 +39,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% (Stable) — init, import, and list verified by e2e; idempotent init and list output shape test-backed.
+**Completeness:** 60% — init, import, and list are test-verified; user can create bank datasets, import a statement, and list transactions (journey step before reconcile).
 
-**Use case readiness:** Accounting workflow: 60% — init and import verified; schema validation before append and counterparty_id would complete bank step before reconcile. Finnish company reorganisation: 60% — import statements and transactions; basis for reconciliation evidence. Finnish payroll handling: 60% — import bank statements for pay-day transfers; e2e covers init and import.
+**Use case readiness:** Accounting workflow: 60% — init and import verified by e2e; list with filters and TSV verified; schema validation before append and counterparty_id would complete bank step. Finnish company reorganisation: 60% — import and list verified; basis for reconciliation evidence. Finnish payroll handling: 60% — import and list verified for pay-day statement flow.
 
-**Current:** E2e script `tests/e2e_bus_bank.sh` proves help, version, invalid quiet+verbose and color and format, init creating bank-imports and bank-transactions CSV and schema at workspace root, idempotent init warning, import --file appending from raw CSV with schema, and list with deterministic TSV. Unit tests in `internal/app/run_test.go` and `internal/bank/` cover app run, import, schema, validate, and output.
+**Current:** `tests/e2e_bus_bank.sh` proves help, version, invalid usage (quiet+verbose, color, format), init (create four files at workspace root, idempotent warning, partial-state fail), import `--file` and `--dry-run` (no append), list (deterministic TSV, `--month`, `-o`, `-q`, `-f tsv`), and global flags (`-C`, `--`, `-vv`, `--no-color`). Unit tests in `internal/app/run_test.go`, `internal/app/import_test.go`, and `internal/bank/datasets_test.go` prove run/init/list/import paths, init idempotent and partial fail, import validation and dry-run, and list filters (month, from/to, counterparty name and invoice-ref) via `ApplyListFilters*`; `internal/bank/schema_test.go`, `output_test.go`, and `internal/cli/flags_test.go` cover schema, output formatting, and flag parsing.
 
-**Planned next:** Schema validation before append; counterparty_id and filter; link imports to attachments; --dry-run for init.
+**Planned next:** Schema validation before append on import (FR-BNK-001); add counterparty_id and filter `list --counterparty` by entity id (accounting workflow); link imports to attachments metadata (NFR-BNK-001); `--dry-run` for init.
 
 **Blockers:** None known.
 

@@ -122,23 +122,23 @@ The tool exits with status 0 on success. It exits with status 2 on invalid usage
 
 ### Development state
 
-**Value promise:** Parse, evaluate, and render BFL (Bus Formula Language) expressions so [bus-data](./bus-data) and spreadsheets can use formula-enabled fields with deterministic, testable semantics.
+**Value promise:** Parse, format, validate, and evaluate BFL expressions so [bus-data](./bus-data) and the workbook can use formula-enabled fields with deterministic, testable semantics.
 
 **Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
 
-**Completeness:** 60% (Stable) — parse, eval, render CLI and conformance verified by e2e and unit tests; formula evaluation and dialect behavior test-backed.
+**Completeness:** 60% — parse, format, validate, eval, and funcset list plus global flags verified by e2e; conformance, limits, and library behavior verified by unit tests; formula engine ready for [bus-data](./bus-data) integration.
 
-**Use case readiness:** Workbook and validated tabular editing: 60% — parse, eval, render BFL; CLI and conformance verified by e2e and unit tests; formula engine for [bus-data](./bus-data).
+**Use case readiness:** Workbook and validated tabular editing: 60% — CLI and library contract verified; formula engine ready for [bus-data](./bus-data) projection.
 
-**Current:** E2e script `tests/e2e_bus_bfl.sh` proves help, version, color flags, subcommand help (parse), parse with expr and dialect, eval with context, and render. Unit tests in `pkg/bfl/` cover expr, parse, eval, decimal, datetime, range_array, conformance, and fuzz; `internal/cli/run_test.go` covers CLI behavior.
+**Current:** E2e `tests/e2e_bus_bfl.sh` proves help, version, color/format/quiet/verbose, chdir, output, `--`, funcset list, parse (expr, range, JSON), format (expr, stdin, dialect), validate (ok, range, array symbol, missing schema exit), eval (scalar, array, infer schema, exit 2 without `--context`), and error/stderr behavior. Unit tests: `pkg/bfl/conformance_test.go` (conformance vectors), `pkg/bfl/expr_test.go`, `pkg/bfl/decimal_test.go`, `pkg/bfl/datetime_test.go`, `pkg/bfl/range_array_test.go` (eval, limits, ranges), `internal/cli/run_test.go`, `internal/cli/flags_test.go`, `internal/cli/json_test.go`, `internal/cli/render_test.go`.
 
-**Planned next:** CI workflow; make `eval` exit 2 when `--context` is omitted.
+**Planned next:** None in PLAN; optional benchmark metadata and CI artifact follow-ups per SDD.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-data](./bus-data) uses this library for formula validation and projection.
+**Used by:** [bus-data](./bus-data) for formula validation and projection.
 
 See [Development status](../implementation/development-status).
 

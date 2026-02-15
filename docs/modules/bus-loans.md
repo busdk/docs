@@ -41,13 +41,13 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 40% (Meaningful task, partial verification) — init and add implemented; unit tests cover run and flags. No e2e; event and amortize not verified.
+**Completeness:** 40% (Meaningful task, partial verification) — loan registry (init, add, list, update), validate, balances, schedule, and postings verified by unit and e2e; `event` and `amortize` subcommands not implemented and not verified.
 
-**Use case readiness:** Finnish company reorganisation: 40% — loan registry; init/add verified by unit tests; event, amortize not verified.
+**Use case readiness:** Finnish company reorganisation: 40% — loan registry, list, validate, balances, schedule, postings verified by unit and e2e; event and amortize not implemented.
 
-**Current:** Unit tests in `internal/app/run_test.go` (including `TestRunInitSuccessAndIdempotency`, `TestRunAddSuccess`, `TestRunAddDuplicateLoanID`) and `internal/cli/flags_test.go` prove init, add, run dispatch, and flag parsing. No e2e; event and amortize are not verified.
+**Current:** Verified by tests: init, add, list, validate, balances, schedule, postings, update, and global flags (help, version, quiet, verbose, chdir, output, format, color). Unit tests in `internal/app/run_test.go` (e.g. `TestRunInitSuccessAndIdempotency`, `TestRunAddSuccess`, `TestRunAddDuplicateLoanID`, `TestRunListOutputSorted`, `TestRunValidateSuccess`, `TestRunBalancesOutputShape`, `TestRunScheduleAnnuity`, `TestRunPostingsBorrowerSplit`, `TestRunPostingsLenderAccounts`, `TestRunUpdateSuccess`, and flag/error tests) and `internal/cli/flags_test.go`; e2e in `tests/e2e_bus_loans.sh` (init, add, list, validate, balances, schedule, postings, -C, --output, -q, help, version, invalid usage).
 
-**Planned next:** event (disbursement, repayment, interest, fee, adjustment with postings); amortize (period, optional loan-id); idempotent init; root layout; add flags; ref validation; command-level tests.
+**Planned next:** Implement `event` and `amortize` subcommands (PLAN.md) to advance the yrityssaneeraus evidence-pack journey; idempotent init; root layout; add-flag alignment with SDD; reference validation; command-level tests for event/amortize.
 
 **Blockers:** None known.
 

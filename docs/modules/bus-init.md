@@ -82,21 +82,21 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-**Value promise:** Initialize a new BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits), so users can run `bus init` or `bus init all` and get a deterministic, script-friendly setup.
+**Value promise:** Bootstrap a BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits) so users can complete the “create repo and baseline” step deterministically.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step 1: create repo and baseline).
 
-**Completeness:** 70% (Broadly usable) — config-only and full-baseline init fully covered by e2e; subcommands defaults and all, exclusions, global flags, and stub delegation verified.
+**Completeness:** 70% — User can run config-only or full-baseline init; e2e and unit tests verify step order, exclusions, and global flags.
 
-**Use case readiness:** Accounting workflow: 70% — step order and exclusions verified; follow-up e2e/unit refinements only.
+**Use case readiness:** Accounting workflow: 70% — Config-only and full baseline (subcommand `all` or `--all`) verified; step order and `--no-<module>` exclusions proven by tests.
 
-**Current:** E2e script `tests/e2e_bus_init.sh` proves config-only init (no subcommand or `defaults`) creates only `datapackage.json`; `all` runs config then all 13 module inits in order; `all --no-payroll` excludes payroll; per-module flags run only selected inits; invalid usage and missing bus yield correct exit codes. Unit tests in `internal/businit/run_test.go` and `internal/cli/flags_test.go` cover parsing and step order.
+**Current:** `tests/e2e_bus_init.sh` verifies config-only (no subcommand or `defaults`), subcommand `all` and `all --no-payroll`, per-module flags, `-C`/`--output`/`--quiet`, missing bus and step-failure diagnostics, and extra-positional rejection. `internal/businit/run_test.go` covers config-only, `--all` and subcommand `all`/`defaults`, exclusions, step failure and exit-code-2 upgrade message, and `internal/cli/flags_test.go` covers flag parsing (`-vv`, `--`, quiet+verbose, color, subcommand parsing).
 
-**Planned next:** Any follow-up unit or e2e refinements.
+**Planned next:** Help text that lists each per-module flag and each `--no-<module>` explicitly (PLAN.md; FR-INIT-005 acceptance). Advances SDD/help completeness, not a new journey step.
 
 **Blockers:** None known.
 
-**Depends on:** None (orchestrates [bus-config](./bus-config) and each module’s init).
+**Depends on:** Orchestrates [bus-config](./bus-config) and each domain module’s init; no direct code dependency.
 
 **Used by:** The [bus](./bus) dispatcher invokes this when users run `bus init`.
 

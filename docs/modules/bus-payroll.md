@@ -43,19 +43,19 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 **Use cases:** [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 40% (Meaningful task, partial verification) — validate and export implemented; integration and unit tests cover flags and run. No e2e for full payroll run.
+**Completeness:** 20% — validate and export only; init, run, list, employee not implemented; user cannot complete pay-run journey.
 
-**Use case readiness:** Finnish payroll handling (monthly pay run): 40% — validate and export verified by integration tests; init, run, list, employee not implemented; no e2e for full pay-run journey.
+**Use case readiness:** Finnish payroll handling (monthly pay run): 20% — validate and export verified; init, run, list, employee not implemented; no e2e for full pay-run journey.
 
-**Current:** Integration tests in `run_test.go` prove validation of payroll datasets and deterministic export CSV for a run; unit tests in `internal/cli/flags_test.go` cover flag parsing and global flags. No e2e for full pay-run journey.
+**Current:** `run_test.go` verifies validate success, deterministic export CSV, schema/CSV/constraint validation failures, usage errors, help/version, quiet/--output/truncation, -C chdir, and invalid format/color/quiet+verbose. `internal/cli/flags_test.go` verifies -vv, -- terminator, quiet+verbose conflict, invalid color/format. `tests/e2e_bus_payroll.sh` verifies help, version, --no-color/--color=never, --format, validate and export with payroll/ fixture, -o truncation and quiet, -C, and deterministic export. All use current `payroll/` layout; workspace-root layout and init/run/list/employee are not implemented.
 
-**Planned next:** Align CLI and layout with docs (init, run, list, employee); e2e for run → export → journal; README `make check`; test that `--no-color` disables color on stderr.
+**Planned next:** Workspace-root layout and init per SDD (FR-INIT-004); run, list, employee add/list; e2e for run → export → journal (Finnish payroll journey).
 
 **Blockers:** None known.
 
-**Depends on:** None.
+**Depends on:** [bus-accounts](./bus-accounts), [bus-entities](./bus-entities) for chart and entity references.
 
-**Used by:** Standalone payroll runs; postings feed [bus-journal](./bus-journal).
+**Used by:** Postings feed [bus-journal](./bus-journal).
 
 See [Development status](../implementation/development-status).
 

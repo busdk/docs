@@ -39,13 +39,13 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 50% (Primary journey) — delegation to targets and list_targets implemented; unit tests cover run, list_targets, and flags. Bundle assembly and pass-through args not fully verified.
+**Completeness:** 60% (Stable) — delegation to all three targets (prh, vero, tax-audit-pack), list, global flags, args pass-through, workdir/env, and exit code propagation are verified by e2e and unit tests; bundle assembly (FR-FIL-001) is not yet implemented or documented as delegated (PLAN).
 
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — delegation and list_targets verified; bundle assembly and tax-audit-pack would unlock filing delivery.
+**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 60% — user can run `bus filing prh` / `vero` / `tax-audit-pack` with correct delegation; bundle delivery depends on targets and stable contract.
 
-**Current:** Unit tests in `internal/busfiling/run_test.go`, `internal/busfiling/list_targets_test.go`, and `internal/cli/flags_test.go` prove run, list targets, and flag parsing. No e2e; bundle assembly (FR-FIL-001) and args pass-through are in PLAN.
+**Current:** E2e `tests/e2e_bus_filing.sh` proves help, version, usage errors (no subcommand, invalid color/format, quiet+verbose), list (sorted), `--output`/`--chdir`/`--quiet`, target-not-found, args pass-through for prh, vero, and tax-audit-pack, exit code propagation, and target workdir. Unit tests `internal/busfiling/run_test.go`, `internal/busfiling/list_targets_test.go`, and `internal/cli/flags_test.go` prove run, list targets, and flag parsing.
 
-**Planned next:** Bundle assembly from validated closed-period data; parameter set for tax-audit-pack; document targets; test args pass-through and tax-audit-pack delegation.
+**Planned next:** Clarify or implement FR-FIL-001 (bundle assembly from validated closed-period data or document delegation to targets); define parameter set for tax-audit-pack (OQ-FIL-001). Both advance Finnish bookkeeping and tax-audit compliance when bundle contract is stable.
 
 **Blockers:** Stable bundle contract needed for filing targets to consume.
 

@@ -47,13 +47,13 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% (Stable) — init, add (all types), list, and validate verified by e2e; full chart-of-accounts workflow is test-backed.
+**Completeness:** 60% — init, add (all five types), list, validate, global flags and init contract verified by e2e and unit tests; user can complete the “define master data” chart step.
 
-**Use case readiness:** Accounting workflow: 60% — init, add (all types), list, validate verified; init contract when both files exist and add `--type` help implemented and covered. Finnish payroll handling: 60% — chart of accounts for wage expense, withholding, net payable; e2e covers full workflow.
+**Use case readiness:** Accounting workflow: 60% — init, add, list, validate and init contract (both-files-exist / partial-existence) verified; e2e covers full chart workflow. Finnish payroll handling: 60% — chart of accounts for wage expense, withholding, net payable verified by same e2e and unit tests.
 
-**Current:** E2e script `tests/e2e_bus_accounts.sh` proves init creates `accounts.csv` and schema; add with asset, liability, equity, revenue, and expense types appends correct rows; list produces deterministic TSV; validate succeeds after add; init contract when both files exist (warn or fail) and invalid usage (format, color, quiet+verbose). Unit tests in `run_test.go`, `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, and `internal/cli/flags_test.go` cover storage, validation, flags, and help.
+**Current:** `tests/e2e_bus_accounts.sh` proves init (creates files, idempotent when both exist, fails when inconsistent or only CSV), add (asset, revenue, expense; dry-run no write), list (deterministic TSV, `--output`, `--format tsv`, `--quiet` no stdout/output file), validate, `-C` (invalid chdir and nested workdir), help/version, `--`, invalid `--format`/`--color`/quiet+verbose, and add `--help` documents `--type`. `run_test.go` covers init (creates, idempotent, both-exist-inconsistent, CSV-from-schema, CSV-without-schema), list, add (success, duplicate key, dry-run, missing required), validate, missing schema/CSV, schema parse/field/enum/PK/FK, usage. `run_flags_test.go` covers help/version ignore args, quiet, quiet+verbose invalid, invalid color, unknown format, chdir, output. `run_workspace_test.go` covers non-Git, MERGE_HEAD, conflict markers. `run_property_test.go` covers list permutation and add appends (all five types). `internal/cli/help_test.go` and `internal/cli/flags_test.go` cover help and flag parsing. `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, and `run_helpers_test.go` cover storage, validation, TSV sort, and workdir/color.
 
-**Planned next:** None in PLAN; init contract and add `--type` help are implemented and covered. Optional follow-ups per SDD (e.g. income/revenue alignment in schema wording).
+**Planned next:** None in PLAN; all SDD items implemented and covered. Optional SDD follow-ups (e.g. income/revenue wording in schema) when applicable.
 
 **Blockers:** None known.
 

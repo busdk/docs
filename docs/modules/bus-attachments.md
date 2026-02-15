@@ -35,23 +35,23 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 ### Development state
 
-**Value promise:** Register evidence files and maintain attachment metadata so bank imports, invoices, and filing can reference stable attachment identifiers and the [accounting workflow](../workflow/accounting-workflow-overview) treats evidence as first-class.
+**Value promise:** Register evidence files and maintain attachment metadata so other modules can reference stable attachment identifiers and the accounting workflow treats evidence as first-class.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step: register attachments), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% (Stable) — init, add, and list verified by e2e; idempotent init and evidence file layout test-backed.
+**Completeness:** 60% — User can complete the register-attachments step; init, add, and list verified by e2e and unit tests; idempotent init, evidence layout, and workspace-relative diagnostics test-backed.
 
-**Use case readiness:** Accounting workflow: 60% — init, add, list verified; workspace-relative paths in diagnostics would improve UX. Finnish company reorganisation: 60% — link source documents to records; traceability for audit.
+**Use case readiness:** Accounting workflow: 60% — Register evidence and list; full init/add/list flow verified. Finnish company reorganisation: 60% — Link source documents to records for audit; traceability verified.
 
-**Current:** E2e script `tests/e2e_bus_attachments.sh` proves exact help/version, global flags, init creating attachments.csv and schema, idempotent init warning, add with file and --desc, list with deterministic TSV. Unit tests in `cmd/bus-attachments/run_test.go` and `internal/attachments/validate_test.go` cover run and validate.
+**Current:** `tests/e2e_bus_attachments.sh` proves help/version, global flags (color, format, quiet, --, chdir, output), init (CSV and schema), idempotent init, add with file and --desc, list (deterministic TSV, evidence under `attachments/yyyy/mm/`), quiet+output behavior, and workspace-relative diagnostics (errors cite `attachments.csv`, no absolute path). `cmd/bus-attachments/run_test.go` covers usage, init/add/list, idempotent and partial-state init, chdir, output, and error paths. `internal/attachments/validate_test.go` covers relpath and pattern validation; `internal/attachments/csvio_test.go` covers CSV error basename; `internal/cli/flags_test.go` covers flag parsing.
 
-**Planned next:** Workspace-relative paths in diagnostics.
+**Planned next:** None (PLAN empty); optional SDD follow-ups.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-bank](./bus-bank) links imports to attachment metadata; [bus-invoices](./bus-invoices) and [bus-filing](./bus-filing) use attachment metadata.
+**Used by:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-filing](./bus-filing) reference attachment metadata.
 
 See [Development status](../implementation/development-status).
 
