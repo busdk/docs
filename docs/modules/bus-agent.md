@@ -121,7 +121,7 @@ Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% e
 
 **Blockers:** None known.
 
-**Depends on:** [bus-preferences](./bus-preferences) (runtime and run-config defaults). [bus-config](./bus-config) (for default agent when set/get agent exist).
+**Depends on:** [bus-preferences](./bus-preferences) (runtime and run-config defaults).
 
 **Used by:** [bus-sheets](./bus-sheets) (optional agent chat); [bus-dev](./bus-dev) (work, commit, etc.).
 

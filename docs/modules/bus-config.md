@@ -7,38 +7,35 @@ description: bus config owns workspace-level configuration stored in datapackage
 
 ### Synopsis
 
-`bus config init [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
-`bus config configure [--base-currency <code>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
-`bus config set agent <runtime>`  
-`bus config get agent [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
+`bus config init [--base-currency <code>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
+`bus config set [--base-currency <code>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
+`bus config set base-currency <code>`  
+`bus config set fiscal-year-start <YYYY-MM-DD>`  
+`bus config set fiscal-year-end <YYYY-MM-DD>`  
+`bus config set vat-registered <true|false>`  
+`bus config set vat-reporting-period <monthly|quarterly>`
 
-All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`. The `set agent` and `get agent` commands operate on user-level bus configuration and do not require a workspace.
+All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`.
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root and user-level bus configuration stored in a dedicated config file. The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence) as BusDK metadata so other modules can read them without duplicating settings in row-level datasets. The user-level bus configuration holds preferences that apply across invocations, such as the default agent runtime used by [bus agent](./bus-agent) and [bus dev](./bus-dev); that preference is read and written by the bus-agent module through the bus-config library so that the chosen agent is saved in bus configuration.
+Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root. The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence) as BusDK metadata so other modules can read them without duplicating settings in row-level datasets.
 
-`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object. When the file already has that object, init prints a warning and does nothing. [bus init](./bus-init) always runs `bus config init` first; when you pass module-include flags (e.g. `--accounts`, `--journal`), it then runs each selected domain module’s init. You can also run `bus config init` on its own when you need only the workspace descriptor.
+`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object. You can pass the same optional accounting-entity flags as for `set` (e.g. `--base-currency`, `--vat-registered`) so that the initial descriptor has the correct values from the start; any flag you omit uses the default for that property. When the file already has that object, init prints a warning and does nothing (flags are ignored). [bus init](./bus-init) always runs `bus config init` first; when you pass module-include flags (e.g. `--accounts`, `--journal`), it then runs each selected domain module’s init. You can also run `bus config init` on its own when you need only the workspace descriptor.
 
-`bus config configure` updates accounting entity settings in an existing workspace `datapackage.json`. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object. Only the properties you pass via flags are changed; others remain unchanged.
+`bus config set` updates accounting entity settings in an existing workspace `datapackage.json`. You can pass one or more optional flags (e.g. `bus config set --base-currency=EUR --vat-registered=true`) to change multiple properties in one call, or use the per-property form `bus config set <key> <value>` (e.g. `bus config set base-currency SEK`). Only the properties you specify are changed; others remain unchanged. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object. Running `bus config set` with no property flags or values exits 0 without modifying the file.
 
-`bus config set agent <runtime>` saves the default agent runtime to bus configuration. The value is persisted so that [bus agent](./bus-agent) and [bus dev](./bus-dev) use that runtime when you do not pass `--agent` or set a session variable. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`; any other value is invalid usage (exit 2). You do not need to be in a workspace to set or get the default agent.
-
-`bus config get agent` prints the current default agent from bus configuration to stdout. If none is set, the command may print nothing or a documented sentinel; see `bus config get agent --help` for the current behavior.
+To set a default agent runtime for [bus agent](./bus-agent) or [bus dev](./bus-dev), use those modules’ own commands (e.g. `bus agent set runtime <runtime>` or `bus preferences set bus-agent.runtime <runtime>`); agent preferences live in each module’s namespace in [bus-preferences](./bus-preferences).
 
 ### Commands
 
-`init` — Create or ensure `datapackage.json` at the effective workspace root with a `busdk.accounting_entity` object. If the file is missing or does not contain that object, it is created or updated with default values. If it already contains `busdk.accounting_entity`, the command prints a warning to stderr and exits 0 without modifying the file. No extra positional arguments are accepted.
+`init` — Create or ensure `datapackage.json` at the effective workspace root with a `busdk.accounting_entity` object. Accepts the same optional flags as `set` (batch form): `--base-currency`, `--fiscal-year-start`, `--fiscal-year-end`, `--vat-registered`, `--vat-reporting-period`. When the file is missing or does not contain that object, it is created or updated; any provided flag sets that property (others use defaults). When the file already contains `busdk.accounting_entity`, the command prints a warning to stderr and exits 0 without modifying the file; flags are ignored. No extra positional arguments are accepted.
 
-`configure` — Edit accounting entity settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence) in the workspace `datapackage.json`. Requires an existing workspace that already has `datapackage.json` and a `busdk.accounting_entity` object. Only the flags you provide are applied. No extra positional arguments are accepted.
-
-`set agent <runtime>` — Save the default agent runtime to bus configuration. The [bus-agent](./bus-agent) and [bus-dev](./bus-dev) modules read this value via the bus-config library when no per-command or session preference is set. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Does not require a workspace.
-
-`get agent` — Print the current default agent from bus configuration to stdout. Does not require a workspace.
+`set` — Update accounting entity settings in the workspace `datapackage.json`. Two forms are supported. (1) **Batch:** `bus config set [--base-currency <code>] [--fiscal-year-start <date>] [--fiscal-year-end <date>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly>]` — only the flags you provide are applied; no flags means no change. (2) **Per-property:** `bus config set <key> <value>` where `<key>` is one of `base-currency`, `fiscal-year-start`, `fiscal-year-end`, `vat-registered`, `vat-reporting-period`. Requires an existing workspace that already has `datapackage.json` and a `busdk.accounting_entity` object. Unknown `<key>` is invalid usage (exit 2).
 
 ### Global flags
 
-These flags apply to both `init` and `configure`. They match the [standard global flags](../cli/global-flags) shared by most BusDK modules. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are treated as positional arguments (and for `init` and `configure`, extra positionals are invalid).
+These flags apply to both `init` and `set`. They match the [standard global flags](../cli/global-flags) shared by most BusDK modules. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are treated as positional arguments (and for `init`, extra positionals are invalid; for `set`, the per-property form expects exactly `<key> <value>` after `set`).
 
 - **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
 - **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0. Other flags and arguments are ignored.
@@ -53,11 +50,13 @@ Command results (e.g. help or version) are written to stdout. Diagnostics, progr
 
 ### Init: behavior and defaults
 
-`bus config init` creates `datapackage.json` when it is missing, or adds the `busdk.accounting_entity` subtree when the file exists but does not yet have it. The initial shape follows [workspace configuration](../data/workspace-configuration). Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, and fiscal year and VAT registration as documented in the data package extension. You can adjust these afterward with `bus config configure`.
+`bus config init` creates `datapackage.json` when it is missing, or adds the `busdk.accounting_entity` subtree when the file exists but does not yet have it. The initial shape follows [workspace configuration](../data/workspace-configuration). Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, and fiscal year and VAT registration as documented in the data package extension. You can set correct values from the start by passing the same optional flags as for `set` (e.g. `bus config init --base-currency=SEK --vat-registered=true`); omit a flag to use the default for that property. You can adjust values afterward with `bus config set`.
 
-### Configure: options and behavior
+### Set: options and behavior
 
-`bus config configure` updates only the fields you pass. Omit a flag to leave that property unchanged. The following flags map to [accounting entity](../master-data/accounting-entity/index) properties in `datapackage.json`:
+`bus config set` updates only the fields you pass. You can use the batch form with optional flags or the per-property form `bus config set <key> <value>`.
+
+**Batch form.** Omit a flag to leave that property unchanged. The following flags map to [accounting entity](../master-data/accounting-entity/index) properties in `datapackage.json`:
 
 - **`--base-currency <code>`** — ISO 4217 currency code. Must be uppercase (e.g. `EUR`, `SEK`). Lowercase or invalid codes are a usage error (exit 2).
 - **`--fiscal-year-start <date>`** — Fiscal year start in `YYYY-MM-DD` form. Slash or other formats are invalid and yield a usage error.
@@ -65,18 +64,20 @@ Command results (e.g. help or version) are written to stdout. Diagnostics, progr
 - **`--vat-registered <true|false>`** — Exactly `true` or `false`. Any other value is a usage error.
 - **`--vat-reporting-period <period>`** — Allowed values are `monthly` and `quarterly`. Other values (e.g. `yearly`) are invalid and exit with a usage error.
 
-Configure requires an existing workspace. If `datapackage.json` is missing in the effective workspace directory, the command fails with “datapackage.json not found”. If the file exists but does not contain a `busdk.accounting_entity` object (e.g. a minimal package with no BusDK extension), it fails with “missing busdk.accounting_entity”. In both cases the message is on stderr and the exit code is non-zero.
+**Per-property form.** `bus config set <key> <value>` where `<key>` is one of: `base-currency`, `fiscal-year-start`, `fiscal-year-end`, `vat-registered`, `vat-reporting-period`. The same value rules apply as for the batch form. Unknown `<key>` is invalid usage (exit 2).
+
+Set requires an existing workspace. If `datapackage.json` is missing in the effective workspace directory, the command fails with “datapackage.json not found”. If the file exists but does not contain a `busdk.accounting_entity` object (e.g. a minimal package with no BusDK extension), it fails with “missing busdk.accounting_entity”. In both cases the message is on stderr and the exit code is non-zero.
 
 ### Files
 
-The module reads and writes `datapackage.json` at the workspace root for workspace configuration and a dedicated user-level config file for bus configuration (e.g. default agent). The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `configure` subcommand updates only that subtree in place. The `set agent` and `get agent` commands read and write the user-level bus configuration file; the exact path is documented in the [module SDD](../sdd/bus-config).
+The module reads and writes `datapackage.json` at the workspace root. The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `set` subcommand updates only that subtree in place.
 
 ### Exit status and errors
 
 Exit 0 on success. Non-zero in these cases:
 
-- **Invalid usage (exit 2)** — Unknown or invalid flag value (e.g. invalid `--color`, invalid `--base-currency` or date or `--vat-reporting-period`), combining `--quiet` and `--verbose`, or extra positional arguments for `init` or `configure`. The tool prints a short usage-style error to stderr.
-- **Configure preconditions (exit non-zero)** — `configure` was run in a directory without `datapackage.json` or without `busdk.accounting_entity`; see above.
+- **Invalid usage (exit 2)** — Unknown or invalid flag value (e.g. invalid `--color`, invalid `--base-currency` or date or `--vat-reporting-period` on `init` or `set`), combining `--quiet` and `--verbose`, extra positional arguments for `init`, or unknown `<key>` in `bus config set <key> <value>`. The tool prints a short usage-style error to stderr.
+- **Set preconditions (exit non-zero)** — `set` was run in a directory without `datapackage.json` or without `busdk.accounting_entity`; see above.
 
 ### Development state
 
@@ -84,19 +85,19 @@ Exit 0 on success. Non-zero in these cases:
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
 
-**Completeness:** 70% (Broadly usable) — init and configure verified by e2e and unit tests; idempotent init and deterministic entity updates; set agent / get agent and config library not implemented and not verified.
+**Completeness:** 70% (Broadly usable) — init and set verified by e2e and unit tests; idempotent init and deterministic entity updates.
 
-**Use case readiness:** Accounting workflow: 70% — init and configure verified; user can complete workspace-config step (create/update datapackage and entity) before domain inits.
+**Use case readiness:** Accounting workflow: 70% — init and set verified; user can complete workspace-config step (create/update datapackage and entity) before domain inits.
 
-**Current:** `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity and exact JSON shape, init idempotent when entity already present (warn, no write), configure updates only given fields with deterministic diff, precondition failures (missing file or entity), and global flags (help, version, invalid color, quiet+verbose, --output, --quiet, -C, --). `internal/run/run_test.go` covers init, configure, chdir, output, quiet, and unknown subcommand. `internal/cli/flags_test.go` and `internal/config/validate_test.go` cover flag parsing and entity validation.
+**Current:** `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity and exact JSON shape, init idempotent when entity already present (warn, no write), set updates only given fields with deterministic diff, precondition failures (missing file or entity), and global flags (help, version, invalid color, quiet+verbose, --output, --quiet, -C, --). `internal/run/run_test.go` covers init, set, chdir, output, quiet, and unknown subcommand. `internal/cli/flags_test.go` and `internal/config/validate_test.go` cover flag parsing and entity validation.
 
-**Planned next:** Config library and `set agent` / `get agent` with persistence and E2E (PLAN.md); advances developer workflow when consumed by [bus-agent](./bus-agent) and [bus-dev](./bus-dev).
+**Planned next:** Per module roadmap.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-init](./bus-init) runs `bus config init` first; [bus-agent](./bus-agent) and [bus-dev](./bus-dev) will use config for default agent when set/get agent are implemented.
+**Used by:** [bus-init](./bus-init) runs `bus config init` first.
 
 See [Development status](../implementation/development-status).
 
@@ -113,6 +114,4 @@ See [Development status](../implementation/development-status).
 - [Workspace configuration (datapackage.json extension)](../data/workspace-configuration)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-config](../sdd/bus-config)
-- [bus-agent CLI reference](./bus-agent)
-- [bus-dev CLI reference](./bus-dev)
 - [Workflow: Initialize repo](../workflow/initialize-repo)
