@@ -19,6 +19,8 @@ FR-INV-003 Invoice master data in workspace root only. The module MUST place all
 
 NFR-INV-001 Auditability. Invoice corrections MUST be recorded as new records and linked to attachments and journal postings. Acceptance criteria: corrections do not overwrite existing records and references remain traceable.
 
+NFR-INV-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (sales and purchase invoice headers and lines, and their schemas). Other modules that need read-only access to invoice raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the invoice datasets; consumers use these accessors for read-only access; no consumer hardcodes invoice file names outside this module.
+
 ### System Architecture
 
 Bus Invoices owns invoice header and line datasets and integrates with the ledger by optionally writing journal postings. It relies on entities, accounts, VAT reference data, and attachments for traceability.
@@ -29,6 +31,8 @@ KD-INV-001 Invoice data is canonical repository data. Invoice headers and lines 
 
 KD-INV-002 Invoice master data lives in the project root only. All invoice datasets and their schemas are stored in the workspace root directory; the module does not create or use an `invoices/` subdirectory for master data. This satisfies FR-INV-003.
 
+KD-INV-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of invoice datasets for read-only access. Write access and all invoice business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-INV-001 (module CLI). The module exposes `bus invoices` with subcommands `init`, `add`, `list`, and `pdf` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -37,7 +41,9 @@ The `init` command creates the baseline invoice datasets and schemas (sales and 
 
 Invoice-line operations are `bus invoices <invoice-id> add` and `bus invoices <invoice-id> validate`, which append and validate line items for a specific invoice.
 
-Documented parameters for `bus invoices add` are `--type <sales|purchase>`, `--invoice-id <id>`, `--invoice-date <YYYY-MM-DD>`, `--due-date <YYYY-MM-DD>`, and `--customer <name>`. Documented parameters for `bus invoices <invoice-id> add` are `--desc <text>`, `--quantity <number>`, `--unit-price <number>`, `--revenue-account <account-name>`, and `--vat-rate <percent>`. Documented parameters for `bus invoices pdf` are `<invoice-id>` as a positional argument and `--out <path>`. Documented parameters for `bus invoices list` include a deterministic filter surface: `--type <sales|purchase>`, `--status <status>`, `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--due-from <YYYY-MM-DD>`, `--due-to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-id <id>`. Date filters apply to the invoice date in the header dataset, while `--due-from` and `--due-to` apply to the due date. `--month` selects the calendar month and is mutually exclusive with `--from` or `--to`. `--from` and `--to` may be used together or independently and are inclusive bounds, and the same inclusivity applies to `--due-from` and `--due-to`. `--status` matches the header status value exactly as stored, typically values like unpaid or paid. `--counterparty` matches the invoice header counterparty identifier exactly as stored, typically aligned with `bus entities` identifiers. `--invoice-id` matches the stable invoice identifier exactly. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.
+Documented parameters for `bus invoices add` are `--type <sales|purchase>`, `--invoice-id <id>`, `--invoice-date <YYYY-MM-DD>`, `--due-date <YYYY-MM-DD>`, and `--customer <name>`. Documented parameters for `bus invoices <invoice-id> add` are `--desc <text>`, `--quantity <number>`, `--unit-price <number>`, `--revenue-account <account-name>`, and `--vat-rate <percent>`. Documented parameters for `bus invoices pdf` are `<invoice-id>` as a positional argument and `--out <path>`. Interface IF-INV-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (sales and purchase invoice headers and lines, and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and invoice logic remain in this module.
+
+Documented parameters for `bus invoices list` include a deterministic filter surface: `--type <sales|purchase>`, `--status <status>`, `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--due-from <YYYY-MM-DD>`, `--due-to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-id <id>`. Date filters apply to the invoice date in the header dataset, while `--due-from` and `--due-to` apply to the due date. `--month` selects the calendar month and is mutually exclusive with `--from` or `--to`. `--from` and `--to` may be used together or independently and are inclusive bounds, and the same inclusivity applies to `--due-from` and `--due-to`. `--status` matches the header status value exactly as stored, typically values like unpaid or paid. `--counterparty` matches the invoice header counterparty identifier exactly as stored, typically aligned with `bus entities` identifiers. `--invoice-id` matches the stable invoice identifier exactly. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.
 
 Usage examples:
 
@@ -54,6 +60,8 @@ bus invoices list --status unpaid
 ### Data Design
 
 Invoice master data file locations conform to the [minimal example layout](../layout/minimal-example-layout): all owned files reside in the workspace root only, as required by the [data directory layout principles](../layout/layout-principles). The header datasets `sales-invoices.csv` and `purchase-invoices.csv`, the line datasets `sales-invoice-lines.csv` and `purchase-invoice-lines.csv`, and each dataset’s JSON Table Schema file (e.g. `sales-invoices.schema.json`) are stored with paths relative to the workspace root. The module MUST NOT create or use an `invoices/` or other invoice-specific subdirectory for master data. The module reads and writes these files in place so that invoice data remains reviewable and exportable as canonical repository data.
+
+Other modules that need read-only access to invoice datasets MUST obtain the path(s) from this module’s Go library (IF-INV-002). All writes and invoice-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

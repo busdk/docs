@@ -233,6 +233,8 @@ BusDK also extends Table Schema field descriptors with `busdk.formula` metadata 
 
 Bus Data owns mechanical concerns only: reading and writing CSV, reading and writing schema JSON, creating and patching `datapackage.json`, enforcing Table Schema constraints, and validating foreign key integrity. Domain modules own business rules, domain invariants, and any accounting classification decisions; bus-data does not infer or enforce those semantics.
 
+Path ownership lies with domain modules. When a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it MUST obtain the path from the owning module’s Go library (see [Data path contract for read-only cross-module access](./modules#data-path-contract-for-read-only-cross-module-access)). Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods.” This keeps the data layer mechanical and allows future dynamic path configuration to be implemented in the owning modules without changing bus-data’s contract.
+
 ### Assumptions and Dependencies
 
 Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.

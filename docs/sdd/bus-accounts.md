@@ -21,6 +21,8 @@ FR-ACC-003 Data-layer init via bus-data library. Bus Accounts MUST perform all i
 
 NFR-ACC-001 Deterministic outputs. The module MUST produce deterministic listings and diagnostics so scripting and audits are stable across machines. Acceptance criteria: listings are ordered by stable account identifiers, and diagnostics refer to workspace-relative paths and stable identifiers.
 
+NFR-ACC-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (e.g. accounts table and schema). Other modules that need read-only access to the chart of accounts raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration (e.g. from workspace or data package config) can be supported without breaking consumers; today paths may be conventional defaults (e.g. `accounts.csv`). Acceptance criteria: the library provides at least one path accessor (e.g. given workspace root, returns the path to the accounts CSV and/or schema); consumers that need to read accounts data for pure-data purposes use this accessor; no consumer hardcodes `accounts.csv` outside this module.
+
 ### System Architecture
 
 Bus Accounts is a module that owns the accounts datasets and schemas and exposes a CLI surface that reads and writes those datasets. It integrates with the [bus-data](./bus-data) Go library for all initialization: ensuring the workspace data package exists, creating `accounts.csv` and `accounts.schema.json`, and registering the accounts resource in `datapackage.json`. It integrates with other modules by providing stable account identifiers and types that become foreign keys in journal, invoice, budget, and reporting datasets.
@@ -31,6 +33,8 @@ KD-ACC-001 Accounts are authoritative repository data. The chart of accounts is 
 
 KD-ACC-002 Init via bus-data library only. Account baseline creation is implemented on top of the bus-data Go library. The module ensures the data package descriptor exists (bus-data init semantics), then creates `accounts.csv` and `accounts.schema.json` and registers the accounts resource in `datapackage.json` through library calls. This keeps a single code path for descriptor and table creation and aligns with [bus-data](./bus-data) KD-DAT-004 and [bus-config](./bus-config) / [bus-init](./bus-init) practice.
 
+KD-ACC-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the accounts dataset for read-only access without hardcoding file names. Write access and all account business logic remain in this module; path exposure does not grant write or domain-logic rights.
+
 ### Component Design and Interfaces
 
 Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `add`, `set`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -40,6 +44,8 @@ The `init` command creates the baseline accounts dataset and schema when they ar
 The `add` command creates a new account. It accepts account identity and type parameters: `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The command MUST fail if an account with the same identifier (e.g. the same `--code`) already exists in the chart of accounts: it MUST exit non-zero, emit a clear diagnostic to standard error, and MUST NOT modify the dataset (FR-ACC-004).
 
 The `set` command modifies an existing account. It is used to update name, type, or other attributes of an account that already exists (identified by code). The command MUST fail if no account with the given identifier exists. Parameters and semantics are defined by the module implementation; the invariant is that creation is done only via `add` and updates only via `set`.
+
+Interface IF-ACC-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s). For example, given a workspace root path, the library returns the path to the accounts CSV (and optionally the beside-the-table schema path). Resolution MUST be designed so that default paths are conventional names today but can later be overridden from workspace or data package configuration without changing the consumer API. Consumers use these accessors for read-only access to the raw file(s); they must not write to the path or rely on account business logic except via this module’s own APIs.
 
 Usage examples:
 
@@ -57,6 +63,8 @@ bus accounts validate
 ### Data Design
 
 The module reads and writes `accounts.csv` with a beside-the-table JSON Table Schema. Account identifiers are stable keys used by other datasets. Master data owned by this module is stored in the workspace root only; the module does not create or use an `accounts/` or other subdirectory for its datasets and schemas. After a successful `bus accounts init`, the workspace data package (`datapackage.json`) MUST contain a resource entry for the accounts table: the resource path points to `accounts.csv` and the resource reflects the beside-the-table schema so that `bus data package discover`, `bus data package validate`, and other data-package operations see the accounts dataset.
+
+Other modules that need read-only access to the accounts dataset (e.g. to resolve account codes or read the chart for balance computation in another workspace) MUST obtain the path from this module’s Go library (IF-ACC-002), not by hardcoding `accounts.csv`. All writes and account-domain logic (validation, types, listing) remain in this module.
 
 ### Assumptions and Dependencies
 

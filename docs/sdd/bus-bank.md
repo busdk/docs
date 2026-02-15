@@ -19,6 +19,8 @@ FR-BNK-003 Init behavior. The module MUST provide an `init` command that creates
 
 NFR-BNK-001 Auditability. Imports MUST preserve source statement identifiers and evidence links. Acceptance criteria: each normalized transaction records a source reference and can be traced to attachments metadata.
 
+NFR-BNK-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (bank-imports, bank-transactions, and their schemas). Other modules that need read-only access to bank raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the bank datasets; consumers use these accessors for read-only access; no consumer hardcodes bank file names outside this module.
+
 ### System Architecture
 
 Bus Bank owns the bank import datasets and normalizes raw statement data into repository tables. It integrates with `bus reconcile` for matching and with `bus journal` for posting outcomes, using `bus accounts`, `bus entities`, and `bus invoices` as reference data.
@@ -27,11 +29,15 @@ Bus Bank owns the bank import datasets and normalizes raw statement data into re
 
 KD-BNK-001 Bank statements are normalized into canonical datasets. The module converts raw statement data into schema-validated tables for deterministic downstream processing.
 
+KD-BNK-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of bank datasets for read-only access. Write access and all bank business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-BNK-001 (module CLI). The module exposes `bus bank` with subcommands `init`, `import`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline bank datasets and schemas (`bank-imports.csv`, `bank-transactions.csv` and their beside-the-table schemas) when they are absent. If all owned bank datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
+Interface IF-BNK-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (bank-imports.csv, bank-transactions.csv, and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and bank logic remain in this module.
 
 Documented parameters are `bus bank import --file <path>` and `bus bank list` filters that constrain the transaction set deterministically. The complete `list` filter surface is `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-ref <text>`. Date filters apply to the normalized transaction date in `bank-transactions.csv`. `--month` selects the calendar month and is mutually exclusive with `--from` or `--to`. `--from` and `--to` may be used together or independently and are inclusive bounds. `--counterparty` filters by the stable counterparty identifier as recorded in the transaction row, matching `bus entities` identifiers exactly. `--invoice-ref` filters by the normalized invoice reference string present on the transaction row, matching exactly as stored. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.
 
@@ -45,6 +51,8 @@ bus bank list --month 2026-2
 ### Data Design
 
 The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Master data owned by this module is stored in the workspace root only; the module does not create or use a `bank/` or other subdirectory for its datasets and schemas. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments.
+
+Other modules that need read-only access to bank datasets MUST obtain the path(s) from this module’s Go library (IF-BNK-002). All writes and bank-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

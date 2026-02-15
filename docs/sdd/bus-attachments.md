@@ -19,6 +19,8 @@ FR-ATT-003 Init behavior. The module MUST provide an `init` command that creates
 
 NFR-ATT-001 Auditability. Attachment metadata MUST remain in the repository even if files are stored outside Git. Acceptance criteria: metadata rows are retained and list outputs remain deterministic.
 
+NFR-ATT-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (attachments metadata CSV and schema). Other modules that need read-only access to the attachment metadata raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the attachments dataset; consumers use these accessors for read-only access; no consumer hardcodes `attachments.csv` outside this module.
+
 ### System Architecture
 
 Bus Attachments owns the repository-root attachments metadata dataset and manages references to files stored under a predictable directory structure. It integrates with invoices, journal entries, bank data, and reconciliation by providing stable attachment identifiers.
@@ -29,6 +31,8 @@ KD-ATT-001 Attachment evidence is recorded as repository data. Attachment metada
 
 KD-ATT-002 Attachments are a special case for file layout. Evidence files are stored under a dedicated subdirectory `./attachments/yyyy/mm/yyyymmdd-filename...` (relative to the workspace root), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. The metadata dataset and schema remain at the workspace root; only the evidence files use this subdirectory.
 
+KD-ATT-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the attachments metadata dataset for read-only access. Write access and all attachment business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with subcommands `init`, `add`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -36,6 +40,8 @@ Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with sub
 The `init` command creates the baseline attachments metadata dataset and schema (`attachments.csv` and `attachments.schema.json`) when they are absent. If both already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 The `add` command accepts a positional file path plus a description parameter. Documented parameters are `<file>` as a positional argument and `--desc <text>` for the attachment description.
+
+Interface IF-ATT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (attachments metadata CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and attachment logic remain in this module.
 
 Usage examples:
 
@@ -47,6 +53,8 @@ bus attachments list
 ### Data Design
 
 The module reads and writes `attachments.csv` in the repository root with a beside-the-table schema file. Master data (the metadata dataset and its schema) lives in the workspace root only. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` — for example `attachments/2026/01/20260115-INV-1001.pdf` — where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename begins with an eight-digit date. This is the only BusDK layout that places operational files in a subdirectory; the path is deterministic so the metadata can reference it reliably. Each `attachment_id` is a standard UUID string in canonical form so integrations can generate or validate identifiers without guessing; the expected representation is lowercase hex with hyphens in 8-4-4-4-12 grouping.
+
+Other modules that need read-only access to the attachments metadata dataset MUST obtain the path from this module’s Go library (IF-ATT-002). All writes and attachment-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

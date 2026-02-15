@@ -19,6 +19,8 @@ FR-PER-003 Opening from prior workspace. The module MUST provide a CLI operation
 
 NFR-PER-001 Auditability. Period transitions MUST remain reviewable in repository history. Acceptance criteria: period control datasets preserve open and close boundaries without overwrites.
 
+NFR-PER-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (period control dataset and schema). Other modules that need read-only access to period control raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the period dataset (and schema); consumers use these accessors for read-only access; no consumer hardcodes `periods.csv` outside this module.
+
 ### System Architecture
 
 Bus Period owns the period control datasets and uses journal data to generate closing entries. The `opening` subcommand reads journal and period data from a prior workspace and appends one opening transaction to the current workspace journal via existing journal APIs. The module integrates with validation, VAT, and reporting workflows that precede filing and exports.
@@ -27,9 +29,13 @@ Bus Period owns the period control datasets and uses journal data to generate cl
 
 KD-PER-001 Period control is recorded as repository data. Period transitions are stored in datasets so close and lock boundaries remain reviewable.
 
+KD-PER-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the period control dataset for read-only access. Write access and all period business logic (open, close, lock, opening entry) remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `open`, `close`, `lock`, and `opening` and follows BusDK CLI conventions for deterministic output and diagnostics.
+
+Interface IF-PER-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (e.g. period control CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and period logic remain in this module.
 
 The `init` command creates the baseline period control dataset and schema when they are absent. If both `periods.csv` and `periods.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
@@ -45,7 +51,7 @@ The `opening` subcommand generates the opening entry for a new fiscal year in th
 
 **Flags.**
 
-- `--from <path>`: Path to the prior workspace (directory containing that workspace’s `periods.csv`, journal datasets, and `accounts.csv`). The path is resolved relative to the current process working directory (before any `-C`). The command does not perform network access; the prior workspace must be accessible on the local filesystem.
+- `--from <path>`: Path to the prior workspace root. The command MUST resolve paths to that workspace’s period control, journal, and accounts datasets via the respective owning modules’ Go libraries (bus-period, bus-journal, bus-accounts), not by hardcoding file names. The path is resolved relative to the current process working directory (before any `-C`). The command does not perform network access; the prior workspace must be accessible on the local filesystem.
 - `--as-of <YYYY-MM-DD>`: Closing date in the prior workspace. Account balances are computed as-of this date using the same internal logic as period close or journal balance in that workspace.
 - `--post-date <YYYY-MM-DD>`: Posting date for the opening entry in the current workspace (typically the first day of the new fiscal year).
 - `--period <YYYY-MM>`: Target period in the current workspace. The opening entry is associated with this period; the period must be open (see validation rules).
@@ -55,7 +61,7 @@ The `opening` subcommand generates the opening entry for a new fiscal year in th
 - `--replace`: (Optional.) If an opening entry already exists for the target period that was created by this command (identified deterministically, e.g. by a fixed prefix or marker in the transaction description), remove only that entry (or those entries) and then create the new opening entry. The command MUST NOT remove arbitrary user postings; only entries that can be deterministically attributed to a previous `bus period opening` run for the same target period may be removed. If no such entry exists, `--replace` has no effect on removal and the command proceeds to create the opening entry. Default: false; when false, the command refuses to run if an opening entry for the target period already exists (as identified by the same deterministic rule).
 - `--allow-as-of-mismatch`: (Optional.) Allow running when the prior workspace’s fiscal year end (from its workspace config, if available) does not match `--as-of`. When omitted, the command MUST refuse to run if the prior workspace has a defined fiscal year end and it does not equal `--as-of`, with a clear diagnostic. When set, the command proceeds so that operators can intentionally carry forward from a different cut-off date (e.g. mid-year migration). Default: false.
 
-**Deterministic behavior and validation.** The command MUST read the prior workspace state and compute account balances as-of `--as-of` using the same internal logic as period close or journal balance (so that closing balances and opening-source balances are consistent). The command MUST require that the current workspace has a chart of accounts initialized (e.g. `accounts.csv` and schema present and valid). It MUST validate that every account code used in the opening entry exists in the current workspace chart of accounts; if any code is missing, it MUST exit non-zero with a clear diagnostic and MUST NOT write any journal data. The command MUST refuse to run if the target period is not open or is closed/locked. It MUST refuse to run if the prior workspace has a defined fiscal year end and that date does not match `--as-of`, unless `--allow-as-of-mismatch` is set. It MUST refuse to run if an opening entry for the target period already exists (identified as above) unless `--replace` is provided. The command MUST NOT directly edit files outside BusDK modules; it MUST use existing library APIs (e.g. bus-journal or shared journal layer) for journal append and validation so that all writes go through the same schema and balance checks.
+**Deterministic behavior and validation.** The command MUST read the prior workspace state and compute account balances as-of `--as-of` using the same internal logic as period close or journal balance (so that closing balances and opening-source balances are consistent). It MUST resolve paths to the prior workspace’s accounts, journal, and period datasets via the bus-accounts, bus-journal, and bus-period Go libraries (read-only path access). The command MUST require that the current workspace has a chart of accounts initialized (path and schema obtained via bus-accounts library). It MUST validate that every account code used in the opening entry exists in the current workspace chart of accounts; if any code is missing, it MUST exit non-zero with a clear diagnostic and MUST NOT write any journal data. The command MUST refuse to run if the target period is not open or is closed/locked. It MUST refuse to run if the prior workspace has a defined fiscal year end and that date does not match `--as-of`, unless `--allow-as-of-mismatch` is set. It MUST refuse to run if an opening entry for the target period already exists (identified as above) unless `--replace` is provided. The command MUST NOT directly edit files outside BusDK modules; it MUST use existing library APIs (e.g. bus-journal or shared journal layer) for journal append and validation so that all writes go through the same schema and balance checks.
 
 **Output data changes.** The command creates exactly one balanced journal transaction in the current workspace, dated `--post-date`, with one line per (included) balance from the prior workspace plus a balancing line posted to the selected equity account. The transaction MUST include deterministic provenance in its description when `--description` is not set (normalized source workspace path and as-of date). The resulting journal MUST pass the same validation as any other journal transaction (balanced to zero, schema-valid, account codes present in the current chart). VAT reporting period and other workspace configuration (e.g. in [bus-config](../sdd/bus-config)) are not modified by this command.
 
@@ -82,6 +88,8 @@ bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 
 ### Data Design
 
 The module reads and writes the period control dataset at the workspace root as `periods.csv`, with a beside-the-table schema file `periods.schema.json`. Paths are root-level only: there is no subdirectory (for example, the data is not under `periods/periods.csv`). Period operations append records so period boundaries remain reviewable.
+
+Other modules that need read-only access to the period control dataset (e.g. to check open/closed state in another workspace) MUST obtain the path from this module’s Go library (IF-PER-002). All writes and period-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

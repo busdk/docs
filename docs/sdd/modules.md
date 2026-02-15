@@ -11,6 +11,14 @@ This section collects the module Software Design Documents. For end user command
 
 For the architectural rationale behind independent modules and the design goals that shape their boundaries, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
+### Data path contract for read-only cross-module access
+
+Every module that owns workspace data (datasets and/or schemas in the workspace) MUST expose the path(s) to its owned data file(s) via its Go library. Other modules that need read-only, pure-data access to another module’s raw files MUST obtain the path(s) from that owning module’s library; they MUST NOT hardcode file names or paths outside the module that owns the data.
+
+Providing a path grants read-only access only. All write access and business logic (e.g. balance computation, validation, posting) remain in the owning module. Consumers may use the path to read raw file contents for their own logic (e.g. computing opening balances from a prior workspace’s journal); they must not perform writes or rely on the owning module’s domain logic except by calling the owning module’s APIs.
+
+Path accessors MUST be designed so that future dynamic configuration is possible without breaking consumers. Today, default paths may be conventional names (e.g. `accounts.csv` at the workspace root). The API MUST resolve paths in a way that allows, in a later phase, resolving from workspace or data package configuration (e.g. end users configuring paths in a data package) so that only the owning module’s implementation changes; consuming modules continue to call the same library to obtain the path. Each data-owning module SDD specifies its path-accessor interface and owned file set.
+
 - [`bus`](./bus): Top-level dispatcher; runs `bus <command> [args...]` by invoking the corresponding `bus-<command>` executable on PATH.
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating `bus config init` and then module-owned `init` commands for the standard workspace layout.
 - [`bus config`](./bus-config): Owns workspace-level configuration (`datapackage.json`, accounting entity settings); provides `init` and `configure` so workspace settings can be created or updated without re-running full bootstrap.

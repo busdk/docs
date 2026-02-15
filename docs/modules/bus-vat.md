@@ -27,7 +27,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus vat` comp
 
 ### Files
 
-Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`). Writes VAT summaries and exports as root-level datasets with schemas. When period-specific report or return data is saved to its own file, it is stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`), not in a subdirectory. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not use a subdirectory for that data.
+Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`). Writes VAT summaries and exports as root-level datasets with schemas. When period-specific report or return data is saved to its own file, it is stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`), not in a subdirectory. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not use a subdirectory for that data. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 

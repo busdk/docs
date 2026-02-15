@@ -17,6 +17,8 @@ FR-BUD-002 Variance reporting. The module MUST compute budget versus actual vari
 
 NFR-BUD-001 Reproducibility. Budget outputs MUST be reproducible from stored budgets and journal actuals. Acceptance criteria: variance results are derived from repository data without external dependencies.
 
+NFR-BUD-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (budget dataset and schema). Other modules that need read-only access to budget raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the budget dataset; consumers use these accessors for read-only access; no consumer hardcodes budget file names outside this module.
+
 ### System Architecture
 
 Bus Budget owns the budgeting area datasets and produces variance outputs by reading journal actuals and accounts. It integrates with `bus reports` and management reporting workflows.
@@ -25,11 +27,15 @@ Bus Budget owns the budgeting area datasets and produces variance outputs by rea
 
 KD-BUD-001 Budgets are stored as repository datasets. Budget intent is recorded as data so variance outputs remain deterministic and reviewable.
 
+KD-BUD-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of budget datasets for read-only access. Write access and all budget business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-BUD-001 (module CLI). The module exposes `bus budget` with subcommands `init`, `add`, `set`, and `report` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline budget dataset and schema when they are absent. If both the budget dataset and its schema already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
+Interface IF-BUD-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (e.g. budgets.csv and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and budget logic remain in this module.
 
 Documented parameters include `bus budget report --year <YYYY>` and `bus budget report --period <period>`. Documented parameters for `bus budget add` are `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`, with no positional arguments. Documented parameters for `bus budget set` are the same, and `set` is defined as an upsert keyed by `(account, year, period)` that replaces the existing row for that key or inserts a new row when none exists.
 
@@ -43,6 +49,8 @@ bus budget report --year 2026
 ### Data Design
 
 The module reads and writes budget datasets in the budgeting area, such as `budgets.csv`, with JSON Table Schemas stored beside each dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `budgets/` or other subdirectory for its datasets and schemas.
+
+Other modules that need read-only access to budget datasets MUST obtain the path(s) from this module’s Go library (IF-BUD-002). All writes and budget-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

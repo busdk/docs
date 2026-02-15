@@ -17,6 +17,8 @@ FR-INV-002 Valuation outputs. The module MUST produce valuation outputs suitable
 
 NFR-INV-001 Auditability. Inventory corrections MUST be append-only and reference original records. Acceptance criteria: movement and valuation records are not overwritten.
 
+NFR-INVT-001 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (inventory item and movement datasets and their schemas). Other modules that need read-only access to inventory raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the inventory datasets; consumers use these accessors for read-only access; no consumer hardcodes inventory file names outside this module.
+
 ### System Architecture
 
 Bus Inventory owns inventory datasets and produces valuation outputs that can be posted into the journal. It relies on account references from `bus accounts` and integrates with `bus reports`.
@@ -24,6 +26,8 @@ Bus Inventory owns inventory datasets and produces valuation outputs that can be
 ### Key Decisions
 
 KD-INV-001 Inventory is stored as repository data. Item master data and movements remain reviewable and exportable as datasets.
+
+KD-INVT-001 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of inventory datasets for read-only access. Write access and all inventory business logic remain in this module.
 
 ### Component Design and Interfaces
 
@@ -37,6 +41,8 @@ The `move` command appends a stock movement row for an item. It accepts `--item-
 
 The `valuation` command computes valuation outputs for an as-of date. It accepts `--as-of <YYYY-MM-DD>` as a required parameter and `--item-id <id>` as an optional parameter. When `--item-id` is supplied, the output is scoped to that item; otherwise the output includes all items that have movements up to the as-of date, and valuation uses the method stored on each item record.
 
+Interface IF-INVT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (inventory item and movement datasets and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and inventory logic remain in this module.
+
 Usage examples:
 
 ```bash
@@ -47,6 +53,8 @@ bus inventory valuation
 ### Data Design
 
 The module reads and writes inventory item and movement datasets in the inventory area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use an `inventory/` or other subdirectory for its datasets and schemas.
+
+Other modules that need read-only access to inventory datasets MUST obtain the path(s) from this module’s Go library (IF-INVT-002). All writes and inventory-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

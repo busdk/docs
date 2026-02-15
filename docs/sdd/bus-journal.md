@@ -17,6 +17,8 @@ FR-JRN-002 CLI surface for ledger postings. The module MUST provide commands to 
 
 NFR-JRN-001 Period integrity. The module MUST respect period close and lock boundaries. Acceptance criteria: postings that would break closed periods are rejected with deterministic diagnostics.
 
+NFR-JRN-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (journal index and period journal files, and their schemas). Other modules that need read-only access to journal data (e.g. to compute balances in another workspace) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the journal index and for resolving period journal paths; consumers use these accessors for read-only access; no consumer hardcodes journal file names outside this module.
+
 ### System Architecture
 
 Bus Journal owns the journal index and period journal datasets and accepts postings from other modules. It relies on account references from `bus accounts` and serves as the foundation for reporting and VAT computation.
@@ -24,6 +26,8 @@ Bus Journal owns the journal index and period journal datasets and accepts posti
 ### Key Decisions
 
 KD-JRN-001 Append-only ledger. Journal corrections are expressed as new entries that reference prior records rather than overwriting them.
+
+KD-JRN-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the journal index and period journal file(s) for read-only access (e.g. balance computation in a prior workspace). Write access and all journal business logic (add, balance, validation) remain in this module.
 
 ### Component Design and Interfaces
 
@@ -34,6 +38,8 @@ The `init` command creates the baseline journal index and schema (and any requir
 Documented parameters for `bus journal add` are `--date <YYYY-MM-DD>`, `--desc <text>`, `--debit <account>=<amount>`, and `--credit <account>=<amount>`. Documented parameters for `bus journal balance` include `--as-of <YYYY-MM-DD>`.
 
 Each `--debit` and `--credit` flag represents one journal line and uses the syntax `<account>=<amount>`, where `<account>` is the account name as stored in the accounts dataset and should be quoted when it contains spaces. The flags are repeatable, and multiple debit and credit lines may be provided in any order to form a single transaction. At least one debit and one credit line are required, and the module sums all debit amounts and all credit amounts and requires them to balance before it writes the entry.
+
+Interface IF-JRN-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s): the journal index and, when applicable, period journal file(s) (and their schemas). Given a workspace root path and optionally a period identifier, the library returns the relevant path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and journal logic (balance computation, posting) remain in this module.
 
 Usage examples:
 
@@ -48,6 +54,8 @@ bus journal balance --as-of 2026-03-31
 ### Data Design
 
 All files owned by Bus Journal include “journal” or “journals” in the filename so that journal data is unambiguous at the workspace root. The module reads and writes the journal index `journals.csv` in the repository root and period journal files at the workspace root with a date prefix, for example `journal-2026.csv` (and its beside-the-table schema `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not create or use a subdirectory such as `2026/journals/` for journal data.
+
+Other modules that need read-only access to journal data (e.g. to compute balances as-of a date in another workspace) MUST obtain the path(s) from this module’s Go library (IF-JRN-002). All writes and journal-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

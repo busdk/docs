@@ -17,6 +17,8 @@ FR-ENT-002 CLI surface for reference data. The module MUST provide commands to i
 
 NFR-ENT-001 Auditability. Entity records MUST remain stable across the retention period when referenced by vouchers, invoices, or bank data. Acceptance criteria: identifiers are stable and corrections are append-only.
 
+NFR-ENT-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (entities table and schema). Other modules that need read-only access to the entity registry raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the entities dataset; consumers use these accessors for read-only access; no consumer hardcodes `entities.csv` outside this module.
+
 ### System Architecture
 
 Bus Entities owns the entity reference dataset (`entities.csv`) at the workspace root (no `entities/` subdirectory) and provides stable identifiers to other modules. It integrates with invoices, bank imports, reconciliation, VAT, and attachments through shared identifier references.
@@ -25,6 +27,8 @@ Bus Entities owns the entity reference dataset (`entities.csv`) at the workspace
 
 KD-ENT-001 Entity data is a shared reference dataset. Counterparty identifiers are stored as repository data and reused across modules.
 
+KD-ENT-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the entity dataset for read-only access. Write access and all entity business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-ENT-001 (module CLI). The module exposes `bus entities` with subcommands `init`, `list`, and `add` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -32,6 +36,8 @@ Interface IF-ENT-001 (module CLI). The module exposes `bus entities` with subcom
 The `init` command creates the baseline entity dataset and schema when they are absent. If both `entities.csv` and `entities.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 The `add` command accepts entity identity parameters. Documented parameters are `--id <entity-id>` and `--name <display-name>`, with no positional arguments. The `list` command accepts no module-specific filters and returns the full entity registry in stable identifier order.
+
+Interface IF-ENT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (e.g. entities CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and entity logic remain in this module.
 
 Usage examples:
 
@@ -47,6 +53,8 @@ bus entities add --id ENT-ACME --name "Acme Corp"
 ### Data Design
 
 The module reads and writes `entities.csv` with a beside-the-dataset JSON Table Schema `entities.schema.json` in the [accounts area](../layout/accounts-area) at the workspace root. Entity data does not use a dedicated subdirectory: `entities.csv` and `entities.schema.json` sit at the same level as `accounts.csv` and other canonical datasets, as defined in the [minimal workspace baseline](../layout/minimal-workspace-baseline). The entity identifier is treated as a stable key referenced by other datasets.
+
+Other modules that need read-only access to the entity registry MUST obtain the path from this module’s Go library (IF-ENT-002). All writes and entity-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

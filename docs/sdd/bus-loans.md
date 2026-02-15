@@ -17,6 +17,8 @@ FR-LOAN-002 Amortization outputs. The module MUST generate amortization schedule
 
 NFR-LOAN-001 Auditability. Loan corrections MUST be append-only and traceable to original records. Acceptance criteria: schedules and events remain reviewable in repository history.
 
+NFR-LOAN-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (loan register, event datasets, and their schemas). Other modules that need read-only access to loan raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the loan datasets; consumers use these accessors for read-only access; no consumer hardcodes loan file names outside this module.
+
 ### System Architecture
 
 Bus Loans owns the loan datasets and generates schedules and posting suggestions. It relies on `bus accounts` and `bus entities` for reference data and integrates with the journal and reporting workflows.
@@ -24,6 +26,8 @@ Bus Loans owns the loan datasets and generates schedules and posting suggestions
 ### Key Decisions
 
 KD-LOAN-001 Loan records are repository data. Loan contracts, events, and schedules are stored as datasets for auditability and exportability.
+
+KD-LOAN-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of loan datasets for read-only access. Write access and all loan business logic remain in this module.
 
 ### Component Design and Interfaces
 
@@ -37,6 +41,8 @@ The `event` command appends an event record that references the loan contract an
 
 The `amortize` command generates amortization schedules and posting output for a specific period. It accepts `--period <period>` as a required parameter and `--loan-id <id>` and `--post-date <YYYY-MM-DD>` as optional parameters. When `--loan-id` is omitted, the command scopes to all loans; when `--post-date` is omitted, the posting date is the last date of the selected period.
 
+Interface IF-LOAN-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (loan register and event datasets and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and loan logic remain in this module.
+
 Usage examples:
 
 ```bash
@@ -49,6 +55,8 @@ bus loans amortize --period 2026-02
 ### Data Design
 
 The module reads and writes loan register and event datasets in the loans area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `loans/` or other subdirectory for its datasets and schemas.
+
+Other modules that need read-only access to loan datasets MUST obtain the path(s) from this module’s Go library (IF-LOAN-002). All writes and loan-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

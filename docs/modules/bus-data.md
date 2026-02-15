@@ -272,7 +272,7 @@ Help and version output are printed to standard output. Diagnostics and validati
 
 ### Files
 
-Operates on any workspace CSV and its beside-the-table `.schema.json` (same directory, `.csv` replaced by `.schema.json`), plus `datapackage.json` at the workspace root when present.
+Operates on any workspace CSV and its beside-the-table `.schema.json` (same directory, `.csv` replaced by `.schema.json`), plus `datapackage.json` at the workspace root when present. Paths to domain datasets (e.g. accounts, journal) are owned by the module that owns each dataset; callers obtain paths from that module (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 

@@ -17,6 +17,8 @@ FR-PAY-002 Payroll run outputs. The module MUST produce posting outputs for payr
 
 NFR-PAY-001 Auditability. Payroll corrections MUST be append-only and traceable to the original runs. Acceptance criteria: payroll datasets remain reviewable in repository history.
 
+NFR-PAY-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (employee and payroll run datasets and their schemas). Other modules that need read-only access to payroll raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the payroll datasets; consumers use these accessors for read-only access; no consumer hardcodes payroll file names outside this module.
+
 ### System Architecture
 
 Bus Payroll owns the payroll datasets and produces posting outputs for the journal. It relies on `bus accounts` and `bus entities` for reference data and contributes to reporting workflows.
@@ -25,6 +27,8 @@ Bus Payroll owns the payroll datasets and produces posting outputs for the journ
 
 KD-PAY-001 Payroll data is repository data. Payroll runs and employee records are stored as datasets for auditability and exportability.
 
+KD-PAY-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of payroll datasets for read-only access. Write access and all payroll business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-PAY-001 (module CLI). The module exposes `bus payroll` with subcommands `init`, `run`, `list`, and `employee` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -32,6 +36,8 @@ Interface IF-PAY-001 (module CLI). The module exposes `bus payroll` with subcomm
 The `init` command creates the baseline payroll datasets and schemas (employee and payroll run data) when they are absent. If all owned payroll datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 Documented parameters for `bus payroll run` are `--month <YYYY-MM>`, `--run-id <id>`, and `--pay-date <YYYY-MM-DD>`. The `--month` value selects the calendar month for the payroll period and uses the same `YYYY-MM` form as other period-scoped commands. The run uses employee records that are active for the pay date, where `start-date` is on or before the pay date and `end-date` is either empty or after the pay date, and it posts wages and withholdings using the account identifiers recorded on each employee row.
+
+Interface IF-PAY-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (employee and payroll run datasets and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and payroll logic remain in this module.
 
 Employee management commands are `bus payroll employee add` and `bus payroll employee list`. Documented parameters for `employee add` are `--employee-id <id>`, `--entity <entity-id>`, `--start-date <YYYY-MM-DD>`, `--end-date <YYYY-MM-DD>`, `--gross <decimal>`, `--withholding-rate <percent>`, `--wage-expense <account-id>`, `--withholding-payable <account-id>`, and `--net-payable <account-id>`. The `--end-date` parameter is optional; when omitted the employee remains active after the start date. The `employee list` command accepts no module-specific filters and returns employees in stable identifier order.
 
@@ -46,6 +52,8 @@ bus payroll run --month 2026-01 --run-id PAY-2026-01 --pay-date 2026-01-31
 ### Data Design
 
 The module reads and writes payroll datasets in the payroll area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `payroll/` or other subdirectory for its datasets and schemas.
+
+Other modules that need read-only access to payroll datasets MUST obtain the path(s) from this module’s Go library (IF-PAY-002). All writes and payroll-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

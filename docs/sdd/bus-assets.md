@@ -17,6 +17,8 @@ FR-AST-002 Posting outputs. The module MUST produce depreciation and disposal po
 
 NFR-AST-001 Auditability. The module MUST represent corrections as new records rather than destructive edits. Acceptance criteria: asset corrections are append-only and include references to the original records.
 
+NFR-AST-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (fixed-asset register, depreciation datasets, and their schemas). Other modules that need read-only access to asset raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the asset datasets; consumers use these accessors for read-only access; no consumer hardcodes asset file names outside this module.
+
 ### System Architecture
 
 Bus Assets owns the assets area datasets and exposes a CLI surface that writes asset registers and depreciation schedules. It integrates with the ledger by producing posting outputs for `bus journal` and relies on account references from `bus accounts`.
@@ -24,6 +26,8 @@ Bus Assets owns the assets area datasets and exposes a CLI surface that writes a
 ### Key Decisions
 
 KD-AST-001 Asset records are canonical repository data. The asset register and depreciation schedules are stored as datasets with beside-the-table schemas for long-term reviewability.
+
+KD-AST-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of asset datasets for read-only access. Write access and all asset business logic remain in this module.
 
 ### Component Design and Interfaces
 
@@ -37,6 +41,8 @@ The `depreciate` command generates depreciation entries for a specific period an
 
 The `dispose` command records an asset disposal and produces disposal postings. It accepts `--asset-id <id>`, `--date <YYYY-MM-DD>`, and `--proceeds-account <account-id>` as required parameters, and it accepts `--proceeds <amount>`, `--desc <text>`, and `--voucher <voucher-id>` as optional parameters. When `--proceeds` is omitted, the proceeds amount is zero and the disposal is treated as a non-cash write-off.
 
+Interface IF-AST-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (fixed-asset register and depreciation datasets and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and asset logic remain in this module.
+
 Usage examples:
 
 ```bash
@@ -47,6 +53,8 @@ bus assets depreciate
 ### Data Design
 
 The module reads and writes fixed-asset datasets in the assets area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use an `assets/` or other subdirectory for its datasets and schemas.
+
+Other modules that need read-only access to asset datasets MUST obtain the path(s) from this module’s Go library (IF-AST-002). All writes and asset-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

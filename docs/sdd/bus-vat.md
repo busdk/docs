@@ -19,6 +19,8 @@ FR-VAT-003 CLI surface for VAT baseline. The module MUST provide an `init` comma
 
 NFR-VAT-001 Auditability. VAT corrections MUST be append-only and traceable to original records. Acceptance criteria: corrections create new records that reference originals.
 
+NFR-VAT-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (e.g. vat-rates, vat-reports, vat-returns, and any period-definition or period-scoped files and their schemas). Other modules that need read-only access to VAT raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the VAT datasets; consumers use these accessors for read-only access; no consumer hardcodes VAT file names outside this module.
+
 ### System Architecture
 
 Bus VAT reads invoice and journal datasets and optional VAT reference datasets to compute reports and exports. It integrates with filing workflows and reporting outputs. Period boundaries (including transitions and non-standard lengths) are defined within the VAT module, e.g. via a period-definition dataset or logic that consumes workspace config.
@@ -29,6 +31,8 @@ KD-VAT-001 VAT outputs are stored as repository data. VAT summaries and exports 
 
 KD-VAT-002 VAT period boundaries are owned by bus-vat. The sequence of VAT reporting periods (including changes within a year from monthly to yearly to quarterly, 4-month transition periods, 18-month first period, and partial first or last periods from registration dates) is defined or computed by bus-vat. Workspace config in bus-config supplies the current period length and registration start/end dates as inputs; bus-vat is the single place that produces the actual list of (start_date, end_date) periods for reporting and allocation.
 
+KD-VAT-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of VAT datasets for read-only access. Write access and all VAT business logic remain in this module.
+
 ### Component Design and Interfaces
 
 Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `report`, and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -36,6 +40,8 @@ Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands
 The `init` command creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
 Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument.
+
+Interface IF-VAT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (vat-rates, vat-reports, vat-returns, and any period-definition or period-scoped files and their schemas). Given a workspace root path and optionally a period identifier, the library returns the relevant path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and VAT logic remain in this module.
 
 Usage examples:
 
@@ -47,6 +53,8 @@ bus vat export --period 2026Q1
 ### Data Design
 
 The module reads invoice data and journal postings and writes VAT summaries and export data. It owns the definition of VAT period boundaries; that definition may be stored in a period-definition dataset (e.g. `vat-periods.csv`) at the workspace root or computed from workspace config and rules. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report or return data is written to its own file (rather than only appended to the root index datasets), that file is also stored at the workspace root with a date prefix, for example `vat-reports-2026Q1.csv` or `vat-returns-2026Q1.csv`, not under a subdirectory such as `2026/vat-reports/`. The index datasets at root record which period files exist and where they live.
+
+Other modules that need read-only access to VAT datasets MUST obtain the path(s) from this module’s Go library (IF-VAT-002). All writes and VAT-domain logic remain in this module.
 
 ### Assumptions and Dependencies
 

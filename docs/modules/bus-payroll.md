@@ -31,7 +31,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus payroll` 
 
 ### Files
 
-Payroll datasets and their beside-the-table schemas in the payroll area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `payroll/` folder).
+Payroll datasets and their beside-the-table schemas in the payroll area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `payroll/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 

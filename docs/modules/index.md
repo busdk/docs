@@ -9,6 +9,10 @@ This section is the end user reference for the BusDK module CLIs. Each page is s
 
 If you need architectural background on why modules are independent and how they integrate, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
+### Data files and path ownership
+
+Each module that owns workspace data defines where its data files live. Today these are conventional names at the workspace root (for example `accounts.csv`, `periods.csv`, `datapackage.json`). Only the owning module may write to those files or apply business logic to them; other tools that need read-only access to another module’s data obtain the path from that module (see the [Data path contract for read-only cross-module access](../sdd/modules#data-path-contract-for-read-only-cross-module-access) in the module SDDs). The design allows future configuration of paths (for example in a data package) so that end users can customize where data is stored without breaking how other tools discover it.
+
 - [`bus`](./bus): Top-level dispatcher; run `bus <command> [args...]` to invoke a module (e.g. `bus init`, `bus accounts add`).
 - [`bus init`](./bus-init): Initialize a new workspace by orchestrating `bus config init` and module-owned `init` commands.
 - [`bus config`](./bus-config): Create and update workspace configuration (accounting entity settings in `datapackage.json`).
