@@ -10,6 +10,29 @@
       url: /design-goals/
     - label: Development status
       url: /implementation/development-status
+      children:
+        - label: Accounting workflow
+          url: /implementation/development-status#accounting-workflow
+        - label: Inventory valuation and COGS postings
+          url: /implementation/development-status#inventory-valuation-and-cogs-postings
+        - label: Workbook and validated tabular editing
+          url: /implementation/development-status#workbook-and-validated-tabular-editing
+        - label: Finnish bookkeeping and tax-audit compliance
+          url: /implementation/development-status#finnish-bookkeeping-and-tax-audit-compliance
+        - label: Finnish company reorganisation (yrityssaneeraus)
+          url: /implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack
+        - label: Developer module workflow (Cursor CLI)
+          url: /implementation/development-status#developer-module-workflow-with-cursor-cli
+        - label: Developer module workflow (Gemini CLI)
+          url: /implementation/development-status#developer-module-workflow-with-gemini-cli
+        - label: Developer module workflow (Claude CLI)
+          url: /implementation/development-status#developer-module-workflow-with-claude-cli
+        - label: Developer module workflow (Codex CLI)
+          url: /implementation/development-status#developer-module-workflow-with-codex-cli
+        - label: Finnish payroll (monthly pay run)
+          url: /implementation/development-status#finnish-payroll-handling-monthly-pay-run
+        - label: Orphan modules
+          url: /implementation/development-status#orphan-modules
 
 - title: Workflows
   links:

@@ -7,20 +7,6 @@ description: Evidence-based snapshot of what is usable today and what is missing
 
 This page summarizes the implementation state of each BusDK module using test evidence as the primary proof of readiness. A capability is treated as verified only when it is covered by at least one test (Go unit test or e2e script) in the module repository. Readiness is grouped by documented use cases so you can see what works today for each journey. Per-module detail, including the specific test files that prove each claim, is in each module’s CLI reference under **Development state**. Implement modules in **Depends on** before the dependent.
 
-### Use cases
-
-- [Accounting workflow](../workflow/accounting-workflow-overview)
-- [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs)
-- [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing)
-- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack)
-- [Developer module workflow with Cursor CLI](./developer-module-workflow#developer-module-workflow-with-cursor-cli)
-- [Developer module workflow with Gemini CLI](./developer-module-workflow#developer-module-workflow-with-gemini-cli)
-- [Developer module workflow with Claude CLI](./developer-module-workflow#developer-module-workflow-with-claude-cli)
-- [Developer module workflow with Codex CLI](./developer-module-workflow#developer-module-workflow-with-codex-cli)
-- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
-- [Orphan modules](#orphan-modules)
-
 ### Accounting workflow
 
 See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. Module readiness:
@@ -32,7 +18,7 @@ See [Accounting workflow overview](../workflow/accounting-workflow-overview) for
 | [config](../modules/bus-config#development-state) | 70% (Broadly usable) – init and configure verified by e2e and unit tests; idempotent init and deterministic entity updates; set/get agent and config library not implemented. | Config library and set agent / get agent (PLAN.md). | None known. |
 | [accounts](../modules/bus-accounts#development-state) | 60% (Stable) – init, add (all five types), list, validate and init contract verified; e2e covers full chart workflow; user can complete define-master-data chart step. | Optional SDD follow-ups. | None known. |
 | [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified by e2e and unit tests; user can define counterparties for the workflow. | None in PLAN; optional SDD follow-ups. | None known. |
-| [period](../modules/bus-period#development-state) | 70% — init, open, list, validate, close, lock verified; merge-conflict and non-Git hints would complete. | Merge-conflict surface; non-Git workspace hint. | None known. |
+| [period](../modules/bus-period#development-state) | 70% (Broadly usable) — init, open, list, validate, close, lock verified; merge-conflict and non-Git hints would complete. | Merge-conflict surface; non-Git workspace hint. | None known. |
 | [attachments](../modules/bus-attachments#development-state) | 60% (Stable) – Register evidence and list; init/add/list and workspace-relative diagnostics verified. | None in PLAN. | None known. |
 | [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – init, add, balance, period integrity and layout/audit columns verified; interactive add not verified. | Optional: interactive add. | [period](../modules/bus-period) writing closed-period file for full workflow. |
 | [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified by e2e and unit tests; user can bootstrap and list; add and pdf not implemented. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
@@ -69,7 +55,7 @@ See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [period](../modules/bus-period#development-state) | 70% — close and lock with append-only and locked state verified. | Merge-conflict surface; non-Git workspace hint. | None known. |
+| [period](../modules/bus-period#development-state) | 70% (Broadly usable) — close and lock with append-only and locked state verified. | Merge-conflict surface; non-Git workspace hint. | None known. |
 | [vat](../modules/bus-vat#development-state) | 70% (Broadly usable) – VAT report and export from invoice (and optionally journal) data. | Index update; journal input; posting/voucher refs. | None known. |
 | [validate](../modules/bus-validate#development-state) | 50% (Primary journey) – workspace and resource validation for coherence before close/filing. | format; audit and closed-period checks. | None known. |
 | [reports](../modules/bus-reports#development-state) | 50% (Primary journey) – trial balance and account-ledger; basis for statements and audit pack. | general-ledger; period; traceable line items (NFR-REP-001). | None known. |
@@ -83,7 +69,7 @@ See [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pac
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [period](../modules/bus-period#development-state) | 70% — close and lock for snapshots verified. | Merge-conflict surface; non-Git workspace hint. | None known. |
+| [period](../modules/bus-period#development-state) | 70% (Broadly usable) — close and lock for snapshots verified. | Merge-conflict surface; non-Git workspace hint. | None known. |
 | [reports](../modules/bus-reports#development-state) | 50% (Primary journey) – trial balance and ledger as audit evidence; no e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
 | [validate](../modules/bus-validate#development-state) | 50% (Primary journey) – workspace and resource validation before assembling evidence pack. | format; stdout/--output; audit and closed-period. | None known. |
 | [attachments](../modules/bus-attachments#development-state) | 60% (Stable) – Link source documents to records for audit; traceability verified. | None in PLAN. | None known. |
@@ -144,7 +130,7 @@ See [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-mon
 | [payroll](../modules/bus-payroll#development-state) | 20% (Validate and export only) – validate and export verified by e2e and unit tests with payroll/ layout; init, run, list, employee not implemented; user cannot complete pay-run journey. | Workspace-root layout; init, run, list, employee (PLAN.md); e2e run→export→journal. | None known. |
 | [accounts](../modules/bus-accounts#development-state) | 60% (Stable) – chart of accounts for wage expense, withholding, net payable; e2e and unit tests cover full workflow; user can define accounts prerequisite. | Optional SDD follow-ups. | None known. |
 | [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list and `--id`/`--name` aliases verified by e2e and unit tests; user can define party references for employees. | None in PLAN; optional SDD follow-ups. | None known. |
-| [period](../modules/bus-period#development-state) | 70% — period open/close/lock for payroll month verified. | Merge-conflict surface; non-Git workspace hint. | None known. |
+| [period](../modules/bus-period#development-state) | 70% (Broadly usable) — period open/close/lock for payroll month verified. | Merge-conflict surface; non-Git workspace hint. | None known. |
 | [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – append posting path verified; init, add, balance, closed-period reject verified. | Optional: interactive add. | [period](../modules/bus-period) writing closed-period file for full workflow. |
 | [bank](../modules/bus-bank#development-state) | 60% — import and list verified for pay-day statement flow. | Schema validation before append; dry-run for init. | None known. |
 | [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – match/allocate/list not verified; blocks payroll bank reconciliation. | match, allocate, list; journal linking; tests. | Missing verified match/allocate blocks reconciliation step. |
