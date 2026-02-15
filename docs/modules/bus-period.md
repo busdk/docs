@@ -37,17 +37,17 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 ### Development state
 
-**Value promise:** Manage period control (open, close, lock) and period-scoped balance so the [accounting workflow](../workflow/accounting-workflow-overview) can close and lock periods and downstream modules can rely on closed state for reporting and filing.
+**Value promise:** Manage period control (open, close, lock) and period-scoped balance so the accounting workflow can close and lock periods and downstream modules can rely on closed state for reporting and filing.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — User can init, open, list, validate, close, and lock periods with append-only state and balanced-journal check; verified by e2e and unit tests. Merge-conflict and non-Git workspace hints would complete the journey.
+**Completeness:** 70% — Init, open, list, validate, close, and lock verified by e2e and unit tests; user can complete period open/close/lock with append-only state and balanced-journal check. Merge-conflict and non-Git workspace hints would complete the journey.
 
-**Use case readiness:** Accounting workflow: 70% — init, open, list, validate, close, lock verified; merge-conflict and non-Git hints would complete. Finnish bookkeeping and tax-audit compliance: 70% — close and lock with append-only and locked state verified. Finnish company reorganisation: 70% — close and lock for snapshots verified. Finnish payroll handling: 70% — period open/close/lock for payroll month verified.
+**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, open, list, validate, close, lock verified; merge-conflict and non-Git hints would complete. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 70% — close and lock with append-only and locked state verified. [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack): 70% — close and lock for snapshots verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — period open/close/lock for payroll month verified.
 
-**Current:** `tests/e2e_bus_period.sh` proves init (root, idempotent), list, validate (success and fail when unbalanced or schema missing), close (--period required, dry-run, append-only state and close_entries/opening_balances, refuses unbalanced), lock (--period, fails on open period, closed→locked), and global flags. `internal/app/run_test.go` proves open (success, requires --period, rejects positional), init/close/lock/validate/list, dry-run, chdir, output, quiet. `internal/period/period_test.go` proves List, Init, Open (marks open, not-found), init idempotent and inconsistent; `internal/validate/validate_test.go` and `internal/cli/flags_test.go` support validate and flags.
+**Current:** `tests/e2e_bus_period.sh` proves init (root, idempotent), list, validate (success, fail when unbalanced or schema missing), close (--period required, dry-run, append-only state, close_entries/opening_balances, refuses unbalanced), lock (--period, fails on open period, closed→locked), and global flags (help, version, color, output, quiet, chdir, invalid color/format, quiet+verbose, --, -vv, stderr). `internal/app/run_test.go` proves open (success, requires --period, rejects positional), init/close/lock/validate/list, dry-run, chdir, output, quiet. `internal/period/period_test.go` proves List, Init, Open (marks open, not-found), init idempotent and inconsistent. `internal/validate/validate_test.go` and `internal/cli/flags_test.go` support validate and flags.
 
-**Planned next:** Surface merge conflicts in workspace datasets when Git-tracked (no Git commands); optional non-Git workspace detection and stderr hint (PLAN.md). Advances workflow diagnostics.
+**Planned next:** Detect and surface merge conflicts in workspace datasets when Git-tracked (no Git commands); optional non-Git workspace detection and stderr hint (PLAN.md). Advances accounting workflow diagnostics.
 
 **Blockers:** None known.
 

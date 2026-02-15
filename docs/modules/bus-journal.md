@@ -41,7 +41,10 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Completeness:** 70% — init, add (by code and name), balance, NFR-JRN-001, layout and audit columns verified by e2e and unit tests; interactive add not verified.
 
-**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, add, balance, period integrity and layout/audit columns verified; interactive add not verified. [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — postings, balancing, period reject and audit columns verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — append posting path verified; init, add, balance, closed-period reject verified.
+**Use case readiness:**  
+- [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, add, balance, period integrity and layout/audit columns verified; interactive add not verified.  
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — postings, balancing, period reject and audit columns verified.  
+- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — append posting path verified; init, add, balance, closed-period reject verified.
 
 **Current:** E2e `tests/e2e_bus_journal.sh` proves help, version, invalid color/format, quiet+verbose, chdir, init (journals.schema.json, journals.csv), idempotent init, dry-run add, add by code and by name (Cash/Sales→1000/3000), balance (TSV, --as-of, --output, --quiet), period CSV audit columns (entry_id, transaction_id, posting_date, account_id, entry_sequence, voucher_id), and NFR-JRN-001 (add to closed period exits 1 with deterministic stderr). Unit tests `internal/journal/period_test.go`, `internal/app/init_test.go`, `internal/app/run_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, and `internal/app/integration_test.go` cover period integrity, init, flags/output/chdir, validation and post, add args, and balance/add flows.
 
