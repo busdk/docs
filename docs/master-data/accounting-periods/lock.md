@@ -5,7 +5,7 @@ description: Prevent further changes to closed period data.
 
 ## Lock an accounting period
 
-Prevent further changes to closed period data.
+Lock transitions a period from state **closed** to **locked**, preventing further changes to closed period data. The period must exist and be closed. Run `bus period lock --period <period>`.
 
 Owner: [bus period](../../modules/bus-period).
 

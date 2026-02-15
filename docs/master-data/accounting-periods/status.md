@@ -7,7 +7,7 @@ description: status is part of the accounting periods master data.
 
 `status` is part of the accounting periods master data. Bookkeeping uses it to keep the register stable and to support deterministic posting, validation, and review workflows.
 
-Example values: `open`, `locked`.
+Example values: `future`, `open`, `closed`, `locked`. Periods are created in state **future**, then transitioned **open** → **closed** → **locked** via [bus period](../../modules/bus-period) open, close, and lock.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

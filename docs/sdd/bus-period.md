@@ -1,17 +1,19 @@
 ---
 title: bus-period — accounting period open/close and locking (SDD)
-description: Bus Period opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace, and locks periods to prevent changes after close.
+description: Bus Period adds periods in future state, opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace, and locks periods to prevent changes after close.
 ---
 
 ## bus-period — accounting period open/close and locking
 
 ### Introduction and Overview
 
-Bus Period opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace into the current workspace, and locks periods to prevent changes after close.
+Bus Period opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace into the current workspace, and locks periods to prevent changes after close. Periods can be created in advance in a **future** state; **open** and **close** are then pure state transitions (future → open → closed → locked).
 
 ### Requirements
 
-FR-PER-001 Period control datasets. The module MUST store period open, close, and lock states as schema-validated repository data. Acceptance criteria: period rows validate against schemas and are append-only.
+FR-PER-001 Period control datasets. The module MUST store period state (future, open, closed, locked) as schema-validated repository data. Acceptance criteria: period rows validate against schemas and are append-only; allowed state values are exactly future, open, closed, locked.
+
+FR-PER-004 Period state lifecycle. The module MUST support creating periods in a future state and transitioning them open → closed → locked. Acceptance criteria: only periods in state open accept new postings; closed and locked periods reject writes; future periods exist in the dataset but do not accept postings until opened; transitions are future → open → closed → locked (re-opening a closed or locked period is not required and may be refused).
 
 FR-PER-002 Close and lock operations. The module MUST generate closing entries and enforce period locks. Acceptance criteria: close outputs are deterministic and locked periods reject writes.
 
@@ -31,21 +33,42 @@ Bus Period owns the period control datasets and uses journal data to generate cl
 
 KD-PER-001 Period control is recorded as repository data. Period transitions are stored in datasets so close and lock boundaries remain reviewable.
 
-KD-PER-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the period control dataset for read-only access. Write access and all period business logic (open, close, lock, opening entry) remain in this module.
+KD-PER-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of the period control dataset for read-only access. Write access and all period business logic (add, open, close, lock, opening entry) remain in this module.
+
+KD-PER-003 Future periods. Periods can be created in advance in state **future**. Creation is a separate operation (`add`); **open** and **close** are state transitions only and require the period to already exist. This allows batch setup (e.g. all months for a year) and clear semantics: open means “this period is now active for posting,” close means “this period is finished.”
 
 ### Component Design and Interfaces
 
-Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `open`, `close`, `lock`, and `opening` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `add`, `open`, `close`, `lock`, and `opening` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 Interface IF-PER-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (e.g. period control CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and period logic remain in this module.
 
 The `init` command creates the baseline period control dataset and schema when they are absent. The baseline consists of the schema and a period control file that may be empty or contain only a header row; it does not pre-create any period rows. If both `periods.csv` and `periods.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-The `open` command marks the given period as open. If the period does not yet exist in the period control dataset, the command MUST create it (append a period record) and set its state to open, so that the workflow "init then open --period &lt;id&gt;" succeeds without any intermediate step. If the period already exists and is open, `open` is idempotent (exit 0, no change). If the period already exists and is closed or locked, behavior is implementation-defined (re-open may be refused or allowed; the command MUST exit non-zero with a clear diagnostic when it refuses).
+**Period state lifecycle.** The period control dataset records exactly four states: **future**, **open**, **closed**, **locked**. Valid transitions are: future → open (via `open`); open → closed (via `close`); closed → locked (via `lock`). Only periods in state open accept new journal postings. Re-opening a closed or locked period is not required by the workflow; the implementation MAY refuse it and MUST exit non-zero with a clear diagnostic when it refuses.
+
+#### Subcommand: add
+
+The `add` command creates a period row in state **future**. The period MUST NOT already exist; if a row with the same period identifier exists, the command MUST exit non-zero with a clear diagnostic and MUST NOT modify the dataset.
+
+**Command signature.** `bus period add --period <period> [--start-date <YYYY-MM-DD>] [--end-date <YYYY-MM-DD>] [--retained-earnings-account <code>] [-C <dir>] [global flags]`.
+
+**Flags.**
+
+- `--period <period>`: (Required.) Period identifier in one of the forms YYYY, YYYY-MM, or YYYYQn. Determines the period_id stored in the dataset.
+- `--start-date <YYYY-MM-DD>`: (Optional.) First date of the period. When omitted, the implementation MUST derive it deterministically from the period identifier (e.g. 2024-01 → 2024-01-01; 2024Q1 → 2024-01-01).
+- `--end-date <YYYY-MM-DD>`: (Optional.) Last date of the period. When omitted, the implementation MUST derive it deterministically from the period identifier (e.g. 2024-01 → 2024-01-31; 2024Q1 → 2024-03-31).
+- `--retained-earnings-account <code>`: (Optional.) Account code used for closing/opening balance (e.g. retained earnings). When omitted, the implementation uses a schema-defined default or leaves the field empty if the schema allows.
+
+**Contract.** The command MUST append exactly one row to the period control dataset with state **future**, the given (or derived) period_id, start_date, end_date, and optional retained_earnings_account; closed_at and locked_at MUST be empty. The command MUST NOT change state of any existing period. Idempotency: adding the same period twice is invalid; the command MUST fail when the period already exists.
+
+#### Subcommand: open
+
+The `open` command transitions a period from state **future** to **open**. The period MUST already exist in the period control dataset; if it does not exist, the command MUST exit non-zero with a clear diagnostic (e.g. “period … not found”) and MUST NOT create a row. If the period exists and is in state future, the command MUST update its state to open and exit 0. If the period exists and is already open, the command is idempotent (exit 0, no change). If the period exists and is closed or locked, the command MUST exit non-zero with a clear diagnostic and MUST NOT change state (re-open is not required by the design and may be refused).
 
 Period selection is always explicit and flag-based. The `open`, `close`, and `lock` commands accept `--period <period>` as a required parameter and do not use positional period arguments. A period identifier is a stable string in one of three forms: `YYYY` for a full-year period, `YYYY-MM` for a calendar month, or `YYYYQn` for a quarter (where `n` is 1 through 4). This mirrors period usage in other modules such as `bus vat`, `bus loans`, and `bus payroll`, which also use `--period` and `YYYY-MM` or `YYYYQn` formats rather than positional arguments.
 
-Close generates posting output and therefore accepts one additional optional flag: `--post-date <YYYY-MM-DD>`. When `--post-date` is omitted, the closing entry date defaults to the last date of the selected period, matching the default behavior of other posting-generating commands that accept `--post-date`.
+**Close and lock (state transitions).** The `close` command transitions a period from **open** to **closed**. The period MUST exist and be in state open; otherwise the command MUST exit non-zero with a clear diagnostic. Close generates closing entries and then updates the period state; it accepts optional `--post-date <YYYY-MM-DD>` (when omitted, the closing entry date defaults to the last date of the selected period). The `lock` command transitions a period from **closed** to **locked**. The period MUST exist and be in state closed; if it is open or already locked, the command MUST exit non-zero with a clear diagnostic. Lock does not generate postings; it only updates state so that the period cannot be modified.
 
 #### Subcommand: opening
 
@@ -71,11 +94,12 @@ The `opening` subcommand generates the opening entry for a new fiscal year in th
 
 **Acceptance criteria and invariants.** The generated opening entry MUST be balanced to zero. Output MUST be deterministic for the same inputs (same `--from`, `--as-of`, `--post-date`, `--period`, `--equity-account`, `--include-zero`, and prior/current workspace contents). Validation of the resulting journal (e.g. `bus journal validate` or equivalent) MUST pass. The command MUST NOT perform network or interactive operations.
 
-**Example workflow (year rollover).** In the new workspace: run `bus accounts init` and populate the chart of accounts; run `bus period init`; run `bus period open --period 2024-01`; run `bus journal init`; then run `bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 2024-01-01 --period 2024-01 --equity-account 3200`. VAT reporting period and other workspace configuration are handled by bus-config and are not modified by `bus period opening`.
+**Example workflow (year rollover).** In the new workspace: run `bus accounts init` and populate the chart of accounts; run `bus period init`; run `bus period add --period 2024-01` (or add multiple future periods, e.g. 2024-01 through 2024-12); run `bus period open --period 2024-01`; run `bus journal init`; then run `bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 2024-01-01 --period 2024-01 --equity-account 3200`. VAT reporting period and other workspace configuration are handled by bus-config and are not modified by `bus period opening`.
 
 Usage examples:
 
 ```bash
+bus period add --period 2026-02
 bus period open --period 2026-02
 bus period close --period 2026-02
 ```
@@ -93,7 +117,7 @@ bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 
 
 The module reads and writes the period control dataset at the workspace root as `periods.csv`, with a beside-the-table schema file `periods.schema.json`. Paths are root-level only: there is no subdirectory (for example, the data is not under `periods/periods.csv`). Period operations append records so period boundaries remain reviewable.
 
-Period rows enter the dataset when the user runs `open --period <id>` for a period that is not yet present; the `open` command creates the period record and sets it to open. The `init` command creates only the dataset file and schema (empty or header-only); it does not insert any period rows. There is no separate "add period" command; opening a period is the way to create it.
+Period rows enter the dataset when the user runs `add --period <id>`. The `add` command creates the row in state **future**. The `init` command creates only the dataset file and schema (empty or header-only); it does not insert any period rows. The `open` command only transitions an existing period from future to open; it does not create rows.
 
 Other modules that need read-only access to the period control dataset (e.g. to check open/closed state in another workspace) MUST obtain the path from this module’s Go library (IF-PER-002). All writes and period-domain logic remain in this module.
 
@@ -131,10 +155,12 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 ### Glossary and Terminology
 
-Period control dataset: the repository dataset that records period boundaries and locks.  
-Period lock: a state that prevents edits to closed period data.  
-Opening entry: a single balanced journal transaction that carries forward account balances from a prior workspace into the current workspace, produced by `bus period opening`.  
-Prior workspace: the workspace (e.g. a separate repository for the previous fiscal year) whose closing balances are used as the source for an opening entry in the current workspace.
+**Period control dataset:** the repository dataset that records period boundaries, state, and locks.  
+**Period state:** one of **future**, **open**, **closed**, **locked**. Future periods exist in the dataset but do not accept postings until opened.  
+**Future period:** a period in state future, created by `bus period add`, not yet open for posting.  
+**Period lock:** a state (locked) that prevents edits to closed period data.  
+**Opening entry:** a single balanced journal transaction that carries forward account balances from a prior workspace into the current workspace, produced by `bus period opening`.  
+**Prior workspace:** the workspace (e.g. a separate repository for the previous fiscal year) whose closing balances are used as the source for an opening entry in the current workspace.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

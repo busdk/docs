@@ -25,7 +25,7 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.
 - [`bus accounts`](./bus-accounts): Manage the chart of accounts.
 - [`bus entities`](./bus-entities): Manage counterparty reference data.
-- [`bus period`](./bus-period): Open, close, and lock accounting periods.
+- [`bus period`](./bus-period): Add, open, close, and lock accounting periods.
 - [`bus attachments`](./bus-attachments): Register evidence files and attachment metadata.
 - [`bus invoices`](./bus-invoices): Create and manage sales and purchase invoices.
 - [`bus journal`](./bus-journal): Post and query ledger journal entries.

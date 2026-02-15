@@ -19,9 +19,10 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Actions
 
-- [Open an accounting period](./open): Mark a period open so bookkeeping work can proceed for that period.
-- [Close an accounting period](./close): Generate closing entries and mark the period closed for review.
-- [Lock an accounting period](./lock): Prevent further changes to closed period data.
+- [Add an accounting period](./add): Create a period in state **future** so it exists in the dataset and can later be opened. Periods are created before they are opened; you can add multiple future periods (e.g. all months for the year) then open them in sequence.
+- [Open an accounting period](./open): Transition a period from **future** to **open** so bookkeeping work can proceed for that period. The period must already exist (created with add).
+- [Close an accounting period](./close): Generate closing entries and transition the period from **open** to **closed** for review.
+- [Lock an accounting period](./lock): Transition the period from **closed** to **locked** to prevent further changes to closed period data.
 
 ### Properties
 

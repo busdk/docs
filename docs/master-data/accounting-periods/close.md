@@ -5,7 +5,7 @@ description: Generate closing entries and mark the period closed for review.
 
 ## Close an accounting period
 
-Generate closing entries and mark the period closed for review.
+Close transitions a period from state **open** to **closed** and generates the closing entries. The period must exist and be open. Run `bus period close --period <period>`; optional `--post-date` defaults to the last date of the period.
 
 Owner: [bus period](../../modules/bus-period).
 

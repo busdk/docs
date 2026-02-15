@@ -1,15 +1,15 @@
 ---
 title: Open an accounting period
-description: Mark a period open so bookkeeping work can proceed for that period.
+description: Transition a period from future to open so bookkeeping work can proceed for that period.
 ---
 
 ## Open an accounting period
 
-Mark a period open so bookkeeping work can proceed for that period.
+Open transitions a period from state **future** to **open** so bookkeeping work can proceed for that period. The period must already exist in the period control dataset (created with [Add an accounting period](./add)); if it does not exist, the command exits with a clear diagnostic.
 
 Owner: [bus period](../../modules/bus-period).
 
-This action is required in bookkeeping so the register can be used as a deterministic input for posting, period-based review, and audit navigation.
+Run `bus period open --period <YYYY-MM>` (or `YYYY` / `YYYYQn`). This action is required in bookkeeping so the register can be used as a deterministic input for posting, period-based review, and audit navigation.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -21,6 +21,8 @@ This action is required in bookkeeping so the register can be used as a determin
 
 ### Sources
 
+- [Add an accounting period](./add)
+- [bus-period CLI reference](../../modules/bus-period)
 - [Workflow: Year-end close (closing entries)](../../workflow/year-end-close)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 

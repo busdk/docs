@@ -27,9 +27,9 @@ The following command surface is the minimum needed to execute the workflow as d
   
   Appends counterparty reference data and establishes stable entity identifiers for cross-dataset links. If it emits a result on standard output, it should include the stable entity identifier.
 
-- `bus period open`, `bus period close`, `bus period lock`
+- `bus period add`, `bus period open`, `bus period close`, `bus period lock`
   
-  Establishes the boundaries that make “period close” repeatable and prevents later drift. These commands must fail deterministically when asked to violate close and lock invariants. If they emit results, they should reference stable period identifiers.
+  Creates periods in state **future** (`add`) and establishes the state transitions that make period close repeatable and prevent later drift (`open` → `close` → `lock`). These commands must fail deterministically when asked to violate add or state invariants (e.g. add when period already exists, open when period not found or not in state future). If they emit results, they should reference stable period identifiers.
 
 - `bus attachments add`
   
