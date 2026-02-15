@@ -1,20 +1,21 @@
 ---
-title: bus-period — open, close, and lock accounting periods
-description: bus period manages period open, close, and lock state as schema-validated repository data.
+title: bus-period — open, close, lock, and opening from prior workspace
+description: bus period manages period open, close, and lock state and generates opening balances from a prior workspace as schema-validated repository data.
 ---
 
-## `bus-period` — open, close, and lock accounting periods
+## `bus-period` — open, close, lock, and opening from prior workspace
 
 ### Synopsis
 
 `bus period init [-C <dir>] [global flags]`  
 `bus period open --period <period> [-C <dir>] [global flags]`  
 `bus period close --period <period> [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
-`bus period lock --period <period> [-C <dir>] [global flags]`
+`bus period lock --period <period> [-C <dir>] [global flags]`  
+`bus period opening --from <path> --as-of <YYYY-MM-DD> --post-date <YYYY-MM-DD> --period <YYYY-MM> [optional flags] [-C <dir>] [global flags]`
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus period` manages period open, close, and lock state as schema-validated repository data. Close generates closing entries; lock prevents further changes to closed period data. Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`.
+Command names follow [CLI command naming](../cli/command-naming). `bus period` manages period open, close, and lock state as schema-validated repository data. Close generates closing entries; lock prevents further changes to closed period data. The `opening` subcommand generates the opening entry for a new fiscal year in the current workspace from the closing balances of a prior workspace (e.g. a separate repository for the previous year), producing a single balanced journal transaction so the year rollover stays CLI-driven and auditable. Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`.
 
 ### Commands
 
@@ -22,10 +23,17 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 - `open` marks a period as open.
 - `close` generates closing entries and marks the period closed.
 - `lock` locks a closed period so it cannot be modified.
+- `opening` generates the opening entry for the current workspace from a prior workspace’s closing balances (one balanced journal transaction with deterministic provenance). It requires `--from`, `--as-of`, `--post-date`, and `--period`; see Options and the [module SDD](../sdd/bus-period) for optional flags and validation rules. It does not change [bus-config](./bus-config) settings such as VAT reporting period.
 
 ### Options
 
-`open`, `close`, and `lock` require `--period <period>`. `close` accepts optional `--post-date <YYYY-MM-DD>` (defaults to last date of period). Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus period --help`.
+`open`, `close`, and `lock` require `--period <period>`. `close` accepts optional `--post-date <YYYY-MM-DD>` (defaults to last date of period).
+
+`opening` requires `--from <path>`, `--as-of <YYYY-MM-DD>`, `--post-date <YYYY-MM-DD>`, and `--period <YYYY-MM>`. Optional flags: `--equity-account <code>` (balancing equity account; default is implementation-defined and documented in the module); `--include-zero` (include zero-balance accounts; default false, so only non-zero balances are included); `--description <text>` (override the default transaction description, which otherwise includes normalized source path and as-of date); `--replace` (remove any existing opening entry for the target period that was created by this command, then create the new entry; does not remove other postings); `--allow-as-of-mismatch` (allow running when the prior workspace’s fiscal year end does not match `--as-of`; default false). The path in `--from` is resolved relative to the process working directory (before `-C`). The command fails if the target period is not open or is closed/locked, if an opening entry for the period already exists and `--replace` is not set, if any account code from the prior workspace is missing from the current chart, or if the prior workspace’s fiscal year end differs from `--as-of` and `--allow-as-of-mismatch` is not set.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus period --help`.
+
+**Year rollover.** In the new workspace, run `bus accounts init` and populate the chart of accounts, then `bus period init`, `bus period open --period <YYYY-MM>` for the first period, and `bus journal init`. Then run `bus period opening --from <path-to-prior-workspace> --as-of <prior-year-end> --post-date <new-year-start> --period <YYYY-MM> [--equity-account <code>]`. Full validation rules and optional flags are specified in the [bus-period module SDD](../sdd/bus-period).
 
 ### Files
 
@@ -33,11 +41,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus period` m
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage or close/lock violations.
+`0` on success. Non-zero on invalid usage or close, lock, or opening violations (e.g. target period not open, opening entry already exists without `--replace`, missing account in current chart, or as-of vs fiscal year end mismatch without `--allow-as-of-mismatch`).
 
 ### Development state
 
-**Value promise:** Manage period control (open, close, lock) and period-scoped balance so the accounting workflow can close and lock periods and downstream modules can rely on closed state for reporting and filing.
+**Value promise:** Manage period control (open, close, lock) and period-scoped balance so the accounting workflow can close and lock periods, carry forward opening balances from a prior workspace into a new fiscal year, and downstream modules can rely on closed state for reporting and filing.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
