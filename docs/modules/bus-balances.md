@@ -85,7 +85,17 @@ bus balances apply --as-of 2025-12-31 --post-date 2026-01-01 --period 2026-01 --
 
 **Value promise:** Own an append-only balance snapshot dataset; build snapshots with add or import; materialize a snapshot into one balanced journal transaction for opening or cutover so users can adopt BusDK without a prior workspace.
 
-**Completeness:** Design complete (see [Module SDD](../sdd/bus-balances)); implementation status is tracked in the repository and [Development status](../implementation/development-status).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (opening/cutover step).
+
+**Completeness:** 60% — Opening/cutover journey (init → add or import → validate → list → apply, with replace) is verified by e2e; apply still uses internal journal implementation; some SDD-mandated unit tests and e2e cases not yet covered.
+
+**Use case readiness:** Accounting workflow (opening/cutover): 60% — User can complete init, add, import, validate, list, and apply (including replace); apply writes via internal workspace journal; import `--allow-unknown-accounts` and apply balanced-order unit tests not verified.
+
+**Current:** Init (idempotent), add (amount or debit/credit; unknown account refused), import (valid CSV appends; unknown account fails with no rows), validate, list (effective only, tsv/csv, --output, --quiet, --), template, and apply (first run, second without replace refuses, with replace succeeds; journal marker) are verified by `tests/e2e_bus_balances.sh`. Effective-record selection (latest `recorded_at` per as_of, account_code) and replace-by-marker removal are verified by `snapshot/record_test.go` and `internal/workspace/journal_test.go`. Global flags (help, version, color, format, output, quiet, chdir, --) and add unknown-account refusal are covered by `internal/cli/flags_test.go`, `internal/cli/run_test.go`, and the e2e script.
+
+**Planned next:** Use [bus-journal](./bus-journal) (and [bus-accounts](./bus-accounts), [bus-period](./bus-period)) Go libraries for apply and path resolution (PLAN.md); init data-consistency check when both files exist; unit tests for import unknown-accounts and apply transaction generation; e2e for import `--allow-unknown-accounts` and post-apply journal validate. Advances Accounting workflow opening/cutover reliability.
+
+**Blockers:** None known.
 
 **Depends on:** [bus-accounts](./bus-accounts) (chart of accounts), [bus-period](./bus-period) (period state), [bus-journal](./bus-journal) (append and validate for apply).
 
