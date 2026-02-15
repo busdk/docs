@@ -35,6 +35,8 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 **Year rollover.** In the new workspace, run `bus accounts init` and populate the chart of accounts, then `bus period init`, `bus period open --period <YYYY-MM>` for the first period, and `bus journal init`. Then run `bus period opening --from <path-to-prior-workspace> --as-of <prior-year-end> --post-date <new-year-start> --period <YYYY-MM> [--equity-account <code>]`. Full validation rules and optional flags are specified in the [bus-period module SDD](../sdd/bus-period).
 
+**Year-end result transfer.** Transferring profit or loss to equity at year end is currently done by posting a balanced entry with [bus journal](./bus-journal) (see [Year-end close](../workflow/year-end-close)). Automatic result-to-equity transfer is planned in this module.
+
 ### Files
 
 `periods.csv` and its beside-the-table schema `periods.schema.json` live at the workspace root. Paths are root-level only — the data is not under a subdirectory such as `periods/periods.csv`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
@@ -55,7 +57,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 **Current:** E2e `tests/e2e_bus_period.sh` proves init (root, idempotent), list, validate (success, unbalanced/schema-missing/merge-conflict fail), close (--period required, dry-run, append-only, close_entries/opening_balances, journal-closed-periods.csv, refuses unbalanced or already closed), lock (--period, fails on open period, closed→locked), opening (prior→current workspace, required flags, already-exists without --replace, dry-run), merge-conflict and non-Git hint, and global flags. Unit tests in `internal/app/run_test.go`, `internal/period/period_test.go`, `internal/period/opening_test.go`, `internal/period/periodid_test.go`, `internal/period/closed_periods_file_test.go`, `internal/validate/validate_test.go`, and `internal/cli/flags_test.go` cover open/close/lock/init/opening, dry-run, chdir, output, quiet, and invalid usage.
 
-**Planned next:** E2E for opening `--replace` and `--allow-as-of-mismatch` per PLAN.md. Advances [Accounting workflow](../workflow/accounting-workflow-overview).
+**Planned next:** Optional automatic result-to-equity transfer at year end. See [Development status](../implementation/development-status).
 
 **Blockers:** None known.
 

@@ -21,6 +21,8 @@ NFR-PER-001 Auditability. Period transitions MUST remain reviewable in repositor
 
 NFR-PER-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (period control dataset and schema). Other modules that need read-only access to period control raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the period dataset (and schema); consumers use these accessors for read-only access; no consumer hardcodes `periods.csv` outside this module.
 
+Planned: automatic result-to-equity transfer at year end (profit/loss to equity account as part of close or a dedicated step). Until implemented, users post the transfer via [bus-journal](../sdd/bus-journal).
+
 ### System Architecture
 
 Bus Period owns the period control datasets and uses journal data to generate closing entries. The `opening` subcommand reads journal and period data from a prior workspace and appends one opening transaction to the current workspace journal via existing journal APIs. The module integrates with validation, VAT, and reporting workflows that precede filing and exports.

@@ -30,7 +30,7 @@ bus period close --help
 bus period close ...
 ```
 
-The close produces deterministic entries that bring the period to a clean boundary and records period-close metadata as repository data. Any income and expense zeroing into retained earnings is expressed as new append-only postings rather than as in-place edits.
+The close produces deterministic entries that bring the period to a clean boundary and records period-close metadata as repository data. Transfer of profit or loss to equity (retained earnings) is expressed as new append-only postings. Until [bus period](../modules/bus-period) supports automatic result-to-equity transfer, post that transfer with `bus journal add` using your chart’s equity account; see the [bus-period](../modules/bus-period) CLI reference.
 
 4. Alice locks the closed period to prevent later edits from drifting reported results:
 
