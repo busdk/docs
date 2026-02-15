@@ -1,6 +1,6 @@
 ---
 title: bus accounts — manage the chart of accounts
-description: "CLI reference for bus accounts: init, list, add, and validate the chart of accounts; schema-validated repository data and stable identifiers for downstream modules."
+description: "CLI reference for bus accounts: init, list, add, set, and validate the chart of accounts; schema-validated repository data and stable identifiers for downstream modules."
 ---
 
 ## Overview
@@ -10,6 +10,7 @@ description: "CLI reference for bus accounts: init, list, add, and validate the 
 `bus accounts init [-C <dir>] [global flags]`  
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
+`bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
 `bus accounts validate [-C <dir>] [global flags]`
 
 ### Description
@@ -20,12 +21,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus accounts`
 
 - `init` creates the baseline accounts datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `list` prints the current chart of accounts in deterministic order.
-- `add` adds a new account record.
+- `add` creates a new account. It fails (non-zero exit, diagnostic on stderr, no change to the dataset) if an account with the same `--code` already exists. To change an existing account, use `set`.
+- `set` modifies an existing account identified by `--code`. It updates only the attributes you supply (for example `--name` or `--type`). It fails if no account with that code exists.
 - `validate` checks the accounts datasets against their schemas.
 
 ### Options
 
-The `add` command accepts `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help`.
+The `add` command requires `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The `set` command requires `--code <account-id>` to identify the account and accepts optional `--name` and `--type` to update those attributes. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help`.
 
 ### Choosing account type: Finnish numbering convention (practical guide)
 
@@ -49,7 +51,7 @@ Many Finnish charts use the first digit (or leading digits) to group accounts by
 
 ### Write path and field coverage
 
-The CLI surface covers the core lifecycle needed for scripts and UIs to create and validate accounts. `bus accounts add` writes the stable account identifier, name, and type, and it refuses to write rows that would violate schema or invariants.
+The CLI surface covers the core lifecycle needed for scripts and UIs to create, update, and validate accounts. `bus accounts add` creates a new account and fails if that account code already exists; `bus accounts set` updates an existing account by code. Both commands refuse to write rows that would violate schema or invariants.
 
 If your `accounts.csv` schema includes additional reporting and control columns (for example `ledger_category_id` and `is_active`), those fields are currently maintained by editing `accounts.csv` directly and then validating with `bus accounts validate` (and, for whole-workspace checks, `bus validate`). This keeps the authoritative dataset explicit while avoiding documentation that implies unsupported flags exist.
 

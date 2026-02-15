@@ -1,6 +1,6 @@
 ---
 title: bus-accounts — chart of accounts and stable references (SDD)
-description: "Design spec for the BusDK accounts module: chart of accounts as schema-validated repository data, CLI for init, list, add, validate, stable references for downstream modules."
+description: "Design spec for the BusDK accounts module: chart of accounts as schema-validated repository data, CLI for init, list, add, set, validate, stable references for downstream modules."
 ---
 
 ## bus-accounts — chart of accounts and stable references
@@ -13,7 +13,9 @@ Bus Accounts maintains the chart of accounts as schema-validated repository data
 
 FR-ACC-001 Account registry integrity. Bus Accounts MUST maintain a deterministic chart of accounts in `accounts.csv` with schema validation and stable identifiers. Acceptance criteria: the module refuses duplicate identifiers and invalid account types and writes only schema-valid rows.
 
-FR-ACC-002 CLI surface for account lifecycle. Bus Accounts MUST provide commands to initialize, list, add, and validate accounts so workflows can manage the chart of accounts without manual file edits. Acceptance criteria: the command names `init`, `list`, `add`, and `validate` are available under `bus accounts`, and each command fails with deterministic diagnostics on invalid inputs.
+FR-ACC-002 CLI surface for account lifecycle. Bus Accounts MUST provide commands to initialize, list, add, set, and validate accounts so workflows can manage the chart of accounts without manual file edits. Acceptance criteria: the command names `init`, `list`, `add`, `set`, and `validate` are available under `bus accounts`, and each command fails with deterministic diagnostics on invalid inputs.
+
+FR-ACC-004 Add fails when account exists. The `add` command MUST fail if an account with the same identifier (e.g. `--code`) already exists in the chart of accounts. Acceptance criteria: invoking `bus accounts add` with a code that is already present exits non-zero, emits a clear diagnostic to standard error, and does not modify the dataset. Modifying an existing account is done via `bus accounts set`, not `add`.
 
 FR-ACC-003 Data-layer init via bus-data library. Bus Accounts MUST perform all initialization of the accounts dataset and schema through the [bus-data](./bus-data) Go library, not by invoking the bus-data CLI. Before creating or ensuring `accounts.csv` and `accounts.schema.json`, the module MUST use the bus-data library to ensure the workspace data package is initialized (i.e. an empty `datapackage.json` exists at the workspace root when missing, as defined by bus-data init). The module MUST create the accounts table and beside-the-table schema via the bus-data library (e.g. schema init or resource add). After a successful `bus accounts init`, `datapackage.json` MUST contain a resource entry for the accounts table with the path to `accounts.csv` and the associated schema so that workspace-level validation and discovery see the accounts data. Acceptance criteria: `bus accounts init` does not shell out to `bus data`; it calls bus-data library APIs only; after init, `datapackage.json` includes a resource for accounts (path and schema reference); re-running init when the data package already contains the accounts resource and files are consistent is idempotent.
 
@@ -31,11 +33,13 @@ KD-ACC-002 Init via bus-data library only. Account baseline creation is implemen
 
 ### Component Design and Interfaces
 
-Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `add`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `add`, `set`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline accounts dataset and schema when they are absent. It MUST use the [bus-data](./bus-data) Go library only (no CLI invocation). Init sequence: (1) Call the bus-data library to ensure the workspace data package is initialized — i.e. create an empty `datapackage.json` at the workspace root when the file is missing, matching bus-data init behavior. (2) Create `accounts.csv` and `accounts.schema.json` via the bus-data library (e.g. schema init or resource add). (3) Ensure `datapackage.json` contains a resource entry for the accounts table (path to `accounts.csv` and schema reference) so that after init the data package describes the accounts dataset. If both `accounts.csv` and `accounts.schema.json` already exist and are consistent and the data package already contains the accounts resource, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of the files exists, or the data is inconsistent, or the data package is missing when it should exist, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](./bus-init) FR-INIT-003).
 
-The `add` command accepts account identity and type parameters. Documented parameters are `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`.
+The `add` command creates a new account. It accepts account identity and type parameters: `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The command MUST fail if an account with the same identifier (e.g. the same `--code`) already exists in the chart of accounts: it MUST exit non-zero, emit a clear diagnostic to standard error, and MUST NOT modify the dataset (FR-ACC-004).
+
+The `set` command modifies an existing account. It is used to update name, type, or other attributes of an account that already exists (identified by code). The command MUST fail if no account with the given identifier exists. Parameters and semantics are defined by the module implementation; the invariant is that creation is done only via `add` and updates only via `set`.
 
 Usage examples:
 
@@ -46,6 +50,7 @@ bus accounts list
 
 ```bash
 bus accounts add --code 3000 --name "Consulting Revenue" --type income
+bus accounts set --code 3000 --name "Consulting & Training Revenue"
 bus accounts validate
 ```
 
@@ -71,7 +76,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Schema and
 
 ### Testing Strategy
 
-Unit tests cover account validation and deterministic listing behavior, and command-level tests exercise `init`, `add`, `list`, and `validate` against fixture workspaces.
+Unit tests cover account validation and deterministic listing behavior, and command-level tests exercise `init`, `add`, `set`, `list`, and `validate` against fixture workspaces. Tests MUST verify that `add` fails with non-zero exit and no dataset change when the account code already exists (FR-ACC-004), and that `set` can modify an existing account and fails when the account does not exist.
 
 ### Deployment and Operations
 
