@@ -59,11 +59,11 @@ bus invoices list --status unpaid
 
 **Value promise:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
+**Use cases:** [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
 **Completeness:** 60% — init, validate, and list verified by tests; user can bootstrap and list invoices but cannot yet record new invoices or render PDFs (add and pdf not implemented).
 
-**Use case readiness:** Accounting workflow: 60% — init, validate, list verified; recording new invoices (add) and PDF export not yet in journey. Finnish company reorganisation: 60% — init and validation support evidence-pack baseline; add and pdf not yet in journey.
+**Use case readiness:** Sale invoicing (sending to customers): 60% — init, validate, list verified; add and pdf not yet in journey. Accounting workflow: 60% — init, validate, list verified; recording new invoices (add) and PDF export not yet in journey. Finnish company reorganisation: 60% — init and validation support evidence-pack baseline; add and pdf not yet in journey.
 
 **Current:** Verified only. E2e `tests/e2e_bus_invoices.sh` proves help, version, usage exit 2, validate when datasets missing, init creating eight files in workspace root only (no `invoices/`), validate after init, init --dry-run (no files), list deterministic TSV, list filters --type and --status, global flags (--output, --chdir, --quiet, --, --format, --color). Unit tests: `cmd/bus-invoices/run_test.go` (init dry-run, list filters type/status/invoice-id, flags, usage); `internal/initarea/initarea_test.go` (init when absent, warn when all exist, partial fails, dry-run); `internal/validate/*` (schema, types, CSV, foreign keys, list summaries and filters); `internal/cli/flags_test.go`, `help_test.go`, `color_test.go`.
 
@@ -100,5 +100,6 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-invoices](../sdd/bus-invoices)
 - [Layout: Invoices area](../layout/invoices-area)
+- [Workflow: Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing)
 - [Workflow: Create a sales invoice](../workflow/create-sales-invoice)
 

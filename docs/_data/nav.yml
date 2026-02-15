@@ -13,23 +13,25 @@
       children:
         - label: Accounting workflow
           url: /implementation/development-status#accounting-workflow
-        - label: Inventory valuation and COGS postings
+        - label: Sale invoicing
+          url: /implementation/development-status#sale-invoicing-sending-invoices-to-customers
+        - label: Inventory valuation
           url: /implementation/development-status#inventory-valuation-and-cogs-postings
-        - label: Workbook and validated tabular editing
-          url: /implementation/development-status#workbook-and-validated-tabular-editing
-        - label: Finnish bookkeeping and tax-audit compliance
+        - label: Spreadsheet workbooks
+          url: /implementation/development-status#spreadsheet-workbooks
+        - label: Finnish bookkeeping and tax
           url: /implementation/development-status#finnish-bookkeeping-and-tax-audit-compliance
-        - label: Finnish company reorganisation (yrityssaneeraus)
+        - label: Finnish company reorganisation
           url: /implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack
-        - label: Developer module workflow (Cursor CLI)
+        - label: Developer workflow (Cursor)
           url: /implementation/development-status#developer-module-workflow-with-cursor-cli
-        - label: Developer module workflow (Gemini CLI)
+        - label: Developer workflow (Gemini)
           url: /implementation/development-status#developer-module-workflow-with-gemini-cli
-        - label: Developer module workflow (Claude CLI)
+        - label: Developer workflow (Claude)
           url: /implementation/development-status#developer-module-workflow-with-claude-cli
-        - label: Developer module workflow (Codex CLI)
+        - label: Developer workflow (Codex)
           url: /implementation/development-status#developer-module-workflow-with-codex-cli
-        - label: Finnish payroll (monthly pay run)
+        - label: Finnish payroll
           url: /implementation/development-status#finnish-payroll-handling-monthly-pay-run
         - label: Orphan modules
           url: /implementation/development-status#orphan-modules
@@ -38,6 +40,8 @@
   links:
     - label: Accounting workflow overview
       url: /workflow/accounting-workflow-overview
+    - label: Sale invoicing (sending invoices to customers)
+      url: /workflow/sale-invoicing
     - label: Example end-to-end workflow
       url: /workflow/
     - label: Finnish payroll (monthly pay run)

@@ -1,6 +1,6 @@
 ---
 title: Development status — BusDK modules
-description: Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case (accounting, workbook UI, compliance, developer workflow, payroll, orphans), derived from tests and PLAN.md in each repository.
+description: Evidence-based snapshot of what is usable today and what is missing across BusDK modules, grouped by use case (accounting, sale invoicing, workbook UI, compliance, developer workflow, payroll, orphans), derived from tests and PLAN.md in each repository.
 ---
 
 ## Development status
@@ -29,6 +29,19 @@ See [Accounting workflow overview](../workflow/accounting-workflow-overview) for
 | [reports](../modules/bus-reports#development-state) | 50% (Primary journey) – trial balance, account-ledger; unit tests for run and report; no e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
 | [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; list-templates, flags, overwrite, chdir verified. | None in PLAN. | None known. |
 
+### Sale invoicing (sending invoices to customers)
+
+See [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing) for the outbound journey: creating sales invoices, rendering PDFs, and sending them to customers. This is distinct from the accounting workflow, which also records incoming and third-party invoices. Module readiness for the sale-invoicing path:
+
+| Module | Readiness | Biggest next | Biggest blocker |
+|--------|-----------|--------------|-----------------|
+| [bus](../modules/bus#development-state) | 50% (Primary journey) – single entrypoint; no-args and missing-subcommand verified; e2e for dispatch would raise confidence. | E2E for dispatch; `bus help` when bus-help missing. | None known. |
+| [init](../modules/bus-init#development-state) | 70% (Broadly usable) – config-only or full baseline verified by e2e; step order and `--no-<module>` exclusions proven. | Help list each per-module flag and `--no-<module>` (PLAN.md). | None known. |
+| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified by e2e and unit tests; user can define customers (counterparties) for invoicing. | None in PLAN; optional SDD follow-ups. | None known. |
+| [accounts](../modules/bus-accounts#development-state) | 60% (Stable) – init, add (all five types), list, validate and init contract verified; e2e covers full chart workflow; revenue accounts for invoice lines. | Optional SDD follow-ups. | None known. |
+| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified by e2e and unit tests; user can bootstrap and list; add and pdf not implemented. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
+| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; list-templates, flags, overwrite, chdir verified. | None in PLAN. | None known. |
+
 ### Inventory valuation and COGS postings
 
 See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs). Module readiness:
@@ -37,9 +50,9 @@ See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-
 |--------|-----------|--------------|-----------------|
 | [inventory](../modules/bus-inventory#development-state) | 30% (Some basic commands) – validate, status, move (current CLI and inventory/ layout) verified by unit and e2e; init, add, valuation not implemented. | Root layout; init, add, move (SDD), valuation; e2e/unit tests for full journey. | None known. |
 
-### Workbook and validated tabular editing
+### Spreadsheet workbooks
 
-See [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing). Module readiness:
+See [Spreadsheet workbooks](../workflow/workbook-and-validated-tabular-editing). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -161,6 +174,7 @@ Modules not mapped to any documented use case appear here with overall completen
 - [Module CLI reference](../modules/index)
 - [bus-sheets](../modules/bus-sheets) and [bus-sheets SDD](../sdd/bus-sheets)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing)
 - [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 - [Module repository structure and dependency rules](./module-repository-structure)
