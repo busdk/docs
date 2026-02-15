@@ -164,7 +164,7 @@ Modules not mapped to any documented use case appear here with overall completen
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./developer-module-workflow">Developer module workflow</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation and development status</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="../data/index">Data format and storage</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./cost-summary">Bus project cost summary</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

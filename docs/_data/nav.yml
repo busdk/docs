@@ -35,6 +35,8 @@
           url: /implementation/development-status#finnish-payroll-handling-monthly-pay-run
         - label: Orphan modules
           url: /implementation/development-status#orphan-modules
+    - label: Cost summary
+      url: /implementation/cost-summary
 
 - title: Workflows
   links:

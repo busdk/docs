@@ -10,6 +10,7 @@ This section covers how modules are structured and their current implementation 
 - [Module repository structure and dependency rules](./module-repository-structure)
 - [Developer module workflow](./developer-module-workflow): scaffold modules, run commit/work/spec/e2e, set agent and run-config (Cursor, Gemini, Claude, Codex)
 - [Development status](./development-status): implementation state of each BusDK module and the Bus as a whole, derived from each repository’s PLAN.md
+- [Bus project cost summary](./cost-summary): snapshot of total commits and AI-related spend per module (2025-02-15)
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

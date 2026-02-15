@@ -39,7 +39,9 @@ Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcomma
 
 Interface IF-PER-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (e.g. period control CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and period logic remain in this module.
 
-The `init` command creates the baseline period control dataset and schema when they are absent. If both `periods.csv` and `periods.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+The `init` command creates the baseline period control dataset and schema when they are absent. The baseline consists of the schema and a period control file that may be empty or contain only a header row; it does not pre-create any period rows. If both `periods.csv` and `periods.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+
+The `open` command marks the given period as open. If the period does not yet exist in the period control dataset, the command MUST create it (append a period record) and set its state to open, so that the workflow "init then open --period &lt;id&gt;" succeeds without any intermediate step. If the period already exists and is open, `open` is idempotent (exit 0, no change). If the period already exists and is closed or locked, behavior is implementation-defined (re-open may be refused or allowed; the command MUST exit non-zero with a clear diagnostic when it refuses).
 
 Period selection is always explicit and flag-based. The `open`, `close`, and `lock` commands accept `--period <period>` as a required parameter and do not use positional period arguments. A period identifier is a stable string in one of three forms: `YYYY` for a full-year period, `YYYY-MM` for a calendar month, or `YYYYQn` for a quarter (where `n` is 1 through 4). This mirrors period usage in other modules such as `bus vat`, `bus loans`, and `bus payroll`, which also use `--period` and `YYYY-MM` or `YYYYQn` formats rather than positional arguments.
 
@@ -90,6 +92,8 @@ bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 
 ### Data Design
 
 The module reads and writes the period control dataset at the workspace root as `periods.csv`, with a beside-the-table schema file `periods.schema.json`. Paths are root-level only: there is no subdirectory (for example, the data is not under `periods/periods.csv`). Period operations append records so period boundaries remain reviewable.
+
+Period rows enter the dataset when the user runs `open --period <id>` for a period that is not yet present; the `open` command creates the period record and sets it to open. The `init` command creates only the dataset file and schema (empty or header-only); it does not insert any period rows. There is no separate "add period" command; opening a period is the way to create it.
 
 Other modules that need read-only access to the period control dataset (e.g. to check open/closed state in another workspace) MUST obtain the path from this module’s Go library (IF-PER-002). All writes and period-domain logic remain in this module.
 
