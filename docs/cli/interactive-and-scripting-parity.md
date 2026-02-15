@@ -1,15 +1,15 @@
 ---
-title: Interactive use and scripting parity
-description: Every command must be usable interactively and non-interactively.
+title: Non-interactive use and scripting
+description: BusDK commands never wait for user input; all input is supplied per invocation and output is produced when ready.
 ---
 
-## Interactive use and scripting parity
+## Non-interactive use and scripting
 
-Every command must be usable interactively and non-interactively. Interactive prompts are used when the user omits parameters, enabling a guided experience. Non-interactive flags and arguments must allow full scripting and automation. This includes workflows such as nightly cron-driven bank imports or scripted ledger entries produced by external systems.
+BusDK commands are designed so that an AI agent or automation script never runs a command that waits for user input. Every command is non-interactive: all required input must be supplied to the command via arguments, flags, or standard input, and output is produced as soon as the operation is ready.
 
-Interactive prompting must never block automation. In non-interactive contexts, commands must not prompt for missing inputs; they must instead fail with a concise diagnostic and a usage error exit code. In interactive contexts, prompts must be avoidable by providing explicit flags and arguments so the same operation can be expressed as a deterministic command line.
+There are no interactive prompts. When the user or script omits a required parameter, the command must not prompt for it; it must fail with a concise usage error on standard error and exit with status code 2. Commands must not read from the terminal for confirmation, choices, or missing options. Optional input (for example bulk row data) may be provided via standard input or a file path; the command must not block waiting for a TTY.
 
-When an operation has both a “guided” interactive mode and an explicit non-interactive mode, the resulting repository data must be equivalent. Interactive mode is an implementation choice for user experience, not a different behavioral contract.
+This contract ensures scripting parity: the same invocation works the same whether run from a human at a terminal or from a script, CI, or agent. Deterministic output and exit codes allow automation to rely on BusDK without special “non-interactive” or “batch” modes.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -21,6 +21,6 @@ For Finnish compliance, missing audit-trail references or retention-critical met
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./minimum-command-surface">Minimum required command surface (end-to-end workflow)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./interactive-and-scripting-parity">Interactive use and scripting parity</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./interactive-and-scripting-parity">Non-interactive use and scripting</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

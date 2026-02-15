@@ -14,7 +14,7 @@ This section is split into **single-concept** documents:
 - [CLI command naming](./command-naming)
 - [Minimum required command surface (end-to-end workflow)](./minimum-command-surface)
 - [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
-- [Interactive use and scripting parity](./interactive-and-scripting-parity)
+- [Non-interactive use and scripting](./interactive-and-scripting-parity)
 - [Reporting and query commands](./reporting-and-queries)
 - [Validation and safety checks](./validation-and-safety-checks)
 

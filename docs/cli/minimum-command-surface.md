@@ -9,7 +9,7 @@ This page defines the minimum CLI surface that must exist for the end-to-end boo
 
 The purpose of this contract is to make the CLI testable as a stable interface. “Minimum required” means a conforming BusDK implementation provides these commands and subcommands by name, with deterministic behavior, deterministic diagnostics, and predictable outputs suitable for both human use and scripting.
 
-This page specifies command names and output expectations at a contract level. The detailed CLI conventions for diagnostics, exit codes, interactive behavior, and reporting determinism are defined in the shared CLI pages: [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), [Interactive use and scripting parity](./interactive-and-scripting-parity), [Reporting and query commands](./reporting-and-queries), and [Validation and safety checks](./validation-and-safety-checks).
+This page specifies command names and output expectations at a contract level. The detailed CLI conventions for diagnostics, exit codes, non-interactive behavior, and reporting determinism are defined in the shared CLI pages: [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), [Non-interactive use and scripting](./interactive-and-scripting-parity), [Reporting and query commands](./reporting-and-queries), and [Validation and safety checks](./validation-and-safety-checks).
 
 ### Minimum required commands
 
