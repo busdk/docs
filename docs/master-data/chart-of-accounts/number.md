@@ -11,7 +11,7 @@ Stable account numbers make postings readable and auditable over time, because r
 
 Example values: `1910`, `3000`.
 
-Account numbering schemes are conventions chosen by the workspace. BusDK does not require any specific numbering ranges and accepts arbitrary numbers as long as the chart of accounts remains internally consistent and the reporting structure (`ledger_category_id`) can group accounts into the required financial statement categories.
+Account numbering schemes are conventions chosen by the workspace. BusDK does not require any specific numbering ranges and accepts arbitrary numbers as long as the chart of accounts remains internally consistent and the reporting structure (`ledger_category_id`) can group accounts into the required financial statement categories. For a practical mapping from Finnish account codes to BusDK account types when adding accounts, see the [Finnish numbering convention (practical guide)](../../modules/bus-accounts#choosing-account-type-finnish-numbering-convention-practical-guide) on the bus-accounts module page.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -27,6 +27,26 @@ Command names follow [CLI command naming](../cli/command-naming). `bus accounts`
 
 The `add` command accepts `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help`.
 
+### Choosing account type: Finnish numbering convention (practical guide)
+
+The following is a **practical convention** used by many Finnish bookkeeping setups to choose the BusDK `--type` value when running `bus accounts add`. It is not a legal requirement and BusDK does not enforce any national numbering scheme. Organizations may customize numbering; when in doubt, follow the chart used in the previous year or your accountant’s guidance.
+
+Many Finnish charts use the first digit (or leading digits) to group accounts by balance-sheet vs income-statement categories. You can use that pattern as a default heuristic to map account codes to BusDK types.
+
+**1xxx — assets (`asset`).** Codes starting with 1 are typically asset accounts. Common subgroups: 10xx intangible assets; 11xx tangible assets and depreciation accumulations; 13xx receivables; 14xx cash, bank, and payment-provider accounts.
+
+**2xxx — liabilities (`liability`).** Codes starting with 2 are typically liability accounts. Common subgroups: 20xx trade payables; 21xx VAT payable/receivable settlement accounts; 22xx–26xx other short- or long-term liabilities; 29xx private drawings or investment accounts for sole proprietors, depending on the firm’s practice.
+
+**3xxx — equity (`equity`).** Codes starting with 3 are typically equity. In sole-proprietorship bookkeeping, owner’s equity and prior-year results are often in 3xxx; practices vary, so align with your accountant’s chart.
+
+**4xxx — revenue (`income`).** Codes starting with 4 are typically revenue. VAT-rate-specific sales accounts (e.g. 4010, 4040, 4050) are common; exact numbering varies by chart.
+
+**5xxx–7xxx — expenses (`expense`).** Codes starting with 5, 6, or 7 are typically expenses. Common subgroups include purchases, services, rent, marketing, travel, office, telecom, banking fees, insurance, accounting/legal, and depreciation.
+
+**8xxx–9xxx — financial and result/summary accounts.** These ranges are often used for financial income/expense and for result or summary accounts. As a conservative default: 80xx–81xx are often financial income or expense — map them to `income` or `expense` according to their meaning. Many 9xxx “result” and “summary” accounts are used for reporting or closing rather than day-to-day posting; if you include them, still assign a BusDK type (`income` or `expense`) consistent with their meaning. BusDK does not enforce a specific national numbering scheme.
+
+**Rules of thumb.** Prefer consistency over perfection: use the same mapping logic across your chart. If in doubt, follow the chart used in the previous year or the one your accountant uses. When migrating from Excel or ledger headers that only have code and name, you must assign `type` explicitly — BusDK needs it for reporting and validation.
+
 ### Write path and field coverage
 
 The CLI surface covers the core lifecycle needed for scripts and UIs to create and validate accounts. `bus accounts add` writes the stable account identifier, name, and type, and it refuses to write rows that would violate schema or invariants.

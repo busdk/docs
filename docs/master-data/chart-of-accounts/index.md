@@ -7,7 +7,7 @@ description: A chart of accounts is the set of ledger accounts you post debits a
 
 A chart of accounts is the set of ledger accounts you post debits and credits into, together with the reporting structure that makes financial statements readable. Bookkeeping automation depends on being able to choose the correct account consistently, and reviewers depend on stable numbers and names when they validate postings.
 
-Account numbering is a workspace convention, not a BusDK requirement. BusDK supports arbitrary account numbers as long as the chart is internally consistent and accounts map cleanly to the reporting groupings required by your statements and filings. Examples in this documentation use familiar numbers such as `1910` (bank) and `3000` (revenue) as illustrative conventions rather than required ranges.
+Account numbering is a workspace convention, not a BusDK requirement. BusDK supports arbitrary account numbers as long as the chart is internally consistent and accounts map cleanly to the reporting groupings required by your statements and filings. Examples in this documentation use familiar numbers such as `1910` (bank) and `3000` (revenue) as illustrative conventions rather than required ranges. For choosing the correct `type` value when creating accounts (e.g. with `bus accounts add`), see the [Finnish chart-of-accounts numbering convention (practical guide)](../../modules/bus-accounts#choosing-account-type-finnish-numbering-convention-practical-guide) on the bus-accounts module page — it maps common Finnish account code ranges to BusDK types and gives rules of thumb.
 
 ### Ownership
 
