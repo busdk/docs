@@ -1,11 +1,11 @@
 ---
 title: "`default_sales_account_id` (classification default for sales)"
-description: default_sales_account_id is the party’s default revenue account suggestion.
+description: default_sales_account_id is the party’s default income account suggestion.
 ---
 
 ## `default_sales_account_id` (classification default for sales)
 
-`default_sales_account_id` is the party’s default revenue account suggestion. Bookkeeping uses it to pre-fill the most likely sales account for new invoice rows so sales classification becomes review rather than repeated manual selection.
+`default_sales_account_id` is the party’s default income account suggestion. Bookkeeping uses it to pre-fill the most likely sales account for new invoice rows so sales classification becomes review rather than repeated manual selection.
 
 Defaults should be treated as suggestions that remain overrideable per invoice row, because the correct account can still vary by what was sold.
 

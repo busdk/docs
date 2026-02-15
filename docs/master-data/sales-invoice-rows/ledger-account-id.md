@@ -1,11 +1,11 @@
 ---
-title: "`ledger_account_id` (revenue account intent)"
-description: ledger_account_id records which revenue account the invoice row belongs to.
+title: "`ledger_account_id` (income account intent)"
+description: ledger_account_id records which income account the invoice row belongs to.
 ---
 
-## `ledger_account_id` (revenue account intent)
+## `ledger_account_id` (income account intent)
 
-`ledger_account_id` records which revenue account the invoice row belongs to. A revenue account per sales line is one of the highest-value fields for automation because it turns sales bookkeeping from manual classification into validation and review.
+`ledger_account_id` records which income account the invoice row belongs to. An income account per sales line is one of the highest-value fields for automation because it turns sales bookkeeping from manual classification into validation and review.
 
 Example values: `acc-3000`, `acc-3010`.
 

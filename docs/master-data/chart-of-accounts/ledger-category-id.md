@@ -9,7 +9,7 @@ description: ledger_category_id links an account to the reporting structure used
 
 When categories are explicit, a chart of accounts can evolve without breaking the reporting structure that accountants and reviewers rely on.
 
-Example values: `assets_current`, `revenue_sales`.
+Example values: `assets_current`, `income_sales`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

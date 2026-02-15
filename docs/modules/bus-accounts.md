@@ -41,7 +41,7 @@ Many Finnish charts use the first digit (or leading digits) to group accounts by
 
 **3xxx — equity (`equity`).** Codes starting with 3 are typically equity. In sole-proprietorship bookkeeping, owner’s equity and prior-year results are often in 3xxx; practices vary, so align with your accountant’s chart.
 
-**4xxx — revenue (`income`).** Codes starting with 4 are typically revenue. VAT-rate-specific sales accounts (e.g. 4010, 4040, 4050) are common; exact numbering varies by chart.
+**4xxx — income.** Codes starting with 4 are typically income. VAT-rate-specific sales accounts (e.g. 4010, 4040, 4050) are common; exact numbering varies by chart.
 
 **5xxx–7xxx — expenses (`expense`).** Codes starting with 5, 6, or 7 are typically expenses. Common subgroups include purchases, services, rent, marketing, travel, office, telecom, banking fees, insurance, accounting/legal, and depreciation.
 
@@ -73,9 +73,9 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Use case readiness:** Accounting workflow: 60% — init, add, list, validate and init contract (both-files-exist / partial-existence) verified; e2e covers full chart workflow. Finnish payroll handling: 60% — chart of accounts for wage expense, withholding, net payable verified by same e2e and unit tests.
 
-**Current:** `tests/e2e_bus_accounts.sh` proves init (creates files, idempotent when both exist, fails when inconsistent or only CSV), add (asset, revenue, expense; dry-run no write), list (deterministic TSV, `--output`, `--format tsv`, `--quiet` no stdout/output file), validate, `-C` (invalid chdir and nested workdir), help/version, `--`, invalid `--format`/`--color`/quiet+verbose, and add `--help` documents `--type`. `run_test.go` covers init (creates, idempotent, both-exist-inconsistent, CSV-from-schema, CSV-without-schema), list, add (success, duplicate key, dry-run, missing required), validate, missing schema/CSV, schema parse/field/enum/PK/FK, usage. `run_flags_test.go` covers help/version ignore args, quiet, quiet+verbose invalid, invalid color, unknown format, chdir, output. `run_workspace_test.go` covers non-Git, MERGE_HEAD, conflict markers. `run_property_test.go` covers list permutation and add appends (all five types). `internal/cli/help_test.go` and `internal/cli/flags_test.go` cover help and flag parsing. `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, and `run_helpers_test.go` cover storage, validation, TSV sort, and workdir/color.
+**Current:** `tests/e2e_bus_accounts.sh` proves init (creates files, idempotent when both exist, fails when inconsistent or only CSV), add (asset, income, expense; dry-run no write), list (deterministic TSV, `--output`, `--format tsv`, `--quiet` no stdout/output file), validate, `-C` (invalid chdir and nested workdir), help/version, `--`, invalid `--format`/`--color`/quiet+verbose, and add `--help` documents `--type`. `run_test.go` covers init (creates, idempotent, both-exist-inconsistent, CSV-from-schema, CSV-without-schema), list, add (success, duplicate key, dry-run, missing required), validate, missing schema/CSV, schema parse/field/enum/PK/FK, usage. `run_flags_test.go` covers help/version ignore args, quiet, quiet+verbose invalid, invalid color, unknown format, chdir, output. `run_workspace_test.go` covers non-Git, MERGE_HEAD, conflict markers. `run_property_test.go` covers list permutation and add appends (all five types). `internal/cli/help_test.go` and `internal/cli/flags_test.go` cover help and flag parsing. `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, and `run_helpers_test.go` cover storage, validation, TSV sort, and workdir/color.
 
-**Planned next:** None in PLAN; all SDD items implemented and covered. Optional SDD follow-ups (e.g. income/revenue wording in schema) when applicable.
+**Planned next:** None in PLAN; all SDD items implemented and covered. Optional SDD follow-ups when applicable.
 
 **Blockers:** None known.
 

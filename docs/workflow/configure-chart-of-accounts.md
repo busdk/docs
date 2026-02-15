@@ -32,7 +32,7 @@ bus accounts add \
   --code 1700 --name "Accounts Receivable" --type asset
 
 bus accounts add \
-  --code 3000 --name "Consulting Revenue" --type income
+  --code 3000 --name "Consulting Income" --type income
 
 bus accounts add \
   --code 2930 --name "VAT Payable" --type liability

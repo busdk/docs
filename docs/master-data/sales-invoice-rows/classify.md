@@ -1,15 +1,15 @@
 ---
 title: Classify a sales invoice row
-description: Record revenue account and VAT treatment so sales bookkeeping is deterministic.
+description: Record income account and VAT treatment so sales bookkeeping is deterministic.
 ---
 
 ## Classify a sales invoice row
 
-Record revenue account and VAT treatment so sales bookkeeping is deterministic.
+Record income account and VAT treatment so sales bookkeeping is deterministic.
 
 Owner: [bus invoices](../../modules/bus-invoices).
 
-Classify rows by setting the revenue account and VAT treatment. Row-level intent is the most precise place to capture the bookkeeping decision that drives postings and VAT reporting.
+Classify rows by setting the income account and VAT treatment. Row-level intent is the most precise place to capture the bookkeeping decision that drives postings and VAT reporting.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

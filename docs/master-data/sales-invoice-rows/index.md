@@ -5,7 +5,7 @@ description: A sales invoice row is the line-level specification of what was sol
 
 ## Sales invoice rows
 
-A sales invoice row is the line-level specification of what was sold. For bookkeeping, invoice rows are the best place to record posting intent because they determine the revenue account and VAT handling more precisely than invoice headers.
+A sales invoice row is the line-level specification of what was sold. For bookkeeping, invoice rows are the best place to record posting intent because they determine the income account and VAT handling more precisely than invoice headers.
 
 ### Ownership
 
@@ -13,12 +13,12 @@ Owner: [bus invoices](../../modules/bus-invoices). This module is responsible fo
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus accounts](../../modules/bus-accounts): provides the chart used for revenue account selection.
+- [bus accounts](../../modules/bus-accounts): provides the chart used for income account selection.
 - [bus vat](../../modules/bus-vat): uses line-level VAT fields for reporting and validation.
 
 ### Actions
 
-- [Classify a sales invoice row](./classify): Record revenue account and VAT treatment so sales bookkeeping is deterministic.
+- [Classify a sales invoice row](./classify): Record income account and VAT treatment so sales bookkeeping is deterministic.
 - [Set sales row service period](./periodize): Record service dates when period allocation depends on the delivered period.
 
 ### Properties
@@ -30,7 +30,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 - [`price`](./price): Unit price.
 - [`discount_percent`](./discount-percent): Discount impact.
 - [`vat_percent`](./vat-percent): Applied VAT percentage.
-- [`ledger_account_id`](./ledger-account-id): Revenue account intent.
+- [`ledger_account_id`](./ledger-account-id): Income account intent.
 - [`vat_treatment`](./vat-treatment): VAT handling code.
 - [`dimension`](./dimension): Lightweight reporting tag.
 - [`service_start_date`](./service-start-date): Line-level service period start.

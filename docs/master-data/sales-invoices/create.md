@@ -1,15 +1,15 @@
 ---
 title: Create a sales invoice
-description: Record the legal and accounting document that creates revenue and a receivable.
+description: Record the legal and accounting document that creates income and a receivable.
 ---
 
 ## Create a sales invoice
 
-Record the legal and accounting document that creates revenue and a receivable.
+Record the legal and accounting document that creates income and a receivable.
 
 Owner: [bus invoices](../../modules/bus-invoices).
 
-Create the sales invoice as the evidence-backed record that drives revenue recognition and receivables. The invoice becomes an open item for matching until it is paid.
+Create the sales invoice as the evidence-backed record that drives income recognition and receivables. The invoice becomes an open item for matching until it is paid.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

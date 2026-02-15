@@ -1,11 +1,11 @@
 ---
 title: Sales invoices
-description: A sales invoice is a legal and accounting document that creates revenue and a receivable until it is paid.
+description: A sales invoice is a legal and accounting document that creates income and a receivable until it is paid.
 ---
 
 ## Sales invoices
 
-A sales invoice is a legal and accounting document that creates revenue and a receivable until it is paid. In bookkeeping, sales invoices become postings and later become open items for payment matching and receivables review.
+A sales invoice is a legal and accounting document that creates income and a receivable until it is paid. In bookkeeping, sales invoices become postings and later become open items for payment matching and receivables review.
 
 ### Ownership
 
@@ -20,7 +20,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Actions
 
-- [Create a sales invoice](./create): Record the legal and accounting document that creates revenue and a receivable.
+- [Create a sales invoice](./create): Record the legal and accounting document that creates income and a receivable.
 - [Correct a sales invoice](./correct): Record credit notes or corrections so the audit trail remains consistent.
 - [Prepare sales invoice postings](./prepare-posting): Turn invoice intent into a balanced posting proposal for the journal.
 

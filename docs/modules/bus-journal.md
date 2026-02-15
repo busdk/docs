@@ -39,16 +39,16 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — init, add (by code and name), balance, NFR-JRN-001, layout and audit columns verified by e2e and unit tests; add with all params via flags verified.
+**Completeness:** 70% — User can init journal, post balanced entries (by code or name), run balance, and respect closed periods; verified by e2e and unit tests.
 
 **Use case readiness:**  
-- [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, add, balance, period integrity and layout/audit columns verified; add with all params via flags verified.  
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — postings, balancing, period reject and audit columns verified.  
-- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — append posting path verified; init, add, balance, closed-period reject verified.
+- [Accounting workflow](../workflow/accounting-workflow-overview): 70% — Init, add, balance, period integrity and layout/audit columns verified; add with all params via flags verified.  
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — Postings, balancing, period reject and audit columns verified.  
+- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — Append posting path verified; init, add, balance, closed-period reject verified.
 
-**Current:** E2e `tests/e2e_bus_journal.sh` proves help, version, invalid color/format, quiet+verbose, chdir, init (journals.schema.json, journals.csv), idempotent init, partial-state init failure, dry-run add, add by code and by name (Cash/Sales→1000/3000), balance (TSV, --as-of, --output, --quiet, quiet suppresses stdout and does not write output file), period CSV audit columns (entry_id, transaction_id, posting_date, account_id, entry_sequence, voucher_id), and NFR-JRN-001 (add to closed period exits 1 with deterministic stderr). Unit tests `internal/journal/period_test.go`, `internal/app/init_test.go`, `internal/app/run_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, and `internal/app/integration_test.go` cover period integrity, init, flags/output/chdir, validation and post, add args, and balance/add flows.
+**Current:** E2e `tests/e2e_bus_journal.sh` proves help, version, invalid color/format, quiet+verbose, chdir, init (journals.schema.json, journals.csv), idempotent init, partial-state init failure, dry-run add, add by code and by name (Cash/Sales→1000/3000), balance (TSV, --as-of, --output, --quiet, quiet suppresses stdout and output file), period CSV audit columns (entry_id, transaction_id, posting_date, account_id, entry_sequence, voucher_id), and NFR-JRN-001 (add to closed period exits 1 with deterministic stderr). Unit tests in `internal/journal/period_test.go`, `internal/app/init_test.go`, `internal/app/run_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, and `internal/app/integration_test.go` cover period integrity, init, flags/output/chdir, validation and post, add args, and balance/add flows.
 
-**Planned next:** PLAN.md lists no open items; optional add convenience (all input via flags per [NFR-009](../sdd#nfr-009-non-interactive-operation)) would advance [Accounting workflow](../workflow/accounting-workflow-overview).
+**Planned next:** PLAN.md: align add with NFR-009 (fail with usage when required flags omitted, remove interactive prompting); README/AGENTS.md corrections. Optional add convenience (all input via flags/stdin) would advance [Accounting workflow](../workflow/accounting-workflow-overview).
 
 **Blockers:** [bus-period](./bus-period) writing closed-period file for full workflow.
 

@@ -22,8 +22,8 @@ This section describes the business objects and the bookkeeping properties they 
 
 #### Sales (invoicing and receivables)
 
-- [Sales invoices](./sales-invoices/index): Outgoing invoices that create revenue and a receivable until paid.
-- [Sales invoice rows](./sales-invoice-rows/index): Line-level intent that drives revenue account selection and VAT handling.
+- [Sales invoices](./sales-invoices/index): Outgoing invoices that create income and a receivable until paid.
+- [Sales invoice rows](./sales-invoice-rows/index): Line-level intent that drives income account selection and VAT handling.
 
 #### Purchasing (vendor invoices, payables, and posting intent)
 

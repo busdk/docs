@@ -33,7 +33,7 @@ bus invoices add \
 bus invoices 1001 add \
   --desc "Consulting, 10h @ €100/h" \
   --quantity 10 --unit-price 100 \
-  --revenue-account "Consulting Revenue" \
+  --income-account "Consulting Income" \
   --vat-rate 25.5
 
 bus invoices 1001 validate
@@ -41,7 +41,7 @@ bus invoices 1001 validate
 
 This is intentionally low-level: the module must have a command surface that allows scripts and UIs to write the same canonical invoice rows without relying on interactive prompting. Interactive prompting can still exist as a convenience mode, but it is not the definition of the workflow’s invariants.
 
-On write, the module rejects missing references (unknown customer when entities are required, unknown revenue account, unknown VAT class) and rejects internally inconsistent totals rather than writing partial data.
+On write, the module rejects missing references (unknown customer when entities are required, unknown income account, unknown VAT class) and rejects internally inconsistent totals rather than writing partial data.
 
 3. Alice verifies the invoice is present and consistent by listing invoices:
 

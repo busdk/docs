@@ -5,7 +5,7 @@ description: service_start_date records when the invoiced service period begins.
 
 ## `service_start_date` (service period start)
 
-`service_start_date` records when the invoiced service period begins. Bookkeeping uses service period dates to decide how revenue belongs to accounting periods without reopening the invoice document.
+`service_start_date` records when the invoiced service period begins. Bookkeeping uses service period dates to decide how income belongs to accounting periods without reopening the invoice document.
 
 Service periods are especially important for subscriptions, hosting, insurance-like periods, and other prepaid services where invoicing timing does not match when the service is delivered.
 

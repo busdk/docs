@@ -55,8 +55,8 @@ bus accounts list
 ```
 
 ```bash
-bus accounts add --code 3000 --name "Consulting Revenue" --type income
-bus accounts set --code 3000 --name "Consulting & Training Revenue"
+bus accounts add --code 3000 --name "Consulting Income" --type income
+bus accounts set --code 3000 --name "Consulting & Training Income"
 bus accounts validate
 ```
 

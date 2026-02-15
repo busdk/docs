@@ -7,7 +7,7 @@ description: invoice_row_id is the stable identity of a sales invoice row.
 
 `invoice_row_id` is the stable identity of a sales invoice row. Bookkeeping uses row identity for traceability when postings, exports, or later corrections need to point to the exact commercial line that drove the accounting decision.
 
-Row identity keeps the audit trail precise when an invoice contains multiple lines with different VAT treatments or revenue accounts.
+Row identity keeps the audit trail precise when an invoice contains multiple lines with different VAT treatments or income accounts.
 
 Example values: `SI-2026-000123-1`, `SI-2026-000123-2`.
 

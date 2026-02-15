@@ -21,9 +21,9 @@ Liabilities are obligations the business owes to others. Typical liabilities inc
 
 Equity is the owners’ residual interest in the business after liabilities. Typical equity accounts include share capital, invested capital, retained earnings, and the current-period result (profit or loss).
 
-#### Income (Revenue)
+#### Income
 
-Income accounts track value earned from providing goods or services, such as sales, service revenue, and interest income. Income increases profit.
+Income accounts track value earned from providing goods or services, such as sales, service income, and interest income. Income increases profit.
 
 #### Expenses
 
@@ -63,7 +63,7 @@ Common contra examples:
 
 * **Accumulated depreciation** (contra-asset): offsets equipment; normal balance is **credit**
 * **Allowance for doubtful accounts** (contra-asset): offsets receivables; normal balance is **credit**
-* **Sales returns/allowances** (contra-income): offsets revenue; normal balance is **debit**
+* **Sales returns/allowances** (contra-income): offsets income; normal balance is **debit**
 
 Contra accounts don’t break double-entry rules — they keep the economic meaning visible while reversing the “usual” side for increases.
 

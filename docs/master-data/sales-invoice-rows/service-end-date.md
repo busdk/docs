@@ -5,7 +5,7 @@ description: service_end_date records when the service period ends for this invo
 
 ## `service_end_date` (line-level service period end)
 
-`service_end_date` records when the service period ends for this invoice row. Together with `service_start_date`, it makes the service window explicit so bookkeeping can allocate revenue across periods correctly when invoices mix service periods.
+`service_end_date` records when the service period ends for this invoice row. Together with `service_start_date`, it makes the service window explicit so bookkeeping can allocate income across periods correctly when invoices mix service periods.
 
 Example values: `2026-02-28`, `2026-01-31`.
 
