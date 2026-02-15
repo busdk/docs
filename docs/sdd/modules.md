@@ -29,6 +29,7 @@ Path accessors MUST be designed so that future dynamic configuration is possible
 - [`bus accounts`](./bus-accounts): Maintains the chart of accounts as schema-validated CSV datasets used as shared reference data across the workspace.
 - [`bus entities`](./bus-entities): Maintains counterparty reference datasets and stable entity IDs used for linking and matching across modules.
 - [`bus period`](./bus-period): Opens and closes accounting periods, generates closing and opening balance entries, and locks closed periods to prevent changes after close.
+- [`bus balances`](./bus-balances): Owns an append-only balance snapshot dataset; add/import build snapshots, apply materializes one balanced journal transaction for opening or cutover.
 - [`bus attachments`](./bus-attachments): Stores evidence files and attachment metadata with stable IDs, enabling cross-module links from invoices, journal entries, bank data, and reconciliation records.
 - [`bus invoices`](./bus-invoices): Maintains sales and purchase invoices as datasets, validates totals and VAT breakdowns, and can emit posting outputs for the ledger.
 - [`bus journal`](./bus-journal): Maintains append-only journal entries as the authoritative ledger postings and validates balanced transaction invariants.
