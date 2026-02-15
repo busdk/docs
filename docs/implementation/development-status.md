@@ -96,7 +96,7 @@ See [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pac
 
 ### Developer module workflow with Cursor CLI
 
-The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Cursor CLI: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Cursor runs from the repository root so its native AGENTS.md loading applies. **E2e coverage:** `bus-dev` `tests/e2e_bus_dev.sh` proves init (AGENTS.md, Makefile, `.cursor/rules`, stubs), flags, set, invalid `--agent`, per-directory lock, context catalog and `--output`, post-init restrictions (only plan/spec/work/e2e), and pipeline list builtin; `bus-agent` `tests/e2e_bus_agent.sh` proves detect, render, help, version, and **run with Cursor** (stub executable in PATH; stderr mentions cursor). Work/spec/e2e with a real Cursor CLI are not run in e2e. Runtime behavior is defined in the [bus-agent](../modules/bus-agent) CLI reference under “Project instructions (AGENTS.md)”.
+See [Developer module workflow with Cursor CLI](./developer-module-workflow#developer-module-workflow-with-cursor-cli). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
