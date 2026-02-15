@@ -47,7 +47,7 @@ BusDK MUST support an exportable “tax audit pack” for a selected period, and
 
 #### H) VAT and periodic reporting support
 
-BusDK MUST store VAT codes, bases, rates, and tax amounts at posting and/or invoice-line level so that VAT returns can be produced and later verified. VAT reports MUST be derivable from journal and invoice data without manual rewriting of history, and corrections MUST remain audit-traceable. VAT return outputs MUST retain references to the underlying postings and vouchers that justify each reported amount. (KPL 2:6 §; KILA 3.4; KILA 3.7; OVML 26 §; AVL 209 e–f §; Verohallinnon ohje verotarkastuksesta 4.12.2025, section 3.3)
+BusDK MUST store VAT codes, bases, rates, and tax amounts at posting and/or invoice-line level so that VAT returns can be produced and later verified. VAT reports MUST be derivable from journal and invoice data without manual rewriting of history, and corrections MUST remain audit-traceable. VAT return outputs MUST retain references to the underlying postings and vouchers that justify each reported amount. (KPL 2:6 §; KILA 3.4; KILA 3.7; OVML 26 §; AVL 209 e–f §; Verohallinnon ohje verotarkastuksesta 4.12.2025, section 3.3) Workspace-level VAT settings (reporting period, timing basis, registration dates) are configured via [bus config](../../modules/bus-config) and documented in [Workspace configuration](../../data/workspace-configuration); VAT allocation and reporting MUST use those settings consistently.
 
 ### Non-goals and accounting judgment
 

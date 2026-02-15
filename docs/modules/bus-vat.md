@@ -13,7 +13,7 @@ description: bus vat computes VAT totals per reporting period, validates VAT cod
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data for archiving and filing. Period selection uses the same `--period` form as other period-scoped commands.
+Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data for archiving and filing. Period selection uses the same `--period` form as other period-scoped commands. VAT reporting period, timing basis (performance, invoice, or cash), and optional registration dates are configured in the workspace via [bus config](./bus-config). Bus-vat **owns the definition of VAT period boundaries**: it uses those settings as inputs and may maintain a period-definition dataset or logic to produce the actual sequence of periods (including transitions within a year — e.g. monthly → yearly → quarterly — and non-standard lengths such as 4-month transition or 18-month first period). It then allocates transactions and invoices to those periods and produces reports and exports.
 
 ### Commands
 
@@ -65,6 +65,8 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
+- [bus-config (VAT configuration reference)](./bus-config)
+- [Workspace configuration](../data/workspace-configuration)
 - [Master data: VAT treatment](../master-data/vat-treatment/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Sales invoices](../master-data/sales-invoices/index)

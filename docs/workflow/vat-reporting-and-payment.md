@@ -5,7 +5,7 @@ description: "VAT close is a repeatable sequence: compute the VAT summary from s
 
 ## VAT reporting and payment
 
-VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then record the payment as a normal ledger transaction. The goal is that both the computed VAT numbers and the evidence used to file them remain reviewable in the revision history.
+VAT close is a repeatable sequence: compute the VAT summary from stored invoice and journal data, export the filing artifacts as repository data, then record the payment as a normal ledger transaction. The goal is that both the computed VAT numbers and the evidence used to file them remain reviewable in the revision history. Which reporting period (monthly, quarterly, or yearly) and which date drives period allocation (performance, invoice, or cash) are set in the workspace via [bus config](../modules/bus-config); [bus vat](../modules/bus-vat) reads those settings when it allocates transactions to tax periods and produces reports.
 
 1. Alice computes the VAT summary for the reporting period:
 
@@ -32,7 +32,7 @@ bus vat export --help
 bus vat export --period 2026Q1
 ```
 
-The module writes period-specific artifacts (for example under `2026/vat-reports/` and `2026/vat-returns/`) and updates any index tables used to make those artifacts discoverable as part of the repository data.
+The module writes period-specific artifacts at the workspace root (for example `vat-reports-2026Q1.csv` and `vat-returns-2026Q1.csv`) and updates any index tables used to make those artifacts discoverable as part of the repository data.
 
 3. After filing, Alice records the VAT payment as a normal journal transaction:
 
@@ -54,3 +54,10 @@ If she prefers to treat the bank statement row as the primary evidence, she can 
   <span class="busdk-prev-next-item busdk-next"><a href="./workflow-takeaways">Workflow takeaways (transparency, control, automation)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-config (VAT and workspace configuration)](../modules/bus-config)
+- [bus-vat (VAT report and export)](../modules/bus-vat)
+- [Workspace configuration](../data/workspace-configuration)
+- [Workflow index](./index)

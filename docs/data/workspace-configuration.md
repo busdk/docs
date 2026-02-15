@@ -25,7 +25,10 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
       "fiscal_year_start": "2026-01-01",
       "fiscal_year_end": "2026-12-31",
       "vat_registered": true,
-      "vat_reporting_period": "quarterly"
+      "vat_reporting_period": "quarterly",
+      "vat_timing": "performance",
+      "vat_registration_start": null,
+      "vat_registration_end": null
     }
   }
 }
@@ -39,7 +42,11 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 `vat_registered` indicates whether the workspace’s accounting entity is VAT registered. It is the primary switch that determines whether VAT reporting expectations apply.
 
-`vat_reporting_period` defines the VAT reporting cadence used for VAT reporting workflows and completeness checks. Typical values are `monthly` and `quarterly`.
+`vat_reporting_period` defines the **current** (or default) VAT reporting cadence. Allowed values: `monthly`, `quarterly`, `yearly`. Under Finnish rules, monthly is the default; quarterly is allowed when turnover is below the applicable threshold (100 000 EUR); yearly is allowed when turnover is below the lower threshold (30 000 EUR). Primary producers and visual artists who do not run other VAT-taxable business typically use a yearly period. See [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos). The actual sequence of period boundaries (including changes within a year, transition periods, or non-standard first/last periods) is defined by the [bus-vat](../modules/bus-vat) module, not in this descriptor.
+
+`vat_timing` selects which date determines VAT period allocation. Allowed values: `performance` (suoriteperuste — allocation by delivery or performance date), `invoice` (laskutusperuste — allocation by the period in which the customer is charged), `cash` (maksuperuste — allocation by payment date for sales and purchases). Cash basis applies only to domestic supplies; under Finnish rules it is available only when annual turnover does not exceed the eligibility threshold (500 000 EUR), and VAT must be reported no later than 12 months after delivery or performance even if unpaid. When switching from cash to performance or invoice basis, previously unpaid sales are reported in the next open VAT period. See [Vero: Pienet yritykset voivat tilittää arvonlisäveron maksuperusteisesti](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/vahainen-liiketoiminta-on-arvonlisaverotonta/pienyrityksen-maksuperusteinen-alv).
+
+`vat_registration_start` (optional) is the date from which the entity is VAT registered, in `YYYY-MM-DD` form. `vat_registration_end` (optional) is the date on which VAT registration ends. The [bus-vat](../modules/bus-vat) module uses these as inputs when it builds the sequence of VAT periods (including partial first or last periods and any non-standard period lengths). Omit or set to null when not applicable. See [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

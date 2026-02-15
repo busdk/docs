@@ -15,17 +15,17 @@ Other modules consume the accounting entity settings as read-only workspace conf
 
 - [bus accounts](../../modules/bus-accounts): reads workspace scope and entity settings to keep charts and validations consistent.
 - [bus invoices](../../modules/bus-invoices): reads entity settings to interpret invoice dates, currency, and VAT context.
-- [bus vat](../../modules/bus-vat): reads VAT registration and reporting cadence for period reporting.
+- [bus vat](../../modules/bus-vat): reads VAT registration, reporting period, timing basis, and registration dates for period allocation and reporting.
 - [bus journal](../../modules/bus-journal): posts and reports per entity scope.
 
 ### Actions
 
 - [Create an accounting entity](./create): Create a new workspace directory so journals and VAT never mix across business entities.
-- [Configure accounting entity settings](./configure): Edit workspace configuration that controls currency, fiscal year boundaries, and VAT reporting expectations.
+- [Configure accounting entity settings](./configure): Edit workspace configuration that controls currency, fiscal year boundaries, VAT reporting, VAT timing, and optional VAT registration dates.
 
 ### Properties
 
-Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The settings include base currency ([base_currency](./base-currency)), fiscal year boundaries ([fiscal_year_start](./fiscal-year-start) and [fiscal_year_end](./fiscal-year-end)), VAT registration ([vat_registered](./vat-registered)), and VAT reporting cadence ([vat_reporting_period](./vat-reporting-period)). The canonical reference for keys and semantics is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration).
+Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The settings include base currency ([base_currency](./base-currency)), fiscal year boundaries ([fiscal_year_start](./fiscal-year-start) and [fiscal_year_end](./fiscal-year-end)), VAT registration ([vat_registered](./vat-registered)), VAT reporting cadence ([vat_reporting_period](./vat-reporting-period)), VAT timing ([vat_timing](./vat-timing)), and optional VAT registration dates ([vat_registration_start](./vat-registration-start)). The canonical reference for all keys and semantics is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration); the [bus config](../../modules/bus-config) CLI is the single place to create and update these settings.
 
 ### Relations
 
