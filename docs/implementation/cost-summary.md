@@ -1,13 +1,13 @@
 ---
 title: Bus project cost summary
-description: Snapshot of total days, commits, and AI-related spend across the BusDK org (2025-02-15), with cost per day, commits per day, per-module breakdown, and average cost per commit.
+description: Snapshot of total days, commits, and AI-related spend across the BusDK org (2026-02-15), with cost per day, commits per day, per-module breakdown, and average cost per commit.
 ---
 
 ## Overview
 
-This page summarizes project cost metrics captured on **2025-02-15 at approximately 19:00 Europe/Helsinki (EET, UTC+02:00)**. The numbers are intended as a snapshot for comparing relative effort and spend across repositories.
+This page summarizes project cost metrics captured on **2026-02-15 at approximately 22:11 Europe/Helsinki (EET, UTC+02:00)**. The numbers are intended as a snapshot for comparing relative effort and spend across repositories.
 
-**Total commits** across the BusDK org repositories are used as a proxy for work units. **Total cost** is the sum of AI-related spend attributed per repository or module (documentation, code, and tooling). Commits were mostly produced via automated AI-driven commit workflows, so commits are intended to be small and semantically meaningful; that makes the metric useful for comparing relative effort across modules.
+**Total commits** across the BusDK org repositories are used as a proxy for work units. **Total cost** is the sum of AI-related spend (Cursor team subscription and usage, plus ChatGPT Plus and any extra costs). Commits were mostly produced via automated AI-driven commit workflows, so commits are intended to be small and semantically meaningful; that makes the metric useful for comparing relative effort across modules.
 
 All amounts are in **USD**. Totals may not exactly match the sum of per-module rounded values because of rounding; the stated totals below are authoritative.
 
@@ -15,51 +15,66 @@ All amounts are in **USD**. Totals may not exactly match the sum of per-module r
 
 | Metric | Value |
 |--------|--------|
-| **Total days** | 17 |
-| **Total commits** | 1,005 |
-| **Commits per day** | 60 |
-| **Total cost** | **654.63 USD** |
-| **Cost per day** | **38.51 USD** |
-| **Approximate average cost per commit** | **0.65 USD** |
+| **Date span** | 2025-12-25 to 2026-02-15 |
+| **Active days (union)** | 18 |
+| **Total commits** | 1,027 |
+| **Avg commits per day** | 57.06 |
+| **Busiest day** | 2026-01-25 (140 commits) |
+| **Avg active modules per day** | 12.56 |
+| **Total cost** | **708.45 USD** |
+| **Cost per active day** | **39.36 USD** |
+| **Approximate average cost per commit** | **0.69 USD** |
+
+### Cost breakdown
+
+| Component | USD |
+|-----------|-----|
+| ChatGPT Plus | 21.76 |
+| Cursor team (spend over included) | 591.59 |
+| Cursor team (included) | 95.10 |
+| Cursor team total | 686.69 |
+| Extra costs | 0 |
+| **Overall total** | **708.45** |
 
 ### Per-module breakdown
 
-Module order below matches the source snapshot (no reordering).
+Module order below matches the source snapshot (no reordering). *Active days* is the number of distinct days with at least one commit in that module. Cost per module is derived from each module’s share of total commits.
 
-| Module | Commits | % of commits | Cost (USD) | % of cost |
-|--------|--------|---------------|------------|-----------|
-| [bus](../modules/bus) | 35 | 3.5% | 22.80 | 3.5% |
-| [bus-accounts](../modules/bus-accounts) | 46 | 4.6% | 29.96 | 4.6% |
-| [bus-agent](../modules/bus-agent) | 15 | 1.5% | 9.77 | 1.5% |
-| [bus-api](../modules/bus-api) | 10 | 1.0% | 6.51 | 1.0% |
-| [bus-assets](../modules/bus-assets) | 26 | 2.6% | 16.94 | 2.6% |
-| [bus-attachments](../modules/bus-attachments) | 26 | 2.6% | 16.94 | 2.6% |
-| [bus-bank](../modules/bus-bank) | 37 | 3.7% | 24.10 | 3.7% |
-| [bus-bfl](../modules/bus-bfl) | 17 | 1.7% | 11.07 | 1.7% |
-| [bus-budget](../modules/bus-budget) | 27 | 2.7% | 17.59 | 2.7% |
-| [bus-config](../modules/bus-config) | 10 | 1.0% | 6.51 | 1.0% |
-| [bus-data](../modules/bus-data) | 27 | 2.7% | 17.59 | 2.7% |
-| [bus-dev](../modules/bus-dev) | 49 | 4.9% | 31.92 | 4.9% |
-| [bus-entities](../modules/bus-entities) | 47 | 4.7% | 30.61 | 4.7% |
-| [bus-filing](../modules/bus-filing) | 24 | 2.4% | 15.63 | 2.4% |
-| [bus-filing-prh](../modules/bus-filing-prh) | 22 | 2.2% | 14.33 | 2.2% |
-| [bus-filing-vero](../modules/bus-filing-vero) | 20 | 2.0% | 13.03 | 2.0% |
-| [bus-init](../modules/bus-init) | 19 | 1.9% | 12.38 | 1.9% |
-| [bus-inventory](../modules/bus-inventory) | 20 | 2.0% | 13.03 | 2.0% |
-| [bus-invoices](../modules/bus-invoices) | 26 | 2.6% | 16.94 | 2.6% |
-| [bus-journal](../modules/bus-journal) | 52 | 5.2% | 33.87 | 5.2% |
-| [bus-loans](../modules/bus-loans) | 28 | 2.8% | 18.24 | 2.8% |
-| [bus-payroll](../modules/bus-payroll) | 23 | 2.3% | 14.98 | 2.3% |
-| [bus-pdf](../modules/bus-pdf) | 11 | 1.1% | 7.17 | 1.1% |
-| [bus-period](../modules/bus-period) | 54 | 5.4% | 35.17 | 5.4% |
-| [bus-preferences](../modules/bus-preferences) | 4 | 0.4% | 2.61 | 0.4% |
-| [bus-reconcile](../modules/bus-reconcile) | 19 | 1.9% | 12.38 | 1.9% |
-| [bus-reports](../modules/bus-reports) | 22 | 2.2% | 14.33 | 2.2% |
-| [bus-run](../modules/bus-run) | 5 | 0.5% | 3.26 | 0.5% |
-| [bus-sheets](../modules/bus-sheets) | 4 | 0.4% | 2.61 | 0.4% |
-| [bus-validate](../modules/bus-validate) | 22 | 2.2% | 14.33 | 2.2% |
-| [bus-vat](../modules/bus-vat) | 33 | 3.3% | 21.50 | 3.3% |
-| docs | 225 | 22.4% | 146.56 | 22.4% |
+| Module | Commits | Active days | % of commits | Cost (USD) | % of cost |
+|--------|--------|-------------|---------------|------------|-----------|
+| [bus](../modules/bus) | 35 | 9 | 3.4% | 24.14 | 3.4% |
+| [bus-accounts](../modules/bus-accounts) | 46 | 7 | 4.5% | 31.78 | 4.5% |
+| [bus-agent](../modules/bus-agent) | 15 | 2 | 1.5% | 10.36 | 1.5% |
+| [bus-api](../modules/bus-api) | 10 | 2 | 1.0% | 6.90 | 1.0% |
+| [bus-assets](../modules/bus-assets) | 26 | 8 | 2.5% | 17.94 | 2.5% |
+| [bus-attachments](../modules/bus-attachments) | 26 | 9 | 2.5% | 17.94 | 2.5% |
+| [bus-bank](../modules/bus-bank) | 37 | 9 | 3.6% | 25.52 | 3.6% |
+| [bus-bfl](../modules/bus-bfl) | 17 | 4 | 1.7% | 11.73 | 1.7% |
+| [bus-budget](../modules/bus-budget) | 27 | 8 | 2.6% | 18.63 | 2.6% |
+| [bus-config](../modules/bus-config) | 10 | 3 | 1.0% | 6.90 | 1.0% |
+| [bus-data](../modules/bus-data) | 28 | 5 | 2.7% | 19.31 | 2.7% |
+| [bus-dev](../modules/bus-dev) | 49 | 6 | 4.8% | 33.81 | 4.8% |
+| [bus-entities](../modules/bus-entities) | 47 | 10 | 4.6% | 32.44 | 4.6% |
+| [bus-filing](../modules/bus-filing) | 24 | 8 | 2.3% | 16.56 | 2.3% |
+| [bus-filing-prh](../modules/bus-filing-prh) | 22 | 8 | 2.1% | 15.18 | 2.1% |
+| [bus-filing-vero](../modules/bus-filing-vero) | 20 | 8 | 1.9% | 13.80 | 1.9% |
+| [bus-init](../modules/bus-init) | 19 | 8 | 1.8% | 13.11 | 1.8% |
+| [bus-inventory](../modules/bus-inventory) | 20 | 8 | 1.9% | 13.80 | 1.9% |
+| [bus-invoices](../modules/bus-invoices) | 26 | 9 | 2.5% | 17.94 | 2.5% |
+| [bus-journal](../modules/bus-journal) | 52 | 8 | 5.1% | 35.88 | 5.1% |
+| [bus-loans](../modules/bus-loans) | 28 | 6 | 2.7% | 19.31 | 2.7% |
+| [bus-payroll](../modules/bus-payroll) | 23 | 8 | 2.2% | 15.87 | 2.2% |
+| [bus-pdf](../modules/bus-pdf) | 11 | 5 | 1.1% | 7.59 | 1.1% |
+| [bus-period](../modules/bus-period) | 55 | 12 | 5.4% | 37.96 | 5.4% |
+| [bus-preferences](../modules/bus-preferences) | 4 | 1 | 0.4% | 2.76 | 0.4% |
+| [bus-reconcile](../modules/bus-reconcile) | 19 | 8 | 1.8% | 13.11 | 1.8% |
+| [bus-reports](../modules/bus-reports) | 22 | 7 | 2.1% | 15.18 | 2.1% |
+| [bus-run](../modules/bus-run) | 5 | 1 | 0.5% | 3.45 | 0.5% |
+| [bus-sheets](../modules/bus-sheets) | 4 | 1 | 0.4% | 2.76 | 0.4% |
+| [bus-validate](../modules/bus-validate) | 22 | 8 | 2.1% | 15.18 | 2.1% |
+| [bus-vat](../modules/bus-vat) | 33 | 8 | 3.2% | 22.78 | 3.2% |
+| busdk.com | 16 | 6 | 1.6% | 11.04 | 1.6% |
+| docs | 229 | 16 | 22.3% | 158.02 | 22.3% |
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -69,6 +84,6 @@ Module order below matches the source snapshot (no reordering).
 </p>
 <!-- busdk-docs-nav end -->
 
-### Sources / method
+### Sources
 
-The numbers come from internal cost tracking tied to automated AI commit workflows and represent a snapshot at the stated timestamp (2025-02-15, ~19:00 EET).
+The numbers come from `scripts/get-cost-metrics.sh`: commit and active-day metrics are derived from Git history across BusDK repositories; cost figures are from internal tracking (Cursor team and ChatGPT Plus). The snapshot timestamp is 2026-02-15, approximately 22:11 EET.
