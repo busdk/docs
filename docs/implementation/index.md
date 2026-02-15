@@ -8,6 +8,7 @@ description: "Module repository structure, dependency rules, and implementation 
 This section covers how modules are structured and their current implementation state:
 
 - [Module repository structure and dependency rules](./module-repository-structure)
+- [Developer module workflow](./developer-module-workflow): scaffold modules, run commit/work/spec/e2e, set agent and run-config (Cursor, Gemini, Claude, Codex)
 - [Development status](./development-status): implementation state of each BusDK module and the Bus as a whole, derived from each repository’s PLAN.md
 
 <!-- busdk-docs-nav start -->

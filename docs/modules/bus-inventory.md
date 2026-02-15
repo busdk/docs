@@ -39,7 +39,7 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 **Value promise:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.
 
-**Use cases:** [Inventory valuation and COGS postings](../implementation/development-status#inventory-valuation-and-cogs-postings).
+**Use cases:** [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs).
 
 **Completeness:** 30% (Some basic commands) — validate, status, and move (current CLI and `inventory/` layout) verified by unit and e2e tests; init, add, and valuation are not implemented; full SDD-aligned journey not verified.
 

@@ -9,21 +9,21 @@ This page summarizes the implementation state of each BusDK module using test ev
 
 ### Use cases
 
-- [Accounting workflow](#accounting-workflow) — [Accounting workflow overview](../workflow/accounting-workflow-overview): End-to-end bookkeeping from repo init through master data, attachments, invoices and journal, bank import and reconcile, to period close (validate, VAT, close, lock, reports). Delivers a reviewable audit trail and script-friendly flow.
-- [Inventory valuation and COGS postings](#inventory-valuation-and-cogs-postings) — [bus-inventory](../modules/bus-inventory): Inventory register, append-only stock movements, and deterministic as-of valuation outputs suitable for reporting and later posting.
-- [Workbook and validated tabular editing](#workbook-and-validated-tabular-editing) — [bus-sheets](../modules/bus-sheets): Lightweight, local, web-based workbook that shows workspace datasets as spreadsheet-like tables, supports create and edit with strict schema validation, and can use formulas and scripted operations for reproducible, auditable calculations. The workbook is the generic entry point; Bus modules can later provide dedicated, task-specific screens that write to the same validated workspace data.
-- [Finnish bookkeeping and tax-audit compliance](#finnish-bookkeeping-and-tax-audit-compliance) — [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): Audit trail, retention, VAT returns, and tax-audit pack. Delivers compliance with Finnish legal and tax-audit expectations.
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) — [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): Audit-ready evidence pack from accounting data (statements or equivalents, interim snapshot, significant assets, creditor/debt and loan registry, budgets and cashflow); BusDK delivers a reviewable, deterministic audit trail in a Git workspace.
-- [Developer module workflow with Cursor CLI](#developer-module-workflow-with-cursor-cli) — [bus-dev](../modules/bus-dev): Scaffold modules, commit/work/spec/e2e, set agent and run-config with Cursor CLI; **only developer runtime with e2e coverage** (init, flags, set, agent detect and run stub).
-- [Developer module workflow with Gemini CLI](#developer-module-workflow-with-gemini-cli) — [bus-dev](../modules/bus-dev): Scaffold modules, commit/work/spec/e2e, set agent and run-config with Gemini CLI; repo-local `.gemini` context. Not exercised in e2e.
-- [Developer module workflow with Claude CLI](#developer-module-workflow-with-claude-cli) — [bus-dev](../modules/bus-dev): Scaffold modules, commit/work/spec/e2e, set agent and run-config with Claude Code; per-run AGENTS.md injection. Not exercised in e2e.
-- [Developer module workflow with Codex CLI](#developer-module-workflow-with-codex-cli) — [bus-dev](../modules/bus-dev): Scaffold modules, commit/work/spec/e2e, set agent and run-config with Codex; repo-local CODEX_HOME. Not exercised in e2e.
-- [Finnish payroll handling (monthly pay run)](#finnish-payroll-handling-monthly-pay-run) — [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): Run monthly payroll from employee register to balanced posting intent; postings feed the journal and later bank reconciliation. Delivers traceable salary and withholding bookkeeping for a small company.
-- [Orphan modules](#orphan-modules): Modules not yet mapped to a documented use case.
+- [Accounting workflow](../workflow/accounting-workflow-overview)
+- [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs)
+- [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack)
+- [Developer module workflow with Cursor CLI](./developer-module-workflow#developer-module-workflow-with-cursor-cli)
+- [Developer module workflow with Gemini CLI](./developer-module-workflow#developer-module-workflow-with-gemini-cli)
+- [Developer module workflow with Claude CLI](./developer-module-workflow#developer-module-workflow-with-claude-cli)
+- [Developer module workflow with Codex CLI](./developer-module-workflow#developer-module-workflow-with-codex-cli)
+- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
+- [Orphan modules](#orphan-modules)
 
 ### Accounting workflow
 
-The [Accounting workflow overview](../workflow/accounting-workflow-overview) describes the intended end-to-end bookkeeping flow: create repo and baseline, define master data (accounts, entities, period), register attachments, record invoices and journal postings, import bank data and reconcile, then validate, run VAT report/export, close and lock the period, and produce reports.
+See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -45,7 +45,7 @@ The [Accounting workflow overview](../workflow/accounting-workflow-overview) des
 
 ### Inventory valuation and COGS postings
 
-Define inventory items, record stock movements (purchases, sales or consumption, adjustments) as append-only rows with voucher references, and compute deterministic valuation outputs (FIFO or weighted-average) for an as-of date or period end that can feed reports and later journal postings for cost of goods sold.
+See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -53,7 +53,7 @@ Define inventory items, record stock movements (purchases, sales or consumption,
 
 ### Workbook and validated tabular editing
 
-As a BusDK workspace user you get a lightweight, local, web-based “workbook” that shows workspace datasets as spreadsheet-like tables and lets you create and edit rows with strict schema validation, so you can maintain reliable typed tabular data without accidentally breaking formats. Simple automation hooks — formula-projected fields and, when enabled, an agent that can run Bus CLI tools — support reproducible, auditable calculations and transformations. The workbook is the generic entry point; Bus modules can provide dedicated, task-specific screens that guide you through common workflows and still write to the same validated workspace data. The [bus-sheets](../modules/bus-sheets) module is the canonical implementation of this journey; it embeds [bus-api](../modules/bus-api) in-process and relies on [bus-data](../modules/bus-data) and [bus-bfl](../modules/bus-bfl) for schema, row operations, and formula semantics.
+See [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -63,11 +63,9 @@ As a BusDK workspace user you get a lightweight, local, web-based “workbook”
 | [bfl](../modules/bus-bfl#development-state) | 60% (Stable) – parse, format, validate, eval, funcset list and CLI contract verified by e2e and unit tests; formula engine ready for [data](../modules/bus-data) projection. | Range and array semantics in data; formula source in API responses. | None known. |
 | [agent](../modules/bus-agent#development-state) | 40% — detect, render, set, format, run with Cursor stub and resolution order verified by e2e; optional sheets chat not test-backed. | Order/config; AGENTS.md; adapters; sheets integration. | None known. |
 
-The full journey — open workbook, edit rows with schema validation, see formula-projected values, and optionally run agent-driven operations — is not yet covered end-to-end by tests. Today you can start the bus-sheets server and receive a capability URL; the workbook grid, schema panel, and validation actions depend on the embedded API and UI assets that are planned next.
-
 ### Finnish bookkeeping and tax-audit compliance
 
-The [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) page defines requirements for audit trail, retention, VAT, and tax-audit delivery. Modules that contribute to this use case overlap with the accounting workflow; the table below highlights readiness for the compliance-facing parts (VAT, close/lock, filing, tax-audit pack).
+See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit). Module readiness for the compliance-facing parts (VAT, close/lock, filing, tax-audit pack):
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -81,7 +79,7 @@ The [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-
 
 ### Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack
 
-The [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack) page describes the use case and evidence-pack scope. This journey is about assembling an audit-ready evidence pack for a restructuring or reorganisation context. It emphasises correctness and traceability of bookkeeping, explicit separation of snapshot reporting (baseline and interim) from ongoing operational postings, loan registry roll-forward and debt visibility, and budget or forecast and liquidity evidence. In practice the application or assessment typically expects recent financial statements or equivalent bookkeeping-based summaries (where no formal statements are required), an interim snapshot, a list of significant assets, and where applicable an independent auditor or expert report in debtor-led filings.
+See [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -109,7 +107,7 @@ The [bus-dev](../modules/bus-dev) module is the canonical entry for developer wo
 
 ### Developer module workflow with Gemini CLI
 
-The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Gemini CLI: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Gemini may rely on repo-local `.gemini/settings.json` and `.geminiignore` so AGENTS.md is discovered as intended (additive merges only; no user-global Gemini edits). **Not exercised in e2e:** no test runs bus-dev or bus-agent with Gemini; only the generic detect/selection contract is tested (e2e uses stubs; run with real Gemini is untested).
+See [Developer module workflow with Gemini CLI](./developer-module-workflow#developer-module-workflow-with-gemini-cli). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -119,7 +117,7 @@ The [bus-dev](../modules/bus-dev) module is the canonical entry for developer wo
 
 ### Developer module workflow with Claude CLI
 
-The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Claude Code: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Claude prefers per-run injection of AGENTS.md (with a clearly marked, additive repo-local shim as fallback). **Not exercised in e2e:** no test runs bus-dev or bus-agent with Claude; only the generic detect/selection contract is tested; run with real Claude CLI is untested.
+See [Developer module workflow with Claude CLI](./developer-module-workflow#developer-module-workflow-with-claude-cli). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -129,7 +127,7 @@ The [bus-dev](../modules/bus-dev) module is the canonical entry for developer wo
 
 ### Developer module workflow with Codex CLI
 
-The [bus-dev](../modules/bus-dev) module is the canonical entry for developer workflows with Codex: scaffold new modules, run commit/work/spec/e2e, and set agent and run-config. Codex runs with repo-local state (e.g. CODEX_HOME set to a repo-local directory) so no global state is used or mutated; AGENTS.md is discovered natively when the workdir is the repo root. **Not exercised in e2e:** no test runs bus-dev or bus-agent with Codex; only the generic detect/selection contract is tested; run with real Codex CLI is untested.
+See [Developer module workflow with Codex CLI](./developer-module-workflow#developer-module-workflow-with-codex-cli). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -139,7 +137,7 @@ The [bus-dev](../modules/bus-dev) module is the canonical entry for developer wo
 
 ### Finnish payroll handling (monthly pay run)
 
-The [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run) page describes the journey from prerequisites (accounts, entity, periods) and employee register through a monthly pay run with pay date to balanced posting intent and onward into the journal and bank reconciliation. The table below lists the modules a user touches in this story and their readiness for it; test evidence in each module repository is the basis for the readiness claims.
+See [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -165,7 +163,7 @@ Modules not mapped to any documented use case appear here with overall completen
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./module-repository-structure">Module repository structure and dependency rules</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./developer-module-workflow">Developer module workflow</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation and development status</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../data/index">Data format and storage</a> &rarr;</span>
 </p>
