@@ -25,7 +25,7 @@ bus -V
 bus -h
 ```
 
-3. Alice scaffolds the workspace. By default, `bus init` creates only workspace configuration (`datapackage.json` and accounting entity settings). To create the full standard baseline (config plus all domain datasets), she passes the module-include flags:
+3. Alice scaffolds the workspace. By default, `bus init` creates only workspace configuration (`datapackage.json` and accounting entity settings). The descriptor is created or ensured via the data layer before accounting entity settings are applied. To create the full standard baseline (config plus all domain datasets), she passes the module-include flags:
 
 ```bash
 bus init all

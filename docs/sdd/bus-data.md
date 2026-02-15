@@ -7,7 +7,7 @@ description: Bus Data provides the shared tabular data layer for BusDK by implem
 
 ### Introduction and Overview
 
-Bus Data provides the shared tabular data layer for BusDK by implementing deterministic Frictionless Table Schema and Data Package handling for workspace datasets. Its primary surface is a Go library that other modules import directly for schema, data package, and CSV operations, and it also provides the `bus-data` CLI as a thin wrapper for inspection and mechanical maintenance. The module remains library-first, CLI-first, deterministic, and non-interactive, with no Git or network behavior.
+Bus Data provides the shared tabular data layer for BusDK by implementing deterministic Frictionless Table Schema and Data Package handling for workspace datasets. Its primary surface is a Go library that other modules import directly for schema, data package, and CSV operations. The canonical way to run the module’s CLI is via the BusDK dispatcher as `bus data`; the `bus-data` binary remains available for scripts or direct invocation, but end users and documentation should prefer `bus data`. The module remains library-first, deterministic, and non-interactive, with no Git or network behavior. Modules that need to create or ensure `datapackage.json` (e.g. [bus-config](./bus-config), [bus-init](./bus-init)) MUST use the bus-data Go library to initialize the empty descriptor first, not by invoking the CLI.
 
 ### Requirements
 
@@ -27,7 +27,11 @@ FR-DAT-007 Schema inference. The module MUST support initializing a Table Schema
 
 FR-DAT-008 Type changes with compatibility checks. The module MUST support changing a field type only when the change is non-destructive for existing data. Acceptance criteria: incompatible type changes are rejected with a clear diagnostic, and compatible changes update the schema while leaving table data unchanged.
 
-FR-DAT-009 Data Package management. The module MUST support creating, reading, updating, and patching `datapackage.json` for workspace datasets. Acceptance criteria: `datapackage.json` can be initialized deterministically, round-tripped without loss of unknown properties, and updated through explicit commands and JSON patches with no interactive prompts.
+FR-DAT-009 Data Package management. The module MUST support creating, reading, updating, and patching `datapackage.json` for workspace datasets. Acceptance criteria: `datapackage.json` can be initialized deterministically (empty descriptor with profile and empty resources), round-tripped without loss of unknown properties, and updated through explicit commands and JSON patches with no interactive prompts.
+
+FR-DAT-009a Data package init (empty). The module MUST provide an `init` command that creates an empty `datapackage.json` at the workspace root when the file is missing (profile `tabular-data-package`, empty `resources` array, deterministic formatting). When the file already exists, init MUST be idempotent and MUST NOT scan the workspace for CSV files or add resources. Acceptance criteria: `bus data init` in an empty directory creates only the minimal descriptor; re-running leaves the file unchanged; no resource entries are added automatically.
+
+FR-DAT-009b Data package discover. The module MUST provide a distinct command (e.g. `package discover`) that scans the workspace for CSV files with a beside-the-table schema and adds or updates resource entries in an existing `datapackage.json`. This operation MUST NOT be named `init`. Acceptance criteria: discover requires an existing `datapackage.json` (created by `bus data init` or equivalent); it adds one resource per discovered table with deterministic name and path; resource order is lexicographic by name; running discover when no package exists fails with a clear diagnostic.
 
 FR-DAT-010 Resource management. The module MUST support adding, removing, and renaming resources in `datapackage.json` while creating or deleting the underlying CSV and schema artifacts when explicitly requested. Acceptance criteria: resource add creates the CSV and schema artifacts in deterministic locations and names, resource remove refuses when the resource is referenced by any foreign key in the workspace, and resource rename updates foreign key references deterministically.
 
@@ -53,7 +57,7 @@ FR-DAT-020 Opt-in formula source output. The module MUST provide an explicit, de
 
 FR-DAT-021 Range resolution for BFL. When evaluating BFL expressions that contain range syntax, the module MUST provide a deterministic range resolver to the BFL runtime context. Acceptance criteria: range expressions resolve to arrays based on a stable mapping from BFL column and row references to the current resource snapshot, and open-ended ranges resolve a deterministic last row without inspecting external state.
 
-NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and MUST NOT implement domain-specific accounting logic. Acceptance criteria: domain invariants are enforced by domain modules, not by `bus-data`.
+NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and MUST NOT implement domain-specific accounting logic. Acceptance criteria: domain invariants are enforced by domain modules, not by bus-data.
 
 NFR-DAT-002 No Git or network behavior. The module MUST NOT perform Git operations or network access. Acceptance criteria: the library and CLI only read and write local workspace files.
 
@@ -72,52 +76,57 @@ Bus Data integrates [bus-bfl](./bus-bfl) to validate and evaluate formulas decla
 
 ### Key Decisions
 
-KD-DAT-001 Shared library for data mechanics. Dataset I/O and schema handling are centralized in a library to keep module behavior consistent.
-KD-DAT-002 Frictionless-native data package support. Data Package descriptors are treated as first-class workspace metadata and remain fully compatible with Frictionless Table Schema and Data Package rules.
+KD-DAT-001 Shared library for data mechanics. Dataset I/O and schema handling are centralized in a library to keep module behavior consistent.  
+KD-DAT-002 Frictionless-native data package support. Data Package descriptors are treated as first-class workspace metadata and remain fully compatible with Frictionless Table Schema and Data Package rules.  
+KD-DAT-003 Init vs discover. Creating an empty `datapackage.json` is a separate operation (init) from scanning the workspace and adding resource entries (discover). Init does not scan for CSV files; discover requires an existing descriptor. This keeps bootstrap predictable and avoids implicit discovery under the name “init”.  
+KD-DAT-004 Library integration for descriptor bootstrap. bus-config and bus-init MUST use the bus-data Go library to create or ensure the empty `datapackage.json` before writing accounting entity or other metadata. They MUST NOT invoke the bus-data CLI; integration is via library calls only so that a single code path owns descriptor creation and formatting.
 
 ### Component Design and Interfaces
 
 Interface IF-DAT-001 (data library). The module exposes a Go library interface for reading, validating, and writing tables, schemas, and data packages deterministically, satisfying FR-DAT-001, FR-DAT-007, FR-DAT-009, FR-DAT-011, and FR-DAT-016. The library provides explicit operations for schema inference, schema patching, resource add/remove/rename, and cross-resource validation, satisfying FR-DAT-007, FR-DAT-009, FR-DAT-010, FR-DAT-012, and FR-DAT-013. JSON patching uses a deterministic, safe merge approach and preserves unknown properties on both Table Schema and Data Package descriptors, satisfying FR-DAT-009, FR-DAT-011, and FR-DAT-014.
 
-Interface IF-DAT-002 (module CLI). The module exposes `bus-data` as a thin wrapper over the library for deterministic inspection and maintenance of workspace tables, schemas, and data packages, satisfying FR-DAT-002, FR-DAT-015, NFR-DAT-003, and NFR-DAT-008. It accepts workspace-relative resource names and table paths, resolves beside-the-table schema files by replacing the `.csv` suffix with `.schema.json` in the same directory, and never shells out to other CLIs. All commands are explicit, non-interactive, and map directly to library operations so that other modules can call the library without invoking the CLI.
+Interface IF-DAT-002 (module CLI). The module is invoked as `bus data` via the BusDK dispatcher (or directly as `bus-data`). The CLI is a thin wrapper over the library for deterministic inspection and maintenance of workspace tables, schemas, and data packages, satisfying FR-DAT-002, FR-DAT-015, NFR-DAT-003, and NFR-DAT-008. It accepts workspace-relative resource names and table paths, resolves beside-the-table schema files by replacing the `.csv` suffix with `.schema.json` in the same directory, and never shells out to other CLIs. All commands are explicit, non-interactive, and map directly to library operations so that other modules can call the library without invoking the CLI.
 
-Command `bus-data package init` creates `datapackage.json` at the workspace root with the `tabular-data-package` profile and includes one resource entry per existing table that has a beside-the-table schema. Resource names are derived from the CSV basename without the `.csv` suffix, paths are stored as workspace-relative CSV paths, and resources are ordered lexicographically by name. Command `bus-data package show` emits the `datapackage.json` content as stored on disk, and command `bus-data package patch` applies a JSON merge patch while preserving unknown properties and enforcing deterministic formatting. Command `bus-data package validate` validates all resources and foreign keys defined in the data package and returns a deterministic report.
+Command `bus data init` creates an empty `datapackage.json` at the workspace root when the file is missing: profile `tabular-data-package`, empty `resources` array, deterministic JSON formatting. It does not scan for CSV files or add any resources. When the file already exists, init is idempotent and exits 0 without modifying it. This ensures a single, predictable way to bootstrap the descriptor; modules that need to add accounting entity or other metadata (e.g. bus-config, bus-init) MUST call the bus-data library to ensure the descriptor exists before writing their own content — via the Go library interface, not by running the CLI.
 
-Command `bus-data resource list` emits a deterministic TSV of resource name and path from `datapackage.json`, ordered lexicographically by name. Command `bus-data resource add` requires an explicit resource name, CSV path, and schema source, and creates the CSV and beside-the-table schema artifacts before inserting the resource into `datapackage.json`. Command `bus-data resource remove` refuses to remove a resource if it is referenced by any foreign key in the workspace, and it deletes the CSV and schema artifacts only when `--delete-files` is provided. Command `bus-data resource rename` updates the resource name and any foreign key references deterministically, and it only renames files when `--rename-files` is provided. Command `bus-data resource validate <resource>` validates a single resource’s schema and data and reports any errors deterministically without modifying files.
+Command `bus data package discover` scans the workspace for CSV files that have a beside-the-table schema file and adds or updates resource entries in the existing `datapackage.json`. Resource names are derived from the CSV basename without the `.csv` suffix, paths are stored as workspace-relative CSV paths, and resources are ordered lexicographically by name. Discover requires `datapackage.json` to exist (e.g. after `bus data init`); if the file is missing, the command fails with a clear diagnostic. Command `bus data package show` emits the `datapackage.json` content as stored on disk, and command `bus data package patch` applies a JSON merge patch while preserving unknown properties and enforcing deterministic formatting. Command `bus data package validate` validates all resources and foreign keys defined in the data package and returns a deterministic report.
 
-Command `bus-data table list` takes no parameters and emits a deterministic TSV with columns `table_path` and `schema_path`, one row per table. A table is any `*.csv` file that has a beside-the-table schema file. Output ordering is lexicographic by `table_path` so the results are stable across machines.
+Command `bus data resource list` emits a deterministic TSV of resource name and path from `datapackage.json`, ordered lexicographically by name. Command `bus data resource add` requires an explicit resource name, CSV path, and schema source, and creates the CSV and beside-the-table schema artifacts before inserting the resource into `datapackage.json`. Command `bus data resource remove` refuses to remove a resource if it is referenced by any foreign key in the workspace, and it deletes the CSV and schema artifacts only when `--delete-files` is provided. Command `bus data resource rename` updates the resource name and any foreign key references deterministically, and it only renames files when `--rename-files` is provided. Command `bus data resource validate <resource>` validates a single resource’s schema and data and reports any errors deterministically without modifying files.
 
-Command `bus-data schema show --table <table>` writes the schema file content exactly as stored on disk to standard output. Command `bus-data schema show --resource <name>` resolves the resource in `datapackage.json` and writes the resolved schema. If the schema file is missing or unreadable, the command exits non-zero with a concise diagnostic.
+Command `bus data table list` takes no parameters and emits a deterministic TSV with columns `table_path` and `schema_path`, one row per table. A table is any `*.csv` file that has a beside-the-table schema file. Output ordering is lexicographic by `table_path` so the results are stable across machines.
 
-Command `bus-data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows, filters, and columns without changing validation behavior.
+Command `bus data schema show --table <table>` writes the schema file content exactly as stored on disk to standard output. Command `bus data schema show --resource <name>` resolves the resource in `datapackage.json` and writes the resolved schema. If the schema file is missing or unreadable, the command exits non-zero with a concise diagnostic.
 
-When a table contains formula-enabled fields, `bus-data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns. For formulas that include ranges, bus-data resolves `Ref.ColumnIndex` to the schema field order (1-based) and `Ref.RowIndex` to the physical row order (1-based) in the current resource snapshot, and it resolves open-ended ranges using the last row in that snapshot without probing external state.
+Command `bus data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows, filters, and columns without changing validation behavior.
 
-Command `bus-data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
+When a table contains formula-enabled fields, `bus data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns. For formulas that include ranges, bus-data resolves `Ref.ColumnIndex` to the schema field order (1-based) and `Ref.RowIndex` to the physical row order (1-based) in the current resource snapshot, and it resolves open-ended ranges using the last row in that snapshot without probing external state.
 
-Command `bus-data schema infer <table>` reads an existing CSV and writes a beside-the-table schema inferred from the data. It does not modify the CSV and refuses to overwrite an existing schema unless explicitly forced.
+Command `bus data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
 
-Command `bus-data schema field add --resource <name>` appends a new field definition to the schema and updates the CSV by appending a new column. Existing rows receive the field’s default value when provided, or an empty value when no default is specified.
+Command `bus data schema infer <table>` reads an existing CSV and writes a beside-the-table schema inferred from the data. It does not modify the CSV and refuses to overwrite an existing schema unless explicitly forced.
 
-Command `bus-data schema field set-type --resource <name>` changes a field type only when the existing values are compatible with the new type. The command updates the schema and does not rewrite table data.
+Command `bus data schema field add --resource <name>` appends a new field definition to the schema and updates the CSV by appending a new column. Existing rows receive the field’s default value when provided, or an empty value when no default is specified.
+
+Command `bus data schema field set-type --resource <name>` changes a field type only when the existing values are compatible with the new type. The command updates the schema and does not rewrite table data.
 
 Schema field remove and rename commands update both the schema and CSV deterministically. Field removal is refused unless `--force` is provided, and even when forced it must still refuse if the change would break primary key or foreign key integrity. Primary key and foreign key commands validate existing data before applying changes, and failures produce deterministic diagnostics without writing.
 
-Command `bus-data row add <table>` appends a new row. Row input is provided as repeated `--set col=value` flags or as a JSON object via `--json`. The row is validated against the schema and written in canonical column order.
+Command `bus data row add <table>` appends a new row. Row input is provided as repeated `--set col=value` flags or as a JSON object via `--json`. The row is validated against the schema and written in canonical column order.
 
-Command `bus-data row update <table>` replaces or updates a row identified by the primary key only when schema mutation policy allows in-place updates. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. It revalidates the resulting row and writes changes only when the schema permits in-place updates.
+Command `bus data row update <table>` replaces or updates a row identified by the primary key only when schema mutation policy allows in-place updates. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. It revalidates the resulting row and writes changes only when the schema permits in-place updates.
 
-Command `bus-data row delete <table>` removes a row identified by the primary key only when the schema permits deletion. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. Soft deletion uses the schema’s configured soft-delete field and value, while hard deletion removes the row entirely.
+Command `bus data row delete <table>` removes a row identified by the primary key only when the schema permits deletion. Row selection uses repeated `--key field=value` flags in the same order as the schema’s `primaryKey`, and all primary key fields must be provided. Soft deletion uses the schema’s configured soft-delete field and value, while hard deletion removes the row entirely.
 
 Initialization, schema extension, package and resource mutation, and row mutation commands write or modify files only when explicitly invoked and operate in the same workspace-relative path conventions as the inspection commands. Schema extension only adds columns and must not reorder or delete existing columns unless explicitly forced and compatible. Row mutation operations validate against the schema and mutation policy and write changes without altering unrelated rows.
 
 Usage:
 
 ```bash
-bus-data [global flags] <command> [args]
+bus data [global flags] <command> [args]
 
 Commands:
-  package init                        Initialize datapackage.json deterministically.
+  init                                Create empty datapackage.json at workspace root (no discovery).
+  package discover                    Scan workspace for tables with schemas; add resources to datapackage.json.
   package show                        Print datapackage.json as stored.
   package patch                        Apply a JSON merge patch to datapackage.json.
   package validate                    Validate the full workspace data package.
@@ -196,21 +205,22 @@ Write flags:
   --force                  Allow destructive operations and overwrites.
 
 Examples:
-  bus-data -vv table list
-  bus-data --format json resource list
-  bus-data table read people
-  bus-data --format json --filter name=alice --row 1 table read people
-  bus-data --key id=p-001 --column name --column age table read people
-  bus-data package init
-  bus-data resource add --name people --path people.csv --schema people.schema.json
-  bus-data schema init people --schema people.schema.json
-  bus-data schema infer people
-  bus-data schema field add --resource people --field nickname --type string
-  bus-data schema field set-type --resource people --field age --type integer
-  bus-data row add people --set id=p-001 --set name=Alice
-  bus-data row update people --key id=p-001 --set name=Alice A.
-  bus-data row delete people --key id=p-001
-  bus-data -- table read --weird.csv   (use -- when the table path starts with '-')
+  bus data init
+  bus data -vv table list
+  bus data --format json resource list
+  bus data table read people
+  bus data --format json --filter name=alice --row 1 table read people
+  bus data --key id=p-001 --column name --column age table read people
+  bus data package discover
+  bus data resource add --name people --path people.csv --schema people.schema.json
+  bus data schema init people --schema people.schema.json
+  bus data schema infer people
+  bus data schema field add --resource people --field nickname --type string
+  bus data schema field set-type --resource people --field age --type integer
+  bus data row add people --set id=p-001 --set name=Alice
+  bus data row update people --key id=p-001 --set name=Alice A.
+  bus data row delete people --key id=p-001
+  bus data -- table read --weird.csv   (use -- when the table path starts with '-')
 ```
 
 ### Data Design
@@ -221,7 +231,7 @@ BusDK extends Table Schema metadata with a `busdk` object used by `bus-data` to 
 
 BusDK also extends Table Schema field descriptors with `busdk.formula` metadata to declare BFL-enabled fields and their evaluation rules. The canonical representation uses the following keys under each field descriptor’s `busdk.formula` object: `language` set to `bfl`, `mode` set to `inline` or `constant`, `expression` as a string when `mode` is `constant`, `result` as an object describing the computed logical type, `prefix` as an optional string used only when the consumer enables a prefix stripping policy, `on_error` set to `fail` or `null`, and `rounding` as an optional object with `scale` and `mode` (`half_up` or `half_even`). Formula-enabled fields are stored physically as standard Frictionless types that can hold the UTF-8 formula source, while the computed result type is enforced only at read-time projection and validation.
 
-Bus Data owns mechanical concerns only: reading and writing CSV, reading and writing schema JSON, creating and patching `datapackage.json`, enforcing Table Schema constraints, and validating foreign key integrity. Domain modules own business rules, domain invariants, and any accounting classification decisions; `bus-data` does not infer or enforce those semantics.
+Bus Data owns mechanical concerns only: reading and writing CSV, reading and writing schema JSON, creating and patching `datapackage.json`, enforcing Table Schema constraints, and validating foreign key integrity. Domain modules own business rules, domain invariants, and any accounting classification decisions; bus-data does not infer or enforce those semantics.
 
 ### Assumptions and Dependencies
 
@@ -263,14 +273,15 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 Workspace store interface: the persistence boundary for deterministic table and schema operations.  
 Mechanical data layer: functionality that handles storage and validation without domain rules.  
-Schema operation policy: the optional `busdk` metadata in a Table Schema that declares whether in-place update and delete operations are permitted.
-Formula-enabled field: a field descriptor that declares `busdk.formula` metadata and is evaluated using BFL during read-time projection.
+Schema operation policy: the optional `busdk` metadata in a Table Schema that declares whether in-place update and delete operations are permitted.  
+Formula-enabled field: a field descriptor that declares `busdk.formula` metadata and is evaluated using BFL during read-time projection.  
+Package discover: the operation that scans the workspace for CSV files with beside-the-table schemas and adds or updates resource entries in `datapackage.json`; distinct from init, which only creates an empty descriptor.
 
 ### Open Questions
 
 OQ-DAT-001 What is the exact CLI flag name and output shape for the opt-in mode that includes formula source alongside computed values, and which output formats must support it?
 
-OQ-DAT-002 Should `bus-data table read` fail the entire command on the first formula evaluation error, or should it report all formula errors and then fail without emitting partial output?
+OQ-DAT-002 Should `bus data table read` fail the entire command on the first formula evaluation error, or should it report all formula errors and then fail without emitting partial output?
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -294,7 +305,7 @@ OQ-DAT-002 Should `bus-data table read` fail the entire command on the first for
 Title: bus-data module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-DATA`  
-Version: 2026-02-08  
+Version: 2026-02-15  
 Status: Draft  
-Last updated: 2026-02-08  
+Last updated: 2026-02-15  
 Owner: BusDK development team  

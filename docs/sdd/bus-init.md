@@ -7,7 +7,7 @@ description: Bus Init creates workspace configuration by default (datapackage.js
 
 ### Introduction and Overview
 
-Bus Init bootstraps a new BusDK workspace by creating or ensuring workspace-level configuration and, when requested, by orchestrating domain module `init` commands. By default it runs only [bus-config](./bus-config) `init`, so that `datapackage.json` and accounting entity settings exist without creating any domain datasets. Domain module inits run only when the user explicitly includes them via per-module flags. Each Bus module that owns workspace data has its own flag; when one or more of these flags are present, bus-init runs `bus config init` first, then each selected module’s `init` in a deterministic order. Bus Init does not write configuration or domain data itself; it delegates to bus-config for the descriptor and to each domain module for its baseline data.
+Bus Init bootstraps a new BusDK workspace by creating or ensuring workspace-level configuration and, when requested, by orchestrating domain module `init` commands. By default it runs only [bus-config](./bus-config) `init`, so that `datapackage.json` and accounting entity settings exist without creating any domain datasets. bus-config init uses the [bus-data](./bus-data) library to create the empty descriptor when missing, then adds the accounting entity subtree; bus-init does not call bus-data directly. Domain module inits run only when the user explicitly includes them via per-module flags. Each Bus module that owns workspace data has its own flag; when one or more of these flags are present, bus-init runs `bus config init` first, then each selected module’s `init` in a deterministic order. Bus Init does not write configuration or domain data itself; it delegates to bus-config for the descriptor and to each domain module for its baseline data.
 
 ### Requirements
 
@@ -104,7 +104,7 @@ The module does not create or own any workspace files directly. It always invoke
 
 ### Assumptions and Dependencies
 
-Bus Init depends on the presence of the `bus` dispatcher and [bus-config](./bus-config) for workspace configuration. When a module-include flag is supplied, the corresponding domain module CLI (e.g. bus-accounts for `--accounts`, bus-entities for `--entities`) must be available; if that module is not installed or not in PATH, the invoked step fails and bus-init reports it. The standard workspace layout conventions apply to any datasets created by the selected modules. Missing or unavailable module commands result in deterministic diagnostics.
+Bus Init depends on the presence of the `bus` dispatcher and [bus-config](./bus-config) for workspace configuration. bus-config in turn uses the [bus-data](./bus-data) library to create the empty `datapackage.json` when missing. When a module-include flag is supplied, the corresponding domain module CLI (e.g. bus-accounts for `--accounts`, bus-entities for `--entities`) must be available; if that module is not installed or not in PATH, the invoked step fails and bus-init reports it. The standard workspace layout conventions apply to any datasets created by the selected modules. Missing or unavailable module commands result in deterministic diagnostics.
 
 ### Security Considerations
 

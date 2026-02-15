@@ -24,7 +24,7 @@ All paths and the workspace directory are resolved relative to the current direc
 
 Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root. The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, fiscal year boundaries, VAT registration, VAT reporting cadence, VAT timing basis, and optional VAT registration dates) as BusDK metadata so other modules can read them without duplicating settings in row-level datasets. All VAT-related configuration keys and allowed values are defined here; [bus vat](./bus-vat) and other modules consume these settings. The **current** reporting period and registration dates are inputs; the actual sequence of VAT period boundaries (including transitions within a year, 4-month or 18-month periods, and partial first/last periods) is owned and defined by [bus vat](./bus-vat).
 
-`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object. You can pass the same optional accounting-entity flags as for `set` (e.g. `--base-currency`, `--vat-registered`) so that the initial descriptor has the correct values from the start; any flag you omit uses the default for that property. When the file already has that object, init prints a warning and does nothing (flags are ignored). [bus init](./bus-init) always runs `bus config init` first; when you pass module-include flags (e.g. `--accounts`, `--journal`), it then runs each selected domain module’s init. You can also run `bus config init` on its own when you need only the workspace descriptor.
+`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object. When the file is missing, it uses the bus-data library to create the empty descriptor first, then adds the accounting entity subtree. You can pass the same optional accounting-entity flags as for `set` (e.g. `--base-currency`, `--vat-registered`) so that the initial descriptor has the correct values from the start; any flag you omit uses the default for that property. When the file already has that object, init prints a warning and does nothing (flags are ignored). [bus init](./bus-init) always runs `bus config init` first; when you pass module-include flags (e.g. `--accounts`, `--journal`), it then runs each selected domain module’s init. You can also run `bus config init` on its own when you need only the workspace descriptor. To create only an empty `datapackage.json` without accounting entity settings, use [bus data init](./bus-data) instead.
 
 `bus config set` updates accounting entity settings in an existing workspace `datapackage.json`. You can pass one or more optional flags (e.g. `bus config set --base-currency=EUR --vat-registered=true`) to change multiple properties in one call, or use the per-property form `bus config set <key> <value>` (e.g. `bus config set base-currency SEK`). Only the properties you specify are changed; others remain unchanged. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object. Running `bus config set` with no property flags or values exits 0 without modifying the file.
 
@@ -103,7 +103,7 @@ Exit 0 on success. Non-zero in these cases:
 
 **Blockers:** None known.
 
-**Depends on:** None.
+**Depends on:** [bus-data](./bus-data) (Go library) for creating the empty `datapackage.json` when the file is missing.
 
 **Used by:** [bus-init](./bus-init) runs `bus config init` first.
 
