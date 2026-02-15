@@ -1,6 +1,6 @@
 ---
 title: Bus project cost summary
-description: Snapshot of total commits and AI-related spend across the BusDK org (2025-02-15), with per-module breakdown and average cost per commit.
+description: Snapshot of total days, commits, and AI-related spend across the BusDK org (2025-02-15), with cost per day, commits per day, per-module breakdown, and average cost per commit.
 ---
 
 ## Overview
@@ -15,8 +15,11 @@ All amounts are in **USD**. Totals may not exactly match the sum of per-module r
 
 | Metric | Value |
 |--------|--------|
+| **Total days** | 17 |
 | **Total commits** | 1,005 |
+| **Commits per day** | 60 |
 | **Total cost** | **654.63 USD** |
+| **Cost per day** | **38.51 USD** |
 | **Approximate average cost per commit** | **0.65 USD** |
 
 ### Per-module breakdown
