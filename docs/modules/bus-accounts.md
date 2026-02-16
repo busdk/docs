@@ -1,6 +1,6 @@
 ---
 title: bus accounts — manage the chart of accounts
-description: "CLI reference for bus accounts: init, list, add, set, and validate the chart of accounts; schema-validated repository data and stable identifiers for downstream modules."
+description: "CLI reference for bus accounts: init, list, add, set, validate, and sole-proprietor; chart of accounts as schema-validated repository data and stable identifiers for downstream modules."
 ---
 
 ## Overview
@@ -11,7 +11,8 @@ description: "CLI reference for bus accounts: init, list, add, set, and validate
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
 `bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
-`bus accounts validate [-C <dir>] [global flags]`
+`bus accounts validate [-C <dir>] [global flags]`  
+`bus accounts sole-proprietor withdrawal|investment --equity-code <code> --cash-code <code> --amount <amount> [global flags]`
 
 ### Description
 
@@ -24,10 +25,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus accounts`
 - `add` creates a new account. It fails (non-zero exit, diagnostic on stderr, no change to the dataset) if an account with the same `--code` already exists. To change an existing account, use `set`.
 - `set` modifies an existing account identified by `--code`. It updates only the attributes you supply (for example `--name` or `--type`). It fails if no account with that code exists.
 - `validate` checks both the accounts CSV and the schema document (`accounts.schema.json`). It reports row-level violations and schema-document errors (for example malformed foreign key definitions). Invalid schema causes a clear error pointing to the schema file and the offending path so issues are caught in bus-accounts rather than in downstream tools such as bus-journal.
+- `sole-proprietor` suggests balanced double-entry lines for owner withdrawal (yksityisotto) or investment (yksityissijoitus). Subcommands: `withdrawal`, `investment`. Requires `--equity-code`, `--cash-code`, and `--amount`. Does not read or write `accounts.csv`; output is TSV (code, side, amount per line) for use with `bus journal add`.
 
 ### Options
 
-The `add` command requires `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The `set` command requires `--code <account-id>` to identify the account and accepts optional `--name` and `--type` to update those attributes. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help`.
+The `add` command requires `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The `set` command requires `--code <account-id>` to identify the account and accepts optional `--name` and `--type` to update those attributes. The `sole-proprietor` subcommands require `--equity-code <code>`, `--cash-code <code>`, and `--amount <positive number>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help` or `bus accounts --help sole-proprietor`.
 
 ### Choosing account type: Finnish numbering convention (practical guide)
 
@@ -41,7 +43,7 @@ Many Finnish charts use the first digit (or leading digits) to group accounts by
 
 **3xxx — equity (`equity`).** Codes starting with 3 are typically equity. In sole-proprietorship bookkeeping, owner’s equity and prior-year results are often in 3xxx; practices vary, so align with your accountant’s chart.
 
-For sole proprietors, owner withdrawals (yksityisotto) and owner investments (yksityissijoitus) are posted with `bus journal add` using equity and cash/bank accounts from this chart; an optional helper command may be added later.
+For sole proprietors, use `bus accounts sole-proprietor withdrawal` or `bus accounts sole-proprietor investment` to produce balanced TSV lines (code, side, amount) that you can feed into `bus journal add`; the command does not read or write the chart of accounts.
 
 **4xxx — income.** Codes starting with 4 are typically income. VAT-rate-specific sales accounts (e.g. 4010, 4040, 4050) are common; exact numbering varies by chart.
 
@@ -69,21 +71,21 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Value promise:** Manage the chart of accounts as schema-validated workspace data so downstream modules and reports can rely on stable account identifiers and types.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% — init, add (all five types), set, list, validate and init contract verified by e2e and unit tests; user can complete the “define master data” chart step.
+**Completeness:** 70% — init, add (all five types), set, list, validate and sole-proprietor withdrawal/investment verified by e2e and unit tests; user can complete the define-master-data chart step and produce balanced owner withdrawal/investment lines for journal.
 
-**Use case readiness:** Accounting workflow: 60% — init, add, set, list, validate and init contract verified; e2e covers full chart workflow. Finnish payroll handling: 60% — chart of accounts for wage expense, withholding, net payable verified by same e2e and unit tests.
+**Use case readiness:** Accounting workflow: 70% — chart lifecycle and sole-proprietor verified; e2e covers full chart workflow and withdrawal/investment output. Sale invoicing: 70% — chart for income/VAT accounts verified by same tests. Finnish payroll handling: 70% — chart for wage expense, withholding, net payable verified by same e2e and unit tests.
 
-**Current:** `tests/e2e_bus_accounts.sh` proves init (creates files, idempotent when both exist, fails when inconsistent or only CSV), add (asset, income, expense; dry-run no write), set (modify, fail when missing, dry-run), list (deterministic TSV, `--output`, `--format tsv`, `--quiet` no stdout/output file), validate, `-C` (invalid chdir and nested workdir), help/version, `--`, invalid `--format`/`--color`/quiet+verbose, and add `--help` documents `--type`. `run_test.go` covers init (creates, idempotent, both-exist-inconsistent, CSV-from-schema, CSV-without-schema), list, add (success, duplicate key, dry-run, missing required), set (modify in place, fail when no account, dry-run, require `--code`), validate, missing schema/CSV, schema parse/field/enum/PK/FK, usage. `run_set_test.go` covers set args and updateAccountCSV. `run_flags_test.go` covers help/version ignore args, quiet, quiet+verbose invalid, invalid color, unknown format, chdir, output. `run_workspace_test.go` covers non-Git, MERGE_HEAD, conflict markers. `run_property_test.go` covers list permutation and add appends (all five types). `internal/cli/help_test.go` and `internal/cli/flags_test.go` cover help and flag parsing. `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, and `run_helpers_test.go` cover storage, validation, TSV sort, and workdir/color.
+**Current:** `tests/e2e_bus_accounts.sh` proves init (creates files, datapackage resource, FR-ACC-005 schema, idempotent when both exist, fails when inconsistent or only CSV or only schema), add (all types, FR-ACC-004 duplicate fails, dry-run), set (modify, fail when missing, dry-run), list (deterministic TSV, `--output`, `--format tsv`, `--quiet` no stdout/output file), validate (incl. malformed foreignKeys diagnostic), sole-proprietor (withdrawal, investment, `-o` file output), `-C`, help/version, `--`, invalid `--format`/`--color`/quiet+verbose. `run_test.go` covers init, list, add (success, duplicate key, dry-run, missing required), set (modify, not found, dry-run, require `--code`), validate (success, missing schema/CSV, schema parse/field/enum/PK/FK, malformed foreignKeys). `run_sole_proprietor_test.go` covers withdrawal/investment success, TSV format, missing/invalid args, quiet, decimal amount. `run_flags_test.go` covers help/version ignore args, quiet, quiet+verbose invalid, invalid color, unknown format, chdir, output. `run_set_test.go`, `run_property_test.go`, `run_workspace_test.go`, `internal/cli/help_test.go`, `internal/cli/flags_test.go`, `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, and `run_helpers_test.go` cover set args, list permutation, add all five types, workspace edge cases, help, flags, storage, validation.
 
-**Planned next:** Optional sole-proprietor withdrawal/investment helper (balanced entry from recommended accounts); advances accounting workflow. See [Development status](../implementation/development-status).
+**Planned next:** E2E or README/AGENTS link for bus journal add regression (SDD testing strategy); AGENTS.md update to describe sole-proprietor as implemented. No new user-facing features in PLAN.md.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-loans](./bus-loans) validates account IDs when reference datasets exist; accounting workflow uses accounts as master data.
+**Used by:** [bus-journal](./bus-journal) consumes account codes for postings; [bus-loans](./bus-loans) validates account IDs when reference datasets exist; accounting workflow uses accounts as master data.
 
 See [Development status](../implementation/development-status).
 

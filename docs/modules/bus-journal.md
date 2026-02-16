@@ -39,14 +39,14 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — Init, add, balance, and closed-period reject are test-verified; user can complete record-postings and balance steps.
+**Completeness:** 70% — Init (index+schema only), add, balance, dry-run, and closed-period reject are test-verified; user can complete record-postings and balance steps.
 
 **Use case readiness:**  
 - [Accounting workflow](../workflow/accounting-workflow-overview): 70% — Init (index+schema only; period files on first add), add (by code/name), balance, dry-run, and global flags verified; record-postings and balance steps usable.  
 - [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — Append path, balance, and NFR-JRN-001 closed-period reject verified; audit columns (entry_id, transaction_id, voucher_id, entry_sequence) in period CSV.  
 - [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — Init, add, balance, and closed-period reject verified; posting path ready for payroll export consumption.
 
-**Current:** E2e `tests/e2e_bus_journal.sh` verifies help, version, invalid color/format, quiet+verbose conflict, `--`, chdir, init (index+schema only; no period files after init), idempotent init, partial init failure, dry-run init/add, add by code and by name (Cash/Sales→1000/3000), balance (TSV, --as-of, -o, -q, quiet suppresses stdout and output file), -vv, period audit columns, NFR-JRN-001 (add to closed period exit 1), and add missing-required-flags exit 2. Unit tests: `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go` cover flags, init, balance/add flows, period integrity, validation, and post args.
+**Current:** E2e `tests/e2e_bus_journal.sh` verifies help, version, invalid color/format, quiet+verbose conflict, `--`, chdir, init (index+schema only; no period files after init), idempotent init, partial init failure, dry-run init/add, add by code and by name (Cash/Sales→1000/3000), balance (TSV, --as-of, -o, -q, quiet suppresses stdout and output file), -vv, period audit columns, NFR-JRN-001 (add to closed period exit 1 via journal-closed-periods.csv and periods.csv), and add missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, and `internal/journal/add_test.go` cover flags, init, balance/add flows, period integrity, validation, and post args.
 
 **Planned next:** Optional add-from-stdin (PLAN.md) to advance [Accounting workflow](../workflow/accounting-workflow-overview); README/help alignment (init = index+schema only).
 
