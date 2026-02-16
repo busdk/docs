@@ -172,9 +172,9 @@ Modules not mapped to any documented use case appear here with overall completen
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [run](../modules/bus-run#development-state) | 50% — Define/list/set/unset and run script token verified; prompt run and stop-on-first-failure not verified. | Unit test for run sequence stop-on-first-failure (PLAN.md). | None known. |
+| [run](../modules/bus-run#development-state) | 60% — Define/list/set/unset and run script token and stop-on-first-failure verified; prompt run not verified. | Unit tests path/symlink escape, ambiguity, expansion limit; e2e disabled script and ambiguity (PLAN.md). | None known. |
 
-**run:** 50% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. No new use case doc needed — generic runner, not journey-specific.
+**run:** 60% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. No new use case doc needed — generic runner, not journey-specific.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

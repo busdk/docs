@@ -108,13 +108,13 @@ Deterministic results (context, pipeline list, action list, script list) are wri
 
 **Use cases:** [Orphan modules](../implementation/development-status#orphan-modules) — not mapped to a documented use case.
 
-**Completeness:** 50% — User can define and list pipelines/actions/scripts, run script tokens, and use context and global flags; run with prompt (agent) and stop-on-first-failure are not test-verified.
+**Completeness:** 60% — User can define/list/set/unset and run script tokens and pipelines; stop-on-first-failure verified. Prompt (agent) run not test-verified.
 
-**Use case readiness:** Orphan (not mapped): 50% — Define/list/set/unset and run script token verified; prompt run and stop-on-first-failure not verified.
+**Use case readiness:** Orphan (not mapped): 60% — Define/list/set/unset and run script token and stop-on-first-failure verified; prompt run not verified.
 
-**Current:** Help and version verified in `internal/run/run_test.go` and `tests/e2e_bus_run.sh`. Global flags (`-C`, `-o`, `-q`, `-v`, `--`, `--color`, `-f`), quiet+verbose invalid, unknown format, invalid color in `internal/cli/flags_test.go`, `internal/run/run_test.go`, and e2e. Context sorted and `-C` in `run_test.go` and e2e; `--output` and quiet wins in e2e. Catalog and `DOCS_BASE_URL` from env in `internal/catalog/catalog_test.go`. Name grammar in `internal/name/name_test.go`. Template render and unresolved placeholder in `internal/template/render_test.go`. Token resolution and expansion (single prompt, unknown token, cycle, chain, prefs pipeline) in `internal/expand/expand_test.go`. Pipeline/action/script list, set repo, unset, action set empty stdin → exit 2, run script token, set agent/model, unknown token → exit 2 in e2e.
+**Current:** Help and version in `internal/run/run_test.go` and `tests/e2e_bus_run.sh`. Global flags (`-C`, `-o`, `-q`, `-v`, `--`, `--color`, `-f`), quiet+verbose invalid, unknown format, invalid color in `internal/cli/flags_test.go`, `internal/run/run_test.go`, and e2e. Context sorted and `-C` in `run_test.go` and e2e; `--output` and quiet wins in e2e. Catalog and `DOCS_BASE_URL` from env in `internal/catalog/catalog_test.go`. Name grammar in `internal/name/name_test.go`. Template render and unresolved placeholder in `internal/template/render_test.go`. Token resolution and expansion (single prompt, unknown token, cycle, chain, prefs pipeline) in `internal/expand/expand_test.go`. Pipeline/action/script list, set repo, unset, action set empty stdin → exit 2, run script token, set agent/model, unknown token → exit 2 in e2e. Stop-on-first-failure in `internal/run/run_test.go` (TestRun_stopOnFirstFailure) and `tests/e2e_bus_run.sh`.
 
-**Planned next:** Unit test for run sequence stop-on-first-failure (stub agent; assert exit code and no later step). Advances orphan journey completeness (PLAN.md).
+**Planned next:** Unit tests for path/symlink escape (FR-RUN-005), ambiguity (same name in two types → exit 2), and pipeline expansion limit (FR-RUN-011); e2e for disabled script and ambiguity (PLAN.md).
 
 **Blockers:** None known.
 
