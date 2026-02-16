@@ -1,8 +1,10 @@
 # Site-wide defaults for jekyll-seo-tag. Each page can override with YAML front matter:
 #   title: Page-specific title (used in <title> and og:title)
 #   description: Short page-specific description (used in meta description and og:description)
-title: BusDK Design Document
-description: Design documentation for BusDK, a modular CLI-first toolkit for running a business in a Git repository with reviewable workspace datasets and auditable workflows.
+#   image: Page-specific OG/twitter image (default below)
+title: BusDK Docs
+description: Documentation for BusDK, a modular CLI-first toolkit for running a business in a Git repository with reviewable workspace datasets and auditable workflows.
+image: /assets/preview/preview.webp
 theme: jekyll-theme-primer
 repository: busdk/docs
 url: https://docs.busdk.com
@@ -13,6 +15,7 @@ defaults:
       path: ""
     values:
       layout: default
+      image: /assets/preview/preview.webp
 
 # Chrome DevTools automatic workspace: the plugin writes .well-known/appspecific/com.chrome.devtools.json
 # in the build output only when JEKYLL_ENV=development; production build never contains it.
