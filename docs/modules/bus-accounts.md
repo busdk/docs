@@ -23,7 +23,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus accounts`
 - `list` prints the current chart of accounts in deterministic order.
 - `add` creates a new account. It fails (non-zero exit, diagnostic on stderr, no change to the dataset) if an account with the same `--code` already exists. To change an existing account, use `set`.
 - `set` modifies an existing account identified by `--code`. It updates only the attributes you supply (for example `--name` or `--type`). It fails if no account with that code exists.
-- `validate` checks the accounts datasets against their schemas.
+- `validate` checks both the accounts CSV and the schema document (`accounts.schema.json`). It reports row-level violations and schema-document errors (for example malformed foreign key definitions). Invalid schema causes a clear error pointing to the schema file and the offending path so issues are caught in bus-accounts rather than in downstream tools such as bus-journal.
 
 ### Options
 
@@ -59,11 +59,11 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 ### Files
 
-`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area. The schema must be a valid Frictionless Table Schema document so that bus-data and other BusDK modules (for example bus-journal) can parse and use it without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 
-`0` on success. Non-zero on errors, including invalid usage or schema violations.
+`0` on success. Non-zero on errors, including invalid usage, row-level schema violations, or an invalid or malformed schema document.
 
 ### Development state
 

@@ -11,9 +11,11 @@ Bus Accounts maintains the chart of accounts as schema-validated repository data
 
 ### Requirements
 
-FR-ACC-001 Account registry integrity. Bus Accounts MUST maintain a deterministic chart of accounts in `accounts.csv` with schema validation and stable identifiers. Acceptance criteria: the module refuses duplicate identifiers and invalid account types and writes only schema-valid rows.
+FR-ACC-001 Account registry integrity. Bus Accounts MUST maintain a deterministic chart of accounts in `accounts.csv` with schema validation and stable identifiers. Acceptance criteria: the module refuses duplicate identifiers and invalid account types and writes only schema-valid rows and emits only schema-valid schemas.
 
 FR-ACC-002 CLI surface for account lifecycle. Bus Accounts MUST provide commands to initialize, list, add, set, and validate accounts so workflows can manage the chart of accounts without manual file edits. Acceptance criteria: the command names `init`, `list`, `add`, `set`, and `validate` are available under `bus accounts`, and each command fails with deterministic diagnostics on invalid inputs.
+
+FR-ACC-005 Table Schema correctness. The file `accounts.schema.json` MUST be a valid Frictionless Table Schema document and MUST be parseable by bus-data and all BusDK consumers. Acceptance criteria: (1) `accounts.schema.json` is valid Table Schema and passes bus-data schema and workspace validators. (2) Foreign key contract for the optional `parent_code` hierarchy field: if a `foreignKeys` entry is present for `parent_code`, the `reference` object MUST always include both `resource` and `fields`; for a self-referencing relationship `reference.resource` MUST be the empty string and `reference.fields` MUST be `"code"`. (3) If `foreignKeys` is present it must never be partial: missing `reference.resource`, missing `reference.fields`, or malformed `reference` is an immediate validation error. (4) If the project chooses not to enforce the hierarchy via foreign keys, the schema MUST omit the `foreignKeys` entry entirely; it MUST never include an incomplete `foreignKeys` entry.
 
 FR-ACC-004 Add fails when account exists. The `add` command MUST fail if an account with the same identifier (e.g. `--code`) already exists in the chart of accounts. Acceptance criteria: invoking `bus accounts add` with a code that is already present exits non-zero, emits a clear diagnostic to standard error, and does not modify the dataset. Modifying an existing account is done via `bus accounts set`, not `add`.
 
@@ -41,7 +43,9 @@ KD-ACC-003 Path exposure for read-only consumption. The module exposes path acce
 
 Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `add`, `set`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-The `init` command creates the baseline accounts dataset and schema when they are absent. It MUST use the [bus-data](./bus-data) Go library only (no CLI invocation). Init sequence: (1) Call the bus-data library to ensure the workspace data package is initialized — i.e. create an empty `datapackage.json` at the workspace root when the file is missing, matching bus-data init behavior. (2) Create `accounts.csv` and `accounts.schema.json` via the bus-data library (e.g. schema init or resource add). (3) Ensure `datapackage.json` contains a resource entry for the accounts table (path to `accounts.csv` and schema reference) so that after init the data package describes the accounts dataset. If both `accounts.csv` and `accounts.schema.json` already exist and are consistent and the data package already contains the accounts resource, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of the files exists, or the data is inconsistent, or the data package is missing when it should exist, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](./bus-init) FR-INIT-003).
+The `init` command creates the baseline accounts dataset and schema when they are absent. It MUST use the [bus-data](./bus-data) Go library only (no CLI invocation). Init sequence: (1) Call the bus-data library to ensure the workspace data package is initialized — i.e. create an empty `datapackage.json` at the workspace root when the file is missing, matching bus-data init behavior. (2) Create `accounts.csv` and `accounts.schema.json` via the bus-data library (e.g. schema init or resource add). The emitted schema MUST conform to the foreign key contract in FR-ACC-005: if `foreignKeys` is present for `parent_code`, each entry’s `reference` MUST include both `resource` and `fields` (self-referencing: `reference.resource` empty string, `reference.fields` `"code"`); if hierarchy is not enforced via foreign keys, `foreignKeys` MUST be omitted entirely. (3) Ensure `datapackage.json` contains a resource entry for the accounts table (path to `accounts.csv` and schema reference) so that after init the data package describes the accounts dataset. If both `accounts.csv` and `accounts.schema.json` already exist and are consistent and the data package already contains the accounts resource, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of the files exists, or the data is inconsistent, or the data package is missing when it should exist, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](./bus-init) FR-INIT-003).
+
+The `parent_code` field is optional and empty is allowed; if non-empty it is intended to reference an existing account code, and the schema may enforce this via a self-referencing foreign key. Whatever bus accounts init emits MUST be accepted by bus-data’s schema and workspace validators and MUST be consumable by [bus-journal](./bus-journal) without special cases.
 
 The `add` command creates a new account. It accepts account identity and type parameters: `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The command MUST fail if an account with the same identifier (e.g. the same `--code`) already exists in the chart of accounts: it MUST exit non-zero, emit a clear diagnostic to standard error, and MUST NOT modify the dataset (FR-ACC-004).
 
@@ -84,9 +88,13 @@ Command results are written to standard output, and diagnostics are written to s
 
 Invalid usage exits with a non-zero status and a concise usage error. Schema and invariant violations exit non-zero without modifying datasets.
 
+The `validate` command MUST validate both the CSV content and the schema document itself. If `accounts.schema.json` contains a `foreignKeys` entry where `reference.resource` is missing or `reference` is otherwise malformed, bus accounts validate MUST exit non-zero and print a clear error pointing to `accounts.schema.json` and the offending foreign key path, instead of allowing downstream modules (e.g. bus-journal) to fail later with “unsupported foreign key reference” or similar.
+
 ### Testing Strategy
 
 Unit tests cover account validation and deterministic listing behavior, and command-level tests exercise `init`, `add`, `set`, `list`, and `validate` against fixture workspaces. Tests MUST verify that `add` fails with non-zero exit and no dataset change when the account code already exists (FR-ACC-004), and that `set` can modify an existing account and fails when the account does not exist.
+
+Required regression and compatibility coverage: (1) An e2e or command-level test runs `bus accounts init` in an empty workspace, then `bus accounts validate`, and asserts success. (2) A regression test proves downstream compatibility: after `bus accounts init` (and minimal required init for journal/period if needed), run a simple `bus journal add` that references accounts and assert it does not fail due to schema parsing or foreign key reference errors. (3) A negative test starts from an intentionally malformed `accounts.schema.json` (e.g. `foreignKeys` entry with missing `reference.resource`) and asserts `bus accounts validate` fails with the expected diagnostic pointing to the schema file and the offending foreign key. Implementers MUST keep these tests in place so the invalid-schema bug cannot recur.
 
 ### Deployment and Operations
 
@@ -132,5 +140,5 @@ Project: BusDK
 Document ID: `BUSDK-MOD-ACCOUNTS`  
 Version: 2026-02-07  
 Status: Draft  
-Last updated: 2026-02-15  
+Last updated: 2026-02-16  
 Owner: BusDK development team  
