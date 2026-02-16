@@ -69,6 +69,21 @@
   color: var(--busdk-muted);
 }
 
+.busdk-footer-links {
+  color: var(--busdk-muted);
+}
+
+.busdk-footer-links a {
+  color: var(--busdk-link);
+  text-decoration: none;
+}
+
+.busdk-footer-links a:hover,
+.busdk-footer-links a:focus-visible {
+  color: var(--busdk-link-hover);
+  text-decoration: underline;
+}
+
 .busdk-footer-edit a {
   color: var(--busdk-link);
   text-decoration: none;
@@ -215,6 +230,126 @@
 
 .markdown-body .busdk-home p.busdk-home-hero-desc {
   color: var(--busdk-muted);
+}
+
+.busdk-home-hero-quick-install {
+  margin-top: 2.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.busdk-home-hero-quick-install-title {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--busdk-muted);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 1.5;
+}
+
+.markdown-body .busdk-home h2.busdk-home-hero-quick-install-title {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--busdk-muted);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 1.5;
+}
+
+.busdk-home-hero-quick-install-cmd-wrap {
+  cursor: pointer;
+  display: flex;
+  align-items: stretch;
+  max-width: 36em;
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--busdk-code-bg);
+  color: var(--busdk-code-fg);
+  border: 1px solid var(--busdk-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.busdk-home-hero-quick-install-cmd-wrap:focus {
+  outline: 2px solid var(--busdk-accent);
+  outline-offset: 2px;
+}
+
+// Override .markdown-body pre so the inner pre has no border and correct spacing.
+.markdown-body .busdk-home-hero-quick-install-cmd,
+.busdk-home-hero-quick-install-cmd {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  font-size: 0.9375rem;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.markdown-body .busdk-home-hero-quick-install-cmd code,
+.busdk-home-hero-quick-install-cmd code {
+  padding: 0;
+  background: transparent !important;
+  color: inherit;
+  border-radius: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.busdk-home-hero-quick-install-icon-wrap {
+  flex-shrink: 0;
+  width: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--busdk-muted);
+}
+
+.busdk-home-hero-quick-install-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  pointer-events: none;
+}
+
+.busdk-home-hero-quick-install-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.busdk-home-hero-quick-install-icon--ok {
+  display: none;
+}
+
+.busdk-home-hero-quick-install-cmd-wrap.copied .busdk-home-hero-quick-install-icon--copy {
+  display: none;
+}
+
+.busdk-home-hero-quick-install-cmd-wrap.copied .busdk-home-hero-quick-install-icon--ok {
+  display: flex;
+}
+
+.busdk-home-hero-quick-install-cmd-wrap.copied .busdk-home-hero-quick-install-icon-wrap {
+  color: var(--busdk-accent);
+}
+
+.busdk-home-hero-quick-install-cmd-wrap:hover {
+  border-color: var(--busdk-accent);
 }
 
 .busdk-home-cards {

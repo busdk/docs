@@ -8,6 +8,16 @@ layout: default
     <div class="busdk-content-inner">
       <h1 class="busdk-home-hero-title">{{ page.title | default: site.title }}</h1>
       <p class="busdk-home-hero-desc">{{ page.description | default: site.description }}</p>
+      <div class="busdk-home-hero-quick-install">
+        <h2 class="busdk-home-hero-quick-install-title">Quick install</h2>
+        <div class="busdk-home-hero-quick-install-cmd-wrap" role="button" tabindex="0" title="Copy to clipboard" data-clipboard-text="curl -fsSL https://install.busdk.com | bash">
+          <pre class="busdk-home-hero-quick-install-cmd"><code>curl -fsSL https://install.busdk.com | bash</code></pre>
+          <div class="busdk-home-hero-quick-install-icon-wrap">
+            <span class="busdk-home-hero-quick-install-icon busdk-home-hero-quick-install-icon--copy" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+            <span class="busdk-home-hero-quick-install-icon busdk-home-hero-quick-install-icon--ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -36,3 +46,27 @@ layout: default
     </div>
   </section>
 </div>
+
+<script>
+(function () {
+  var wrap = document.querySelector('.busdk-home-hero-quick-install-cmd-wrap');
+  if (!wrap) return;
+  function copy() {
+    var text = wrap.getAttribute('data-clipboard-text');
+    if (!text) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        wrap.classList.add('copied');
+        setTimeout(function () { wrap.classList.remove('copied'); }, 2000);
+      });
+    }
+  }
+  wrap.addEventListener('click', copy);
+  wrap.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      copy();
+    }
+  });
+})();
+</script>
