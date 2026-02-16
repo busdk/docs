@@ -8,67 +8,67 @@ description: Design and reference documentation for the BusDK toolkit — modula
 
 ## Get started
 
-### Orientation
+### Overview
 
 - [Overview](overview/index)
 - [Purpose and scope](overview/purpose-and-scope)
 - [Visual identity and branding on outputs](overview/visual-identity)
 - [Design goals and requirements](design-goals/index)
-- [Implementation and development status](implementation/index)
+- [Implementation status](implementation/index)
 
-### Design foundations
+### Principles
 
-- [CLI-first and human-friendly interfaces](design-goals/cli-first)
-- [Modularity as a first-class requirement](design-goals/modularity)
-- [Schema-driven data contract (Frictionless Table Schema)](design-goals/schema-contract)
-- [Git as the canonical, append-only source of truth](design-goals/git-as-source-of-truth)
-- [Auditability and append-only discipline](design-goals/append-only-auditability)
+- [CLI-first interfaces](design-goals/cli-first)
+- [Modularity](design-goals/modularity)
+- [Schema-driven contract](design-goals/schema-contract)
+- [Git as source of truth](design-goals/git-as-source-of-truth)
+- [Auditability and append-only](design-goals/append-only-auditability)
 
-### Delivery and progress
+### Status
 
 - [Development status](implementation/development-status)
 - [Cost summary](implementation/cost-summary)
-- [Module repository structure and dependency rules](implementation/module-repository-structure)
-- [Developer module workflow](implementation/developer-module-workflow)
-- [BusDK Software Design Document (single-page SDD)](sdd)
+- [Module repository structure](implementation/module-repository-structure)
+- [Developer workflow](implementation/developer-module-workflow)
+- [BusDK SDD (single page)](sdd)
 
 ## Workflows
 
-### Workflow hubs
+### Workflow overview
 
-- [Example end-to-end workflow](workflow/index)
+- [End-to-end workflow](workflow/index)
 - [Accounting workflow overview](workflow/accounting-workflow-overview)
-- [Sale invoicing (sending invoices to customers)](workflow/sale-invoicing)
+- [Sale invoicing](workflow/sale-invoicing)
 - [Scenario introduction](workflow/scenario-introduction)
 - [CLI tooling and workflow](cli/index)
 
-### Core bookkeeping flow
+### Core flow
 
 - [Initialize a new repository](workflow/initialize-repo)
 - [Configure the chart of accounts](workflow/configure-chart-of-accounts)
-- [Add a sales invoice (interactive workflow)](workflow/create-sales-invoice)
+- [Add a sales invoice](workflow/create-sales-invoice)
 - [Invoice ledger impact](workflow/invoice-ledger-impact)
 - [Record a purchase as a journal transaction](workflow/record-purchase-journal-transaction)
 
-### Controls and period operations
+### Controls
 
 - [Import bank transactions and apply payments](workflow/import-bank-transactions-and-apply-payment)
 - [VAT reporting and payment](workflow/vat-reporting-and-payment)
-- [Year-end close (closing entries)](workflow/year-end-close)
+- [Year-end close](workflow/year-end-close)
 - [Generate invoice PDF and register attachment](workflow/generate-invoice-pdf-and-register-attachment)
 - [Workflow takeaways](workflow/workflow-takeaways)
 
-### Specialized operations
+### Advanced
 
-- [AI-assisted classification (review before recording)](workflow/ai-assisted-classification-review)
+- [AI-assisted classification](workflow/ai-assisted-classification-review)
 - [Budgeting and budget-vs-actual reporting](workflow/budgeting-and-budget-vs-actual)
-- [Finnish payroll (monthly pay run)](workflow/finnish-payroll-monthly-pay-run)
+- [Finnish payroll](workflow/finnish-payroll-monthly-pay-run)
 - [Inventory valuation and COGS postings](workflow/inventory-valuation-and-cogs)
-- [Workbook and validated tabular editing](workflow/workbook-and-validated-tabular-editing)
+- [Workbook editing](workflow/workbook-and-validated-tabular-editing)
 
-## Modules by use (CLI + SDD)
+## Modules by use
 
-### Core command surface
+### Core commands
 
 - `bus` - [CLI](modules/bus) - [SDD](sdd/bus)
 - `bus init` - [CLI](modules/bus-init) - [SDD](sdd/bus-init)
@@ -76,7 +76,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - `bus data` - [CLI](modules/bus-data) - [SDD](sdd/bus-data)
 - `bus preferences` - [CLI](modules/bus-preferences) - [SDD](sdd/bus-preferences)
 
-### Interfaces and automation tooling
+### Interfaces and automation
 
 - `bus api` - [CLI](modules/bus-api) - [SDD](sdd/bus-api)
 - `bus sheets` - [CLI](modules/bus-sheets) - [SDD](sdd/bus-sheets)
@@ -84,7 +84,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - `bus agent` - [CLI](modules/bus-agent) - [SDD](sdd/bus-agent)
 - `bus dev` - [CLI](modules/bus-dev) - [SDD](sdd/bus-dev)
 
-### Formula and ledger foundation
+### Ledger foundation
 
 - `bus bfl` - [CLI](modules/bus-bfl) - [SDD](sdd/bus-bfl)
 - `bus accounts` - [CLI](modules/bus-accounts) - [SDD](sdd/bus-accounts)
@@ -92,7 +92,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - `bus period` - [CLI](modules/bus-period) - [SDD](sdd/bus-period)
 - `bus balances` - [CLI](modules/bus-balances) - [SDD](sdd/bus-balances)
 
-### Journal and transaction flow
+### Journal flow
 
 - `bus journal` - [CLI](modules/bus-journal) - [SDD](sdd/bus-journal)
 - `bus invoices` - [CLI](modules/bus-invoices) - [SDD](sdd/bus-invoices)
@@ -100,7 +100,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - `bus reconcile` - [CLI](modules/bus-reconcile) - [SDD](sdd/bus-reconcile)
 - `bus attachments` - [CLI](modules/bus-attachments) - [SDD](sdd/bus-attachments)
 
-### Asset and resource operations
+### Assets and resources
 
 - `bus assets` - [CLI](modules/bus-assets) - [SDD](sdd/bus-assets)
 - `bus loans` - [CLI](modules/bus-loans) - [SDD](sdd/bus-loans)
@@ -108,7 +108,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - `bus payroll` - [CLI](modules/bus-payroll) - [SDD](sdd/bus-payroll)
 - `bus budget` - [CLI](modules/bus-budget) - [SDD](sdd/bus-budget)
 
-### Validation and reporting outputs
+### Validation and reports
 
 - `bus reports` - [CLI](modules/bus-reports) - [SDD](sdd/bus-reports)
 - `bus validate` - [CLI](modules/bus-validate) - [SDD](sdd/bus-validate)
@@ -123,31 +123,31 @@ description: Design and reference documentation for the BusDK toolkit — modula
 
 ## Design
 
-### Software Design Documents
+### Design Documents
 
 - [SDD index](sdd/index)
-- [BusDK Software Design Document (single-page SDD)](sdd)
-- [Module SDDs (list)](sdd/modules)
+- [BusDK SDD](sdd)
+- [Module SDDs](sdd/modules)
 - [Independent modules](architecture/independent-modules)
-- [Modularity as a first-class requirement](design-goals/modularity)
+- [Modularity](design-goals/modularity)
 
-### Architecture and boundaries
+### Architecture
 
 - [System architecture](architecture/index)
 - [Architectural overview](architecture/architectural-overview)
 - [Independent modules](architecture/independent-modules)
-- [Workspace scope and multi-workspace workflows](architecture/workspace-scope-and-multi-workspace)
+- [Workspace scope](architecture/workspace-scope-and-multi-workspace)
 - [Shared validation layer](architecture/shared-validation-layer)
 
-### Security and storage model
+### Security and storage
 
-- [Append-only discipline and security model](architecture/append-only-and-security)
+- [Append-only and security](architecture/append-only-and-security)
 - [CLI as the primary interface](architecture/cli-as-primary-interface)
 - [Git-backed data repository](architecture/git-backed-data-store)
 - [Data formats and storage](data/index)
-- [Frictionless Table Schema as the contract](data/table-schema-contract)
+- [Table Schema contract](data/table-schema-contract)
 
-### Data contracts over time
+### Data evolution
 
 - [Workspace configuration (datapackage.json)](data/workspace-configuration)
 - [CSV conventions](data/csv-conventions)
@@ -158,12 +158,12 @@ description: Design and reference documentation for the BusDK toolkit — modula
 ### Workspace layout
 
 - [Data directory layout](layout/index)
-- [Data directory layout (principles)](layout/layout-principles)
-- [Minimal workspace baseline](layout/minimal-workspace-baseline)
+- [Layout principles](layout/layout-principles)
+- [Workspace baseline](layout/minimal-workspace-baseline)
 - [Minimal example layout](layout/minimal-example-layout)
 - [Schemas beside datasets](layout/schemas-area)
 
-### Operational layout areas
+### Layout areas
 
 - [Accounts area](layout/accounts-area)
 - [Invoices area](layout/invoices-area)
@@ -173,23 +173,23 @@ description: Design and reference documentation for the BusDK toolkit — modula
 
 ## Reference
 
-### Master data hubs
+### Master data
 
 - [Master data (business objects)](master-data/index)
 - [Accounting entity](master-data/accounting-entity/index)
 - [Chart of accounts](master-data/chart-of-accounts/index)
 - [Accounting periods](master-data/accounting-periods/index)
-- [Bookkeeping status and review workflow](master-data/workflow-metadata/index)
+- [Bookkeeping status](master-data/workflow-metadata/index)
 
-### Commercial and cash records
+### Commercial and cash
 
 - [Sales invoices](master-data/sales-invoices/index)
 - [Purchase invoices](master-data/purchase-invoices/index)
 - [Bank transactions](master-data/bank-transactions/index)
 - [Reconciliations](master-data/reconciliations/index)
-- [Documents (evidence)](master-data/documents/index)
+- [Evidence documents](master-data/documents/index)
 
-### People, assets, and planning records
+### People, assets, and planning
 
 - [Fixed assets](master-data/fixed-assets/index)
 - [Loans](master-data/loans/index)
@@ -197,24 +197,24 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - [Inventory items](master-data/inventory-items/index)
 - [Budgets](master-data/budgets/index)
 
-### CLI behavior and command contracts
+### CLI behavior
 
 - [CLI tooling (index)](cli/index)
 - [Standard global flags](cli/global-flags)
 - [CLI command naming](cli/command-naming)
-- [Minimum required command surface](cli/minimum-command-surface)
+- [Required command surface](cli/minimum-command-surface)
 - [Validation and safety checks](cli/validation-and-safety-checks)
 
-### Integration, extensibility, and quality
+### Integration and quality
 
 - [Integration and future interfaces](integration/index)
 - [Extensibility model](extensibility/index)
 - [Testing](testing/index)
-- [References and external foundations](references/index)
+- [References](references/index)
 - [Sources](references/link-list)
 
-### Compliance and regulatory context
+### Compliance
 
 - [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](compliance/fi-company-reorganisation-evidence-pack)
+- [Finnish company reorganisation evidence pack](compliance/fi-company-reorganisation-evidence-pack)
 
