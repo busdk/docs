@@ -39,14 +39,14 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — Init (index+schema only), add, balance, dry-run, and closed-period reject are test-verified; record-postings and balance steps are journey-complete.
+**Completeness:** 70% — Record-postings and balance steps are journey-complete; init (index+schema only; period files on first add), add by code/name, balance, dry-run, and NFR-JRN-001 closed-period reject are test-verified.
 
 **Use case readiness:**  
-- [Accounting workflow](../workflow/accounting-workflow-overview): 70% — Record-postings and balance steps usable; init (index+schema only; period files on first add), add by code/name, balance, dry-run, NFR-JRN-001 verified.  
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — Append path, balance, NFR-JRN-001 closed-period reject verified; audit columns (entry_id, transaction_id, voucher_id, entry_sequence) in period CSV.  
+- [Accounting workflow](../workflow/accounting-workflow-overview): 70% — Record-postings and balance steps usable; init, add, balance, dry-run, NFR-JRN-001 verified.  
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — Append path, balance, NFR-JRN-001 verified; audit columns in period CSV.  
 - [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — Posting path ready for payroll export; init, add, balance, closed-period reject verified.
 
-**Current:** Verified by `tests/e2e_bus_journal.sh`: help, version, global flags (color, format, chdir, output, quiet, --, -vv), init (index+schema only; period files on first add), idempotent and partial-init behaviour, dry-run init/add, add by code and name, balance (TSV, --as-of, -o, -q), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
+**Current:** `tests/e2e_bus_journal.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`, `-vv`), init (index+schema only; period files on first add), idempotent and partial-init, dry-run init/add, add by code and name, balance (TSV, `--as-of`, `-o`, `-q`), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), and missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, `internal/cli/flags_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
 
 **Planned next:** Optional add-from-stdin (PLAN.md) to advance [Accounting workflow](../workflow/accounting-workflow-overview); README/help alignment (init = index+schema only).
 

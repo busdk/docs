@@ -7,6 +7,21 @@ description: Evidence-based snapshot of what is usable today and what is missing
 
 This page summarizes the implementation state of each BusDK module using test evidence as the primary proof of readiness. A capability is treated as verified only when it is covered by at least one test (Go unit test or e2e script) in the module repository. Readiness is grouped by documented use cases so you can see what works today for each journey. Per-module detail, including the specific test files that prove each claim, is in each module’s CLI reference under **Development state**. Implement modules in **Depends on** before the dependent.
 
+### Use cases index
+
+- [Accounting workflow](#accounting-workflow) — [Accounting workflow overview](../workflow/accounting-workflow-overview): create repo and baseline, define master data and evidence, record invoices and journal, import bank and reconcile, close period with validate/VAT/reports.
+- [Sale invoicing (sending invoices to customers)](#sale-invoicing-sending-invoices-to-customers) — [Sale invoicing](../workflow/sale-invoicing): create sales invoices, render PDFs, and send to customers (outbound journey).
+- [Inventory valuation and COGS postings](#inventory-valuation-and-cogs-postings) — [Inventory valuation and COGS](../workflow/inventory-valuation-and-cogs): define items, record movements with vouchers, compute as-of valuation for reporting and COGS postings.
+- [Spreadsheet workbooks](#spreadsheet-workbooks) — [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing): local web workbook over workspace datasets with schema-validated editing and formula projection.
+- [Finnish bookkeeping and tax-audit compliance](#finnish-bookkeeping-and-tax-audit-compliance) — [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): audit trail, retention, VAT and periodic reporting, tax-audit pack.
+- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) — [Finnish company reorganisation — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): evidence pack from accounting data for court-supervised reorganisation.
+- [Developer module workflow with Cursor CLI](#developer-module-workflow-with-cursor-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-cursor-cli): scaffold modules, run plan/work/spec/e2e with Cursor.
+- [Developer module workflow with Gemini CLI](#developer-module-workflow-with-gemini-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-gemini-cli): same workflow with Gemini runtime.
+- [Developer module workflow with Claude CLI](#developer-module-workflow-with-claude-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-claude-cli): same workflow with Claude runtime.
+- [Developer module workflow with Codex CLI](#developer-module-workflow-with-codex-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-codex-cli): same workflow with Codex runtime.
+- [Finnish payroll handling (monthly pay run)](#finnish-payroll-handling-monthly-pay-run) — [Finnish payroll handling](../workflow/finnish-payroll-monthly-pay-run): employee register, monthly pay run, posting intent to journal, bank reconciliation.
+- [Orphan modules](#orphan-modules) — Modules not mapped to a documented use case.
+
 ### Accounting workflow
 
 See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. Module readiness:
@@ -16,19 +31,19 @@ See [Accounting workflow overview](../workflow/accounting-workflow-overview) for
 | [bus](../modules/bus#development-state) | 50% (Primary journey) – single entrypoint; no-args and missing-subcommand verified; e2e for dispatch would raise confidence. | E2E for dispatch; `bus help` when bus-help missing. | None known. |
 | [init](../modules/bus-init#development-state) | 70% (Broadly usable) – config-only or full baseline verified by e2e; step order and `--no-<module>` exclusions proven. | Help list each per-module flag and `--no-<module>` (PLAN.md). | None known. |
 | [config](../modules/bus-config#development-state) | 90% (Broadly usable) – init and set verified by e2e and unit tests; workspace-config step complete; set no-flags no-op not verified. | Set no-flags no-op (no write, no message) per PLAN.md. | None known. |
-| [accounts](../modules/bus-accounts#development-state) | 70% (Broadly usable) – chart lifecycle and sole-proprietor verified; user can complete define-master-data step and produce owner withdrawal/investment lines for journal. | E2E or README link for [journal](../modules/bus-journal) add regression; AGENTS.md sole-proprietor as implemented. | None known. |
-| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified by e2e and unit tests; user can define counterparties for the workflow. | None in PLAN; optional SDD follow-ups. | None known. |
+| [accounts](../modules/bus-accounts#development-state) | 70% (Broadly usable) – chart lifecycle and sole-proprietor verified; define-master-data step completable. | Document journal add regression test location or add when [journal](../modules/bus-journal) available (PLAN.md). | None known. |
+| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified; user can define counterparties. | Go library path accessors (NFR-ENT-002). | None known. |
 | [period](../modules/bus-period#development-state) | 90% — add/open/close/lock and year-rollover opening verified; user can complete period lifecycle. | Optional: automatic result-to-equity transfer at year end. | None known. |
-| [attachments](../modules/bus-attachments#development-state) | 60% (Stable) – Register evidence and list; init/add/list and workspace-relative diagnostics verified. | None in PLAN. | None known. |
-| [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – Record-postings and balance steps usable; init (index+schema only; period files on first add), add by code/name, balance, dry-run, NFR-JRN-001 verified. | Optional add-from-stdin (PLAN.md); README/help alignment. | [period](../modules/bus-period) writing closed-period file for full workflow. |
-| [balances](../modules/bus-balances#development-state) | 60% (Stable) – Opening/cutover: user can complete init, add, import (incl. --allow-unknown-accounts), validate, list, apply and replace; e2e and unit tests verify effective-record, replace-marker, balanced transaction. | [period](../modules/bus-period) library for path/state; e2e run bus journal validate after apply (PLAN.md). | None known. |
-| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified by e2e and unit tests; user can bootstrap and list; add and pdf not implemented. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
+| [attachments](../modules/bus-attachments#development-state) | 60% (Stable) – Register evidence and list; init/add/list and workspace-relative diagnostics verified. | Go library path accessors (NFR-ATT-002); optional --dry-run (PLAN.md). | None known. |
+| [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – Record-postings and balance steps usable; init, add, balance, dry-run, NFR-JRN-001 verified. | Optional add-from-stdin (PLAN.md); README/help alignment. | [period](../modules/bus-period) writing closed-period file for full workflow. |
+| [balances](../modules/bus-balances#development-state) | 60% (Stable) – Opening/cutover: user can complete init, add, import (incl. --allow-unknown-accounts), validate, list, apply and replace; e2e and unit tests verify effective-record, replace-marker, balanced transaction. | Optional: [period](../modules/bus-period) library; e2e bus journal validate when bus on PATH. | None known. |
+| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified; user can bootstrap and list; add and pdf not in journey. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
 | [bank](../modules/bus-bank#development-state) | 60% — init and import verified by e2e; list with filters and TSV verified; user can complete bank step before reconcile. | Schema validation before append; counterparty_id; dry-run for init. | None known. |
-| [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – help, version, flags verified; match/allocate/list not verified. | match, allocate, list; journal linking; command-level tests. | Missing verified match/allocate blocks reconciliation step. |
+| [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – validate, plan, apply verified; documented match/allocate/list not implemented; reconciliation step not completable as in workflow doc. | match, allocate, list (SDD); journal linking; command-level tests. | Documented match/allocate/list not implemented. |
 | [validate](../modules/bus-validate#development-state) | 50% (Primary journey) – workspace and resource validation; unit tests for run and type/constraint checks. | format; stdout/--output; audit and closed-period checks. | None known. |
 | [vat](../modules/bus-vat#development-state) | 70% (Broadly usable) – init, validate, report, export; e2e covers VAT workflow; deterministic output. | Index update; dry-run; rate validation; journal input. | None known. |
 | [reports](../modules/bus-reports#development-state) | 50% (Primary journey) – trial balance, account-ledger; unit tests for run and report; no e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
-| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; list-templates, flags, overwrite, chdir verified; user can complete render step. | Template from render model (JSON) and repo-relative path (PLAN.md). | None known. |
+| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; list-templates, flags, overwrite, chdir verified; user can complete PDF render step. | Template from render model (JSON) and repo-relative path (PLAN.md). | None known. |
 
 ### Sale invoicing (sending invoices to customers)
 
@@ -38,14 +53,14 @@ See [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing)
 |--------|-----------|--------------|-----------------|
 | [bus](../modules/bus#development-state) | 50% (Primary journey) – single entrypoint; no-args and missing-subcommand verified; e2e for dispatch would raise confidence. | E2E for dispatch; `bus help` when bus-help missing. | None known. |
 | [init](../modules/bus-init#development-state) | 70% (Broadly usable) – config-only or full baseline verified by e2e; step order and `--no-<module>` exclusions proven. | Help list each per-module flag and `--no-<module>` (PLAN.md). | None known. |
-| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified by e2e and unit tests; user can define customers (counterparties) for invoicing. | None in PLAN; optional SDD follow-ups. | None known. |
-| [accounts](../modules/bus-accounts#development-state) | 70% (Broadly usable) – chart lifecycle and sole-proprietor verified; income/VAT accounts for invoice lines. | E2E or README link for [journal](../modules/bus-journal) add regression; AGENTS.md update. | None known. |
-| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified by e2e and unit tests; user can bootstrap and list; add and pdf not implemented. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
-| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified; user can complete PDF generation step. | Template from render model (JSON) and repo-relative path (PLAN.md). | None known. |
+| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified; user can define customers. | Go library path accessors (NFR-ENT-002). | None known. |
+| [accounts](../modules/bus-accounts#development-state) | 70% (Broadly usable) – chart for income/VAT accounts verified. | Document journal add regression test or add when [journal](../modules/bus-journal) available (PLAN.md). | None known. |
+| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified; user can bootstrap and list; add and pdf not in journey. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
+| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; user can complete PDF generation step. | Template from render model (JSON) and repo-relative path (PLAN.md). | None known. |
 
 ### Inventory valuation and COGS postings
 
-See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs). Module readiness:
+See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs). This use case covers defining inventory items, recording append-only movements with voucher references, and computing as-of valuation for reporting and COGS postings. Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -53,7 +68,7 @@ See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-
 
 ### Spreadsheet workbooks
 
-See [Spreadsheet workbooks](../workflow/workbook-and-validated-tabular-editing). Module readiness:
+See [Spreadsheet workbooks](../workflow/workbook-and-validated-tabular-editing). This use case covers a local web-based workbook over workspace datasets with schema-validated editing and formula projection. Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
@@ -86,14 +101,14 @@ See [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pac
 | [period](../modules/bus-period#development-state) | 90% — close, lock, opening for snapshots verified. | Optional: automatic result-to-equity at year end. | None known. |
 | [reports](../modules/bus-reports#development-state) | 50% (Primary journey) – trial balance and ledger as audit evidence; no e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
 | [validate](../modules/bus-validate#development-state) | 50% (Primary journey) – workspace and resource validation before assembling evidence pack. | format; stdout/--output; audit and closed-period. | None known. |
-| [attachments](../modules/bus-attachments#development-state) | 60% (Stable) – Link source documents to records for audit; traceability verified. | None in PLAN. | None known. |
-| [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – Append path, balance, NFR-JRN-001 closed-period reject verified; audit columns (entry_id, transaction_id, voucher_id, entry_sequence) in period CSV. | Optional add-from-stdin (PLAN.md); README/help alignment. | [period](../modules/bus-period) writing closed-period file for full workflow. |
-| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init and validation verified; list supports evidence-pack baseline; add and pdf not implemented. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
+| [attachments](../modules/bus-attachments#development-state) | 60% (Stable) – Link source documents to records for audit; traceability verified. | Go library path accessors (NFR-ATT-002); optional --dry-run (PLAN.md). | None known. |
+| [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – Append path, balance, NFR-JRN-001 verified; audit columns in period CSV. | Optional add-from-stdin (PLAN.md); README/help alignment. | [period](../modules/bus-period) writing closed-period file for full workflow. |
+| [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init and validation verified; list supports evidence-pack baseline; add and pdf not in journey. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
 | [bank](../modules/bus-bank#development-state) | 60% — import and list verified; basis for reconciliation evidence. | Schema validation before append; counterparty_id; dry-run for init. | None known. |
-| [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – match/allocate/list not verified; blocks reconciliation evidence. | match, allocate, list; journal linking; tests. | Missing verified match/allocate blocks reconciliation step. |
+| [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – validate, plan, apply verified; match/allocate/list not implemented; blocks reconciliation evidence. | match, allocate, list (SDD); journal linking; tests. | Documented match/allocate/list not implemented. |
 | [loans](../modules/bus-loans#development-state) | 40% (Meaningful task, partial verification) – loan registry, list, validate, balances, schedule, postings verified by unit and e2e; event and amortize not implemented. | event, amortize subcommands (PLAN.md); e2e for full journey. | None known. |
 | [budget](../modules/bus-budget#development-state) | 30% (Some basic commands) – init, validate, variance verified; add/set/report and root layout not verified. | Root layout; report, add, set; e2e for report/add/set. | None known. |
-| [assets](../modules/bus-assets#development-state) | 50% (Primary journey) – validate, schedule, post verified; posting and schedule support evidence pack; init/add not implemented. | init, add, depreciate, dispose (SDD CLI); root layout; --dry-run. | None known. |
+| [assets](../modules/bus-assets#development-state) | 50% (Primary journey) – validate, schedule, post verified; posting and schedule support evidence pack; init/add not implemented. | init, add, depreciate, dispose (SDD CLI); workspace-root layout; --dry-run. | None known. |
 
 ### Developer module workflow with Cursor CLI
 
@@ -143,11 +158,11 @@ See [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-mon
 |--------|-----------|--------------|-----------------|
 | [payroll](../modules/bus-payroll#development-state) | 20% (Validate and export only) – validate and export verified by e2e and unit tests with payroll/ layout; init, run, list, employee not implemented; user cannot complete pay-run journey. | Workspace-root layout; init, run, list, employee (PLAN.md); e2e run→export→journal. | None known. |
 | [accounts](../modules/bus-accounts#development-state) | 70% (Broadly usable) – chart lifecycle and sole-proprietor verified; user can define accounts prerequisite for wage expense, withholding, net payable. | E2E or README link for [journal](../modules/bus-journal) add regression; AGENTS.md update. | None known. |
-| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list and `--id`/`--name` aliases verified by e2e and unit tests; user can define party references for employees. | None in PLAN; optional SDD follow-ups. | None known. |
+| [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list and `--id`/`--name` verified; user can define party references for employees. | Go library path accessors (NFR-ENT-002). | None known. |
 | [period](../modules/bus-period#development-state) | 90% — period open/close/lock and opening for payroll month verified. | Optional: automatic result-to-equity at year end. | None known. |
 | [journal](../modules/bus-journal#development-state) | 70% (Broadly usable) – Posting path ready for payroll export; init, add, balance, closed-period reject verified. | Optional add-from-stdin (PLAN.md); README/help alignment. | [period](../modules/bus-period) writing closed-period file for full workflow. |
 | [bank](../modules/bus-bank#development-state) | 60% — import and list verified for pay-day statement flow. | Schema validation before append; dry-run for init. | None known. |
-| [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – match/allocate/list not verified; blocks payroll bank reconciliation. | match, allocate, list; journal linking; tests. | Missing verified match/allocate blocks reconciliation step. |
+| [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – validate, plan, apply verified; match/allocate/list not implemented; blocks payroll bank reconciliation. | match, allocate, list (SDD); journal linking; tests. | Documented match/allocate/list not implemented. |
 
 The full journey from empty workspace through employee register and `bus payroll run` to journal append is not yet covered by e2e tests. Users can today maintain payroll data under `payroll/` (by hand or another tool), run `bus payroll validate` and `bus payroll export <run-id>`, and append the export output to the journal manually or via script; init, run, list, and employee add/list are not implemented.
 
@@ -157,7 +172,7 @@ Modules not mapped to any documented use case appear here with overall completen
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [run](../modules/bus-run#development-state) | 50% (Primary journey) – context, pipeline/action/script list and set/unset (repo), run script token, global flags; e2e and unit tests. Run with prompt (agent) and stop-on-first-failure not verified. | Unit test for run sequence stop-on-first-failure (PLAN.md). | None known. |
+| [run](../modules/bus-run#development-state) | 50% — Define/list/set/unset and run script token verified; prompt run and stop-on-first-failure not verified. | Unit test for run sequence stop-on-first-failure (PLAN.md). | None known. |
 
 **run:** 50% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. No new use case doc needed — generic runner, not journey-specific.
 

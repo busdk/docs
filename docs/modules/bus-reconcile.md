@@ -35,19 +35,19 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ### Development state
 
-**Value promise:** Link bank transactions to invoices or journal entries (match and allocate) so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
+**Value promise:** Link bank transactions to invoices or journal entries so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 30% (Some basic commands) — help, version, and global flags implemented; unit tests cover run and flags. No e2e; match, allocate, and list not verified.
+**Completeness:** 30% (Some basic commands) — help, version, global flags, and validate/plan/apply verified by tests; documented match/allocate/list are not implemented, so the reconciliation step in workflow docs is not completable as described.
 
-**Use case readiness:** Accounting workflow: 30% — only flags and run verified; match, allocate, list missing and block reconcile step. Finnish company reorganisation: 30% — match/allocate/list not verified; blocks reconciliation evidence. Finnish payroll handling: 30% — match/allocate/list not verified; blocks payroll bank reconciliation.
+**Use case readiness:** Accounting workflow: 30% — validate, plan, apply verified; match/allocate/list not implemented; user cannot complete step as in workflow doc. Finnish company reorganisation: 30% — same; reconciliation evidence path differs from doc. Finnish payroll handling: 30% — same; payroll bank reconciliation step blocked.
 
-**Current:** Unit tests in `internal/app/run_test.go` and `internal/cli/flags_test.go` prove run dispatch and flag parsing. No e2e script; match, allocate, and list behavior are not covered by tests.
+**Current:** Help and version verified in `internal/app/run_test.go` (TestGlobalFlagsBehavior). Flag parsing and global flags (chdir, output, format, color, quiet/verbose) verified in `internal/cli/flags_test.go` and `internal/app/run_test.go` (TestChdirFlag, TestQuietVerboseConflict). Validate, plan, and apply verified in `internal/app/run_test.go` (TestValidateSuccess, TestPlanExactReference, TestPlanUnmatchedSuspense, TestApplySuccess, TestApplyIdempotency, plus error-path tests). The documented match, allocate, and list subcommands are not implemented; the binary exposes validate, plan, apply.
 
-**Planned next:** match (bank-id plus invoice-id or journal-id); allocate (bank-id with allocations); list with output/format; command-level tests.
+**Planned next:** Implement match, allocate, and list per SDD and end-user docs (PLAN.md); journal linking; command-level tests for match/allocate/list. Advances accounting, reorganisation, and payroll use cases.
 
-**Blockers:** Missing verified match/allocate blocks the reconciliation step in accounting, reorganisation, and payroll.
+**Blockers:** Documented match/allocate/list not implemented blocks the reconciliation step as described in workflow and compliance docs.
 
 **Depends on:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-journal](./bus-journal).
 

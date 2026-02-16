@@ -87,13 +87,13 @@ bus balances apply --as-of 2025-12-31 --post-date 2026-01-01 --period 2026-01 --
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (opening/cutover step).
 
-**Completeness:** 60% — Opening/cutover journey verified by e2e and unit tests; apply uses internal journal; PLAN lists [bus-period](./bus-period) library and e2e journal validate.
+**Completeness:** 60% — Opening/cutover journey verified by e2e and unit tests; user can complete init→apply flow; balanced transaction and replace verified.
 
-**Use case readiness:** Accounting workflow (opening/cutover): 60% — User can complete init, add, import (incl. `--allow-unknown-accounts` report and no rows), validate, list, and apply (incl. replace); balanced transaction and deterministic order verified; apply uses internal journal.
+**Use case readiness:** Accounting workflow (opening/cutover): 60% — User can complete init, add, import (incl. `--allow-unknown-accounts` report and no rows), validate, list, and apply (incl. replace); e2e and unit tests verify effective-record, replace-marker, balanced transaction.
 
-**Current:** Init (idempotent; one-file-only or header mismatch exit 1), add (amount or debit/credit; unknown account refused), import (valid CSV appends; unknown account no rows; `--allow-unknown-accounts` reports and no rows), validate, list (effective, tsv/csv, `--output`, `--quiet`, `--`), template, and apply (first run; second without replace refuses, with replace succeeds; marker; balanced transaction) verified by `tests/e2e_bus_balances.sh`. Effective-record selection by `snapshot/record_test.go`; replace-by-marker by `internal/workspace/journal_test.go`; apply balanced and deterministic order by `internal/cli/run_test.go` (TestRun_ApplyTransaction_balanced_deterministicOrder_balancingLine); import unknown-account and `--allow-unknown-accounts` by e2e and `internal/cli/run_test.go`; period-open precondition by `internal/workspace/period_test.go`. Global flags by `internal/cli/flags_test.go`, `internal/cli/run_test.go`, and e2e; schema/header by `snapshot/schema_test.go`; path accessors by `path/path_test.go`.
+**Current:** Init (idempotent; one-file-only or header mismatch exit 1), add (amount or debit/credit; unknown account refused), import (valid CSV appends; unknown no rows; `--allow-unknown-accounts` reports and no rows), validate, list (effective, tsv/csv, `--output`, `--quiet`, `--`), template, and apply (first run; second without replace refuses, with replace succeeds; marker; balanced) verified by `tests/e2e_bus_balances.sh`. Effective-record selection by `snapshot/record_test.go`; replace-by-marker by `internal/workspace/journal_test.go`; apply balanced and deterministic order by `internal/cli/run_test.go` (TestRun_ApplyTransaction_balanced_deterministicOrder_balancingLine); import unknown-account and `--allow-unknown-accounts` by e2e and `internal/cli/run_test.go`; period-open precondition by `internal/workspace/period_test.go`. Global flags by `internal/cli/flags_test.go` and e2e; schema by `snapshot/schema_test.go`; path accessors by `path/path_test.go`.
 
-**Planned next:** Use [bus-period](./bus-period) Go library for period path and effective open state (PLAN.md); e2e run bus journal validate after apply. Advances Accounting workflow opening/cutover.
+**Planned next:** None in PLAN; optional: [bus-period](./bus-period) library for path/state; e2e run bus journal validate after apply when bus on PATH (e2e runs it conditionally). Advances Accounting workflow opening/cutover.
 
 **Blockers:** None known.
 

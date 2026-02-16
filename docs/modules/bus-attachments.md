@@ -37,15 +37,15 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 **Value promise:** Register evidence files and maintain attachment metadata so other modules can reference stable attachment identifiers and the accounting workflow treats evidence as first-class.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step: register attachments), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% — User can complete the register-attachments step; init, add, and list verified by e2e and unit tests; idempotent init, evidence layout, and workspace-relative diagnostics test-backed.
+**Completeness:** 60% — Register-attachments step completable; init, add, and list verified by tests; idempotent init and workspace-relative diagnostics verified.
 
-**Use case readiness:** Accounting workflow: 60% — Register evidence and list; full init/add/list flow verified. Finnish company reorganisation: 60% — Link source documents to records for audit; traceability verified.
+**Use case readiness:** Accounting workflow: 60% — Register evidence and list; init/add/list and diagnostics verified. Finnish company reorganisation: 60% — Link source documents for audit; traceability verified.
 
-**Current:** `tests/e2e_bus_attachments.sh` proves help/version, global flags (color, format, quiet, --, chdir, output), init (CSV and schema), idempotent init, add with file and --desc, list (deterministic TSV, evidence under `attachments/yyyy/mm/`), quiet+output behavior, and workspace-relative diagnostics (errors cite `attachments.csv`, no absolute path). `cmd/bus-attachments/run_test.go` covers usage, init/add/list, idempotent and partial-state init, chdir, output, and error paths. `internal/attachments/validate_test.go` covers relpath and pattern validation; `internal/attachments/csvio_test.go` covers CSV error basename; `internal/cli/flags_test.go` covers flag parsing.
+**Current:** Verified capabilities: help/version, global flags (color, format, quiet, `--`, chdir, output), init (CSV and schema), idempotent init, add with file and `--desc`, list (deterministic TSV, evidence under `attachments/yyyy/mm/`), quiet with `--output` (no file written), and workspace-relative diagnostics (errors cite `attachments.csv`, no absolute path). Proved by `tests/e2e_bus_attachments.sh` and `cmd/bus-attachments/run_test.go`; `internal/attachments/validate_test.go` and `internal/attachments/csvio_test.go` cover relpath/pattern and CSV basename; `internal/cli/flags_test.go` covers flag parsing.
 
-**Planned next:** None (PLAN empty); optional SDD follow-ups.
+**Planned next:** Go library path accessors for cross-module read-only access (NFR-ATT-002; advances accounting and evidence-pack when consumers link). Optional `--dry-run` for init and add.
 
 **Blockers:** None known.
 

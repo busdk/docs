@@ -29,15 +29,15 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 **Value promise:** Render deterministic PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (invoice PDF generation; see [Generate invoice PDF and register it as evidence](../workflow/generate-invoice-pdf-and-register-attachment)). [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing) (PDF generation step).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (invoice PDF; [Generate invoice PDF and register it as evidence](../workflow/generate-invoice-pdf-and-register-attachment)), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing) (PDF generation step).
 
-**Completeness:** 70% (Broadly usable) — render from file and stdin verified by e2e and unit tests; list-templates, global flags, overwrite, and chdir verified; user can produce PDFs from JSON for attachment or invoice use.
+**Completeness:** 70% — render from file and stdin, list-templates, global flags, overwrite, and chdir verified by e2e and unit tests; user can complete the PDF render step for attachment or invoice use.
 
-**Use case readiness:** Accounting workflow: 70% — render from file and stdin verified by e2e; user can complete the render step; `bus invoices pdf` in [bus-invoices](./bus-invoices) not yet implemented. Sale invoicing: 70% — same; PDF generation step verified; end-to-end `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
+**Use case readiness:** Accounting workflow: 70% — render step verified; `bus invoices pdf` in [bus-invoices](./bus-invoices) not yet implemented. Sale invoicing: 70% — PDF generation step verified; end-to-end `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
 
-**Current:** E2E `tests/e2e_bus_pdf.sh` proves help, version, no-args usage, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file and stdin (`--data @-`), overwrite, and reject existing output without overwrite. Unit tests in `cmd/bus-pdf/run_test.go`, `internal/render/render_test.go`, `internal/render/normalize_test.go`, `internal/templates/templates_test.go`, `internal/templates/invoice_test.go`, and `internal/cli/flags_test.go` prove run, render determinism, template validation, and flag parsing.
+**Current:** E2E `tests/e2e_bus_pdf.sh` proves help, version, no-args exit 2, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file and stdin (`--data @-`), overwrite, and reject existing output without overwrite. Unit tests in `cmd/bus-pdf/run_test.go` prove run behavior (list-templates, render plain/invoice, determinism, validation and overwrite); `internal/render/render_test.go` and `internal/render/normalize_test.go` prove determinism and PDF normalization; `internal/templates/templates_test.go` and `internal/templates/invoice_test.go` prove template names and invoice validation; `internal/cli/flags_test.go` proves flag parsing.
 
-**Planned next:** Template selection from render model (JSON) and repository-relative template path (PLAN.md); optional PDF/A for preservation. Advances [accounting workflow](../workflow/accounting-workflow-overview) and [sale invoicing](../workflow/sale-invoicing) when [bus-invoices](./bus-invoices) consumes render models.
+**Planned next:** Template selection from render model (JSON) and repository-relative template path (PLAN.md); optional PDF/A for preservation. Advances accounting and sale-invoicing use cases when [bus-invoices](./bus-invoices) consumes render models.
 
 **Blockers:** None known.
 

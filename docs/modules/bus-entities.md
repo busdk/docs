@@ -43,15 +43,15 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 **Value promise:** Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 50% — Init, add, and list are test-verified; user can complete the counterparty master-data step for accounting and payroll.
+**Completeness:** 50% — Init, add, and list are verified by e2e and unit tests; user can complete the counterparty master-data step for accounting, sale invoicing, and payroll.
 
-**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 50% — init, add, list verified; user can define counterparties for the workflow. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 50% — init, add, list and `--id`/`--name` aliases verified by e2e; user can define party references for employees.
+**Use case readiness:** Accounting workflow: 50% — init, add, list verified; user can define counterparties. Sale invoicing: 50% — init, add, list verified; user can define customers. Finnish payroll handling: 50% — init, add, list and `--id`/`--name` verified by e2e; user can define party references for employees.
 
-**Current:** Help, version, and global-flag invalid usage (quiet+verbose, color, format, chdir) and init (create CSV and schema at workspace root, idempotent warning, partial-state fail, dry-run no write) are verified in `tests/e2e_bus_entities.sh` and `internal/app/run_test.go`. Add (missing-param error, full add with entity-id/entity-type/display-name/business-id/email, duplicate reject, `--id`/`--name` aliases, dry-run no append) and list (empty and populated TSV, `--output`, `--quiet`, `-f tsv`, `--`, `-vv`, `--no-color`) are verified in `tests/e2e_bus_entities.sh` and `internal/app/run_test.go`. Flags and schema/foreign-key validation are covered by `internal/cli/flags_test.go` and `internal/entities/validator_test.go`.
+**Current:** Verified in `tests/e2e_bus_entities.sh` and `internal/app/run_test.go`: help, version, global-flag errors (quiet+verbose, color, format, chdir), init (create CSV and schema, idempotent warning, partial-state fail, dry-run no write), add (missing-param exit 2, full add, duplicate reject, `--id`/`--name` aliases, dry-run no append), list (empty and populated TSV, `--output`, `--quiet`, `-f tsv`, `--`, `-vv`, `--no-color`). Flag parsing in `internal/cli/flags_test.go`; schema and foreign-key validation in `internal/entities/validator_test.go`.
 
-**Planned next:** None in PLAN; optional SDD follow-ups (e.g. validate subcommand if scoped). No use-case-specific next items.
+**Planned next:** Expose Go library path accessors for entities dataset and schema (NFR-ENT-002, IF-ENT-002) so other modules obtain paths from this module; no use-case-specific next.
 
 **Blockers:** None known.
 

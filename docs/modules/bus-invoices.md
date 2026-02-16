@@ -57,23 +57,23 @@ bus invoices list --status unpaid
 
 ### Development state
 
-**Value promise:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the [accounting workflow](../workflow/accounting-workflow-overview).
+**Value promise:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the accounting and sale-invoicing journeys.
 
-**Use cases:** [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% — init, validate, and list verified by tests; user can bootstrap and list invoices but cannot yet record new invoices or render PDFs (add and pdf not implemented).
+**Completeness:** 60% — init, validate, and list verified by e2e and unit tests; user can bootstrap and list but cannot yet add invoices or render PDFs.
 
-**Use case readiness:** Sale invoicing (sending to customers): 60% — init, validate, list verified; add and pdf not yet in journey. Accounting workflow: 60% — init, validate, list verified; recording new invoices (add) and PDF export not yet in journey. Finnish company reorganisation: 60% — init and validation support evidence-pack baseline; add and pdf not yet in journey.
+**Use case readiness:** Accounting workflow: 60% — init, validate, list verified; add and pdf not in journey. Sale invoicing (sending to customers): 60% — init, validate, list verified; add and pdf not in journey. Finnish company reorganisation: 60% — init and validation support evidence-pack baseline; add and pdf not in journey.
 
-**Current:** Verified only. E2e `tests/e2e_bus_invoices.sh` proves help, version, usage exit 2, validate when datasets missing, init creating eight files in workspace root only (no `invoices/`), validate after init, init --dry-run (no files), list deterministic TSV, list filters --type and --status, global flags (--output, --chdir, --quiet, --, --format, --color). Unit tests: `cmd/bus-invoices/run_test.go` (init dry-run, list filters type/status/invoice-id, flags, usage); `internal/initarea/initarea_test.go` (init when absent, warn when all exist, partial fails, dry-run); `internal/validate/*` (schema, types, CSV, foreign keys, list summaries and filters); `internal/cli/flags_test.go`, `help_test.go`, `color_test.go`.
+**Current:** Verified only. E2E `tests/e2e_bus_invoices.sh` proves help, version, usage exit 2, validate when datasets missing, init creating eight files in workspace root only (no `invoices/`), validate after init, init --dry-run (no files), list deterministic TSV, list filters --type and --status, global flags (--output, --chdir, --quiet, --, --format, --color). Unit tests: `cmd/bus-invoices/run_test.go` (init, init dry-run, list filters type/status/invoice-id, flags, usage); `internal/initarea/initarea_test.go` (init when absent, warn when all exist, partial fails, dry-run); `internal/validate/*` (schema, types, CSV, foreign keys, list); `internal/cli/flags_test.go`, `help_test.go`, `color_test.go`.
 
-**Planned next:** `bus invoices add` and `<invoice-id> add` (PLAN.md); `<invoice-id> validate`; `bus invoices pdf` delegating to [bus-pdf](./bus-pdf); header/line totals validation (FR-INV-001); E2E for add and pdf. These advance the [accounting workflow](../workflow/accounting-workflow-overview) invoice-recording step and [create-sales-invoice](../workflow/create-sales-invoice) flow.
+**Planned next:** `bus invoices add` and `<invoice-id> add`, and `bus invoices pdf` (PLAN.md); `<invoice-id> validate`; header/line totals validation (FR-INV-001). These advance the accounting workflow and sale invoicing use cases.
 
 **Blockers:** [bus-pdf](./bus-pdf) required for `bus invoices pdf`. None for init/validate/list.
 
 **Depends on:** [bus-pdf](./bus-pdf) (for `bus invoices pdf`).
 
-**Used by:** [bus-reconcile](./bus-reconcile) matches bank to invoices; [bus-vat](./bus-vat) uses invoice data.
+**Used by:** [bus-reconcile](./bus-reconcile), [bus-vat](./bus-vat).
 
 See [Development status](../implementation/development-status).
 

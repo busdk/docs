@@ -188,7 +188,7 @@ Error messages are always on stderr. If you are not in a Git repository when a s
 
 **Current:** E2e `tests/e2e_bus_dev.sh` proves help, version, subcommand help, `--` terminator, invalid quiet+verbose and `--color`/`--agent`, `-C` missing/non-repo, per-directory lock (init into read-only dir → exit 1), init creating AGENTS.md, Makefile, `.cursor/rules`, and e2e script name in Makefile, post-init-only plan/spec/work/e2e (triage/stage/commit/round → exit 2), context KEY=VALUE catalog and `--output`, quiet wins over `--output` (no file written), set invalid key/agent/output-format, action/script generate invalid usage, and pipeline list builtin. Unit tests in `run/run_test.go`, `internal/init/scaffold_test.go`, `internal/cli/flags_test.go`, `internal/set/set_test.go`, `internal/extensions/extensions_test.go`, `internal/prompts/prompts_test.go`, `internal/repo/resolve_test.go`, and `internal/lock/lock_test.go` cover run path (plan, work, spec, e2e, stage, commit, set persist), pipeline expansion, scaffold, prompts, resolve, and lock.
 
-**Planned next:** action generate and script generate to write agent-produced content to `.bus/dev/` files once [bus-agent](../modules/bus-agent) exposes stdout capture (PLAN.md); advances all four developer workflow use cases. Optional: e2e assert AGENTS.md at init target root; README exit-codes and prompt names.
+**Planned next:** action generate and script generate to write agent-produced content to `.bus/dev/` files once [bus-agent](./bus-agent) exposes stdout capture (PLAN.md); advances all four developer workflow use cases. Optional: e2e assert AGENTS.md at init target root; README exit-codes and prompt names.
 
 **Blockers:** None known.
 

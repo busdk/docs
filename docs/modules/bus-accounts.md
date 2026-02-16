@@ -73,13 +73,13 @@ If your `accounts.csv` schema includes additional reporting and control columns 
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — chart lifecycle (init, add, set, list, validate) and sole-proprietor withdrawal/investment are verified by e2e and unit tests; user can complete the define-master-data step and produce balanced owner withdrawal/investment lines for journal.
+**Completeness:** 70% — chart lifecycle and sole-proprietor verified by e2e and unit tests; user can complete define-master-data and produce owner withdrawal/investment lines for journal.
 
-**Use case readiness:** Accounting workflow: 70% — chart lifecycle and sole-proprietor verified; e2e covers init→add→set→list→validate and withdrawal/investment output. Sale invoicing: 70% — chart for income/VAT accounts verified by same tests. Finnish payroll handling: 70% — chart for wage expense, withholding, net payable verified by same e2e and unit tests.
+**Use case readiness:** Accounting workflow: 70% — chart lifecycle and sole-proprietor verified; define-master-data step completable. Sale invoicing: 70% — chart for income/VAT accounts verified. Finnish payroll handling: 70% — chart for wage expense, withholding, net payable verified.
 
-**Current:** Verified capabilities: init (files, datapackage resource, FR-ACC-005 schema, idempotent and failure paths), add (all five types, FR-ACC-004 duplicate fails, dry-run), set (modify, not-found fails, dry-run), list (deterministic TSV, `--output`, `--format tsv`, `--quiet`), validate (malformed foreignKeys diagnostic), sole-proprietor (withdrawal, investment, `-o` file), global flags and `--`. Proved by `tests/e2e_bus_accounts.sh`, `run_test.go`, `run_sole_proprietor_test.go`, `run_flags_test.go`, `run_set_test.go`, `run_property_test.go`, `run_workspace_test.go`, `internal/cli/help_test.go`, `internal/cli/flags_test.go`, `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, `run_helpers_test.go`.
+**Current:** Init (files, datapackage resource, FR-ACC-005 schema, idempotent and failure paths), add (all five types, FR-ACC-004 duplicate fails, dry-run), set (modify, not-found fails, dry-run), list (deterministic TSV, `--output`, `--format tsv`, `--quiet`), validate (malformed foreignKeys diagnostic), and sole-proprietor (withdrawal, investment, `-o`) are verified. Global flags and `--` are covered. Proved by `tests/e2e_bus_accounts.sh`, `run_test.go`, `run_sole_proprietor_test.go`, `run_flags_test.go`, `run_set_test.go`, `run_property_test.go`, `run_workspace_test.go`, `internal/cli/help_test.go`, `internal/cli/flags_test.go`, `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, `run_helpers_test.go`.
 
-**Planned next:** E2E or README/AGENTS link for bus journal add regression (SDD testing strategy); AGENTS.md update to describe sole-proprietor as implemented (advances accounting and payroll use cases). No new user-facing features in PLAN.md.
+**Planned next:** Document where bus journal add regression test is maintained (or add to this repo when [bus-journal](./bus-journal) is available) per PLAN.md; advances accounting workflow. AGENTS.md update for sole-proprietor as implemented.
 
 **Blockers:** None known.
 
