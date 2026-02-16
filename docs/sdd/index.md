@@ -23,7 +23,7 @@ For end user CLI documentation in a man-page style, see the [BusDK module CLI re
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">BusDK design spec</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../index">BusDK documentation</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../sdd">BusDK Software Design Document (SDD)</a> &rarr;</span>
 </p>

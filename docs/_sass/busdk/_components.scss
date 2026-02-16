@@ -176,18 +176,30 @@
   padding: 1.25rem 0 0.5rem;
 }
 
+.busdk-home-hero .busdk-content-inner {
+  text-align: center;
+}
+
 .busdk-home-hero-title {
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0 0.5rem;
+  margin: 0 auto 0.5rem;
   color: var(--busdk-fg);
   line-height: 1.25;
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.markdown-body .busdk-home h1.busdk-home-hero-title {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0.5rem;
 }
 
 .busdk-home-hero-desc {
   font-size: 1.125rem;
   color: var(--busdk-muted);
-  margin: 0;
+  margin: 0 auto;
   line-height: 1.5;
   max-width: 42em;
 }
@@ -198,26 +210,26 @@
 
 .busdk-home-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem 2.25rem;
 }
 
 .busdk-home-card {
-  background: var(--busdk-surface-1);
-  border: 1px solid var(--busdk-border);
-  border-radius: 8px;
-  padding: 1.25rem 1.25rem 1rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
 }
 
 .busdk-home-card-title {
-  font-size: 0.8125rem;
+  font-size: 1rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--busdk-muted);
-  margin: 0 0 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--busdk-border);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--busdk-fg);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .busdk-home-card-links {
@@ -232,10 +244,10 @@
 
 .busdk-home-card-links a {
   display: block;
-  font-size: 0.9375rem;
+  font-size: 0.9rem;
   color: var(--busdk-link);
   text-decoration: none;
-  padding: 0.35rem 0;
+  padding: 0.22rem 0;
   border-radius: 4px;
 }
 
@@ -250,13 +262,18 @@
   border-top: 1px solid var(--busdk-border);
 }
 
+.busdk-home-more--standalone {
+  padding-top: 0.5rem;
+  border-top: 0;
+}
+
 .busdk-home-more h2,
 .busdk-home-more h3 {
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   margin-bottom: 0.75rem;
-  color: var(--busdk-link);
-  border-bottom: 1px solid var(--busdk-border);
-  padding-bottom: 0.2rem;
+  color: var(--busdk-fg);
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .busdk-home-more h2:first-child,
@@ -264,9 +281,111 @@
   margin-top: 0;
 }
 
-.busdk-home-more > .busdk-content-inner {
-  max-width: 1012px;
+.busdk-home-more-content {
   padding-top: 1.25rem;
+}
+
+.busdk-home-more--standalone .busdk-home-more-content {
+  padding-top: 0.5rem;
+}
+
+.busdk-home-more ul {
+  margin-top: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.busdk-home-more li {
+  margin: 0.12rem 0;
+}
+
+// Frontpage grid blocks: each h2 category renders h3 subsections as cards.
+.busdk-home-more--grid .busdk-chapter--level-2 {
+  background: var(--busdk-chapter-odd-bg);
+  border-radius: 0;
+  padding: 2rem 0 3rem;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2:nth-of-type(even) {
+  background: var(--busdk-chapter-even-bg);
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 320px));
+  justify-content: center;
+  gap: 1.5rem 1.5rem;
+  align-items: start;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3.busdk-chapter--title {
+  grid-column: 1 / -1;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3.busdk-chapter--title > .busdk-chapter-section-inner.busdk-content-inner {
+  max-width: none;
+  padding: 0;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3.busdk-chapter--title h2 {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) {
+  margin: 0;
+  padding: 1.05rem 1.15rem 1rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) > .busdk-chapter-section-inner.busdk-content-inner {
+  max-width: none;
+  padding: 0;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 0.97rem;
+  color: var(--busdk-fg);
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) ul {
+  list-style: none;
+  margin: 0.45rem 0 0;
+  padding: 0;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) li {
+  margin: 0.22rem 0;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) a {
+  display: inline;
+  padding: 0;
+}
+
+.busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner > .busdk-chapter--level-3:not(.busdk-chapter--title) li > a:only-child {
+  display: block;
+  padding: 0.2rem 0;
+}
+
+@media (max-width: 768px) {
+  .busdk-home-more--grid .busdk-chapter--level-2 > .busdk-chapter-inner {
+    padding: 0 1rem;
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+  }
 }
 
 // Home layout section backgrounds should span the full visible content area,

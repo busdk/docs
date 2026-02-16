@@ -11,6 +11,7 @@ layout: default
     </div>
   </section>
 
+  {% if page.show_nav_cards != false %}
   <section class="busdk-home-cards">
     <div class="busdk-content-inner">
       <div class="busdk-home-cards-grid">
@@ -27,10 +28,11 @@ layout: default
       </div>
     </div>
   </section>
+  {% endif %}
 
-  <section class="busdk-home-more">
-    <div class="busdk-content-inner markdown-body">
-      {{ content }}
+  <section class="busdk-home-more{% if page.show_nav_cards == false %} busdk-home-more--standalone{% endif %}{% if page.home_grid_blocks %} busdk-home-more--grid{% endif %}">
+    <div class="busdk-home-more-content markdown-body">
+      {{ content | wrap_busdk_chapters }}
     </div>
   </section>
 </div>

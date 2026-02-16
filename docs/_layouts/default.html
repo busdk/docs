@@ -38,7 +38,11 @@
             </header>
             {% endif %}
 
+            {% if page.layout == "home" %}
+            {{ content }}
+            {% else %}
             {{ content | wrap_busdk_chapters }}
+            {% endif %}
           </div>
         </main>
       </div>
