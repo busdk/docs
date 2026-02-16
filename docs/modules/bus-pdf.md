@@ -1,6 +1,6 @@
 ---
 title: bus-pdf — render PDFs from JSON render models
-description: bus pdf renders deterministic PDFs from structured JSON input.
+description: bus pdf renders deterministic PDFs from a JSON render model; template and content are chosen in the JSON so callers like bus-invoices can drive rendering with a single payload.
 ---
 
 ## `bus-pdf` — render PDFs from JSON render models
@@ -11,15 +11,19 @@ description: bus pdf renders deterministic PDFs from structured JSON input.
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus pdf` renders deterministic PDFs from structured JSON input. It does not read or write BusDK datasets; it is used to produce archival PDFs (e.g. invoices) that can then be registered as attachments. Template selection is specified in the render model.
+Command names follow [CLI command naming](../cli/command-naming). `bus pdf` renders deterministic PDFs from structured JSON input. It does not read BusDK datasets; it only accepts a render model via `--data <file>` or `--data @-` (stdin). Callers such as [bus-invoices](./bus-invoices) load invoice data from workspace CSVs and build a single JSON payload that matches the schema defined by this module. Output PDFs (e.g. invoices) can be registered as attachments. The template used for rendering is chosen inside the render model via a `template` field (template identifier or repository-relative path); there is no separate CLI flag for template selection.
+
+### Render model
+
+The JSON render model must include a top-level `template` field: either a template identifier (e.g. `"invoices/standard"`) or a repository-relative path to the template directory. The module uses this value to select the template for the run. For invoice PDFs, the payload must conform to the invoice render model schema (header, lines, totals/VAT as applicable); the full schema is defined in the [bus-pdf module SDD](../sdd/bus-pdf).
 
 ### Options
 
-`--data <file>` (or `--data @-` for stdin) supplies the JSON render model. `--out <path>` is the output PDF path. `--overwrite` allows overwriting an existing file. Global flags are defined in [Standard global flags](../cli/global-flags). For help, run `bus pdf --help`.
+`--data <file>` (or `--data @-` for stdin) supplies the JSON render model. `--out <path>` is the output PDF path. `--overwrite` allows overwriting an existing file; if the output file already exists and `--overwrite` is not given, the command fails with a clear diagnostic. Global flags are defined in [Standard global flags](../cli/global-flags). For help, run `bus pdf --help`.
 
 ### Files
 
-Reads a JSON render model from a file or stdin. Writes only the specified PDF output. Does not modify workspace datasets.
+Reads a JSON render model from a file or stdin. Writes only the specified PDF output. Does not read or write workspace datasets.
 
 ### Exit status
 
@@ -37,7 +41,7 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 **Current:** E2E `tests/e2e_bus_pdf.sh` proves help, version, no-args exit 2, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file and stdin (`--data @-`), overwrite, and reject existing output without overwrite. Unit tests in `cmd/bus-pdf/run_test.go` prove run behavior (list-templates, render plain/invoice, determinism, validation and overwrite); `internal/render/render_test.go` and `internal/render/normalize_test.go` prove determinism and PDF normalization; `internal/templates/templates_test.go` and `internal/templates/invoice_test.go` prove template names and invoice validation; `internal/cli/flags_test.go` proves flag parsing.
 
-**Planned next:** Template selection from render model (JSON) and repository-relative template path (PLAN.md); optional PDF/A for preservation. Advances accounting and sale-invoicing use cases when [bus-invoices](./bus-invoices) consumes render models.
+**Planned next:** Full implementation of template selection from the render model and of the documented [invoice render model schema](../sdd/bus-pdf) (see SDD Data Design); optional PDF/A for preservation. When complete, [bus-invoices](./bus-invoices) can drive invoice PDF rendering via a single JSON payload.
 
 **Blockers:** None known.
 
