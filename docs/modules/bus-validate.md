@@ -31,17 +31,17 @@ Reads all workspace datasets and schemas. Does not write.
 
 ### Development state
 
-**Value promise:** Validate workspace datasets and invariants so the [accounting workflow](../workflow/accounting-workflow-overview) can run a single check before period close and filing and get deterministic diagnostics.
+**Value promise:** Validate workspace datasets and invariants so the accounting workflow can run a single check before period close and filing and get deterministic diagnostics.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 50% (Primary journey) — workspace and resource validation implemented; unit tests cover run and type/constraint checks. No e2e; format and stdout behavior not fully verified.
+**Completeness:** 50% — Run, schema/type/constraint/invariant checks, and global flags are verified by unit and e2e tests; pre-close check works. Diagnostics format (text/tsv) and empty stdout on success are in PLAN; audit and closed-period checks not implemented.
 
-**Use case readiness:** Accounting workflow: 50% — run and type checks verified; format and success stdout would complete pre-close check. Finnish bookkeeping and tax-audit compliance: 50% — validation supports coherence; audit and closed-period checks would strengthen. Finnish company reorganisation: 50% — workspace validation before assembling evidence pack.
+**Use case readiness:** Accounting workflow: 50% — run and schema/invariant checks verified; format and empty stdout would complete pre-close contract. Finnish bookkeeping and tax-audit compliance: 50% — workspace validation for coherence; audit and closed-period checks would strengthen. Finnish company reorganisation: 50% — workspace validation before evidence pack; same gaps.
 
-**Current:** Unit tests in `cmd/bus-validate/run_test.go`, `internal/validate/type_property_test.go`, and `internal/workspace/normalize_fuzz_test.go` prove run, type validation, and workspace normalization. No e2e; format and success stdout behavior are in PLAN.
+**Current:** `cmd/bus-validate/run_test.go` and `tests/e2e_bus_validate.sh` verify success/failure exit codes, missing CSV, schema parse and required/enum/primaryKey/foreignKey errors, journal double-entry balance, FK cascade suppression, ambiguous FK, and global flags (help, version, quiet, output, chdir, color, format-unknown, quiet+verbose, terminator, errors to stderr). `internal/validate/type_property_test.go`, `internal/validate/schema_test.go`, `internal/workspace/discover_test.go`, and `internal/cli/flags_test.go` verify type validation, FK schema shapes, discovery and naming styles, and flag parsing. Success path currently prints to stdout; empty stdout on success is planned.
 
-**Planned next:** --format text (default) and tsv; empty stdout on success; help; min/max; audit and closed-period protection.
+**Planned next:** `--format text` (default) and `tsv` for diagnostics; empty stdout on success and `--output` no-op for validate (PLAN.md). Help and min/max constraints; audit and closed-period protection to advance compliance use cases.
 
 **Blockers:** None known.
 
