@@ -43,7 +43,7 @@ See [Accounting workflow overview](../workflow/accounting-workflow-overview) for
 | [validate](../modules/bus-validate#development-state) | 50% — Run and schema/invariant checks verified by unit and e2e; format and empty stdout would complete pre-close contract. | format text/tsv; empty stdout and --output no-op; audit and closed-period. | None known. |
 | [vat](../modules/bus-vat#development-state) | 70% (Broadly usable) – init, validate, report, export; e2e covers VAT workflow; deterministic output. | Index update; dry-run; rate validation; journal input. | None known. |
 | [reports](../modules/bus-reports#development-state) | 50% (Primary journey) – trial balance, account-ledger; unit tests for run and report; no e2e. | general-ledger; period; stable format; budget; KPA/PMA. | None known. |
-| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; list-templates, flags, overwrite, chdir verified; user can complete PDF render step. | Template from render model (JSON) and repo-relative path (PLAN.md). | None known. |
+| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin, list-templates, flags, overwrite, chdir verified by e2e and unit tests; user can complete PDF render step. | Repo-relative template path in render model; optional PDF/A (PLAN.md). | None known. |
 
 ### Sale invoicing (sending invoices to customers)
 
@@ -56,7 +56,7 @@ See [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing)
 | [entities](../modules/bus-entities#development-state) | 50% (Primary journey) – init, add, list verified; user can define customers. | Go library path accessors (NFR-ENT-002). | None known. |
 | [accounts](../modules/bus-accounts#development-state) | 70% (Broadly usable) – chart for income/VAT accounts verified. | Document journal add regression test or add when [journal](../modules/bus-journal) available (PLAN.md). | None known. |
 | [invoices](../modules/bus-invoices#development-state) | 60% (Stable) – init, validate, list verified; user can bootstrap and list; add and pdf not in journey. | add (header/lines); pdf; totals validation; E2E for add/pdf. | [pdf](../modules/bus-pdf) for `bus invoices pdf`. |
-| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; user can complete PDF generation step. | Template from render model (JSON) and repo-relative path (PLAN.md). | None known. |
+| [pdf](../modules/bus-pdf#development-state) | 70% (Broadly usable) – render from file and stdin verified by e2e and unit tests; user can complete PDF generation step. | Repo-relative template path in render model; optional PDF/A (PLAN.md). | None known. |
 
 ### Inventory valuation and COGS postings
 
