@@ -61,15 +61,15 @@ bus invoices list --status unpaid
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% — init, validate, and list verified by e2e and unit tests; user can bootstrap and list but cannot yet add invoices or render PDFs.
+**Completeness:** 70% — init, add (header/lines), validate (global and per-invoice), list and filters verified by e2e and unit tests; totals validation and add-refuse-on-fail verified; user can create and list invoices; pdf requires [bus-pdf](./bus-pdf) and is not verified in this repo’s e2e.
 
-**Use case readiness:** Accounting workflow: 60% — init, validate, list verified; add and pdf not in journey. Sale invoicing (sending to customers): 60% — init, validate, list verified; add and pdf not in journey. Finnish company reorganisation: 60% — init and validation support evidence-pack baseline; add and pdf not in journey.
+**Use case readiness:** Accounting workflow: 70% — init, add, validate, list verified; user can create and list invoices; pdf not verified in e2e. Sale invoicing (sending to customers): 70% — same; pdf step blocked by [bus-pdf](./bus-pdf). Finnish company reorganisation: 70% — init, add, validate, list support evidence-pack baseline; pdf not in journey.
 
-**Current:** Verified only. E2E `tests/e2e_bus_invoices.sh` proves help, version, usage exit 2, validate when datasets missing, init creating eight files in workspace root only (no `invoices/`), validate after init, init --dry-run (no files), list deterministic TSV, list filters --type and --status, global flags (--output, --chdir, --quiet, --, --format, --color). Unit tests: `cmd/bus-invoices/run_test.go` (init, init dry-run, list filters type/status/invoice-id, flags, usage); `internal/initarea/initarea_test.go` (init when absent, warn when all exist, partial fails, dry-run); `internal/validate/*` (schema, types, CSV, foreign keys, list); `internal/cli/flags_test.go`, `help_test.go`, `color_test.go`.
+**Current:** Verified only. E2E `tests/e2e_bus_invoices.sh`: help, version, usage exit 2, validate when missing/after init, init (eight files in workspace root only, no `invoices/`), init --dry-run, list TSV and filters --type/--status, add (header) and `<invoice-id> add` (line), `<invoice-id> validate`, total_net validation and add/add-line refuse when validation fails, add --dry-run, global flags (--output, --chdir, --quiet, --, --format, --color); pdf runs but e2e expects non-zero (bus not in PATH). Unit: `cmd/bus-invoices/run_test.go` (init, list filters, add, invoice-id add/validate, flags, usage, quiet/verbose/color/format/chdir/output); `internal/initarea/initarea_test.go`; `internal/validate/*` (schema, types, CSV, foreign keys, list, validate_invoice totals/due-before-issue); `internal/add/add_test.go`; `internal/cli/flags_test.go`, `help_test.go`, `color_test.go`; `internal/pdf/pdf_test.go` (BuildInvoiceRenderModel, RunBusPDF); `paths/paths_test.go`.
 
-**Planned next:** `bus invoices add` and `<invoice-id> add`, and `bus invoices pdf` (PLAN.md); `<invoice-id> validate`; header/line totals validation (FR-INV-001). These advance the accounting workflow and sale invoicing use cases.
+**Planned next:** VAT amount validation when line/header VAT present (PLAN.md); unit or command-level tests for list filters --month, --from, --to, --due-from, --due-to, --counterparty; posting output for [bus-journal](./bus-journal) when required by roadmap. Advances accounting workflow and sale invoicing use cases.
 
-**Blockers:** [bus-pdf](./bus-pdf) required for `bus invoices pdf`. None for init/validate/list.
+**Blockers:** [bus-pdf](./bus-pdf) required for `bus invoices pdf` to complete sale-invoicing PDF step. None for init/add/validate/list.
 
 **Depends on:** [bus-pdf](./bus-pdf) (for `bus invoices pdf`).
 

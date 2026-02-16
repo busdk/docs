@@ -41,13 +41,13 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 50% (Primary journey) — trial balance and account-ledger implemented; unit tests cover run, workspace load, and report logic. No e2e.
+**Completeness:** 70% — Trial balance, balance sheet, P&amp;L, general-ledger, and account-ledger plus global flags verified by e2e and unit tests; optional budget and traceability (basis, voucher/entry columns) verified. KPA/PMA formats not implemented.
 
-**Use case readiness:** Accounting workflow: 50% — trial balance and account-ledger verified by unit tests; general-ledger and period support would complete. Finnish bookkeeping and tax-audit compliance: 50% — reports support statements; traceable line items (NFR-REP-001) and KPA/PMA would complete. Finnish company reorganisation: 50% — trial balance and ledger as audit evidence; no e2e.
+**Use case readiness:** Accounting workflow: 70% — Close-step reports verified by e2e; user can run all report commands. Finnish bookkeeping and tax-audit compliance: 70% — Reports and traceability verified; KPA/PMA would complete. Finnish company reorganisation: 70% — Trial balance and ledgers as audit evidence verified by e2e.
 
-**Current:** Unit tests in `internal/app/run_test.go`, `internal/workspace/load_test.go`, and `internal/report/report_test.go` prove run dispatch, workspace loading, and report generation. No e2e; report output shape is not asserted end-to-end.
+**Current:** E2e script `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), trial-balance (text/csv/json with basis), balance-sheet, profit-and-loss (with optional budget), general-ledger (all and `--account`), account-ledger (`--from`/`--to`), and error cases. Unit tests in `internal/app/run_test.go`, `internal/workspace/load_test.go`, `internal/report/report_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` prove run dispatch, workspace load, report logic, period parsing, and flag parsing.
 
-**Planned next:** general-ledger with --period and --account; trial-balance --as-of; --period for P&amp;L; stable text format; traceability; optional budget; KPA/PMA.
+**Planned next:** KPA and PMA output formats when entity is in scope (Finnish compliance; PLAN.md). Advances Finnish bookkeeping and tax-audit use case.
 
 **Blockers:** None known.
 
