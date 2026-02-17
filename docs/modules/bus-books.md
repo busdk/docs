@@ -108,13 +108,13 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use cases:** [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
-**Completeness:** 20% — serve and capability URL verified by e2e; token gating and workspace checks by unit tests; embedded API core and minimal UI (index, SPA fallback, assets from embed) verified; no domain backends wired; no bookkeeping step completable in the UI.
+**Completeness:** 20% — serve and capability URL, token gating, workspace checks, embedded API and minimal UI, and read-only 403 verified by tests; no domain backends wired; user cannot complete any bookkeeping step in the UI.
 
-**Use case readiness:** Accounting workflow (bookkeeping UI): 20% — user can start server and get capability URL; token gating and workspace-root checks verified; embedded API and minimal UI verified; no dashboard or workflow screens yet.
+**Use case readiness:** Accounting workflow (bookkeeping UI): 20% — user can start server and get capability URL; token gating, workspace-root checks, embedded API, minimal UI, and read-only 403 verified; no dashboard or workflow screens yet.
 
-**Current:** Serve and capability URL: `tests/e2e_bus_books.sh`. Default subcommand serve and fixed token/port: `tests/e2e_bus_books.sh`. Global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags: `tests/e2e_bus_books.sh`, `internal/run/run_test.go`, `internal/cli/flags_test.go`. Workspace root validation and token gating (404 outside `/{token}/`, 200 under token): `internal/server/server_test.go`. Embedded API (healthz, openapi.json, module backends mount): `internal/server/server_test.go` (TestHandler_EmbeddedAPIV1Mount), `internal/api/api_test.go`. Minimal UI (index at base, SPA fallback for non-API paths, assets from embed, API routes not intercepted): `internal/server/server_test.go` (TestHandler_IndexAtBase, TestHandler_SPAFallbackForNonAPIPaths, TestHandler_AssetServingFromEmbed, TestHandler_SPAFallbackDoesNotInterceptAPIRoutes). No domain backends wired at runtime; no bookkeeping screens covered by tests.
+**Current:** Serve and capability URL, default subcommand (no args → serve), and fixed token/port are verified by `tests/e2e_bus_books.sh`; global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags by `tests/e2e_bus_books.sh`, `internal/run/run_test.go`, and `internal/cli/flags_test.go`. Workspace root validation, token gating (404 outside `/{token}/`, 200 under token), embedded API (healthz, openapi.json, module backends), read-only 403 on mutating API, and minimal UI (index at base, SPA fallback, assets from embed, API routes not intercepted) are verified by `internal/server/server_test.go` and `internal/api/api_test.go`. No domain backends wired at runtime; no bookkeeping screens are covered by tests.
 
-**Planned next:** Enforce read-only 403 and add unit test (PLAN.md); wire or register default bookkeeping module backends; Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) — advances Accounting workflow.
+**Planned next:** Wire or register default bookkeeping module backends; Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) per PLAN.md — advances Accounting workflow.
 
 **Blockers:** None known.
 

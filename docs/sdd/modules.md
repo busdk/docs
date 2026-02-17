@@ -42,6 +42,7 @@ Path accessors MUST be designed so that future dynamic configuration is possible
 - [`bus payroll`](./bus-payroll): Maintains payroll datasets, validates payroll runs, and produces journal posting outputs for salaries and taxes.
 - [`bus budget`](./bus-budget): Maintains budgets keyed by account and period and produces budget vs actual variance outputs against ledger actuals.
 - [`bus reports`](./bus-reports): Computes financial and management reports from journal entries and reference data and emits reports in text and structured formats.
+- [`bus replay`](./bus-replay): Exports a deterministic, append-only replay log (JSONL and shell script) from a workspace for migration and parity; apply runs the log into a target workspace with idempotent guards.
 - [`bus validate`](./bus-validate): Validates workspace datasets against schemas and cross-table invariants and emits deterministic diagnostics suitable for CI and scripted workflows.
 - [`bus vat`](./bus-vat): Computes VAT totals per reporting period, validates VAT mappings, and reconciles invoice VAT with ledger postings before emitting VAT summaries and exports.
 - [`bus pdf`](./bus-pdf): Renders deterministic PDFs from prepared JSON render models without modifying any canonical workspace datasets.

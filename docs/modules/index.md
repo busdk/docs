@@ -38,6 +38,7 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus payroll`](./bus-payroll): Run payroll and generate postings.
 - [`bus budget`](./bus-budget): Record budgets and run budget vs actual reports.
 - [`bus reports`](./bus-reports): Generate trial balance, ledger, and statement reports.
+- [`bus replay`](./bus-replay): Export and apply deterministic replay logs for workspace migration.
 - [`bus validate`](./bus-validate): Validate workspace datasets and invariants.
 - [`bus vat`](./bus-vat): Compute VAT reports and exports.
 - [`bus pdf`](./bus-pdf): Render PDFs from JSON render models.

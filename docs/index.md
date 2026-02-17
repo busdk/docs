@@ -111,6 +111,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 ### Validation and reports
 
 - `bus reports` - [CLI](modules/bus-reports) - [SDD](sdd/bus-reports)
+- `bus replay` - [CLI](modules/bus-replay) - [SDD](sdd/bus-replay)
 - `bus validate` - [CLI](modules/bus-validate) - [SDD](sdd/bus-validate)
 - `bus vat` - [CLI](modules/bus-vat) - [SDD](sdd/bus-vat)
 - `bus pdf` - [CLI](modules/bus-pdf) - [SDD](sdd/bus-pdf)
