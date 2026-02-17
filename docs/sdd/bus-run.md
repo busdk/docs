@@ -55,6 +55,8 @@ FR-RUN-006 Prompt-template rendering. Prompt actions (embedded or from `.bus/run
 
 FR-RUN-007 Dependence on bus-agent. The implementation MUST depend on the bus-agent Go library for all agent invocations. Bus Run MUST use bus-agent’s runner interface, template renderer, runtime detection, and installation references. Model, output format, and timeout are configurable via flags or environment; resolution order MUST follow a documented bus-run-specific order (e.g. `--agent`, then `BUS_RUN_AGENT`, then `BUS_AGENT`, then `bus-run.agent`, then `bus-agent.runtime`, then first available). Acceptance criteria: bus-run imports and uses bus-agent for every agent run; run-config is configurable and resolution order is documented.
 
+FR-RUN-007a Agent output and disclosure on each step. When the tool executes an agent-invoking step (prompt action), it MUST print to stderr, at the start of that step and before streaming or capturing agent output, which internal agent runtime and which model are in use. When an external agent is invoked, the agent's output (human-readable; e.g. NDJSON formatted to text per bus-agent's contract) MUST be written to stderr so the user sees the agent's response; the tool MUST NOT suppress or discard agent output. Acceptance criteria: at the start of each prompt-action step the tool writes one line to stderr identifying runtime and model; agent output is streamed or written to stderr in a human-readable form; no code path discards or hides agent output.
+
 FR-RUN-008 Agent runtimes. The implementation MUST use bus-agent’s supported runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI). The active runtime MUST be selectable via a documented flag (e.g. `--agent cursor|codex|gemini|claude`) and via bus-run persistent preferences (`bus-run.agent`) written through the [bus-preferences](./bus-preferences) Go library. Acceptance criteria: user can select any of the four runtimes; invalid runtime yields exit 2; bus-run only writes `bus-run.*` preference keys.
 
 FR-RUN-009 Set and context subcommands. The implementation MUST provide **bus run set agent \<runtime\>**, **bus run set model \<value\>**, **bus run set output-format \<ndjson|text\>**, and **bus run set timeout \<duration\>**, each writing only the corresponding `bus-run.*` key via the bus-preferences library (no shell-out to `bus preferences`). The implementation MUST provide **bus run context**, which prints the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout; context uses the effective working directory to derive catalog values and does not require Git. When the effective working directory does not exist or is not accessible, context MUST exit with code 1. Acceptance criteria: set subcommands persist only bus-run keys; context output is deterministic and script-friendly; context does not require Git; inaccessible workdir yields exit 1.
@@ -105,7 +107,7 @@ High-level components:
 
 - **Subcommand handlers.** Run (execute normalized sequence step by step), set (write bus-run preferences), context (print catalog), pipeline/action/script (management). Management commands that write to `.bus/run/` take the per-directory lock. The `pipeline preview` handler resolves and normalizes exactly like run, then prints and exits without execution.
 
-Data flow: user invokes `bus run <tokens>` or `bus run <management>`; CLI parses and resolves; for run, tokens are expanded and normalized to final steps; for each prompt step, handler loads template, renders with catalog, calls bus-agent; for each script step, handler runs script with catalog as env; diagnostics to stderr, results per BusDK conventions. `pipeline preview` follows the same parse/resolve/expand/normalize path and emits the final step list without execution.
+Data flow: user invokes `bus run <tokens>` or `bus run <management>`; CLI parses and resolves; for run, tokens are expanded and normalized to final steps; for each prompt step, handler loads template, renders with catalog, calls bus-agent; bus-agent's output is streamed or written to stderr so the user sees the agent's response (FR-RUN-007a); for each script step, handler runs script with catalog as env; diagnostics and human-readable agent or script output to stderr, deterministic command results to stdout per BusDK conventions. `pipeline preview` follows the same parse/resolve/expand/normalize path and emits the final step list without execution.
 
 ### Key Decisions
 
@@ -123,7 +125,7 @@ KD-RUN-004 Single-instance per directory via lock. To avoid concurrent edits to 
 
 **Run entrypoint.** The program exposes a single entrypoint `Run(args []string, workdir string, stdout, stderr io.Writer) int`. `main` passes `os.Args[1:]`, effective working directory, and writers, and exits with the returned code.
 
-**bus-agent integration.** Bus Run calls the bus-agent library’s runner interface with: selected runtime (or resolution delegated to bus-agent with bus-run caller context), prompt text (rendered from directory-local template and catalog), workdir, timeout, output mode. Bus Run does not implement the runner; it is a caller of bus-agent.
+**bus-agent integration.** Bus Run calls the bus-agent library’s runner interface with: selected runtime (or resolution delegated to bus-agent with bus-run caller context), prompt text (rendered from directory-local template and catalog), workdir, timeout, output mode. Bus Run does not implement the runner; it is a caller of bus-agent. Per FR-RUN-007a, at the start of each prompt-action step Bus Run writes to stderr which agent runtime and model are in use, and agent output is streamed or written to stderr so the user always sees the agent's response.
 
 **Project root.** The effective working directory (after `-C`/`--chdir`) is the project root; no Git. Used for `.bus/run/` discovery and for catalog derivation (`WORKDIR_ROOT`, `PROJECT_NAME`).
 
@@ -183,9 +185,9 @@ Additional variables MAY be added in this SDD or in the implementation and MUST 
 
 ### I/O Conventions
 
-Stdout: Reserved for deterministic command results (e.g. list, context KEY=VALUE output, pipeline list, pipeline preview output, action list, script list). Agent and script output may be streamed to stderr when the run is interactive or script-friendly as documented.
+Stdout: Reserved for deterministic command results (e.g. list, context KEY=VALUE output, pipeline list, pipeline preview output, action list, script list). Prompt-action (agent) output and script-action output MUST NOT be written to stdout; they go to stderr so that stdout remains reserved for parseable results.
 
-Stderr: Diagnostics, progress, and human-readable agent or script output. At the start of each agent-invoking step, the tool SHOULD print to stderr which agent runtime and model are in use (when provided by bus-agent).
+Stderr: All diagnostics, progress, and human-readable agent or script output MUST go to stderr (FR-RUN-007a). At the start of each agent-invoking step (prompt action), the tool MUST write to stderr which internal agent runtime and which model are in use, before streaming or capturing agent output. When an external agent is invoked, the agent's raw output (e.g. NDJSON) may be piped through an internal formatter that writes readable text to stderr; the tool MUST NOT suppress or discard agent output so the user always sees the agent's response.
 
 ### Exit Codes
 
@@ -227,7 +229,7 @@ AD-RUN-005 Operating environment. Linux and macOS for primary support; Windows f
 
 ### Testing Strategy
 
-- **Unit tests.** Project-root resolution (effective workdir, no Git), token resolution, pipeline expansion (including cycle detection and expansion limit), final-sequence normalization (duplicate step merge in first-appearance order), name grammar, prompt rendering (missing/unresolved placeholder → exit 2), and run sequence (stop-on-first-failure) MUST have unit tests. Tests MUST be hermetic: no network, no real agent; stub agent in PATH or mock bus-agent.
+- **Unit tests.** Project-root resolution (effective workdir, no Git), token resolution, pipeline expansion (including cycle detection and expansion limit), final-sequence normalization (duplicate step merge in first-appearance order), name grammar, prompt rendering (missing/unresolved placeholder → exit 2), run sequence (stop-on-first-failure), and agent output and disclosure (FR-RUN-007a: runtime/model line to stderr at step start, agent output written to stderr) MUST have unit tests. Tests MUST be hermetic: no network, no real agent; stub agent in PATH or mock bus-agent.
 
 - **Management command tests.** Pipeline/action/script set and unset, list output determinism, preview output determinism and non-execution, ambiguity detection (same NAME in two definition types → exit 2), and preference read/write via bus-preferences.
 

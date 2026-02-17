@@ -31,7 +31,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Developer workflow](implementation/developer-module-workflow)
 - [BusDK SDD (single page)](sdd)
 
-## Run Business Workflows
+## Run Business Workflows {#run-business-workflows}
 
 ### Workflow overview
 
@@ -65,7 +65,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Inventory valuation and COGS postings](workflow/inventory-valuation-and-cogs)
 - [Workbook editing](workflow/workbook-and-validated-tabular-editing)
 
-## Find Modules by Task
+## Find Modules by Task {#find-modules-by-task}
 
 ### Core commands
 
@@ -122,7 +122,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - `bus filing prh` - [CLI](modules/bus-filing-prh) - [SDD](sdd/bus-filing-prh)
 - `bus filing vero` - [CLI](modules/bus-filing-vero) - [SDD](sdd/bus-filing-vero)
 
-## Understand System Design
+## Understand System Design {#understand-system-design}
 
 ### Design Documents
 
@@ -172,7 +172,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [VAT area](layout/vat-area)
 - [Budgeting area](layout/budget-area)
 
-## Use Data and CLI Reference
+## Use Data and CLI Reference {#use-data-and-cli-reference}
 
 ### Master data
 

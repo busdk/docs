@@ -353,14 +353,14 @@
 }
 
 .busdk-home-hero-cta {
-  margin-top: 1.2rem;
+  margin-top: 2.25rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.7rem;
 }
 
-.busdk-home-hero-cta-link {
+.busdk-home-hero-cta .busdk-home-hero-cta-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -377,30 +377,39 @@
   transition: border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease;
 }
 
-.busdk-home-hero-cta-link:hover,
-.busdk-home-hero-cta-link:focus-visible {
+.busdk-home-hero-cta .busdk-home-hero-cta-link:visited {
+  color: var(--busdk-link);
+}
+
+.busdk-home-hero-cta .busdk-home-hero-cta-link:hover,
+.busdk-home-hero-cta .busdk-home-hero-cta-link:focus-visible {
   border-color: var(--busdk-accent);
   background: rgba(47, 108, 229, 0.08);
   color: var(--busdk-link-hover);
   text-decoration: none;
 }
 
-.busdk-home-hero-cta-link:focus-visible {
+.busdk-home-hero-cta .busdk-home-hero-cta-link:focus-visible {
   outline: 2px solid var(--busdk-accent);
   outline-offset: 2px;
 }
 
-.busdk-home-hero-cta-link--primary {
+.busdk-home-hero-cta .busdk-home-hero-cta-link--primary {
   background: var(--busdk-accent);
   border-color: var(--busdk-accent);
   color: #fff;
 }
 
-.busdk-home-hero-cta-link--primary:hover,
-.busdk-home-hero-cta-link--primary:focus-visible {
-  background: #1d4ea6;
-  border-color: #1d4ea6;
+.busdk-home-hero-cta .busdk-home-hero-cta-link--primary:visited {
   color: #fff;
+}
+
+.busdk-home-hero-cta .busdk-home-hero-cta-link--primary:hover,
+.busdk-home-hero-cta .busdk-home-hero-cta-link--primary:focus-visible {
+  background: var(--busdk-link-hover);
+  border-color: var(--busdk-link-hover);
+  color: #fff;
+  text-decoration: none;
 }
 
 .busdk-home-cards {
@@ -622,6 +631,27 @@
 
   .markdown-body .busdk-home p.busdk-home-hero-desc {
     color: #94a3b8;
+  }
+
+  .busdk-home-hero-cta .busdk-home-hero-cta-link:hover,
+  .busdk-home-hero-cta .busdk-home-hero-cta-link:focus-visible {
+    background: rgba(45, 212, 191, 0.12);
+  }
+
+  .busdk-home-hero-cta .busdk-home-hero-cta-link--primary {
+    color: #0b0f14;
+  }
+
+  .busdk-home-hero-cta .busdk-home-hero-cta-link--primary:visited {
+    color: #0b0f14;
+  }
+
+  .busdk-home-hero-cta .busdk-home-hero-cta-link--primary:hover,
+  .busdk-home-hero-cta .busdk-home-hero-cta-link--primary:focus-visible {
+    background: #14b8a6;
+    border-color: #14b8a6;
+    color: #0b0f14;
+    text-decoration: none;
   }
 }
 

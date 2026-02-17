@@ -35,17 +35,17 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ### Development state
 
-**Value promise:** Link bank transactions to invoices or journal entries so the [accounting workflow](../workflow/accounting-workflow-overview) can reconcile bank activity and keep an explicit reconciliation history.
+**Value promise:** Link bank transactions to invoices or journal entries so the accounting workflow can reconcile bank activity and keep an explicit reconciliation history.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 80% — match, allocate, list and validation failures (amount/currency, sum, already-reconciled, missing ref) verified by unit and e2e; user can complete reconciliation step with deterministic diagnostics.
+**Completeness:** 80% — match, allocate, list and validation failures verified by unit and e2e; reconciliation step completable with deterministic diagnostics.
 
-**Use case readiness:** Accounting workflow: 80% — match (invoice and journal), allocate (mixed), list and global flags verified; validation failures (amount/currency mismatch, sum mismatch, already reconciled, missing invoice/journal ref) verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`; reconciliation step completable. Finnish company reorganisation: 80% — same; reconciliation evidence path verified. Finnish payroll handling: 80% — same; payroll bank reconciliation step completable.
+**Use case readiness:** Accounting workflow: 80% — reconciliation step completable. Finnish company reorganisation: 80% — reconciliation evidence path verified. Finnish payroll handling: 80% — payroll bank reconciliation step completable.
 
-**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list, and validation failures (amount/currency mismatch, allocate sum mismatch, already reconciled, missing invoice/journal ref) verified in `internal/app/run_test.go` (TestMatchSuccess, TestListAfterMatch, TestAllocateSuccess, TestMatchJournalSuccess, TestAllocateWithJournal, TestMatchAmountCurrencyMismatch, TestAllocateSumMismatch, TestAllocateAlreadyReconciled, TestAllocateReferencedNotFound, TestMatchIdempotency, TestDuplicatePrimaryKey, TestGlobalFlagsBehavior, TestChdirFlag, TestQuietVerboseConflict) and in `tests/e2e_bus_reconcile.sh` (match→list, allocate mixed, list empty/--output/-C, invalid --color/--format, quiet+verbose, err_match_ws, err_alloc_sum_ws, err_recon_ws, err_ref_ws). Help, version, and flag parsing in `internal/cli/flags_test.go` and run tests.
+**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list, and validation failures (amount/currency, sum mismatch, already reconciled, missing ref) verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`; global flags, help, version, and flag parsing by `internal/cli/flags_test.go` and run tests.
 
-**Planned next:** Obtain bank path from [bus-bank](./bus-bank) Go library per data path contract (PLAN.md). Advances accounting, reorganisation, and payroll use cases when cross-module path is used.
+**Planned next:** Obtain bank path from [bus-bank](./bus-bank) Go library per data path contract. Reject invoice status `canceled` in match when target is invoice (align with allocate and [bus-invoices](./bus-invoices) schema; PLAN.md). Both advance accounting, reorganisation, and payroll when applicable.
 
 **Blockers:** None known.
 
