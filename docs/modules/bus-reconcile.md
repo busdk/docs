@@ -39,15 +39,15 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 30% (Some basic commands) — help, version, global flags, and validate/plan/apply verified by tests; documented match/allocate/list are not implemented, so the reconciliation step in workflow docs is not completable as described.
+**Completeness:** 70% — match, allocate, and list verified by unit and e2e tests; user can complete the reconciliation step (one-to-one match, split allocation, list records); amount/sum and already-reconciled validation tests pending (PLAN.md).
 
-**Use case readiness:** Accounting workflow: 30% — validate, plan, apply verified; match/allocate/list not implemented; user cannot complete step as in workflow doc. Finnish company reorganisation: 30% — same; reconciliation evidence path differs from doc. Finnish payroll handling: 30% — same; payroll bank reconciliation step blocked.
+**Use case readiness:** Accounting workflow: 70% — match (invoice and journal), allocate (invoice and journal mix), list and global flags verified by `internal/app/run_test.go`, `internal/cli/flags_test.go`, and `tests/e2e_bus_reconcile.sh`; reconciliation step completable. Finnish company reorganisation: 70% — same; reconciliation evidence path verified. Finnish payroll handling: 70% — same; payroll bank reconciliation step completable.
 
-**Current:** Help and version verified in `internal/app/run_test.go` (TestGlobalFlagsBehavior). Flag parsing and global flags (chdir, output, format, color, quiet/verbose) verified in `internal/cli/flags_test.go` and `internal/app/run_test.go` (TestChdirFlag, TestQuietVerboseConflict). Validate, plan, and apply verified in `internal/app/run_test.go` (TestValidateSuccess, TestPlanExactReference, TestPlanUnmatchedSuspense, TestApplySuccess, TestApplyIdempotency, plus error-path tests). The documented match, allocate, and list subcommands are not implemented; the binary exposes validate, plan, apply.
+**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), and list verified in `internal/app/run_test.go` (TestMatchSuccess, TestListAfterMatch, TestListEmpty, TestAllocateSuccess, TestMatchJournalSuccess, TestAllocateWithJournal, TestMatchJournalEntryNotFound, TestMatchIdempotency, TestDuplicatePrimaryKey, TestInvalidMatchConfidence, TestGlobalFlagsBehavior, TestChdirFlag, TestQuietVerboseConflict) and in `tests/e2e_bus_reconcile.sh` (match→list, allocate mixed, list empty and with --output, -C, --terminator, invalid --color/--format, quiet+verbose). Help, version, and flag parsing verified in `internal/cli/flags_test.go` and run tests. List validation (schema, duplicate IDs, confidence) and missing-invoices file error verified in `internal/app/run_test.go`.
 
-**Planned next:** Implement match, allocate, and list per SDD and end-user docs (PLAN.md); journal linking; command-level tests for match/allocate/list. Advances accounting, reorganisation, and payroll use cases.
+**Planned next:** Tests for match amount/currency mismatch, allocate sum mismatch, allocate already-reconciled, and allocate missing invoice/journal id (PLAN.md); obtain bank path from [bus-bank](./bus-bank) Go library per data path contract. Advances accounting, reorganisation, and payroll use cases.
 
-**Blockers:** Documented match/allocate/list not implemented blocks the reconciliation step as described in workflow and compliance docs.
+**Blockers:** None known.
 
 **Depends on:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-journal](./bus-journal).
 

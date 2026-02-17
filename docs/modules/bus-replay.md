@@ -55,17 +55,17 @@ Export reads workspace configuration, resource list, and domain datasets (accoun
 
 **Value promise:** Export a workspace to a deterministic, append-only replay log and apply it into a clean workspace so migrations and parity work can be reviewed in Git and re-run reproducibly.
 
-**Use cases:** Not mapped to a documented workflow; supports operator/automation use cases (workspace migration, parity verification, reproducible setup). See [Orphan modules](../implementation/development-status#orphan-modules).
+**Use cases:** Not mapped to a documented workflow; supports operator/automation (workspace migration, parity verification, reproducible setup). See [Orphan modules](../implementation/development-status#orphan-modules).
 
-**Completeness:** 30% — export and render (JSONL→sh) verified by tests; apply reports and guard evaluation verified but apply does not execute operations, so the full migration/parity journey is not yet completable. Export currently emits only the five baseline init operations (config, accounts, period, journal, attachments) regardless of workspace content; it does not yet emit `bus config set`, per-account or per-posting adds, period state transitions, attachment registrations, or VAT/report actions. Authoritative implementation status and gap versus the full [Export Plan](../sdd/bus-replay#export-plan-default-accounting-snapshot) are documented in the [module SDD Implementation status](../sdd/bus-replay#implementation-status).
+**Completeness:** 50% — export (empty and populated) and render verified by tests; apply executes via dispatcher (roundtrip and idempotency when bus on PATH per e2e); full export plan (config set, attachment registrations, VAT/reports) not yet implemented.
 
-**Use case readiness:** Workspace migration / parity verification: 30% — export produces deterministic JSONL and render produces POSIX sh; apply evaluates guards and reports but does not execute bus commands. Until export covers master data and journal postings (SDD steps 1–7), hand-written replay scripts cannot be replaced by `bus replay export`.
+**Use case readiness:** Workspace migration / parity verification: 50% — export produces full replay log for minimal/populated workspaces (inits + accounts, period, journal); apply executes via dispatcher; roundtrip and idempotency verified when bus on PATH; full SDD export plan not yet implemented.
 
-**Current:** Export yields deterministic JSONL (golden tests, no workspace mutation). Apply reads JSONL, evaluates guards, and produces TSV/JSON report; dry-run and idempotent skip are verified; apply does not execute bus commands. Render produces POSIX sh with shebang and `set -euo pipefail`. Global flags and invalid usage are verified.
+**Current:** Export empty and populated yields deterministic JSONL (`internal/replay/golden_test.go`, `tests/e2e_bus_replay.sh`). Apply guard evaluation, dry-run report, and execution via dispatcher verified (`internal/replay/apply_test.go`, `internal/replay/executor_test.go`); roundtrip and idempotency when bus on PATH (`tests/e2e_bus_replay.sh`). Render JSONL→sh with shebang and `set -euo pipefail` (`internal/replay/render_test.go`, golden). Global flags and invalid usage (`internal/cli/flags_test.go`, `tests/e2e_bus_replay.sh`).
 
-**Planned next:** Complete the export plan (config set, accounts add, period add/open, journal add, attachments, optional VAT/reports) so that a populated workspace exports a full replay log; apply executing operations in-process so the migration journey is completable.
+**Planned next:** In-process executor for apply (PLAN.md); complete export plan (config set, attachment registrations, VAT/reports) for full accounting snapshot.
 
-**Blockers:** Apply does not execute bus commands; export emits only baseline inits (full accounting snapshot per SDD not implemented). For large migrations, continue using existing hand-written replay scripts until export coverage is completed.
+**Blockers:** None known.
 
 **Depends on:** [bus config](./bus-config), [bus data](./bus-data), [bus accounts](./bus-accounts), [bus period](./bus-period), [bus journal](./bus-journal), [bus attachments](./bus-attachments); optionally [bus vat](./bus-vat) and report-producing modules when included.
 

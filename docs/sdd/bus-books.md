@@ -11,7 +11,7 @@ description: bus books provides a local, end-user-focused web UI for BusDK bookk
 
 Bus Books provides a local, end-user-facing web UI for doing bookkeeping work in a BusDK workspace. Unlike [Bus Sheets](bus-sheets) (generic table/grid editing), Bus Books focuses on accounting screens and workflows that map to real bookkeeping tasks: journal postings, period control, VAT review, bank import and reconciliation, invoice review, evidence attachments, and workspace validation.
 
-Bus Books does not create a new accounting engine. All domain behavior is delegated to existing BusDK modules through in-process Go libraries and the embedded [Bus API](bus-api) surface. The UI is schema-driven: adding a new column to a workspace dataset and its schema must make that column appear in list and detail views without recompilation or reprogramming. Bus Books does not shell out to other `bus-*` CLIs for its own UI operations. The only allowed CLI execution is optional agent chat, which runs in a clearly marked, explicitly enabled “agent execution context”.
+Bus Books does not create a new accounting engine. All domain behavior is delegated to existing BusDK modules through in-process Go libraries and the embedded [Bus API](bus-api) surface. The frontend is implemented in Go and delivered as WebAssembly (WASM), so the entire module — server and UI — can be written in Go. The UI is schema-driven: adding a new column to a workspace dataset and its schema must make that column appear in list and detail views without recompilation or reprogramming. Bus Books does not shell out to other `bus-*` CLIs for its own UI operations. The only allowed CLI execution is optional agent chat, which runs in a clearly marked, explicitly enabled “agent execution context”.
 
 Bus Books follows the same MVP security model as [Bus API](bus-api) and [Bus Sheets](bus-sheets): loopback-only binding by default, and a capability-style unguessable random token in the URL path prefix that gates both UI and API.
 
@@ -30,6 +30,8 @@ G-BOK-004 Unified “Inbox” mental model. Provide one actionable view for item
 G-BOK-005 Optional agent assist. When explicitly enabled, provide a chat view where an AI agent can propose or perform operations in the workspace, with clear separation from normal UI actions.
 
 G-BOK-006 Schema-driven column display. Adding a new column to a workspace dataset (and its schema) must make that column appear in the relevant Bus Books list and detail views without recompilation, redeployment, or configuration change. The implementation must be schema-driven so that workspace evolution does not require code or binary changes.
+
+G-BOK-007 Go frontend via WebAssembly. The Bus Books frontend must be implemented in Go and compiled to WebAssembly (WASM) so that the whole module — server and UI — stays in a single language and toolchain, improving maintainability and code sharing.
 
 ### Non-goals
 
@@ -50,14 +52,17 @@ NG-BOK-005 No “magical” bookkeeping automation. The UI may assist, but accou
 FR-BOK-001 Local UI server. The module MUST provide a CLI command that starts a local HTTP server which serves the Bus Books web UI for the selected workspace root.
 Acceptance criteria: startup succeeds without configuration in a readable workspace; startup fails deterministically if the workspace root is not readable.
 
+FR-BOK-001a Workspace root and data from current directory. The workspace root MUST be the effective working directory (the process current working directory, or the directory specified by the standard `-C` / `--chdir` global flag when the module is invoked via the dispatcher). When that directory contains Bus workspace data files (datasets, schemas, and related workspace structure), the server MUST use that data from that directory: the embedded Bus API and all module backends MUST resolve and read/write workspace datasets relative to the workspace root. No separate configuration or path flag is required to “point” at the data when the user starts the server from the Bus directory.
+Acceptance criteria: started from a directory that contains valid Bus workspace data, the UI and API operate on that data; started from a different directory (or with `-C` pointing elsewhere), the server uses the data in that effective root; deterministic failure if the workspace root is not readable or not a valid workspace when the UI requires it.
+
 FR-BOK-002 Capability URL gating. On startup, the server MUST generate an unguessable random token and MUST require all UI and API requests to be scoped under a path prefix containing that token.
 Acceptance criteria: the server prints a full base URL that includes the token and a port; requests outside the token prefix return 404 (or equivalent).
 
 FR-BOK-003 Safe default binding. The server MUST bind to `127.0.0.1` by default and MUST NOT listen on non-loopback interfaces unless explicitly requested.
 Acceptance criteria: without flags, the UI is reachable only from localhost; non-loopback bind requires an explicit `--listen` flag.
 
-FR-BOK-004 Embedded assets. The binary MUST embed everything needed to serve the UI (HTML/CSS/JS) without external template files, build directories, or runtime downloads.
-Acceptance criteria: `bus-books serve` works after installation with no additional files.
+FR-BOK-004 Embedded assets. Any static compiled frontend client files MUST be embedded in the bus-books implementation. The binary MUST embed everything needed to serve the UI: no external template files, no build directories on disk at runtime, no runtime downloads. The UI is delivered as a Go-compiled WebAssembly (WASM) application plus HTML, CSS, and a minimal JS loader to bootstrap the WASM runtime. All static frontend artifacts — HTML, CSS, loader JS, WASM binary, and any other compiled client assets (fonts, images, etc.) — MUST be embedded in the server binary. The server MUST NOT serve frontend assets from the filesystem or from a remote URL; all such assets MUST come from the embedded binary.
+Acceptance criteria: `bus-books serve` works after installation with no additional files; the browser loads the WASM binary and runs the Go frontend; no external CDN or runtime fetch is required for the UI; no frontend asset is read from disk or fetched from the network at request time.
 
 FR-BOK-005 Bus API backend in-process. Bus Books MUST embed the Bus API server core as a Go library and mount it under the capability prefix.
 Acceptance criteria: all workspace reads/writes performed by the UI are served by embedded handlers; no code path executes `bus-api`, `bus-data`, or any other `bus-*` binary for normal UI operations.
@@ -116,11 +121,14 @@ NFR-BOK-004 Operation gating. The server MUST support a read-only mode that make
 
 NFR-BOK-005 Concurrency safety. Concurrent writes must not corrupt workspace data; all mutations go through the embedded API and module libraries and rely on their locking/atomicity rules.
 
-NFR-BOK-006 Maintainability. The module MUST be library-first with a thin CLI wrapper and a reproducible frontend build; the UI should not depend on network services to run.
+NFR-BOK-006 Maintainability. The module MUST be library-first with a thin CLI wrapper and a reproducible frontend build. The frontend MUST be implemented in Go and compiled to WebAssembly so that server and UI share one language and toolchain; the UI must not depend on network services to run.
 
 NFR-BOK-007 Performance (local). The server and UI MUST remain responsive for typical local workspaces; list views must support paging/limits as needed.
 
 NFR-BOK-008 No hardcoded column set for datasets. The implementation MUST NOT require recompilation or reprogramming to display new or renamed columns in workspace datasets. Column metadata MUST be read from the workspace (schema or data) at runtime.
+
+NFR-BOK-009 Modern styles and theme aligned with documentation site. The Bus Books UI MUST use a modern visual style and theme consistent with the BusDK documentation site. The implementation MUST use a token-based palette (e.g. CSS custom properties for background, foreground, muted text, border, accent, and link colors), MUST respect the user’s `prefers-color-scheme` (light/dark) so the UI supports both modes, MUST use the same accent color family (teal) for section headings and interactive emphasis as the documentation site, and MUST keep main content in a constrained width with full-width section backgrounds where appropriate so the experience matches the documentation site’s layout contract. Focus and selection styling MUST use the accent token. The goal is visual and ergonomic consistency for users who move between the docs and Bus Books.
+Acceptance criteria: UI renders with a token-driven theme; light and dark modes both work when the system preference is set; section headings and primary actions use the accent color; content is readable in a constrained column; focus-visible and selection use the accent; no conflicting or ad-hoc color palette that diverges from the documentation site’s design.
 
 ## System Architecture
 
@@ -128,7 +136,7 @@ Bus Books is a local web app server composed of:
 
 1) Embedded Bus API core (in-process). This is the authoritative HTTP surface for workspace operations and module endpoints. Bus Books mounts the Bus API handler under `/{token}/v1/...` and enables a default set of bookkeeping modules (when compiled/registered).
 
-2) Embedded frontend assets (SPA). The server serves `index.html` and static assets under `/{token}/...` with SPA fallback for non-API routes.
+2) Embedded frontend assets (WASM SPA). The frontend is implemented in Go and compiled to WebAssembly. All static compiled frontend client files are embedded in the binary (FR-BOK-004). The server serves `index.html`, the WASM binary, a minimal JS loader, and CSS/static assets under `/{token}/...` from embedded data only — no filesystem or remote asset serving. SPA route fallback for non-API routes. The browser loads the WASM module and runs the Go UI; no separate JavaScript framework or runtime download is required beyond the Go-generated WASM and loader.
 
 Optional:
 3) Embedded agent endpoints (when enabled). When `--enable-agent` is set, Bus Books mounts agent endpoints that delegate to bus-agent library, with the workspace root as working directory.
@@ -160,11 +168,15 @@ KD-BOK-005 Agent integration is optional and clearly separated. The agent is dis
 
 KD-BOK-006 Schema-driven table display. List and detail views for workspace datasets (journal lines, bank transactions, invoices, etc.) derive their column set from the workspace schema at runtime so that new columns appear in the UI without code changes. Workspace evolution (e.g. adding a table column) must not require a new build or reprogramming.
 
+KD-BOK-007 Visual alignment with documentation site. The Bus Books UI uses the same modern theme and styling approach as the BusDK documentation site: token-based palette, light/dark preference support, teal accent for headings and emphasis, constrained content width, and consistent focus/selection styling. This keeps the experience consistent for users who use both the docs and the bookkeeping UI.
+
+KD-BOK-008 Go frontend via WebAssembly. The Bus Books frontend is implemented in Go and compiled to WebAssembly (WASM) so that the entire module can be written in Go. This keeps a single language and toolchain, allows shared types and logic between server and client where useful, and avoids maintaining a separate JavaScript/TypeScript frontend codebase.
+
 ## Component Design and Interfaces
 
 ### IF-BOK-001 Go library interface (server core)
 
-The module exposes a Go package that can be used to embed Bus Books server behavior.
+The module exposes a Go package that can be used to embed Bus Books server behavior. When the CLI is used, the `root` passed to `NewServer` is the effective working directory (CWD or `-C`/`--chdir`); when that directory contains Bus workspace data files, the server uses that data from that directory (FR-BOK-001a).
 
 Normative shape (names illustrative):
 - `type Server struct { … }`
@@ -188,14 +200,16 @@ Bus Books constructs an embedded Bus API server instance using the Bus API Go li
 
 Bus Books MUST NOT invoke any Bus module CLI for normal UI operations. Domain module behavior is provided by registered module backends (Go `http.Handler`) mounted under `/{token}/v1/modules/{module}/...`.
 
-### IF-BOK-003 Frontend asset serving
+### IF-BOK-003 Frontend asset serving (WASM)
 
-The server serves:
-- `index.html` for SPA entry
-- hashed static assets under a deterministic prefix (e.g. `/{token}/assets/...`)
+The frontend is implemented in Go and compiled to WebAssembly. The server serves:
+- `index.html` for SPA entry (loads the WASM loader and mounts the Go WASM app)
+- the compiled WASM binary (Go `js/wasm` or equivalent target)
+- a minimal JS loader that instantiates the WASM module and runs the Go frontend
+- CSS and any other static assets (e.g. under `/{token}/assets/...`)
 - SPA route fallback: any non-API path under `/{token}/` that is not a real asset returns `index.html`
 
-The SPA must support a dynamic base path rooted at `/{token}/`.
+The Go WASM frontend must support a dynamic base path rooted at `/{token}/` for API and asset URLs. All static compiled frontend client files (HTML, CSS, JS, WASM, fonts, images, and any other build output) MUST be embedded in the bus-books implementation; the server must not read them from the filesystem or fetch them from the network when serving requests (FR-BOK-004).
 
 ### IF-BOK-004 Optional agent integration
 
@@ -205,6 +219,8 @@ When `EnableAgent` is false, no agent routes are registered and the UI must not 
 ## Command Surface
 
 The module exposes `bus-books` as a CLI entry point (and via dispatcher as `bus books …`).
+
+**Workspace root.** The workspace root is the effective working directory: the current working directory when the command is run, or the directory given by the standard `-C` / `--chdir` global flag when invoked via the bus dispatcher. When that directory contains Bus workspace data files (datasets, schemas, and related structure), the server uses that data from that directory for all embedded API and module operations. The user does not need to pass a separate path or config to “point” at the data when starting from the Bus directory.
 
 Commands:
 - `bus-books serve` (default)
@@ -225,6 +241,10 @@ Serve flags (module-specific, aligned with Bus API defaults):
 ## UI Behavior
 
 List and detail views for workspace datasets derive their column set from the workspace schema at runtime; new or renamed columns appear in the UI without recompilation (FR-BOK-019, KD-BOK-006).
+
+### Visual design and theme
+
+The UI MUST use a modern style and theme aligned with the BusDK documentation site (NFR-BOK-009, KD-BOK-007). Use a token-based palette (CSS custom properties for background, foreground, muted, border, accent, link) so that light and dark modes can switch via `prefers-color-scheme`. Section headings and primary interactive elements use the accent color (teal family). Main content lives in a constrained-width column; section backgrounds may span the full content area. Focus-visible outlines and text selection use the accent token. This contract matches the documentation site’s `_sass/busdk` tokens and layout (full-width section stripes, constrained inner content, accent headings).
 
 ### Navigation
 
@@ -333,6 +353,8 @@ AD-BOK-003 Domain modules that Bus Books exposes provide module backends (Go han
 
 AD-BOK-004 When agent integration is enabled, bus-agent is available and agent runtimes are configured/detected outside bus-books per bus-agent semantics.
 
+AD-BOK-005 The Go toolchain supports building the frontend for the `js/wasm` target (or equivalent), and the resulting WASM binary runs in browsers that support WebAssembly. The build pipeline produces an embeddable WASM artifact plus a minimal JS loader. If Go’s WASM support or browser support is insufficient for the required UI behavior, the module may need a hybrid approach (e.g. Go WASM for logic with minimal JS for DOM glue); the SDD still requires the frontend to be implemented primarily in Go and delivered via WASM.
+
 ## Security Considerations
 
 Bus Books inherits Bus API MVP security model:
@@ -389,6 +411,7 @@ Operators MAY run the server on non-loopback interfaces or behind a reverse prox
 - [bus-api module SDD](./bus-api) (embedded API, security model)
 - [bus-sheets module SDD](./bus-sheets) (contrast: generic workbook vs accounting UI)
 - [bus-agent module SDD](./bus-agent) (optional agent chat)
+- BusDK documentation site styling (`docs/_sass/busdk/` tokens, typography, components) — visual theme reference for NFR-BOK-009
 
 ### Document control
 

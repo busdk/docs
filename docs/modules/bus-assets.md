@@ -41,13 +41,13 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% — init, add, validate, schedule, post verified by tests; user can create register, add assets, and produce schedule and postings; depreciate and dispose subcommands not test-covered; layout still `assets/` (workspace-root per SDD pending).
+**Completeness:** 70% — init, add, validate, schedule, depreciate, dispose, post verified by tests; user can complete full asset lifecycle and produce postings for evidence pack; workspace-root layout verified by e2e; partial-init failure path (FR-INIT-004) not yet test-covered.
 
-**Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 60% — init, add, validate, schedule, post verified; register creation and posting output support evidence pack; depreciate/dispose CLIs unverified.
+**Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 70% — full lifecycle and postings verified; path accessors (NFR-AST-002) and partial-init test pending.
 
-**Current:** init verified by `cmd/bus-assets/run_test.go` (TestInitCreatesDataset). add verified by `run_test.go` (TestAddAcceptsMethodAliasStraightLine, TestAddRejectsInvalidMethod). validate, schedule, post verified by `run_test.go`, `run_property_test.go`, `internal/assets/schedule_property_test.go`, `post_property_test.go`, `period_property_test.go`, `load_assets_property_test.go`, and `tests/e2e_bus_assets.sh`. Global flags verified by `internal/cli/flags_test.go`, `flags_property_test.go` and e2e.
+**Current:** init verified by `cmd/bus-assets/run_test.go` (TestInitCreatesDataset) and `tests/e2e_bus_assets.sh`. add verified by `run_test.go` (TestAddAcceptsMethodAliasStraightLine, TestAddRejectsInvalidMethod) and e2e. validate, schedule, post verified by `run_test.go`, `run_property_test.go`, `internal/assets/schedule_property_test.go`, `post_property_test.go`, `period_property_test.go`, `load_assets_property_test.go`, and `tests/e2e_bus_assets.sh`. depreciate verified by `run_test.go` (TestDepreciateMatchesPostOutput) and e2e. dispose verified by `run_test.go` (TestDryRunDisposePrintsSummary, validation-before-dispose) and e2e. Workspace-root layout (no `assets/` subdir) verified by e2e. Global flags verified by `internal/cli/flags_test.go`, `flags_property_test.go` and e2e.
 
-**Planned next:** Workspace-root layout (remove `assets/` subdir per SDD); Go library path accessors (NFR-AST-002); `--dry-run` for write commands; voucher refs in postings (FR-AST-002). Advances Finnish company reorganisation evidence pack.
+**Planned next:** Add test that init fails with clear error when only schema or only CSV exists (FR-INIT-004, PLAN.md). Go library path accessors (NFR-AST-002). Advances Finnish company reorganisation evidence pack.
 
 **Blockers:** None known.
 

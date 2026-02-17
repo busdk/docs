@@ -37,17 +37,17 @@ The module reads invoice and journal datasets and optional VAT reference dataset
 
 ### Development state
 
-**Value promise:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the accounting workflow and archive returns for filing.
+**Value promise:** Compute VAT reports and export period returns from workspace invoice or journal data so users can complete the close-period VAT step and archive returns for filing with traceable source refs.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 70% — init, validate, report, export and vat-returns index update verified by e2e; user can complete close-step VAT from invoice data; only invoice path is test-covered; journal input and posting/voucher refs would complete the journey.
+**Completeness:** 80% — init (incl. --dry-run), validate (incl. rate check and vat_registered=false), report and export from invoice or journal with source_refs, vat-returns index update, closed-period re-export/--force, and path API verified by e2e and unit tests; user can complete close-step VAT from either source.
 
-**Use case readiness:** Accounting workflow: 70% — close-step VAT (init→validate→report→export) with index update verified by e2e; journal input and voucher refs would complete. Finnish bookkeeping and tax-audit compliance: 70% — VAT report and export verified; posting/voucher refs in output would strengthen audit trail.
+**Use case readiness:** Accounting workflow: 80% — close-step VAT from invoice or journal (init→validate→report→export) with source_refs and index update verified; e2e and run_test.go. Finnish bookkeeping and tax-audit compliance: 80% — VAT report and export with invoice and voucher refs in output verified; closed-period/--force and rate validation verified.
 
-**Current:** E2e `tests/e2e_bus_vat.sh` proves help, version, global flags (invalid --color/--format, -q+-v, --, -C, -o, -p, --dry-run), init (baseline CSV and schemas, idempotent warning), validate (fail without data, succeed with invoice fixture), report (deterministic TSV, --output, -C, --quiet), export (--dry-run no file, write period file, update vat-returns.csv index), missing --period exit 2. Unit tests: `internal/app/run_test.go` (run, init, report, export, chdir, quiet, color, format, output file); `internal/vat/` (export_test.go index append, report_test.go format/period, init_test.go, rounding_test.go, schema_test.go, validate_helpers_test.go); `internal/cli/flags_test.go`, `help_test.go`.
+**Current:** E2e `tests/e2e_bus_vat.sh` proves help, version, global flags (invalid --color/--format, -q+-v, --, -C, -o, -p, --dry-run), init and init --dry-run (no files, paths to stderr), validate (fail without data, succeed with invoice; vat_registered=false; reject vat_rate_bp not in vat-rates.csv), report and export from invoice and from journal with voucher refs in output, export index update, closed-period re-export without --force (exit 1) and with --force overwrite, missing --period exit 2. Unit: `internal/app/run_test.go` (validate, report, report --source journal with voucher refs, init, export, chdir, quiet, color, format, output, init dry-run); `internal/vat/` (export_test.go, report_test.go, init_test.go, rounding_test.go, schema_test.go, validate_helpers_test.go, config_test.go, journal_test.go, validate_rate_test.go, periods_test.go); `vatpath/path_test.go` (workspace-relative paths and layout per IF-VAT-002); `internal/cli/flags_test.go`, `help_test.go`.
 
-**Planned next:** Go library path API (IF-VAT-002); --dry-run for init; rate validation against vat-rates.csv; journal input (FR-VAT-004); posting/voucher refs in output (Finnish compliance).
+**Planned next:** Period transitions and non-standard period lengths (PLAN.md); validate --source journal (PLAN.md).
 
 **Blockers:** None known.
 
