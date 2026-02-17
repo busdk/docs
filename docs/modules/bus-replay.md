@@ -19,6 +19,8 @@ The module is filesystem-only. Export reads the [workspace](../layout/minimal-wo
 
 Bus replay does not infer missing historical intent — it exports what exists in the workspace and does not guess missing invoices, evidence, or mappings. The module does not perform network, filing submission, or Git operations. To export another revision, run `git checkout <ref>` in the repository and then run export. The intended users are operators and automation performing workspace migration, parity verification, or reproducible setup.
 
+For ERP history migrations, the intended first-class workflow is profile-driven import commands with auditable import artifacts. That workflow is specified in the SDD but not yet implemented as a replay-first command pattern in current module releases.
+
 ### Commands
 
 - **`export`** — Read the current workspace snapshot and emit a deterministic replay log. Export covers the full accounting snapshot (see [module SDD](../sdd/bus-replay)): config init, module inits, accounts add, period add and state transitions, journal add, and optionally VAT/report actions when enabled; verified by golden and roundtrip tests. Use `--mode history` for best-effort export of raw row history where the domain supports it.
@@ -34,6 +36,12 @@ Bus replay does not infer missing historical intent — it exports what exists i
 **Render.** `--in <path>` or `--in -` is the replay log input; `--format sh` is required; `--out <path>` or `--out -` is the script output.
 
 Global flags (e.g. `-C`, `-o`, `-q`, `-v`) are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus replay <subcommand> --help`.
+
+### ERP profile-import replay workflow (planned)
+
+The target workflow captures short profile-driven import commands in replay logs, such as `bus invoices import --profile ... --source ...` and `bus bank import --profile ... --source ...`, instead of replaying thousands of generated per-row append commands. Replay keeps those operations deterministic by carrying stable operation IDs, guards, and references to import plan/result artifacts.
+
+This first-class workflow is not yet shipped. Current ERP history migration still uses generated explicit scripts, including `exports/2024/017-erp-invoices-2024.sh` and `exports/2024/018-erp-bank-2024.sh`, produced from ERP TSV mappings.
 
 ### Output formats
 
@@ -57,13 +65,13 @@ Export reads workspace configuration, resource list, and domain datasets (accoun
 
 **Use cases:** [Orphan modules](../implementation/development-status#orphan-modules) — operator/automation (workspace migration, parity verification, reproducible setup); no documented end-user workflow page.
 
-**Completeness:** 90% — full accounting snapshot export and apply verified by tests; user can complete export → apply → verify with roundtrip and idempotency when bus on PATH.
+**Completeness:** 70% — export→apply→render and idempotency are test-verified; user can complete workspace migration and re-run a log. First-class profile-driven ERP import replay is not implemented.
 
-**Use case readiness:** Workspace migration / parity verification: 90% — export produces full replay log (inits, accounts add, period add/state, journal add) verified by golden and e2e; apply (guards, dry-run, execution; in-process for config/accounts add) and roundtrip/idempotency when bus on PATH verified by `tests/e2e_bus_replay.sh`.
+**Use case readiness:** Workspace migration / parity verification: 70% — export, apply (dry-run and, when `bus` on PATH, real apply), render, and second-run idempotency verified by golden, roundtrip, and e2e; ERP history migration still uses generated scripts.
 
-**Current:** Export yields deterministic JSONL from empty and populated fixtures (`internal/replay/golden_test.go`, `tests/e2e_bus_replay.sh`); full snapshot (inits, accounts add, period add/state, journal add) in `TestExport_golden_populated`, `TestRoundtrip_fullExport`, and e2e roundtrip. Apply: guard evaluation (file_absent, config_equal, row_absent, period_state_gte), dry-run report, and execution in `internal/replay/apply_test.go`, `internal/replay/executor_test.go`, `internal/replay/executor_inprocess_test.go`; roundtrip and idempotency when bus on PATH in `tests/e2e_bus_replay.sh`. Render (JSONL→sh, shebang and `set -euo pipefail`), global flags, and export options in `internal/replay/render_test.go`, `internal/cli/flags_test.go`, `cmd/bus-replay/main_test.go`, `internal/replay/export_test.go`, `internal/replay/validate_test.go`.
+**Current:** Deterministic export (empty and populated golden, `--append`, `--mode history`, `--scope all`, `--require-valid`, no workspace mutation) is verified by `internal/replay/golden_test.go`, `internal/replay/export_test.go`, and `tests/e2e_bus_replay.sh`. Apply guard evaluation, dry-run, TSV/JSON report, `--chdir`, stdin, and (when `bus` on PATH) real apply and idempotency are verified by `internal/replay/apply_test.go`, `internal/replay/executor_inprocess_test.go`, and `tests/e2e_bus_replay.sh`. Render to POSIX sh is verified by `internal/replay/render_test.go` and e2e. CLI and global flags are verified by `cmd/bus-replay/main_test.go` and `internal/cli/flags_test.go`. Profile-driven ERP import replay is not implemented.
 
-**Planned next:** None in PLAN.md.
+**Planned next:** First-class replay support for profile-driven ERP import operations (`bus invoices import --profile ...`, `bus bank import --profile ...`) with deterministic guards and auditable import-artifact references (SDD FR-RPL-008); advances workspace migration when [Import ERP history](../workflow/import-erp-history-into-canonical-datasets) is the workflow.
 
 **Blockers:** None known.
 
@@ -87,3 +95,4 @@ See [Development status](../implementation/development-status).
 - [Workspace layout](../layout/minimal-workspace-baseline)
 - [Standard global flags](../cli/global-flags)
 - [Development status](../implementation/development-status)
+- [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)

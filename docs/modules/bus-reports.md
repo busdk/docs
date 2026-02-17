@@ -16,6 +16,8 @@ description: bus reports computes financial reports from journal and reference d
 
 Command names follow [CLI command naming](../cli/command-naming). `bus reports` computes financial reports from journal and reference data. Reports are deterministic and derived only from repository data; the module does not modify datasets. Use for period close, filing preparation, and management reporting.
 
+The planned migration-quality extension adds a non-opening journal coverage report that compares monthly imported operational totals against journal activity for gap detection workflows. This report surface is specified but not yet implemented.
+
 ### Commands
 
 - `trial-balance` prints trial balance as of a date.
@@ -54,6 +56,10 @@ For balance-sheet and profit-and-loss, `--comparatives <on|off>` overrides the w
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
 
+### Journal coverage report (planned)
+
+The planned command surface adds a deterministic coverage report, for example `bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> --source-summary <path> --exclude-opening`, to emit monthly deltas between imported operational data and non-opening journal activity. Threshold pass or fail decisions remain in [bus-validate](./bus-validate), while bus-reports emits the deterministic coverage rows.
+
 ### Files
 
 Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-accounts) datasets and optionally budget datasets. For statutory layouts, also reads workspace reporting profile settings from [bus-config](./bus-config) (`datapackage.json`) and account mapping from `report-account-mapping.csv`. Reports are computed from validated journal data inside explicit period boundaries, including year-end close/opening transitions managed by [bus-period](./bus-period). Writes only to stdout (or the file given by global `--output`).
@@ -68,13 +74,13 @@ Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-acc
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 90% — Close-step reports and all formats verified by e2e and unit tests; user can complete the report step in all three use cases.
+**Completeness:** 90% — Close-step report commands and formats (text/csv/markdown/json/kpa/pma/pdf) are verified by e2e and unit tests; user can complete the report step in all three use cases. Profile-driven defaults (FR-REP-005), report-account-mapping (FR-REP-007), comparatives (FR-REP-008), and journal-coverage report are not yet implemented.
 
-**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown, Finnish statutory layout ids (`fi-kpa-*`, `fi-pma-*`), TASE/tuloslaskelma PDF, and layout selection verified by e2e. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), deterministic statutory layouts and PDF output verified by e2e. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory statement layouts and PDF output verified by e2e.
+**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown/kpa/pma/pdf, built-in statutory layouts (kpa, pma, kpa-full), TASE/tuloslaskelma PDF, and layout-file selection verified by e2e and unit tests; report step completable. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), statutory layouts and PDF output verified by e2e; user can produce statement outputs for compliance. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory layouts and PDF verified by e2e; evidence-pack report step completable.
 
-**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), journal-area layout, ledger integrity before reports (FR-REP-002), trial-balance/balance-sheet/profit-and-loss in text/csv/json/markdown/kpa/pma/pdf, layout file selection with custom labels and account mapping (FR-REP-004), general-ledger and account-ledger, and error cases. `internal/app/run_test.go`, `internal/report/report_test.go`, and `internal/report/layout_test.go` verify CLI paths, PDF (FR-REP-003), statutory-format layout resolution, and mapping behavior; `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` verify workspace load, period parsing, and flag parsing.
+**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), journal-area layout (journals.csv + period-segmented), ledger integrity before reports (FR-REP-002), trial-balance/balance-sheet/profit-and-loss in text/csv/json/markdown/kpa/pma/pdf, layout-file selection with custom labels and account mapping (FR-REP-004), built-in kpa-full layout, general-ledger and account-ledger, and error cases. `internal/app/run_test.go`, `internal/report/report_test.go`, and `internal/report/layout_test.go` verify CLI paths, PDF (FR-REP-003), layout resolution (default/kpa/pma/kpa-full) and mapping; `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` verify workspace load, period parsing, and flag parsing.
 
-**Planned next:** None in PLAN.md.
+**Planned next:** Add non-opening journal coverage report for migration gap checks (advances accounting workflow and source-import parity). Expose stable `--layout-id` and fi-* built-in identifiers, workspace reporting profile (FR-REP-005), and report-account-mapping (FR-REP-007) per PLAN.md.
 
 **Blockers:** None known.
 
@@ -98,6 +104,9 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-reports](../sdd/bus-reports)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Module SDD: bus-validate](../sdd/bus-validate)
+- [Module SDD: bus-reconcile](../sdd/bus-reconcile)
+- [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
 - [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
 - [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration)
 - [PRH: Tilinpäätösilmoituksen asiakirjat kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/ilmoituksen_liitteet.html)

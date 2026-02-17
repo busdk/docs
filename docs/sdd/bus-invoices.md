@@ -7,7 +7,7 @@ description: Bus Invoices stores sales and purchase invoices as schema-validated
 
 ### Introduction and Overview
 
-Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the journal. The module provides CLI commands to initialize invoice datasets, add headers and lines, list and filter invoices, validate line totals, and render PDFs. Intended users are operators and tooling that maintain or query invoice data in a BusDK workspace. This document specifies the module’s requirements, interfaces, and data layout for implementers and reviewers. Out of scope: rendering layout or branding of PDFs (handled by [bus-pdf](./bus-pdf)), and storage of evidence files (handled by [bus-attachments](./bus-attachments)).
+Bus Invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the journal. The module provides CLI commands to initialize invoice datasets, add headers and lines, list and filter invoices, validate line totals, and render PDFs. Intended users are operators and tooling that maintain or query invoice data in a BusDK workspace. This document specifies the module’s requirements, interfaces, and data layout for implementers and reviewers. Out of scope: rendering layout or branding of PDFs (handled by [bus-pdf](./bus-pdf)), and storage of evidence files (handled by [bus-attachments](./bus-attachments)). This SDD also defines a profile-driven ERP history import contract for canonical invoice datasets; that import contract is currently specified but not yet implemented as a first-class workflow.
 
 ### Requirements
 
@@ -17,9 +17,17 @@ FR-INV-002 CLI surface for invoice lifecycle. The module MUST provide commands t
 
 FR-INV-003 Invoice master data in workspace root only. The module MUST place all invoice master data datasets and their JSON Table Schema files in the workspace root (the effective working directory). It MUST NOT create or use an `invoices/` or any other invoice-specific subdirectory for those files. File locations MUST conform to the [minimal example layout](../layout/minimal-example-layout). Acceptance criteria: `bus invoices init` creates only the eight owned files (four CSVs and four schema files) directly in the workspace root; no directory named `invoices` (or equivalent) is created for master data; all read/write paths for invoice datasets and schemas resolve to the workspace root.
 
+FR-INV-004 Profile-driven ERP invoice import. The module MUST provide a first-class import workflow that maps ERP source tables into canonical invoice datasets using an explicit, versioned mapping profile. Acceptance criteria: import runs from a short command invocation that references a profile and source dataset(s), supports deterministic row selection (for example fiscal-year filters), status mapping, VAT line synthesis, and party lookup rules defined in the profile, and appends canonical invoice rows with deterministic ordering.
+
+FR-INV-005 Reconciliation proposal input contract. The module MUST expose deterministic invoice fields needed by reconciliation proposal generation and batch apply workflows in [bus-reconcile](./bus-reconcile). Acceptance criteria: stable invoice identifiers, status, due date, total amount, currency, and open/settled semantics are queryable and deterministic so proposal generation can enforce reference, amount, and uniqueness constraints without guesswork.
+
 NFR-INV-001 Auditability. Invoice corrections MUST be recorded as new records and linked to attachments and journal postings. Acceptance criteria: corrections do not overwrite existing records and references remain traceable.
 
 NFR-INV-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (sales and purchase invoice headers and lines, and their schemas). Other modules that need read-only access to invoice raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the invoice datasets; consumers use these accessors for read-only access; no consumer hardcodes invoice file names outside this module.
+
+NFR-INV-003 Import mapping auditability. ERP import mappings MUST be reviewable as repository data and import execution MUST emit auditable artifacts. Acceptance criteria: profile files are committed as regular repository files; imports can emit deterministic plan and result artifacts that include source rows, mapping decisions, and produced invoice identifiers; rerunning with the same profile and source data yields byte-identical artifacts.
+
+NFR-INV-004 Deterministic open-item read semantics. Read surfaces consumed by reconciliation proposal workflows MUST produce deterministic ordering and status interpretation for open invoice selection. Acceptance criteria: identical workspace inputs produce byte-identical open-item rows; diagnostics identify invoice ID and status when an invoice is ineligible for deterministic reconciliation planning.
 
 ### System Architecture
 
@@ -33,6 +41,10 @@ KD-INV-002 Invoice master data lives in the project root only. All invoice datas
 
 KD-INV-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of invoice datasets for read-only access. Write access and all invoice business logic remain in this module.
 
+KD-INV-004 ERP history import is profile-driven. Historical ERP invoice ingestion is defined as a reusable profile contract rather than generated one-off row-add scripts. Profiles are versioned repository data and import execution remains plain Bus commands with deterministic output artifacts.
+
+KD-INV-005 Reconciliation proposal workflows consume invoice data as-is. Candidate generation and batch apply logic belong to [bus-reconcile](./bus-reconcile), while bus-invoices guarantees deterministic invoice identity and open-item read semantics.
+
 ### Component Design and Interfaces
 
 Interface IF-INV-001 (module CLI). The module exposes `bus invoices` with subcommands `init`, `add`, `list`, and `pdf` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -44,6 +56,10 @@ Invoice-line operations are `bus invoices <invoice-id> add` and `bus invoices <i
 Documented parameters for `bus invoices add` are `--type <sales|purchase>`, `--invoice-id <id>`, `--invoice-date <YYYY-MM-DD>`, `--due-date <YYYY-MM-DD>`, and `--customer <name>`. Documented parameters for `bus invoices <invoice-id> add` are `--desc <text>`, `--quantity <number>`, `--unit-price <number>`, `--income-account <account-name>`, and `--vat-rate <percent>`. Documented parameters for `bus invoices pdf` are `<invoice-id>` as a positional argument and `--out <path>`. Interface IF-INV-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (sales and purchase invoice headers and lines, and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and invoice logic remain in this module.
 
 Documented parameters for `bus invoices list` include a deterministic filter surface: `--type <sales|purchase>`, `--status <status>`, `--month <YYYY-M>`, `--from <YYYY-MM-DD>`, `--to <YYYY-MM-DD>`, `--due-from <YYYY-MM-DD>`, `--due-to <YYYY-MM-DD>`, `--counterparty <entity-id>`, and `--invoice-id <id>`. Date filters apply to the invoice date in the header dataset, while `--due-from` and `--due-to` apply to the due date. `--month` selects the calendar month and is mutually exclusive with `--from` or `--to`. `--from` and `--to` may be used together or independently and are inclusive bounds, and the same inclusivity applies to `--due-from` and `--due-to`. `--status` matches the header status value exactly as stored, typically values like unpaid or paid. `--counterparty` matches the invoice header counterparty identifier exactly as stored, typically aligned with `bus entities` identifiers. `--invoice-id` matches the stable invoice identifier exactly. When multiple filters are supplied, they are combined with logical AND so every returned row satisfies every filter.
+
+Interface IF-INV-003 (profile import, planned). The module defines a first-class command surface for ERP history import into invoice datasets: `bus invoices import --profile <path> --source <path>` with optional deterministic selectors (for example `--year <YYYY>`) and dry-run support. The profile contract defines source table bindings, column mappings, status mapping, VAT synthesis rules, and party lookup behavior. Execution emits deterministic import artifacts (plan and result) and appends canonical rows through module-owned write paths. This interface is specified for implementation and is not yet shipped in current module releases.
+
+Interface IF-INV-004 (reconciliation candidate read surface, planned integration). Invoice read outputs consumed by reconciliation proposal workflows MUST provide a deterministic field contract, including at minimum invoice ID, status, due date, total amount, currency, and counterparty identifier where available. The module does not generate proposals, but its read contract must let [bus-reconcile](./bus-reconcile) compute proposals and apply approved rows deterministically.
 
 Usage examples:
 
@@ -63,9 +79,11 @@ Invoice master data file locations conform to the [minimal example layout](../la
 
 Other modules that need read-only access to invoice datasets MUST obtain the path(s) from this module’s Go library (IF-INV-002). All writes and invoice-domain logic remain in this module.
 
+Profile mappings for ERP import are authoritative repository data. A profile describes how source invoice headers and lines map into `sales-invoices.csv`, `sales-invoice-lines.csv`, `purchase-invoices.csv`, and `purchase-invoice-lines.csv`, including deterministic filter predicates, status normalization, VAT-line synthesis, and party resolution. Import execution artifacts are stored as reviewable files so reviewers can verify source-to-target behavior without reading generated mega-scripts.
+
 ### Assumptions and Dependencies
 
-Bus Invoices depends on reference data from `bus entities`, `bus accounts`, and VAT reference datasets. Missing datasets or schemas result in deterministic diagnostics.
+Bus Invoices depends on reference data from `bus entities`, `bus accounts`, and VAT reference datasets. Missing datasets or schemas result in deterministic diagnostics. The profile import workflow depends on deterministic source-table read and normalization helpers from [bus-data](./bus-data), but invoice ownership and all write logic remain in this module. Reconciliation proposal and apply workflows depend on this module’s deterministic open-invoice identity and status contract.
 
 ### Security Considerations
 
@@ -81,7 +99,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Schema or 
 
 ### Testing Strategy
 
-Unit tests cover invoice validation and posting integration, and command-level tests exercise `add`, line item additions, `list`, `validate`, and `pdf` against fixture workspaces. Tests MUST verify that `init` creates the eight owned files (four CSVs and four schema files) only in the workspace root and does not create an `invoices/` directory for master data (FR-INV-003).
+Unit tests cover invoice validation and posting integration, and command-level tests exercise `add`, line item additions, `list`, `validate`, and `pdf` against fixture workspaces. Tests MUST verify that `init` creates the eight owned files (four CSVs and four schema files) only in the workspace root and does not create an `invoices/` directory for master data (FR-INV-003). Profile-import tests MUST verify deterministic mapping execution, year-filter behavior, status mapping, VAT line synthesis, party lookup outcomes, and byte-identical import artifacts for repeated runs with the same inputs (FR-INV-004, NFR-INV-003). Reconciliation-candidate contract tests MUST verify deterministic open-item read outputs and deterministic diagnostics for ineligible statuses, including invoice status transitions relevant to reconciliation planning (FR-INV-005, NFR-INV-004).
 
 ### Deployment and Operations
 
@@ -126,13 +144,15 @@ Invoice line: the dataset row describing a line item linked to an invoice header
 - [Repository](https://github.com/busdk/bus-invoices)
 - [Invoices area](../layout/invoices-area)
 - [Add a sales invoice](../workflow/create-sales-invoice)
+- [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
+- [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 
 ### Document control
 
 Title: bus-invoices module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-INVOICES`  
-Version: 2026-02-07  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-12  
+Last updated: 2026-02-18  
 Owner: BusDK development team  

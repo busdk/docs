@@ -35,9 +35,9 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step [Generate invoice PDF and register attachment](../workflow/generate-invoice-pdf-and-register-attachment)), [Sale invoicing](../workflow/sale-invoicing).
 
-**Completeness:** 70% — Render step verified by tests; user can produce PDF from file or stdin; `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
+**Completeness:** 70% — Render step test-verified; user can produce PDF from file or stdin; `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
 
-**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview) (Generate invoice PDF and register attachment): 70% — render step verified; `bus invoices pdf` not in [bus-invoices](./bus-invoices). [Sale invoicing](../workflow/sale-invoicing): 70% — PDF generation step verified; `bus invoices pdf` not in [bus-invoices](./bus-invoices).
+**Use case readiness:** Generate invoice PDF and register attachment: 70% — render verified; `bus invoices pdf` not in [bus-invoices](./bus-invoices). Sale invoicing (sending invoices to customers): 70% — PDF step verified; `bus invoices pdf` not in [bus-invoices](./bus-invoices).
 
 **Current:** E2E `tests/e2e_bus_pdf.sh` verifies help, version, no-args exit 2, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file and stdin, default render, overwrite and reject without overwrite, `--pdfa`, fi-invoice-a4 valid/invalid payload, repo-relative template, determinism, and `-vv`. Unit tests `cmd/bus-pdf/run_test.go`, `internal/cli/flags_test.go`, `internal/render/render_test.go`, `internal/render/normalize_test.go`, `internal/templates/templates_test.go`, and `internal/templates/invoice_test.go` cover run behavior, flag parsing, render path, PDF normalization, template resolution, and invoice schema validation.
 

@@ -52,6 +52,10 @@ bus reconcile match ...
 
 [`bus bank`](../modules/bus-bank) normalizes and validates bank statement data, and [`bus reconcile`](../modules/bus-reconcile) links bank transactions to invoices or journal entries. When reconciliation reveals missing bookkeeping (fees, partial payments, unrecorded purchases), Alice records the missing source data with `bus invoices add` or posts directly with `bus journal add`, then re-runs matching so the reconciliation history remains explicit.
 
+For deterministic high-volume planning and approval flows, use [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply). The current production fallback for that phase remains script-generated candidate plans until first-class proposal/apply commands are implemented.
+
+When onboarding historical data from an external ERP, teams can follow the dedicated [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets) workflow. The current migration path uses generated append scripts, while the planned first-class workflow is profile-driven import into canonical invoice and bank datasets.
+
 6. Close each period with a repeatable, script-friendly sequence:
 
 ```bash
@@ -64,6 +68,8 @@ bus reports trial-balance ...
 ```
 
 Validation via [`bus validate`](../modules/bus-validate) ensures schemas and invariants are still satisfied. VAT is computed and exported via [`bus vat`](../modules/bus-vat) as repository data for archiving and filing. The period is closed and locked via [`bus period`](../modules/bus-period), and the financial output set is generated via [`bus reports`](../modules/bus-reports).
+
+For migration-quality controls before close, use [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks). Current production fallback in this repository is script-based parity and gap diagnostics until first-class command surfaces are implemented.
 
 7. Record close boundaries as revisions:
 
@@ -78,3 +84,13 @@ At year end, the same pattern applies to the final period, producing a reproduci
   <span class="busdk-prev-next-item busdk-next"><a href="./ai-assisted-classification-review">AI-assisted classification (review before external commit)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
+- [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply)
+- [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets)
+- [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)
+- [bus-invoices module CLI reference](../modules/bus-invoices)
+- [bus-bank module CLI reference](../modules/bus-bank)
+- [bus-reconcile module CLI reference](../modules/bus-reconcile)

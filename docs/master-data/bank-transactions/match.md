@@ -13,6 +13,8 @@ Match transactions to invoices or journal entries to close open items determinis
 
 Matching decisions are stored as [Reconciliations](../reconciliations/index) and written by [bus reconcile](../../modules/bus-reconcile).
 
+For high-volume reconciliation planning and approval, use the planned two-phase workflow in [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply), where candidate generation and batch apply are explicit steps.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./import">Import bank transactions</a></span>
@@ -24,6 +26,7 @@ Matching decisions are stored as [Reconciliations](../reconciliations/index) and
 ### Sources
 
 - [Import bank transactions and apply payment](../../workflow/import-bank-transactions-and-apply-payment)
+- [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 - [Reconcile bank transactions](../../modules/bus-reconcile)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 

@@ -38,8 +38,16 @@ bus validate
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./accounting-workflow-overview">Accounting workflow overview (current planned modules)</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./source-import-parity-and-journal-gap-checks">Source import parity and journal gap checks</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./budgeting-and-budget-vs-actual">Budgeting and budget-vs-actual reporting</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
+- [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets)
+- [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)
+- [bus-bank module CLI reference](../modules/bus-bank)
+- [bus-journal module CLI reference](../modules/bus-journal)

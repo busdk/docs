@@ -18,15 +18,18 @@ The recommended reading order is:
 7. [Invoice ledger impact (integration through journal entries)](./invoice-ledger-impact)
 8. [Record a purchase as a journal transaction](./record-purchase-journal-transaction)
 9. [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
-10. [AI-assisted classification (review before recording a revision)](./ai-assisted-classification-review)
-11. [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
-12. [VAT reporting and payment](./vat-reporting-and-payment)
-13. [Year-end close (closing entries)](./year-end-close)
-14. [Finnish payroll handling (monthly pay run)](./finnish-payroll-monthly-pay-run)
-15. [Inventory valuation and COGS postings](./inventory-valuation-and-cogs)
-16. [Workbook and validated tabular editing](./workbook-and-validated-tabular-editing)
-17. [Evolution over time (extending the model)](./evolution-over-time)
-18. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
+10. [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply)
+11. [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets)
+12. [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)
+13. [AI-assisted classification (review before recording a revision)](./ai-assisted-classification-review)
+14. [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
+15. [VAT reporting and payment](./vat-reporting-and-payment)
+16. [Year-end close (closing entries)](./year-end-close)
+17. [Finnish payroll handling (monthly pay run)](./finnish-payroll-monthly-pay-run)
+18. [Inventory valuation and COGS postings](./inventory-valuation-and-cogs)
+19. [Workbook and validated tabular editing](./workbook-and-validated-tabular-editing)
+20. [Evolution over time (extending the model)](./evolution-over-time)
+21. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -35,3 +38,11 @@ The recommended reading order is:
   <span class="busdk-prev-next-item busdk-next"><a href="./accounting-workflow-overview">Accounting workflow overview (current planned modules)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Accounting workflow overview (current planned modules)](./accounting-workflow-overview)
+- [Import bank transactions and apply payments](./import-bank-transactions-and-apply-payment)
+- [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply)
+- [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets)
+- [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)

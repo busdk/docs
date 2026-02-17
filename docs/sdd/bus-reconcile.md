@@ -7,7 +7,7 @@ description: Bus Reconcile links bank transactions to invoices or journal entrie
 
 ### Introduction and Overview
 
-Bus Reconcile links bank transactions to invoices or journal entries, records allocations for partials, splits, and fees, and stores reconciliation records as schema-validated repository data.
+Bus Reconcile links bank transactions to invoices or journal entries, records allocations for partials, splits, and fees, and stores reconciliation records as schema-validated repository data. This SDD also defines a deterministic two-phase reconciliation workflow where proposals are generated first and approved rows are then applied in batch; that workflow is currently specified but not yet implemented as a first-class command surface.
 
 ### Requirements
 
@@ -15,7 +15,19 @@ FR-REC-001 Reconciliation datasets. The module MUST store reconciliation records
 
 FR-REC-002 CLI surface for matching and allocation. The module MUST provide commands to match, allocate, and list reconciliations. Acceptance criteria: `match`, `allocate`, and `list` are available under `bus reconcile`.
 
+FR-REC-003 Deterministic reconciliation proposal generation. The module MUST provide a command that generates reconciliation proposal rows from bank and invoice/journal datasets using deterministic rules and constraints. Acceptance criteria: the command writes a deterministic proposal dataset or report that includes candidate target, confidence score, and explicit reasons; rules include at least reference matching, amount equality, and uniqueness constraints; repeated runs with the same inputs yield byte-identical output.
+
+FR-REC-004 Batch apply of approved proposals. The module MUST provide a command that consumes approved proposal rows and records reconciliation matches or allocations deterministically. Acceptance criteria: apply consumes explicit proposal row identifiers, writes canonical reconciliation records through module-owned paths, supports `--dry-run`, and refuses ambiguous or invalid proposal rows without partial writes.
+
+FR-REC-005 Reconciliation coverage output contract. The module MUST expose deterministic reconciliation coverage fields that parity and gap checks can consume. Acceptance criteria: proposal and apply outputs include stable identifiers and statuses for matched, allocated, skipped, and rejected rows; period and target references are explicit so [bus-validate](./bus-validate) and [bus-reports](./bus-reports) can compute deterministic migration-quality checks.
+
 NFR-REC-001 Auditability. Allocation history MUST be append-only and traceable to bank transactions, invoices, and vouchers. Acceptance criteria: allocation records are not overwritten and retain source references.
+
+NFR-REC-002 Idempotent re-apply semantics. Reconciliation apply operations MUST be idempotent when the same approved proposal set is applied repeatedly. Acceptance criteria: re-running apply against already-applied proposal rows yields deterministic "already applied" outcomes and does not create duplicate reconciliation records.
+
+NFR-REC-003 Proposal artifact auditability. Proposal generation and apply MUST emit reviewable artifacts that explain decisions. Acceptance criteria: proposal outputs include deterministic confidence and reason fields; apply outputs include per-row status (applied, skipped, rejected) with deterministic diagnostics referencing proposal row identifiers.
+
+NFR-REC-004 Deterministic downstream-consumption semantics. Proposal and apply artifacts MUST be stable for downstream parity and gap checks. Acceptance criteria: field names, status vocabulary, and period references are versioned and deterministic across runs for the same inputs.
 
 ### System Architecture
 
@@ -25,6 +37,10 @@ Bus Reconcile owns reconciliation datasets and integrates bank and invoice data 
 
 KD-REC-001 Reconciliation history is stored as repository data. Allocation changes are recorded as new rows to preserve the audit trail.
 
+KD-REC-002 Reconciliation is a two-phase workflow. Candidate generation and decision review are separated from write operations. The apply phase consumes explicit approved rows only, which keeps reconciliation deterministic, reviewable, and script-friendly.
+
+KD-REC-003 Reconciliation outputs feed migration controls. Proposal and apply artifacts are designed so migration parity and gap checks can consume them directly without repository-specific script glue.
+
 ### Component Design and Interfaces
 
 Interface IF-REC-001 (module CLI). The module exposes `bus reconcile` with subcommands `match`, `allocate`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
@@ -33,10 +49,18 @@ Documented parameters for `bus reconcile match` are `--bank-id <id>` and exactly
 
 Documented parameters for `bus reconcile allocate` are `--bank-id <id>` plus one or more allocations expressed as repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>` flags. Allocation flags may appear in any order, and each allocation row references the stable invoice identifier or the stable journal transaction identifier as stored in their datasets. Allocation amounts are positive decimals expressed in the same currency as the bank transaction row, and the sum of all allocations must equal the bank transaction amount exactly. If any referenced record does not exist or the amounts do not sum exactly, the command exits non-zero and writes no reconciliation rows.
 
+Interface IF-REC-002 (proposal generation, planned). The planned command surface is `bus reconcile propose --out <path>|-` with optional deterministic selectors such as date range, period, and target scope. The command reads unreconciled bank rows and eligible invoice or journal targets, computes deterministic candidate rows, and writes a proposal dataset or report. Each proposal row includes stable proposal ID, bank transaction ID, proposed target kind and target ID, proposed amount, confidence score, and reason codes. Proposal output ordering is deterministic and stable across machines.
+
+Interface IF-REC-003 (batch apply, planned). The planned command surface is `bus reconcile apply --in <path>|-` with optional row selection and `--dry-run`. The command consumes approved proposal rows and applies each row as either a one-to-one match or an allocation write, depending on the proposal shape. Apply is deterministic, idempotent, and fail-safe: invalid rows are rejected with deterministic diagnostics and no partial writes for the rejected row; already-applied rows are reported as skipped.
+
+Interface IF-REC-004 (coverage artifact contract, planned integration). Proposal and apply outputs expose a deterministic row contract including at minimum proposal ID, bank transaction ID, target kind, target ID, period key, amount, confidence, reason codes, and apply status. This contract is consumed by [bus-validate](./bus-validate) parity or gap checks and [bus-reports](./bus-reports) coverage reports.
+
 Usage examples:
 
 ```bash
-bus reconcile match
+bus reconcile match --bank-id BANK-001 --invoice-id INV-1001
+bus reconcile propose --out reconcile-proposals.tsv
+bus reconcile apply --in reconcile-proposals-approved.tsv --dry-run
 bus reconcile allocate --bank-id BANK-001 --invoice INV-1001=900 --journal JRN-2026-014=40 --journal JRN-2026-015=300
 bus reconcile list
 ```
@@ -45,9 +69,11 @@ bus reconcile list
 
 The module reads and writes reconciliation datasets in the reconciliation area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `reconcile/` or other subdirectory for its datasets and schemas. It consumes bank transactions and invoice references as inputs.
 
+Proposal generation writes deterministic proposal artifacts as repository data, typically in a dedicated import or reconciliation artifact path. The canonical reconciliation datasets remain the source of truth; proposal files are review artifacts used as explicit apply inputs.
+
 ### Assumptions and Dependencies
 
-Bus Reconcile depends on `bus bank` transaction data, `bus invoices` references, and the workspace layout and schema conventions. Missing datasets or schemas result in deterministic diagnostics.
+Bus Reconcile depends on `bus bank` transaction data, `bus invoices` references, and the workspace layout and schema conventions. Missing datasets or schemas result in deterministic diagnostics. The proposal workflow depends on stable bank transaction identifiers and deterministic invoice/journal target read surfaces from owning modules. Migration parity and gap workflows depend on this module’s deterministic proposal and apply output contract.
 
 ### Security Considerations
 
@@ -63,7 +89,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Schema or 
 
 ### Testing Strategy
 
-Unit tests cover matching and allocation logic, and command-level tests exercise `match`, `allocate`, and `list` against fixture workspaces.
+Unit tests cover matching and allocation logic, and command-level tests exercise `match`, `allocate`, and `list` against fixture workspaces. Proposal and apply tests MUST verify deterministic candidate output, confidence and reason field stability, exact-match and uniqueness constraints, dry-run behavior, and idempotent re-apply semantics for approved proposal rows. Coverage-contract tests MUST verify stable status vocabulary and period references for downstream parity and gap checks.
 
 ### Deployment and Operations
 
@@ -71,7 +97,9 @@ Not Applicable. The module ships as a BusDK CLI component and relies on the stan
 
 ### Migration/Rollout
 
-Not Applicable. Schema evolution is handled through the standard schema migration workflow for workspace datasets.
+The current production pattern for deterministic candidate planning is script-based. In this workspace, candidate generation and exact-match planning are handled by custom scripts such as `exports/2024/025-reconcile-sales-candidates-2024.sh` and `exports/2024/024-reconcile-sales-exact-2024.sh`. This remains the fallback until IF-REC-002 and IF-REC-003 are implemented.
+
+The current `match` path also has an active bank-ID lookup defect in this workspace. Rollout of the proposal/apply workflow requires fixing that defect so first-class reconciliation commands can replace custom scripts safely.
 
 ### Risks
 
@@ -98,6 +126,10 @@ Allocation history: append-only records detailing partials, splits, and fees.
 - [End user documentation: bus-reconcile CLI reference](../modules/bus-reconcile)
 - [Repository](https://github.com/busdk/bus-reconcile)
 - [Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
+- [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
+- [bus-validate module SDD](./bus-validate)
+- [bus-reports module SDD](./bus-reports)
+- [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
 
 ### Document control
@@ -105,7 +137,7 @@ Allocation history: append-only records detailing partials, splits, and fees.
 Title: bus-reconcile module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-RECONCILE`  
-Version: 2026-02-07  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-07  
+Last updated: 2026-02-18  
 Owner: BusDK development team  

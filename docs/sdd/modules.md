@@ -22,7 +22,7 @@ Path accessors MUST be designed so that future dynamic configuration is possible
 - [`bus`](./bus): Top-level dispatcher; runs `bus <command> [args...]` by invoking the corresponding `bus-<command>` executable on PATH.
 - [`bus init`](./bus-init): Bootstraps a new workspace by orchestrating `bus config init` and then module-owned `init` commands for the standard workspace layout.
 - [`bus config`](./bus-config): Owns workspace-level configuration (`datapackage.json`, accounting entity settings); provides `init` and `configure` so workspace settings can be created or updated without re-running full bootstrap.
-- [`bus data`](./bus-data): Tabular data layer: schema-validated dataset I/O and validation for BusDK workspaces (CSV + JSON Table Schema), providing a Go library (and a thin 'bus data ...' CLI) for deterministic CRUD-style table and schema handling without domain business logic or CLI-to-CLI dependencies.
+- [`bus data`](./bus-data): Tabular data layer: schema-validated dataset I/O and validation for BusDK workspaces (CSV + JSON Table Schema), providing a Go library (and a thin 'bus data ...' CLI) for deterministic CRUD-style table and schema handling, including mechanical import-profile parsing and execution helpers used by domain modules.
 - [`bus dev`](./bus-dev): Developer-only companion: centralizes workflow logic for BusDK module repositories (commit, work, spec, e2e); operates on source repositories and developer workflows, not on accounting datasets.
 - [`bus run`](./bus-run): End-user runner for user-defined prompts, pipelines, and scripts with agentic execution via the bus-agent library; no built-in developer workflows and no dependency on bus-dev.
 - [`bus books`](./bus-books): Local bookkeeping web UI for end users; accounting screens (journal, periods, VAT, bank, invoices, attachments) over workspace; embeds Bus API.
@@ -32,18 +32,18 @@ Path accessors MUST be designed so that future dynamic configuration is possible
 - [`bus period`](./bus-period): Opens and closes accounting periods, generates closing and opening balance entries, and locks closed periods to prevent changes after close.
 - [`bus balances`](./bus-balances): Owns an append-only balance snapshot dataset; add/import build snapshots, apply materializes one balanced journal transaction for opening or cutover.
 - [`bus attachments`](./bus-attachments): Stores evidence files and attachment metadata with stable IDs, enabling cross-module links from invoices, journal entries, bank data, and reconciliation records.
-- [`bus invoices`](./bus-invoices): Maintains sales and purchase invoices as datasets, validates totals and VAT breakdowns, and can emit posting outputs for the ledger.
+- [`bus invoices`](./bus-invoices): Maintains sales and purchase invoices as datasets, validates totals and VAT breakdowns, can emit posting outputs for the ledger, and specifies profile-driven ERP invoice import into canonical invoice datasets.
 - [`bus journal`](./bus-journal): Maintains append-only journal entries as the authoritative ledger postings and validates balanced transaction invariants.
-- [`bus bank`](./bus-bank): Imports bank statements into normalized datasets, matches transactions to references, and emits balanced journal entries for posting into the ledger.
-- [`bus reconcile`](./bus-reconcile): Links bank transactions to invoices or journal entries and records allocations (partials, splits, fees) as auditable reconciliation datasets.
+- [`bus bank`](./bus-bank): Imports bank statements into normalized datasets, matches transactions to references, and specifies profile-driven ERP bank import into canonical bank datasets.
+- [`bus reconcile`](./bus-reconcile): Links bank transactions to invoices or journal entries, records allocations (partials, splits, fees), and defines planned deterministic proposal generation plus batch apply commands and coverage artifacts for reconciliation workflows.
 - [`bus assets`](./bus-assets): Maintains a fixed-asset register, generates depreciation schedules, and produces depreciation postings for period workflows and the journal.
 - [`bus loans`](./bus-loans): Maintains a loan register and event logs, generates amortization schedules from contract terms, and produces posting suggestions for loan activity.
 - [`bus inventory`](./bus-inventory): Maintains inventory master data and stock movement ledgers and produces valuation outputs for accounting and reporting.
 - [`bus payroll`](./bus-payroll): Maintains payroll datasets, validates payroll runs, and produces journal posting outputs for salaries and taxes.
 - [`bus budget`](./bus-budget): Maintains budgets keyed by account and period and produces budget vs actual variance outputs against ledger actuals.
-- [`bus reports`](./bus-reports): Computes financial and management reports from journal entries and reference data and emits reports in text and structured formats.
-- [`bus replay`](./bus-replay): Exports a deterministic, append-only replay log (JSONL and shell script) from a workspace for migration and parity; apply runs the log into a target workspace with idempotent guards.
-- [`bus validate`](./bus-validate): Validates workspace datasets against schemas and cross-table invariants and emits deterministic diagnostics suitable for CI and scripted workflows.
+- [`bus reports`](./bus-reports): Computes financial and management reports from journal entries and reference data and emits reports in text and structured formats, with planned non-opening journal coverage reporting for migration checks.
+- [`bus replay`](./bus-replay): Exports a deterministic, append-only replay log (JSONL and shell script) from a workspace for migration and parity; apply runs the log into a target workspace with idempotent guards, including planned profile-import migration operations for invoices and bank.
+- [`bus validate`](./bus-validate): Validates workspace datasets against schemas and cross-table invariants, with planned first-class parity and journal-gap threshold checks for CI and scripted migration workflows.
 - [`bus vat`](./bus-vat): Computes VAT totals per reporting period, validates VAT mappings, and reconciles invoice VAT with ledger postings before emitting VAT summaries and exports.
 - [`bus pdf`](./bus-pdf): Renders deterministic PDFs from prepared JSON render models without modifying any canonical workspace datasets.
 - [`bus filing`](./bus-filing): Produces deterministic filing bundles from validated workspace data and delegates target-specific formats to filing target modules.
@@ -57,3 +57,10 @@ Path accessors MUST be designed so that future dynamic configuration is possible
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-init">bus-init</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [SDD index](./index)
+- [BusDK module CLI reference](../modules/index)
+- [Independent modules](../architecture/independent-modules)
+- [Modularity](../design-goals/modularity)

@@ -11,6 +11,8 @@ Command names follow [CLI command naming](../cli/command-naming). Bus Data provi
 
 `bus data` reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. It remains a mechanical data layer and does not implement domain-specific accounting logic; domain invariants are enforced by domain modules. Paths to domain datasets (e.g. accounts, journal) are owned by the module that owns each dataset; callers obtain paths from that module, and bus-data accepts table paths as input and performs schema-validated I/O on them.
 
+For ERP migration workflows, bus-data also defines a mechanical import-profile contract for domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). This profile helper layer is specified in the module SDD and is planned for implementation so ERP mapping behavior can be reusable and deterministic across repositories.
+
 ### Synopsis
 
 `bus data init [--chdir <dir>] [global flags]`  
@@ -228,6 +230,12 @@ bus data table read laskelmat_const
 
 Formula evaluation uses a table snapshot, so range expressions resolve against the same read and do not depend on row-by-row mutation. Invalid formula metadata is rejected at read time and reports a formula error to standard error. To treat formula errors as empty values, set `on_error` to `null` in the formula block.
 
+### Import mapping profiles (planned)
+
+The planned import-profile contract in the bus-data library provides deterministic, mechanical mapping primitives for ERP-to-canonical imports. Domain modules provide the profile and target semantics, and bus-data validates and executes operations such as source row filtering, field mapping, enum/status mapping, keyed lookup joins, and deterministic value transforms as pure data mechanics.
+
+This is a library contract rather than an end-user accounting command. The first end-user command surfaces are expected in domain modules such as `bus invoices import --profile ...` and `bus bank import --profile ...`, while bus-data remains responsible for profile validation and deterministic execution primitives.
+
 ### Output formats and files
 
 `bus data` can emit JSON where a command supports structured output. Table and resource listings default to TSV, while table reads default to CSV. Package and resource validation report one row per resource and use TSV by default, or JSON when `--format json` is set. JSON outputs preserve the CSV string values and keep ordering deterministic.
@@ -289,7 +297,7 @@ The module operates on workspace datasets as CSV resources with beside-the-table
 
 **Current:** E2e script `tests/e2e_bus_data.sh` verifies init, package discover/show/patch/validate, resource list/validate/add/remove/rename (FK refusal, --delete-files, --rename-files, FK update), schema init/show/infer/patch, schema key set and foreign-key add/remove (--dry-run and refusal), schema field add/remove/rename/set-type/set-format/set-constraints/set-missing-values, table list/read (--row, --column, --filter, --key) and table workbook (address/range, --header, --anchor-col, --anchor-row, --decimal-sep, --formula), row add/update/delete (in-place and soft-delete), formula projection (--formula-source, on_error=null), and global flags (--chdir, --output, --quiet, --dry-run, --). Unit tests in `internal/cli/package_resource_test.go`, `internal/cli/run_test.go`, `internal/cli/flags_test.go`, `internal/cli/write_commands_test.go`, `pkg/data/datapackage_test.go`, `pkg/data/mutate_test.go`, `pkg/data/formula_test.go`, `pkg/data/workbook_test.go`, `pkg/data/schema_key_set_test.go`, and `pkg/data/schema_foreign_key_test.go` cover resource remove when referenced, help/version/quiet/format/chdir/output, mutate/patch/validate/formula/serialization, and key set and foreign-key behavior.
 
-**Planned next:** Document table workbook in SDD and CLI reference (KD-DAT-005). Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing) for [bus-api](./bus-api) and [bus-sheets](./bus-sheets) consumers.
+**Planned next:** Add and document the import-profile library contract (descriptor validation and deterministic mapping primitives) for [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank), and keep table workbook documentation aligned in SDD and CLI reference (KD-DAT-005). Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing) and ERP migration workflows.
 
 **Blockers:** None known.
 
@@ -312,4 +320,5 @@ See [Development status](../implementation/development-status#spreadsheet-workbo
 - [Master data: Master data (business objects)](../master-data/index)
 - [Module SDD: bus-data](../sdd/bus-data)
 - [Storage contract: Storage backends and workspace store interface](../data/storage-backends)
+- [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
 

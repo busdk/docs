@@ -9,6 +9,8 @@ A reconciliation record links a bank transaction to the bookkeeping record it se
 
 Reconciliation supports both one-to-one matches and multi-target allocations. A match is used when one bank transaction equals one target amount. An allocation is used when one bank transaction is split across multiple targets, such as partial payments, settlement batches, or fees booked separately from the invoice.
 
+The planned deterministic reconciliation workflow adds two first-class phases before and during write operations: proposal generation and batch apply of approved proposal rows. Until those commands are implemented, high-volume candidate planning remains script-assisted in migration repositories.
+
 ### Ownership
 
 Owner: [bus reconcile](../../modules/bus-reconcile). This module is responsible for implementing write operations for reconciliation records and is the only module that should directly change the canonical datasets for them.
@@ -24,6 +26,8 @@ Secondary read-only use cases are provided by these modules when they consume re
 - [Match a bank transaction](./match): Record a one-to-one settlement link when amounts match exactly.
 - [Allocate a bank transaction](./allocate): Record a split across multiple invoices and/or journal transactions.
 - [List reconciliations](./list): Produce a reviewable list of reconciliation records.
+- [Generate reconciliation proposals](./propose): Planned deterministic candidate generation with confidence and reason fields.
+- [Apply approved reconciliation proposals](./apply-proposals): Planned batch apply flow that consumes approved proposal rows deterministically.
 
 ### Properties
 
@@ -55,5 +59,6 @@ When `target_kind` is `invoice`, the target is either a [sales invoice](../sales
 
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Import bank transactions and apply payments](../../workflow/import-bank-transactions-and-apply-payment)
+- [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 - [Reconcile bank transactions](../../modules/bus-reconcile)
 

@@ -7,7 +7,7 @@ description: bus-replay reads an existing BusDK workspace and emits a determinis
 
 ### Introduction and Overview
 
-Bus Replay turns an existing workspace state into a repeatable, auditable replay log: a deterministic, append-only sequence of BusDK CLI operations that can reconstruct the workspace in a fresh directory. This solves a common migration problem. When historical accounting data is imported or reconstructed, the final datasets may be correct, but producing and maintaining thousands of explicit `bus ...` commands by hand is slow and error-prone.
+Bus Replay turns an existing workspace state into a repeatable, auditable replay log: a deterministic, append-only sequence of BusDK CLI operations that can reconstruct the workspace in a fresh directory. This solves a common migration problem. When historical accounting data is imported or reconstructed, the final datasets may be correct, but producing and maintaining thousands of explicit `bus ...` commands by hand is slow and error-prone. This SDD includes a profile-driven ERP import replay contract so replay logs can capture short import invocations with versioned profiles instead of generated mega-scripts.
 
 Bus Replay is a filesystem-only module. It reads [workspace](../layout/minimal-workspace-baseline) datasets and, when enabled, derived outputs; it does not modify them during export. Its primary output is a structured log format (JSONL) that can be rendered into a POSIX shell script (and later other targets). The log is intended to live in Git as an auditable artifact alongside the workspace data.
 
@@ -47,6 +47,10 @@ Acceptance criteria: apply succeeds in a clean workspace without manual reorderi
 Export MUST not modify workspace datasets or derived artifacts.  
 Acceptance criteria: no files change in the workspace directory when running `bus replay export`.
 
+**FR-RPL-008 Profile-import operation coverage.**  
+Replay export and render MUST support profile-driven ERP import operations for canonical invoice and bank datasets when those operations are present in migration workflows.  
+Acceptance criteria: replay logs can represent `bus invoices import --profile ...` and `bus bank import --profile ...` style operations with stable IDs and guards, render them as deterministic shell commands, and preserve references to auditable import artifacts produced by those commands.
+
 **NFR-RPL-001 Filesystem-only and non-interactive.**  
 The module MUST not perform network operations and MUST not prompt interactively. All commands are scriptable.  
 Acceptance criteria: no network calls; deterministic exit codes and diagnostics.
@@ -73,6 +77,9 @@ Idempotency is achieved via explicit guards and stable operation identifiers, no
 **KD-RPL-004 No Git dependency.**  
 Bus Replay reads the working directory state. If users need another revision, they run `git checkout <ref>` externally and then export.
 
+**KD-RPL-005 ERP migration is captured as profile invocations.**  
+Replay prefers short, deterministic profile-import commands and their artifacts over generated per-row append scripts. This keeps migration logs reviewable and reusable across repositories while preserving deterministic behavior.
+
 ### System Architecture
 
 Bus Replay has three layers.
@@ -90,11 +97,11 @@ Export never writes to workspace datasets. Apply never shells out to Git and nev
 **Interface IF-RPL-001 (module CLI).**  
 The module is invoked as `bus replay` with subcommands:
 
-- `bus replay export [--format jsonl|sh] [--out <path>|-] [--append] [--mode snapshot|history] [--include vat,reports] [--scope accounting|all]`
+- `bus replay export [--format jsonl|sh] [--out <path>|-] [--append] [--mode snapshot|history] [--include vat,reports,erp-imports] [--scope accounting|all]`
 - `bus replay apply --in <path>|- [--chdir <dir>] [--dry-run] [--stop-on-error]`
 - `bus replay render --in <path>|- --format sh [--out <path>|-]`
 
-`--scope accounting` exports only accounting-critical surfaces; `all` also includes optional modules when their datasets exist and are schema-valid. `--include vat,reports` is opt-in and guarded; defaults to off. `--mode snapshot` is default and exports effective state; `history` is best-effort and may fall back to raw row appends for exact reproduction.
+`--scope accounting` exports only accounting-critical surfaces; `all` also includes optional modules when their datasets exist and are schema-valid. `--include vat,reports,erp-imports` is opt-in and guarded; defaults to off. `--mode snapshot` is default and exports effective state; `history` is best-effort and may fall back to raw row appends for exact reproduction.
 
 Exit codes: 0 success; 1 runtime/precondition failure (missing required datasets, unreadable files); 2 invalid usage (unknown flag, missing arg, invalid enum). Global flags (e.g. `-C`, `-o`, `-q`, `-v`) follow [standard global flags](../cli/global-flags) where applicable.
 
@@ -106,14 +113,14 @@ The library exposes `Export(ctx, opts) (io.Reader / []Op, error)`, `Render(ops, 
 **Replay log format (JSONL).**  
 Each line is one JSON object (one operation). Canonical keys in order: `id` (string, required) — stable operation id, deterministic; `kind` (string, required) — `init` | `set` | `add` | `action`; `cmd` (string, required) — BusDK command path, e.g. `config init`, `accounts add`, `journal add`; `args` (object, optional) — structured arguments (flags and values); `guard` (object, optional) — idempotency guard evaluated during apply; `notes` (string, optional) — human-readable annotation, not used for determinism unless explicitly enabled.
 
-Guard examples: `{"type":"file_absent","path":"datapackage.json"}` for init-like operations; `{"type":"row_absent","resource":"accounts","key":{"code":"3000"}}`; `{"type":"vat_report_absent","period":"2026Q1"}` (module-specific, only when include is enabled). Operation ids are derived from stable domain keys (e.g. `accounts:add:3000`, `period:add:2026Q1`, `journal:add:<transaction_id>`). When no stable key exists, ids are derived from a canonical hash of the operation payload and remain deterministic.
+Guard examples: `{"type":"file_absent","path":"datapackage.json"}` for init-like operations; `{"type":"row_absent","resource":"accounts","key":{"code":"3000"}}`; `{"type":"vat_report_absent","period":"2026Q1"}` (module-specific, only when include is enabled); `{"type":"import_artifact_absent","path":"imports/runs/2024-erp-invoices.result.json"}` for profile import operations. Operation ids are derived from stable domain keys (e.g. `accounts:add:3000`, `period:add:2026Q1`, `journal:add:<transaction_id>`, `invoices:import:<profile_id>:<source_digest>`). When no stable key exists, ids are derived from a canonical hash of the operation payload and remain deterministic.
 
 **Shell rendering rules (POSIX sh).**  
 Script starts with `#!/usr/bin/env bash` and `set -euo pipefail`. Each operation renders to one `bus ...` line. All strings are single-quoted with deterministic escaping. Output does not embed timestamps by default so that byte-stability is preserved.
 
 ### Export Plan (default “accounting snapshot”)
 
-Export produces operations in this order: (1) Workspace configuration — `bus config init` (guard: datapackage missing or missing busdk subtree), `bus config set ...` only if needed to match exported values, guarded by “already equal”. (2) Module baseline init for modules that are present or required by scope — `bus accounts init`, `bus period init`, `bus journal init`, `bus attachments init`, `bus vat init` only when include vat or VAT datasets exist and scope requires. (3) Master data — accounts via `bus accounts add --code ... --name ... --type ...` (one per account; guard: account absent). (4) Period control — period creation `bus period add ...` (guard: period absent), state transitions `bus period open|close|lock ...` (guard: current state &lt; desired state). (5) Attachments — `bus attachments add <file> --desc ...` (guard: attachment absent; path stable and workspace-relative). (6) Journal postings — `bus journal add --date ... --desc ... --debit ... --credit ...` (guard: transaction absent); if the workspace contains stable transaction identifiers, export uses them for guards and ids; otherwise export uses a deterministic hash of the posting payload as the guard id. (7) Optional derived actions (opt-in) — VAT `bus vat report --period ...` and `bus vat export --period ...` (guarded); reports: module-specific actions when those modules define idempotent “generate once” outputs.
+Export produces operations in this order: (1) Workspace configuration — `bus config init` (guard: datapackage missing or missing busdk subtree), `bus config set ...` only if needed to match exported values, guarded by “already equal”. (2) Module baseline init for modules that are present or required by scope — `bus accounts init`, `bus period init`, `bus journal init`, `bus attachments init`, `bus invoices init`, `bus bank init`, `bus vat init` only when include vat or VAT datasets exist and scope requires. (3) Master data — accounts via `bus accounts add --code ... --name ... --type ...` (one per account; guard: account absent). (4) Profile-driven ERP imports (opt-in) — `bus invoices import --profile <path> --source <path> ...` and `bus bank import --profile <path> --source <path> ...` with deterministic guards and references to import artifacts (plan/result files). (5) Period control — period creation `bus period add ...` (guard: period absent), state transitions `bus period open|close|lock ...` (guard: current state &lt; desired state). (6) Attachments — `bus attachments add <file> --desc ...` (guard: attachment absent; path stable and workspace-relative). (7) Journal postings — `bus journal add --date ... --desc ... --debit ... --credit ...` (guard: transaction absent); if the workspace contains stable transaction identifiers, export uses them for guards and ids; otherwise export uses a deterministic hash of the posting payload as the guard id. (8) Optional derived actions (opt-in) — VAT `bus vat report --period ...` and `bus vat export --period ...` (guarded); reports: module-specific actions when those modules define idempotent “generate once” outputs.
 
 ### Apply Behavior
 
@@ -151,9 +158,9 @@ Golden tests: a known fixture workspace yields exported JSONL that matches a com
 
 ### Implementation status
 
-The `bus replay` CLI is implemented: subcommands `export`, `apply`, and `render` exist with the flags defined in IF-RPL-001 (`--format jsonl|sh`, `--out`, `--append`, `--mode snapshot|history`, `--include vat,reports`, `--scope accounting|all`). Apply and render behave as specified.
+The `bus replay` CLI is implemented: subcommands `export`, `apply`, and `render` exist for deterministic log export, apply, and rendering. Current releases implement the established include surface (`vat,reports`) and core export/apply/render behavior; the `erp-imports` include path defined in IF-RPL-001 remains planned and is not yet shipped.
 
-Export does not yet meet the coverage required by FR-RPL-003 and the [Export Plan](#export-plan-default-accounting-snapshot) above. On a workspace that contains full master data, periods, journal postings, and optional domains (e.g. 100+ accounts, full journal, periods, invoices, bank, VAT), `bus replay export --scope accounting` currently emits only the baseline init operations: config init, accounts init, period init, journal init, and attachments init (five lines). It does not yet emit: `bus config set` for entity settings; `bus accounts add` per account; `bus period add` / `bus period open` (or close/lock) per period; `bus journal add` per posting; attachment registrations; invoice, bank, or VAT data; or derived report actions. Until the implementation produces master data and journal postings as in the Export Plan steps 1–7, hand-written replay scripts (e.g. thousands of commands in `original/2023/exports/*.sh`) cannot be replaced or round-tripped by replay export. Operators should continue using existing hand-written replay scripts for migrations until export coverage is completed.
+The first-class profile-import replay workflow required by FR-RPL-008 is not yet implemented. Current ERP history migration still uses generated explicit append scripts (for example `exports/2024/017-erp-invoices-2024.sh` and `exports/2024/018-erp-bank-2024.sh`) built from ERP TSV mappings. Those scripts are deterministic and auditable, but they remain large, one-off artifacts that are difficult to reuse across repositories. Until replay can emit and render profile-based import operations with deterministic import-artifact references, operators should continue using the current generated scripts for ERP history ingestion.
 
 ### Open Questions
 
@@ -163,6 +170,9 @@ For snapshot mode, equivalence is “same effective accounting state”. Which d
 **OQ-RPL-002 Transaction identity contract.**  
 Should [bus journal](./bus-journal) expose a stable transaction id in its dataset that bus-replay can always use for guards, or should bus-replay rely on hashing the posting payload?
 
+**OQ-RPL-003 Import artifact reference contract.**  
+For profile-driven ERP imports, should replay guards reference only deterministic import result artifact paths, or also include a source snapshot digest in guard evaluation to prevent accidental replay against changed source exports?
+
 ### Sources
 
 - [SDD index](./index)
@@ -170,6 +180,9 @@ Should [bus journal](./bus-journal) expose a stable transaction id in its datase
 - [bus config](./bus-config), [bus data](./bus-data), [bus accounts](./bus-accounts), [bus period](./bus-period), [bus journal](./bus-journal), [bus attachments](./bus-attachments), [bus vat](./bus-vat)
 - [Workspace layout](../layout/minimal-workspace-baseline)
 - [Standard global flags](../cli/global-flags)
+- [bus-invoices SDD](./bus-invoices)
+- [bus-bank SDD](./bus-bank)
+- [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -184,7 +197,7 @@ Should [bus journal](./bus-journal) expose a stable transaction id in its datase
 Title: bus-replay module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-REPLAY`  
-Version: 2026-02-17  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-17  
+Last updated: 2026-02-18  
 Owner: BusDK development team

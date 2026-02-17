@@ -16,7 +16,7 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus`](./bus): Top-level dispatcher; run `bus <command> [args...]` to invoke a module (e.g. `bus init`, `bus accounts add`).
 - [`bus init`](./bus-init): Initialize a new workspace by orchestrating `bus config init` and module-owned `init` commands.
 - [`bus config`](./bus-config): Create and update workspace configuration (accounting entity settings in `datapackage.json`).
-- [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI.
+- [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI and provide deterministic import-profile primitives for domain modules.
 - [`bus api`](./bus-api): Local REST JSON API gateway for BusDK workspaces.
 - [`bus sheets`](./bus-sheets): Local spreadsheet-like web UI for workspaces (workbook, sheet tabs, optional agent chat).
 - [`bus books`](./bus-books): Local bookkeeping web UI for end users (accounting screens over modules).
@@ -28,18 +28,18 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus entities`](./bus-entities): Manage counterparty reference data.
 - [`bus period`](./bus-period): Add, open, close, and lock accounting periods.
 - [`bus attachments`](./bus-attachments): Register evidence files and attachment metadata.
-- [`bus invoices`](./bus-invoices): Create and manage sales and purchase invoices.
+- [`bus invoices`](./bus-invoices): Create and manage sales and purchase invoices, including planned profile-driven ERP invoice import.
 - [`bus journal`](./bus-journal): Post and query ledger journal entries.
-- [`bus bank`](./bus-bank): Import and list bank transactions.
-- [`bus reconcile`](./bus-reconcile): Match bank transactions to invoices or journal entries.
+- [`bus bank`](./bus-bank): Import and list bank transactions, including planned profile-driven ERP bank import.
+- [`bus reconcile`](./bus-reconcile): Match and allocate bank transactions today, with planned deterministic proposal generation, batch apply, and machine-readable coverage artifacts.
 - [`bus assets`](./bus-assets): Manage fixed-asset records and depreciation.
 - [`bus loans`](./bus-loans): Manage loans and amortization schedules.
 - [`bus inventory`](./bus-inventory): Manage inventory items and movements.
 - [`bus payroll`](./bus-payroll): Run payroll and generate postings.
 - [`bus budget`](./bus-budget): Record budgets and run budget vs actual reports.
-- [`bus reports`](./bus-reports): Generate trial balance, ledger, and statement reports.
-- [`bus replay`](./bus-replay): Export and apply deterministic replay logs for workspace migration.
-- [`bus validate`](./bus-validate): Validate workspace datasets and invariants.
+- [`bus reports`](./bus-reports): Generate trial balance, ledger, and statement reports, with planned non-opening journal coverage reporting for migration gap checks.
+- [`bus replay`](./bus-replay): Export and apply deterministic replay logs for workspace migration, with planned replay support for profile-driven ERP imports.
+- [`bus validate`](./bus-validate): Validate workspace datasets and invariants, with planned source-import parity and journal-gap threshold checks for CI.
 - [`bus vat`](./bus-vat): Compute VAT reports and exports.
 - [`bus pdf`](./bus-pdf): Render PDFs from JSON render models.
 - [`bus filing`](./bus-filing): Build deterministic filing bundles.
@@ -53,3 +53,12 @@ Each module that owns workspace data defines where its data files live. Today th
   <span class="busdk-prev-next-item busdk-next"><a href="./bus">bus</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [CLI command naming](../cli/command-naming)
+- [Standard global flags](../cli/global-flags)
+- [Module SDD index](../sdd/index)
+- [Modules (SDD)](../sdd/modules)
+- [Independent modules](../architecture/independent-modules)
+- [Modularity](../design-goals/modularity)

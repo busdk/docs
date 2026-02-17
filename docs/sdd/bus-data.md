@@ -67,6 +67,10 @@ FR-DAT-024 Locale-aware numeric normalization for workbook read. The module MUST
 
 FR-DAT-025 Optional formula evaluation for workbook read. When reading CSV workbooks with address-based or range access, the module MAY support optional formula metadata or schema and evaluate cell contents using [bus-bfl](./bus-bfl) when the content is treated as a formula. Acceptance criteria: when enabled, formula-driven cells are evaluated deterministically and results are available in the same machine-friendly output; formula source can be included via an explicit opt-in; evaluation uses the same BFL dialect and range resolver contract as schema-validated table read so that formula-driven report totals can be represented and validated in Bus-native workflows.
 
+FR-DAT-026 Import profile contract and validation. The module MUST provide a deterministic import-profile contract that domain modules can use to map external ERP tables into canonical workspace datasets. Acceptance criteria: the library validates profile descriptors against a documented schema, preserves deterministic profile serialization, and rejects unsupported mapping operators or ambiguous source bindings with deterministic diagnostics.
+
+FR-DAT-027 Deterministic profile execution helpers. The module MUST provide library helpers for executing import-profile primitives without domain accounting logic. Acceptance criteria: helpers support deterministic source row filtering, column mapping, enum/status mapping, key-based lookup joins, and explicit transform steps (for example computed field synthesis) as pure data operations; the same source snapshot and profile produce byte-identical mapped row output.
+
 NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and MUST NOT implement domain-specific accounting logic. Acceptance criteria: domain invariants are enforced by domain modules, not by bus-data.
 
 NFR-DAT-002 No Git or network behavior. The module MUST NOT perform Git operations or network access. Acceptance criteria: the library and CLI only read and write local workspace files.
@@ -86,6 +90,8 @@ Bus Data integrates [bus-bfl](./bus-bfl) to validate and evaluate formulas decla
 
 A workbook-style read path (FR-DAT-022 through FR-DAT-025) provides address-based cell and range access, optional header or anchor-based lookup, locale-aware numeric normalization, and optional formula evaluation for CSV resources that are used as table-like workbooks (e.g. spreadsheet exports). That path reuses the same BFL reference grammar and range resolution contract so that workbook extraction and formula-driven validation share a single addressing model and output remains machine-friendly (tsv or json) for agent workflows and audit scripts.
 
+For ERP migration workflows, bus-data provides profile parsing, validation, and deterministic execution helpers as a mechanical layer (FR-DAT-026 and FR-DAT-027). Domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank) own canonical write behavior and domain invariants, while bus-data provides reusable mapping primitives so profile-driven import remains consistent across modules.
+
 ### Key Decisions
 
 KD-DAT-001 Shared library for data mechanics. Dataset I/O and schema handling are centralized in a library to keep module behavior consistent.  
@@ -94,6 +100,8 @@ KD-DAT-003 Init vs discover. Creating an empty `datapackage.json` is a separate 
 KD-DAT-004 Library integration for descriptor bootstrap. bus-config and bus-init MUST use the bus-data Go library to create or ensure the empty `datapackage.json` before writing accounting entity or other metadata. They MUST NOT invoke the bus-data CLI; integration is via library calls only so that a single code path owns descriptor creation and formatting.
 
 KD-DAT-005 Workbook read as optional, deterministic extension. Workbook-style read (address-based cell/range, header or anchor lookup, numeric normalization, optional formula evaluation) is an optional extension of the data layer. It operates on CSV resources with the same BFL addressing grammar as formula range resolution, keeps output machine-friendly (tsv|json), and does not replace or alter the existing schema-validated table read contract.
+
+KD-DAT-006 Profile execution remains mechanical. Import-profile parsing and mapping execution live in bus-data as deterministic data mechanics, while domain modules keep ownership of canonical dataset writes and domain-specific rules (for example invoice VAT synthesis policy details and bank posting semantics).
 
 ### Component Design and Interfaces
 
@@ -124,6 +132,8 @@ Command `bus data schema infer <table>` reads an existing CSV and writes a besid
 Command `bus data schema field add --resource <name>` appends a new field definition to the schema and updates the CSV by appending a new column. Existing rows receive the field’s default value when provided, or an empty value when no default is specified.
 
 Command `bus data schema field set-type --resource <name>` changes a field type only when the existing values are compatible with the new type. The command updates the schema and does not rewrite table data.
+
+Interface IF-DAT-003 (import profile library contract). The bus-data library exposes a deterministic import-profile API for domain modules. The API validates profile descriptors, loads source resources using workspace-relative paths, and executes profile steps into an intermediate mapped-row stream with deterministic ordering. Supported primitive operations are mechanical and explicit: row filters, field maps, enum maps, keyed lookups, and deterministic transforms. The API does not write domain datasets and does not infer accounting semantics; consumers are responsible for canonical writes and domain validation.
 
 Schema field remove and rename commands update both the schema and CSV deterministically. Field removal is refused unless `--force` is provided, and even when forced it must still refuse if the change would break primary key or foreign key integrity. Primary key and foreign key commands validate existing data before applying changes, and failures produce deterministic diagnostics without writing.
 
@@ -253,6 +263,8 @@ Path ownership lies with domain modules. When a consumer needs to read or write 
 
 Workbook-style CSV is a read-only view over a CSV resource treated as a grid of cells. Addressing uses the same column-letter and row-number mapping as [bus-bfl](./bus-bfl) (1-based rows; column A=1 through Z=26, AA=27, etc.) so that address-based extraction and formula range resolution are consistent. Workbook read does not require a beside-the-table schema; when a schema is present and formula evaluation is enabled, formula metadata may be used, and when no schema is present, formula treatment is opt-in and implementation-defined (e.g. heuristic detection of leading `=` or explicit cell-set configuration). Locale-aware numeric normalization applies only in workbook read and does not change the stored CSV or schema-validated table read behavior.
 
+Import profiles are repository files that declare source resources, target resource intent, and deterministic mapping steps. A profile descriptor must include stable identifiers for the profile itself and source bindings, explicit transform ordering, and mapping-step metadata sufficient for audit artifacts. Bus-data validates this descriptor and executes only supported mechanical operations; domain modules own any domain-specific enrichments and final append semantics.
+
 ### Assumptions and Dependencies
 
 Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.
@@ -276,6 +288,8 @@ Invalid usage exits with status code 2 and a concise usage error. Schema violati
 Unit tests cover Table Schema and Data Package parsing, safe patching with preservation of unknown properties, deterministic JSON serialization, deterministic CSV write behavior, schema inference determinism, and foreign key validation logic. Command-level end-to-end tests validate outputs, exit codes, and on-disk changes using fixture workspaces, including at least one test that verifies cross-resource foreign key integrity and one test that proves resource deletion is refused when referenced.
 
 Integration tests cover formula metadata round-tripping in schemas and data packages, formula validation failures with deterministic error context, and read-time projection of computed values without modifying stored CSV. Tests include at least one case for inline formulas, one case for constant formulas, one case that verifies the configured rounding policy is applied or rejected deterministically, and at least one case that evaluates a range expression using the bus-data range resolver against a fixed dataset snapshot.
+
+Import-profile tests MUST cover descriptor validation failures, deterministic execution ordering, stable handling of filters and lookup joins, enum/status mapping behavior, and byte-identical mapped-row output for repeated runs with identical source snapshots. Tests MUST also verify that bus-data profile helpers do not write domain datasets directly and return deterministic diagnostics that identify profile ID, source binding, and failing step when execution fails.
 
 ### Deployment and Operations
 
@@ -325,13 +339,17 @@ OQ-DAT-003 What is the exact CLI command name, flag set, and output schema for w
 - [Storage backends and workspace store interface](../data/storage-backends)
 - [Module repository structure and dependency rules](../implementation/module-repository-structure)
 - [bus-bfl SDD](./bus-bfl)
+- [bus-invoices SDD](./bus-invoices)
+- [bus-bank SDD](./bus-bank)
+- [bus-replay SDD](./bus-replay)
+- [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
 
 ### Document control
 
 Title: bus-data module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-DATA`  
-Version: 2026-02-17  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-17  
+Last updated: 2026-02-18  
 Owner: BusDK development team  

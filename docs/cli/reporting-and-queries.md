@@ -15,6 +15,8 @@ Reporting commands SHOULD support audit-trail exports and period-scoped output s
 
 For Finnish statutory financial statements, reporting commands MUST use explicit layout identifiers and deterministic account mapping contracts rather than vague format labels. In BusDK this contract is defined by [bus-reports SDD](../sdd/bus-reports), which specifies built-in `fi-kpa-*` and `fi-pma-*` layout identifiers, comparative handling, and statement-level validations required for filing-readiness. The CLI reference for [bus-reports](../modules/bus-reports) documents the command-level surface (`--layout-id`, `--layout`, `--comparatives`) and points to the workspace reporting profile keys in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration).
 
+For migration-quality checks, planned reporting also includes non-opening journal coverage rows that can be compared against source-import totals. That workflow is documented in [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks).
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./interactive-and-scripting-parity">Non-interactive use and scripting</a></span>
@@ -28,3 +30,4 @@ For Finnish statutory financial statements, reporting commands MUST use explicit
 - [bus-reports SDD](../sdd/bus-reports)
 - [bus-reports module CLI reference](../modules/bus-reports)
 - [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration)
+- [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)

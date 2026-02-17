@@ -9,6 +9,8 @@ Record allocations for a bank transaction that is split across multiple targets,
 
 Allocation is strict and deterministic. Allocations are expressed as one or more rows that each reference a stable target record identifier, and the allocation amounts must sum to the bank transaction amount exactly. Allocation amounts are expressed in the same currency as the bank transaction.
 
+For high-volume reconciliation where candidates are generated and reviewed first, use the planned proposal and batch-apply workflow described in [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply).
+
 Owner: [bus reconcile](../../modules/bus-reconcile).
 
 This action writes records in [Reconciliations](./index).
@@ -25,4 +27,5 @@ This action writes records in [Reconciliations](./index).
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
 - [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
+- [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 
