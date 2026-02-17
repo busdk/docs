@@ -73,7 +73,7 @@ FR-RUN-015 Script management. **bus run script set NAME [--platform=unix|windows
 
 FR-RUN-016 Token resolution and ambiguity. There are no built-in operations or @-prefix semantics. A token resolves with deterministic precedence: (1) directory-local prompt (`.bus/run/<NAME>.txt`), (2) directory-local script (platform-selected: non-Windows uses `.sh`; Windows uses `.ps1` if present, else `.bat`), (3) directory-local pipeline (`.bus/run/<NAME>.yml`), (4) preference pipeline (`bus-run.pipeline.<name>`). It is a usage error (exit 2) if the same NAME is defined in more than one of prompt, script, directory pipeline, or prefs pipeline. Having both `.sh` and `.bat` for the same NAME, or both `.bat` and `.ps1`, or all three, is allowed (one script action, platform variants). After resolution and expansion, repeated step names are merged as defined in FR-RUN-003. Acceptance criteria: resolution order is deterministic; on Windows .ps1 is preferred over .bat when both exist; ambiguity yields exit 2 before any run.
 
-FR-RUN-017 Working-directory lock. At most one `bus run` invocation that operates on a given directory (run with one or more tokens, or pipeline/action/script set or generate) MAY run at a time for that directory. The tool MUST acquire an exclusive lock on the effective operation directory before running any runnable step or any management command that writes to `.bus/run/`, and MUST release the lock when the process exits. Subcommands that only read (pipeline list, pipeline preview, action list, script list, context) or that only write preferences (set) do not require the lock. The effective operation directory is the project root (effective working directory). Acceptance criteria: two concurrent runs targeting the same directory serialize; lock is released on exit; list/preview/context/set do not block.
+FR-RUN-017 Working-directory lock. At most one `bus run` invocation that operates on a given directory (run with one or more tokens, or pipeline/action/script set or generate) MAY run at a time for that directory. The tool MUST acquire an exclusive lock on the effective operation directory before running any runnable step or any management command that writes to `.bus/run/`, MUST release the lock when the process exits, and MUST remove the lock file (e.g. `.bus-run.lock`) when the lock is released. Subcommands that only read (pipeline list, pipeline preview, action list, script list, context) or that only write preferences (set) do not require the lock. The effective operation directory is the project root (effective working directory). Acceptance criteria: two concurrent runs targeting the same directory serialize; lock is released on exit; lock file is removed after release; list/preview/context/set do not block.
 
 FR-RUN-018 Script action execution. Script actions run with the project root (effective working directory) as the working directory and receive the prompt-variable catalog as environment variables (injected values override existing same-named vars). `.sh` runs via exec of the file path (shebang respected) or a fixed shell. On Windows, `.bat` runs via `cmd.exe /C` and `.ps1` runs via PowerShell (e.g. `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <path>` or the platform’s PowerShell executable; exact invocation is implementation-defined and MUST be documented). Acceptance criteria: scripts receive catalog as env; working directory is project root; execution method is documented for all three variants.
 
@@ -123,7 +123,7 @@ KD-RUN-004 Single-instance per directory via lock. To avoid concurrent edits to 
 
 **Project root.** The effective working directory (after `-C`/`--chdir`) is the project root; no Git. Used for `.bus/run/` discovery and for catalog derivation (`WORKDIR_ROOT`, `PROJECT_NAME`).
 
-**Working-directory lock.** For run (with at least one token) and for pipeline set repo, action set, script set (and unset when removing directory-local files), the implementation acquires an exclusive lock keyed by the effective operation directory (project root). Lock is released when the process exits. List, context, set (preferences only), and pipeline/action/script unset that only remove prefs do not take the lock.
+**Working-directory lock.** For run (with at least one token) and for pipeline set repo, action set, script set (and unset when removing directory-local files), the implementation acquires an exclusive lock keyed by the effective operation directory (project root). Lock is released when the process exits; the lock file (e.g. `.bus-run.lock`) MUST be removed when the lock is released. List, context, set (preferences only), and pipeline/action/script unset that only remove prefs do not take the lock.
 
 **Prompt variable catalog (minimal).** Variables available for prompt templates and script env:
 
@@ -199,7 +199,7 @@ All error messages MUST be written to stderr.
 
 ### Data Design
 
-- **Working-directory lock file.** Exclusive lock keyed by the effective operation directory (e.g. `<effective-dir>/.bus-run.lock`). Implemented with an exclusive file lock; released when the process exits. Used for run and for pipeline/action/script set (writes to `.bus/run/` only).
+- **Working-directory lock file.** Exclusive lock keyed by the effective operation directory (e.g. `<effective-dir>/.bus-run.lock`). Implemented with an exclusive file lock; released when the process exits. The lock file MUST be removed when the lock is released so no stale file remains. Used for run and for pipeline/action/script set (writes to `.bus/run/` only).
 
 - **Directory-local extension directory.** `.bus/run/` at the project root (effective working directory). Only `<NAME>.txt`, `<NAME>.yml`, `<NAME>.sh`, `<NAME>.bat`, `<NAME>.ps1` are considered. Paths must resolve inside the project root; symlinks that escape are refused. On Windows, when both .bat and .ps1 exist for the same NAME, .ps1 is used.
 
@@ -225,7 +225,7 @@ AD-RUN-005 Operating environment. Linux and macOS for primary support; Windows f
 
 - **Management command tests.** Pipeline/action/script set and unset, list output determinism, preview output determinism and non-execution, ambiguity detection (same NAME in two definition types → exit 2), and preference read/write via bus-preferences.
 
-- **Lock tests.** Two concurrent runs (or run and directory-writing management) for the same directory run one after the other; lock released on exit. List, context, and set (prefs only) do not take the lock.
+- **Lock tests.** Two concurrent runs (or run and directory-writing management) for the same directory run one after the other; lock released on exit and lock file removed after release. List, context, and set (prefs only) do not take the lock.
 
 - **Fixture directory.** At least one test uses a fixture directory (no Git required) with `.bus/run/*` files to verify discovery, resolution order, and script env injection.
 
