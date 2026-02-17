@@ -10,7 +10,7 @@ description: bus assets maintains the fixed-asset register and produces deprecia
 `bus assets init [-C <dir>] [global flags]`  
 `bus assets add --asset-id <id> --name <name> --acquired <date> --cost <amount> --asset-account <account> --depreciation-account <account> --expense-account <account> --method <method> --life-months <n> [--in-service <date>] [--salvage <amount>] [--desc <text>] [--voucher <id>] [-C <dir>] [global flags]`  
 `bus assets depreciate --period <period> [--asset-id <id>] [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
-`bus assets dispose --asset-id <id> --date <YYYY-MM-DD> --proceeds-account <account> [--proceeds <amount>] [--desc <text>] [--voucher <id>] [-C <dir>] [global flags]`
+`bus assets dispose --asset-id <id> --date <YYYY-MM-DD> --proceeds-account <account> --gain-account <account> --loss-account <account> [--proceeds <amount>] [--desc <text>] [--voucher <id>] [-C <dir>] [global flags]`
 
 ### Description
 
@@ -25,7 +25,15 @@ Command names follow [CLI command naming](../cli/command-naming). `bus assets` m
 
 ### Options
 
-`add` accepts `--asset-id`, `--name`, `--acquired`, `--cost`, `--asset-account`, `--depreciation-account`, `--expense-account`, `--method`, and `--life-months`, with optional `--in-service`, `--salvage`, `--desc`, and `--voucher`. `depreciate` accepts `--period` and optional `--asset-id` and `--post-date`. `dispose` accepts `--asset-id`, `--date`, and `--proceeds-account`, with optional `--proceeds`, `--desc`, and `--voucher`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus assets --help`.
+`add` accepts `--asset-id`, `--name`, `--acquired`, `--cost`, `--asset-account`, `--depreciation-account`, `--expense-account`, `--method`, and `--life-months`, with optional `--in-service`, `--salvage`, `--desc`, and `--voucher`. `depreciate` accepts `--period` and optional `--asset-id` and `--post-date`. `dispose` accepts required `--asset-id`, `--date`, `--proceeds-account`, `--gain-account`, and `--loss-account`, and optional `--proceeds`, `--desc`, and `--voucher`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus assets --help`.
+
+#### Add command
+
+The only depreciation method supported by the current schema is `straight_line_monthly`. You may pass `straight_line_monthly` or the alias `straight-line`; the CLI normalizes aliases to the schema value before writing. Any other `--method` value is invalid and causes the command to exit with an error without changing the dataset, so that `bus assets validate` continues to pass. All of `--asset-id`, `--name`, `--acquired`, `--cost`, `--asset-account`, `--depreciation-account`, `--expense-account`, `--method`, and `--life-months` are required; `--in-service` defaults to the acquisition date and `--salvage` defaults to zero if omitted.
+
+#### Dispose command
+
+You must supply `--proceeds-account`, `--gain-account`, and `--loss-account` so that disposal can post proceeds and gain or loss to the correct ledger accounts. Omit `--proceeds` for a non-cash write-off (proceeds treated as zero). Accumulated depreciation used at disposal is capped to the depreciable base (cost minus residual). If the asset is already fully depreciated before the disposal month, no depreciation row is emitted for that month; the command only posts removal of the asset and accumulated depreciation, then proceeds and gain or loss.
 
 ### Files
 
