@@ -28,6 +28,18 @@ The script enables rbenv (so the correct Ruby is used), runs `bundle install` if
 
 **Source maps.** When running locally with `./start.sh`, the built CSS is generated with source maps so DevTools can map rules back to the original `.scss` files. To verify CSS source maps, open the site in Chrome, open DevTools (F12 or Inspect), then in the Elements panel select an element and look at the Styles pane: the file name next to a rule should be a `.scss` path (e.g. `_sass/busdk/_tokens.scss`); clicking it should open the original source in the Sources panel. This site does not bundle or minify custom JavaScript; theme-provided JS is served as-is. If you add a JS build step later, enable source maps in that tool for development only (emit `.map` files and a `//# sourceMappingURL=` comment in the built JS), ensure Jekyll serves the `.map` files in dev, and configure production builds to omit or remove `.map` files; then in DevTools → Sources you can confirm you can navigate to the original JS source files.
 
+## Content index JSON
+
+This repository generates a machine-readable index at `docs/assets/data/content-index.json` with one record per tracked content file under `docs/` (excluding Jekyll internal paths under `docs/_*`). The JSON is flat: a metadata key `@generated_at` is included, and every other top-level key is a site path starting with `/` (the `docs/` prefix is removed, and `.md` suffixes are stripped) whose value is the ISO 8601 timestamp from the most recent Git commit that edited that file.
+
+Generate it locally from the repository root with:
+
+```bash
+python3 scripts/generate-content-index.py
+```
+
+The GitHub Pages workflow also regenerates this file on every build. The workflow uses full repository history so timestamps come from Git commit history instead of filesystem modification times.
+
 ## GitHub Pages
 
 Custom Jekyll plugins in `docs/_plugins` (for example the chapter-wrapping filter) do not run when GitHub Pages builds the site from the branch (safe mode). To use them, switch the site to **Deploy from GitHub Actions**: in the repo **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**. The workflow in `.github/workflows/jekyll.yml` runs `bundle exec jekyll build -s docs` so plugins are loaded, then deploys the built site.
