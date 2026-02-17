@@ -90,9 +90,9 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Completeness:** 20% (Basic structure) — serve and capability URL verified by e2e; token gating by unit tests; no workbook journey step is test-verified or completable.
 
-**Use case readiness:** Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; token gating (404 outside token, 200 under token) in unit tests; grid, schema panel, validation UI not test-backed.
+**Use case readiness:** Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; token gating (404 outside token, 200 under token) in unit tests; grid, schema panel, validation UI not test-backed; no workbook journey step completable.
 
-**Current:** E2e `tests/e2e_bus_sheets.sh` verifies help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), and serve printing the capability URL with fixed token and port. Unit tests: `internal/cli/flags_test.go` (flag parsing, chdir, quiet+verbose), `internal/serve/serve_test.go` (requests outside token → 404, under token → 200; serve args), `internal/run/run_test.go` (help, version, quiet, output). No test covers embedded API, workbook tabs, or grid CRUD.
+**Current:** `tests/e2e_bus_sheets.sh` verifies help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), serve printing capability URL with fixed token and port, quiet serve (no stdout/output file), and `-C` missing dir → exit 1. `internal/cli/flags_test.go` covers flag parsing, chdir, quiet+verbose. `internal/serve/serve_test.go` covers requests outside token → 404 and under token → 200. `internal/run/run_test.go` covers help, version, quiet, output. No test covers embedded API, workbook tabs, or grid CRUD.
 
 **Planned next:** Embed [bus-api](./bus-api) in-process and mount under `/{token}/v1/`; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI. Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
