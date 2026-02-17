@@ -7,13 +7,15 @@ description: "bus run executes user-defined prompts, pipelines, and scripts with
 
 ### Synopsis
 
-`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | pipeline | action | script ) [options]`
+`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | list | pipeline | action | script ) [options]`
 
 **Run:** `bus run <token> [<token> ...]` — Execute one or more user-defined prompt actions, script actions, or pipeline names. Tokens are resolved and pipeline names are expanded to a flat sequence of prompt and script steps; the final sequence is then normalized by merging repeated steps so each step name appears once in first-appearance order. The normalized sequence runs in order and the run stops on first failure. All agent execution uses the [bus-agent](./bus-agent) library; there are no built-in developer operations (no plan, work, spec, e2e, commit, or init).
 
-**Management:** **`set`** — persist bus-run defaults (agent, model, output-format, timeout) via the [bus-preferences](./bus-preferences) library. **`context`** — print the prompt-variable catalog and resolved values (one `KEY=VALUE` per line, sorted by key) for prompt and script authors; uses the effective working directory to build the catalog (no Git required). **`pipeline`** — define, list, or preview pipelines (directory-local `.bus/run/<NAME>.yml` or preference `bus-run.pipeline.<name>`). **`action`** — define or list directory-local prompt actions (`.bus/run/<NAME>.txt`). **`script`** — define or list directory-local script actions (`.bus/run/<NAME>.sh`, `.bat`, or `.ps1`).
+**Management:** **`set`** — persist bus-run defaults (agent, model, output-format, timeout) via the [bus-preferences](./bus-preferences) library. **`context`** — print the prompt-variable catalog and resolved values (one `KEY=VALUE` per line, sorted by key) for prompt and script authors; uses the effective working directory to build the catalog (no Git required). **`list`** — print every runnable token (pipelines, prompt actions, script actions) and what each executes, without running any step; requires the project root (exit 1 when inaccessible). **`pipeline`** — define, list, or preview pipelines (directory-local `.bus/run/<NAME>.yml` or preference `bus-run.pipeline.<name>`). **`action`** — define or list directory-local prompt actions (`.bus/run/<NAME>.txt`). **`script`** — define or list directory-local script actions (`.bus/run/<NAME>.sh`, `.bat`, or `.ps1`).
 
-Directory-local content is under the effective working directory (project root); no Git is required. Paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. Diagnostics and agent output go to stderr; deterministic results (context, list output) go to stdout.
+Global **`bus run --help`** shows usage, states that runnable tokens are user-defined only (no built-in operations or pipelines), and directs you to **`bus run list`**, **`bus run pipeline list`**, **`bus run action list`**, and **`bus run script list`** to discover available tokens. No agent or script is run to produce help. **`bus run list`** prints a unified catalog of every runnable token in the current context (directory-local and preference pipelines, prompt actions, script actions) with source and, for pipelines, the normalized expanded step sequence; it does not execute any step.
+
+Directory-local content is under the effective working directory (project root); no Git is required. Paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. Diagnostics and agent output go to stderr; deterministic results (list, context, pipeline list, action list, script list) go to stdout.
 
 ### Description
 
@@ -30,6 +32,8 @@ Command names follow [CLI command naming](../cli/command-naming). `bus run` is a
 **`bus run set model <value>`** — Set the bus-run default model (`bus-run.model`). **`bus run set output-format <ndjson|text>`** — Set the bus-run default output format (`bus-run.output_format`). **`bus run set timeout <duration>`** — Set the bus-run default timeout (`bus-run.timeout`). Each writes only the corresponding `bus-run.*` key. Invalid value → exit 2.
 
 **`bus run context`** — Print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout. Use this when authoring prompt templates or scripts so you can see the same variables the tool injects. Uses the effective working directory to derive catalog values; no Git required. If the effective working directory does not exist or is not accessible, exit 1. Does not take the per-directory lock.
+
+**`bus run list`** — Print every runnable token available in the current context and what each executes, without running any agent, script, or other step. When the effective working directory does not exist or is not accessible, exit 1 with a clear message (same as **bus run context**). When the project root is accessible, output includes directory-local pipelines (source path and normalized expanded step sequence), directory-local prompt actions (`.bus/run/<NAME>.txt`), directory-local script actions (source and platform variants), and preference pipelines (source key and expanded step sequence). Each entry includes token name, type (pipeline, action prompt, or action script), short description or source, and for pipelines the normalized expanded step sequence. Output format is stable and parseable. Does not take the per-directory lock.
 
 **`bus run pipeline set repo NAME TOKEN...`** — Write or overwrite `.bus/run/NAME.yml` with a YAML sequence of tokens under the project root (effective workdir). Takes the lock. If the project root does not exist or is not writable, exit 1. **`bus run pipeline unset repo NAME`** — Remove `.bus/run/NAME.yml` if present; exit 0 if absent. **`bus run pipeline set prefs NAME TOKEN...`** — Write preference `bus-run.pipeline.NAME` as a JSON array via bus-preferences. **`bus run pipeline unset prefs NAME`** — Remove that preference key if present; exit 0 if absent. **`bus run pipeline list [all|repo|prefs]`** — Print a deterministic listing of pipelines and their source; output lexicographic by name then source. **`bus run pipeline preview TOKEN...`** — Resolve and fully expand tokens, apply the same duplicate-merge normalization used by `bus run <token...>`, print one normalized step name per line to stdout, and exit without executing any prompt or script step.
 
@@ -61,13 +65,13 @@ Example normalization: `bus run my-step my-step my-step` normalizes to one `my-s
 | `WORKDIR_ROOT` | Absolute path to the effective working directory (project root) | Effective workdir after `-C`/`--chdir` |
 | `PROJECT_NAME` | Base name of the effective working directory | Base name of the project root path |
 
-**Per-directory lock.** Only one run (or one directory-writing management command) operates on a given directory at a time. Commands that take the lock: **bus run** with one or more tokens, **pipeline set repo**, **action set**, **script set**, **pipeline unset repo**, **action unset**, and **script unset** when removing directory-local files. Commands that do not take the lock: **pipeline list**, **pipeline preview**, **action list**, **script list**, **context**, **set** (preferences only), **pipeline unset prefs**, and **pipeline set prefs**. A second invocation that would need the lock for the same directory waits until the first exits.
+**Per-directory lock.** Only one run (or one directory-writing management command) operates on a given directory at a time. Commands that take the lock: **bus run** with one or more tokens, **pipeline set repo**, **action set**, **script set**, **pipeline unset repo**, **action unset**, and **script unset** when removing directory-local files. Commands that do not take the lock: **list**, **pipeline list**, **pipeline preview**, **action list**, **script list**, **context**, **set** (preferences only), **pipeline unset prefs**, and **pipeline set prefs**. A second invocation that would need the lock for the same directory waits until the first exits.
 
 ### Global flags
 
 These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). They can appear in any order before the subcommand. A lone `--` ends flag parsing.
 
-- **`-h`**, **`--help`** — Print help to stdout and exit 0.
+- **`-h`**, **`--help`** — Print help to stdout and exit 0. Help shows usage and global flags, states that Bus Run has no built-in operations or pipelines (runnable tokens are user-defined only: prompt actions, script actions, and pipelines under `.bus/run/` or in preferences), and directs you to **`bus run list`**, **`bus run pipeline list`**, **`bus run action list`**, and **`bus run script list`** to discover available tokens. No agent or script is run to produce help.
 - **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
 - **`-v`**, **`--verbose`** — Verbose progress and diagnostics to stderr; repeatable (e.g. `-vv`).
 - **`-q`**, **`--quiet`** — Suppress normal command result output; only errors to stderr. Cannot combine with `--verbose` (exit 2).
@@ -102,11 +106,11 @@ Preferences that affect `bus run` are stored via the [bus-preferences](./bus-pre
 - **1** — Execution failure: agent run failed or timed out, selected agent runtime not found or not executable, script execution failed, no agent available when the automatic default would apply, working-directory lock could not be acquired, or effective working directory does not exist or is not accessible when required.
 - **2** — Invalid usage: unknown token or subcommand, invalid flag, invalid pipeline definition or name, pipeline recursion or expansion limit exceeded, ambiguity (same name in more than one definition), invalid name grammar, empty stdin for **action set**, or disabled script action invoked.
 
-Deterministic results (context, pipeline list, action list, script list) are written to stdout. Diagnostics and errors are written to stderr.
+Deterministic results (list, context, pipeline list, action list, script list) are written to stdout. Diagnostics and errors are written to stderr.
 
 ### Development state
 
-**Value promise:** Run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint; no built-in developer workflows and no dependency on [bus-dev](./bus-dev).
+**Value promise:** Run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint; list and help show every available token without running; no built-in developer workflows and no dependency on [bus-dev](./bus-dev).
 
 **Use cases:** [Orphan modules](../implementation/development-status#orphan-modules) — not mapped to a documented use case.
 

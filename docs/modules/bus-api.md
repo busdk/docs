@@ -101,23 +101,23 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Value promise:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
 
-**Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
+**Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Completeness:** 50% — Startup, capability URL, healthz, openapi, and event stream are test-verified; resources, package, row CRUD, schema, and validation endpoints have no test coverage (bus-data integration deferred per PLAN.md).
+**Completeness:** 70% — Resources, package, row CRUD, resource add/rename/remove, workspace validation, event stream, read-only 403, and serve flags (base-path, CORS, TLS, enable-module) are verified by e2e and unit tests; schema endpoints and single-resource validate have no test coverage (PLAN.md).
 
-**Use case readiness:** Workbook and validated tabular editing: 50% — User can start the API and reach healthz/openapi/events; listing resources and reading or writing rows over HTTP are not verified by tests.
+**Use case readiness:** Workbook and validated tabular editing: 70% — User can start API, list resources, CRUD rows, validate workspace, and use events; schema read/mutation and single-resource validate not verified.
 
-**Current:** `tests/e2e_bus_api.sh` proves exact global help, serve-specific help, version line, global flags (chdir, output, quiet, color, format, `--`), openapi output and format behavior, invalid usage (quiet+verbose, unknown command, invalid color, unknown format) exit 2, serve with fixed token/port prints capability URL, and GET base URL and GET healthz return expected JSON. `internal/cli/flags_test.go` and `internal/cli/run_test.go` prove flag parsing and run behavior (help, version, quiet, output, openapi, serve missing workdir exit 1). `internal/server/server_test.go` proves token gating, healthz/openapi/api-base under token, wrong-token and no-prefix 404, OpenAPI doc validity and events path, serve-flag parsing, and event stream (200 + text/event-stream, optional query params, method not allowed, and delivery of a published event). No tests hit resources, package, schema, row, or validation endpoints.
+**Current:** `tests/e2e_bus_api.sh` proves global help (exact diff), serve help, version, global flags (chdir, output, quiet, color, format, `--`), openapi CLI and from server, invalid usage exit 2, serve capability URL, base-path/CORS/HTTPS/enable-module, fixture workspace GET/POST/PATCH/DELETE resources, GET package, POST /validate (workspace), GET/POST/PATCH/DELETE rows and dry_run, read-only 403, POST /validate failure payload. `internal/server/server_test.go` proves token gating, healthz, openapi, api base, events (200, text/event-stream, query params, 405, event delivery), GET resources 200, GET package 404, PATCH package read-only 403, path safety, POST validate 200 and stable errors, resource add/remove/rename, CORS, OpenAPI paths and module paths, module backend stripped path. `internal/server/backend_test.go` proves ListResources, TablePathForName path safety, GetPackageRaw, ReadRows, ValidatePackage, GetSchemaBytes, safeResourceName. `internal/cli/run_test.go` and `internal/cli/flags_test.go` prove flag parsing and run (help, version, openapi, serve missing workdir exit 1, TLS cert-only exit 1, quiet+output).
 
-**Planned next:** bus-data integration for resource discovery, package, schema, row CRUD, and validation (PLAN.md); e2e against those endpoints with a fixture workspace; optional serve flags (base-path, cors-origin, tls-cert/tls-key, enable-module) and module backends. Advances Workbook and validated tabular editing when data endpoints are verified.
+**Planned next:** Schema field rename via PATCH (PLAN.md); e2e for schema endpoints (GET/PATCH /resources/{name}/schema, single-resource POST /validate); OpenAPI stable key ordering and module path specs. Advances Workbook and validated tabular editing when schema endpoints are verified.
 
 **Blockers:** None known.
 
-**Depends on:** [bus-data](./bus-data), [bus-bfl](./bus-bfl) (formula). Implement bus-data first.
+**Depends on:** [bus-data](./bus-data), [bus-bfl](./bus-bfl) (formula).
 
-**Used by:** [bus-sheets](./bus-sheets) and [bus-books](../sdd/bus-books) embed this API in-process for the spreadsheet UI and the bookkeeping UI respectively.
+**Used by:** [bus-sheets](./bus-sheets) and [bus-books](./bus-books) embed this API in-process for the spreadsheet UI and the bookkeeping UI respectively.
 
-See [Development status](../implementation/development-status).
+See [Development status](../implementation/development-status#spreadsheet-workbooks).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
