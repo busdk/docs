@@ -7,10 +7,10 @@ description: bus reports computes financial reports from journal entries and ref
 
 ### Synopsis
 
-`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports profit-and-loss --period <period> [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`
+`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports profit-and-loss --period <period> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
@@ -25,7 +25,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus reports` 
 
 ### Options
 
-`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv>` (default `text`). Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
+`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv|markdown>` (default `text`). For balance-sheet and profit-and-loss, `json`, `kpa`, and `pma` are also supported. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
 
 ### Files
 
@@ -41,7 +41,7 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 80% — All report commands, text/csv/json, KPA/PMA for balance-sheet and profit-and-loss, optional budget, and traceability verified by e2e and unit tests; entity-scoped KPA/PMA not verified.
+**Completeness:** 80% — All report commands, text/csv/json, KPA/PMA for balance-sheet and profit-and-loss, optional budget, and traceability verified by e2e and unit tests; entity-scoped KPA/PMA not verified. Regulated TASE and tuloslaskelma as PDF are not yet supported; see [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs).
 
 **Use case readiness:** Accounting workflow: 80% — Close-step reports including KPA/PMA verified by e2e; user can run all report commands. Finnish bookkeeping and tax-audit compliance: 80% — Reports, traceability, and KPA/PMA formats verified by e2e. Finnish company reorganisation: 80% — Trial balance and ledgers as audit evidence and KPA/PMA verified by e2e.
 
@@ -71,4 +71,5 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-reports](../sdd/bus-reports)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
 

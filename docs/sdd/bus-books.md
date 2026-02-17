@@ -11,7 +11,7 @@ description: bus books provides a local, end-user-focused web UI for BusDK bookk
 
 Bus Books provides a local, end-user-facing web UI for doing bookkeeping work in a BusDK workspace. Unlike [Bus Sheets](bus-sheets) (generic table/grid editing), Bus Books focuses on accounting screens and workflows that map to real bookkeeping tasks: journal postings, period control, VAT review, bank import and reconciliation, invoice review, evidence attachments, and workspace validation.
 
-Bus Books does not create a new accounting engine. All domain behavior is delegated to existing BusDK modules through in-process Go libraries and the embedded [Bus API](bus-api) surface. Bus Books does not shell out to other `bus-*` CLIs for its own UI operations. The only allowed CLI execution is optional agent chat, which runs in a clearly marked, explicitly enabled “agent execution context”.
+Bus Books does not create a new accounting engine. All domain behavior is delegated to existing BusDK modules through in-process Go libraries and the embedded [Bus API](bus-api) surface. The UI is schema-driven: adding a new column to a workspace dataset and its schema must make that column appear in list and detail views without recompilation or reprogramming. Bus Books does not shell out to other `bus-*` CLIs for its own UI operations. The only allowed CLI execution is optional agent chat, which runs in a clearly marked, explicitly enabled “agent execution context”.
 
 Bus Books follows the same MVP security model as [Bus API](bus-api) and [Bus Sheets](bus-sheets): loopback-only binding by default, and a capability-style unguessable random token in the URL path prefix that gates both UI and API.
 
@@ -28,6 +28,8 @@ G-BOK-003 Safe-by-default local operation. Default to loopback binding and capab
 G-BOK-004 Unified “Inbox” mental model. Provide one actionable view for items needing bookkeeping attention (e.g. invoices and bank transactions) using shared workflow metadata fields so triage and review status are consistent across object types.
 
 G-BOK-005 Optional agent assist. When explicitly enabled, provide a chat view where an AI agent can propose or perform operations in the workspace, with clear separation from normal UI actions.
+
+G-BOK-006 Schema-driven column display. Adding a new column to a workspace dataset (and its schema) must make that column appear in the relevant Bus Books list and detail views without recompilation, redeployment, or configuration change. The implementation must be schema-driven so that workspace evolution does not require code or binary changes.
 
 ### Non-goals
 
@@ -99,6 +101,9 @@ Acceptance criteria: server starts with agent disabled by default; when enabled,
 FR-BOK-018 Event-driven refresh (API-originated). The UI SHOULD subscribe to the embedded API event stream and refresh views when changes are made through the API.
 Acceptance criteria: when mutations occur via the embedded API, relevant lists refresh without manual reload; changes made outside the API (agent CLI or external file edits) require manual refresh.
 
+FR-BOK-019 Schema-driven columns for datasets. The UI and embedded API MUST derive the set of columns for dataset tables from the workspace schema (e.g. Table Schema) at runtime. Adding a new column to a dataset and its schema in the workspace MUST cause that column to appear in the relevant Bus Books list and detail views without recompilation, redeployment, or configuration change.
+Acceptance criteria: (1) For any dataset exposed in the UI, the columns shown are those present in the schema (or inferred from the data) for that dataset. (2) After a new column is added to the CSV and schema, refreshing or reopening the view shows the new column. (3) No code or binary change is required to display the new column.
+
 ### Non-Functional Requirements
 
 NFR-BOK-001 Minimal authentication surface. The MVP MUST rely on loopback binding + capability URL token and MUST NOT implement accounts, sessions, OAuth, cookies, or stored credentials.
@@ -114,6 +119,8 @@ NFR-BOK-005 Concurrency safety. Concurrent writes must not corrupt workspace dat
 NFR-BOK-006 Maintainability. The module MUST be library-first with a thin CLI wrapper and a reproducible frontend build; the UI should not depend on network services to run.
 
 NFR-BOK-007 Performance (local). The server and UI MUST remain responsive for typical local workspaces; list views must support paging/limits as needed.
+
+NFR-BOK-008 No hardcoded column set for datasets. The implementation MUST NOT require recompilation or reprogramming to display new or renamed columns in workspace datasets. Column metadata MUST be read from the workspace (schema or data) at runtime.
 
 ## System Architecture
 
@@ -150,6 +157,8 @@ KD-BOK-003 Module-backed operations. Bookkeeping actions are performed through d
 KD-BOK-004 Inbox uses shared workflow metadata. The Inbox is a unified view over different object types by relying on a shared review/evidence vocabulary where available.
 
 KD-BOK-005 Agent integration is optional and clearly separated. The agent is disabled by default and, when enabled, is explicitly presented as a privileged tool that can run CLI operations in the workspace.
+
+KD-BOK-006 Schema-driven table display. List and detail views for workspace datasets (journal lines, bank transactions, invoices, etc.) derive their column set from the workspace schema at runtime so that new columns appear in the UI without code changes. Workspace evolution (e.g. adding a table column) must not require a new build or reprogramming.
 
 ## Component Design and Interfaces
 
@@ -214,6 +223,8 @@ Serve flags (module-specific, aligned with Bus API defaults):
 - `--enable-agent` enables optional agent chat integration (default: disabled)
 
 ## UI Behavior
+
+List and detail views for workspace datasets derive their column set from the workspace schema at runtime; new or renamed columns appear in the UI without recompilation (FR-BOK-019, KD-BOK-006).
 
 ### Navigation
 
@@ -309,6 +320,8 @@ Agent actions are treated as privileged:
 Bus Books introduces no new on-disk formats or persistent server state. All persistent data remains BusDK workspace datasets (CSV + Table Schema + optional `datapackage.json`) owned by existing modules.
 
 The server is stateless aside from in-process runtime state (token, listeners, active SSE connections). Any “last run” UI status (e.g. last validation results) is session-local and may be stored in the browser only.
+
+Column set for dataset views is not stored or hardcoded in Bus Books. The UI and API derive which columns to display from the workspace schema (and, where applicable, from the data) at runtime. Adding or renaming columns in the workspace datasets and their schemas is sufficient for those columns to appear in list and detail views; no recompilation or configuration change is required.
 
 ## Assumptions and Dependencies
 

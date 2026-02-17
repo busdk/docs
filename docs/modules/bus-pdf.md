@@ -11,7 +11,7 @@ description: bus pdf renders deterministic PDFs from a JSON render model; templa
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus pdf` renders deterministic PDFs from structured JSON input. It does not read BusDK datasets; it only accepts a render model via `--data <file>` or `--data @-` (stdin). Callers such as [bus-invoices](./bus-invoices) load invoice data from workspace CSVs and build a single JSON payload that matches the schema defined by this module. Output PDFs (e.g. invoices) can be registered as attachments. The template used for rendering is chosen inside the render model via a `template` field (template identifier or repository-relative path); there is no separate CLI flag for template selection.
+Command names follow [CLI command naming](../cli/command-naming). `bus pdf` renders deterministic PDFs from structured JSON input. It does not read BusDK datasets; it only accepts a render model via `--data <file>` or `--data @-` (stdin). Callers such as [bus-invoices](./bus-invoices) load invoice data from workspace CSVs and build a single JSON payload that matches the schema defined by this module. Output PDFs (e.g. invoices) can be registered as attachments. The template used for rendering is chosen inside the render model via a `template` field (template identifier or repository-relative path); there is no separate CLI flag for template selection. Built-in templates are **fi-invoice-a4** and **plain-a4** only; there are no TASE or tuloslaskelma report templates yet (see [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)).
 
 ### Render model
 
@@ -66,4 +66,5 @@ See [Development status](../implementation/development-status).
 - [Master data: Purchase invoices](../master-data/purchase-invoices/index)
 - [Module SDD: bus-pdf](../sdd/bus-pdf)
 - [Layout: Invoice PDF storage](../layout/invoice-pdf-storage)
+- [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
 

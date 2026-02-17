@@ -49,6 +49,10 @@ BusDK MUST support an exportable “tax audit pack” for a selected period, and
 
 BusDK MUST store VAT codes, bases, rates, and tax amounts at posting and/or invoice-line level so that VAT returns can be produced and later verified. VAT reports MUST be derivable from journal and invoice data without manual rewriting of history, and corrections MUST remain audit-traceable. VAT return outputs MUST retain references to the underlying postings and vouchers that justify each reported amount. (KPL 2:6 §; KILA 3.4; KILA 3.7; OVML 26 §; AVL 209 e–f §; Verohallinnon ohje verotarkastuksesta 4.12.2025, section 3.3) Workspace-level VAT settings (reporting period, timing basis, registration dates) are configured via [bus config](../../modules/bus-config) and documented in [Workspace configuration](../../data/workspace-configuration); VAT allocation and reporting MUST use those settings consistently.
 
+#### I) Balance sheet and income statement as PDF
+
+Finnish bookkeeping regulation requires the balance sheet (TASE) and the income statement (tuloslaskelma) to be available as PDF for archiving, auditors, and authorities. BusDK MUST support producing these documents from workspace data via the CLI so that users can obtain compliant PDFs without relying on external conversion tools. Implementation options (e.g. PDF format in [bus-reports](../../modules/bus-reports), report templates in [bus-pdf](../../modules/bus-pdf), or a dedicated report-PDF subcommand) are described in [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs). (KPA 1339/1997; PMA 1753/2015; retention and readability expectations in KPL 2:7 §; KILA 4.1.1; KILA 4.4.1)
+
 ### Non-goals and accounting judgment
 
 BusDK MUST provide deterministic primitives, validation, and traceability, but MUST NOT decide discretionary accounting treatment. Modules MAY propose classifications or allocations, but authoritative postings MUST be created or accepted explicitly by the user. When judgment is involved, BusDK MUST allow rationale to be recorded as linked notes or attachments without breaking the audit trail. (KPL 2:5 §; KPL 2:6 §; KILA 2.5; KILA 3.4)
@@ -65,7 +69,7 @@ Retention, accessibility, and location requirements (E, F) stem from KPL 2:9–2
 
 Tax-audit readiness (G) relies on VML 14 § and OVML 24 §, which define inspection rights and electronic data availability, and Verohallinto’s audit procedure guidance. (VML 14 §; OVML 24 §; Verohallinnon ohje verotarkastuksesta 4.12.2025)
 
-Financial statement output requirements for reports reference Kirjanpitoasetus (KPA 1339/1997) and the small/micro entity regulation (PMA 1753/2015), which BusDK reports must be able to support as output formats when the user is in scope. (KPA 1339/1997; PMA 1753/2015)
+Financial statement output requirements for reports reference Kirjanpitoasetus (KPA 1339/1997) and the small/micro entity regulation (PMA 1753/2015), which BusDK reports must be able to support as output formats when the user is in scope. Requirement (I) adds that the balance sheet and income statement must be producible as PDF; the chosen implementation approach is documented in [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs). (KPA 1339/1997; PMA 1753/2015)
 
 ### Maintenance process
 

@@ -7,7 +7,7 @@ description: Bus Sheets provides a local, spreadsheet-like web user interface fo
 
 ### Introduction and Overview
 
-Bus Sheets provides a local, spreadsheet-like web user interface for BusDK workspaces. It is intended for system administrators and power users who want a familiar multi-tab “workbook” experience over BusDK’s tabular data: each BusDK resource (a CSV file with a beside-the-table Table Schema JSON) is presented as a sheet tab, and the workspace directory is presented as the workbook.
+Bus Sheets provides a local, spreadsheet-like web user interface for BusDK workspaces. It is intended for system administrators and power users who want a familiar multi-tab “workbook” experience over BusDK’s tabular data: each BusDK resource (a CSV file with a beside-the-table Table Schema JSON) is presented as a sheet tab, and the workspace directory is presented as the workbook. The grid is schema-driven so that adding a new column to a resource and its schema makes that column appear in the UI without recompilation or reprogramming.
 
 Bus Sheets does **not** implement domain UIs for Bus modules (accounts, invoices, VAT, etc.). Its scope is strictly the mechanical workspace layer: listing resources, viewing and editing rows, inspecting and mechanically editing schemas, and running validations. All semantics for CSV, Table Schema, Data Package, mutation policies, foreign keys, and formula projection are delegated to Bus API / Bus Data, not re-implemented. ([bus-api SDD](./bus-api))
 
@@ -26,6 +26,8 @@ G-SHT-003 Library-backed correctness. Reuse Bus API as the authoritative backend
 G-SHT-004 Zero-install web UI. Ship as a single embedded binary that starts the UI from the CLI without external runtime downloads.
 
 G-SHT-005 Optional agent integration. When enabled, provide an IDE-style chat dialog so the user can ask an AI agent to perform operations via Bus CLI tools in the workspace and see resulting changes in the sheets view. The agent runs with the workspace as working directory and has access to run Bus CLI tools; the user can enable or disable the feature at startup (command-line) and hide or show the chat at runtime in the UI. ([bus-agent](./bus-agent))
+
+G-SHT-006 Schema-driven column display. Adding a new column to a workspace resource (CSV and schema) must make that column appear in the grid without recompilation, redeployment, or configuration change. The grid is driven by the workspace schema at runtime so that workspace evolution does not require code or binary changes.
 
 ### Non-goals
 
@@ -67,6 +69,8 @@ FR-SHT-012 Agent enable and visibility. Agent integration MUST be optional and c
 
 FR-SHT-013 Event-driven refresh. The UI MUST support subscribing to the embedded [bus-api](./bus-api) event stream (`GET /{token}/v1/events`) and MUST use received mutation events to refresh or invalidate the affected resource, tab, or resource list so that changes made through the API are reflected without requiring a manual full refresh. Acceptance criteria: when the UI subscribes to the event stream and a mutation occurs via the API (e.g. row or schema change from the same session or from another client), the relevant sheet or tab updates to show the new data; events are consumed according to the bus-api event stream contract (SSE, payload shape). Manual refresh remains available and continues to work. Events are emitted only for mutations performed through the API; changes made outside the API (e.g. by the agent running Bus CLI tools) do not produce events, so the user must refresh to see those changes. ([bus-api SDD](./bus-api))
 
+FR-SHT-014 Schema-driven columns for the grid. The UI and embedded API MUST derive the set of columns for each sheet from the workspace schema (e.g. Table Schema) at runtime. Adding a new column to a resource (CSV and schema) in the workspace MUST cause that column to appear in the grid without recompilation, redeployment, or configuration change. Acceptance criteria: (1) For any resource, the columns shown are those present in the schema (or inferred from the data) for that resource. (2) After a new column is added via schema operations or external edit and the view is refreshed, the new column appears in the grid. (3) No code or binary change is required to display the new column.
+
 ### Non-Functional Requirements
 
 NFR-SHT-001 Minimal authentication surface. The MVP MUST rely on loopback binding + capability URL token and MUST NOT implement accounts, sessions, OAuth, cookies, or stored credentials. ([bus-api SDD](./bus-api))
@@ -84,6 +88,8 @@ NFR-SHT-006 Maintainability. The module MUST be library-first with a thin CLI wr
 NFR-SHT-007 Performance. The server MUST remain responsive for local use on typical workspace datasets. Acceptance criteria: UI and API responses complete within a documented timeout under normative load; no unbounded in-memory growth for resource listing or row reads within a single request.
 
 NFR-SHT-008 Scalability. The module targets a single workspace per server instance. Acceptance criteria: the design does not assume distributed deployment or multi-tenant sharing; scaling is by running additional instances bound to different workspace roots.
+
+NFR-SHT-009 No hardcoded column set for resources. The implementation MUST NOT require recompilation or reprogramming to display new or renamed columns in workspace resources. Column metadata MUST be read from the workspace (schema or data) at runtime.
 
 ## System Architecture
 
@@ -121,6 +127,8 @@ KD-SHT-003 Bus API as the only workspace backend. The UI backend delegates all o
 KD-SHT-004 Formula display is delegated. Formulas are shown via Bus API’s formula-projected reads; BFL’s range and array mechanics remain a library concern (Bus Data provides the range resolver; BFL supports ranges and arrays as first-class values). ([bus-api SDD](./bus-api))
 
 KD-SHT-005 Agent integration is optional and IDE-style. The agent is exposed as a chat dialog (similar to IDE AI integrations), disabled by default and controllable via CLI flag and runtime UI visibility. The agent runs with the workspace as workdir and can run Bus CLI tools so the user can request multi-step operations and see results in the sheets view. ([bus-agent](./bus-agent))
+
+KD-SHT-006 Schema-driven grid columns. The grid derives its column set from the workspace schema at runtime so that new or renamed columns appear without code changes. Adding a column to a resource (via the schema UI, API, or external edit) must not require a new build or reprogramming.
 
 ## Component Design and Interfaces
 
@@ -201,7 +209,7 @@ Serve flags (module-specific, aligned with Bus API defaults):
 
 ### Grid rendering
 
-* Column headers follow schema field order.
+* Column headers follow schema field order; the column set is derived from the workspace schema at runtime (FR-SHT-014, KD-SHT-006). New or renamed columns appear in the grid after refresh without recompilation.
 * Cells display typed values as returned by the API (including computed values for formula-projected fields). ([bus-api SDD](./bus-api))
 * Primary key fields are treated as identity fields for row operations; MVP SHOULD treat PK cells as non-editable to avoid “row identity changes” ambiguity.
 
@@ -240,6 +248,8 @@ When the server is started with `--enable-agent`, the UI shows an optional chat 
 ## Data Design
 
 Bus Sheets introduces no new on-disk formats or persistent state. All persistent data remains BusDK workspace datasets: CSV files, beside-the-table schema JSON files, and an optional `datapackage.json`. The server holds no persistent state; all reads and writes go through the embedded [bus-api](./bus-api) and thus the [bus-data](./bus-data) stack.
+
+The column set for each sheet is not stored or hardcoded in Bus Sheets. The UI and API derive which columns to display from the workspace schema (and, where applicable, from the data) at runtime. Adding or renaming columns in a resource and its schema is sufficient for those columns to appear in the grid; no recompilation or configuration change is required.
 
 ## Assumptions and Dependencies
 

@@ -108,17 +108,17 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use cases:** [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
-**Completeness:** TBD — implementation and test evidence to be tracked as the module is built. Design is specified in the [bus-books SDD](../sdd/bus-books).
+**Completeness:** 20% — serve and capability URL verified; token gating verified; no embedded API or UI screens yet, so no bookkeeping step is completable in the UI.
 
-**Use case readiness:** Accounting workflow (bookkeeping UI): TBD — serve, capability URL, and screen behavior to be verified by e2e and integration tests as the module is implemented.
+**Use case readiness:** Accounting workflow (bookkeeping UI): 20% — user can start server and get capability URL (e2e); token gating and workspace-root checks verified; no dashboard or workflow screens yet.
 
-**Current:** No implementation or tests in repository yet; this page and the SDD describe the intended contract.
+**Current:** Serve starts and prints capability URL to stdout; fixed token and port and default (no subcommand) serve verified by `tests/e2e_bus_books.sh`. Global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags (token, port) verified by e2e and `internal/run/run_test.go`, `internal/cli/flags_test.go`. Workspace root validation and handler token gating (404 outside `/{token}/`, 200 under token) verified by `internal/server/server_test.go`. No embedded Bus API or UI assets; no bookkeeping screens or API endpoints covered by tests.
 
-**Planned next:** Implement serve with embedded Bus API and default bookkeeping module backends; embed UI assets; dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate); optional agent chat; read-only mode; e2e and integration tests.
+**Planned next:** Embed Bus API in-process and mount under `/{token}/v1/`; embed UI assets and SPA; Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) per PLAN.md — advances Accounting workflow (bookkeeping UI). Read-only mode and event-driven refresh; optional agent chat when `--enable-agent`; integration tests for validation endpoint, period transitions, journal add by period state.
 
-**Blockers:** None specified; depends on [bus-api](./bus-api) (and domain module backends) being embeddable and stable.
+**Blockers:** None known.
 
-**Depends on:** [bus-api](./bus-api) (embedded); domain modules (journal, period, vat, bank, invoices, attachments, reconcile, validate) via their module backend handlers.
+**Depends on:** [bus-api](./bus-api) (embedded); domain modules ([journal](./bus-journal), [period](./bus-period), [vat](./bus-vat), [bank](./bus-bank), [invoices](./bus-invoices), [attachments](./bus-attachments), [reconcile](./bus-reconcile), [validate](./bus-validate)) via their module backend handlers.
 
 **Used by:** End users as the bookkeeping UI; no other bus module invokes it.
 

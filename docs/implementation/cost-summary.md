@@ -78,7 +78,7 @@ Module order below matches the source snapshot (no reordering). *Active days* is
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./development-status">Development status — BusDK modules</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./regulated-report-pdfs">Regulated report PDFs (TASE and tuloslaskelma)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation and development status</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../data/index">Data format and storage</a> &rarr;</span>
 </p>

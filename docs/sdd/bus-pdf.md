@@ -73,6 +73,10 @@ The module MUST document this schema in full (e.g. JSON Schema or equivalent) so
 
 [bus-invoices](../modules/bus-invoices) will implement `bus invoices pdf <invoice-id> --out <path> [--overwrite]` by loading the invoice header and lines from the workspace CSVs, building the invoice render model JSON that matches the schema defined above, and invoking bus-pdf (e.g. `bus pdf --data @- --out <path> [--overwrite]`). The caller may optionally register the resulting PDF via bus-attachments. No new overwrite or CLI behavior is required in bus-pdf; the existing `--data`, `--out`, and `--overwrite` contract (and stdin via `--data @-`) remains the interface that bus-invoices will use.
 
+### Regulated report PDFs (TASE and tuloslaskelma)
+
+Finnish bookkeeping regulation requires the balance sheet (TASE) and the income statement (tuloslaskelma) to be available as PDF. The module currently provides only the **fi-invoice-a4** and **plain-a4** templates; there are no built-in templates or documented render model schemas for TASE or tuloslaskelma. One possible implementation path (Option B) is to add report templates (e.g. `fi-tase-a4`, `fi-tuloslaskelma-a4`) and a stable JSON schema for report render models, plus a documented pipeline that feeds [bus-reports](../modules/bus-reports) JSON into `bus pdf render`. The requirement, current state, and all implementation options (A, B, C, or combination) are described in [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs). When an option that involves bus-pdf is chosen, this SDD will be updated with the corresponding requirements (e.g. report render model schema, template identifiers) and interfaces.
+
 ### Assumptions and Dependencies
 
 Bus PDF depends on a deterministic render template and a valid JSON input model. Invalid input results in deterministic diagnostics. Callers are responsible for producing render models that conform to the documented schema for the chosen template.
@@ -131,6 +135,7 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 - [Repository](https://github.com/busdk/bus-pdf)
 - [Invoice PDF storage](../layout/invoice-pdf-storage)
 - [Layout principles](../layout/layout-principles)
+- [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
 
 ### Document control
 

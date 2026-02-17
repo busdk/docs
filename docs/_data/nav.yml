@@ -35,6 +35,8 @@
           url: /implementation/development-status#finnish-payroll-handling-monthly-pay-run
         - label: Orphan modules
           url: /implementation/development-status#orphan-modules
+    - label: Regulated report PDFs (TASE, tuloslaskelma)
+      url: /implementation/regulated-report-pdfs
     - label: Cost summary
       url: /implementation/cost-summary
 

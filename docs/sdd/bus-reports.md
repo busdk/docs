@@ -17,6 +17,8 @@ FR-REP-002 Integrity checks. The module MUST verify ledger integrity before emit
 
 NFR-REP-001 Auditability. Report outputs MUST be fully derivable from repository data and traceable to postings and vouchers. Acceptance criteria: report outputs reference stable identifiers or are reproducible from the same datasets.
 
+FR-REP-003 Regulated report PDFs. The toolchain MUST support producing the balance sheet (TASE) and the income statement (tuloslaskelma) as PDF suitable for Finnish regulated reporting (archiving, auditors, authorities). Acceptance criteria: users can obtain compliant TASE and tuloslaskelma PDFs from workspace data via the CLI without relying on external conversion tools. The implementation approach (e.g. `--format pdf` in this module, report templates in [bus-pdf](../modules/bus-pdf), or a dedicated report-PDF subcommand) is described in [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs); that document lists options A, B, and C and their combination. Until one option is implemented, this requirement is not satisfied.
+
 ### System Architecture
 
 Bus Reports reads journal and account datasets and optionally budget datasets to compute reports. It produces report outputs used for filing and management reporting.
@@ -31,7 +33,7 @@ Interface IF-REP-001 (module CLI). The module exposes `bus reports` with subcomm
 
 Report scoping is explicit and deterministic. `trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>` and include postings on or before the as-of date. `general-ledger` and `profit-and-loss` require `--period <period>` using the same period identifier form as `bus period` and `bus vat`. `general-ledger` accepts an optional `--account <account-id>` to emit a single-account ledger; when omitted it emits all accounts in deterministic order.
 
-All report commands accept `--format <format>` with supported values `text` and `csv`. The default is `text`, which emits a plain, non-aligned table with a stable column order and a literal `|` separator so output does not vary by terminal width. The `csv` format emits UTF-8 CSV with a header row and the same deterministic row ordering as the text output.
+All report commands accept `--format <format>` with supported values `text`, `csv`, and `markdown`. For balance-sheet and profit-and-loss, `json`, `kpa`, and `pma` are also supported. The default is `text`, which emits a plain, non-aligned table with a stable column order and a literal `|` separator so output does not vary by terminal width. The `csv` format emits UTF-8 CSV with a header row and the same deterministic row ordering as the text output. The `markdown` format emits a Markdown table (header row and `|`-separated columns) with the same row ordering, suitable for documentation or further processing. PDF is not yet supported; see FR-REP-003 and [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs).
 
 Usage example:
 
@@ -97,6 +99,7 @@ General ledger: a report listing detailed postings by account.
 - [Repository](https://github.com/busdk/bus-reports)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
 - [Append-only and soft deletion](../data/append-only-and-soft-deletion)
+- [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
 
 ### Document control
 

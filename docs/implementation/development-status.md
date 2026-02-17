@@ -24,10 +24,11 @@ This page summarizes the implementation state of each BusDK module using test ev
 
 ### Accounting workflow
 
-See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. The end-user bookkeeping web UI for this flow is [bus-books](../sdd/bus-books) (design in SDD). Module readiness:
+See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. The end-user bookkeeping web UI for this flow is [books](../modules/bus-books#development-state) (design in [bus-books SDD](../sdd/bus-books)). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
+| [books](../modules/bus-books#development-state) | 20% (Basic structure) – serve and capability URL verified by e2e; token gating and workspace checks by unit tests; no embedded API or UI yet; user cannot complete any bookkeeping step in the UI. | Embed [api](../modules/bus-api) and UI assets; Dashboard and core screens (PLAN.md). | None known. |
 | [bus](../modules/bus#development-state) | 50% (Primary journey) – single entrypoint; no-args and missing-subcommand verified; e2e for dispatch would raise confidence. | E2E for dispatch; `bus help` when bus-help missing. | None known. |
 | [init](../modules/bus-init#development-state) | 70% (Broadly usable) – config-only or full baseline verified by e2e; step order and `--no-<module>` exclusions proven. | Help list each per-module flag and `--no-<module>` (PLAN.md). | None known. |
 | [config](../modules/bus-config#development-state) | 90% (Broadly usable) – init and set verified by e2e and unit tests; workspace-config step complete; set no-flags no-op not verified. | Set no-flags no-op (no write, no message) per PLAN.md. | None known. |
@@ -87,7 +88,7 @@ See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-
 | [period](../modules/bus-period#development-state) | 90% — close, lock, opening with append-only and locked state verified. | Optional: automatic result-to-equity at year end. | None known. |
 | [vat](../modules/bus-vat#development-state) | 70% (Broadly usable) – VAT report and export from invoice (and optionally journal) data. | Index update; journal input; posting/voucher refs. | None known. |
 | [validate](../modules/bus-validate#development-state) | 50% — Workspace validation for coherence before close/filing verified; audit and closed-period would strengthen. | format text/tsv; audit and closed-period checks. | None known. |
-| [reports](../modules/bus-reports#development-state) | 80% (Broadly usable) – reports, traceability, and KPA/PMA formats for balance-sheet and profit-and-loss verified by e2e. | Entity-scoped KPA/PMA if required by compliance. | None known. |
+| [reports](../modules/bus-reports#development-state) | 80% (Broadly usable) – reports, traceability, and KPA/PMA formats for balance-sheet and profit-and-loss verified by e2e. | Regulated TASE/tuloslaskelma PDF ([design](../implementation/regulated-report-pdfs)). | None known. |
 | [filing](../modules/bus-filing#development-state) | 60% (Stable) – delegation to prh/vero/tax-audit-pack, list, flags, pass-through, workdir/env verified by e2e and unit tests. | Bundle assembly or document delegation (FR-FIL-001); tax-audit-pack parameter set (OQ-FIL-001). | Stable bundle contract for filing targets. |
 | [filing-prh](../modules/bus-filing-prh#development-state) | 50% — Validate and bundle from fixture verified by e2e and unit tests; PRH content and SBR taxonomy would complete filing. | PRH content in bundles (FR-PRH-002); SBR taxonomy in iXBRL; README links. | [filing](../modules/bus-filing) bundle contract. |
 | [filing-vero](../modules/bus-filing-vero#development-state) | 50% — user can produce and verify a Vero bundle from a fixture; manifest source_refs and root VAT path verified; full integration blocked by [filing](../modules/bus-filing) bundle contract. | Doc update (Risks/pre-export layout per PLAN.md); optional voucher/posting refs in bundle. | [filing](../modules/bus-filing) bundle contract. |
@@ -180,7 +181,7 @@ Modules not mapped to any documented use case appear here with overall completen
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./developer-module-workflow">Developer module workflow</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation and development status</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./cost-summary">Bus project cost summary</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./regulated-report-pdfs">Regulated report PDFs (TASE and tuloslaskelma)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
