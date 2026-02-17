@@ -1,11 +1,15 @@
 ---
-title: bus data
-description: bus data is the workspace dataset tool for BusDK repositories. Run it as bus data via the dispatcher.
+title: bus-data — shared tabular data layer and schema-validated I/O
+description: bus data provides the shared tabular data layer for BusDK with deterministic Frictionless Table Schema and Data Package handling for workspace datasets.
 ---
 
 ## bus data — inspect and maintain workspace datasets, schemas, and data packages
 
-Run the data module via the BusDK dispatcher as `bus data`. Do not invoke the `bus-data` binary directly unless you have a specific reason; the dispatcher is the supported entrypoint.
+### Overview
+
+Command names follow [CLI command naming](../cli/command-naming). Bus Data provides the shared tabular data layer for BusDK by implementing deterministic [Frictionless](https://specs.frictionlessdata.io/) Table Schema and Data Package handling for workspace datasets. Its primary surface is a Go library that other modules import for schema, data package, and CSV operations. The canonical way to run the module’s CLI is via the BusDK dispatcher as `bus data`; the `bus-data` binary remains available for scripts or direct invocation, but end users and documentation should prefer `bus data`. The module is library-first, deterministic, and non-interactive, with no Git or network behavior. Modules that need to create or ensure `datapackage.json` (e.g. [bus-config](./bus-config), [bus-init](./bus-init)) use the bus-data Go library to initialize the empty descriptor first, not by invoking the CLI.
+
+`bus data` reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. It remains a mechanical data layer and does not implement domain-specific accounting logic; domain invariants are enforced by domain modules. Paths to domain datasets (e.g. accounts, journal) are owned by the module that owns each dataset; callers obtain paths from that module, and bus-data accepts table paths as input and performs schema-validated I/O on them.
 
 ### Synopsis
 
@@ -13,9 +17,8 @@ Run the data module via the BusDK dispatcher as `bus data`. Do not invoke the `b
 `bus data schema init <table> --schema <file> [--force] [--chdir <dir>] [global flags]`  
 `bus data schema show <table> | schema show --resource <name> [--chdir <dir>] [global flags]`  
 `bus data schema infer <table> [--sample <n>] [--chdir <dir>] [global flags]`  
-`bus data schema add-field <table> --field <name> --type <type> [--default <value>] [--required] [--description <text>] [--chdir <dir>] [global flags]`  
-`bus data schema field add <table> --field <name> --type <type> [--formula-mode ...] [--formula-prefix ...] [--formula-result-type ...] [--default <value>] [--chdir <dir>] [global flags]`  
-`bus data schema set-type <table> --field <name> --type <type> [--chdir <dir>] [global flags]`  
+`bus data schema field add [--resource <name>] --field <name> --type <type> [--default <value>] [--required] [--description <text>] [--chdir <dir>] [global flags]`  
+`bus data schema field set-type [--resource <name>] --field <name> --type <type> [--chdir <dir>] [global flags]`  
 `bus data schema patch [--resource <name>] --patch <file> [--chdir <dir>] [global flags]`  
 `bus data package discover | package show | package patch --patch <file> | package validate [--chdir <dir>] [global flags]`  
 `bus data resource list | resource validate <resource> [--chdir <dir>] [global flags]`  
@@ -27,13 +30,9 @@ Run the data module via the BusDK dispatcher as `bus data`. Do not invoke the `b
 `bus data table read <table> [--row <index|start:end>] [--column <name>] ... [--filter <field>=<value>] ... [--key <key>=<value>] [--formula-source] [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus data table list [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`
 
-### Description
-
-Command names follow [CLI command naming](../cli/command-naming). `bus data` is the workspace dataset tool for BusDK repositories. It reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. The goal is to make dataset maintenance predictable and reviewable while keeping day-to-day operations simple and non-interactive.
-
 ### Getting started
 
-To create an empty workspace data package descriptor, run `bus data init`. It creates `datapackage.json` at the workspace root with the standard profile and an empty resources list. It does not scan for CSV files or add resources; use `bus data package discover` when you want to register existing tables that already have beside-the-table schemas.
+To create an empty workspace data package descriptor, run `bus data init`. It creates `datapackage.json` at the workspace root with the standard profile and an empty `resources` array. Init does not scan the workspace for CSV files or add resources. When the file already exists, init is idempotent and leaves it unchanged. Adding resource entries is a separate operation: run `bus data package discover` to scan the workspace for CSV files that have a beside-the-table schema and add or update resource entries in the existing `datapackage.json`. Discover requires `datapackage.json` to exist (e.g. after `bus data init`); if the file is missing, the command fails with a clear diagnostic.
 
 ```text
 bus data init
@@ -141,14 +140,14 @@ bus data schema infer products --sample 2
 Adding a field extends both the schema and the CSV. A default value is written to existing rows, and you can mark the field as required and add a description. When you need formula metadata inline, use `schema field add` with formula flags so the schema and table stay in sync.
 
 ```text
-bus data schema add-field products --field category --type string --default general --required --description "category"
-bus data schema field add products --field total --type string --formula-mode inline --formula-prefix "=" --formula-result-type number --default "=a + b"
+bus data schema field add --resource products --field category --type string --default general --required --description "category"
+bus data schema field add --resource products --field total --type string --formula-mode inline --formula-prefix "=" --formula-result-type number --default "=a + b"
 ```
 
 Changing a field type updates the schema only when existing values are compatible with the new type.
 
 ```text
-bus data schema set-type products --field price --type number
+bus data schema field set-type --resource products --field price --type number
 ```
 
 Schema metadata can include `primaryKey`, `foreignKeys`, and `missingValues`. These are preserved by `schema init`, and `primaryKey` can be either a single field name or an ordered list for composite keys. Foreign key definitions follow the Table Schema format and are enforced during resource and package validation.
@@ -272,7 +271,7 @@ Help and version output are printed to standard output. Diagnostics and validati
 
 ### Files
 
-Operates on any workspace CSV and its beside-the-table `.schema.json` (same directory, `.csv` replaced by `.schema.json`), plus `datapackage.json` at the workspace root when present. Paths to domain datasets (e.g. accounts, journal) are owned by the module that owns each dataset; callers obtain paths from that module (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files (same directory, `.csv` replaced by `.schema.json`). A workspace `datapackage.json` is stored at the workspace root and references resources by name and workspace-relative CSV path. Path ownership lies with domain modules: when a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it obtains the path from the owning module’s Go library. Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods” (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 

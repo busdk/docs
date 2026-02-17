@@ -1,9 +1,15 @@
 ---
-title: bus-vat — compute VAT reports and exports
-description: bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings.
+title: bus-vat — VAT computation, reports, and export
+description: bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, reconciles invoice VAT with ledger postings, and supports journal-driven VAT when invoice masters are incomplete.
 ---
 
-## `bus-vat` — compute VAT reports and exports
+## `bus-vat` — VAT computation, reports, and export
+
+### Overview
+
+Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data so they remain reviewable and exportable for archiving and [VAT reporting and payment](../workflow/vat-reporting-and-payment). The module **owns the definition of VAT period boundaries**: the actual sequence of reporting periods (start and end dates) used for allocation and reporting. That sequence can include transitions when the period length changes within a year (e.g. monthly → yearly → quarterly), transition periods (e.g. 4 months), and non-standard first or last periods (e.g. 18-month first period after registration). Workspace-level inputs come from [bus config](./bus-config) — current `vat_reporting_period`, `vat_timing`, and optional `vat_registration_start` / `vat_registration_end` — with the canonical definition of those keys and allowed values in [Workspace configuration](../data/workspace-configuration). The module uses those settings as inputs and may maintain a period-definition dataset or logic to produce the authoritative list of periods, then allocates transactions and invoices to those periods and produces reports and exports.
+
+Where invoice master data is incomplete or absent (e.g. journal-first bookkeeping or migration), the module supports **journal-driven VAT mode**: computing VAT period totals from journal postings and VAT-related account and tax mappings, with deterministic period allocation and traceable diagnostics. The same period boundaries, allocation rules, and output formats apply as for the invoice-based path; only the input source differs. The CLI binding for journal-driven mode (e.g. a source selector on `report`/`export` or a dedicated command) is still an open design choice and will be documented when resolved.
 
 ### Synopsis
 
@@ -11,15 +17,11 @@ description: bus vat computes VAT totals per reporting period, validates VAT cod
 `bus vat report --period <period> [-C <dir>] [global flags]`  
 `bus vat export --period <period> [-C <dir>] [global flags]`
 
-### Description
-
-Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data for archiving and filing. Period selection uses the same `--period` form as other period-scoped commands. VAT reporting period, timing basis (performance, invoice, or cash), and optional registration dates are configured in the workspace via [bus config](./bus-config). Bus-vat **owns the definition of VAT period boundaries**: it uses those settings as inputs and may maintain a period-definition dataset or logic to produce the actual sequence of periods (including transitions within a year — e.g. monthly → yearly → quarterly — and non-standard lengths such as 4-month transition or 18-month first period). It then allocates transactions and invoices to those periods and produces reports and exports.
-
 ### Commands
 
-- `init` creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas). If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `report` computes and emits VAT summary for a period.
-- `export` writes VAT export output for a period (e.g. for filing).
+`init` creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero.
+
+`report` computes and emits the VAT summary for a given period. `export` writes VAT export output for a period (e.g. for filing). Both require `--period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules; VAT commands do not use a positional period argument.
 
 ### Options
 
@@ -27,7 +29,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus vat` comp
 
 ### Files
 
-Reads invoice and journal data and VAT reference datasets (e.g. `vat-rates.csv`). Writes VAT summaries and exports as root-level datasets with schemas. When period-specific report or return data is saved to its own file, it is stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`), not in a subdirectory. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not use a subdirectory for that data. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries and exports as repository data. VAT master data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report or return data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 
