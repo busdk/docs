@@ -174,11 +174,11 @@ Modules not mapped to any documented use case appear here with overall completen
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
 | [replay](../modules/bus-replay#development-state) | 70% — Core export/apply/render and idempotency verified by golden, roundtrip, and e2e; user can migrate workspace and re-run log; ERP history still uses generated scripts. | First-class profile-driven ERP import replay (FR-RPL-008). | None known. |
-| [run](../modules/bus-run#development-state) | 60% — Define/list/set/unset and run script token and pipeline; stop-on-first-failure, path escape, ambiguity, disabled script, expansion limits verified; prompt run stub-only. | Document script execution method for .sh/.bat/.ps1 (PLAN.md). | None known. |
+| [run](../modules/bus-run#development-state) | 60% — Define/list/set/unset and run script token and pipeline; stop-on-first-failure, path escape, ambiguity, disabled script, expansion limits verified; prompt run stub-only. | Align agent/script output with SDD (stdout for piping); document script execution for .sh/.bat/.ps1 (PLAN.md). | None known. |
 
 **replay:** 70% overall. Journey: user can complete export→apply→render and re-run the same log (idempotency); golden, roundtrip, and e2e verify deterministic logs, guard evaluation, and script rendering. ERP history migration still uses generated scripts. No new use case doc needed — operator/automation tool, not a step in a documented end-user workflow.
 
-**run:** 60% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. Journey: user can define/list/set/unset and run script tokens and pipelines; context, list, pipeline preview, management commands, stop-on-first-failure, path escape, ambiguity, disabled script, and expansion limits verified by unit and e2e tests; prompt run verified with stub agent only. No new use case doc needed — generic runner, not journey-specific.
+**run:** 60% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. Journey: user can define/list/set/unset and run script tokens and pipelines; context, list, pipeline preview, management commands, stop-on-first-failure, path escape, ambiguity, disabled script, and expansion limits verified by unit and e2e; prompt run stub-only. No new use case doc needed — generic runner, not journey-specific.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
