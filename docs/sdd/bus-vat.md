@@ -9,6 +9,8 @@ description: Bus VAT computes VAT totals per reporting period, validates VAT cod
 
 Bus VAT computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger postings. It **owns the definition of VAT period boundaries**: the actual sequence of reporting periods (start and end dates) used for allocation and reporting. That sequence can include transitions when the period length changes within a year (e.g. monthly → yearly → quarterly), transition periods (e.g. 4 months), and non-standard first or last periods (e.g. 18-month first period after registration). Bus-vat uses workspace-level inputs from [bus-config](../sdd/bus-config) — current `vat_reporting_period`, `vat_timing`, and optional `vat_registration_start` / `vat_registration_end` — and may maintain a period-definition dataset or logic to produce the authoritative list of periods. The canonical definition of those configuration keys and allowed values is in [bus-config](../sdd/bus-config) and [Workspace configuration](../data/workspace-configuration).
 
+Some bookkeeping sources are journal-first and do not have complete invoice master datasets. VAT workflows that emphasize invoice data as the primary source can block migration and parity workflows for such sources. The module therefore supports a **journal-driven VAT mode**: computation of VAT period totals from journal postings plus VAT-related account and tax mappings, with deterministic period allocation and traceable diagnostics. That mode enables VAT reporting in migrations where invoice masters are incomplete and improves parity for historical datasets while preserving auditability and deterministic outputs.
+
 ### Requirements
 
 FR-VAT-001 VAT computations. The module MUST compute VAT summaries from invoice and journal data. Acceptance criteria: VAT report outputs are deterministic and traceable to source postings.
@@ -16,6 +18,8 @@ FR-VAT-001 VAT computations. The module MUST compute VAT summaries from invoice 
 FR-VAT-002 VAT export outputs. The module MUST write VAT summary and export files as repository data. Acceptance criteria: export outputs are recorded in datasets such as `vat-reports.csv` and `vat-returns.csv`.
 
 FR-VAT-003 CLI surface for VAT baseline. The module MUST provide an `init` command that creates the VAT baseline datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas) when they are absent. When they already exist in full, `init` MUST print a warning to standard error and exit 0 without modifying anything. When they exist only partially, `init` MUST fail with a clear error and not write any file (see [bus-init](../sdd/bus-init) FR-INIT-004). Acceptance criteria: `bus vat init` is available; idempotent and partial-state behavior as specified.
+
+FR-VAT-004 Journal-driven VAT mode. The module MUST support computing VAT period totals from journal postings and VAT-related account/tax mappings when invoice master data is incomplete or absent. Acceptance criteria: period allocation is deterministic; diagnostics are traceable to source postings and mappings; report and export outputs remain append-only and audit-ready; behavior is equivalent in auditability and determinism to the invoice-based path where both sources exist.
 
 NFR-VAT-001 Auditability. VAT corrections MUST be append-only and traceable to original records. Acceptance criteria: corrections create new records that reference originals.
 
@@ -33,13 +37,15 @@ KD-VAT-002 VAT period boundaries are owned by bus-vat. The sequence of VAT repor
 
 KD-VAT-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of VAT datasets for read-only access. Write access and all VAT business logic remain in this module.
 
+KD-VAT-004 Journal-driven mode supports migration and legacy scenarios. Where invoice master data is incomplete or absent, VAT period totals are computed from journal postings and VAT-related account/tax mappings. The same period boundaries, allocation rules, and output formats apply as for the invoice-based path; only the input source differs. Implementation may expose this mode as an option on `bus vat` (e.g. `--source journal`) or as a dedicated CLI (e.g. `bus vat-journal`); the binding is an open design choice (see Open Questions).
+
 ### Component Design and Interfaces
 
 Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `report`, and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument.
+Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument. Journal-driven VAT mode (FR-VAT-004) is invoked either by a source selector on these commands (e.g. `--source journal`) or by a dedicated CLI entry point (e.g. `bus vat-journal`); the chosen binding is documented once the open design choice is resolved (OQ-VAT-001).
 
 Interface IF-VAT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (vat-rates, vat-reports, vat-returns, and any period-definition or period-scoped files and their schemas). Given a workspace root path and optionally a period identifier, the library returns the relevant path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and VAT logic remain in this module.
 
@@ -53,6 +59,8 @@ bus vat export --period 2026Q1
 ### Data Design
 
 The module reads invoice data and journal postings and writes VAT summaries and export data. It owns the definition of VAT period boundaries; that definition may be stored in a period-definition dataset (e.g. `vat-periods.csv`) at the workspace root or computed from workspace config and rules. VAT master data (vat-rates.csv, vat-reports.csv, vat-returns.csv and their schemas) is stored in the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report or return data is written to its own file (rather than only appended to the root index datasets), that file is also stored at the workspace root with a date prefix, for example `vat-reports-2026Q1.csv` or `vat-returns-2026Q1.csv`, not under a subdirectory such as `2026/vat-reports/`. The index datasets at root record which period files exist and where they live.
+
+In journal-driven VAT mode (FR-VAT-004), inputs are journal postings and VAT-related account/tax mappings (e.g. chart-of-accounts or mapping tables that identify which accounts and tax codes contribute to VAT). Period boundaries and allocation rules are unchanged; outputs (vat-reports, vat-returns) use the same schemas and repository layout so that migration and parity workflows produce reviewable, deterministic results.
 
 Other modules that need read-only access to VAT datasets MUST obtain the path(s) from this module’s Go library (IF-VAT-002). All writes and VAT-domain logic remain in this module.
 
@@ -91,7 +99,12 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 ### Glossary and Terminology
 
 VAT report: a computed summary of VAT totals for a reporting period.  
-VAT export: a repository data output intended for filing or archiving.
+VAT export: a repository data output intended for filing or archiving.  
+Journal-driven VAT mode: computation of VAT period totals from journal postings and VAT-related account/tax mappings instead of (or in addition to) invoice master data; used when invoice masters are incomplete or absent (e.g. migration or legacy sources).
+
+### Open Questions
+
+OQ-VAT-001 Journal-driven mode binding. Should journal-driven VAT mode be exposed as an option on `bus vat` (e.g. `--source invoice` | `--source journal`) or as a dedicated CLI such as `bus vat-journal`? The requirement (FR-VAT-004) and behavior are fixed; only the CLI surface is to be decided.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -119,7 +132,7 @@ VAT export: a repository data output intended for filing or archiving.
 Title: bus-vat module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-VAT`  
-Version: 2026-02-15  
+Version: 2026-02-17  
 Status: Draft  
-Last updated: 2026-02-15  
+Last updated: 2026-02-17  
 Owner: BusDK development team  

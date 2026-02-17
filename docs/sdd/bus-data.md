@@ -9,6 +9,8 @@ description: Bus Data provides the shared tabular data layer for BusDK by implem
 
 Bus Data provides the shared tabular data layer for BusDK by implementing deterministic Frictionless Table Schema and Data Package handling for workspace datasets. Its primary surface is a Go library that other modules import directly for schema, data package, and CSV operations. The canonical way to run the module’s CLI is via the BusDK dispatcher as `bus data`; the `bus-data` binary remains available for scripts or direct invocation, but end users and documentation should prefer `bus data`. The module remains library-first, deterministic, and non-interactive, with no Git or network behavior. Modules that need to create or ensure `datapackage.json` (e.g. [bus-config](./bus-config), [bus-init](./bus-init)) MUST use the bus-data Go library to initialize the empty descriptor first, not by invoking the CLI.
 
+The module may be extended with deterministic read helpers for table-like CSV workbooks: historical accounting data often arrives as spreadsheet-style CSV exports where report totals are driven by formulas and cross-sheet references. Address-based cell and range read, optional header or anchor-based lookup, and consistent numeric normalization for locale-formatted values reduce dependence on ad-hoc external parsing for migration and parity analysis. Optional integration with [bus-bfl](./bus-bfl) for formula metadata and evaluation allows formula-driven report totals to be represented and validated in Bus-native datasets, improving reproducibility and auditability when reconciling source reports against ledger-level reconstructions.
+
 ### Requirements
 
 FR-DAT-001 Deterministic dataset I/O. The module MUST provide deterministic read, write, and validation behavior for workspace datasets. Acceptance criteria: table reads and writes are schema-validated and refuse invalid writes, and the same input files and commands yield byte-for-byte identical outputs.
@@ -57,6 +59,14 @@ FR-DAT-020 Opt-in formula source output. The module MUST provide an explicit, de
 
 FR-DAT-021 Range resolution for BFL. When evaluating BFL expressions that contain range syntax, the module MUST provide a deterministic range resolver to the BFL runtime context. Acceptance criteria: range expressions resolve to arrays based on a stable mapping from BFL column and row references to the current resource snapshot, and open-ended ranges resolve a deterministic last row without inspecting external state.
 
+FR-DAT-022 Workbook-style address-based read. The module MUST support deterministic read of cell and range values from CSV resources using address-based notation consistent with the [bus-bfl](./bus-bfl) reference and range grammar (e.g. cell `J510`, range `HC513:HD513`). Acceptance criteria: a designated command or mode accepts one or more cell or range addresses, resolves them against a CSV resource, and returns values in a deterministic, machine-friendly format (tsv or json); resolution uses the same column-letter and row-number mapping as BFL (1-based rows, A=1 through Z=26, AA=27, etc.) so that workbook read and formula evaluation share a single addressing model.
+
+FR-DAT-023 Header- or anchor-based lookup. The module MUST support optional header or anchor-based lookup for robust extraction from table-like CSV workbooks. Acceptance criteria: when configured, extraction can identify data by column header name and optionally by anchor row or column; resolution is deterministic and documented so migration and parity scripts can rely on stable addressing.
+
+FR-DAT-024 Locale-aware numeric normalization for workbook read. The module MUST support consistent numeric normalization for locale-formatted values when reading workbook-style CSV. Acceptance criteria: configurable decimal and thousands separators (or a documented locale profile) produce deterministic numeric values in output; raw string output remains available when normalization is disabled; behavior is explicit and does not infer locale from the environment.
+
+FR-DAT-025 Optional formula evaluation for workbook read. When reading CSV workbooks with address-based or range access, the module MAY support optional formula metadata or schema and evaluate cell contents using [bus-bfl](./bus-bfl) when the content is treated as a formula. Acceptance criteria: when enabled, formula-driven cells are evaluated deterministically and results are available in the same machine-friendly output; formula source can be included via an explicit opt-in; evaluation uses the same BFL dialect and range resolver contract as schema-validated table read so that formula-driven report totals can be represented and validated in Bus-native workflows.
+
 NFR-DAT-001 Mechanical scope. The module MUST remain a mechanical data layer and MUST NOT implement domain-specific accounting logic. Acceptance criteria: domain invariants are enforced by domain modules, not by bus-data.
 
 NFR-DAT-002 No Git or network behavior. The module MUST NOT perform Git operations or network access. Acceptance criteria: the library and CLI only read and write local workspace files.
@@ -74,12 +84,16 @@ Bus Data implements the workspace store interface and dataset I/O mechanics used
 
 Bus Data integrates [bus-bfl](./bus-bfl) to validate and evaluate formulas declared in Table Schema metadata, satisfying FR-DAT-017, FR-DAT-018, FR-DAT-019, and FR-DAT-021. Formula evaluation is deterministic, row-local, and bounded by the bus-bfl defaults unless a schema-provided rounding policy is present, and read-time projection never writes back to CSV. When formulas include range expressions, bus-data provides a deterministic range resolver that maps column and row references to the current resource snapshot.
 
+A workbook-style read path (FR-DAT-022 through FR-DAT-025) provides address-based cell and range access, optional header or anchor-based lookup, locale-aware numeric normalization, and optional formula evaluation for CSV resources that are used as table-like workbooks (e.g. spreadsheet exports). That path reuses the same BFL reference grammar and range resolution contract so that workbook extraction and formula-driven validation share a single addressing model and output remains machine-friendly (tsv or json) for agent workflows and audit scripts.
+
 ### Key Decisions
 
 KD-DAT-001 Shared library for data mechanics. Dataset I/O and schema handling are centralized in a library to keep module behavior consistent.  
 KD-DAT-002 Frictionless-native data package support. Data Package descriptors are treated as first-class workspace metadata and remain fully compatible with Frictionless Table Schema and Data Package rules.  
 KD-DAT-003 Init vs discover. Creating an empty `datapackage.json` is a separate operation (init) from scanning the workspace and adding resource entries (discover). Init does not scan for CSV files; discover requires an existing descriptor. This keeps bootstrap predictable and avoids implicit discovery under the name “init”.  
 KD-DAT-004 Library integration for descriptor bootstrap. bus-config and bus-init MUST use the bus-data Go library to create or ensure the empty `datapackage.json` before writing accounting entity or other metadata. They MUST NOT invoke the bus-data CLI; integration is via library calls only so that a single code path owns descriptor creation and formatting.
+
+KD-DAT-005 Workbook read as optional, deterministic extension. Workbook-style read (address-based cell/range, header or anchor lookup, numeric normalization, optional formula evaluation) is an optional extension of the data layer. It operates on CSV resources with the same BFL addressing grammar as formula range resolution, keeps output machine-friendly (tsv|json), and does not replace or alter the existing schema-validated table read contract.
 
 ### Component Design and Interfaces
 
@@ -100,6 +114,8 @@ Command `bus data schema show --table <table>` writes the schema file content ex
 Command `bus data table read <table>` takes a required table path, loads the beside-the-table schema, validates the table against the schema, and writes canonical CSV or JSON to standard output. It preserves the row order from the file and performs no normalization beyond validation. On validation failure, the command exits non-zero and does not emit partial output. Read flags may select specific rows, filters, and columns without changing validation behavior.
 
 When a table contains formula-enabled fields, `bus data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns. For formulas that include ranges, bus-data resolves `Ref.ColumnIndex` to the schema field order (1-based) and `Ref.RowIndex` to the physical row order (1-based) in the current resource snapshot, and it resolves open-ended ranges using the last row in that snapshot without probing external state.
+
+Workbook-style read (FR-DAT-022 through FR-DAT-025) is provided by a designated command or mode that accepts a CSV path (workspace-relative or via `--chdir`), one or more cell or range addresses in BFL-compatible notation, and optional flags for header or anchor-based lookup and locale-aware numeric normalization. Output is deterministic tsv or json suitable for agent workflows and audit scripts. When optional formula evaluation is enabled, the same [bus-bfl](./bus-bfl) dialect and range resolver contract as schema-validated table read apply so that formula-driven cells can be evaluated and included in the output; formula source may be included via an explicit opt-in. The library MUST expose this behavior through a dedicated API so that other modules can invoke workbook read without shelling out to the CLI. The exact command name, flag set, and output schema for cell/range results are TBD and MUST be documented when implemented.
 
 Command `bus data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
 
@@ -235,6 +251,8 @@ Bus Data owns mechanical concerns only: reading and writing CSV, reading and wri
 
 Path ownership lies with domain modules. When a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it MUST obtain the path from the owning module’s Go library (see [Data path contract for read-only cross-module access](./modules#data-path-contract-for-read-only-cross-module-access)). Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods.” This keeps the data layer mechanical and allows future dynamic path configuration to be implemented in the owning modules without changing bus-data’s contract.
 
+Workbook-style CSV is a read-only view over a CSV resource treated as a grid of cells. Addressing uses the same column-letter and row-number mapping as [bus-bfl](./bus-bfl) (1-based rows; column A=1 through Z=26, AA=27, etc.) so that address-based extraction and formula range resolution are consistent. Workbook read does not require a beside-the-table schema; when a schema is present and formula evaluation is enabled, formula metadata may be used, and when no schema is present, formula treatment is opt-in and implementation-defined (e.g. heuristic detection of leading `=` or explicit cell-set configuration). Locale-aware numeric normalization applies only in workbook read and does not change the stored CSV or schema-validated table read behavior.
+
 ### Assumptions and Dependencies
 
 Bus Data depends on the workspace layout conventions for CSV, beside-the-table schema files, and `datapackage.json` at the workspace root. If datasets or schemas are missing or invalid, the library and CLI return deterministic diagnostics and do not modify files.
@@ -279,11 +297,17 @@ Schema operation policy: the optional `busdk` metadata in a Table Schema that de
 Formula-enabled field: a field descriptor that declares `busdk.formula` metadata and is evaluated using BFL during read-time projection.  
 Package discover: the operation that scans the workspace for CSV files with beside-the-table schemas and adds or updates resource entries in `datapackage.json`; distinct from init, which only creates an empty descriptor.
 
+Workbook-style CSV: a CSV resource treated as a grid of cells for address-based or range extraction, optionally with header or anchor-based lookup and formula evaluation, without requiring schema-validated table read.
+
+Cell address: a BFL-compatible reference to a single cell (e.g. J510), using column letters and 1-based row number.
+
 ### Open Questions
 
 OQ-DAT-001 What is the exact CLI flag name and output shape for the opt-in mode that includes formula source alongside computed values, and which output formats must support it?
 
 OQ-DAT-002 Should `bus data table read` fail the entire command on the first formula evaluation error, or should it report all formula errors and then fail without emitting partial output?
+
+OQ-DAT-003 What is the exact CLI command name, flag set, and output schema for workbook-style read (address-based cell/range, header or anchor lookup, locale normalization, optional formula evaluation)?
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -307,7 +331,7 @@ OQ-DAT-002 Should `bus data table read` fail the entire command on the first for
 Title: bus-data module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-DATA`  
-Version: 2026-02-15  
+Version: 2026-02-17  
 Status: Draft  
-Last updated: 2026-02-15  
+Last updated: 2026-02-17  
 Owner: BusDK development team  
