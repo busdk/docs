@@ -16,7 +16,7 @@ description: "CLI reference for bus accounts: init, list, add, set, validate, an
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus accounts` maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types so downstream modules can rely on stable account identifiers.
+Command names follow [CLI command naming](../cli/command-naming). `bus accounts` maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types so downstream modules can rely on stable account identifiers. For Finnish statutory statement output in [bus-reports](./bus-reports), this module also owns the account-to-statement mapping dataset contract.
 
 ### Commands
 
@@ -59,9 +59,11 @@ The CLI surface covers the core lifecycle needed for scripts and UIs to create, 
 
 If your `accounts.csv` schema includes additional reporting and control columns (for example `ledger_category_id` and `is_active`), those fields are currently maintained by editing `accounts.csv` directly and then validating with `bus accounts validate` (and, for whole-workspace checks, `bus validate`). This keeps the authoritative dataset explicit while avoiding documentation that implies unsupported flags exist.
 
+For Finnish statutory reports, account-to-line mapping is maintained in `report-account-mapping.csv` with beside-the-table schema `report-account-mapping.schema.json`. Minimum mapping fields are `layout_id`, `account_code`, `statement_target`, `layout_line_id`, and `normal_side` (with optional `rollup_rule`). The mapping is deterministic per selected statement layout (`fi-kpa-*` or `fi-pma-*`) and is consumed by [bus-reports](./bus-reports). Unmapped and ambiguous mappings are treated as errors for `fi-*` statutory layouts.
+
 ### Files
 
-`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area. The schema must be a valid Frictionless Table Schema document so that bus-data and other BusDK modules (for example bus-journal) can parse and use it without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For statutory statement mapping, the module also owns `report-account-mapping.csv` and `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 
@@ -101,6 +103,7 @@ See [Development status](../implementation/development-status).
 
 - [Owns master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [Module SDD: bus-reports](../sdd/bus-reports)
 - [Module SDD: bus-accounts](../sdd/bus-accounts)
 - [Accounts layout: Accounts area](../layout/accounts-area)
 

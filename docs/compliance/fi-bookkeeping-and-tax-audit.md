@@ -51,7 +51,7 @@ BusDK MUST store VAT codes, bases, rates, and tax amounts at posting and/or invo
 
 #### I) Balance sheet and income statement as PDF
 
-Finnish bookkeeping regulation requires the balance sheet (TASE) and the income statement (tuloslaskelma) to be available as PDF for archiving, auditors, and authorities. BusDK MUST support producing these documents from workspace data via the CLI so that users can obtain compliant PDFs without relying on external conversion tools. Implementation options (e.g. PDF format in [bus-reports](../../modules/bus-reports), report templates in [bus-pdf](../../modules/bus-pdf), or a dedicated report-PDF subcommand) are described in [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs). (KPA 1339/1997; PMA 1753/2015; retention and readability expectations in KPL 2:7 §; KILA 4.1.1; KILA 4.4.1)
+Finnish bookkeeping regulation requires the balance sheet (TASE) and the income statement (tuloslaskelma) to be available as PDF for archiving, auditors, and authorities. BusDK MUST support producing these documents from workspace data via the CLI so that users can obtain compliant PDFs without relying on external conversion tools. The statement contract in [bus-reports SDD](../../sdd/bus-reports) defines explicit statutory layout identifiers (`fi-kpa-*`, `fi-pma-*`), deterministic account mapping requirements, comparative behavior, and statement consistency validations; [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs) describes the PDF rendering path that uses that contract. (KPA 1339/1997; PMA 1753/2015; retention and readability expectations in KPL 2:7 §; KILA 4.1.1; KILA 4.4.1)
 
 ### Non-goals and accounting judgment
 
@@ -69,7 +69,7 @@ Retention, accessibility, and location requirements (E, F) stem from KPL 2:9–2
 
 Tax-audit readiness (G) relies on VML 14 § and OVML 24 §, which define inspection rights and electronic data availability, and Verohallinto’s audit procedure guidance. (VML 14 §; OVML 24 §; Verohallinnon ohje verotarkastuksesta 4.12.2025)
 
-Financial statement output requirements for reports reference Kirjanpitoasetus (KPA 1339/1997) and the small/micro entity regulation (PMA 1753/2015), which BusDK reports must be able to support as output formats when the user is in scope. Requirement (I) adds that the balance sheet and income statement must be producible as PDF; the chosen implementation approach is documented in [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs). (KPA 1339/1997; PMA 1753/2015)
+Financial statement output requirements for reports reference Kirjanpitoasetus (KPA 1339/1997) and the small/micro entity regulation (PMA 1753/2015), which BusDK supports through explicit layout identifiers and mapping contracts defined in [bus-reports SDD](../../sdd/bus-reports). Requirement (I) adds that the balance sheet and income statement must be producible as PDF; the chosen implementation approach is documented in [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs). (KPA 1339/1997; PMA 1753/2015)
 
 ### Maintenance process
 
@@ -83,6 +83,14 @@ Re-check Finlex and Verohallinto sources at least annually and whenever legislat
 </p>
 <!-- busdk-docs-nav end -->
 
-### Sources (authoritative)
+### Sources
 
-Authoritative sources for this page are Kirjanpitolaki (KPL) at https://finlex.fi/fi/laki/ajantasa/1997/19971336, Kirjanpitoasetus (KPA) at https://finlex.fi/fi/laki/ajantasa/1997/19971339, KILA yleisohje 20.4.2021 (PDF) at https://kirjanpitolautakunta.fi/documents/8208007/11087193/final+2021-04-20+KILA-menetelmaohje+(1).pdf/d19100d1-1b6d-e652-3be0-a22a1a157291/final+2021-04-20+KILA-menetelmaohje+(1).pdf?t=1619681814561, Verohallinnon ohje verotarkastuksesta 4.12.2025 at https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/359968/verohallinnon-ohje-verotarkastuksesta/, Arvonlisäverolaki (AVL) at https://finlex.fi/fi/laki/ajantasa/1993/19931501, Laki verotusmenettelystä (VML) at https://finlex.fi/fi/laki/ajantasa/1995/19951558, Laki oma-aloitteisten verojen verotusmenettelystä (OVML) at https://finlex.fi/fi/laki/ajantasa/2016/20160768, and pien- ja mikroyrityksen tilinpäätösvaatimukset (PMA 1753/2015) at https://finlex.fi/fi/laki/alkup/2015/20151753.
+- [Finlex: Kirjanpitolaki 1336/1997 (KPL)](https://www.finlex.fi/fi/lainsaadanto/1997/1336)
+- [Finlex: Kirjanpitoasetus 1339/1997 (KPA)](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
+- [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
+- [KILA: Yleisohje kirjanpidon menetelmistä ja aineistoista](https://kirjanpitolautakunta.fi/documents/8208007/11087193/final+2021-04-20+KILA-menetelmaohje+(1).pdf/d19100d1-1b6d-e652-3be0-a22a1a157291/final+2021-04-20+KILA-menetelmaohje+(1).pdf?t=1619681814561)
+- [Vero: Verohallinnon ohje verotarkastuksesta](https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/359968/verohallinnon-ohje-verotarkastuksesta/)
+- [Finlex: Arvonlisäverolaki 1501/1993 (AVL)](https://finlex.fi/fi/lainsaadanto/1993/1501)
+- [Finlex: Laki verotusmenettelystä 1558/1995 (VML)](https://finlex.fi/fi/lainsaadanto/1995/1558)
+- [Finlex: Laki oma-aloitteisten verojen verotusmenettelystä 768/2016 (OVML)](https://finlex.fi/fi/lainsaadanto/2016/768)
+- [PRH: Tilinpäätösilmoituksen asiakirjat kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/ilmoituksen_liitteet.html)

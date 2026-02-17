@@ -15,12 +15,14 @@ Owner: [bus accounts](../../modules/bus-accounts). This module is responsible fo
 
 In the current CLI surface, `bus accounts add` records the core account identity (`--code`), `name`, and `type`, and `bus accounts validate` checks schema and invariants. Reporting and control fields such as `ledger_category_id` and `is_active` are maintained by editing `accounts.csv` directly and then validating, so the documentation does not imply unsupported CLI flags exist.
 
+Finnish statutory statement mapping is modeled as a companion dataset, `report-account-mapping.csv`, with schema `report-account-mapping.schema.json`. Each mapping row binds one account to one statement line for one layout identifier (for example `fi-kpa-tase` or `fi-kpa-tuloslaskelma-kululaji`) and includes sign-handling metadata. This keeps account master data and statutory layout mapping deterministic and auditable as repository data.
+
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the chart (and schema) via the [bus accounts](../../modules/bus-accounts) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../sdd/modules#data-path-contract-for-read-only-cross-module-access).
 
 - [bus invoices](../../modules/bus-invoices): references accounts for invoice row classification.
 - [bus journal](../../modules/bus-journal): posts to accounts and reports balances.
 - [bus bank](../../modules/bus-bank): maps bank accounts and statement items to ledger accounts.
-- [bus reports](../../modules/bus-reports): reads account structure for reporting outputs.
+- [bus reports](../../modules/bus-reports): reads account structure and account-to-statement mapping for statutory report outputs.
 
 ### Actions
 
@@ -48,6 +50,8 @@ Employees reference payroll-related accounts via [`wage_expense_account_id`](../
 
 Budgets reference ledger accounts via [`ledger_account_id`](../budgets/ledger-account-id) so budget vs actual reporting can use the same account structure as postings.
 
+Statutory statement mapping rows reference account ids from this chart and layout ids from [bus-reports](../../modules/bus-reports). For Finnish `fi-*` statement layouts, each mapped account must resolve to exactly one line in the selected layout; missing mappings are explicit report-generation errors unless the account is assigned to an allowed statutory other-bucket line.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../accounting-entity/index">Accounting entity</a></span>
@@ -62,4 +66,5 @@ Budgets reference ledger accounts via [`ledger_account_id`](../budgets/ledger-ac
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Configure chart of accounts](../../workflow/configure-chart-of-accounts)
 - [Account types in double-entry bookkeeping](../../data/account-types)
+- [bus-reports module SDD](../../sdd/bus-reports)
 

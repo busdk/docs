@@ -17,6 +17,7 @@ Other modules consume the accounting entity settings as read-only workspace conf
 - [bus invoices](../../modules/bus-invoices): reads entity settings to interpret invoice dates, currency, and VAT context.
 - [bus vat](../../modules/bus-vat): reads VAT registration, reporting period, timing basis, and registration dates for period allocation and reporting.
 - [bus journal](../../modules/bus-journal): posts and reports per entity scope.
+- [bus reports](../../modules/bus-reports): reads Finnish statutory reporting profile keys for layout defaults, comparatives, and PDF signature metadata.
 
 ### Actions
 
@@ -25,7 +26,7 @@ Other modules consume the accounting entity settings as read-only workspace conf
 
 ### Properties
 
-Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The settings include base currency ([base_currency](./base-currency)), fiscal year boundaries ([fiscal_year_start](./fiscal-year-start) and [fiscal_year_end](./fiscal-year-end)), VAT registration ([vat_registered](./vat-registered)), VAT reporting cadence ([vat_reporting_period](./vat-reporting-period)), VAT timing ([vat_timing](./vat-timing)), and optional VAT registration dates ([vat_registration_start](./vat-registration-start)). The canonical reference for all keys and semantics is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration); the [bus config](../../modules/bus-config) CLI is the single place to create and update these settings.
+Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The settings include base currency ([base_currency](./base-currency)), fiscal year boundaries ([fiscal_year_start](./fiscal-year-start) and [fiscal_year_end](./fiscal-year-end)), VAT registration ([vat_registered](./vat-registered)), VAT reporting cadence ([vat_reporting_period](./vat-reporting-period)), VAT timing ([vat_timing](./vat-timing)), optional VAT registration dates ([vat_registration_start](./vat-registration-start)), and Finnish statutory reporting-profile keys under `reporting_profile.fi_statutory` (reporting standard, income statement scheme, comparatives default, presentation unit, and signature metadata). The canonical reference for all keys and semantics is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration); the [bus config](../../modules/bus-config) CLI is the single place to create and update these settings.
 
 ### Relations
 
@@ -49,4 +50,6 @@ Multi-company workflows are expressed as multi-workspace operations; see [Worksp
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Year-end close (closing entries)](../../workflow/year-end-close)
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
+- [bus-reports module CLI reference](../../modules/bus-reports)
+- [bus-reports SDD](../../sdd/bus-reports)
 

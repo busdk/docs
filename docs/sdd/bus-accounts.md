@@ -7,7 +7,7 @@ description: "Design spec for the BusDK accounts module: chart of accounts as sc
 
 ### Introduction and Overview
 
-Bus Accounts maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types and provides stable account references for downstream modules.
+Bus Accounts maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types, provides stable account references for downstream modules, and owns the account-to-statement mapping dataset contract used by Finnish statutory statement layouts in [bus-reports](./bus-reports).
 
 ### Requirements
 
@@ -24,6 +24,8 @@ FR-ACC-003 Data-layer init via bus-data library. Bus Accounts MUST perform all i
 NFR-ACC-001 Deterministic outputs. The module MUST produce deterministic listings and diagnostics so scripting and audits are stable across machines. Acceptance criteria: listings are ordered by stable account identifiers, and diagnostics refer to workspace-relative paths and stable identifiers.
 
 NFR-ACC-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (e.g. accounts table and schema). Other modules that need read-only access to the chart of accounts raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration (e.g. from workspace or data package config) can be supported without breaking consumers; today paths may be conventional defaults (e.g. `accounts.csv`). Acceptance criteria: the library provides at least one path accessor (e.g. given workspace root, returns the path to the accounts CSV and/or schema); consumers that need to read accounts data for pure-data purposes use this accessor; no consumer hardcodes `accounts.csv` outside this module.
+
+FR-ACC-006 Statutory statement mapping dataset contract. The module MUST define and own the schema contract for account-to-statement mapping data consumed by [bus-reports](./bus-reports) for `fi-*` statutory layouts. Acceptance criteria: a dedicated mapping dataset (for example `report-account-mapping.csv` with beside-the-table schema) defines at least `layout_id`, `account_code`, `statement_target`, `layout_line_id`, and `normal_side`; each account mapping is deterministic per selected layout; schema validation catches duplicate or malformed mapping rows before downstream report generation.
 
 Planned: optional helper (or documented recommended accounts) for sole-proprietor owner withdrawals and investments (yksityisotto, yksityissijoitus) that produces a balanced journal entry from configured equity/cash accounts. Until implemented, users post via [bus-journal](../sdd/bus-journal) using accounts from this chart.
 
@@ -68,7 +70,7 @@ bus accounts validate
 
 ### Data Design
 
-The module reads and writes `accounts.csv` with a beside-the-table JSON Table Schema. Account identifiers are stable keys used by other datasets. Master data owned by this module is stored in the workspace root only; the module does not create or use an `accounts/` or other subdirectory for its datasets and schemas. After a successful `bus accounts init`, the workspace data package (`datapackage.json`) MUST contain a resource entry for the accounts table: the resource path points to `accounts.csv` and the resource reflects the beside-the-table schema so that `bus data package discover`, `bus data package validate`, and other data-package operations see the accounts dataset.
+The module reads and writes `accounts.csv` with a beside-the-table JSON Table Schema. Account identifiers are stable keys used by other datasets. For Finnish statutory reporting, the module also owns the account-mapping dataset contract (for example `report-account-mapping.csv` with `report-account-mapping.schema.json`) that maps account ids to statement layout line ids per layout id. Master data owned by this module is stored in the workspace root only; the module does not create or use an `accounts/` or other subdirectory for its datasets and schemas. After a successful `bus accounts init`, the workspace data package (`datapackage.json`) MUST contain a resource entry for the accounts table: the resource path points to `accounts.csv` and the resource reflects the beside-the-table schema so that `bus data package discover`, `bus data package validate`, and other data-package operations see the accounts dataset.
 
 Other modules that need read-only access to the accounts dataset (e.g. to resolve account codes or read the chart for balance computation in another workspace) MUST obtain the path from this module’s Go library (IF-ACC-002), not by hardcoding `accounts.csv`. All writes and account-domain logic (validation, types, listing) remain in this module.
 
@@ -128,6 +130,7 @@ Data package: the workspace `datapackage.json` descriptor maintained by [bus-dat
 - [bus-init SDD](./bus-init) (module init contract)
 - [Owns master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
+- [bus-reports module SDD](./bus-reports)
 - [End user documentation: bus-accounts CLI reference](../modules/bus-accounts)
 - [Repository](https://github.com/busdk/bus-accounts)
 - [Accounts area](../layout/accounts-area)

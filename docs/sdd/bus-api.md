@@ -262,7 +262,7 @@ Invalid usage exits with code 2 and a concise usage error. Runtime request failu
 
 ### Testing Strategy
 
-Unit tests MUST cover token path gating, workspace-root confinement, deterministic JSON ordering, and OpenAPI document validity. Integration tests MUST start the server with fixed `--token` and fixed `--port`, run CRUD and validation requests against a fixture workspace, and verify on-disk results match the equivalent [bus-data](./bus-data) library operations (library-only integration; no CLI invocation). Integration tests for the event stream MUST verify that a client subscribed to `GET /{token}/v1/events` receives exactly one event (or the documented set of events) per successful mutating request, with payload shape conforming to IF-API-004, and that events are not emitted for failed or read-only requests. Concurrency tests MUST assert that two concurrent write requests serialize or reject deterministically without corrupting CSV files.
+Unit tests MUST cover token path gating, workspace-root confinement, deterministic JSON ordering, and OpenAPI document validity. Integration tests MUST start the server with fixed `--token` and fixed `--port`, run CRUD and validation requests against a fixture workspace, and verify on-disk results match the equivalent [bus-data](./bus-data) library operations (library-only integration; no CLI invocation). End-to-end tests MUST execute the running `bus-api serve` process through `curl` so the real HTTP surface is verified from outside the process boundary. These `curl` E2E checks MUST use the printed capability base URL, MUST verify that requests outside the token prefix fail deterministically, and MUST verify successful and failing CRUD, schema mutation, and validation calls against fixture workspace data. Event-stream E2E checks MUST use `curl` streaming mode against `GET /{token}/v1/events` and verify that a subscribed client receives exactly one event (or the documented set of events) per successful mutating request, with payload shape conforming to IF-API-004, and that events are not emitted for failed or read-only requests. Concurrency tests MUST assert that two concurrent write requests serialize or reject deterministically without corrupting CSV files.
 
 ### Deployment and Operations
 
@@ -286,6 +286,7 @@ Not Applicable. The module is additive; it does not change dataset formats.
 - [bus-data SDD](./bus-data)
 - [bus-bfl SDD](./bus-bfl)
 - [Standard global flags](https://docs.busdk.com/cli/global-flags)
+- [curl documentation](https://curl.se/docs/)
 - [OpenAPI Specification (OAS) 3.1](https://spec.openapis.org/oas/v3.1.0.html)
 
 ### Document control
@@ -295,5 +296,5 @@ Project: BusDK
 Document ID: `BUSDK-MOD-API`
 Version: 2026-02-13
 Status: Draft
-Last updated: 2026-02-13
+Last updated: 2026-02-18
 Owner: BusDK development team

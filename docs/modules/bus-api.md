@@ -103,13 +103,13 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Completeness:** 80% — Core API journey (discovery, CRUD, validation, schema, events, read-only) verified by tests; stable JSON key ordering for single-resource validate success pending (PLAN.md).
+**Completeness:** 90% — Core API journey verified by e2e and unit tests; discovery, CRUD, validation (workspace and per-resource with stable key ordering), schema read/mutation, event stream, read-only; PLAN.md lists no remaining work.
 
-**Use case readiness:** Workbook and validated tabular editing: 80% — User can complete API-driven discovery, CRUD, workspace and per-resource validation, and schema read/mutation; event stream and read-only verified; stable key ordering for validate success pending.
+**Use case readiness:** Workbook and validated tabular editing: 90% — User can complete API-driven discovery, CRUD, validation, schema read/mutation, event stream, read-only; stable validate success key ordering verified in e2e.
 
-**Current:** Verified by `tests/e2e_bus_api.sh` (global help, serve/version/openapi, flags, capability URL, base-path/CORS/HTTPS/enable-module, fixture GET/POST/PATCH/DELETE resources and package, schema GET/PATCH and fine-grained fields/primaryKey, POST /validate and POST /resources/{name}/validate, row CRUD and dry_run, read-only 403, OpenAPI deterministic, NFR-API-008 health 5s) and by `internal/server/server_test.go` (token gating, healthz, events, path safety, stable error payloads, resource add/remove/rename, CORS, module paths), `internal/server/backend_test.go` (ListResources, path safety, GetPackageRaw, ReadRows, ValidatePackage, GetSchemaBytes), and `internal/cli/run_test.go` / `internal/cli/flags_test.go` (flag parsing, serve missing workdir/TLS cert-only/quiet+output).
+**Current:** Verified by `tests/e2e_bus_api.sh` (global help, serve/version/openapi, flags, capability URL, base-path/CORS/HTTPS/enable-module, fixture GET/POST/PATCH/DELETE resources and package, schema GET/PATCH and fine-grained fields/primaryKey, POST /validate and POST /resources/{name}/validate including stable success key ordering and failure payloads, row CRUD and dry_run, read-only 403, OpenAPI deterministic, NFR-API-008 health 5s) and by `internal/server/server_test.go` (token gating, healthz, events, path safety, stable error payloads, resource add/remove/rename, CORS, module paths), `internal/server/backend_test.go` (ListResources, path safety, GetPackageRaw, ReadRows, ValidatePackage, GetSchemaBytes), and `internal/cli/run_test.go` / `internal/cli/flags_test.go` (flag parsing, serve missing workdir/TLS cert-only/quiet+output).
 
-**Planned next:** Stable JSON key ordering for POST /resources/{name}/validate success response (PLAN.md). Advances Workbook and validated tabular editing (determinism).
+**Planned next:** None in PLAN.md.
 
 **Blockers:** None known.
 

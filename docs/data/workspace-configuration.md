@@ -28,7 +28,24 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
       "vat_reporting_period": "quarterly",
       "vat_timing": "performance",
       "vat_registration_start": null,
-      "vat_registration_end": null
+      "vat_registration_end": null,
+      "reporting_profile": {
+        "fi_statutory": {
+          "reporting_standard": "fi-kpa",
+          "language": "fi",
+          "income_statement_scheme": "by_nature",
+          "comparatives": true,
+          "presentation_currency": "EUR",
+          "presentation_unit": "EUR",
+          "prepared_under_pma": false,
+          "signature": {
+            "signers": [
+              { "name": "Hallitus / Board", "role": "board" }
+            ],
+            "date": null
+          }
+        }
+      }
     }
   }
 }
@@ -48,6 +65,22 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 `vat_registration_start` (optional) is the date from which the entity is VAT registered, in `YYYY-MM-DD` form. `vat_registration_end` (optional) is the date on which VAT registration ends. The [bus-vat](../modules/bus-vat) module uses these as inputs when it builds the sequence of VAT periods (including partial first or last periods and any non-standard period lengths). Omit or set to null when not applicable. See [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos).
 
+`reporting_profile.fi_statutory` defines deterministic presentation settings for Finnish statutory financial statements in [bus-reports](../modules/bus-reports). These are presentation controls, not posting business logic, and they must remain committed and auditable in workspace data.
+
+`reporting_profile.fi_statutory.reporting_standard` selects the statutory framework family (`fi-kpa` or `fi-pma`) used as the default for built-in statement layouts.
+
+`reporting_profile.fi_statutory.language` selects statement labels. Current value is `fi`; `sv` is reserved for later support.
+
+`reporting_profile.fi_statutory.income_statement_scheme` selects income statement structure (`by_nature` for kululajikohtainen, `by_function` for toimintokohtainen). This controls default layout selection and validation expectations.
+
+`reporting_profile.fi_statutory.comparatives` controls whether comparative columns are included by default when prior-period data is available. Default is `true`. First fiscal year is the normal exception because no prior period exists.
+
+`reporting_profile.fi_statutory.presentation_currency` and `reporting_profile.fi_statutory.presentation_unit` define statement display units. Current supported value is `EUR`; `TEUR` is reserved for later.
+
+`reporting_profile.fi_statutory.prepared_under_pma` controls whether output should include the "prepared under small/micro provisions" indicator for PMA reporting when needed.
+
+`reporting_profile.fi_statutory.signature.signers` and `reporting_profile.fi_statutory.signature.date` carry signer metadata and date for statement PDF output. If signer metadata is absent, bus-reports emits a deterministic signature placeholder block.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./data-package-organization">Data Package organization</a></span>
@@ -59,8 +92,14 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 ### Sources
 
 - [bus-config CLI reference](../modules/bus-config)
+- [bus-reports CLI reference](../modules/bus-reports)
+- [bus-reports SDD](../sdd/bus-reports)
 - [Accounting entity](../master-data/accounting-entity/index)
 - [Initialize a new repository](../workflow/initialize-repo)
 - [Minimal workspace baseline (after initialization)](../layout/minimal-workspace-baseline)
 - [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/)
+- [PRH: Tilinpäätösilmoituksen asiakirjat kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/ilmoituksen_liitteet.html)
+- [Finlex: Kirjanpitolaki 1336/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1336)
+- [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
+- [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
 

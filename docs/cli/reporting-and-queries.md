@@ -13,6 +13,8 @@ Human-readable formatting is allowed to optimize terminal readability, but it mu
 
 Reporting commands SHOULD support audit-trail exports and period-scoped output suitable for tax-audit packs. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
+For Finnish statutory financial statements, reporting commands MUST use explicit layout identifiers and deterministic account mapping contracts rather than vague format labels. In BusDK this contract is defined by [bus-reports SDD](../sdd/bus-reports), which specifies built-in `fi-kpa-*` and `fi-pma-*` layout identifiers, comparative handling, and statement-level validations required for filing-readiness. The CLI reference for [bus-reports](../modules/bus-reports) documents the command-level surface (`--layout-id`, `--layout`, `--comparatives`) and points to the workspace reporting profile keys in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration).
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./interactive-and-scripting-parity">Non-interactive use and scripting</a></span>
@@ -20,3 +22,9 @@ Reporting commands SHOULD support audit-trail exports and period-scoped output s
   <span class="busdk-prev-next-item busdk-next"><a href="./validation-and-safety-checks">Validation and safety checks</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-reports SDD](../sdd/bus-reports)
+- [bus-reports module CLI reference](../modules/bus-reports)
+- [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration)

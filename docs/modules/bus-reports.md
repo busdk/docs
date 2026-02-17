@@ -1,6 +1,6 @@
 ---
 title: bus-reports
-description: bus reports computes financial reports from journal entries and reference data.
+description: bus reports computes financial reports from journal and reference data, including deterministic Finnish statutory statement layouts for Tase and tuloslaskelma.
 ---
 
 ## `bus-reports` — generate trial balance, ledger, and statement reports
@@ -9,12 +9,12 @@ description: bus reports computes financial reports from journal entries and ref
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`
+`bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus reports` computes financial reports from journal entries and reference data. Reports are deterministic and derived only from repository data; the module does not modify datasets. Use for period close, filing, and management reporting.
+Command names follow [CLI command naming](../cli/command-naming). `bus reports` computes financial reports from journal and reference data. Reports are deterministic and derived only from repository data; the module does not modify datasets. Use for period close, filing preparation, and management reporting.
 
 ### Commands
 
@@ -23,17 +23,44 @@ Command names follow [CLI command naming](../cli/command-naming). `bus reports` 
 - `profit-and-loss` prints profit and loss for a period.
 - `balance-sheet` prints balance sheet as of a date.
 
+### Finnish statutory financial statements
+
+For Finnish filing-facing statement output, `bus reports` is configured to produce deterministic TASE and tuloslaskelma outputs with explicit layout identifiers and explicit account mapping. The filing-facing minimum in this module is statement output (balance sheet and income statement), comparative handling, consistency validations, and PDF metadata suitable for dating and signing workflows.
+
+The command surface supports statutory layout selection using `--layout-id`. Built-in layout identifiers include:
+
+- `fi-kpa-tuloslaskelma-kululaji`
+- `fi-kpa-tuloslaskelma-toiminto`
+- `fi-kpa-tase`
+- `fi-kpa-tase-lyhennetty`
+- `fi-pma-tuloslaskelma-kululaji`
+- `fi-pma-tuloslaskelma-toiminto` (where applicable)
+- `fi-pma-tase`
+- `fi-pma-tase-lyhennetty` (where applicable)
+
+These layout ids are presets of the general layout mechanism documented in [bus-reports SDD](../sdd/bus-reports). `--layout <file>` remains available for custom layouts. The same selected layout governs text, CSV, JSON, KPA/PMA, and PDF output structures.
+
+For `fi-*` layouts, account mapping must be deterministic per selected layout. The mapping dataset is `report-account-mapping.csv`, joined to accounts by account code and to statement output by `layout_id`. Unmapped or ambiguously mapped accounts are errors unless the account is explicitly mapped to a permitted statutory other-bucket line in the selected layout.
+
+Statutory comparatives are enabled by default through workspace reporting profile configuration and can be overridden per command with `--comparatives`. When prior-period data exists, comparative columns are expected; first fiscal year is the normal exception. `Tase-erittelyt` are not filed to PRH and are out of generation scope for this module.
+
 ### Options
 
-`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv|markdown>` (default `text`). For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
+`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv|markdown>` (default `text`). For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported.
+
+For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
+
+For balance-sheet and profit-and-loss, `--comparatives <on|off>` overrides the workspace profile default for comparative columns. When omitted, behavior comes from workspace configuration.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
 
 ### Files
 
-Reads journal, accounts, and optionally budget datasets. Writes only to stdout (or the file given by global `--output`).
+Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-accounts) datasets and optionally budget datasets. For statutory layouts, also reads workspace reporting profile settings from [bus-config](./bus-config) (`datapackage.json`) and account mapping from `report-account-mapping.csv`. Reports are computed from validated journal data inside explicit period boundaries, including year-end close/opening transitions managed by [bus-period](./bus-period). Writes only to stdout (or the file given by global `--output`).
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage or integrity failures.
+`0` on success. Non-zero on invalid usage, integrity failures, statutory mapping failures, or statutory statement reconciliation failures.
 
 ### Development state
 
@@ -43,9 +70,9 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 **Completeness:** 90% — Close-step reports and all formats verified by e2e and unit tests; user can complete the report step in all three use cases.
 
-**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown, KPA/PMA, TASE/tuloslaskelma PDF and `--layout` verified by e2e. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), KPA/PMA, TASE/tuloslaskelma PDF verified by e2e. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; KPA/PMA and TASE/tuloslaskelma PDF verified by e2e.
+**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown, Finnish statutory layout ids (`fi-kpa-*`, `fi-pma-*`), TASE/tuloslaskelma PDF, and layout selection verified by e2e. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), deterministic statutory layouts and PDF output verified by e2e. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory statement layouts and PDF output verified by e2e.
 
-**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), journal-area layout, ledger integrity before reports (FR-REP-002), trial-balance/balance-sheet/profit-and-loss in text/csv/json/markdown/kpa/pma/pdf, `--layout` file with custom labels and account_mapping (FR-REP-004), general-ledger and account-ledger, and error cases. `internal/app/run_test.go`, `internal/report/report_test.go`, and `internal/report/layout_test.go` verify CLI paths, PDF (FR-REP-003), KPA/PMA, and layout resolution; `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` verify workspace load, period parsing, and flag parsing.
+**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), journal-area layout, ledger integrity before reports (FR-REP-002), trial-balance/balance-sheet/profit-and-loss in text/csv/json/markdown/kpa/pma/pdf, layout file selection with custom labels and account mapping (FR-REP-004), general-ledger and account-ledger, and error cases. `internal/app/run_test.go`, `internal/report/report_test.go`, and `internal/report/layout_test.go` verify CLI paths, PDF (FR-REP-003), statutory-format layout resolution, and mapping behavior; `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` verify workspace load, period parsing, and flag parsing.
 
 **Planned next:** None in PLAN.md.
 
@@ -72,4 +99,9 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-reports](../sdd/bus-reports)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
 - [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
+- [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration)
+- [PRH: Tilinpäätösilmoituksen asiakirjat kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/ilmoituksen_liitteet.html)
+- [PRH: Digitaalinen iXBRL-rajapinta ohjelmistoyrityksille](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/digitaalinen-tilinpaatosraportointi/rajapinta.html)
+- [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
+- [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
 
