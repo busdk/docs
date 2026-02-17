@@ -10,7 +10,7 @@ BusDK lowers the barrier for user-written extensions. A user can write small scr
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./event-hooks-and-automation">Event hooks and automation</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./plugin-modules-via-datasets">Plug-in modules via new datasets</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

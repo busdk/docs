@@ -3,9 +3,9 @@ layout: home
 show_nav_cards: false
 home_grid_blocks: true
 title: BusDK Docs
-description: Design and reference documentation for the BusDK toolkit — modular CLI, workspace datasets, workflows, modules, and compliance.
+description: Documentation hub for humans and AI agents using the Business Development Kit to run a business — workflows, CLI modules, design documents, data references, and compliance guidance.
 ---
-## Get started
+## Start Here
 
 ### Overview
 
@@ -31,7 +31,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - [Developer workflow](implementation/developer-module-workflow)
 - [BusDK SDD (single page)](sdd)
 
-## Workflows
+## Run Business Workflows
 
 ### Workflow overview
 
@@ -65,7 +65,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - [Inventory valuation and COGS postings](workflow/inventory-valuation-and-cogs)
 - [Workbook editing](workflow/workbook-and-validated-tabular-editing)
 
-## Modules by use
+## Find Modules by Task
 
 ### Core commands
 
@@ -122,7 +122,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - `bus filing prh` - [CLI](modules/bus-filing-prh) - [SDD](sdd/bus-filing-prh)
 - `bus filing vero` - [CLI](modules/bus-filing-vero) - [SDD](sdd/bus-filing-vero)
 
-## Design
+## Understand System Design
 
 ### Design Documents
 
@@ -172,7 +172,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 - [VAT area](layout/vat-area)
 - [Budgeting area](layout/budget-area)
 
-## Reference
+## Use Data and CLI Reference
 
 ### Master data
 

@@ -55,7 +55,7 @@ Until reconciliation is implemented as a first-class module, invoice “paid” 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./evolution-over-time">Evolution over time (extending the model)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./initialize-repo">Initialize a new repository</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

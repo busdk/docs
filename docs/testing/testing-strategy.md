@@ -14,7 +14,7 @@ If a non-file backend such as SQL is implemented, it must provide an equivalent 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Testing</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

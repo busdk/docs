@@ -41,7 +41,7 @@ bus journal balance ...
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./invoice-ledger-impact">Invoice ledger impact (integration through journal entries)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./scenario-introduction">Scenario introduction</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

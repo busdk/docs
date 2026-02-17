@@ -59,7 +59,7 @@ If a particular jurisdiction, accountant, or workflow needs additional close out
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./workflow-takeaways">Workflow takeaways (transparency, control, automation)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

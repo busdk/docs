@@ -12,7 +12,7 @@ For Finnish compliance, VAT summaries MUST retain links to the postings and vouc
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./schemas-area">Schemas beside datasets (Table Schema JSON files)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../cli/index">BusDK Design Spec: CLI tooling and workflow</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

@@ -42,7 +42,7 @@ If Alice adjusts her plan mid-year, she appends new budget rows (or uses `bus bu
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./ai-assisted-classification-review">AI-assisted classification (review before external commit)</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./configure-chart-of-accounts">Configure the chart of accounts</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

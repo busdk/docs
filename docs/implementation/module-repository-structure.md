@@ -18,7 +18,7 @@ This layout preserves multi-language module support because the data contract re
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">BusDK Design Spec: Implementation and development status</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Design Document</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./developer-module-workflow">Developer module workflow</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
