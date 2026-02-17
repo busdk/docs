@@ -75,7 +75,7 @@ The module MUST document this schema in full (e.g. JSON Schema or equivalent) so
 
 ### Regulated report PDFs (TASE and tuloslaskelma)
 
-Finnish bookkeeping regulation requires the balance sheet (TASE) and the income statement (tuloslaskelma) to be available as PDF. The module currently provides only the **fi-invoice-a4** and **plain-a4** templates; there are no built-in templates or documented render model schemas for TASE or tuloslaskelma. One possible implementation path (Option B) is to add report templates (e.g. `fi-tase-a4`, `fi-tuloslaskelma-a4`) and a stable JSON schema for report render models, plus a documented pipeline that feeds [bus-reports](../modules/bus-reports) JSON into `bus pdf render`. The requirement, current state, and all implementation options (A, B, C, or combination) are described in [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs). When an option that involves bus-pdf is chosen, this SDD will be updated with the corresponding requirements (e.g. report render model schema, template identifiers) and interfaces.
+Finnish bookkeeping regulation requires the balance sheet (TASE) and the income statement (tuloslaskelma) to be available as PDF. That requirement is satisfied by [bus-reports](../modules/bus-reports) with `--format pdf` for `balance-sheet` and `profit-and-loss` (Option A); see [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs). This module provides only the **fi-invoice-a4** and **plain-a4** templates and does not add TASE or tuloslaskelma templates; report PDFs are produced by bus-reports directly.
 
 ### Assumptions and Dependencies
 

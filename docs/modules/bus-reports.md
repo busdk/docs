@@ -9,8 +9,8 @@ description: bus reports computes financial reports from journal entries and ref
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports profit-and-loss --period <period> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`
+`bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
@@ -25,7 +25,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus reports` 
 
 ### Options
 
-`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv|markdown>` (default `text`). For balance-sheet and profit-and-loss, `json`, `kpa`, and `pma` are also supported. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
+`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv|markdown>` (default `text`). For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
 
 ### Files
 
@@ -41,13 +41,13 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 80% — All four report commands, text/csv/json, KPA/PMA for balance-sheet and profit-and-loss, optional budget, and traceability verified by e2e and unit tests; user can complete close-step reporting. Regulated TASE/tuloslaskelma PDF and `--format markdown` not yet implemented.
+**Completeness:** 90% — All four report commands plus account-ledger, text/csv/json/markdown, KPA/PMA/PDF for balance-sheet and profit-and-loss, optional budget, and traceability verified by e2e and unit tests; user can complete close-step reporting including TASE and tuloslaskelma PDF (FR-REP-003).
 
-**Use case readiness:** Accounting workflow: 80% — Close-step reports verified by e2e; user can run trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json and KPA/PMA. Finnish bookkeeping and tax-audit compliance: 80% — Reports, traceability (basis in JSON), and KPA/PMA formats verified by e2e. Finnish company reorganisation: 80% — Trial balance and ledgers as audit evidence and KPA/PMA verified by e2e.
+**Use case readiness:** Accounting workflow: 90% — Close-step reports verified by e2e; user can run trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown, KPA/PMA, and PDF. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), KPA/PMA, and TASE/tuloslaskelma PDF verified by e2e. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; KPA/PMA and PDF verified by e2e.
 
-**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), trial-balance (text/csv/json with basis), balance-sheet and profit-and-loss in text/csv and `--format kpa`/`--format pma`, optional budget for P&amp;L, general-ledger (all and `--account`), account-ledger (`--from`/`--to`), and error cases. `internal/app/run_test.go`, `internal/workspace/load_test.go`, `internal/report/report_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` prove run dispatch, workspace load, report logic, period parsing, and flag parsing.
+**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), trial-balance (text/csv/json/markdown with basis), balance-sheet and profit-and-loss in text/csv, `--format kpa`/`--format pma`, and `--format pdf` (TASE/tuloslaskelma), optional budget for P&amp;L, general-ledger (all and `--account`), account-ledger (`--from`/`--to`), and error cases. `internal/app/run_test.go` covers PDF format restriction and PDF output for balance-sheet and profit-and-loss. `internal/workspace/load_test.go`, `internal/report/report_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` prove workspace load, report logic, period parsing, and flag parsing.
 
-**Planned next:** Regulated TASE and tuloslaskelma PDF (FR-REP-003); `--format markdown` for all report commands (IF-REP-001). Advances Finnish compliance use case when PDF is implemented.
+**Planned next:** None in PLAN.md (doc refresh only). Optional: extend markdown to all report commands where not yet exercised in e2e; SDD polish.
 
 **Blockers:** None known.
 
