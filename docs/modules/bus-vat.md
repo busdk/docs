@@ -37,17 +37,17 @@ The module reads invoice and journal datasets and optional VAT reference dataset
 
 ### Development state
 
-**Value promise:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the [accounting workflow](../workflow/accounting-workflow-overview) and archive returns for filing.
+**Value promise:** Compute VAT reports and export period returns from workspace invoice (and optionally journal) data so users can satisfy the close-period VAT step in the accounting workflow and archive returns for filing.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 70% (Broadly usable) — init, validate, report, and export verified by e2e; deterministic report and export output and dry-run test-backed.
+**Completeness:** 70% — init, validate, report, export and vat-returns index update verified by e2e; user can complete close-step VAT from invoice data; only invoice path is test-covered; journal input and posting/voucher refs would complete the journey.
 
-**Use case readiness:** Accounting workflow: 70% — init, validate, report, export verified; journal input and posting/voucher refs would complete. Finnish bookkeeping and tax-audit compliance: 70% — VAT report and export support returns; voucher refs in output would strengthen audit trail.
+**Use case readiness:** Accounting workflow: 70% — close-step VAT (init→validate→report→export) with index update verified by e2e; journal input and voucher refs would complete. Finnish bookkeeping and tax-audit compliance: 70% — VAT report and export verified; posting/voucher refs in output would strengthen audit trail.
 
-**Current:** E2e script `tests/e2e_bus_vat.sh` proves help, version, invalid color/format/quiet+verbose, init creating vat-rates, vat-reports, vat-returns CSV and schema, idempotent init warning, validate with minimal invoice fixture, report --period with exact TSV diff, export --dry-run (no file), export writing vat-returns-{period}.csv, missing --period exit 2. Unit tests in `internal/app/run_test.go` and `internal/vat/` cover run, init, report, export, rounding.
+**Current:** E2e `tests/e2e_bus_vat.sh` proves help, version, global flags (invalid --color/--format, -q+-v, --, -C, -o, -p, --dry-run), init (baseline CSV and schemas, idempotent warning), validate (fail without data, succeed with invoice fixture), report (deterministic TSV, --output, -C, --quiet), export (--dry-run no file, write period file, update vat-returns.csv index), missing --period exit 2. Unit tests: `internal/app/run_test.go` (run, init, report, export, chdir, quiet, color, format, output file); `internal/vat/` (export_test.go index append, report_test.go format/period, init_test.go, rounding_test.go, schema_test.go, validate_helpers_test.go); `internal/cli/flags_test.go`, `help_test.go`.
 
-**Planned next:** Update vat-returns index on export; dry-run for init; rate validation; journal input; posting/voucher refs in output.
+**Planned next:** Go library path API (IF-VAT-002); --dry-run for init; rate validation against vat-rates.csv; journal input (FR-VAT-004); posting/voucher refs in output (Finnish compliance).
 
 **Blockers:** None known.
 
