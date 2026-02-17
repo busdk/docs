@@ -108,13 +108,13 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use cases:** [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
-**Completeness:** 20% — serve and capability URL verified; token gating verified; no embedded API or UI screens yet, so no bookkeeping step is completable in the UI.
+**Completeness:** 20% — serve and capability URL verified by e2e; token gating and workspace checks by unit tests; embedded API core (healthz, openapi, module mount) verified; no domain backends wired, no UI assets; no bookkeeping step completable in the UI.
 
-**Use case readiness:** Accounting workflow (bookkeeping UI): 20% — user can start server and get capability URL (e2e); token gating and workspace-root checks verified; no dashboard or workflow screens yet.
+**Use case readiness:** Accounting workflow (bookkeeping UI): 20% — user can start server and get capability URL (`tests/e2e_bus_books.sh`); token gating and workspace-root checks verified (`internal/server/server_test.go`, `internal/api/api_test.go`); embedded API core verified; no dashboard or workflow screens yet.
 
-**Current:** Serve starts and prints capability URL to stdout; fixed token and port and default (no subcommand) serve verified by `tests/e2e_bus_books.sh`. Global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags (token, port) verified by e2e and `internal/run/run_test.go`, `internal/cli/flags_test.go`. Workspace root validation and handler token gating (404 outside `/{token}/`, 200 under token) verified by `internal/server/server_test.go`. No embedded Bus API or UI assets; no bookkeeping screens or API endpoints covered by tests.
+**Current:** Serve starts and prints capability URL to stdout; default subcommand serve and fixed token/port verified by `tests/e2e_bus_books.sh`. Global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags (token, port) verified by e2e and `internal/run/run_test.go`, `internal/cli/flags_test.go`. Workspace root validation and token gating (404 outside `/{token}/`, 200 under token) verified by `internal/server/server_test.go`. Embedded API core (healthz, openapi.json, module backends mount) verified by `internal/server/server_test.go` (TestHandler_EmbeddedAPIV1Mount) and `internal/api/api_test.go`. No domain module backends wired at runtime; no UI assets; no bookkeeping screens covered by tests.
 
-**Planned next:** Embed Bus API in-process and mount under `/{token}/v1/`; embed UI assets and SPA; Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) per PLAN.md — advances Accounting workflow (bookkeeping UI). Read-only mode and event-driven refresh; optional agent chat when `--enable-agent`; integration tests for validation endpoint, period transitions, journal add by period state.
+**Planned next:** Embed UI assets and SPA; wire or register default bookkeeping module backends (journal, period, vat, bank, attachments, validate, reconcile); Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) per PLAN.md — advances Accounting workflow. Read-only 403 and event-driven refresh; optional agent chat when `--enable-agent`; integration tests for validation endpoint, period transitions, journal add by period state.
 
 **Blockers:** None known.
 

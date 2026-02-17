@@ -26,7 +26,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 ### Status
 
 - [Development status](implementation/development-status)
-- [Cost summary](implementation/cost-summary)
+- [Development cost summary](implementation/cost-summary)
 - [Module repository structure](implementation/module-repository-structure)
 - [Developer workflow](implementation/developer-module-workflow)
 - [BusDK SDD (single page)](sdd)
