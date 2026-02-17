@@ -30,7 +30,7 @@ The script enables rbenv (so the correct Ruby is used), runs `bundle install` if
 
 ## Content index JSON
 
-This repository generates a machine-readable index at `docs/assets/data/content-index.json` with one record per tracked content file under `docs/` (excluding Jekyll internal paths under `docs/_*`). The JSON is flat: a metadata key `@generated_at` is included, and every other top-level key is a site path starting with `/` (the `docs/` prefix is removed, and `.md` suffixes are stripped) whose value is the ISO 8601 timestamp from the most recent Git commit that edited that file.
+This repository generates a machine-readable index at `docs/assets/data/content-index.json` with one record per tracked content file under `docs/` (excluding Jekyll internal paths under `docs/_*`). The JSON is flat: a metadata key `@generated_at` is included, and every other top-level key is a site path starting with `/` (the `docs/` prefix is removed, `.md` and `.html` suffixes are stripped, and trailing `/index` is removed) whose value is the ISO 8601 timestamp from the most recent Git commit that edited that file.
 
 Generate it locally from the repository root with:
 

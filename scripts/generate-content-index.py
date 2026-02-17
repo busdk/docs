@@ -71,7 +71,23 @@ def index_key(path: str) -> str:
         key = f"/{key.lstrip('/')}"
     if key.endswith(".md"):
         key = key[:-3]
+    elif key.endswith(".html"):
+        key = key[:-5]
+    if key == "/index":
+        return "/"
+    if key.endswith("/index"):
+        key = key[: -len("/index")]
     return key
+
+
+def newer_timestamp(a: str, b: str) -> str:
+    if not a:
+        return b
+    if not b:
+        return a
+    dt_a = datetime.fromisoformat(a)
+    dt_b = datetime.fromisoformat(b)
+    return a if dt_a >= dt_b else b
 
 
 def build_payload(files: list[str], last_edits: dict[str, str]) -> dict[str, str]:
@@ -80,9 +96,11 @@ def build_payload(files: list[str], last_edits: dict[str, str]) -> dict[str, str
     }
     for path in files:
         key = index_key(path)
+        ts = last_edits.get(path, "")
         if key in payload:
-            raise RuntimeError(f"duplicate index key after normalization: {key}")
-        payload[key] = last_edits.get(path, "")
+            payload[key] = newer_timestamp(payload[key], ts)
+        else:
+            payload[key] = ts
     return payload
 
 
