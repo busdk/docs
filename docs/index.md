@@ -5,7 +5,7 @@ home_grid_blocks: true
 title: BusDK Docs
 description: Documentation hub for humans and AI agents using the Business Development Kit to run a business — workflows, CLI modules, design documents, data references, and compliance guidance.
 ---
-## Start Here
+## Understand BusDK Foundations
 
 ### Overview
 
@@ -31,7 +31,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Developer workflow](implementation/developer-module-workflow)
 - [BusDK SDD (single page)](sdd)
 
-## Run Business Workflows {#run-business-workflows}
+## Follow Business Workflows {#follow-business-workflows}
 
 ### Workflow overview
 
@@ -65,7 +65,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Inventory valuation and COGS postings](workflow/inventory-valuation-and-cogs)
 - [Workbook editing](workflow/workbook-and-validated-tabular-editing)
 
-## Find Modules by Task {#find-modules-by-task}
+## Browse Modules by Task {#find-modules-by-task}
 
 ### Core commands
 
@@ -172,7 +172,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [VAT area](layout/vat-area)
 - [Budgeting area](layout/budget-area)
 
-## Use Data and CLI Reference {#use-data-and-cli-reference}
+## Understand Data, Interfaces, and Compliance {#understand-data-interfaces-and-compliance}
 
 ### Master data
 
