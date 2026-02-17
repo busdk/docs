@@ -39,13 +39,13 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 80% — match, allocate, list and validation failures verified by unit and e2e; reconciliation step completable with deterministic diagnostics.
+**Completeness:** 80% — reconciliation step completable; match, allocate, list and validation failures verified by unit and e2e.
 
 **Use case readiness:** Accounting workflow: 80% — reconciliation step completable. Finnish company reorganisation: 80% — reconciliation evidence path verified. Finnish payroll handling: 80% — payroll bank reconciliation step completable.
 
-**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list, and validation failures (amount/currency, sum mismatch, already reconciled, missing ref) verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`; global flags, help, version, and flag parsing by `internal/cli/flags_test.go` and run tests.
+**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list (including empty and bootstrap when matches.csv missing), and validation failures (amount/currency mismatch, sum mismatch, already reconciled, missing invoice/journal ref) verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`; global flags (help, version, quiet, verbose, color, format, output, chdir, `--`), quiet+verbose conflict, and flag parsing by `internal/cli/flags_test.go` and `internal/app/run_test.go`.
 
-**Planned next:** Obtain bank path from [bus-bank](./bus-bank) Go library per data path contract. Reject invoice status `canceled` in match when target is invoice (align with allocate and [bus-invoices](./bus-invoices) schema; PLAN.md). Both advance accounting, reorganisation, and payroll when applicable.
+**Planned next:** Reject invoice status `canceled` in match when target is invoice (align with allocate and [bus-invoices](./bus-invoices) schema; PLAN.md); advances accounting, reorganisation, and payroll. Obtain bank path from [bus-bank](./bus-bank) Go library per data path contract when integrating with bus-bank.
 
 **Blockers:** None known.
 

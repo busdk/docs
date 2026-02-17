@@ -392,6 +392,14 @@ Integration tests:
 - verify period transitions produce expected deterministic outcomes
 - verify validation endpoint results are surfaced correctly
 
+End-to-end browser tests:
+- E2E coverage MUST drive a running `bus-books serve` process through a real browser engine, not only API-level checks or simulated DOM tests.
+- Playwright is the reference E2E runner for Bus Books and is expected in CI and local developer workflows.
+- Tests open the printed capability base URL, wait for Go/WASM bootstrap, and verify real UI navigation and rendering across core screens (at minimum Dashboard, Inbox, and Journal).
+- At least one E2E case MUST perform a mutating bookkeeping action from the web UI and verify both user-visible confirmation and persisted workspace dataset change.
+- E2E checks MUST confirm capability scoping by asserting that requests outside the token prefix fail while in-app requests stay under `/{token}/`.
+- CI runs browser E2E in headless mode by default; developers MAY run headed mode for debugging, with identical fixtures and assertions.
+
 ## Deployment and Operations
 
 Not Applicable. The module ships as a single embedded binary for local use; no separate deployment or operational runbook is required beyond starting the server.
@@ -411,6 +419,7 @@ Operators MAY run the server on non-loopback interfaces or behind a reverse prox
 - [bus-api module SDD](./bus-api) (embedded API, security model)
 - [bus-sheets module SDD](./bus-sheets) (contrast: generic workbook vs accounting UI)
 - [bus-agent module SDD](./bus-agent) (optional agent chat)
+- [Playwright documentation](https://playwright.dev/docs/intro) (reference for browser-based E2E coverage)
 - BusDK documentation site styling (`docs/_sass/busdk/` tokens, typography, components) — visual theme reference for NFR-BOK-009
 
 ### Document control
@@ -420,5 +429,5 @@ Project: BusDK
 Document identifier: sdd/bus-books  
 Version: 1  
 Status: Draft  
-Last updated: 2025-02-17  
+Last updated: 2026-02-18  
 Owner: BusDK maintainers

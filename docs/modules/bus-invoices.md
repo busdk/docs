@@ -67,7 +67,7 @@ bus invoices list --status unpaid
 
 **Current:** Verified only. E2E `tests/e2e_bus_invoices.sh` proves help, version, usage exit 2, init (eight files in workspace root only, no `invoices/`, attachment_id in schemas), init --dry-run, validate (missing/success), list TSV and all filters (--type, --status, --month, --from/--to, --due-from/--due-to, --counterparty, --invoice-id), add header and `<invoice-id> add`, `<invoice-id> validate`, total_net and total_vat validation, add and line add refuse when validation fails, add/line add --dry-run, postings (output and --dry-run), global flags (--output, --chdir, --quiet, --format, --color, --); pdf invoked but e2e expects non-zero (bus-pdf not in PATH). Unit: `cmd/bus-invoices/run_test.go`, `internal/initarea/initarea_test.go`, `internal/validate/*`, `internal/add/add_test.go`, `internal/cli/flags_test.go`, `help_test.go`, `color_test.go`, `internal/pdf/pdf_test.go`, `internal/posting/posting_test.go`, `paths/paths_test.go`.
 
-**Planned next:** None in PLAN.md. Optional: postings subcommand help; attachment_id validation (FR-005) for Finnish compliance.
+**Planned next:** Align add and init subcommand help with behavior (--due-date optional, workspace root wording per PLAN.md). Optional: attachment_id validation (FR-005) for Finnish compliance.
 
 **Blockers:** [bus-pdf](./bus-pdf) required for `bus invoices pdf`. None for init/add/validate/list/postings.
 

@@ -88,15 +88,15 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Completeness:** 20% (Basic structure) — only serve and capability URL verified by e2e; workbook, grid, and API embed not yet test-backed.
+**Completeness:** 20% (Basic structure) — serve and capability URL verified by e2e; token gating by unit tests; no workbook journey step is test-verified or completable.
 
-**Use case readiness:** Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; grid, schema panel, validation UI not test-backed.
+**Use case readiness:** Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; token gating (404 outside token, 200 under token) in unit tests; grid, schema panel, validation UI not test-backed.
 
-**Current:** E2e script `tests/e2e_bus_sheets.sh` proves help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), and that serve prints the expected capability URL with a fixed token and port. Unit tests in `internal/cli/flags_test.go` and `internal/serve/serve_test.go` cover flags and run. No test covers embedded API, workbook tabs, or grid CRUD.
+**Current:** E2e `tests/e2e_bus_sheets.sh` verifies help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), and serve printing the capability URL with fixed token and port. Unit tests: `internal/cli/flags_test.go` (flag parsing, chdir, quiet+verbose), `internal/serve/serve_test.go` (requests outside token → 404, under token → 200; serve args), `internal/run/run_test.go` (help, version, quiet, output). No test covers embedded API, workbook tabs, or grid CRUD.
 
-**Planned next:** Embed [bus-api](./bus-api) in-process; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI; optional agent chat; read-only mode; integration tests.
+**Planned next:** Embed [bus-api](./bus-api) in-process and mount under `/{token}/v1/`; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI. Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Blockers:** [bus-api](./bus-api) embed and UI assets required before the main user value (grid over workspace) is real.
+**Blockers:** [bus-api](./bus-api) embed and UI assets required before grid over workspace is real.
 
 **Depends on:** [bus-api](./bus-api) (and transitively [bus-data](./bus-data)).
 
