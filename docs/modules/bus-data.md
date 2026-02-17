@@ -281,15 +281,15 @@ The module operates on workspace datasets as CSV resources with beside-the-table
 
 **Value promise:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.
 
-**Use cases:** [Spreadsheet workbooks (workbook and validated tabular editing)](../workflow/workbook-and-validated-tabular-editing).
+**Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Completeness:** 80% — package/resource/schema/table/workbook/row and formula surface verified by e2e and unit tests; table workbook command not yet documented in SDD/CLI reference (KD-DAT-005).
+**Completeness:** 80% — package/resource/schema/table/workbook/row and formula surface verified by e2e and unit tests; workbook command not yet in SDD/CLI reference (KD-DAT-005).
 
-**Use case readiness:** Spreadsheet workbooks: 80% — user can complete package/resource lifecycle, schema evolution, table and workbook-style read (cell/range, --header, --anchor-col/--anchor-row, --decimal-sep, --formula), and row mutate; workbook command doc in SDD/CLI reference pending.
+**Use case readiness:** Workbook and validated tabular editing: 80% — user can complete package/resource lifecycle, schema evolution, table and workbook-style read (cell/range, --header, --anchor-col/--anchor-row, --decimal-sep, --formula), and row mutate; workbook doc in SDD/CLI reference pending.
 
 **Current:** `tests/e2e_bus_data.sh` verifies init, package discover/show/patch/validate, resource list/validate/add/remove/rename (FK refusal, --delete-files, --rename-files, FK update), schema init/show/infer/patch, schema key set and foreign-key add/remove (--dry-run and refusal), schema field add/remove/rename/set-type/set-format/set-constraints/set-missing-values, table list/read (--row, --column, --filter, --key) and table workbook (address/range, --header, --anchor-col, --anchor-row, --decimal-sep, --formula), row add/update/delete (in-place and soft-delete), formula projection (--formula-source, on_error=null), and global flags (--chdir, --output, --quiet, --dry-run, --). Unit tests in `internal/cli/package_resource_test.go`, `internal/cli/run_test.go`, `internal/cli/flags_test.go`, `internal/cli/write_commands_test.go`, `pkg/data/*_test.go`, `pkg/data/schema_key_set_test.go`, and `pkg/data/schema_foreign_key_test.go` cover resource remove when referenced, help/version/quiet/format/chdir, mutate/patch/validate/formula/serialization, and key set and foreign-key behavior.
 
-**Planned next:** Document table workbook in Module SDD and CLI reference (KD-DAT-005); add or alias schema field set-type per PLAN.md. Advances Spreadsheet workbooks for [api](./bus-api) and [sheets](./bus-sheets) consumers.
+**Planned next:** Document table workbook in SDD and CLI reference (KD-DAT-005). Advances Workbook and validated tabular editing for [bus-api](./bus-api) and [bus-sheets](./bus-sheets) consumers.
 
 **Blockers:** None known.
 
