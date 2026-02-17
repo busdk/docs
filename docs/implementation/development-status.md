@@ -117,7 +117,7 @@ See [Developer module workflow with Cursor CLI](./developer-module-workflow#deve
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [dev](../modules/bus-dev#development-state) | 60% (Stable) — init, set, flags, context, pipeline list/preview verified by e2e; plan/work/spec/e2e/stage/commit and repo-local pipeline override by unit tests with stub agent; user can complete init and run workflow steps. | Submodule commit test (PLAN.md); action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
+| [dev](../modules/bus-dev#development-state) | 60% (Stable) — init, set, flags, context, pipeline list/preview verified by e2e; plan/work/spec/e2e/stage/commit and repo-local pipeline override by unit tests with stub agent; user can complete init and run workflow steps. | Top-level list (PLAN.md); action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
 | [agent](../modules/bus-agent#development-state) | 40% — detect, render, set, run with Cursor stub and resolution order verified by e2e; user can select runtime and run a prompt. | Order/config; AGENTS.md; adapters; sheets integration. | None known. |
 | [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e. | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
@@ -127,7 +127,7 @@ See [Developer module workflow with Gemini CLI](./developer-module-workflow#deve
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) — same CLI; init and flags verified by e2e; run/work/spec/e2e with Gemini not test-covered. | E2e that runs work/spec/e2e with Gemini; action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
+| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) — same CLI; init and flags verified by e2e; run/work/spec/e2e with Gemini not test-covered. | Top-level list (PLAN.md); e2e work/spec/e2e with Gemini; action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
 | [agent](../modules/bus-agent#development-state) | 30% — detect/selection contract only (e2e stub); set runtime gemini and BUS_AGENT=gemini tested; run with Gemini not exercised in e2e. | E2e that runs `run --agent gemini` with real or hermetic Gemini; order/config; adapters. | None known. |
 | [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
@@ -137,7 +137,7 @@ See [Developer module workflow with Claude CLI](./developer-module-workflow#deve
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) — same CLI; init and flags verified by e2e; run/work/spec/e2e with Claude not test-covered. | E2e that runs work/spec/e2e with Claude; action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
+| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) — same CLI; init and flags verified by e2e; run/work/spec/e2e with Claude not test-covered. | Top-level list (PLAN.md); e2e work/spec/e2e with Claude; action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
 | [agent](../modules/bus-agent#development-state) | 30% — detect/selection contract only (e2e stub); run with Claude CLI not exercised in e2e. | E2e that runs `run --agent claude` with real or hermetic Claude; order/config; adapters. | None known. |
 | [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
@@ -147,7 +147,7 @@ See [Developer module workflow with Codex CLI](./developer-module-workflow#devel
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) — same CLI; init and flags verified by e2e; run/work/spec/e2e with Codex not test-covered. | E2e that runs work/spec/e2e with Codex; action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
+| [dev](../modules/bus-dev#development-state) | 30% (Some basic commands) — same CLI; init and flags verified by e2e; run/work/spec/e2e with Codex not test-covered. | Top-level list (PLAN.md); e2e work/spec/e2e with Codex; action/script generate once [agent](../modules/bus-agent#development-state) exposes stdout API. | None known. |
 | [agent](../modules/bus-agent#development-state) | 30% — detect/selection contract only (e2e stub); run with Codex CLI not exercised in e2e. | E2e that runs `run --agent codex` with real or hermetic Codex; order/config; adapters. | None known. |
 | [preferences](../modules/bus-preferences#development-state) | 70% (Broadly usable) – get, set, set-json, unset, list; key-path and format verified by e2e (runtime-agnostic). | Key-path validation for list; canonical JSON; path resolution tests. | None known. |
 
