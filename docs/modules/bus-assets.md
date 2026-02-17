@@ -41,13 +41,13 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 50% — validate, schedule, post verified; init/add/depreciate/dispose not implemented so register creation and acquisition flow unavailable.
+**Completeness:** 60% — init, add, validate, schedule, post verified by tests; user can create register, add assets, and produce schedule and postings; depreciate and dispose subcommands not test-covered; layout still `assets/` (workspace-root per SDD pending).
 
-**Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 50% — validate, schedule, post verified; posting and schedule support evidence pack; init/add not implemented.
+**Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 60% — init, add, validate, schedule, post verified; register creation and posting output support evidence pack; depreciate/dispose CLIs unverified.
 
-**Current:** Validate, schedule, and post are verified: `run_test.go` and `run_property_test.go` prove Run (help, version, validate, schedule, post) and usage errors; `flags_test.go` and `flags_property_test.go` prove global flags; `schedule_property_test.go`, `post_property_test.go`, `period_property_test.go`, and `load_assets_property_test.go` prove schedule, post, period, and load logic; `tests/e2e_bus_assets.sh` proves validate, schedule, post, `-C`, `--output`, `-q`, `--format`, and invalid usage against the built binary.
+**Current:** init verified by `cmd/bus-assets/run_test.go` (TestInitCreatesDataset). add verified by `run_test.go` (TestAddAcceptsMethodAliasStraightLine, TestAddRejectsInvalidMethod). validate, schedule, post verified by `run_test.go`, `run_property_test.go`, `internal/assets/schedule_property_test.go`, `post_property_test.go`, `period_property_test.go`, `load_assets_property_test.go`, and `tests/e2e_bus_assets.sh`. Global flags verified by `internal/cli/flags_test.go`, `flags_property_test.go` and e2e.
 
-**Planned next:** init, add, depreciate, dispose (SDD CLI); workspace-root layout; `--dry-run` for write commands; voucher refs in postings (FR-AST-002). Advances Finnish company reorganisation (register creation and acquisition).
+**Planned next:** Workspace-root layout (remove `assets/` subdir per SDD); Go library path accessors (NFR-AST-002); `--dry-run` for write commands; voucher refs in postings (FR-AST-002). Advances Finnish company reorganisation evidence pack.
 
 **Blockers:** None known.
 

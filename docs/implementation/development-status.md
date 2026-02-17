@@ -109,7 +109,7 @@ See [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pac
 | [reconcile](../modules/bus-reconcile#development-state) | 30% (Some basic commands) – validate, plan, apply verified; match/allocate/list not implemented; blocks reconciliation evidence. | match, allocate, list (SDD); journal linking; tests. | Documented match/allocate/list not implemented. |
 | [loans](../modules/bus-loans#development-state) | 40% (Meaningful task, partial verification) – loan registry, list, validate, balances, schedule, postings verified by unit and e2e; event and amortize not implemented. | event, amortize subcommands (PLAN.md); e2e for full journey. | None known. |
 | [budget](../modules/bus-budget#development-state) | 30% (Some basic commands) – init, validate, variance verified; add/set/report and root layout not verified. | Root layout; report, add, set; e2e for report/add/set. | None known. |
-| [assets](../modules/bus-assets#development-state) | 50% (Primary journey) – validate, schedule, post verified; posting and schedule support evidence pack; init/add not implemented. | init, add, depreciate, dispose (SDD CLI); workspace-root layout; --dry-run. | None known. |
+| [assets](../modules/bus-assets#development-state) | 60% (Stable) – init, add, validate, schedule, post verified; register creation and posting output support evidence pack; depreciate/dispose CLIs not test-covered. | Workspace-root layout; path accessors (NFR-AST-002); --dry-run; e2e for depreciate/dispose. | None known. |
 
 ### Developer module workflow with Cursor CLI
 
