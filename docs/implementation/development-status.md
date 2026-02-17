@@ -24,7 +24,7 @@ This page summarizes the implementation state of each BusDK module using test ev
 
 ### Accounting workflow
 
-See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. Module readiness:
+See [Accounting workflow overview](../workflow/accounting-workflow-overview) for the intended flow. The end-user bookkeeping web UI for this flow is [bus-books](../sdd/bus-books) (design in SDD). Module readiness:
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|

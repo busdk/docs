@@ -14,6 +14,10 @@
       <header class="busdk-site-header">
         <div class="busdk-site-header-inner">
           <a class="busdk-site-header-logo" href="{{ "/" | relative_url }}">{{ site.title }}</a>
+          <div class="busdk-search-inline">
+            <input type="search" class="busdk-search-input" id="busdk-search-input" placeholder="Search docs…" autocomplete="off" aria-label="Search documentation" title="Search (Ctrl+K)">
+            <div class="busdk-search-results" id="busdk-search-results" aria-live="polite"></div>
+          </div>
         </div>
       </header>
 
@@ -59,6 +63,31 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
     <script>anchors.add();</script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js" integrity="sha256-ieUctArvXa2Jaww7u+OyjqzBpOW04E9K17BzP8qrxVM=" crossorigin="anonymous"></script>
+    <script>
+(function () {
+  var searchJsonUrl = {{ "/search.json" | relative_url | jsonify }};
+  var input = document.getElementById('busdk-search-input');
+  var results = document.getElementById('busdk-search-results');
+  if (!input || !results) return;
+
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+
+  window.SimpleJekyllSearch({
+    searchInput: input,
+    resultsContainer: results,
+    json: searchJsonUrl,
+    searchResultTemplate: '<a class="busdk-search-result" href="{url}">{title}</a>',
+    noResultsText: '<p class="busdk-search-no-results">No results found.</p>',
+    limit: 15
+  });
+})();
+    </script>
     {% unless page.permalink == "/" or page.url == "/" or page.permalink == "/404.html" or page.title == "Page not found" %}
     <script>
 (function () {

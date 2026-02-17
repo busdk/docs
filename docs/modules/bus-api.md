@@ -115,7 +115,7 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Depends on:** [bus-data](./bus-data), [bus-bfl](./bus-bfl) (formula). Implement bus-data first.
 
-**Used by:** [bus-sheets](./bus-sheets) embeds this API in-process for the spreadsheet UI.
+**Used by:** [bus-sheets](./bus-sheets) and [bus-books](../sdd/bus-books) embed this API in-process for the spreadsheet UI and the bookkeeping UI respectively.
 
 See [Development status](../implementation/development-status).
 

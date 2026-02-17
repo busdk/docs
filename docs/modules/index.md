@@ -19,6 +19,7 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI.
 - [`bus api`](./bus-api): Local REST JSON API gateway for BusDK workspaces.
 - [`bus sheets`](./bus-sheets): Local spreadsheet-like web UI for workspaces (workbook, sheet tabs, optional agent chat).
+- [`bus books`](./bus-books): Local bookkeeping web UI for end users (accounting screens over modules).
 - [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping.
 - [`bus agent`](./bus-agent): Diagnostics and development helper for the agent runner (detect, render, run, format).
 - [`bus run`](./bus-run): Run user-defined prompts, pipelines, and scripts with agentic support; no built-in developer workflows. Optional `bux` shorthand for `bus run`.

@@ -20,7 +20,7 @@ Serve (default):
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). Bus Sheets provides a local web UI that presents your BusDK workspace as a multi-tab workbook: each workspace resource (a CSV file with its beside-the-table Table Schema) appears as a sheet tab, and you can view and edit rows, inspect and edit schemas, and run validation from the browser. The UI delegates all data and schema semantics to the [bus-api](./bus-api) core embedded in-process; no Bus module CLI is executed for grid or schema operations. Intended users are system administrators and power users who want a familiar spreadsheet experience over workspace datasets without installing a separate runtime.
+Command names follow [CLI command naming](../cli/command-naming). Bus Sheets provides a local web UI that presents your BusDK workspace as a multi-tab workbook: each workspace resource (a CSV file with its beside-the-table Table Schema) appears as a sheet tab, and you can view and edit rows, inspect and edit schemas, and run validation from the browser. The UI delegates all data and schema semantics to the [bus-api](./bus-api) core embedded in-process; no Bus module CLI is executed for grid or schema operations. Intended users are system administrators and power users who want a familiar spreadsheet experience over workspace datasets without installing a separate runtime. For accounting-focused screens (journal, periods, VAT, bank, invoices), use [bus books](../sdd/bus-books).
 
 When you start the server, it prints a **capability URL** to stdout. That URL includes an unguessable path token; you must open the full URL in a browser to use the UI. Requests that do not include the token path return 404. By default the server binds only to `127.0.0.1`, so the UI is reachable only from the local machine. The binary embeds everything needed to serve the UI (HTML, CSS, JavaScript); no extra template files or build directories are required after installation.
 
@@ -108,7 +108,7 @@ See [Development status](../implementation/development-status).
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-api">bus-api</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-dev">bus-dev</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-books">bus-books</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

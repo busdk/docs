@@ -29,7 +29,7 @@ G-SHT-005 Optional agent integration. When enabled, provide an IDE-style chat di
 
 ### Non-goals
 
-NG-SHT-001 No domain module UI. Bus Sheets does not provide “accounting screens”, “invoice screens”, or module-specific wizards. Those belong to separate modules.
+NG-SHT-001 No domain module UI. Bus Sheets does not provide “accounting screens”, “invoice screens”, or module-specific wizards. Those belong to separate modules (e.g. [bus-books](./bus-books) for the end-user bookkeeping UI).
 
 NG-SHT-002 No multi-user auth. No accounts, sessions, OAuth, cookies, or stored credentials. MVP security is loopback + capability URL. ([bus-api SDD](./bus-api))
 
@@ -304,7 +304,7 @@ Not Applicable. The module ships as a single embedded binary for local use; no s
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-api">bus-api</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">SDD index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-dev">bus-dev</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-books">bus-books</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

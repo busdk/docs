@@ -79,6 +79,7 @@ description: Design and reference documentation for the BusDK toolkit — modula
 
 - `bus api` - [CLI](modules/bus-api) - [SDD](sdd/bus-api)
 - `bus sheets` - [CLI](modules/bus-sheets) - [SDD](sdd/bus-sheets)
+- `bus books` - [CLI](modules/bus-books) - [SDD](sdd/bus-books)
 - `bus run` - [CLI](modules/bus-run) - [SDD](sdd/bus-run)
 - `bus agent` - [CLI](modules/bus-agent) - [SDD](sdd/bus-agent)
 - `bus dev` - [CLI](modules/bus-dev) - [SDD](sdd/bus-dev)
