@@ -35,13 +35,13 @@ Reads validated datasets and VAT and report outputs from the canonical layout (w
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 50% (Primary journey) — export and verify from a minimal workspace are verified by e2e and unit tests; source refs (FR-VERO-002) and prerequisites diagnostics would complete the Vero filing step.
+**Completeness:** 50% (Primary journey) — export and verify from a fixture workspace verified by e2e and unit tests; manifest source_refs and root VAT path (NFR-VERO-002) verified; fuller voucher/posting identifiers in bundle and doc alignment would complete the Vero filing step.
 
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — user can produce and verify a Vero bundle from a fixture workspace; source refs and period/filing diagnostics planned.
+**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — user can produce and verify a Vero bundle from a fixture; manifest source_refs and deterministic export verified; voucher/posting refs in bundle and prerequisites diagnostics planned.
 
-**Current:** E2e `tests/e2e_bus_filing-vero.sh` proves help, version, export, verify, global flags (-C, -o, -f, --color, -q, --, --dry-run), prerequisite checks (missing dir, required directory), and bundle layout (manifest, checksums, data). Unit tests `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, and `internal/cli/flags_test.go` prove Run behavior, bundle export/verify/dry-run and validation (missing schema, conflict markers), and flag parsing (-vv, --, help).
+**Current:** E2e `tests/e2e_bus_filing-vero.sh` proves help, version, export, verify, global flags (-C, -o, -f, --color, -q, --, --dry-run), invalid usage (unknown format, invalid color, quiet+verbose), prerequisite checks (missing dir, expected CSV), bundle layout (manifest, checksums, data, source_refs), root-level VAT path in manifest (NFR-VERO-002), verify success, --output, --format json, -vv on stderr, deterministic export (NFR-VERO-001), --dry-run no bundle dir, --no-color no ANSI, quiet no stdout and quiet+--output file not written. Unit tests `internal/app/app_test.go`, `internal/bundle/bundle_test.go`, `internal/cli/flags_test.go`, and `internal/paths/paths_test.go` prove Run behavior (help/version ignore args, quiet+verbose conflict, invalid color/format, -C, --output write/truncate, quiet suppresses output and output file, requires .git), bundle export/verify/dry-run and validation (missing schema, conflict markers, manifest source_refs), flag parsing (-vv, --, help), and root-level VAT path resolution (NFR-VERO-002).
 
-**Planned next:** FR-VERO-002 source refs in bundle (voucher/posting identifiers); path resolution via bus-vat and reports library accessors so export works after standard init (see [module SDD](../sdd/bus-filing-vero)); deterministic diagnostics for period-closed or filing-orchestration state (PLAN.md). Advances Finnish bookkeeping and tax-audit compliance.
+**Planned next:** Update module SDD and CLI reference: revise or remove Risks paragraph (implementation satisfies NFR-VERO-002), clarify pre-export layout (reports/ and vat/ optional, VAT at workspace root, both schema naming conventions) per PLAN.md. Optional: voucher/posting identifiers in bundle content (FR-VERO-002). Advances Finnish bookkeeping and tax-audit compliance.
 
 **Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
 
