@@ -21,7 +21,7 @@ Bus replay does not infer missing historical intent — it exports what exists i
 
 ### Commands
 
-- **`export`** — Read the current workspace snapshot and emit a deterministic replay log. By default exports the minimal set of operations needed to recreate the current effective state (configuration, chart of accounts, periods, journal postings, attachment references, and optionally VAT or report actions when explicitly enabled). Use `--mode history` for best-effort export of raw row history where the domain supports it.
+- **`export`** — Read the current workspace snapshot and emit a deterministic replay log. By design (see [module SDD](../sdd/bus-replay)) export covers configuration, chart of accounts, periods, journal postings, attachment references, and optionally VAT or report actions when explicitly enabled. Current implementation emits only the five baseline init operations; full coverage is planned. Use `--mode history` for best-effort export of raw row history where the domain supports it.
 - **`apply`** — Execute a replay log against a target workspace. Reads operations from the path given by `--in` (or stdin with `--in -`). For each operation, evaluates the idempotency guard; if the guard is satisfied the operation is skipped, otherwise the command is run. Produces a deterministic report (TSV or JSON) of applied, skipped, and failed operations. Use `--dry-run` to print what would run without executing.
 - **`render`** — Transform a replay log (JSONL) into another format. Currently supports `--format sh` to produce a POSIX shell script with deterministic quoting.
 
@@ -41,7 +41,7 @@ The canonical replay representation is JSONL: one JSON object per line, with sta
 
 ### Export and apply behavior
 
-Export never writes to workspace datasets. It produces operations in a fixed order: workspace configuration, module baseline inits (accounts, period, journal, attachments, and optionally vat when included), master data (accounts, periods, attachment registrations), then journal postings, then optional derived actions when enabled. Each operation carries an idempotency guard (e.g. file absent, row absent) so that apply can skip it when the guard is already satisfied. Apply reads the log, evaluates each guard, and either skips (with a deterministic “skipped” record) or runs the command. Running the same log twice into the same workspace yields only “skipped” on the second run.
+Export never writes to workspace datasets. The designed export order (see [module SDD](../sdd/bus-replay#export-plan-default-accounting-snapshot)) is: workspace configuration, module baseline inits, master data (accounts, periods, attachment registrations), journal postings, then optional derived actions when enabled. Current implementation emits only the baseline init operations (config init, accounts init, period init, journal init, attachments init); master data and journal postings are not yet exported. Each operation carries an idempotency guard (e.g. file absent, row absent) so that apply can skip it when the guard is already satisfied. Apply reads the log, evaluates each guard, and either skips (with a deterministic “skipped” record) or runs the command. Running the same log twice into the same workspace yields only “skipped” on the second run.
 
 ### Files
 
@@ -57,15 +57,15 @@ Export reads workspace configuration, resource list, and domain datasets (accoun
 
 **Use cases:** Not mapped to a documented workflow; supports operator/automation use cases (workspace migration, parity verification, reproducible setup). See [Orphan modules](../implementation/development-status#orphan-modules).
 
-**Completeness:** 30% — export (empty workspace) and render (JSONL→sh) verified by tests; apply reports and guard evaluation verified but apply does not execute operations, so migration/parity journey not completable.
+**Completeness:** 30% — export and render (JSONL→sh) verified by tests; apply reports and guard evaluation verified but apply does not execute operations, so the full migration/parity journey is not yet completable. Export currently emits only the five baseline init operations (config, accounts, period, journal, attachments) regardless of workspace content; it does not yet emit `bus config set`, per-account or per-posting adds, period state transitions, attachment registrations, or VAT/report actions. Authoritative implementation status and gap versus the full [Export Plan](../sdd/bus-replay#export-plan-default-accounting-snapshot) are documented in the [module SDD Implementation status](../sdd/bus-replay#implementation-status).
 
-**Use case readiness:** Workspace migration / parity verification: 30% — export from empty workspace and render to shell script verified; apply does not execute bus commands (stub).
+**Use case readiness:** Workspace migration / parity verification: 30% — export produces deterministic JSONL and render produces POSIX sh; apply evaluates guards and reports but does not execute bus commands. Until export covers master data and journal postings (SDD steps 1–7), hand-written replay scripts cannot be replaced by `bus replay export`.
 
-**Current:** Export from an empty workspace yields deterministic JSONL matching golden output (`internal/replay/golden_test.go`, `internal/replay/export_test.go`, `tests/e2e_bus_replay.sh`) and does not mutate the workspace (`internal/replay/export_test.go`). Apply reads JSONL, evaluates `file_absent` guards, and produces TSV/JSON report; dry-run and idempotent skip are verified (`internal/replay/apply_test.go`, `tests/e2e_bus_replay.sh`). Apply does not execute bus commands. Render produces POSIX sh with shebang and `set -euo pipefail` (`internal/replay/render_test.go`, `internal/replay/golden_test.go`, `tests/e2e_bus_replay.sh`). Global flags and invalid usage are verified (`internal/cli/flags_test.go`, `cmd/bus-replay/main_test.go`, `tests/e2e_bus_replay.sh`).
+**Current:** Export yields deterministic JSONL (golden tests, no workspace mutation). Apply reads JSONL, evaluates guards, and produces TSV/JSON report; dry-run and idempotent skip are verified; apply does not execute bus commands. Render produces POSIX sh with shebang and `set -euo pipefail`. Global flags and invalid usage are verified.
 
-**Planned next:** Apply executing operations in-process (PLAN.md) and completing the export plan (master data, periods, journal, attachments) to enable the full migration journey.
+**Planned next:** Complete the export plan (config set, accounts add, period add/open, journal add, attachments, optional VAT/reports) so that a populated workspace exports a full replay log; apply executing operations in-process so the migration journey is completable.
 
-**Blockers:** Apply does not execute bus commands; export emits only inits for an empty workspace (full accounting snapshot not implemented).
+**Blockers:** Apply does not execute bus commands; export emits only baseline inits (full accounting snapshot per SDD not implemented). For large migrations, continue using existing hand-written replay scripts until export coverage is completed.
 
 **Depends on:** [bus config](./bus-config), [bus data](./bus-data), [bus accounts](./bus-accounts), [bus period](./bus-period), [bus journal](./bus-journal), [bus attachments](./bus-attachments); optionally [bus vat](./bus-vat) and report-producing modules when included.
 
