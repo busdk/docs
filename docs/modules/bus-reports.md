@@ -37,17 +37,17 @@ Reads journal, accounts, and optionally budget datasets. Writes only to stdout (
 
 ### Development state
 
-**Value promise:** Produce trial balance, account-ledger, and statement-style reports from journal and period data so the [accounting workflow](../workflow/accounting-workflow-overview) can generate financial output after close.
+**Value promise:** Produce trial balance, general-ledger, account-ledger, and statement-style reports from journal and period data so the [accounting workflow](../workflow/accounting-workflow-overview) can generate financial output after close.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 90% — All four report commands plus account-ledger, text/csv/json/markdown, KPA/PMA/PDF for balance-sheet and profit-and-loss, optional budget, and traceability verified by e2e and unit tests; user can complete close-step reporting including TASE and tuloslaskelma PDF (FR-REP-003).
+**Completeness:** 90% — Close-step reports and all formats (text/csv/json/markdown, KPA/PMA, TASE/tuloslaskelma PDF) verified by e2e and unit tests; FR-REP-004 (configurable layout) not implemented.
 
 **Use case readiness:** Accounting workflow: 90% — Close-step reports verified by e2e; user can run trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown, KPA/PMA, and TASE/tuloslaskelma PDF. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), KPA/PMA, and TASE/tuloslaskelma PDF verified by e2e. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; KPA/PMA and TASE/tuloslaskelma PDF verified by e2e.
 
-**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), trial-balance (text/csv/json/markdown with basis), balance-sheet and profit-and-loss in text/csv, `--format kpa`/`--format pma`, and `--format pdf` (TASE/tuloslaskelma), optional budget for P&amp;L, general-ledger (all and `--account`), account-ledger (`--from`/`--to`), and error cases. `internal/app/run_test.go` covers PDF format restriction and CLI PDF output for balance-sheet and profit-and-loss; `internal/report/report_test.go` covers report logic and PDF writer (FR-REP-003). `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` prove workspace load, period parsing, and flag parsing.
+**Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), trial-balance (text/csv/json/markdown with basis), balance-sheet and profit-and-loss (text, kpa, pma, pdf), optional budget for P&amp;L, general-ledger (all and `--account`), account-ledger (`--from`/`--to`), and error cases. `internal/app/run_test.go` verifies CLI success/error paths, PDF and KPA/PMA formats, and flag behavior; `internal/report/report_test.go` verifies report logic, PDF writer (FR-REP-003), and KPA/PMA; `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` verify workspace load, period parsing, and flag parsing.
 
-**Planned next:** None in PLAN.md (doc refresh only). Optional: extend markdown to all report commands where not yet exercised in e2e; SDD polish.
+**Planned next:** FR-REP-004 configurable report layout (built-in or user layout file) for balance-sheet and profit-and-loss; advances [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [accounting workflow](../workflow/accounting-workflow-overview).
 
 **Blockers:** None known.
 

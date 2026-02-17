@@ -35,11 +35,11 @@ Reads a JSON render model from a file or stdin. Writes only the specified PDF ou
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step [Generate invoice PDF and register it as evidence](../workflow/generate-invoice-pdf-and-register-attachment)), [Sale invoicing](../workflow/sale-invoicing).
 
-**Completeness:** 70% — render from file/stdin, list-templates, flags, overwrite, chdir, repo-relative template, and PDF/A verified by e2e and unit tests; user can complete the PDF render step.
+**Completeness:** 70% — PDF render step verified by e2e and unit tests; user can complete render from file/stdin; integrated `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview) ([Generate invoice PDF and register it as evidence](../workflow/generate-invoice-pdf-and-register-attachment)): 70% — render step verified; `bus invoices pdf` not yet in [bus-invoices](./bus-invoices). [Sale invoicing](../workflow/sale-invoicing): 70% — PDF generation step verified; `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
 
-**Current:** E2E `tests/e2e_bus_pdf.sh` verifies help, version, no-args exit 2, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file and stdin, default render, overwrite, reject without overwrite, `--pdfa` (PDF/A-1b), fi-invoice-a4 valid/invalid, repo-relative template, and `-vv`. Unit tests in `cmd/bus-pdf/run_test.go` cover list-templates, default/render plain and invoice, determinism, validation, overwrite, repo-relative, chdir, output, quiet, color, format, and PDFA; `internal/cli/flags_test.go` covers flag parsing; `internal/render/render_test.go` and `internal/render/normalize_test.go` cover determinism and PDF normalization; `internal/templates/templates_test.go` and `internal/templates/invoice_test.go` cover template names and invoice validation.
+**Current:** E2E `tests/e2e_bus_pdf.sh` verifies help, version, no-args exit 2, list-templates, global flags (output, quiet, format, color, `--`, chdir), render from file/stdin, default render, overwrite, reject without overwrite, `--pdfa`, fi-invoice-a4 valid/invalid, repo-relative template, and `-vv`. Unit tests `cmd/bus-pdf/run_test.go`, `internal/cli/flags_test.go`, `internal/render/render_test.go`, `internal/render/normalize_test.go`, `internal/templates/templates_test.go`, and `internal/templates/invoice_test.go` cover list-templates, default/render, determinism, validation, overwrite, repo-relative, chdir, output, quiet, color, format, PDFA, and invoice schema validation.
 
 **Planned next:** None in PLAN.md.
 

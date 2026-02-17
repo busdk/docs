@@ -112,9 +112,9 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 **Use case readiness:** Accounting workflow (bookkeeping UI): 20% — user can start server and get capability URL; token gating, workspace-root checks, embedded API, minimal UI, and read-only 403 verified; no dashboard or workflow screens yet.
 
-**Current:** Serve and capability URL, default subcommand (no args → serve), and fixed token/port are verified by `tests/e2e_bus_books.sh`; global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags by `tests/e2e_bus_books.sh`, `internal/run/run_test.go`, and `internal/cli/flags_test.go`. Workspace root validation, token gating (404 outside `/{token}/`, 200 under token), embedded API (healthz, openapi.json, module backends), read-only 403 on mutating API, and minimal UI (index at base, SPA fallback, assets from embed, API routes not intercepted) are verified by `internal/server/server_test.go` and `internal/api/api_test.go`. No domain backends wired at runtime; no bookkeeping screens are covered by tests.
+**Current:** Serve and capability URL, default subcommand (no args → serve), and fixed token/port are verified by `tests/e2e_bus_books.sh`; global flags (help, version, quiet, verbose, color, chdir, output, `--`) and serve flags by `tests/e2e_bus_books.sh`, `internal/run/run_test.go`, and `internal/cli/flags_test.go`. Workspace root validation, token gating (404 outside `/{token}/`, 200 under token), embedded API (healthz, openapi.json, module backends), read-only 403 on mutating API, and minimal UI (index at base, SPA fallback, assets from embed, API routes not intercepted) are verified by `internal/server/server_test.go` and `internal/api/api_test.go`; default backends registration by `internal/backends/backends_test.go`. No domain backends wired at runtime; no bookkeeping screens are covered by tests.
 
-**Planned next:** Wire or register default bookkeeping module backends; Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) per PLAN.md — advances Accounting workflow.
+**Planned next:** Wire or register default bookkeeping module backends; then Dashboard and core screens (Inbox, Journal, Periods, VAT, Bank, Attachments, Validate) per PLAN.md — advances Accounting workflow.
 
 **Blockers:** None known.
 
