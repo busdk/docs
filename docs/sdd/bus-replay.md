@@ -15,7 +15,7 @@ Bus Replay is a filesystem-only module. It reads [workspace](../layout/minimal-w
 
 **Out of scope.** Bus Replay does not “intelligently reconstruct” missing historical intent; it exports what exists in the workspace and does not guess missing invoices, evidence, or mappings. The module does not perform network, filing submission, or Git operations. Users who need another revision run `git checkout <ref>` externally and then run export.
 
-The intended users are operators and automation performing workspace migration, parity verification, or reproducible setup. The document’s purpose is to serve as the single source of truth for implementation and review; the audience includes human reviewers and implementation agents.
+The intended users are operators and automation performing workspace migration, parity verification, or reproducible setup. The document’s purpose is to serve as the single source of truth for implementation and review; the audience includes human reviewers and implementation agents. Current implementation status (what is shipped versus the full export plan) is documented in [Implementation status](#implementation-status) below.
 
 ### Requirements
 
@@ -148,6 +148,12 @@ Replay logs may embed business-sensitive metadata (descriptions, evidence paths)
 ### Testing Strategy
 
 Golden tests: a known fixture workspace yields exported JSONL that matches a committed golden file byte-for-byte. Roundtrip tests: fixture workspace → export → apply into empty dir → validate equivalence (effective state). Idempotency tests: apply the same log twice; the second run produces only “skipped”. Renderer tests: JSONL → sh rendering matches golden script output.
+
+### Implementation status
+
+The `bus replay` CLI is implemented: subcommands `export`, `apply`, and `render` exist with the flags defined in IF-RPL-001 (`--format jsonl|sh`, `--out`, `--append`, `--mode snapshot|history`, `--include vat,reports`, `--scope accounting|all`). Apply and render behave as specified.
+
+Export does not yet meet the coverage required by FR-RPL-003 and the [Export Plan](#export-plan-default-accounting-snapshot) above. On a workspace that contains full master data, periods, journal postings, and optional domains (e.g. 100+ accounts, full journal, periods, invoices, bank, VAT), `bus replay export --scope accounting` currently emits only the baseline init operations: config init, accounts init, period init, journal init, and attachments init (five lines). It does not yet emit: `bus config set` for entity settings; `bus accounts add` per account; `bus period add` / `bus period open` (or close/lock) per period; `bus journal add` per posting; attachment registrations; invoice, bank, or VAT data; or derived report actions. Until the implementation produces master data and journal postings as in the Export Plan steps 1–7, hand-written replay scripts (e.g. thousands of commands in `original/2023/exports/*.sh`) cannot be replaced or round-tripped by replay export. Operators should continue using existing hand-written replay scripts for migrations until export coverage is completed.
 
 ### Open Questions
 

@@ -173,7 +173,10 @@ Modules not mapped to any documented use case appear here with overall completen
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
+| [replay](../modules/bus-replay#development-state) | 30% (Some basic commands) — export (empty workspace) and render (JSONL→sh) verified; apply report and file_absent guard verified; apply does not execute operations so migration/parity journey not completable. | Apply executing operations in-process; complete export plan (master data, periods, journal, attachments). | Apply does not execute bus commands; export only emits inits for empty workspace. |
 | [run](../modules/bus-run#development-state) | 60% — Define/list/set/unset and run script token and stop-on-first-failure verified; prompt run not verified. | Unit tests path/symlink escape, ambiguity, expansion limit; e2e disabled script and ambiguity (PLAN.md). | None known. |
+
+**replay:** 30% overall. Value promise: export workspace to a deterministic replay log and apply it into a clean workspace for migration and parity. No new use case doc needed — operator/automation tool, not a step in a documented end-user workflow.
 
 **run:** 60% overall. Value promise: run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint. No new use case doc needed — generic runner, not journey-specific.
 

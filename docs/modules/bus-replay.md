@@ -55,13 +55,23 @@ Export reads workspace configuration, resource list, and domain datasets (accoun
 
 **Value promise:** Export a workspace to a deterministic, append-only replay log and apply it into a clean workspace so migrations and parity work can be reviewed in Git and re-run reproducibly.
 
-**Use cases:** Workspace migration, parity verification, reproducible setup for automation and operators.
+**Use cases:** Not mapped to a documented workflow; supports operator/automation use cases (workspace migration, parity verification, reproducible setup). See [Orphan modules](../implementation/development-status#orphan-modules).
 
-**Completeness:** See the [module SDD](../sdd/bus-replay) and [Development status](../implementation/development-status) for current implementation and test coverage.
+**Completeness:** 30% — export (empty workspace) and render (JSONL→sh) verified by tests; apply reports and guard evaluation verified but apply does not execute operations, so migration/parity journey not completable.
+
+**Use case readiness:** Workspace migration / parity verification: 30% — export from empty workspace and render to shell script verified; apply does not execute bus commands (stub).
+
+**Current:** Export from an empty workspace yields deterministic JSONL matching golden output (`internal/replay/golden_test.go`, `internal/replay/export_test.go`, `tests/e2e_bus_replay.sh`) and does not mutate the workspace (`internal/replay/export_test.go`). Apply reads JSONL, evaluates `file_absent` guards, and produces TSV/JSON report; dry-run and idempotent skip are verified (`internal/replay/apply_test.go`, `tests/e2e_bus_replay.sh`). Apply does not execute bus commands. Render produces POSIX sh with shebang and `set -euo pipefail` (`internal/replay/render_test.go`, `internal/replay/golden_test.go`, `tests/e2e_bus_replay.sh`). Global flags and invalid usage are verified (`internal/cli/flags_test.go`, `cmd/bus-replay/main_test.go`, `tests/e2e_bus_replay.sh`).
+
+**Planned next:** Apply executing operations in-process (PLAN.md) and completing the export plan (master data, periods, journal, attachments) to enable the full migration journey.
+
+**Blockers:** Apply does not execute bus commands; export emits only inits for an empty workspace (full accounting snapshot not implemented).
 
 **Depends on:** [bus config](./bus-config), [bus data](./bus-data), [bus accounts](./bus-accounts), [bus period](./bus-period), [bus journal](./bus-journal), [bus attachments](./bus-attachments); optionally [bus vat](./bus-vat) and report-producing modules when included.
 
 **Used by:** Operators and automation; no other BusDK module invokes replay.
+
+See [Development status](../implementation/development-status).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
