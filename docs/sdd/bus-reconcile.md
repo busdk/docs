@@ -7,7 +7,7 @@ description: Bus Reconcile links bank transactions to invoices or journal entrie
 
 ### Introduction and Overview
 
-Bus Reconcile links bank transactions to invoices or journal entries, records allocations for partials, splits, and fees, and stores reconciliation records as schema-validated repository data. This SDD also defines a deterministic two-phase reconciliation workflow where proposals are generated first and approved rows are then applied in batch; that workflow is currently specified but not yet implemented as a first-class command surface.
+Bus Reconcile links bank transactions to invoices or journal entries, records allocations for partials, splits, and fees, and stores reconciliation records as schema-validated repository data. The deterministic two-phase reconciliation workflow (proposal generation then batch apply) is implemented: `bus reconcile propose` and `bus reconcile apply` provide the flow, with `--dry-run` and idempotent re-apply; `match`, `allocate`, and `list` remain for one-off use.
 
 ### Requirements
 
@@ -43,17 +43,21 @@ KD-REC-003 Reconciliation outputs feed migration controls. Proposal and apply ar
 
 ### Component Design and Interfaces
 
-Interface IF-REC-001 (module CLI). The module exposes `bus reconcile` with subcommands `match`, `allocate`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-REC-001 (module CLI). The module exposes `bus reconcile` with subcommands `match`, `allocate`, `list`, `propose`, and `apply` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 Documented parameters for `bus reconcile match` are `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`. The command records a single reconciliation link between the specified bank transaction row from `bank-transactions.csv` and the target invoice header or journal transaction. Matching is deterministic and strict: the bank transaction amount and currency must equal the target amount as stored in the invoice header total or the journal transaction total, and the bank transaction must not already be reconciled. If these conditions are not met, the command exits non-zero and writes no reconciliation rows. Partial payments, splits, and fees are handled through `bus reconcile allocate` instead of `match`.
 
 Documented parameters for `bus reconcile allocate` are `--bank-id <id>` plus one or more allocations expressed as repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>` flags. Allocation flags may appear in any order, and each allocation row references the stable invoice identifier or the stable journal transaction identifier as stored in their datasets. Allocation amounts are positive decimals expressed in the same currency as the bank transaction row, and the sum of all allocations must equal the bank transaction amount exactly. If any referenced record does not exist or the amounts do not sum exactly, the command exits non-zero and writes no reconciliation rows.
 
-Interface IF-REC-002 (proposal generation, planned). The planned command surface is `bus reconcile propose --out <path>|-` with optional deterministic selectors such as date range, period, and target scope. The command reads unreconciled bank rows and eligible invoice or journal targets, computes deterministic candidate rows, and writes a proposal dataset or report. Each proposal row includes stable proposal ID, bank transaction ID, proposed target kind and target ID, proposed amount, confidence score, and reason codes. Proposal output ordering is deterministic and stable across machines.
+Interface IF-REC-002 (proposal generation). The command surface is `bus reconcile propose --out <path>|-` with optional deterministic selectors such as date range, period, and target scope. The command reads unreconciled bank rows and eligible invoice or journal targets, computes deterministic candidate rows, and writes a proposal dataset or report. Each proposal row includes stable proposal ID, bank transaction ID, proposed target kind and target ID, proposed amount, confidence score, and reason codes. Proposal output ordering is deterministic and stable across machines.
 
-Interface IF-REC-003 (batch apply, planned). The planned command surface is `bus reconcile apply --in <path>|-` with optional row selection and `--dry-run`. The command consumes approved proposal rows and applies each row as either a one-to-one match or an allocation write, depending on the proposal shape. Apply is deterministic, idempotent, and fail-safe: invalid rows are rejected with deterministic diagnostics and no partial writes for the rejected row; already-applied rows are reported as skipped.
+Interface IF-REC-003 (batch apply). The command surface is `bus reconcile apply --in <path>|-` with optional row selection and `--dry-run`. The command consumes approved proposal rows and applies each row as either a one-to-one match or an allocation write, depending on the proposal shape. Apply is deterministic, idempotent, and fail-safe: invalid rows are rejected with deterministic diagnostics and no partial writes for the rejected row; already-applied rows are reported as skipped.
 
-Interface IF-REC-004 (coverage artifact contract, planned integration). Proposal and apply outputs expose a deterministic row contract including at minimum proposal ID, bank transaction ID, target kind, target ID, period key, amount, confidence, reason codes, and apply status. This contract is consumed by [bus-validate](./bus-validate) parity or gap checks and [bus-reports](./bus-reports) coverage reports.
+Interface IF-REC-004 (coverage artifact contract). Proposal and apply outputs expose a deterministic row contract including at minimum proposal ID, bank transaction ID, target kind, target ID, period key, amount, confidence, reason codes, and apply status. This contract is consumed by [bus-validate](./bus-validate) parity or gap checks and [bus-reports](./bus-reports) coverage reports.
+
+Optional CI-friendly behavior (suggested extension). Scripts that need to fail on backlog or incomplete apply currently rely on parsing proposal or apply output. An optional extension is thresholds or strict exit codes for "no proposals" vs "partial apply" so CI can fail without custom output parsing. If adopted, the SDD may add an optional exit-code contract and module docs will document exit codes and optional CI flags.
+
+Use of extracted reference keys in reconciliation (suggested extension, depends on [bus-bank](./bus-bank) reference extractors). Not implemented: propose and match use amount and reference only; there is no first-class use of bank-side extracted keys. When [bus-bank](./bus-bank) exposes normalized reference fields (e.g. `erp_id`, `invoice_number_hint`) from its reference extractors, this module would use them in propose and match when joining to invoice or purchase-invoice ids. Expected field names and matching semantics would be documented; amount and currency checks would be retained; an optional "match by extracted key" path would improve match quality and reduce manual pairing. If this capability is adopted, the SDD will extend the reconcile input contract (expected bank fields and match semantics), and module docs will document field names and match-by-key behavior.
 
 Usage examples:
 
@@ -97,9 +101,9 @@ Not Applicable. The module ships as a BusDK CLI component and relies on the stan
 
 ### Migration/Rollout
 
-The current production pattern for deterministic candidate planning is script-based. In this workspace, candidate generation and exact-match planning are handled by custom scripts such as `exports/2024/025-reconcile-sales-candidates-2024.sh` and `exports/2024/024-reconcile-sales-exact-2024.sh`. This remains the fallback until IF-REC-002 and IF-REC-003 are implemented.
+The two-phase flow is implemented: `bus reconcile propose` and `bus reconcile apply` (with `--dry-run` and idempotent re-apply) provide deterministic candidate generation and batch apply. Script-based candidate planning (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remains an alternative where teams prefer it.
 
-Re-test in 2026-02 indicates that the former bank-ID lookup defect is resolved when a valid `matches` dataset exists; the prior “bank transaction … not found” failure did not reproduce in that configuration. The remaining gap is product-level: there is no first-class proposal-generation plus batch-apply flow, and no idempotent apply mode for repeated runs. Until `bus reconcile propose` and `bus reconcile apply` are implemented, teams continue to use explicit `matches` bootstrap, invoice header totals in ERP import, and generated exact-command sets for deterministic replay.
+Re-test in 2026-02 indicates that the former bank-ID lookup defect is resolved when a valid `matches` dataset exists; the prior “bank transaction … not found” failure did not reproduce in that configuration. An optional CI-friendly extension is not yet specified: thresholds or strict exit codes for "no proposals" vs "partial apply" would allow scripts to fail on backlog or incomplete apply without custom output parsing; when adopted, the exit-code contract and optional CI flags will be documented in the SDD and module reference.
 
 ### Risks
 

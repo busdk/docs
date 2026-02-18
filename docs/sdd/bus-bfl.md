@@ -575,6 +575,10 @@ R-BFL-002 Numeric precision expectations. Mitigation: decimal arithmetic and exp
 
 R-BFL-003 Future cross-table lookups. Mitigation: keep row-local semantics initially and introduce lookups only with explicit schema-declared dependencies and deterministic failure modes.
 
+### Suggested extensions (workbook extraction parity)
+
+Formula metadata and evaluation for workbook extraction are partially wired: [bus-data](./bus-data) supports `bus data table workbook --formula` and `--formula-source`, and formula evaluation when a beside-the-table schema exists. To enable **exact parity** for formula-driven totals in source spreadsheets, the following extensions are suggested but not yet required. Document or extend formula metadata/evaluation so workbook extraction can delegate deterministically; support source-specific formula behavior and locale-aware evaluation (decimal and thousands separators, common functions such as SUM, IF, ROUND). BFL already provides dialect options for decimal and thousands separators and a function registration framework; the consumer (bus-data) is responsible for building dialect from source locale and registering the function set. When this capability is fully adopted, [FR-DAT-025](./bus-data#requirements) in bus-data may be extended to require explicit locale and formula-source behavior, and documentation for formula options, supported functions, and locale handling will be required in the module SDD and in the [Formula metadata and evaluation for workbook extraction](../modules/bus-bfl-workbook-formula-delegation) delegation doc.
+
 ### Glossary and Terminology
 
 BFL is the BusDK Formula Language, a deterministic expression language for formulas.

@@ -35,6 +35,8 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+bus-loans does not classify arbitrary bank rows into principal vs interest; financing-style bank payments still require manual split or custom code. A [loan-payment classifier with principal/interest split](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) may be implemented in [bus-journal](./bus-journal) or by integration with this module; when adopted, the SDD and module docs will document profiles, split policy, and proposal output (see [Suggested extensions](../sdd/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows) in the bus-loans SDD).
+
 ### Development state
 
 **Value promise:** Maintain loan register and events so amortization and event postings feed the [bus-journal](./bus-journal) and loan accounts appear in [bus-reports](./bus-reports).

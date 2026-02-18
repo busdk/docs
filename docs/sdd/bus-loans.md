@@ -90,6 +90,10 @@ Not Applicable. Schema evolution is handled through the standard schema migratio
 
 Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic loan data handling.
 
+### Suggested extensions (loan-payment classifier from bank rows)
+
+The module does not classify arbitrary bank rows into principal vs interest. Financing-style bank payments (lenders, installments) are today handled via manual split or custom code. A suggested extension, implemented in [bus-journal](./bus-journal) or by integration with this module, is loan-profile–aware handling so a bank payment produces deterministic posting proposals with principal vs interest/fee split (lender payment profiles, fixed or schedule-based split, or “all to liability” fallback). When adopted, the bus-journal and/or bus-loans SDD will specify the new interfaces and behavior, and module docs will document profiles, split policy, and proposal output. See the [loan-payment classifier suggested capability](./bus-journal#suggested-capabilities-out-of-current-scope) in the bus-journal SDD.
+
 ### Glossary and Terminology
 
 Loan event: an append-only record of loan activity such as disbursement or repayment.  

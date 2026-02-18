@@ -36,7 +36,7 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 In this workspace, candidate planning for reconciliation is currently script-based (`exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`) while the first-class `bus reconcile propose/apply` workflow is not yet shipped.
 
-Counterparty normalization (canonical names and aliases before rule matching), a built-in classification coverage/backlog report (posted vs unposted by month), and native extraction of ERP or invoice references from bank message text are suggested enhancements not yet implemented. See [Suggested capabilities](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) in the module SDD.
+Counterparty normalization (canonical names and aliases before rule matching), a built-in classification coverage/backlog report (posted vs unposted by month), and optional reference extractors from bank message/reference (normalized fields such as `erp_id`, `invoice_number_hint`) are suggested enhancements not yet implemented. See [Suggested capabilities](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) in the module SDD. When counterparty normalization is implemented, the config format (canonical names, alias patterns, and optional helpers) and the new fields (normalized counterparty with original retained for audit) will be documented in the SDD and in the relevant workflow and master-data pages. When reference extractors are implemented, the extractor config (e.g. configurable patterns such as regex) and the new dataset fields will be documented in the SDD and in this module reference.
 
 ### Files
 

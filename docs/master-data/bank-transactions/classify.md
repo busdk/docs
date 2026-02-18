@@ -9,7 +9,7 @@ Record the target ledger account and VAT intent for fees, taxes, and other event
 
 Owner: [bus bank](../../modules/bus-bank).
 
-Classify statement items that are not invoice payments by recording the target ledger account and any relevant VAT intent. This is essential for fees, taxes, and settlement movements.
+Classify statement items that are not invoice payments by recording the target ledger account and any relevant VAT intent. This is essential for fees, taxes, and settlement movements. When bus-bank implements [counterparty normalization](../../sdd/bus-bank#suggested-capabilities-out-of-current-scope), classification rules will be able to key off a canonical counterparty value while the original bank label remains stored for audit. For recurring domestic supplier charges, [posting templates with automatic VAT split](../../sdd/bus-journal#suggested-capabilities-out-of-current-scope) (bus-journal suggested capability) would split gross bank amounts into base + VAT by configured rate and accounts when implemented; template format and usage would then be documented in the bus-journal SDD and module reference.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
