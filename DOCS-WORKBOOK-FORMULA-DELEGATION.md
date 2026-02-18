@@ -11,14 +11,14 @@ That page is the source of truth. In-repo text (e.g. README) should link only to
 
 ## Status
 
-**No changes needed.** A live check confirms the page already includes:
+The canonical page is current and includes:
 
 - Overview (audience, canonical SDD link)
 - Delegation contract (determinism, consumer responsibilities, bus-bfl role)
 - Formula metadata table (schema → BFL options) and validation note
 - Locale-aware evaluation (decimal/thousands separators, dialect profile, example, display vs evaluation)
 - Function set for report totals (SUM, IF, ROUND; same set for validation and evaluation)
-- Relation to bus-data and FR-DAT-025, with links to the bus-bfl SDD
+- Relation to bus-data and FR-DAT-025, including source-specific workbook dialect behavior
 - Sources (Table Schema contract, bus-bfl SDD, bus-data SDD, bus-data CLI)
 
 ## When to update docs.busdk.com

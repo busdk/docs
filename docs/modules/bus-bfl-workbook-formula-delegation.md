@@ -62,7 +62,7 @@ Additional functions (e.g. `AVERAGE`, `MIN`, `MAX`, `COUNT`) can be added by the
 
 Use the same function set for both validation and evaluation when integrating with bus-data workbook read or table read.
 
-Full parity for formula-driven totals in source spreadsheets requires source-specific formula behavior and locale-aware evaluation to be documented and wired end-to-end. This document describes formula options (metadata mapping, dialect, rounding), the recommended minimal function set, and locale handling (decimal and thousands separators). When the capability is fully adopted, [FR-DAT-025](../sdd/bus-data) in the bus-data SDD may be extended for locale and formula-source behavior, and this material will be reflected in the SDD and module reference as normative documentation for formula options, supported functions, and locale handling.
+Full parity for formula-driven totals in source spreadsheets requires source-specific formula behavior and locale-aware evaluation to be documented and wired end-to-end. This document describes formula options (metadata mapping, dialect, rounding), the recommended minimal function set, and locale handling (decimal and thousands separators). [FR-DAT-025](../sdd/bus-data) in the bus-data SDD now includes locale and source-specific workbook formula behavior, and this material is reflected in the SDD and module reference as normative documentation for formula options, supported functions, and locale handling.
 
 ### Relation to bus-data and FR-DAT-025
 

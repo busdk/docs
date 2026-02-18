@@ -11,7 +11,7 @@ Command names follow [CLI command naming](../cli/command-naming). Bus Data provi
 
 `bus data` reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. It remains a mechanical data layer and does not implement domain-specific accounting logic; domain invariants are enforced by domain modules. Paths to domain datasets (e.g. accounts, journal) are owned by the module that owns each dataset; callers obtain paths from that module, and bus-data accepts table paths as input and performs schema-validated I/O on them.
 
-Workbook-style read is available via `bus data table workbook`: cell and range access by address (e.g. `A1`, `A1:B2`), optional header or anchor-based lookup, locale options (`--decimal-sep`, `--thousands-sep`), and optional formula evaluation (`--formula`, `--formula-source`). Output is deterministic and machine-friendly (tsv/json). Formula options, supported functions, and locale handling for workbook formula evaluation are described in [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation). When exact parity for formula-driven totals is adopted, [FR-DAT-025](../sdd/bus-data) may be extended for locale and formula-source behavior and the SDD will document the full contract. Remaining parity work for spreadsheet-to-Bus reconciliation is advanced source-specific extraction, not core A1/range or formula support; see [Implementation status](../sdd/bus-data#implementation-status-workbook-read) in the module SDD.
+Workbook-style read is available via `bus data table workbook`: cell and range access by address (e.g. `A1`, `A1:B2`), optional header or anchor-based lookup, locale options (`--decimal-sep`, `--thousands-sep`), and formula evaluation controls (`--formula`, `--formula-source`, `--formula-dialect`). Output is deterministic and machine-friendly (tsv/json). Formula options, supported functions, and locale handling for workbook formula evaluation are described in [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation). FR-DAT-025 in the module SDD includes locale-aware and source-specific formula behavior for workbook extraction; see [Implementation status](../sdd/bus-data#implementation-status-workbook-read) for current coverage and remaining parity work.
 
 For ERP migration workflows, bus-data also defines a mechanical import-profile contract for domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). This profile helper layer is specified in the module SDD and is planned for implementation so ERP mapping behavior can be reusable and deterministic across repositories.
 
@@ -113,6 +113,7 @@ bus data table workbook <table_path> <address> [address ...]
 | `--thousands-sep <char>` | Thousands separator for locale-aware numeric normalization (e.g. space). |
 | `--formula` | Evaluate formula-enabled fields when a beside-the-table schema exists. |
 | `--formula-source` | Include formula source in output when `--formula` is set. |
+| `--formula-dialect <name>` | Source-specific formula dialect profile: `spreadsheet`, `excel_like`, or `sheets_like`. |
 | `--header` | Resolve column by header name; addresses may use `ColumnName:RowNumber`. |
 | `--anchor-row <n>` | Use row *n* (1-based) as the column header row; data rows follow. Default 1. |
 | `--anchor-col <col>` | Column (letter or 1-based index) as row labels; addresses may use `ColumnNameOrLetter:RowLabel`. |
@@ -120,6 +121,8 @@ bus data table workbook <table_path> <address> [address ...]
 **Global flags that apply:** `--format` (tsv|json), `--output`, `--quiet`, `--verbose`, `--color`, `--chdir`.
 
 **Output schema (cell/range results):** TSV (default): header row `address\trow\tcol\tvalue`, one data row per cell, tab-separated columns, order by address then row then column (deterministic). JSON (`--format json`): a JSON array of objects; each object has exactly four keys — `"address"` (string), `"row"` (number, 1-based), `"col"` (number, 1-based), `"value"` (string) — with the same ordering as TSV.
+
+Workbook formula evaluation uses deterministic BFL delegation with the minimal supported function set `SUM`, `IF`, and `ROUND`. Locale options (`--decimal-sep`, `--thousands-sep`) are applied both to value normalization and to formula parsing/evaluation for workbook extraction. When `--formula-source` is enabled, formula source columns remain raw source text (not locale-normalized).
 
 **Exit codes:** 0 on success; 2 on invalid usage (e.g. missing table path or addresses, unknown `--format`); non-zero on missing file or validation error.
 
