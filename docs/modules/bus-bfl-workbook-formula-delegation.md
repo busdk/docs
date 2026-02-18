@@ -13,6 +13,8 @@ The audience is BusDK module maintainers integrating BFL for table projection an
 
 **Determinism.** For the same expression, context, dialect, function set, and rounding policy, BFL returns the same result across runs and machines for a given BusDK version. To achieve parity with a given workbook, the consumer must use the same dialect (including locale) and, when formulas use functions, the same function set as the source.
 
+**Output contract.** When formula evaluation is enabled for workbook read, the output MUST contain the evaluated result (e.g. numeric) for formula-driven cells, not the formula source text, unless the consumer opts in to include formula source. Locale options apply both to parsing numeric literals inside formula expressions and to normalizing locale-formatted cell values in output (e.g. `1 234,56` with space thousands and comma decimal becomes `1234.56`).
+
 **Consumer responsibilities.** The consumer is responsible for discovering formula fields from schema metadata; building dialect and options from schema and source locale; building symbol table and runtime context from the current row and table; and calling BFL’s Parse → Compile → Eval pipeline.
 
 **bus-bfl.** The library is pure and data-source-agnostic. It accepts expression source strings and caller-provided context (symbols, types, registered functions). It does not read CSV, Table Schema, or workspace paths.
@@ -69,6 +71,14 @@ Full parity for formula-driven totals in source spreadsheets requires source-spe
 Formula evaluation for table read and workbook-style read (`bus data table workbook --formula`, `--formula-source`) is specified in the bus-data module and aligns with FR-DAT-025. bus-data owns discovery of formula fields from schema, building dialect and options from schema and locale, and registering the function set; it delegates parsing, compilation, and evaluation to the BFL library per this contract.
 
 For the integration contract and Table Schema formula metadata, see [IF-BFL-002 Integration contract with bus-data](https://docs.busdk.com/sdd/bus-bfl#if-bfl-002-integration-contract-with-bus-data) and the [Table Schema formula metadata](https://docs.busdk.com/sdd/bus-bfl#schema-representation-busdk-extension) in the bus-bfl SDD.
+
+### Verification
+
+Implementations and reviewers can confirm formula and locale parity as follows. (1) In a workspace with a CSV that has formula cells and a beside-the-table schema defining formula fields, run `bus data table workbook <path> A1:C3 --formula -f tsv` and assert the output contains evaluated numeric values for formula cells, not formula text. (2) With the same setup, assert that non-formula cells and formula results appear in the same machine-friendly columns. (3) For locale: run with `--decimal-sep "," --thousands-sep " "` against a table that includes a cell whose raw value is `1 234,56` (space thousands, comma decimal). (4) Assert the output value for that cell is normalized to `1234.56` (canonical decimal form). These steps verify FR-DAT-024 and FR-DAT-025 acceptance criteria. Example command with formula and locale options:
+
+```text
+bus data table workbook source.csv A1:C10 --formula --decimal-sep "," --thousands-sep " " -f tsv
+```
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

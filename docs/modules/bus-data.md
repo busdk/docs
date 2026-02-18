@@ -122,7 +122,15 @@ bus data table workbook <table_path> <address> [address ...]
 
 **Output schema (cell/range results):** TSV (default): header row `address\trow\tcol\tvalue`, one data row per cell, tab-separated columns, order by address then row then column (deterministic). JSON (`--format json`): a JSON array of objects; each object has exactly four keys — `"address"` (string), `"row"` (number, 1-based), `"col"` (number, 1-based), `"value"` (string) — with the same ordering as TSV.
 
-Workbook formula evaluation uses deterministic BFL delegation with the minimal supported function set `SUM`, `IF`, and `ROUND`. Locale options (`--decimal-sep`, `--thousands-sep`) are applied both to value normalization and to formula parsing/evaluation for workbook extraction. When `--formula-source` is enabled, formula source columns remain raw source text (not locale-normalized).
+Workbook formula evaluation uses deterministic BFL delegation with the minimal supported function set `SUM`, `IF`, and `ROUND`. Locale options (`--decimal-sep`, `--thousands-sep`) are applied both to value normalization and to formula parsing/evaluation for workbook extraction. When `--formula-source` is enabled, formula source columns remain raw source text (not locale-normalized). With `--formula`, output contains evaluated values (e.g. numeric) for formula cells, not formula text; locale-formatted cell values (e.g. `1 234,56`) are normalized to canonical form (e.g. `1234.56`) when locale flags are set.
+
+Example with formula evaluation and locale (decimal comma, space thousands):
+
+```text
+bus data table workbook source.csv A1:C10 --formula --decimal-sep "," --thousands-sep " " -f tsv
+```
+
+Verification steps for formula output and locale normalization are in [Formula metadata and evaluation for workbook extraction — Verification](./bus-bfl-workbook-formula-delegation#verification).
 
 **Exit codes:** 0 on success; 2 on invalid usage (e.g. missing table path or addresses, unknown `--format`); non-zero on missing file or validation error.
 
