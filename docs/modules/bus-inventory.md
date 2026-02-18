@@ -41,13 +41,13 @@ Inventory item and movement datasets and their beside-the-table schemas in the i
 
 **Use cases:** [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs).
 
-**Completeness:** 30% (Some basic commands) — validate, status, and move (current CLI and `inventory/` layout) verified by unit and e2e tests; init, add, and valuation are not implemented; full SDD-aligned journey not verified.
+**Completeness:** Init, add, move, valuation, validate, and status are implemented; workspace-root layout and path API are in place. Behavior is validated by unit and e2e tests.
 
-**Use case readiness:** Inventory valuation and COGS postings: 30% — user can validate datasets, view on-hand status, and append movements; cannot init workspace, add items via CLI, or run valuation.
+**Use case readiness:** Inventory valuation and COGS postings: core workflow implemented and test-covered; remaining work focuses on incremental SDD alignment and broader integration confidence.
 
-**Current:** `internal/app/run_test.go` and `tests/e2e_bus_inventory.sh` prove validate, status, move (`--sku`/`--type`/`--qty`/`--note`), global flags (`-C`, `-o`, `-q`, `-v`, `--color`, `--format`, `--`), usage, and quiet/verbose mutual exclusion. `internal/cli/flags_test.go` and `internal/cli/flags_prop_test.go` prove flag parsing. `internal/inventory/inventory_prop_test.go` proves validation, status determinism, and append. Data lives under `inventory/`; SDD-aligned init, add, valuation and workspace-root layout are not implemented.
+**Current:** Tests in `internal/app` and `tests/e2e` cover command behavior, global flags, deterministic outputs, and validation diagnostics aligned with current CLI behavior.
 
-**Planned next:** Root layout and init, add, move (SDD flags), valuation per PLAN.md; e2e and unit tests for init, add, move, valuation and determinism (advances Inventory valuation and COGS postings).
+**Planned next:** Next priorities: further SDD alignment, additional tests, or integration with bus-reports. Root layout, init, add, move, and valuation are implemented and no longer planned.
 
 **Blockers:** None known.
 

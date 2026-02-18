@@ -65,7 +65,7 @@ See [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-
 
 | Module | Readiness | Biggest next | Biggest blocker |
 |--------|-----------|--------------|-----------------|
-| [inventory](../modules/bus-inventory#development-state) | 30% (Some basic commands) – validate, status, move (current CLI and inventory/ layout) verified by unit and e2e; init, add, valuation not implemented. | Root layout; init, add, move (SDD), valuation; e2e/unit tests for full journey. | None known. |
+| [inventory](../modules/bus-inventory#development-state) | Core workflow implemented and test-covered — init, add, move, valuation, validate, status; workspace-root layout and path API; remaining work: SDD alignment, more tests, bus-reports integration. | Further SDD alignment; additional tests; integration with bus-reports. | None known. |
 
 ### Spreadsheet workbooks
 

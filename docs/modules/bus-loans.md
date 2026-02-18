@@ -41,13 +41,13 @@ Loan register and event datasets and their beside-the-table schemas in the loans
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 40% (Meaningful task, partial verification) — loan registry (init, add, list, update), validate, balances, schedule, and postings verified by unit and e2e; `event` and `amortize` subcommands not implemented and not verified.
+**Completeness:** 70% (Core workflow implemented and verified) — init, add, event, amortize, list, update, validate, balances, schedule, and postings are implemented and verified by unit and e2e tests.
 
-**Use case readiness:** Finnish company reorganisation: 40% — loan registry, list, validate, balances, schedule, postings verified by unit and e2e; event and amortize not implemented.
+**Use case readiness:** Finnish company reorganisation: 70% — core loan lifecycle (register, events, amortization, validation, balances, schedules, postings) is implemented and test-covered.
 
-**Current:** Verified by tests: init, add, list, validate, balances, schedule, postings, update, and global flags (help, version, quiet, verbose, chdir, output, format, color). Unit tests in `internal/app/run_test.go` (e.g. `TestRunInitSuccessAndIdempotency`, `TestRunAddSuccess`, `TestRunAddDuplicateLoanID`, `TestRunListOutputSorted`, `TestRunValidateSuccess`, `TestRunBalancesOutputShape`, `TestRunScheduleAnnuity`, `TestRunPostingsBorrowerSplit`, `TestRunPostingsLenderAccounts`, `TestRunUpdateSuccess`, and flag/error tests) and `internal/cli/flags_test.go`; e2e in `tests/e2e_bus_loans.sh` (init, add, list, validate, balances, schedule, postings, -C, --output, -q, help, version, invalid usage).
+**Current:** Verified by tests in `internal/app/run_test.go` and `internal/cli/flags_test.go`, including event/amortize command tests (for example `TestRunEvent*` and `TestRunAmortize*`) and global-flag behavior; end-to-end coverage in `tests/e2e_bus_loans.sh` includes init, add, event, amortize, validate, list, balances, schedule, postings, and key global flags.
 
-**Planned next:** Implement `event` and `amortize` subcommands (PLAN.md) to advance the yrityssaneeraus evidence-pack journey; idempotent init; root layout; add-flag alignment with SDD; reference validation; command-level tests for event/amortize.
+**Planned next:** Follow-up priorities are incremental SDD alignment and additional output-format/integration coverage; implementing event and amortize is no longer planned work.
 
 **Blockers:** None known.
 
