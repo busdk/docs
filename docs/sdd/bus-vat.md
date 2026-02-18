@@ -41,7 +41,7 @@ KD-VAT-004 Journal-driven mode supports migration and legacy scenarios. Where in
 
 ### Component Design and Interfaces
 
-Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `report`, and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `validate`, `report`, and `export` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 

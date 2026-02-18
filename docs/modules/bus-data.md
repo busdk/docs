@@ -32,7 +32,8 @@ For ERP migration workflows, bus-data also defines a mechanical import-profile c
 `bus data row update <table> --key <key>=<value> ... (--set <key>=<value> ... | --json <file>) [--chdir <dir>] [global flags]`  
 `bus data row delete <table> --key <key>=<value> ... [--chdir <dir>] [global flags]`  
 `bus data table read <table> [--row <index|start:end>] [--column <name>] ... [--filter <field>=<value>] ... [--key <key>=<value>] [--formula-source] [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
-`bus data table list [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`
+`bus data table list [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus data table workbook <table_path> <address> [address ...] [workbook and global flags]`
 
 ### Getting started
 
@@ -89,6 +90,38 @@ If your tables use a primary key, use `--key field=value` for a single-column ke
 ```text
 bus data table read customers --key id=1
 ```
+
+### Table workbook
+
+`bus data table workbook` reads cells or ranges by address from a CSV table, with optional header or anchor-based lookup and formula evaluation. This gives api/sheets and scripts a stable contract for workbook-style extraction.
+
+**Usage:**
+
+```text
+bus data table workbook <table_path> <address> [address ...]
+```
+
+**Positional arguments:** `<table_path>` is the workspace-relative path to the CSV table (`.csv` suffix optional). `<address> [address ...]` are one or more cell or range addresses and are required.
+
+**Address forms:** A1-style single cell (e.g. `A1`, `J510`), bounded range (e.g. `A1:B2`), or open-ended range (e.g. `A1:A`, `A:A`). Rows are 1-based; column letters A=1, B=2, …, Z=26, AA=27, etc. (BFL-compatible). With `--header`, addresses may use `ColumnName:RowNumber` (e.g. `id:1`, `nimi:2`). With `--anchor-col`, addresses may use `ColumnNameOrLetter:RowLabel` to resolve the row by the anchor column’s value (e.g. `nimi:alice`).
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--decimal-sep <char>` | Decimal separator for locale-aware numeric normalization (e.g. `,`). |
+| `--thousands-sep <char>` | Thousands separator for locale-aware numeric normalization (e.g. space). |
+| `--formula` | Evaluate formula-enabled fields when a beside-the-table schema exists. |
+| `--formula-source` | Include formula source in output when `--formula` is set. |
+| `--header` | Resolve column by header name; addresses may use `ColumnName:RowNumber`. |
+| `--anchor-row <n>` | Use row *n* (1-based) as the column header row; data rows follow. Default 1. |
+| `--anchor-col <col>` | Column (letter or 1-based index) as row labels; addresses may use `ColumnNameOrLetter:RowLabel`. |
+
+**Global flags that apply:** `--format` (tsv|json), `--output`, `--quiet`, `--verbose`, `--color`, `--chdir`.
+
+**Output schema (cell/range results):** TSV (default): header row `address\trow\tcol\tvalue`, one data row per cell, tab-separated columns, order by address then row then column (deterministic). JSON (`--format json`): a JSON array of objects; each object has exactly four keys — `"address"` (string), `"row"` (number, 1-based), `"col"` (number, 1-based), `"value"` (string) — with the same ordering as TSV.
+
+**Exit codes:** 0 on success; 2 on invalid usage (e.g. missing table path or addresses, unknown `--format`); non-zero on missing file or validation error.
 
 ### Update and delete rows
 
@@ -293,13 +326,13 @@ The module operates on workspace datasets as CSV resources with beside-the-table
 
 **Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Completeness:** 80% — Package/resource/schema/table/workbook/row and formula surface verified by e2e and unit tests; workbook command not yet documented in SDD/CLI reference (KD-DAT-005).
+**Completeness:** 80% — Package/resource/schema/table/workbook/row and formula surface verified by e2e and unit tests; table workbook documented in SDD and CLI reference (KD-DAT-005).
 
-**Use case readiness:** Workbook and validated tabular editing: 80% — User can complete package/resource lifecycle, schema evolution, table and workbook-style read (cell/range, --header, --anchor-col/--anchor-row, --decimal-sep, --formula), and row mutate; workbook doc in SDD/CLI reference pending.
+**Use case readiness:** Workbook and validated tabular editing: 80% — User can complete package/resource lifecycle, schema evolution, table and workbook-style read (cell/range, --header, --anchor-col/--anchor-row, --decimal-sep, --formula), and row mutate.
 
 **Current:** E2e script `tests/e2e_bus_data.sh` verifies init, package discover/show/patch/validate, resource list/validate/add/remove/rename (FK refusal, --delete-files, --rename-files, FK update), schema init/show/infer/patch, schema key set and foreign-key add/remove (--dry-run and refusal), schema field add/remove/rename/set-type/set-format/set-constraints/set-missing-values, table list/read (--row, --column, --filter, --key) and table workbook (address/range, --header, --anchor-col, --anchor-row, --decimal-sep, --formula), row add/update/delete (in-place and soft-delete), formula projection (--formula-source, on_error=null), and global flags (--chdir, --output, --quiet, --dry-run, --). Unit tests in `internal/cli/package_resource_test.go`, `internal/cli/run_test.go`, `internal/cli/flags_test.go`, `internal/cli/write_commands_test.go`, `pkg/data/datapackage_test.go`, `pkg/data/mutate_test.go`, `pkg/data/formula_test.go`, `pkg/data/workbook_test.go`, `pkg/data/schema_key_set_test.go`, and `pkg/data/schema_foreign_key_test.go` cover resource remove when referenced, help/version/quiet/format/chdir/output, mutate/patch/validate/formula/serialization, and key set and foreign-key behavior.
 
-**Planned next:** Add and document the import-profile library contract (descriptor validation and deterministic mapping primitives) for [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank), and keep table workbook documentation aligned in SDD and CLI reference (KD-DAT-005). Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing) and ERP migration workflows.
+**Planned next:** Add and document the import-profile library contract (descriptor validation and deterministic mapping primitives) for [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing) and ERP migration workflows.
 
 **Blockers:** None known.
 

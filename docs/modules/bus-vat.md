@@ -14,6 +14,7 @@ Where invoice master data is incomplete or absent (e.g. journal-first bookkeepin
 ### Synopsis
 
 `bus vat init [-C <dir>] [global flags]`  
+`bus vat validate [-C <dir>] [global flags]`  
 `bus vat report --period <period> [-C <dir>] [global flags]`  
 `bus vat export --period <period> [-C <dir>] [global flags]`
 

@@ -5,9 +5,9 @@ description: How consumers such as bus-data delegate formula evaluation to BFL s
 
 ## Overview
 
-This document describes how consumers (such as [bus-data](./bus-data)) can delegate formula evaluation to the BFL library so that **workbook extraction** and table read produce deterministic, formula-driven results. It supports parity workflows where formula-driven report totals in source spreadsheets are reproduced in BusDK.
+This document describes how consumers (such as [bus-data](https://docs.busdk.com/modules/bus-data)) can delegate formula evaluation to the BFL library so that **workbook extraction** and table read produce deterministic, formula-driven results. It supports parity workflows where formula-driven report totals in source spreadsheets are reproduced in BusDK.
 
-**Audience:** BusDK module maintainers integrating BFL for table projection and workbook-style read (e.g. `bus data table workbook --formula`). The canonical API and language semantics remain the [module SDD](../sdd/bus-bfl).
+**Audience:** BusDK module maintainers integrating BFL for table projection and workbook-style read (e.g. `bus data table workbook --formula`). The canonical API and language semantics remain the [module SDD](https://docs.busdk.com/sdd/bus-bfl).
 
 ### Delegation contract
 
@@ -28,7 +28,7 @@ Formula semantics are declared in Frictionless Table Schema via BusDK metadata o
 | `field.busdk.formula.rounding` | Map to `EvalOptions.Rounding` (scale and mode: `half_up` / `half_even`). Omit when not set so BFL defaults apply. |
 | `field.busdk.formula.on_error` | `"fail"`: surface evaluation errors. `"null"`: on evaluation error return null when result type is nullable. |
 
-The normative metadata shape and semantics are defined in the [bus-bfl SDD — Schema representation](../sdd/bus-bfl#schema-representation-busdk-extension). Invalid rounding or result type in the schema must be rejected at validation time before any evaluation.
+The normative metadata shape and semantics are defined in the [bus-bfl SDD — Schema representation](https://docs.busdk.com/sdd/bus-bfl). Invalid rounding or result type in the schema must be rejected at validation time before any evaluation.
 
 ### Locale-aware evaluation
 
@@ -51,7 +51,7 @@ BFL has **no built-in functions**. All function calls (e.g. `SUM(A1:A10)`, `IF(c
 For **formula-driven report totals** and common workbook-style expressions to be reproducible in Bus parity workflows, the consumer should register a minimal set of functions. Recommended names and intent (implementation is in the consumer or a shared package, not in bus-bfl):
 
 | Function | Purpose | Notes |
-|----------|---------|--------|
+|----------|---------|-------|
 | `SUM` | Sum of numeric values in a range or array | Signature: single argument of kind `array` (or range), return `number`. |
 | `IF` | Conditional value | Signature: (condition: bool, thenValue: any, elseValue: any) → any. |
 | `ROUND` | Round a number to a given scale | Signature: (number, scale: integer) → number; use dialect or EvalOptions rounding when scale omitted if desired. |
@@ -67,7 +67,7 @@ When integrating with bus-data workbook read or table read, the same function se
 - **Functions:** Register a minimal set (e.g. SUM, IF, ROUND) in the consumer so report-style formulas can be evaluated; BFL does not ship built-ins.
 - **Determinism:** Same expression, context, dialect, function set, and rounding yield the same result; use consistent options for parity with the source workbook.
 
-This contract aligns with [IF-BFL-002 Integration contract with bus-data](../sdd/bus-bfl#if-bfl-002-integration-contract-with-bus-data) and the [Table Schema formula metadata](../sdd/bus-bfl#schema-representation-busdk-extension) defined in the SDD.
+This contract aligns with [IF-BFL-002 Integration contract with bus-data](https://docs.busdk.com/sdd/bus-bfl) and the [Table Schema formula metadata](https://docs.busdk.com/sdd/bus-bfl) defined in the SDD.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -79,6 +79,6 @@ This contract aligns with [IF-BFL-002 Integration contract with bus-data](../sdd
 
 ### Sources
 
-- [bus-data (module CLI)](./bus-data)
-- [bus-bfl (module SDD)](../sdd/bus-bfl)
-- [Table Schema contract](../data/table-schema-contract)
+- [bus-data (module CLI)](https://docs.busdk.com/modules/bus-data)
+- [bus-bfl (module SDD)](https://docs.busdk.com/sdd/bus-bfl)
+- [Table Schema contract](https://docs.busdk.com/data/table-schema-contract)

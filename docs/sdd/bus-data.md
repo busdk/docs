@@ -123,7 +123,39 @@ Command `bus data table read <table>` takes a required table path, loads the bes
 
 When a table contains formula-enabled fields, `bus data table read` computes formula values using the [bus-bfl](./bus-bfl) library and returns a projected dataset view. The stored CSV values remain the formula source and are not rewritten. Computed values are validated against the declared formula result type and constraints before output, and formula evaluation errors are reported deterministically with resource, field, and row context. The default projection output contains computed values only for formula-enabled fields, and an explicit opt-in mode includes formula source alongside computed values without colliding with user columns. For formulas that include ranges, bus-data resolves `Ref.ColumnIndex` to the schema field order (1-based) and `Ref.RowIndex` to the physical row order (1-based) in the current resource snapshot, and it resolves open-ended ranges using the last row in that snapshot without probing external state.
 
-Workbook-style read (FR-DAT-022 through FR-DAT-025) is provided by a designated command or mode that accepts a CSV path (workspace-relative or via `--chdir`), one or more cell or range addresses in BFL-compatible notation, and optional flags for header or anchor-based lookup and locale-aware numeric normalization. Output is deterministic tsv or json suitable for agent workflows and audit scripts. When optional formula evaluation is enabled, the same [bus-bfl](./bus-bfl) dialect and range resolver contract as schema-validated table read apply so that formula-driven cells can be evaluated and included in the output; formula source may be included via an explicit opt-in. The library MUST expose this behavior through a dedicated API so that other modules can invoke workbook read without shelling out to the CLI. The exact command name, flag set, and output schema for cell/range results are TBD and MUST be documented when implemented.
+Workbook-style read (FR-DAT-022 through FR-DAT-025) is provided by the command `bus data table workbook`. The command accepts a workspace-relative table path (or via `--chdir`), one or more cell or range addresses in BFL-compatible notation, and optional flags for header or anchor-based lookup and locale-aware numeric normalization. Output is deterministic tsv or json suitable for agent workflows and audit scripts. When optional formula evaluation is enabled, the same [bus-bfl](./bus-bfl) dialect and range resolver contract as schema-validated table read apply so that formula-driven cells can be evaluated and included in the output; formula source may be included via an explicit opt-in. The library MUST expose this behavior through a dedicated API so that other modules can invoke workbook read without shelling out to the CLI. The command name, flag set, address forms, and output schema are specified in [Table workbook (KD-DAT-005)](#table-workbook-kd-dat-005) below.
+
+#### Table workbook (KD-DAT-005)
+
+**Command name:** `table workbook`
+
+**Usage:**
+
+```text
+bus data table workbook <table_path> <address> [address ...]
+```
+
+**Positional arguments:** `<table_path>` is the workspace-relative path to the CSV table (`.csv` suffix optional). `<address> [address ...]` are one or more cell or range addresses and are required.
+
+**Address forms:** A1-style single cell (e.g. `A1`, `J510`), bounded range (e.g. `A1:B2`), or open-ended range (e.g. `A1:A`, `A:A`). Rows are 1-based; column letters A=1, B=2, …, Z=26, AA=27, etc. (BFL-compatible). With `--header`, addresses may use `ColumnName:RowNumber` (e.g. `id:1`, `nimi:2`). With `--anchor-col`, addresses may use `ColumnNameOrLetter:RowLabel` to resolve the row by the anchor column’s value (e.g. `nimi:alice`).
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--decimal-sep <char>` | Decimal separator for locale-aware numeric normalization (e.g. `,`). |
+| `--thousands-sep <char>` | Thousands separator for locale-aware numeric normalization (e.g. space). |
+| `--formula` | Evaluate formula-enabled fields when a beside-the-table schema exists. |
+| `--formula-source` | Include formula source in output when `--formula` is set. |
+| `--header` | Resolve column by header name; addresses may use `ColumnName:RowNumber`. |
+| `--anchor-row <n>` | Use row *n* (1-based) as the column header row; data rows follow. Default 1. |
+| `--anchor-col <col>` | Column (letter or 1-based index) as row labels; addresses may use `ColumnNameOrLetter:RowLabel`. |
+
+**Global flags that apply:** `--format` (tsv|json), `--output`, `--quiet`, `--verbose`, `--color`, `--chdir`.
+
+**Output schema (cell/range results):** TSV (default): header row `address\trow\tcol\tvalue`, one data row per cell, tab-separated columns, order by address then row then column (deterministic). JSON (`--format json`): a JSON array of objects; each object has exactly four keys — `"address"` (string), `"row"` (number, 1-based), `"col"` (number, 1-based), `"value"` (string) — with the same ordering as TSV.
+
+**Exit codes:** 0 on success; 2 on invalid usage (e.g. missing table path or addresses, unknown `--format`); non-zero on missing file or validation error.
 
 Command `bus data schema init <table>` creates a new CSV file and beside-the-table schema. It writes a header row that matches the schema field order and refuses to overwrite existing files unless explicitly forced.
 
@@ -305,7 +337,7 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 ### Implementation status (workbook read)
 
-Workbook-style read is implemented at the command surface via `bus data table workbook` (or the equivalent command name once OQ-DAT-003 is resolved): A1 and range reads (e.g. `A1`, `A1:B2`), workbook-specific options for locale and formulas (`--decimal-sep`, `--thousands-sep`, `--formula`, `--formula-source`, `--header`, anchors), and machine-friendly output (tsv/json). FR-DAT-022 through FR-DAT-025 are covered at the command level. Remaining parity work is advanced source-specific extraction behavior (e.g. complex formula-driven report reconciliation), not missing A1/range or formula-evaluation functionality.
+Workbook-style read is implemented at the command surface via `bus data table workbook`. The command name, flags, address forms, and output schema are specified in Table workbook (KD-DAT-005) in Component Design and Interfaces. A1 and range reads (e.g. `A1`, `A1:B2`), workbook-specific options for locale and formulas (`--decimal-sep`, `--thousands-sep`, `--formula`, `--formula-source`, `--header`, anchors), and machine-friendly output (tsv/json) are implemented and verified. FR-DAT-022 through FR-DAT-025 are covered at the command level. Remaining parity work is advanced source-specific extraction behavior (e.g. complex formula-driven report reconciliation), not missing A1/range or formula-evaluation functionality.
 
 ### Glossary and Terminology
 
@@ -321,11 +353,11 @@ Cell address: a BFL-compatible reference to a single cell (e.g. J510), using col
 
 ### Open Questions
 
+OQ-DAT-003 (resolved). The command name, flag set, and output schema for workbook-style read are specified in [Table workbook (KD-DAT-005)](#table-workbook-kd-dat-005).
+
 OQ-DAT-001 What is the exact CLI flag name and output shape for the opt-in mode that includes formula source alongside computed values, and which output formats must support it?
 
 OQ-DAT-002 Should `bus data table read` fail the entire command on the first formula evaluation error, or should it report all formula errors and then fail without emitting partial output?
-
-OQ-DAT-003 What is the exact CLI command name, flag set, and output schema for workbook-style read (address-based cell/range, header or anchor lookup, locale normalization, optional formula evaluation)?
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
