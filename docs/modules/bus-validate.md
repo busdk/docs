@@ -7,7 +7,9 @@ description: bus validate checks all workspace datasets against their schemas an
 
 ### Synopsis
 
-`bus validate [--format <text|tsv>] [-C <dir>] [global flags]`
+`bus validate [--format <text|tsv>] [-C <dir>] [global flags]`  
+`bus validate parity --source <file> [--max-abs-delta <n>] [--max-count-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`  
+`bus validate journal-gap --source <file> [--max-abs-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
@@ -25,7 +27,9 @@ Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide val
 
 ### Parity and gap checks (first-class)
 
-The module exposes deterministic migration checks as subcommands: `bus validate parity --source <file>` (source-import parity: counts and sums by dataset and period) and `bus validate journal-gap --source <file>` (journal gap: imported operational vs non-opening journal by month). Both support optional threshold flags (`--max-abs-delta`, `--max-count-delta`, `--max-pct-delta-*`) and CI-friendly exit semantics; `--dry-run` emits planned thresholds and scope to stderr without writing a result set. Output is a result set (TSV) to stdout or to the file given by `--output`. Per-bucket thresholds are not yet implemented: a single gap is evaluated against one set of thresholds. A suggested extension is [class-aware gap validation thresholds](../sdd/bus-validate#suggested-capabilities-out-of-current-scope): compare gap per account bucket (e.g. operational, financing, internal transfer) against configurable thresholds and exit non-zero when a bucket exceeds its limit, so CI can fail on operational backlog while tolerating financing/transfer backlog. When adopted, the SDD will specify the threshold contract and module docs will document threshold config and exit behavior.
+The module exposes deterministic migration checks as subcommands: `bus validate parity --source <file>` (source-import parity: counts and sums by dataset and period) and `bus validate journal-gap --source <file>` (journal gap: imported operational vs non-opening journal by month). Both consume a deterministic source-summary file whose format is defined by the module: typically counts and sums by dataset and period (or by month for journal-gap), with stable column names so that the same source artifact can be produced by [bus-reports](./bus-reports) or export scripts. Global threshold flags apply to the aggregate result: `--max-abs-delta` (and optionally `--max-count-delta`, `--max-pct-delta-*`) define the allowed deviation; when a row exceeds the threshold, the command exits non-zero (CI-friendly). `--dry-run` emits planned thresholds and scope to stderr without writing a result set. Output is a result set (TSV) to stdout or to the file given by global `--output`.
+
+**Per-bucket thresholds (optional).** When `--bucket-thresholds <file>` is provided, the file defines named buckets (e.g. operational, financing, internal transfer) and a threshold value per bucket. File format: one row per bucket, with columns for bucket name and threshold (e.g. `bucket_name`, `max_abs_delta`). The gap is evaluated per bucket; the command exits non-zero when any bucket exceeds its configured threshold. When not provided, a single aggregate gap is evaluated against the global `--max-abs-delta` (and related) flags only. Class-aware gap reporting (breakdown by account bucket) is under [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope); the current CLI supports global thresholds and optional bucket thresholds when the implementation supplies them.
 
 Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain available as an alternative.
 

@@ -33,13 +33,15 @@ The first-class two-phase reconciliation workflow is implemented: `bus reconcile
 
 ### Deterministic proposals and batch apply
 
-`bus reconcile propose --out <path>|-` generates deterministic reconciliation proposal rows with confidence and reason fields. `bus reconcile apply --in <path>|-` consumes approved proposal rows and records canonical match or allocation writes deterministically, with `--dry-run` and idempotent re-apply semantics. Script-based candidate workflows (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remain an alternative.
+`bus reconcile propose --out <path>|-` generates deterministic reconciliation proposal rows with confidence and reason fields. `bus reconcile apply --in <path>|-` consumes approved proposal rows and records canonical match or allocation writes deterministically, with `--dry-run` and idempotent re-apply semantics. Use `--fail-if-empty` so that propose exits non-zero when no proposals are generated, or apply exits non-zero when the input is empty; this supports CI workflows that must fail on backlog or incomplete apply.
 
-Exit codes and optional CI flags are not yet fully specified. Scripts that need to fail on backlog or incomplete apply may need to parse proposal or apply output. An optional extension is thresholds or strict exit codes for "no proposals" vs "partial apply"; when adopted, exit codes and optional CI flags will be documented in this module reference and the [module SDD](../sdd/bus-reconcile).
+Output from propose (or apply result sets) must be redirected using the **global** `--output` flag before the subcommand: for example `bus reconcile -o proposals.tsv propose` or `bus reconcile -o applied.tsv apply --in approved.tsv`. Placing `-o` after the subcommand is invalid. Script-based candidate workflows (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remain an alternative.
+
+Exit semantics: success (0) when proposals are generated or apply completes; non-zero when usage is invalid, when `--fail-if-empty` is set and no proposals exist or input is empty, or when apply encounters errors. Runtime path or year resolution may still fail in some workspaces (e.g. missing or inconsistent period data); diagnostics identify the failure.
 
 ### Match by extracted reference keys
 
-Propose and match currently use amount and reference only; there is no first-class use of bank-side extracted keys. This capability depends on [bus-bank](./bus-bank) [reference extractors](../sdd/bus-bank#suggested-capabilities-out-of-current-scope): when bus-bank exposes normalized reference fields (e.g. `erp_id`, `invoice_number_hint`) in bank list and export, bus-reconcile would use them in propose and match when joining to invoice or purchase-invoice ids. Expected field names and matching semantics would be documented in the SDD and this module; amount and currency checks would be retained; an optional "match by extracted key" path would improve match quality and reduce manual pairing. See the [module SDD](../sdd/bus-reconcile) for the suggested extension and input-contract change.
+When [bus-bank](./bus-bank) is configured with counterparty and reference extractors, bank list output includes normalized reference fields such as `erp_id` and `invoice_number_hint`. Propose and match can use these extracted keys to join to invoice or purchase-invoice identifiers. Extracted-key semantics: `erp_id` aligns with ERP/internal identifiers; `invoice_number_hint` aligns with human or system invoice numbers. When both an amount match and an extracted-key match are available, precedence is implementation-defined (e.g. amount match first, then extracted key as tie-breaker or secondary path). Match-by-key behavior improves proposal quality and reduces manual pairing while retaining amount and currency checks. See the [module SDD](../sdd/bus-reconcile) for the full input contract.
 
 ### Files
 
@@ -47,7 +49,7 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage or when amounts or references are invalid. A strict exit-code contract for propose (e.g. "no proposals" vs "proposals generated") and apply (e.g. "partial apply" vs "all applied") is not yet specified; see [Deterministic proposals and batch apply](#deterministic-proposals-and-batch-apply) for the optional CI-friendly extension.
+`0` on success. Non-zero on invalid usage, when amounts or references are invalid, or when `--fail-if-empty` is set and propose yields no proposals or apply receives empty input. See [Deterministic proposals and batch apply](#deterministic-proposals-and-batch-apply) for CI flag behavior.
 
 ### Development state
 
@@ -59,9 +61,9 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 **Use case readiness:** Accounting workflow: propose and apply provide the two-phase flow; optional CI exit codes for backlog or partial apply are not yet documented. Finnish company reorganisation: reconciliation evidence path and propose/apply are available. Finnish payroll handling: payroll bank reconciliation works with match/allocate and propose/apply.
 
-**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list (including empty and bootstrap when matches.csv missing), and validation failures (amount/currency mismatch, sum mismatch, already reconciled, missing invoice/journal ref) are verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`. Invoice, journal, and bank dataset paths from [bus-invoices](./bus-invoices), [bus-journal](./bus-journal), and [bus-bank](./bus-bank) path accessors (workspace-relative) are verified by `internal/invoicepath/path_test.go`, `internal/journalpath/path_test.go`, `internal/bankpath/path_test.go`, and `tests/e2e_bus_reconcile.sh`. Global flags (help, version, quiet, verbose, color, format, output, chdir, `--`), quiet+verbose conflict, and flag parsing are verified by `internal/cli/flags_test.go` and `internal/app/run_test.go`. When a valid `matches` dataset exists, `match` works as expected; deterministic candidate planning still uses custom scripts (`exports/2024/025-reconcile-sales-candidates-2024.sh`, prepared `exports/2024/024-reconcile-sales-exact-2024.sh`) until first-class propose/apply are available.
+**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list (including empty and bootstrap when matches.csv missing), propose, and apply (with `--dry-run`, `--fail-if-empty`) and validation failures are verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`. Global flags (help, version, quiet, verbose, color, format, output, chdir, `--`) and path accessors are verified. Propose and apply are first-class; script-based candidate workflows remain optional.
 
-**Planned next:** Optional CI-friendly behavior: thresholds or strict exit codes for "no proposals" vs "partial apply" so scripts can fail on backlog or incomplete apply without custom output parsing; document exit codes and optional CI flags when adopted.
+**Planned next:** None in PLAN.md; propose/apply with `--fail-if-empty` and global `-o` are documented.
 
 **Blockers:** None known.
 

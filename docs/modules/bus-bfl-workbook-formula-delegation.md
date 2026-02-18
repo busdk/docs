@@ -9,6 +9,10 @@ This document describes how consumers (such as [bus-data](https://docs.busdk.com
 
 The audience is BusDK module maintainers integrating BFL for table projection and workbook-style read (e.g. `bus data table workbook --formula`). Canonical API and language semantics remain the [module SDD](https://docs.busdk.com/sdd/bus-bfl).
 
+### Formula options for workbook extraction
+
+For workbook extraction, the consumer (e.g. `bus data table workbook`) exposes formula options that map into BFL behaviour. Use `--formula` to enable evaluation of formula-enabled fields when a beside-the-table schema exists; without a schema, formula evaluation is not applied. Use `--formula-source` to include formula source text in output alongside evaluated values when `--formula` is set. Use `--formula-dialect <name>` to select a source-specific dialect profile (`spreadsheet`, `excel_like`, or `sheets_like`). Locale is controlled by `--decimal-sep <char>` and `--thousands-sep <char>` so that both formula literal parsing and locale-formatted cell values are normalized (e.g. `1 234,56` → `1234.56`). Parity-level behaviour: when a schema exists and formula evaluation is enabled, output contains the evaluated result for formula cells, not the formula source text, unless `--formula-source` is set.
+
 ### Delegation contract
 
 **Determinism.** For the same expression, context, dialect, function set, and rounding policy, BFL returns the same result across runs and machines for a given BusDK version. To achieve parity with a given workbook, the consumer must use the same dialect (including locale) and, when formulas use functions, the same function set as the source.

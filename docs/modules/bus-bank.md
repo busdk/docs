@@ -10,6 +10,7 @@ description: bus bank normalizes bank statement data into schema-validated datas
 `bus bank init [-C <dir>] [global flags]`  
 `bus bank import --file <path> [-C <dir>] [global flags]`  
 `bus bank import --profile <path> --source <path> [--year <YYYY>] [-C <dir>] [global flags]`  
+`bus bank config [<subcommand>] [options] [-C <dir>] [global flags]`  
 `bus bank list [--month <YYYY-M>] [--from <date>] [--to <date>] [--counterparty <id>] [--invoice-ref <ref>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
@@ -20,7 +21,8 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 - `init` creates the baseline bank datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `import` ingests a bank statement file (e.g. `--file <path>`) or runs profile-driven ERP import (`--profile <path> --source <path>`, optional `--year`) into normalized datasets.
-- `list` prints bank transactions with deterministic filtering.
+- `config` manages counterparty normalization and reference extractors. Use `config counterparty add` to add canonical names and alias patterns, and `config extractors add` to add extractor patterns (e.g. regex) so bank message/reference fields yield normalized reference hints. When configured, `list` output includes normalized counterparty and extracted reference-hint columns.
+- `list` prints bank transactions with deterministic filtering. When counterparty and extractor config are present, output includes normalized counterparty and extracted reference-hint columns (e.g. `erp_id`, `invoice_number_hint`).
 
 ### Options
 
@@ -30,13 +32,9 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 Profile-driven import is available: `bus bank import --profile <path> --source <path> [--year <YYYY>]` runs deterministic mapping from ERP export data into canonical bank datasets. The profile defines column mappings, direction normalization, and optional year filtering. Each run emits auditable plan and result artifacts; re-runs with the same profile and source yield byte-identical artifacts. Supported by e2e and unit tests (`tests/e2e_bus_bank.sh`, `internal/bank/profile_import_test.go`). See [Import ERP history into canonical invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets).
 
-### Reconciliation proposal flow (planned integration)
+### Reconciliation proposal flow
 
-Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconcile) depends on stable bank transaction identity and normalized read fields from this module. The planned two-phase reconciliation flow uses bank transaction ID, amount, currency, booking date, and reference fields as deterministic proposal inputs, and then applies approved proposal rows in batch.
-
-In this workspace, candidate planning for reconciliation is currently script-based (`exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`) while the first-class `bus reconcile propose/apply` workflow is not yet shipped.
-
-Counterparty normalization (canonical names and aliases before rule matching), a built-in classification coverage/backlog report (posted vs unposted by month), and optional reference extractors from bank message/reference (normalized fields such as `erp_id`, `invoice_number_hint`) are suggested enhancements not yet implemented. See [Suggested capabilities](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) in the module SDD. When counterparty normalization is implemented, the config format (canonical names, alias patterns, and optional helpers) and the new fields (normalized counterparty with original retained for audit) will be documented in the SDD and in the relevant workflow and master-data pages. When reference extractors are implemented, the extractor config (e.g. configurable patterns such as regex) and the new dataset fields will be documented in the SDD and in this module reference.
+Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconcile) depends on stable bank transaction identity and normalized read fields from this module. The two-phase flow uses bank transaction ID, amount, currency, booking date, and reference fields as deterministic proposal inputs; when counterparty and extractor config are configured, normalized counterparty and extracted reference hints (e.g. `erp_id`, `invoice_number_hint`) are available for match-by-reference in bus-reconcile. Script-based candidate workflows (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remain an alternative. A built-in classification coverage/backlog report (posted vs unposted by month) is a suggested enhancement; see [Suggested capabilities](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) in the module SDD.
 
 ### Files
 

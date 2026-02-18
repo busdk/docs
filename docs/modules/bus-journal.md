@@ -8,7 +8,9 @@ description: bus journal maintains the authoritative ledger as append-only journ
 ### Synopsis
 
 `bus journal init [-C <dir>] [global flags]`  
-`bus journal add --date <YYYY-MM-DD> [--desc <text>] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
+`bus journal add --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
+`bus journal template post --template-file <path> --template <id> --date <YYYY-MM-DD> --gross <amount> [options] [-C <dir>] [global flags]`  
+`bus journal template apply --template-file <path> [options] [-C <dir>] [global flags]`  
 `bus journal balance --as-of <YYYY-MM-DD> [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
@@ -18,12 +20,14 @@ Command names follow [CLI command naming](../cli/command-naming). `bus journal` 
 ### Commands
 
 - `init` creates the journal index and baseline period datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` appends a balanced transaction (one or more debit and credit lines).
+- `add` appends a balanced transaction (one or more debit and credit lines). Optional `--source-id <key>` records source identity; with `--if-missing`, add is a no-op when a posting with that source identity already exists (idempotent add).
+- `template post` posts a single template-driven entry: predicate in the template file selects the rule; the template defines expense account, VAT rate, VAT account, and bank account; gross amount is split into base + VAT with deterministic rounding. Requires `--template-file <path>`, `--template <id>`, `--date <YYYY-MM-DD>`, and `--gross <amount>`.
+- `template apply` applies templates in batch from a bank CSV (or equivalent): each row is matched to a template by predicate, then the same split and posting logic as `template post` is applied. Requires `--template-file <path>` and input (e.g. bank CSV path or stdin); see template file schema and bank-CSV column expectations below.
 - `balance` prints account balances as of a given date.
 
 ### Options
 
-`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. It may accept optional `--source-id <key>` to record source identity; idempotent behavior (e.g. `--if-missing`) is not yet specified — see [Idempotent posting and source keys](#idempotent-posting-and-source-keys) below. The `<account>` value is the account code or name as stored in the workspace chart of accounts; use quotes when the name contains spaces. At least one debit and one credit are required; total debits must equal total credits. Unknown or invalid account names cause the command to fail. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
+`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. Optional `--source-id <key>` records source identity; `--if-missing` makes add idempotent (no-op when a posting with that source identity already exists). See [Idempotent posting and source keys](#idempotent-posting-and-source-keys) below. The `<account>` value is the account code or name as stored in the workspace chart of accounts; use quotes when the name contains spaces. At least one debit and one credit are required; total debits must equal total credits. Unknown or invalid account names cause the command to fail. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
 
 ### Files
 
@@ -35,15 +39,15 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 ### Idempotent posting and source keys
 
-`bus journal add` may support optional `--source-id <key>` to record source identity for the posting. Idempotent semantics are not yet first-class: re-run safety for replay and CI currently depends on custom script guards or marker checks. When the [suggested capability](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) is adopted, the module will support idempotent semantics (e.g. `--if-missing` so that add is a no-op when a posting with that `source_system`/`source_id` already exists, or `bus journal upsert --source-id <key> ...`), uniqueness on `(source_system, source_id)`, and clear diagnostics on conflict. Module docs will then document `--if-missing`/upsert and `source_id` semantics in full.
+`bus journal add` accepts optional `--source-id <key>` to record source identity for the posting. With `--if-missing`, add is a no-op when a posting with that source identity already exists, so re-runs and CI can be safe without custom script guards. Uniqueness is enforced on the source identity; conflicts produce clear diagnostics.
 
 ### Posting templates (VAT split for bank-driven entries)
 
-Posting templates with automatic VAT split are not yet implemented. When adopted, templates would split a gross bank amount into base + VAT by configured rate and VAT account (template: predicate, expense account, VAT rate, VAT account, bank account), post balanced lines with deterministic rounding and trace fields, and support dry-run and optional link to the source bank row. Template format and usage will be documented in the SDD and in this module and the relevant workflow pages. See [Suggested capabilities](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) in the module SDD.
+Posting templates with automatic VAT split are first-class. A template file defines one or more templates: each has an identifier, a predicate (e.g. match on counterparty, reference, or amount sign), and posting rule fields (expense account, VAT rate, VAT account, bank account). Predicate semantics: the first template whose predicate matches the current row (or the single gross amount for `template post`) is used; predicates are evaluated in file order. For `template post`, required flags are `--template-file <path>`, `--template <id>`, `--date <YYYY-MM-DD>`, and `--gross <amount>`. For `template apply`, the input is a bank CSV (or equivalent) whose columns must include the fields referenced by the predicates (e.g. counterparty, reference, amount, date); column names and expected types are defined by the template file schema. The module splits the gross amount into base + VAT by the configured rate, posts balanced lines with deterministic rounding and trace fields, and supports dry-run and optional link to the source bank row. Template file schema (YAML or JSON), predicate syntax, and bank-CSV column expectations are documented in the [module SDD](../sdd/bus-journal) and in the relevant workflow pages.
 
 ### Loan-payment classifier (principal/interest split)
 
-A loan-payment classifier that splits bank payments into principal vs interest/fee is not yet implemented. [bus-loans](../modules/bus-loans) provides loan register, schedule, postings, and amortize but does not classify arbitrary bank rows. When the [suggested capability](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) is adopted (in bus-journal or via bus-loans integration), lender payment profiles (reference keys, liability/interest/fee accounts, split policy) would produce deterministic posting proposals per bank row with explicit split rationale; split options would include fixed split, schedule-based split (e.g. bus-loans schedule), or “all to liability” fallback with warning. Module and workflow docs would then document profiles, split policy, and proposal output.
+A loan-payment classifier that splits bank payments into principal vs interest/fee is not yet implemented. [bus-loans](./bus-loans) provides loan register, schedule, postings, and amortize but does not classify arbitrary bank rows. When the [suggested capability](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) is adopted (in bus-journal or via bus-loans integration), module docs will document the loan-profile schema, split policy, and proposal/apply flow.
 
 ### Planned enhancements
 

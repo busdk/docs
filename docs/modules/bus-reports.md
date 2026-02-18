@@ -7,24 +7,28 @@ description: bus reports computes financial reports from journal and reference d
 
 ### Synopsis
 
-`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports parity [options] [-C <dir>] [global flags]`  
+`bus reports journal-gap [options] [-C <dir>] [global flags]`  
+`bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
 Command names follow [CLI command naming](../cli/command-naming). `bus reports` computes financial reports from journal and reference data. Reports are deterministic and derived only from repository data; the module does not modify datasets. Use for period close, filing preparation, and management reporting.
 
-Migration-quality reporting is partially implemented: `bus reports journal-coverage` and `bus validate parity` / `bus validate journal-gap` exist; validate performs the check but does not emit a report artifact.
+Migration-quality reporting is implemented: `bus reports parity`, `bus reports journal-gap`, and `bus reports journal-coverage` are present; [bus-validate](./bus-validate) provides threshold and CI behavior for parity and journal-gap checks.
 
 ### Commands
 
-- `trial-balance` prints trial balance as of a date.
+- `trial-balance` prints trial balance as of a date. Accepts `-f text` (default) or `-f csv`; TSV is not supported.
 - `general-ledger` prints ledger detail for a period (optionally filtered by account).
 - `profit-and-loss` prints profit and loss for a period.
 - `balance-sheet` prints balance sheet as of a date.
-- `journal-coverage` emits a deterministic monthly comparison between imported operational totals and non-opening journal activity (for use with [bus-validate](./bus-validate) parity or gap checks).
+- `parity` and `journal-gap` emit deterministic parity or gap result sets for use with [bus-validate](./bus-validate) threshold and CI behavior.
+- `journal-coverage` emits a deterministic monthly comparison between imported operational totals and non-opening journal activity.
 
 ### Finnish statutory financial statements
 
@@ -40,12 +44,13 @@ The command surface supports statutory layout selection using `--layout-id`. Bui
 - `fi-pma-tuloslaskelma-toiminto` (where applicable)
 - `fi-pma-tase`
 - `fi-pma-tase-lyhennetty` (where applicable)
+- `kpa-full`, `pma-full` (Finnish full layout options; section-level summaries)
 
 These layout ids are presets of the general layout mechanism documented in [bus-reports SDD](../sdd/bus-reports). `--layout <file>` remains available for custom layouts. The same selected layout governs text, CSV, JSON, KPA/PMA, and PDF output structures.
 
 ### TASE / tuloslaskelma layout parity
 
-`--layout-id pma-full` and `kpa-full` run successfully and emit Finnish section labels (e.g. Pysyvät vastaavat, LIIKEVAIHTO), but output is section-level summaries, not full line-by-line parity with an original TASE or tuloslaskelma. Full parity would require either a built-in "Finnish full" layout or a robust custom YAML/JSON layout mapping accounts to report lines with the same Finnish labels and hierarchy as the source, so that output CSV/PDF has the same line structure as the original for comparison and filing. When delivered, documentation will be required for the Finnish full layout or custom layout format and for the parity mapping (line ids, hierarchy, labels). See [Implementation status (Finnish full layout parity)](../sdd/bus-reports#implementation-status-finnish-full-layout-parity) in the module SDD.
+`--layout-id kpa-full` and `pma-full` run successfully and emit Finnish section labels (e.g. Pysyvät vastaavat, LIIKEVAIHTO), but output is section-level summaries, not full line-by-line parity with an original TASE or tuloslaskelma. Full line-by-line parity may require a custom layout and fine-grained account mapping so that output CSV/PDF matches the source line structure. For parity guidance and the current implementation status, see [Implementation status (Finnish full layout parity)](../sdd/bus-reports#implementation-status-finnish-full-layout-parity) in the module SDD.
 
 For `fi-*` layouts, account mapping must be deterministic per selected layout. The mapping dataset is `report-account-mapping.csv`, joined to accounts by account code and to statement output by `layout_id`. Unmapped or ambiguously mapped accounts are errors unless the account is explicitly mapped to a permitted statutory other-bucket line in the selected layout.
 
@@ -53,7 +58,7 @@ Statutory comparatives are enabled by default through workspace reporting profil
 
 ### Options
 
-`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. All report commands accept `--format <text|csv|markdown>` (default `text`). For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported.
+`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. Trial-balance accepts `-f text` (default) or `-f csv` only (not `tsv`). Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported.
 
 For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
 
