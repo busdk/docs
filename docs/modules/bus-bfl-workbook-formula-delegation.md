@@ -38,9 +38,9 @@ Formula source text may contain locale-dependent numeric literals (e.g. `3,14` w
 
 For workbook extraction parity with a given source (Excel, Google Sheets, or locale-specific export):
 
-1. **Dialect profile:** Use `dialect.excel_like` or `dialect.sheets_like` when operator token rules (e.g. equality `=` vs `==`) must match the source; otherwise `dialect.spreadsheet` is the default.
+1. **Decimal separator:** Set `Dialect.DecimalSeparator` from the source locale (e.g. `,` for many European locales, `.` for en-US).
 2. **Thousands separator:** If the source uses thousands separators in literals, set `Dialect.AllowThousandsSeparator = true` and `Dialect.ThousandsSeparator` (e.g. ` ` or `,`) to match the source.
-3. **Decimal separator:** Set `Dialect.DecimalSeparator` from the source locale (e.g. `,` for many European locales, `.` for en-US).
+3. **Dialect profile:** Use `dialect.excel_like` or `dialect.sheets_like` when operator token rules (e.g. equality `=` vs `==`) must match the source; otherwise `dialect.spreadsheet` is the default.
 
 Example: for a CSV exported from a locale that uses `,` as decimal separator, set `DecimalSeparator: ","` (and optionally thousands separator) on the dialect so a formula such as `=A1 * 2,5` parses and evaluates correctly.
 
@@ -78,7 +78,7 @@ For the integration contract and Table Schema formula metadata, see [IF-BFL-002 
 
 ### Sources
 
-- [bus-data (module CLI)](https://docs.busdk.com/modules/bus-data)
-- [bus-data (module SDD)](https://docs.busdk.com/sdd/bus-data)
-- [bus-bfl (module SDD)](https://docs.busdk.com/sdd/bus-bfl)
 - [Table Schema contract](https://docs.busdk.com/data/table-schema-contract)
+- [bus-bfl (module SDD)](https://docs.busdk.com/sdd/bus-bfl)
+- [bus-data (module SDD)](https://docs.busdk.com/sdd/bus-data)
+- [bus-data (module CLI)](https://docs.busdk.com/modules/bus-data)
