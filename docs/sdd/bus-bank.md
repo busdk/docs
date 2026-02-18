@@ -21,6 +21,8 @@ FR-BNK-004 Profile-driven ERP bank import. The module MUST provide a first-class
 
 FR-BNK-005 Reconciliation proposal input contract. The module MUST expose deterministic transaction fields needed by reconciliation proposal generation and batch apply workflows in [bus-reconcile](./bus-reconcile). Acceptance criteria: bank transaction identifiers, normalized amount, currency, booking date, and reference fields are stable and queryable; unresolved lookup states are explicit in data and diagnostics so proposal generation can fail deterministically instead of guessing.
 
+FR-BNK-006 Add command. The module MUST provide an `add` command that allows adding one bank account or one bank transaction at a time. Acceptance criteria: `bus bank add account` and `bus bank add transaction` (or equivalent) are available; each invocation adds exactly one record to the corresponding dataset with schema validation; invalid or duplicate input fails with clear diagnostics and does not modify any file.
+
 NFR-BNK-001 Auditability. Imports MUST preserve source statement identifiers and evidence links. Acceptance criteria: each normalized transaction records a source reference and can be traced to attachments metadata.
 
 NFR-BNK-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (bank-imports, bank-transactions, and their schemas). Other modules that need read-only access to bank raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the bank datasets; consumers use these accessors for read-only access; no consumer hardcodes bank file names outside this module.
@@ -45,7 +47,7 @@ KD-BNK-004 Reconciliation proposal workflows consume bank data as-is. Candidate 
 
 ### Component Design and Interfaces
 
-Interface IF-BNK-001 (module CLI). The module exposes `bus bank` with subcommands `init`, `import`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-BNK-001 (module CLI). The module exposes `bus bank` with subcommands `init`, `import`, `list`, and `add` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline bank datasets and schemas (`bank-imports.csv`, `bank-transactions.csv` and their beside-the-table schemas) when they are absent. If all owned bank datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
@@ -57,16 +59,20 @@ Interface IF-BNK-003 (profile import, planned). The module defines a first-class
 
 Interface IF-BNK-004 (reconciliation candidate read surface, planned integration). Bank transaction read outputs consumed by reconciliation proposal workflows MUST provide a deterministic field contract, including at minimum bank transaction ID, amount, currency, booking date, reference text, and reconciliation state marker. The module does not generate proposals, but its read contract must let [bus-reconcile](./bus-reconcile) compute proposals and apply approved rows deterministically.
 
+Interface IF-BNK-005 (add command). The module provides `bus bank add account` and `bus bank add transaction` for adding a single bank account or a single bank transaction manually. Each subcommand accepts the fields required by the corresponding schema (e.g. for account: identifier, IBAN, BIC, currency; optional ledger mapping; for transaction: bank_account_id, booking_date, amount, currency, and other required fields per schema). Values are supplied via flags or positional arguments as documented in command help. The command validates input against the module schema, appends exactly one row to the target dataset, and exits 0 on success. On validation failure or duplicate key where applicable, the command exits non-zero, prints a clear error to standard error, and does not modify any file. When the add account subcommand is implemented, the module owns a bank account dataset (e.g. `bank-accounts.csv`) and its beside-the-table schema at the workspace root; path accessors (IF-BNK-002) include that dataset when present.
+
 Usage examples:
 
 ```bash
 bus bank import --file 202602-bank-statement.csv
 bus bank list --month 2026-2
+bus bank add account --id acct-01 --iban FI... --currency EUR
+bus bank add transaction --bank-account acct-01 --date 2026-02-18 --amount 100.00 --currency EUR
 ```
 
 ### Data Design
 
-The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. Master data owned by this module is stored in the workspace root only; the module does not create or use a `bank/` or other subdirectory for its datasets and schemas. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments.
+The module reads and writes `bank-imports.csv` and `bank-transactions.csv` at the repository root, each with a beside-the-table schema file. When the add account subcommand is implemented, the module also owns a bank account dataset (e.g. `bank-accounts.csv`) and its beside-the-table schema at the workspace root; path accessors (IF-BNK-002) then include that dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `bank/` or other subdirectory for its datasets and schemas. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments.
 
 Other modules that need read-only access to bank datasets MUST obtain the path(s) from this module’s Go library (IF-BNK-002). All writes and bank-domain logic remain in this module.
 
@@ -90,7 +96,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Import and
 
 ### Testing Strategy
 
-Unit tests cover normalization and schema validation, and command-level tests exercise `import` and `list` against fixture workspaces with sample bank statements. Profile-import tests MUST verify deterministic mapping execution, year-filter behavior, direction and status normalization, counterparty lookup outcomes, and byte-identical import artifacts for repeated runs with the same inputs (FR-BNK-004, NFR-BNK-003). Reconciliation-candidate contract tests MUST verify stable transaction ID lookup, deterministic read ordering, and deterministic diagnostics when candidate-required fields are missing or invalid (FR-BNK-005, NFR-BNK-004).
+Unit tests cover normalization and schema validation, and command-level tests exercise `import`, `list`, and `add` against fixture workspaces with sample bank statements. Add-command tests MUST verify that one account or one transaction is appended with schema validation, and that invalid or duplicate input exits non-zero without modifying any file (FR-BNK-006). Profile-import tests MUST verify deterministic mapping execution, year-filter behavior, direction and status normalization, counterparty lookup outcomes, and byte-identical import artifacts for repeated runs with the same inputs (FR-BNK-004, NFR-BNK-003). Reconciliation-candidate contract tests MUST verify stable transaction ID lookup, deterministic read ordering, and deterministic diagnostics when candidate-required fields are missing or invalid (FR-BNK-005, NFR-BNK-004).
 
 ### Deployment and Operations
 

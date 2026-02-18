@@ -1,6 +1,6 @@
 ---
 title: bus-bank — import and list bank transactions
-description: bus bank normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows..
+description: bus bank normalizes bank statement data into schema-validated datasets, supports adding bank accounts and transactions manually, and provides listing output for reconciliation and posting workflows.
 ---
 
 ## `bus-bank` — import and list bank transactions
@@ -10,23 +10,26 @@ description: bus bank normalizes bank statement data into schema-validated datas
 `bus bank init [-C <dir>] [global flags]`  
 `bus bank import --file <path> [-C <dir>] [global flags]`  
 `bus bank import --profile <path> --source <path> [--year <YYYY>] [-C <dir>] [global flags]`  
+`bus bank add account <options> [-C <dir>] [global flags]`  
+`bus bank add transaction <options> [-C <dir>] [global flags]`  
 `bus bank config [<subcommand>] [options] [-C <dir>] [global flags]`  
 `bus bank list [--month <YYYY-M>] [--from <date>] [--to <date>] [--counterparty <id>] [--invoice-ref <ref>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows. Ingest supports both single-statement files (`--file`) and profile-driven ERP import (`--profile --source`, optional `--year`), with deterministic artifacts verified by tests.
+Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows. You can add bank accounts and transactions manually one at a time with `add account` and `add transaction`. Ingest supports both single-statement files (`--file`) and profile-driven ERP import (`--profile --source`, optional `--year`), with deterministic artifacts verified by tests.
 
 ### Commands
 
 - `init` creates the baseline bank datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `import` ingests a bank statement file (e.g. `--file <path>`) or runs profile-driven ERP import (`--profile <path> --source <path>`, optional `--year`) into normalized datasets.
+- `add` adds a single bank account or a single bank transaction manually. Use `add account` to register one bank account (e.g. identifier, IBAN, BIC, currency; optional ledger mapping). Use `add transaction` to append one bank transaction (e.g. bank account, booking date, amount, currency, and other required fields per schema). Each subcommand validates input against the module schema and appends exactly one row; invalid or duplicate input fails with clear diagnostics and does not modify any file. For exact options and required fields, run `bus bank add account --help` and `bus bank add transaction --help`.
 - `config` manages counterparty normalization and reference extractors. Use `config counterparty add` to add canonical names and alias patterns, and `config extractors add` to add extractor patterns (e.g. regex) so bank message/reference fields yield normalized reference hints. When configured, `list` output includes normalized counterparty and extracted reference-hint columns.
 - `list` prints bank transactions with deterministic filtering. When counterparty and extractor config are present, output includes normalized counterparty and extracted reference-hint columns (e.g. `erp_id`, `invoice_number_hint`).
 
 ### Options
 
-`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
+`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. `add account` and `add transaction` accept the fields required by the bank account and bank transaction schemas (via flags or arguments as shown in command help). `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help` or `bus bank add account --help` / `bus bank add transaction --help`.
 
 ### Profile-driven ERP history import
 
