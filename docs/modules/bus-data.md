@@ -166,7 +166,7 @@ bus data schema patch --resource products --patch schema.patch.json
 
 Schemas can declare formula columns by adding a `busdk.formula` block under a field. Inline formulas are stored in the CSV cell values and evaluated at read time. Constant formulas ignore cell values and use the schema expression as the source of truth. Formula results are typed and may include rounding rules for numeric results.
 
-Formulas use the BFL language. Inline formulas typically set a `prefix` such as `=` and accept per-cell expressions. Constant formulas set `mode` to `constant` and provide an `expression` string. When `on_error` is set to `null`, formula errors yield empty output values instead of failing the read.
+Formulas use the BFL language; evaluation is delegated to the BFL library, and locale and function set affect parity with source workbooks. Inline formulas typically set a `prefix` such as `=` and accept per-cell expressions. Constant formulas set `mode` to `constant` and provide an `expression` string. When `on_error` is set to `null`, formula errors yield empty output values instead of failing the read. See [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation) for the integration contract and recommended function set.
 
 To get started with inline formulas, define a column with a `busdk.formula` block, add rows with the formula expression in the cell, and read the table to see computed values. The formula source stays in the CSV, while `table read` emits the computed value.
 

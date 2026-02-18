@@ -27,9 +27,7 @@ KD-PRH-001 PRH export is a target-specific specialization. The module focuses on
 
 ### Component Design and Interfaces
 
-Interface IF-PRH-001 (module CLI). The module is invoked as `bus filing prh` and follows BusDK CLI conventions for deterministic output and diagnostics.
-
-Module-specific parameters are not defined in the current design spec and must be provided by the module help output for a pinned version.
+Interface IF-PRH-001 (module CLI). The module is invoked as `bus filing prh` and follows BusDK CLI conventions for deterministic output and diagnostics. The parameter set is defined by the tool’s `--help` output for a pinned version and is stable; see the [module CLI reference](../modules/bus-filing-prh) for the authoritative list.
 
 Usage example:
 
@@ -75,7 +73,11 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 ### Open Questions
 
-OQ-PRH-001 PRH export parameters. Define the complete parameter set for `bus filing prh` so the command surface is deterministic.
+None at this time.
+
+### Resolved open questions
+
+OQ-PRH-001 PRH export parameters. **Resolved.** The complete parameter set for `bus filing prh` is defined by the tool’s `--help` output for a pinned version and is declared stable. See the [module CLI reference](../modules/bus-filing-prh) and the module repository’s help output for the authoritative list (e.g. subcommands `bundle` and `validate`, global flags, `--period`, `--manifest`, `--bundle-dir`, `--dry-run`, etc.).
 
 ### Glossary and Terminology
 
@@ -106,7 +108,7 @@ Manifest: a deterministic listing and checksum set for bundle contents.
 Title: bus-filing-prh module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-FILING-PRH`  
-Version: 2026-02-07  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-07  
+Last updated: 2026-02-18  
 Owner: BusDK development team  

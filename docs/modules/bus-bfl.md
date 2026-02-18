@@ -116,6 +116,10 @@ The context file is a JSON object that supplies values for the symbols used in t
 
 Date values use `YYYY-MM-DD`; datetime values use RFC3339 with an explicit time zone. A null value uses `{ "type": "null", "value": null }`. Array values use `type: "array"` with a `value` object containing `rows`, `cols`, and a row-major `items` array of typed values.
 
+### Integration: workbook and formula parity
+
+Consumers such as [bus-data](./bus-data) use the BFL library to evaluate formula fields during table read and workbook-style read (`bus data table workbook --formula`). Formula-driven report totals in source spreadsheets can be reproduced deterministically by mapping Table Schema formula metadata to BFL options, setting locale-aware dialect options from the source, and registering a function set (e.g. SUM, IF, ROUND) when formulas use functions. See [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation) for the delegation contract, locale handling, and recommended minimal function set.
+
 ### Exit status
 
 The tool exits with status 0 on success. It exits with status 2 on invalid usage such as invalid `--color`, unknown `--format`, both `--quiet` and `--verbose`, or a subcommand invoked without required arguments after `--` terminates global flag parsing. It exits with status 1 when a required file or directory is missing or unreadable, or when an output file cannot be written. It exits with a non-zero status on parse errors, validation failures, or evaluation failures. Error messages are always written to standard error.

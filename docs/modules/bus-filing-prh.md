@@ -31,13 +31,13 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 
 **Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 50% — Validate and bundle from a fixture workspace are verified by e2e and unit tests; PRH-required content and SBR taxonomy would complete the filing journey.
+**Completeness:** High — Validate and bundle are verified by e2e and unit tests. Bundles include PRH-required content (journal, reports, voucher references, attachments metadata) per FR-PRH-002 and full PRH SBR taxonomy in iXBRL (balance sheet, income statement, cash flow statement, notes placeholder). Parameter set is stable (OQ-PRH-001 closed). Remaining work: extended bundle metadata and any future filing-target spec updates; see module README and roadmap.
 
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — validate and bundle verified by e2e; PRH content convention and SBR taxonomy would unlock PRH filing.
+**Use case readiness:** Finnish bookkeeping and tax-audit compliance: High — validate, bundle, PRH-required content (FR-PRH-002), and PRH SBR taxonomy in iXBRL are implemented and covered by e2e; module is ready for PRH filing within the current bundle contract. Depends on bus-filing bundle contract stability.
 
-**Current:** E2e `tests/e2e_bus_filing-prh.sh` proves help, version, subcommand help, invalid usage (quiet+verbose, unknown `--color`/`--format`), `--` stops parsing, validate success, bundle with fixture (manifest, iXBRL, inputs), `--output`, `--quiet`, `--format json`, `--dry-run`, `-C`, and errors on stderr. Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, `internal/bundle/sanitize_test.go`, and `internal/cli/flags_test.go` prove run dispatch and global flags, deterministic bundle and validation gating, path sanitization, and flag parsing.
+**Current:** OQ-PRH-001 is closed; FR-PRH-002 and full PRH SBR iXBRL are implemented and covered by e2e. E2e `tests/e2e_bus_filing-prh.sh` proves help, version, subcommand help, invalid usage (quiet+verbose, unknown `--color`/`--format`), `--` stops parsing, validate success, bundle with fixture (manifest, iXBRL, inputs), `--output`, `--quiet`, `--format json`, `--dry-run`, `-C`, and errors on stderr. Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, `internal/bundle/sanitize_test.go`, and `internal/cli/flags_test.go` prove run dispatch and global flags, deterministic bundle and validation gating, path sanitization, and flag parsing.
 
-**Planned next:** PRH-required content in bundles (journal, reports, voucher refs, attachments metadata) per FR-PRH-002; full PRH SBR taxonomy in iXBRL; README links. Advances Finnish bookkeeping and tax-audit compliance.
+**Planned next:** Extended bundle metadata when filing-target specs are available; README and doc links alignment; any follow-ups from bus-filing bundle contract. FR-PRH-002 and full PRH SBR iXBRL are implemented.
 
 **Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
 
