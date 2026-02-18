@@ -45,15 +45,15 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 ### Development state
 
-**Value promise:** Manage fixed-asset register and depreciation so schedule and post generate journal postings and asset data supports the significant-assets list for the evidence pack.
+**Value promise:** Maintain fixed-asset register and depreciation so schedule and post produce journal postings, and asset data supports the significant-assets list for the evidence pack.
 
 **Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 90% — init (incl. FR-INIT-004), add, validate, schedule, depreciate, dispose, post and path accessors verified; FR-AST-003, FR-AST-004 and require `--gain-account`/`--loss-account` on dispose verified by unit and e2e; user can complete full asset lifecycle and produce postings for evidence pack.
+**Completeness:** 90% — Full asset lifecycle and postings verified by tests; user can complete register, depreciation, and disposal and produce postings for the evidence pack.
 
 **Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 90% — full lifecycle and postings verified; FR-AST-003, FR-AST-004 and dispose required-args verified by unit and e2e.
 
-**Current:** Init (incl. FR-INIT-003, FR-INIT-004) and workspace-root layout verified by `cmd/bus-assets/run_test.go` (TestInitCreatesDataset, TestInitFailsOnPartialState) and `tests/e2e_bus_assets.sh`. Add, validate, schedule, post, depreciate, dispose and global flags verified by `cmd/bus-assets/run_test.go`, `run_property_test.go`, `internal/assets/schedule_property_test.go`, `internal/assets/post_property_test.go`, `internal/assets/period_property_test.go`, `internal/assets/load_assets_property_test.go`, `internal/cli/flags_test.go`, `internal/cli/flags_property_test.go` and e2e; FR-AST-003 and FR-AST-004 by `internal/assets/post_property_test.go` (TestWritePostingsNoDepreciationRowForDisposalMonthWhenFullyDepreciated) and `tests/e2e_bus_assets.sh`; dispose required gain/loss accounts by `run_test.go` (TestDisposeRequiresGainAndLossAccount) and e2e. Path accessors verified by `internal/assets/paths_test.go` (TestRegisterPathAndSchemaPath).
+**Current:** Init (FR-INIT-003, FR-INIT-004), workspace-root layout, add, validate, schedule, post, depreciate, dispose, and global flags verified by `cmd/bus-assets/run_test.go`, `run_property_test.go`, `tests/e2e_bus_assets.sh`, `internal/assets/post_property_test.go` (incl. TestWritePostingsNoDepreciationRowForDisposalMonthWhenFullyDepreciated), `internal/cli/flags_test.go`, `internal/cli/flags_property_test.go`, and e2e. Dispose required `--gain-account`/`--loss-account` verified by `run_test.go` (TestDisposeRequiresGainAndLossAccount) and e2e. Path accessors by `internal/assets/paths_test.go` (TestRegisterPathAndSchemaPath).
 
 **Planned next:** None in PLAN.md.
 
@@ -61,7 +61,7 @@ Fixed-asset datasets and schemas in the assets area. Master data for this module
 
 **Depends on:** None.
 
-**Used by:** Depreciation and disposal postings feed [bus-journal](./bus-journal); asset accounts in [bus-reports](./bus-reports).
+**Used by:** Postings feed [journal](./bus-journal); asset accounts in [reports](./bus-reports).
 
 See [Development status](../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack).
 

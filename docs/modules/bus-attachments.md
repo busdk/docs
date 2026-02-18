@@ -39,13 +39,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 60% — Register-attachments step completable; init, add, and list verified by tests; idempotent init and workspace-relative diagnostics verified.
+**Completeness:** 60% — Register-attachments step completable; init, add, list, dry-run, and path accessors verified by e2e and unit tests; idempotent init and workspace-relative diagnostics verified.
 
-**Use case readiness:** Accounting workflow: 60% — Register evidence and list; init/add/list and diagnostics verified. Finnish company reorganisation: 60% — Link source documents for audit; traceability verified.
+**Use case readiness:** Accounting workflow: 60% — Register evidence and list; init/add/list, dry-run, path accessors, and diagnostics verified. Finnish company reorganisation: 60% — Link source documents for audit; traceability verified.
 
-**Current:** Verified capabilities: help/version, global flags (color, format, quiet, `--`, chdir, output), init (CSV and schema), idempotent init, add with file and `--desc`, list (deterministic TSV, evidence under `attachments/yyyy/mm/`), quiet with `--output` (no file written), and workspace-relative diagnostics (errors cite `attachments.csv`, no absolute path). Proved by `tests/e2e_bus_attachments.sh` and `cmd/bus-attachments/run_test.go`; `internal/attachments/validate_test.go` and `internal/attachments/csvio_test.go` cover relpath/pattern and CSV basename; `internal/cli/flags_test.go` covers flag parsing.
+**Current:** Verified capabilities: help/version, global flags (color, format, quiet, `--`, chdir, output), init (CSV and schema), idempotent init, add with file and `--desc`, list (deterministic TSV, evidence under `attachments/yyyy/mm/`), `--dry-run` for init and add (no writes, stderr preview), Go library path accessors for CSV and schema (NFR-ATT-002), quiet with `--output` (no file written), and workspace-relative diagnostics (errors cite `attachments.csv`, no absolute path). Proved by `tests/e2e_bus_attachments.sh`, `cmd/bus-attachments/run_test.go`, `paths/paths_test.go`, `internal/attachments/validate_test.go`, `internal/attachments/csvio_test.go`, and `internal/cli/flags_test.go`.
 
-**Planned next:** Go library path accessors for cross-module read-only access (NFR-ATT-002; advances accounting and evidence-pack when consumers link). Optional `--dry-run` for init and add.
+**Planned next:** None in PLAN.md.
 
 **Blockers:** None known.
 

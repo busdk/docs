@@ -81,13 +81,13 @@ For Finnish statutory reports, account-to-line mapping is maintained in `report-
 
 **Current:** Init (files, datapackage resource, FR-ACC-005 schema, idempotent and failure paths), add (all five types, FR-ACC-004 duplicate fails, dry-run), set (modify, not-found fails, dry-run), list (deterministic TSV, `--output`, `--format tsv`, `--quiet`), validate (malformed foreignKeys diagnostic), and sole-proprietor (withdrawal, investment, `-o`) are verified. Global flags and `--` are covered. Proved by `tests/e2e_bus_accounts.sh`, `run_test.go`, `run_sole_proprietor_test.go`, `run_flags_test.go`, `run_set_test.go`, `run_property_test.go`, `run_workspace_test.go`, `internal/cli/help_test.go`, `internal/cli/flags_test.go`, `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, `run_helpers_test.go`.
 
-**Planned next:** Document where bus journal add regression test is maintained (or add to this repo when [bus-journal](./bus-journal) is available) per PLAN.md; advances accounting workflow. AGENTS.md update for sole-proprietor as implemented.
+**Planned next:** Define and own report-account-mapping schema contract (FR-ACC-006) for [bus-reports](./bus-reports) fi-* layouts (PLAN.md); advances compliance and reporting. Document where bus journal add regression test is maintained or add when [bus-journal](./bus-journal) is available; advances accounting workflow.
 
 **Blockers:** None known.
 
 **Depends on:** None.
 
-**Used by:** [bus-journal](./bus-journal) consumes account codes for postings; [bus-loans](./bus-loans) validates account IDs when reference datasets exist; accounting workflow uses accounts as master data.
+**Used by:** [bus-journal](./bus-journal) consumes account codes for postings; [bus-reports](./bus-reports) consumes account mapping for fi-* statutory layouts; [bus-loans](./bus-loans) validates account IDs when reference datasets exist; accounting workflow uses accounts as master data.
 
 See [Development status](../implementation/development-status).
 

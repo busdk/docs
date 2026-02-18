@@ -9,29 +9,26 @@ description: bus bank normalizes bank statement data into schema-validated datas
 
 `bus bank init [-C <dir>] [global flags]`  
 `bus bank import --file <path> [-C <dir>] [global flags]`  
+`bus bank import --profile <path> --source <path> [--year <YYYY>] [-C <dir>] [global flags]`  
 `bus bank list [--month <YYYY-M>] [--from <date>] [--to <date>] [--counterparty <id>] [--invoice-ref <ref>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows.
-
-The first-class ERP history import workflow for bank data is profile-driven in design but not yet implemented in current module releases. Today, ERP-to-canonical bank ingestion is performed through generated explicit append scripts in migration repositories.
+Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows. Ingest supports both single-statement files (`--file`) and profile-driven ERP import (`--profile --source`, optional `--year`), with deterministic artifacts verified by tests.
 
 ### Commands
 
 - `init` creates the baseline bank datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `import` ingests a bank statement file into normalized datasets.
+- `import` ingests a bank statement file (e.g. `--file <path>`) or runs profile-driven ERP import (`--profile <path> --source <path>`, optional `--year`) into normalized datasets.
 - `list` prints bank transactions with deterministic filtering.
 
 ### Options
 
-`import` accepts `--file <path>`. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
+`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
 
-### ERP history import (planned)
+### Profile-driven ERP history import
 
-The planned first-class import workflow is a short command invocation that references a versioned mapping profile and source export data, for example `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`. The profile owns deterministic mapping rules such as year filtering, transaction direction normalization, status mapping, and counterparty/reference lookup into canonical identifiers.
-
-This command surface is not yet available in the current release. The current migration path remains generated explicit append scripts (for example `exports/2024/018-erp-bank-2024.sh`) built from ERP TSV mappings. Those scripts remain deterministic and auditable, but they are large and one-off compared with the planned reusable profile workflow.
+Profile-driven import is available: `bus bank import --profile <path> --source <path> [--year <YYYY>]` runs deterministic mapping from ERP export data into canonical bank datasets. The profile defines column mappings, direction normalization, and optional year filtering. Each run emits auditable plan and result artifacts; re-runs with the same profile and source yield byte-identical artifacts. Supported by e2e and unit tests (`tests/e2e_bus_bank.sh`, `internal/bank/profile_import_test.go`). See [Import ERP history into canonical invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets).
 
 ### Reconciliation proposal flow (planned integration)
 
@@ -49,17 +46,17 @@ In this workspace, candidate planning for reconciliation is currently script-bas
 
 ### Development state
 
-**Value promise:** Initialize bank transaction datasets and import normalized statement data so [bus-reconcile](./bus-reconcile) and the [accounting workflow](../workflow/accounting-workflow-overview) can match bank activity to invoices and journal entries.
+**Value promise:** Initialize bank transaction datasets and import normalized statement data (file or profile-driven ERP) so [bus-reconcile](./bus-reconcile) and the [accounting workflow](../workflow/accounting-workflow-overview) can match bank activity to invoices and journal entries.
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
+**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Import ERP history into canonical datasets](../workflow/import-erp-history-into-canonical-datasets), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 60% — init, import, and list are test-verified; user can complete the bank step (create datasets, import statement, list transactions) before reconcile.
+**Completeness:** 70% — init, file and profile import, and list verified by e2e; user can complete bank ingest step including ERP history via profile.
 
-**Use case readiness:** Accounting workflow: 60% — init and import verified by e2e; list with filters and TSV verified; user can complete bank step before reconcile. Finnish company reorganisation: 60% — import and list verified; basis for reconciliation evidence. Finnish payroll handling: 60% — import and list verified for pay-day statement flow.
+**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, file and profile import, list verified; user can complete bank step before reconcile. [Import ERP history](../workflow/import-erp-history-into-canonical-datasets): 70% — profile import with `--year`, dry-run, and byte-identical artifacts verified by e2e. [Finnish company reorganisation — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — import and list verified; basis for reconciliation evidence. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — import and list verified for pay-day statement flow.
 
-**Current:** Verified by tests only. `tests/e2e_bus_bank.sh` proves help, version, invalid usage (quiet+verbose, color, format), init (four files at workspace root, idempotent warning, partial-state fail), import `--file` and `--dry-run`, list (deterministic TSV, `--month`, `-o`, `-q`, `-f tsv`), and global flags (`-C`, `--`, `-vv`, `--no-color`). `internal/app/run_test.go` and `internal/app/import_test.go` prove init/list/import and import dry-run. `internal/bank/datasets_test.go` proves init create/idempotent/partial and list filters (month, from/to, counterparty, invoice-ref) via `ApplyListFilters*`. `internal/bank/schema_test.go`, `internal/bank/output_test.go`, and `internal/cli/flags_test.go` cover schema, output formatting, and flag parsing.
+**Current:** `tests/e2e_bus_bank.sh` verifies help, version, invalid usage (quiet+verbose, color, format), init (four files at workspace root, idempotent warning, partial-state fail, `--dry-run`), import `--file` (schema validation, invalid currency fails, `--dry-run`), import `--profile --source` (plan/result artifacts, byte-identical re-run, `--dry-run`, `--year` filter, profile-without-source usage error), list (deterministic TSV, `--month`, `--counterparty`, `-o`, `-q`, `-f tsv`), and global flags (`-C`, `--`, `-vv`, `--no-color`). `internal/app/run_test.go` and `internal/app/import_test.go` verify init/list/import and import dry-run. `internal/bank/datasets_test.go` verifies init create/idempotent/partial and list filters (month, from/to, counterparty, invoice-ref). `internal/bank/profile_import_test.go` and `internal/bank/profile_test.go` verify profile import deterministic artifacts, year filter, dry-run no writes, and required source columns. `internal/bank/schema_test.go`, `internal/bank/output_test.go`, and `internal/cli/flags_test.go` cover schema, output formatting, and flag parsing. `path/path_test.go` verifies workspace-relative path accessors for bank datasets.
 
-**Planned next:** Add first-class profile-driven ERP bank import so historical ERP exports can be mapped into canonical bank datasets without generated mega-scripts; keep schema validation before append, counterparty_id/list filter alignment, import-to-attachments links, and `--dry-run` for init. Maintain deterministic transaction ID and read-field contract required by planned `bus reconcile propose/apply`.
+**Planned next:** None in PLAN.md; optional: help/synopsis alignment for profile and `--year` flags.
 
 **Blockers:** None known.
 

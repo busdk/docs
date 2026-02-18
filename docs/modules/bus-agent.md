@@ -109,15 +109,15 @@ Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% e
 
 **Value promise:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and [bus-dev](./bus-dev) can use a configured default runtime without hard-coding it.
 
-**Use cases:** [Developer module workflow with Cursor CLI](../implementation/development-status#developer-module-workflow-with-cursor-cli), [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
+**Use cases:** [Developer module workflow with Cursor CLI](../implementation/development-status#developer-module-workflow-with-cursor-cli), [Spreadsheet workbooks](../implementation/development-status#spreadsheet-workbooks).
 
-**Completeness:** 40% — detect, render, set, format, and run with Cursor stub verified by e2e; help, version, and global flags verified; AGENTS.md and per-runtime adapters not test-backed.
+**Completeness:** 40% — Core CLI (detect, render, set, run, format) and resolution order verified by e2e and unit tests; AGENTS.md and per-runtime adapters not test-backed.
 
-**Use case readiness:** Developer module workflow with Cursor CLI: 40% — detect, render, set, run with Cursor stub, and resolution order (prefs, BUS_AGENT, --agent) verified by e2e; user can select runtime and run a prompt. Workbook and validated tabular editing: 40% — optional agent chat in [bus-sheets](./bus-sheets) not yet verified by tests.
+**Use case readiness:** Developer module workflow with Cursor CLI: 40% — detect, render, set, run with Cursor stub, and resolution order (prefs, BUS_AGENT, --agent) verified by e2e; user can select runtime and run a prompt. Spreadsheet workbooks: 40% — optional agent chat in [bus-sheets](./bus-sheets) not verified by tests.
 
-**Current:** E2e `tests/e2e_bus_agent.sh` proves help, version, subcommand help (detect), global flags (color, format, quiet+verbose, chdir, output), detect (empty PATH, detect --first no runtime, resolution order: prefs then BUS_AGENT then --agent), render (template+vars, -C, -o, quiet no output file, unresolved exit 2), set (invalid runtime exit 2, valid with temp prefs), run (no runtime exit 1 with install message, run --agent cursor with stub stderr mentions cursor), and format (cursor NDJSON→text). Unit tests: `internal/cli/flags_test.go`, `internal/cli/run_test.go`, `internal/template/render_test.go`, `internal/runner/run_test.go`, `internal/runner/detect_test.go`, `internal/runner/resolve_test.go`, `agent/prefs_test.go`, `internal/format/format_test.go` cover flags, template, resolve/detect, runner, prefs, and formatter. No e2e proves run with a real agent CLI.
+**Current:** E2e `tests/e2e_bus_agent.sh` proves help, version, subcommand help, global flags (color, format, quiet+verbose, chdir, output), detect (empty PATH, --first no-runtime exit 1, resolution order), render (template+vars, -C, -o, quiet no output file, unresolved exit 2), set (invalid exit 2, valid with temp prefs), run (no runtime exit 1 with install message, run --agent cursor with stub), and format (cursor NDJSON→text). Unit tests in `internal/cli/flags_test.go`, `internal/cli/run_test.go`, `internal/template/render_test.go`, `internal/runner/run_test.go`, `internal/runner/detect_test.go`, `internal/runner/resolve_test.go`, `agent/prefs_test.go`, `agent/lib_test.go`, `internal/format/format_test.go` cover flags, template, resolve/detect, runner, prefs, and formatter. No e2e with real agent CLI.
 
-**Planned next:** Order and enable/disable configuration (FR-AGT-005a); AGENTS.md discovery and per-runtime adapters; deterministic fallback when AGENTS.md missing or over-size. Advances developer workflows.
+**Planned next:** Agent order and enable/disable (FR-AGT-005a); AGENTS.md discovery and per-runtime adapters; fallback when AGENTS.md missing or over-size (PLAN.md). Advances developer workflow use case.
 
 **Blockers:** None known.
 
