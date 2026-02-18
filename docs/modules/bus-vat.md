@@ -25,7 +25,7 @@ Where invoice master data is incomplete or absent (e.g. journal-first bookkeepin
 
 ### Options
 
-`report` and `export` require `--period <period>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
+`report` and `export` require `--period <period>`. When journal-driven mode is supported, use `--source journal` to compute VAT from journal postings and VAT account/tax mappings instead of invoice data. Journal datasets must conform to the expected schema (e.g. a `direction` or equivalent column); if `report` or `export` fails with a schema or column error (such as "missing column direction"), ensure your journal CSV matches the module’s expected columns or see the [module SDD](../sdd/bus-vat) for compatibility and normalization guidance. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
 
 ### Files
 

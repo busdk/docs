@@ -27,7 +27,7 @@ bus validate journal-gap --source imports/source-summary-2024.tsv --max-abs-delt
 
 ### Scope and ownership
 
-[bus-validate](../modules/bus-validate) owns parity and threshold pass or fail behavior. [bus-reports](../modules/bus-reports) owns non-opening journal coverage reporting. [bus-reconcile](../modules/bus-reconcile) provides deterministic proposal and apply output fields that these checks can consume.
+[bus-validate](../modules/bus-validate) owns parity and threshold pass or fail behavior. [bus-reports](../modules/bus-reports) owns non-opening journal coverage reporting. [bus-reconcile](../modules/bus-reconcile) provides deterministic proposal and apply output fields that these checks can consume. A possible future extension is class-aware gap reporting (operational vs financing/transfer buckets) so migration progress can be tracked per activity class; see the bus-validate SDD suggested capabilities for that option.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

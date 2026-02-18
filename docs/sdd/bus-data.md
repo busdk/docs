@@ -303,6 +303,10 @@ Not Applicable. Schema evolution is handled through the standard schema migratio
 
 Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic data handling.
 
+### Implementation status (workbook read)
+
+Workbook-style read is implemented at the command surface via `bus data table workbook` (or the equivalent command name once OQ-DAT-003 is resolved): A1 and range reads (e.g. `A1`, `A1:B2`), workbook-specific options for locale and formulas (`--decimal-sep`, `--thousands-sep`, `--formula`, `--formula-source`, `--header`, anchors), and machine-friendly output (tsv/json). FR-DAT-022 through FR-DAT-025 are covered at the command level. Remaining parity work is advanced source-specific extraction behavior (e.g. complex formula-driven report reconciliation), not missing A1/range or formula-evaluation functionality.
+
 ### Glossary and Terminology
 
 Workspace store interface: the persistence boundary for deterministic table and schema operations.  

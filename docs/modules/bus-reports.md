@@ -40,7 +40,7 @@ The command surface supports statutory layout selection using `--layout-id`. Bui
 - `fi-pma-tase`
 - `fi-pma-tase-lyhennetty` (where applicable)
 
-These layout ids are presets of the general layout mechanism documented in [bus-reports SDD](../sdd/bus-reports). `--layout <file>` remains available for custom layouts. The same selected layout governs text, CSV, JSON, KPA/PMA, and PDF output structures.
+These layout ids are presets of the general layout mechanism documented in [bus-reports SDD](../sdd/bus-reports). `--layout <file>` remains available for custom layouts. The same selected layout governs text, CSV, JSON, KPA/PMA, and PDF output structures. Built-in Finnish layouts produce section-level summaries with Finnish labels (e.g. Pysyvät vastaavat, LIIKEVAIHTO). Full line-by-line parity with a source TASE or tuloslaskelma — same structure and labels as the original — may require a custom layout and fine-grained account mapping; see [Implementation status](../sdd/bus-reports#implementation-status-finnish-full-layout-parity) in the module SDD.
 
 For `fi-*` layouts, account mapping must be deterministic per selected layout. The mapping dataset is `report-account-mapping.csv`, joined to accounts by account code and to statement output by `layout_id`. Unmapped or ambiguously mapped accounts are errors unless the account is explicitly mapped to a permitted statutory other-bucket line in the selected layout.
 

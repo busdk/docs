@@ -9,9 +9,9 @@ The target reconciliation workflow is a two-phase command flow. First, the syste
 
 ### Current workflow (today)
 
-Current production reconciliation uses `bus reconcile match`, `bus reconcile allocate`, and `bus reconcile list` for direct writes. In this workspace, deterministic candidate planning and exact-match preparation are handled by custom scripts such as `exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`.
+Current production reconciliation uses `bus reconcile match`, `bus reconcile allocate`, and `bus reconcile list` for direct writes. In this workspace, deterministic candidate planning and exact-match preparation are handled by custom scripts such as `exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`. When a valid `matches` dataset exists, the former bank-ID lookup defect no longer reproduces; deterministic exact matches can be applied in clean replay (e.g. 124 rows) by combining explicit `matches` bootstrap, invoice header totals in ERP import, and generated exact-command sets.
 
-The current `match` path in this workspace also has an active bank-ID lookup defect. Until that defect is fixed and first-class proposal/apply commands are implemented, teams should continue using the current script-assisted process with explicit review.
+The remaining gap is first-class proposal and batch-apply commands plus idempotent re-apply semantics. Until `bus reconcile propose` and `bus reconcile apply` are implemented, teams should continue using the current script-assisted process with explicit review.
 
 ### Target workflow (planned first-class commands)
 

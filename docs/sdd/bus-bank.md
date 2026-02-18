@@ -104,6 +104,18 @@ Not Applicable. Schema evolution is handled through the standard schema migratio
 
 Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic and audit-friendly bank data handling.
 
+### Suggested capabilities (out of current scope)
+
+The following capabilities are not yet requirements; they are recorded as suggested enhancements for classification, reconciliation, and migration workflows.
+
+**Counterparty normalization.** Classification rules become noisy when the same logical counterparty appears with inconsistent labels (e.g. SENDANOR vs Sendanor, UPCLOUD HELSINKI vs UPCLOUD OY HELSINKI). A suggested extension is deterministic normalization/alias support before rule matching: configurable canonical names with alias patterns (exact/regex), optional normalization helpers (trim, case fold, punctuation cleanup), rule matching against canonical counterparty with original value retained for audit, and normalized fields exposed in bank datasets and downstream proposal outputs.
+
+**Built-in bank-classification coverage/backlog report.** After partial automation, teams need a deterministic “what remains unclassified” view. A suggested command or report would compare bank transactions to journal source links and emit posted vs unposted counts/sums by month, unposted breakdown by counterparty and message code, optional thresholds/fail-on-backlog for CI, and machine-friendly output (tsv/json) with consistent source-link semantics.
+
+**Native linkage from bank message ERP references to invoice rows.** Bank rows often include embedded hints in free-text messages (e.g. `ERP <id>`). A suggested extension is optional reference extractors for bank imports: parse configurable patterns from message/reference into normalized keys (e.g. `erp_id`, `invoice_number_hint`), expose extracted keys in bank datasets and reconciliation proposals, and provide helper commands to join extracted keys against invoice/purchase-invoice ids deterministically.
+
+**Rule-based bank classification and posting.** See the same suggested two-phase flow (classify + apply) under [bus-journal](./bus-journal); bus-bank would supply the bank transaction read surface and, if implemented, counterparty normalization and reference extraction used by the classifier.
+
 ### Glossary and Terminology
 
 Bank import: a normalized record of a statement ingest run stored in `bank-imports.csv`.  

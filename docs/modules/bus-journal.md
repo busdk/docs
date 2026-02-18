@@ -33,6 +33,10 @@ Every file owned by `bus journal` includes “journal” or “journals” in th
 
 `0` on success. Non-zero on invalid usage, unbalanced postings, or schema or period violations.
 
+### Planned enhancements
+
+Idempotent posting with source keys (e.g. `--source-id`, `--if-missing`), rule-based bank classification and posting (classify + apply from bank transactions), learning classifications from prior-year data, and posting templates with automatic VAT split are not yet first-class commands. Re-run safety for replay and CI currently depends on custom script guards. See [Suggested capabilities](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) in the module SDD for details.
+
 ### Development state
 
 **Value promise:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream.

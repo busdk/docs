@@ -99,7 +99,7 @@ Not Applicable. The module ships as a BusDK CLI component and relies on the stan
 
 The current production pattern for deterministic candidate planning is script-based. In this workspace, candidate generation and exact-match planning are handled by custom scripts such as `exports/2024/025-reconcile-sales-candidates-2024.sh` and `exports/2024/024-reconcile-sales-exact-2024.sh`. This remains the fallback until IF-REC-002 and IF-REC-003 are implemented.
 
-The current `match` path also has an active bank-ID lookup defect in this workspace. Rollout of the proposal/apply workflow requires fixing that defect so first-class reconciliation commands can replace custom scripts safely.
+Re-test in 2026-02 indicates that the former bank-ID lookup defect is resolved when a valid `matches` dataset exists; the prior “bank transaction … not found” failure did not reproduce in that configuration. The remaining gap is product-level: there is no first-class proposal-generation plus batch-apply flow, and no idempotent apply mode for repeated runs. Until `bus reconcile propose` and `bus reconcile apply` are implemented, teams continue to use explicit `matches` bootstrap, invoice header totals in ERP import, and generated exact-command sets for deterministic replay.
 
 ### Risks
 

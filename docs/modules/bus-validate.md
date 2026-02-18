@@ -25,7 +25,7 @@ This module has no subcommands. Run `bus validate` from the workspace (or use `-
 
 ### Parity and gap checks (planned)
 
-The planned first-class command flow adds deterministic migration controls such as source-import parity (counts and sums by dataset and period) and journal-gap checks (monthly non-opening journal deltas versus imported operational data), with optional thresholds and CI-friendly exit semantics.
+The planned first-class command flow adds deterministic migration controls such as source-import parity (counts and sums by dataset and period) and journal-gap checks (monthly non-opening journal deltas versus imported operational data), with optional thresholds and CI-friendly exit semantics. A possible future extension is class-aware gap reporting (e.g. operational vs financing/transfer buckets) for clearer migration progress; see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope) in the module SDD.
 
 Current production fallback in this repository is custom diagnostics scripts: `exports/2024/022-erp-parity-2024.sh` and `exports/2024/023-erp-journal-gap-2024.sh`.
 

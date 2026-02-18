@@ -23,7 +23,7 @@ For ERP history migrations, the intended first-class workflow is profile-driven 
 
 ### Commands
 
-- **`export`** — Read the current workspace snapshot and emit a deterministic replay log. Export covers the full accounting snapshot (see [module SDD](../sdd/bus-replay)): config init, module inits, accounts add, period add and state transitions, journal add, and optionally VAT/report actions when enabled; verified by golden and roundtrip tests. Use `--mode history` for best-effort export of raw row history where the domain supports it.
+- **`export`** — Read the current workspace snapshot and emit a deterministic replay log. Export covers the full accounting snapshot (see [module SDD](../sdd/bus-replay)): config init, module inits, accounts add, period add and state transitions, journal add, and optionally VAT/report actions when enabled; verified by golden and roundtrip tests. Use `--mode history` for best-effort export of raw row history where the domain supports it. Export does **not** include row-level facts for canonical invoice and bank datasets (sales-invoices, purchase-invoices, bank-transactions row data). For full migration replay you may still need hand-written or generated append scripts for those datasets in addition to the exported replay script.
 - **`apply`** — Execute a replay log against a target workspace. Reads operations from the path given by `--in` (or stdin with `--in -`). For each operation, evaluates the idempotency guard; if the guard is satisfied the operation is skipped, otherwise the command is run. Produces a deterministic report (TSV or JSON) of applied, skipped, and failed operations. Use `--dry-run` to print what would run without executing.
 - **`render`** — Transform a replay log (JSONL) into another format. Currently supports `--format sh` to produce a POSIX shell script with deterministic quoting.
 
@@ -46,6 +46,10 @@ This first-class workflow is not yet shipped. Current ERP history migration stil
 ### Output formats
 
 The canonical replay representation is JSONL: one JSON object per line, with stable keys `id`, `kind`, `cmd`, optional `args`, optional `guard`, and optional `notes`. Operation order is topological so that dependencies are satisfied — config before domain inits, accounts before journal postings, periods before postings, attachments before references. Shell rendering produces a script that starts with `#!/usr/bin/env bash` and `set -euo pipefail`; each operation becomes one `bus ...` line with deterministic single-quoted escaping. Output does not embed timestamps by default so that byte-stability is preserved.
+
+### Export coverage and limitations
+
+Export with `--scope accounting` produces config, accounts, periods, journal postings, and attachment references. It does not emit operations that recreate row-level invoice or bank facts (sales-invoices, purchase-invoices, bank-transactions). A single artifact for full replay — including those row-level facts — is the target; until that is implemented, full replay may require additional scripts for invoice and bank data alongside the exported replay log. See [Implementation status](../sdd/bus-replay#implementation-status) in the module SDD.
 
 ### Export and apply behavior
 

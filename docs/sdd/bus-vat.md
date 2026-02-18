@@ -102,6 +102,10 @@ VAT report: a computed summary of VAT totals for a reporting period.
 VAT export: a repository data output intended for filing or archiving.  
 Journal-driven VAT mode: computation of VAT period totals from journal postings and VAT-related account/tax mappings instead of (or in addition to) invoice master data; used when invoice masters are incomplete or absent (e.g. migration or legacy sources).
 
+### Implementation status (journal-driven mode)
+
+The CLI exposes journal-driven VAT mode as `bus vat report|export --source journal`. In some workspaces, these commands still fail with schema or column compatibility errors (for example `journal-2023.csv: missing column direction`). Journal schema compatibility or normalization guidance for legacy journal datasets is not yet fully documented or enforced; parity for journal-first migrations depends on the journal dataset conforming to the expected schema (including a `direction` or equivalent field). Until schema expectations and any normalization path are documented and implemented, operators using `--source journal` should ensure their journal datasets match the module’s expected column set or treat failures as open compatibility work.
+
 ### Open Questions
 
 OQ-VAT-001 Journal-driven mode binding. Should journal-driven VAT mode be exposed as an option on `bus vat` (e.g. `--source invoice` | `--source journal`) or as a dedicated CLI such as `bus vat-journal`? The requirement (FR-VAT-004) and behavior are fixed; only the CLI surface is to be decided.
@@ -132,7 +136,7 @@ OQ-VAT-001 Journal-driven mode binding. Should journal-driven VAT mode be expose
 Title: bus-vat module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-VAT`  
-Version: 2026-02-17  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-17  
+Last updated: 2026-02-18  
 Owner: BusDK development team  

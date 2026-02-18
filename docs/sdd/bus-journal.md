@@ -101,6 +101,20 @@ Not Applicable. Schema evolution is handled through the standard schema migratio
 
 Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic ledger data handling.
 
+### Suggested capabilities (out of current scope)
+
+The following capabilities are not yet requirements; they are recorded as suggested enhancements for migration and bank-driven bookkeeping workflows.
+
+**Idempotent posting with source keys.** Re-run safety for replay and CI currently depends on custom shell guards or marker checks, not journal-level source identity. A suggested extension is source-keyed idempotent posting (e.g. `bus journal add ... --source-id bank_txn:<id> --if-missing` or `bus journal upsert --source-id <id> ...`) with uniqueness over `(source_system, source_id)` and clear diagnostics for conflicts, so replay scripts become safely re-runnable without custom marker hacks.
+
+**Rule-based bank classification and posting.** Bank-driven bookkeeping without a daybook source currently requires custom scripting per class. A suggested two-phase flow: (1) a classify command (e.g. `bus journal classify bank --profile <rules.yml>`) that produces deterministic proposal rows from bank transactions using predicates (counterparty regex, message code/text, sign, amount constraints, reference patterns), and (2) an apply command that posts approved proposals as balanced journal entries with idempotent source-linking and explainable rule traces, including dry-run, confidence scores, and skip reasons for unclassified rows.
+
+**Learning classifications from prior-year bookkeeping.** Pattern-mining commands could suggest account mappings from historical posted data (e.g. infer frequent `(counterparty/message-pattern/sign) -> (debit_account, credit_account)` mappings from prior periods, emit ranked candidate rules for a target period, support approval/export into a rules profile consumable by a classifier). This would speed yearly continuation when the source daybook is missing, with transparent heuristics and reviewer approval before posting.
+
+**Posting templates with automatic VAT split.** For recurring domestic supplier charges, posting templates could split gross bank amounts into base + VAT by configured rate and VAT account (template fields: predicate, expense account, vat rate, vat account, bank account; generated balanced lines with deterministic rounding and trace fields). This would improve bank-driven bookkeeping quality and VAT correctness without custom scripts per supplier.
+
+**Loan-payment classifier with principal/interest split.** Financing-style bank rows (lenders, installment-like references) often need at least two lines (liability reduction + finance cost). A suggested extension is optional loan-profile–aware posting support: register lender payment profiles (reference keys, liability account, interest account, fee account, split policy), generate deterministic posting proposals per bank row with explicit split rationale, and support fixed split, schedule-based split (drawing on [bus-assets](./bus-assets) schedule-style patterns where applicable), or “all to liability” fallback with warning.
+
 ### Glossary and Terminology
 
 Journal entry: a ledger posting row associated with a transaction and voucher.  
@@ -119,6 +133,8 @@ Transaction identifier: a stable identifier that groups journal entries for a po
 
 - [bus-accounts SDD](./bus-accounts) (chart of accounts path via library)
 - [bus-period SDD](./bus-period) (period control path and state via library)
+- [bus-bank SDD](./bus-bank)
+- [bus-assets SDD](./bus-assets) (schedule-style patterns for loan-payment suggested capability)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Documents (evidence)](../master-data/documents/index)
@@ -132,7 +148,7 @@ Transaction identifier: a stable identifier that groups journal entries for a po
 Title: bus-journal module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-JOURNAL`  
-Version: 2026-02-07  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-16  
+Last updated: 2026-02-18  
 Owner: BusDK development team  

@@ -85,6 +85,10 @@ Not Applicable. The module ships as a BusDK CLI component and relies on the stan
 
 Current production migration checks are script-based in this repository (`exports/2024/022-erp-parity-2024.sh` and `exports/2024/023-erp-journal-gap-2024.sh`). This remains the fallback until IF-VAL-002 parity and gap command surfaces are implemented.
 
+### Suggested capabilities (out of current scope)
+
+**Class-aware gap reporting.** A single aggregate bank/journal or ERP-vs-journal gap can mix operational income/expense with financing liability movements and internal transfers, which obscures whether business-activity classification is improving. A suggested extension is class-aware gap reporting with configurable account buckets (e.g. operational income/expense coverage, financing liability/service coverage, internal transfer coverage), deterministic period-based outputs, and CI-friendly thresholds per bucket. This would improve decision support during iterative migration and classification work. Not yet a requirement; confirm if this should be added to FR-VAL-004 or a new requirement.
+
 ### Risks
 
 Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic validation.

@@ -36,6 +36,8 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 In this workspace, candidate planning for reconciliation is currently script-based (`exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`) while the first-class `bus reconcile propose/apply` workflow is not yet shipped.
 
+Counterparty normalization (canonical names and aliases before rule matching), a built-in classification coverage/backlog report (posted vs unposted by month), and native extraction of ERP or invoice references from bank message text are suggested enhancements not yet implemented. See [Suggested capabilities](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) in the module SDD.
+
 ### Files
 
 `bank-imports.csv` and `bank-transactions.csv` at the repository root with beside-the-table schemas. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `bank/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).

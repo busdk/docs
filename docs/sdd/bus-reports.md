@@ -174,6 +174,10 @@ Not Applicable. The module ships as a BusDK CLI component and relies on the stan
 
 Not Applicable. Report schema changes are handled by updating the module and documenting new output expectations.
 
+### Implementation status (Finnish full layout parity)
+
+Built-in Finnish layouts (e.g. `pma-full`, `kpa-full` or equivalent `fi-*` layout ids) execute successfully for balance-sheet and profit-and-loss and emit Finnish section labels (e.g. Pysyvät vastaavat, LIIKEVAIHTO). Outputs remain section-level summaries; full line-by-line parity with a source report — same structure and labels as the original TASE or tuloslaskelma — still requires a robust customizable line-mapping path. A built-in “Finnish full” layout or custom YAML/JSON layout that maps accounts to report lines with the same hierarchy and labels as a given source is not yet fully implemented; parity work for comparison and filing may rely on custom layout files and account-mapping refinement until that path is complete.
+
 ### Risks
 
 Not Applicable. Module-specific risks are not enumerated beyond the general need for deterministic report outputs.
