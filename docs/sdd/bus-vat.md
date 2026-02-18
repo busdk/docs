@@ -37,7 +37,7 @@ KD-VAT-002 VAT period boundaries are owned by bus-vat. The sequence of VAT repor
 
 KD-VAT-003 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of VAT datasets for read-only access. Write access and all VAT business logic remain in this module.
 
-KD-VAT-004 Journal-driven mode supports migration and legacy scenarios. Where invoice master data is incomplete or absent, VAT period totals are computed from journal postings and VAT-related account/tax mappings. The same period boundaries, allocation rules, and output formats apply as for the invoice-based path; only the input source differs. Implementation may expose this mode as an option on `bus vat` (e.g. `--source journal`) or as a dedicated CLI (e.g. `bus vat-journal`); the binding is an open design choice (see Open Questions).
+KD-VAT-004 Journal-driven mode supports migration and legacy scenarios. Where invoice master data is incomplete or absent, VAT period totals are computed from journal postings and VAT-related account/tax mappings. The same period boundaries, allocation rules, and output formats apply as for the invoice-based path; only the input source differs. The binding is `--source journal` on `bus vat validate|report|export`.
 
 ### Component Design and Interfaces
 
@@ -45,7 +45,7 @@ Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands
 
 The `init` command creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument. Journal-driven VAT mode (FR-VAT-004) is invoked either by a source selector on these commands (e.g. `--source journal`) or by a dedicated CLI entry point (e.g. `bus vat-journal`); the chosen binding is documented once the open design choice is resolved (OQ-VAT-001).
+Documented parameters include `bus vat report --period <period>` and `bus vat export --period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules, and VAT commands do not use a positional period argument. Journal-driven VAT mode (FR-VAT-004) is invoked with `--source journal` on `bus vat validate|report|export`.
 
 Interface IF-VAT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (vat-rates, vat-reports, vat-returns, and any period-definition or period-scoped files and their schemas). Given a workspace root path and optionally a period identifier, the library returns the relevant path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and VAT logic remain in this module.
 
@@ -104,11 +104,11 @@ Journal-driven VAT mode: computation of VAT period totals from journal postings 
 
 ### Implementation status (journal-driven mode)
 
-The CLI exposes journal-driven VAT mode as `bus vat report|export --source journal`. In some workspaces, these commands still fail with schema or column compatibility errors (for example `journal-2023.csv: missing column direction`). Journal schema compatibility or normalization guidance for legacy journal datasets is not yet fully documented or enforced; parity for journal-first migrations depends on the journal dataset conforming to the expected schema (including a `direction` or equivalent field). Until schema expectations and any normalization path are documented and implemented, operators using `--source journal` should ensure their journal datasets match the module’s expected column set or treat failures as open compatibility work.
+Journal-driven mode is implemented on `bus vat validate|report|export --source journal`. Legacy journal datasets without row-level `direction` are supported through deterministic fallback: `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). If direction remains unresolved, commands fail with deterministic diagnostics that identify the row/account and required normalization input.
 
 ### Open Questions
 
-OQ-VAT-001 Journal-driven mode binding. Should journal-driven VAT mode be exposed as an option on `bus vat` (e.g. `--source invoice` | `--source journal`) or as a dedicated CLI such as `bus vat-journal`? The requirement (FR-VAT-004) and behavior are fixed; only the CLI surface is to be decided.
+None. OQ-VAT-001 (journal-driven mode binding) is resolved: the binding is `--source journal` on `bus vat validate|report|export`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
