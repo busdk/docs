@@ -7,7 +7,7 @@ description: Bus Validate validates all workspace datasets against their schemas
 
 ### Introduction and Overview
 
-Bus Validate validates all workspace datasets against their schemas, verifies cross-table integrity and double-entry invariants, and produces actionable diagnostics for invalid workspaces. This SDD also defines first-class migration parity and gap checks between source imports and workspace or journal activity; those checks are currently specified but not yet implemented as first-class commands.
+Bus Validate validates all workspace datasets against their schemas, verifies cross-table integrity and double-entry invariants, and produces actionable diagnostics for invalid workspaces. This SDD defines first-class migration parity and gap checks between source imports and workspace or journal activity; those checks are implemented as subcommands `bus validate parity` and `bus validate journal-gap` (IF-VAL-002).
 
 ### Requirements
 
@@ -41,11 +41,11 @@ Interface IF-VAL-001 (module CLI). The module is invoked as `bus validate` and f
 
 Validation scope is fixed to the full workspace datasets and schemas, including cross-table invariants. The command does not support partial validation modes or dataset selection parameters because the purpose is to confirm workspace-wide integrity as a single deterministic step.
 
-Interface IF-VAL-002 (parity and gap checks, planned). The planned command surface extends validation with deterministic migration checks, for example `bus validate parity --source <path> --by <dataset,period>` and `bus validate journal-gap --source <path> --exclude-opening`. The module consumes deterministic source-summary inputs and canonical workspace datasets, emits machine-readable parity or gap rows, and applies optional threshold flags to determine CI exit behavior.
+Interface IF-VAL-002 (parity and gap checks). The command surface includes `bus validate parity --source <file>` and `bus validate journal-gap --source <file>` with optional threshold flags and `--dry-run`. The module consumes deterministic source-summary inputs and canonical workspace datasets, emits machine-readable parity or gap rows (TSV to stdout or `--output`), and applies optional threshold flags for CI exit behavior.
 
 Validation results are diagnostics. The command supports a machine-readable diagnostics format by accepting `--format text` (default) or `--format tsv`, with the selected diagnostics written to standard error. The `tsv` format emits a stable column set of `dataset`, `record_id`, `field`, `rule`, and `message` so automation can filter and join diagnostics across revisions. Standard output remains reserved for command results and is empty on success, so automation should capture diagnostics via standard error redirection. The `--output` flag does not apply because `bus validate` does not emit a result set; when present it has no effect on diagnostics.
 
-For planned parity and gap checks, output is a deterministic result set (TSV or JSON) suitable for CI ingestion. Suggested stable columns include `check_id`, `dataset_or_scope`, `period`, `source_value`, `workspace_or_journal_value`, `delta`, `threshold`, and `status`.
+For parity and gap subcommands, output is a deterministic result set (TSV) suitable for CI ingestion. Suggested stable columns include `check_id`, `dataset_or_scope`, `period`, `source_value`, `workspace_or_journal_value`, `delta`, `threshold`, and `status`.
 
 Usage example:
 
@@ -83,11 +83,13 @@ Not Applicable. The module ships as a BusDK CLI component and relies on the stan
 
 ### Migration/Rollout
 
-Current production migration checks are script-based in this repository (`exports/2024/022-erp-parity-2024.sh` and `exports/2024/023-erp-journal-gap-2024.sh`). This remains the fallback until IF-VAL-002 parity and gap command surfaces are implemented.
+Script-based migration checks (`exports/2024/022-erp-parity-2024.sh` and `exports/2024/023-erp-journal-gap-2024.sh`) remain available as an alternative to the first-class parity and journal-gap subcommands.
 
 ### Suggested capabilities (out of current scope)
 
 **Class-aware gap reporting.** A single aggregate bank/journal or ERP-vs-journal gap can mix operational income/expense with financing liability movements and internal transfers, which obscures whether business-activity classification is improving. A suggested extension is class-aware gap reporting with configurable account buckets (e.g. operational income/expense coverage, financing liability/service coverage, internal transfer coverage), deterministic period-based outputs, and CI-friendly thresholds per bucket. This would improve decision support during iterative migration and classification work. Not yet a requirement; confirm if this should be added to FR-VAL-004 or a new requirement.
+
+**Per-bucket thresholds.** Allow separate threshold flags or config per bucket (e.g. `--max-abs-delta-operational`, or a config file mapping bucket → threshold), so CI can fail when operational gap exceeds the limit while tolerating financing or transfer backlog. Exit semantics: non-zero when any bucket exceeds its configured threshold; zero when all buckets are within limits.
 
 ### Risks
 

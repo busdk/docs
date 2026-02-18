@@ -13,21 +13,21 @@ description: bus validate checks all workspace datasets against their schemas an
 
 Command names follow [CLI command naming](../cli/command-naming). `bus validate` checks all workspace datasets against their schemas and enforces cross-table invariants (e.g. balanced debits/credits, valid references, period integrity). It does not modify data. Use before period close and filing. Diagnostics go to stderr; stdout is empty on success.
 
-The planned migration-quality extension adds first-class parity and journal-gap checks between source imports and workspace or journal activity. In this repository, those checks are currently script-based.
+The module provides first-class parity and journal-gap subcommands (`bus validate parity`, `bus validate journal-gap`) for source-import parity and journal-gap checks. Script-based fallbacks (e.g. `exports/2024/022-erp-parity-2024.sh`) remain optional.
 
 ### Commands
 
-This module has no subcommands. Run `bus validate` from the workspace (or use `-C <dir>`).
+Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide validation. Subcommands `parity` and `journal-gap` provide first-class migration checks; see [Parity and gap checks (first-class)](#parity-and-gap-checks-first-class) below.
 
 ### Options
 
-`--format text` (default) or `--format tsv` controls diagnostics format. TSV columns are `dataset`, `record_id`, `field`, `rule`, `message`. Global flags are defined in [Standard global flags](../cli/global-flags). For help, run `bus validate --help`.
+`--format text` (default) or `--format tsv` controls diagnostics format. TSV columns are `dataset`, `record_id`, `field`, `rule`, `message`. Global flags are defined in [Standard global flags](../cli/global-flags). For `bus validate`, stdout is empty on success and `--output` has no effect (no result set). For help, run `bus validate --help`.
 
-### Parity and gap checks (planned)
+### Parity and gap checks (first-class)
 
-The planned first-class command flow adds deterministic migration controls such as source-import parity (counts and sums by dataset and period) and journal-gap checks (monthly non-opening journal deltas versus imported operational data), with optional thresholds and CI-friendly exit semantics. A possible future extension is class-aware gap reporting (e.g. operational vs financing/transfer buckets) for clearer migration progress; see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope) in the module SDD.
+The module exposes deterministic migration checks as subcommands: `bus validate parity --source <file>` (source-import parity: counts and sums by dataset and period) and `bus validate journal-gap --source <file>` (journal gap: imported operational vs non-opening journal by month). Both support optional threshold flags (`--max-abs-delta`, `--max-count-delta`, `--max-pct-delta-*`) and CI-friendly exit semantics; `--dry-run` emits planned thresholds and scope to stderr without writing a result set. Output is a result set (TSV) to stdout or to the file given by `--output`. A possible future extension is class-aware gap reporting (e.g. operational vs financing/transfer buckets); see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope) in the module SDD.
 
-Current production fallback in this repository is custom diagnostics scripts: `exports/2024/022-erp-parity-2024.sh` and `exports/2024/023-erp-journal-gap-2024.sh`.
+Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain available as an alternative.
 
 ### Files
 
@@ -43,13 +43,13 @@ Reads all workspace datasets and schemas. Does not write.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 50% — Run and schema/invariant checks are test-verified; user can complete pre-close validation and get pass/fail and diagnostics. Empty stdout on success, `--format text`/`tsv` for diagnostics, and `--output` no-op are not yet implemented; parity and journal-gap checks are planned.
+**Completeness:** high — Run and schema/invariant checks are test-verified; user can complete pre-close validation and get pass/fail and diagnostics. Stdout is empty on success; `--format text` (default) and `--format tsv` control diagnostics to stderr; `--output` is a no-op for `bus validate` (no result set). First-class `parity` and `journal-gap` subcommands are implemented with thresholds and CI exit behavior.
 
-**Use case readiness:** Accounting workflow: 50% — run and schema/invariant checks verified; user can complete pre-close validate step; format and empty stdout would complete contract. Finnish bookkeeping and tax-audit compliance: 50% — workspace validation before close/filing verified; audit and closed-period would strengthen. Finnish company reorganisation: 50% — workspace validation before evidence pack verified; same gaps.
+**Use case readiness:** Accounting workflow: high — run, schema/invariant checks, empty stdout, format, and output no-op are in place; parity and journal-gap available. Finnish bookkeeping and tax-audit compliance: high — workspace validation and migration checks available; audit and closed-period would strengthen. Finnish company reorganisation: high — same as above.
 
-**Current:** Verified only. `cmd/bus-validate/run_test.go` and `tests/e2e_bus_validate.sh` verify success/failure exit codes, missing CSV, schema parse and required/enum/primaryKey/foreignKey errors, journal double-entry balance, FK cascade suppression, ambiguous FK, and global flags (help, version, quiet, output, chdir, color, format-unknown, quiet+verbose, terminator, errors to stderr). `internal/validate/type_property_test.go`, `internal/validate/schema_test.go`, `internal/workspace/discover_test.go`, and `internal/cli/flags_test.go` verify type validation, FK schema shapes, discovery and naming styles, and flag parsing. Success path prints "validation ok" to stdout (empty stdout on success is planned).
+**Current:** Verified. `cmd/bus-validate/run_test.go` and `tests/e2e_bus_validate.sh` verify success/failure exit codes, missing CSV, schema and invariant errors, journal double-entry balance, FK handling, and global flags (help, version, quiet, output no-op for validate, chdir, color, format text/tsv and unknown format, quiet+verbose, terminator, errors to stderr). Parity and journal-gap subcommands, dry-run, and threshold/CI behavior are covered. Success path leaves stdout empty.
 
-**Planned next:** `--format text` (default) and `--format tsv` for diagnostics; empty stdout on success and `--output` no-op (PLAN.md). First-class parity and journal-gap checks with thresholds and CI exit behavior to advance migration/close confidence. Table Schema min/max and audit/closed-period checks for [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack).
+**Planned next:** Table Schema min/max and audit/closed-period checks for [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack). Class-aware gap reporting with per-bucket thresholds (see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope) in the module SDD) as a possible extension.
 
 **Blockers:** None known.
 
