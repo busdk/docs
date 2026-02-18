@@ -25,6 +25,8 @@ Input VAT (@25.5%): €51
 VAT payable: €204
 ```
 
+When invoice data is incomplete or absent (e.g. journal-first migration), use `bus vat report --period 2026Q1 --source journal` to compute from journal postings and VAT account mappings; see [bus vat](../modules/bus-vat). Journal datasets must conform to the expected schema (e.g. a `direction` column); schema compatibility is documented in the module SDD.
+
 2. Alice exports the VAT output files she will archive alongside the workspace data:
 
 ```bash

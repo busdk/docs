@@ -12,6 +12,7 @@ This section covers how modules are structured and their current implementation 
 - [Development status](./development-status): implementation state of each BusDK module and the Bus as a whole, derived from each repository’s PLAN.md
 - [Regulated report PDFs (TASE and tuloslaskelma)](./regulated-report-pdfs): design for producing Finnish balance sheet and income statement as PDF from BusDK
 - [Bus project cost summary](./cost-summary): snapshot of total commits and AI-related spend per module (2025-02-15)
+- [Module source access and pricing](./fsl-modules): modules offered under source-available licenses (e.g. FSL) with cost-based pricing and foundational cost allocation
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
