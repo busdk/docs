@@ -24,6 +24,8 @@ Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These 
 
 Command names follow [CLI command naming](../cli/command-naming). `bus agent` is a thin CLI on top of the BusDK agent runner library. The runner centralizes how external agent runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI) are invoked so that other modules can use a single, deterministic contract for templating, timeout handling, and output capture. This CLI exposes that contract for diagnostics and development: you can see which runtimes are enabled, render a template without running an agent, run an agent with a prompt under explicit timeout and workdir, and format raw agent output for readability. The tool does not execute Git, does not read or write workspace datasets, and does not define workflow semantics; those belong to modules such as [bus dev](./bus-dev), which depend on the agent runner library. All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. Command results go to stdout; diagnostics and progress go to stderr.
 
+From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the standard runtime set. Codex CLI sign-in works with an active ChatGPT Plus subscription (and other eligible ChatGPT plans), so no API key setup is required for subscription-based access. Gemini and Claude integrations are under active development and are not yet fully verified by end-to-end coverage.
+
 ### Commands
 
 **`detect`** — List the agent runtimes that are currently available. A runtime is available if its CLI executable is found in PATH and is executable and not disabled by user configuration. Output is one runtime identifier per line, in the same effective order used for automatic default selection (user-configured order if present, otherwise alphabetical by runtime ID), so the first line is always the runtime that would be selected for `bus agent run` when no `--agent` or preference override is set. Use this to verify that at least one runtime is available before running workflow commands in [bus dev](./bus-dev), or to see at a glance which agent would be used by default. With **`--first`** (or **`-1`**), output only that default runtime as a single line; if no runtime is available, the command exits with code 1. Scripts can use `bus agent detect --first` to obtain the default agent ID without parsing the full list.
@@ -65,12 +67,12 @@ The agent runner treats **AGENTS.md** at the repository root as the canonical, v
 
 ### Agent runtimes and installation
 
-The agent runner supports four runtimes: **Gemini CLI**, **Cursor CLI**, **Claude CLI**, and **Codex**. Each is a separate external CLI; Bus Agent does not embed provider SDKs or call model APIs directly. When a selected runtime is not installed or not in PATH, the tool reports that on stderr and directs you to the canonical installation reference for that runtime. Those references are:
+The agent runner supports four runtimes: **Gemini CLI**, **Cursor CLI**, **Claude CLI**, and **Codex**. From **BusDK v0.0.26** onward, Codex is part of this supported runtime set. Each is a separate external CLI; Bus Agent does not embed provider SDKs or call model APIs directly. When a selected runtime is not installed or not in PATH, the tool reports that on stderr and directs you to the canonical installation reference for that runtime. Those references are:
 
 - **Gemini CLI** — https://geminicli.com/
 - **Cursor CLI** — https://cursor.com/docs/cli/overview
 - **Claude CLI** — https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started
-- **Codex** — https://developers.openai.com/codex/cli/
+- **Codex** — https://developers.openai.com/codex/cli/ (sign in with ChatGPT; ChatGPT Plus is supported)
 
 Runtime selection for `bus agent run` uses this order (same logic as [bus dev](./bus-dev) when it delegates to the bus-agent library, but without bus-dev-only sources): (1) **`--agent`** for that invocation, (2) **`BUS_AGENT`** (session default), (3) **`bus-agent.runtime`** from [bus-preferences](./bus-preferences), (4) **first available** runtime in the effective order. When multiple agents are available and no earlier source is set, the order is alphabetical by runtime ID unless you configure a different order; you can also disable or enable specific agents (see Agent order and enable/disable below). At any step, if the configured runtime is **disabled** by user configuration, the tool prints a warning to stderr and continues with the next source instead of selecting it. Invalid runtime names produce a usage error (exit 2).
 
@@ -145,3 +147,4 @@ See [Development status](../implementation/development-status).
 - [Cursor CLI — overview and install](https://cursor.com/docs/cli/overview)
 - [Claude Code — get started / install](https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started)
 - [Codex CLI — install](https://developers.openai.com/codex/cli/)
+- [OpenAI Help Center: Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)

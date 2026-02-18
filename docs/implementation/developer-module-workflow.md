@@ -15,15 +15,15 @@ Cursor runs from the repository root so its native AGENTS.md loading applies. Th
 
 ### Developer module workflow with Gemini CLI
 
-Gemini may rely on repo-local `.gemini/settings.json` and `.geminiignore` so AGENTS.md is discovered as intended. Run/work/spec/e2e with Gemini are not exercised in e2e. Readiness table: [Development status — Developer module workflow with Gemini CLI](./development-status#developer-module-workflow-with-gemini-cli).
+Gemini may rely on repo-local `.gemini/settings.json` and `.geminiignore` so AGENTS.md is discovered as intended. Run/work/spec/e2e with Gemini are not exercised in e2e, so this runtime path is in-progress and not yet fully verified. Readiness table: [Development status — Developer module workflow with Gemini CLI](./development-status#developer-module-workflow-with-gemini-cli).
 
 ### Developer module workflow with Claude CLI
 
-Claude prefers per-run injection of AGENTS.md with a clearly marked, additive repo-local shim as fallback. Run/work/spec/e2e with Claude are not exercised in e2e. Readiness table: [Development status — Developer module workflow with Claude CLI](./development-status#developer-module-workflow-with-claude-cli).
+Claude prefers per-run injection of AGENTS.md with a clearly marked, additive repo-local shim as fallback. Run/work/spec/e2e with Claude are not exercised in e2e, so this runtime path is in-progress and not yet fully verified. Readiness table: [Development status — Developer module workflow with Claude CLI](./development-status#developer-module-workflow-with-claude-cli).
 
 ### Developer module workflow with Codex CLI
 
-Codex runs with repo-local state (e.g. CODEX_HOME set to a repo-local directory); AGENTS.md is discovered natively when the workdir is the repo root. Run/work/spec/e2e with Codex are not exercised in e2e. Readiness table: [Development status — Developer module workflow with Codex CLI](./development-status#developer-module-workflow-with-codex-cli).
+From **BusDK v0.0.26** onward, Codex is supported as a bus-agent runtime in this workflow (`bus dev --agent codex`, `bus dev set agent codex`, or `BUS_DEV_AGENT=codex`). Codex runs with repo-local state (e.g. CODEX_HOME set to a repo-local directory); AGENTS.md is discovered natively when the workdir is the repo root. Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans). Run/work/spec/e2e with Codex are not exercised in e2e. Readiness table: [Development status — Developer module workflow with Codex CLI](./development-status#developer-module-workflow-with-codex-cli).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -38,3 +38,4 @@ Codex runs with repo-local state (e.g. CODEX_HOME set to a repo-local directory)
 - [bus-dev](../modules/bus-dev)
 - [bus-agent](../modules/bus-agent)
 - [Development status — BusDK modules](./development-status)
+- [OpenAI Help Center: Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)

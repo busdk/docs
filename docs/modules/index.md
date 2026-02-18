@@ -20,9 +20,9 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus api`](./bus-api): Local REST JSON API gateway for BusDK workspaces.
 - [`bus sheets`](./bus-sheets): Local spreadsheet-like web UI for workspaces (workbook, sheet tabs, optional agent chat).
 - [`bus books`](./bus-books): Local bookkeeping web UI for end users (accounting screens over modules).
-- [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping.
-- [`bus agent`](./bus-agent): Diagnostics and development helper for the agent runner (detect, render, run, format).
-- [`bus run`](./bus-run): Run user-defined prompts, pipelines, and scripts with agentic support; no built-in developer workflows. Optional `bux` shorthand for `bus run`.
+- [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping. From BusDK v0.0.26 onward, includes Codex runtime support through bus-agent; Gemini and Claude integration remains in-progress and not fully verified.
+- [`bus agent`](./bus-agent): Diagnostics and development helper for the agent runner (detect, render, run, format). From BusDK v0.0.26 onward, includes Codex runtime support; Gemini and Claude integration remains in-progress and not fully verified.
+- [`bus run`](./bus-run): Run user-defined prompts, pipelines, and scripts with agentic support; no built-in developer workflows. Optional `bux` shorthand for `bus run`. From BusDK v0.0.26 onward, includes Codex runtime support through bus-agent; Gemini and Claude integration remains in-progress and not fully verified.
 - [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.
 - [`bus accounts`](./bus-accounts): Manage the chart of accounts.
 - [`bus entities`](./bus-entities): Manage counterparty reference data.
@@ -62,3 +62,4 @@ Each module that owns workspace data defines where its data files live. Today th
 - [Modules (SDD)](../sdd/modules)
 - [Independent modules](../architecture/independent-modules)
 - [Modularity](../design-goals/modularity)
+- [OpenAI Help Center: Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)
