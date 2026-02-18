@@ -33,23 +33,46 @@ KD-VERO-002 Consume canonical layout only. Bus-filing-vero consumes VAT and repo
 
 Interface IF-VERO-001 (module CLI). The module is invoked as `bus filing vero` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-Module-specific parameters are not defined in the current design spec and must be provided by the module help output for a pinned version.
+Invocation forms are `bus filing vero` and `bus-filing-vero`. Global flags are parsed before the subcommand, and `--` terminates global flag parsing so remaining tokens are passed to the subcommand.
 
-Usage example:
+The command surface is defined as follows.
 
-```bash
-bus filing vero
-```
+| Flag | Description | Default | Exit on error |
+|------|-------------|---------|---------------|
+| `-h`, `--help` | Print help and exit successfully. With a subcommand, show subcommand help. | — | 0 |
+| `-V`, `--version` | Print `bus-filing-vero <version>` and exit successfully. | — | 0 |
+| `-v`, `--verbose` | Increase diagnostic verbosity on stderr. Repeatable (`-vv`, `-vvv`). | `0` | — |
+| `-q`, `--quiet` | Suppress normal and verbose output; only errors are written to stderr. | off | — |
+| `-C <dir>`, `--chdir <dir>` | Resolve workspace paths from `<dir>`. | current directory | 1 if invalid |
+| `-o <file>`, `--output <file>` | Write command results to `<file>` instead of stdout. | stdout | 1 if write error |
+| `-f <format>`, `--format <format>` | Structured result format: `tsv` or `json`. | `tsv` | 2 if unknown |
+| `--color <mode>` | Color mode for stderr diagnostics: `auto`, `always`, `never`. | `auto` | 2 if invalid |
+| `--no-color` | Alias for `--color=never`. | — | — |
+| `--` | End global flag parsing. Remaining arguments are subcommand arguments. | — | — |
+
+`-q` and `-v`/`--verbose` are mutually exclusive and return usage error exit code 2 when combined. `-h` and `-V` are immediate-exit flags that ignore all other flags and arguments and return exit code 0. When `--quiet` and `--output` are both present, quiet mode wins and no output file is written. If both `--color <mode>` and `--no-color` are present, color is disabled.
+
+| Subcommand | Purpose | Flag | Description | Default |
+|------------|---------|------|-------------|---------|
+| `export` | Build a Vero filing bundle from a validated workspace. | `--bundle <dir>` | Bundle directory to create. | `filing/vero/bundle` |
+| `export` | Build a Vero filing bundle from a validated workspace. | `--dry-run` | Preview bundle contents without writing files. | off |
+| `verify` | Verify bundle checksums and manifest consistency. | `--bundle <dir>` | Bundle directory to verify. | `filing/vero/bundle` |
+
+Subcommands do not accept positional arguments. Unknown subcommands and unknown subcommand flags are usage errors with exit code 2. An empty `--bundle` value is a usage error with exit code 2.
+
+This interface definition resolves OQ-VERO-001 for the module command surface.
 
 ### Data Design
 
 The module reads validated datasets, VAT outputs, and report outputs and writes Vero-specific bundle directories or archives with manifests and hashes.
 
-**Required pre-export layout.** Inputs MUST be in the canonical layout produced by upstream modules. VAT datasets and their beside-the-table schemas live at the workspace root as defined by [bus-vat](../sdd/bus-vat) (see [VAT area](../layout/vat-area)); the module does not expect VAT data under a `vat/` subdirectory. Report outputs live at the location defined by the reports module. Paths to VAT and report files MUST be resolved via those modules’ Go library path accessors only. No preprocessing or manual creation of `reports/` or `vat/` directories is required: a workspace that has run `bus config init`, `bus invoices init`, and `bus vat init` (and report generation when the bundle requires reports) must be sufficient for export to run, subject to missing-data diagnostics that refer to the actual paths provided by the accessors.
+**Required pre-export layout.** Inputs MUST be in the canonical layout produced by upstream modules. VAT datasets and their schemas live at the workspace root as defined by [bus-vat](../sdd/bus-vat) and [VAT area](../layout/vat-area), and this module only reads a `vat/` subdirectory when the VAT path accessor explicitly returns such paths. Report outputs are likewise read from whatever location the reports path accessor returns, so `reports/` is optional and not a required directory contract.
+
+For every CSV input, a beside-the-CSV table schema is required. The module accepts both schema naming conventions: `name.schema.json` and `name.csv.schema.json`. This keeps exports compatible with canonical outputs from `bus vat init` and with other modules that emit the `.csv.schema.json` form.
 
 ### Assumptions and Dependencies
 
-Bus Filing Vero depends on `bus filing` orchestration, `bus period` closed data, and outputs from [bus vat](../sdd/bus-vat) and the reports module. VAT and report file locations and schema naming are defined by the owning modules; bus-filing-vero does not define or require a different layout (KD-VERO-002, NFR-VERO-002). Missing prerequisites result in deterministic diagnostics that reference the paths resolved via the owning modules’ APIs. Impact if false: requiring a layout that upstream modules do not produce blocks end-to-end export after standard init and report/VAT generation.
+Bus Filing Vero depends on `bus filing` orchestration, `bus period` closed data, and outputs from [bus vat](../sdd/bus-vat) and the reports module. VAT and report file locations and schema naming are defined by the owning modules and resolved through their path accessors; bus-filing-vero does not define or require a different layout (KD-VERO-002, NFR-VERO-002). Missing prerequisites result in deterministic diagnostics that reference the paths resolved via the owning modules’ APIs. Impact if false: requiring a layout that upstream modules do not produce blocks end-to-end export after standard init and report/VAT generation.
 
 ### Security Considerations
 
@@ -77,11 +100,7 @@ Not Applicable. Bundle structure changes are handled by updating the module and 
 
 ### Risks
 
-**Implementation alignment with path contract (2026-02-16).** The current implementation can fail with “required directory missing: reports” or “missing schema for vat-rates.csv: vat-rates.schema.json” when the workspace has been initialized only with `bus config init`, `bus invoices init`, and `bus vat init`. That indicates the implementation does not yet resolve VAT (and possibly report) paths via the owning modules’ path accessors and may expect directory or schema layouts those modules do not produce. Until the implementation aligns with NFR-VERO-002 and KD-VERO-002, export remains blocked for the standard init-and-export flow; the design is the target state and implementation changes are required.
-
-### Open Questions
-
-OQ-VERO-001 Vero export parameters. Define the complete parameter set for `bus filing vero` so the command surface is deterministic.
+Path-contract behavior aligns with NFR-VERO-002 and KD-VERO-002 in the current release line. VAT and report inputs are resolved through library path accessors only, root-level VAT files are supported, both schema naming conventions are accepted, and no manual directory creation is required beyond standard `bus vat init` and report generation when the selected bundle content requires reports.
 
 ### Glossary and Terminology
 
@@ -114,7 +133,7 @@ Manifest: a deterministic listing and checksum set for bundle contents.
 Title: bus-filing-vero module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-FILING-VERO`  
-Version: 2026-02-17  
+Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-17  
+Last updated: 2026-02-18  
 Owner: BusDK development team  
