@@ -9,7 +9,8 @@ description: "CLI reference for bus attachments: register evidence files, store 
 
 `bus attachments init [-C <dir>] [global flags]`  
 `bus attachments add <file> [--desc <text>] [-C <dir>] [global flags]`  
-`bus attachments link <attachment_id> [--kind <kind> --id <resource_id> | --bank-row <id> | --voucher <id> | --invoice <id>] [-C <dir>] [global flags]`  
+`bus attachments link <attachment_id> [--if-missing] [--kind <kind> --id <resource_id> | --bank-row <id> | --voucher <id> | --invoice <id>] [-C <dir>] [global flags]`  
+`bus attachments link [--path <relpath>|--desc-exact <text>|--source-hash <sha256>] [--if-missing] [--kind <kind> --id <resource_id> | --bank-row <id> | --voucher <id> | --invoice <id>] [-C <dir>] [global flags]`  
 `bus attachments list [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
@@ -20,7 +21,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 
 - `init` creates baseline attachments metadata and link datasets/schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
 - `add` registers a file and writes attachment metadata.
-- `link` adds deterministic links from an attachment to domain resources (bank row, voucher, invoice, or custom kind/id). Repeated identical links are idempotent.
+- `link` adds deterministic links from an attachment to domain resources (bank row, voucher, invoice, or custom kind/id). Repeated identical links are idempotent. In replay scripts, attachments can be selected without UUID lookup via `--path`, `--desc-exact`, or `--source-hash`; selector resolution is deterministic and fails on zero or multiple matches.
 - `list` prints registered attachments in deterministic order, with filters, reverse-link graph mode, and strict audit flags.
 
 ### Options
@@ -37,6 +38,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 bus attachments init
 bus attachments add ./evidence/INV-1001.pdf --desc "Sales invoice 1001 PDF"
 bus attachments link <attachment_id> --invoice INV-1001
+bus attachments link --path attachments/2026/01/20260115-INV-1001.pdf --bank-row bank_row:27201 --if-missing
 bus attachments list --by-voucher VCH-1 --graph --fail-if-unlinked
 ```
 

@@ -41,7 +41,7 @@ Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with sub
 
 The `init` command creates baseline attachments metadata and links datasets/schemas (`attachments.csv`, `attachments.schema.json`, `attachment-links.csv`, `attachment-links.schema.json`) when they are absent. If all already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-The `add` command accepts a positional file path plus a description parameter. Documented parameters are `<file>` as a positional argument and `--desc <text>` for the attachment description. The `link` command accepts `<attachment_id>` and target parameters (`--kind/--id`, or shortcut selectors such as `--bank-row`, `--voucher`, `--invoice`) and appends deterministic link rows to `attachment-links.csv`. The `list` command supports deterministic filters and reverse-link graph output, with strict audit flags for CI gating.
+The `add` command accepts a positional file path plus a description parameter. Documented parameters are `<file>` as a positional argument and `--desc <text>` for the attachment description. The `link` command accepts either `<attachment_id>` or deterministic replay-safe selectors (`--path`, `--desc-exact`, `--source-hash`) plus target parameters (`--kind/--id`, or shortcut selectors such as `--bank-row`, `--voucher`, `--invoice`) and appends deterministic link rows to `attachment-links.csv`. Selector resolution must be deterministic: zero matches and multiple matches are hard errors. The `list` command supports deterministic filters and reverse-link graph output, with strict audit flags for CI gating.
 
 Interface IF-ATT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (attachments metadata CSV/schema and attachment-links CSV/schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and attachment logic remain in this module.
 
@@ -50,6 +50,7 @@ Usage examples:
 ```bash
 bus attachments add tmp/INV-1001.pdf --desc "Invoice INV-1001 (PDF)"
 bus attachments link <attachment_id> --invoice INV-1001
+bus attachments link --source-hash <sha256> --bank-row 27201 --if-missing
 bus attachments list
 ```
 
