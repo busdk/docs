@@ -1,5 +1,7 @@
 # AGENTS
 
+Merged guidance from `.cursor/rules/*.mdc`.
+
 ## Global documentation writing rules
 
 You are writing BusDK documentation. Prefer readable, self-contained paragraphs
