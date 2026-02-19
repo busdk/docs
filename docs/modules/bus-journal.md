@@ -9,6 +9,10 @@ description: bus journal maintains the authoritative ledger as append-only journ
 
 `bus journal init [-C <dir>] [global flags]`  
 `bus journal add --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
+`bus journal classify bank --profile <rules.yml> [--bank-csv <path>] [--loan-profiles <path>] [--suspense-account <acct> --bank-account <acct> --suspense-reason <text>] [-C <dir>] [global flags]`  
+`bus journal classify apply --proposal <path> [-C <dir>] [global flags]`  
+`bus journal classify suspense-propose --suspense-account <acct> [selectors] [-C <dir>] [global flags]`  
+`bus journal classify suspense-apply --proposal <path> [-C <dir>] [global flags]`  
 `bus journal template post --template-file <path> --template <id> --date <YYYY-MM-DD> --gross <amount> [options] [-C <dir>] [global flags]`  
 `bus journal template apply --template-file <path> [options] [-C <dir>] [global flags]`  
 `bus journal balance --as-of <YYYY-MM-DD> [-C <dir>] [-o <file>] [-f <format>] [global flags]`
@@ -24,6 +28,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus journal` 
 - `template post` posts a single template-driven entry: predicate in the template file selects the rule; the template defines expense account, VAT rate, VAT account, and bank account; gross amount is split into base + VAT with deterministic rounding. Requires `--template-file <path>`, `--template <id>`, `--date <YYYY-MM-DD>`, and `--gross <amount>`.
 - `template apply` applies templates in batch from a bank CSV (or equivalent): each row is matched to a template by predicate, then the same split and posting logic as `template post` is applied. Requires `--template-file <path>` and input (e.g. bank CSV path or stdin); see template file schema and bank-CSV column expectations below.
 - `balance` prints account balances as of a given date.
+- `classify` supports deterministic bank-driven proposal/apply workflows:
+  - `classify bank` emits proposal rows from bank CSV via rules and/or loan profiles; optional suspense fallback marks unmatched rows as `suspense_fallback` and proposes postings to a configured suspense account.
+  - `classify apply` posts applicable proposal rows with idempotent voucher ids (`bank:<bank_txn_id>`).
+  - `classify suspense-propose` scans posted suspense rows and emits deterministic reclassification proposals (selectors: bank id/date/counterparty/reference/amount).
+  - `classify suspense-apply` posts approved reclassification rows with idempotent voucher ids (`reclass:bank:<bank_txn_id>:<target_account>`); supports dry-run.
 
 ### Options
 
@@ -58,11 +67,11 @@ Posting templates with automatic VAT split are first-class. A template file defi
 
 ### Loan-payment classifier (principal/interest split)
 
-A loan-payment classifier that splits bank payments into principal vs interest/fee is not yet implemented. [bus-loans](./bus-loans) provides loan register, schedule, postings, and amortize but does not classify arbitrary bank rows. When the [suggested capability](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) is adopted (in bus-journal or via bus-loans integration), module docs will document the loan-profile schema, split policy, and proposal/apply flow.
+Loan-payment classification is available via `classify bank --loan-profiles <file>` and `classify loan-propose` / `classify loan-apply`. Profile-driven matching and split policy determine principal, interest, and optional fee amounts for deterministic proposal rows before posting.
 
 ### Planned enhancements
 
-Rule-based bank classification and posting (classify + apply from bank transactions) and learning classifications from prior-year data are not yet first-class commands. See [Suggested capabilities](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) in the module SDD for details.
+Further enhancements are tracked in repository feature-request tracking. Core classify/learn/template/suspense flows are available as first-class commands.
 
 ### Development state
 
