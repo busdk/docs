@@ -10,14 +10,15 @@ description: bus reconcile links bank transactions to invoices or journal entrie
 `bus reconcile match --bank-id <id> (--invoice-id <id> | --journal-id <id>) [-C <dir>] [global flags]`  
 `bus reconcile allocate --bank-id <id> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ... [-C <dir>] [global flags]`  
 `bus reconcile list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
-`bus reconcile propose --out <path>|- [options] [-C <dir>] [global flags]`  
+`bus reconcile propose [options] [-C <dir>] [global flags]`  
 `bus reconcile apply --in <path>|- [--dry-run] [options] [-C <dir>] [global flags]`
+`bus reconcile post --kind invoice_payment --bank-account <id> --sales-account <id> --sales-vat-account <id> [--purchase-account <id> --purchase-vat-account <id>] [--if-missing] [--dry-run] [-C <dir>] [global flags]`
 
 ### Description
 
 Command names follow [CLI command naming](../cli/command-naming). `bus reconcile` links bank transactions to invoices or journal entries and records allocations for partials, splits, and fees. Reconciliation records are schema-validated and append-only. Use after importing bank data with `bus bank`.
 
-The first-class two-phase reconciliation workflow is implemented: `bus reconcile propose` and `bus reconcile apply` (with `--dry-run` and idempotent re-apply) provide proposal generation and batch apply; `match`, `allocate`, and `list` remain for one-off use. Proposal and apply outputs feed migration parity and gap checks in [bus-validate](./bus-validate) and [bus-reports](./bus-reports).
+The first-class two-phase reconciliation workflow is implemented: `bus reconcile propose` and `bus reconcile apply` (with `--dry-run` and idempotent re-apply) provide proposal generation and batch apply; `match`, `allocate`, and `list` remain for one-off use. Proposal and apply outputs feed migration parity and gap checks in [bus-validate](./bus-validate) and [bus-reports](./bus-reports). `bus reconcile post` adds deterministic journal posting from existing invoice-payment matches.
 
 ### Commands
 
@@ -26,6 +27,7 @@ The first-class two-phase reconciliation workflow is implemented: `bus reconcile
 - `list` lists reconciliation records.
 - `propose` generates deterministic reconciliation proposal rows from unreconciled bank and invoice/journal data; output includes confidence and reason fields.
 - `apply` consumes approved proposal rows and records match or allocation writes deterministically; supports `--dry-run` and idempotent re-apply.
+- `post` converts existing `invoice_payment` match rows to journal postings using invoice evidence (net + VAT). Sales postings are debit bank / credit sales / credit VAT; purchase postings are debit purchase / debit VAT / credit bank. Idempotency uses voucher id `bank:<bank_txn_id>` and `--if-missing` can skip already-posted vouchers.
 
 ### Options
 
@@ -33,7 +35,7 @@ The first-class two-phase reconciliation workflow is implemented: `bus reconcile
 
 ### Deterministic proposals and batch apply
 
-`bus reconcile propose --out <path>|-` generates deterministic reconciliation proposal rows with confidence and reason fields. `bus reconcile apply --in <path>|-` consumes approved proposal rows and records canonical match or allocation writes deterministically, with `--dry-run` and idempotent re-apply semantics. Use `--fail-if-empty` so that propose exits non-zero when no proposals are generated, or apply exits non-zero when the input is empty; this supports CI workflows that must fail on backlog or incomplete apply.
+`bus reconcile propose` generates deterministic reconciliation proposal rows with confidence and reason fields. `bus reconcile apply --in <path>|-` consumes approved proposal rows and records canonical match or allocation writes deterministically, with `--dry-run` and idempotent re-apply semantics. Use `--fail-if-empty` so that propose exits non-zero when no proposals are generated; this supports CI workflows that must fail on backlog or incomplete apply.
 
 Output from propose (or apply result sets) must be redirected using the **global** `--output` flag before the subcommand: for example `bus reconcile -o proposals.tsv propose` or `bus reconcile -o applied.tsv apply --in approved.tsv`. Placing `-o` after the subcommand is invalid. Script-based candidate workflows (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remain an alternative.
 
@@ -51,12 +53,14 @@ Reconciliation datasets and their beside-the-table schemas in the reconciliation
 
 ```bash
 bus reconcile list
-bus reconcile propose --out ./tmp/reconcile-proposals.tsv
+bus reconcile -o ./tmp/reconcile-proposals.tsv propose
+bus reconcile apply --in ./tmp/reconcile-proposals.tsv --dry-run
+bus reconcile post --kind invoice_payment --bank-account 1910 --sales-account 3000 --sales-vat-account 2931 --if-missing
 ```
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage, when amounts or references are invalid, or when `--fail-if-empty` is set and propose yields no proposals or apply receives empty input. See [Deterministic proposals and batch apply](#deterministic-proposals-and-batch-apply) for CI flag behavior.
+`0` on success. Non-zero on invalid usage, when amounts or references are invalid, when `--fail-if-empty` is set and propose yields no proposals, or when posting/apply validation fails. See [Deterministic proposals and batch apply](#deterministic-proposals-and-batch-apply) for CI flag behavior.
 
 ### Development state
 
@@ -64,11 +68,11 @@ bus reconcile propose --out ./tmp/reconcile-proposals.tsv
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** Largely complete — match, allocate, list, propose, and apply (with dry-run and idempotent re-apply) are implemented; optional CI-friendly exit codes are not yet specified.
+**Completeness:** Largely complete — match, allocate, list, propose, apply, and post are implemented; optional coverage extensions remain.
 
 **Use case readiness:** Accounting workflow: propose and apply provide the two-phase flow; optional CI exit codes for backlog or partial apply are not yet documented. Finnish company reorganisation: reconciliation evidence path and propose/apply are available. Finnish payroll handling: payroll bank reconciliation works with match/allocate and propose/apply.
 
-**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list (including empty and bootstrap when matches.csv missing), propose, and apply (with `--dry-run`, `--fail-if-empty`) and validation failures are verified by `internal/app/run_test.go` and `tests/e2e_bus_reconcile.sh`. Global flags (help, version, quiet, verbose, color, format, output, chdir, `--`) and path accessors are verified. Propose and apply are first-class; script-based candidate workflows remain optional.
+**Current:** Match (invoice and journal), allocate (invoice-only and mixed invoice+journal), list (including empty and bootstrap when matches.csv missing), propose, apply, and post (`invoice_payment` to journal VAT split with idempotent voucher checks) are verified by tests. Global flags (help, version, quiet, verbose, color, format, output, chdir, `--`) and path accessors are verified. Propose/apply/post are first-class; script-based candidate workflows remain optional.
 
 **Planned next:** None in PLAN.md; propose/apply with `--fail-if-empty` and global `-o` are documented.
 
