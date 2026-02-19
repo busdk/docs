@@ -23,6 +23,8 @@ FR-REC-005 Reconciliation coverage output contract. The module MUST expose deter
 
 FR-REC-007 Incoming backlog classifier with transfer pairing. The module MUST support deterministic incoming-row backlog proposals and apply semantics for replay workspaces. Acceptance criteria: propose can classify incoming rows using configurable keyword maps (owner loan/investment and internal transfer), includes deterministic one-sided transfer no-op policy, emits unresolved incoming backlog output, and apply handles these proposals idempotently via explicit no-op/unmatched rows.
 
+FR-REC-008 Settlement evidence payout proposal/apply. The module MUST support deterministic settlement evidence ingestion (structured tabular input), proposal output, and apply posting flow for payout reconciliation. Acceptance criteria: proposal output includes explicit payout totals (`gross`, `base`, `vat`, `fee`, `net`) and source/link identifiers (`bank_txn_id`, optional `bank_row_id`, `source_id`); apply supports dry-run and idempotent re-apply and writes balanced journal postings with deterministic voucher linkage.
+
 FR-REC-006 Deterministic reconciliation dataset bootstrap. The module MUST provide `bus reconcile init` to ensure `matches.csv` and `matches.schema.json` exist with deterministic default content. Acceptance criteria: command is idempotent, supports force rewrite semantics, and emits machine-readable status rows (`path`, `status`) for CI and replay scripts.
 
 NFR-REC-001 Auditability. Allocation history MUST be append-only and traceable to bank transactions, invoices, and vouchers. Acceptance criteria: allocation records are not overwritten and retain source references.
@@ -59,9 +61,21 @@ Interface IF-REC-002 (proposal generation). The command surface is `bus reconcil
 
 Incoming classifier extension (implemented): `bus reconcile propose --incoming` enables deterministic classification proposals for incoming bank rows. Keyword maps are configurable through `--transfer-keywords`, `--owner-loan-keywords`, and `--owner-investment-keywords` (comma-separated, deterministic matching against normalized counterparty/message/reference text). Internal-transfer pairing uses opposite-sign same-amount rows with transfer keyword matches; when only one side exists, propose emits deterministic one-sided no-op reason. `--unresolved-out <path>` writes unclassified incoming rows to a deterministic TSV backlog artifact.
 
+Suspense fallback extension (implemented): `bus reconcile propose --suspense-account <account> --suspense-reason <text>` emits deterministic unmatched fallback proposals for unreconciled rows that remain unresolved after normal candidate generation (and optional incoming classification). Fallback proposal rows use `target_kind=unmatched`, `target_id=suspense:<account>`, explicit reason text, and deterministic ordering.
+
+Suspense reclassification proposal extension (implemented): `bus reconcile propose --suspense-reclass-account <account>` emits deterministic reclassification candidates from existing unmatched rows whose classification target is `suspense:<account>`. Optional selectors (`--bank-id`, `--from-date`, `--to-date`, `--counterparty`, `--reference`, `--amount`) narrow candidate output deterministically for review batches.
+
+Settlement proposal extension (implemented): `bus reconcile propose --settlement-csv <file>` ingests structured settlement input and emits deterministic payout proposal rows with explicit totals and source/link identifiers.
+
 Interface IF-REC-003 (batch apply). The command surface is `bus reconcile apply --in <path>|-` with optional row selection and `--dry-run`. The command consumes approved proposal rows and applies each row as either a one-to-one match or an allocation write, depending on the proposal shape. Apply is deterministic, idempotent, and fail-safe: invalid rows are rejected with deterministic diagnostics and no partial writes for the rejected row; already-applied rows are reported as skipped.
 
 Incoming classifier apply extension (implemented): apply accepts proposal rows with `target_kind=unmatched` and records deterministic no-op classification rows (`kind=unmatched`) in `matches.csv`. Re-applying the same no-op proposal rows is idempotent and yields deterministic skipped status.
+
+Unmatched traceability extension (implemented): when applying unmatched proposal rows, the proposal `target_id` is persisted in `matches.csv` (`entry_id`) so deterministic classification intent remains auditable (for example transfer mirror id or suspense account label).
+
+Unmatched reclassification extension (implemented): apply supports reclassifying unmatched rows when `bank_txn_id` already has unmatched history but the incoming proposal `target_id` is new. Idempotency is deterministic per `(bank_txn_id, target_id)`: re-applying the same target is skipped, while a new target appends a new unmatched classification row.
+
+Settlement apply extension (implemented): `bus reconcile apply --settlement` consumes settlement proposal rows and writes deterministic balanced journal postings (`Dr bank net`, `Dr fee`, `Cr sales`, `Cr VAT`) with idempotent voucher linkage (`bank_row:<id>` when available).
 
 Interface IF-REC-004 (coverage artifact contract). Proposal and apply outputs expose a deterministic row contract including at minimum proposal ID, bank transaction ID, target kind, target ID, period key, amount, confidence, reason codes, and apply status. This contract is consumed by [bus-validate](./bus-validate) parity or gap checks and [bus-reports](./bus-reports) coverage reports.
 

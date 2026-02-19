@@ -9,7 +9,7 @@ description: bus bank normalizes bank statement data into schema-validated datas
 
 `bus bank init [-C <dir>] [global flags]`  
 `bus bank import --file <path> [-C <dir>] [global flags]`  
-`bus bank import --profile <path> --source <path> [--year <YYYY>] [-C <dir>] [global flags]`  
+`bus bank import --profile <path> --source <path> [--year <YYYY>] [--fail-on-ambiguity] [-C <dir>] [global flags]`  
 `bus bank config [<subcommand>] [options] [-C <dir>] [global flags]`  
 `bus bank list [--month <YYYY-M>] [--from <date>] [--to <date>] [--counterparty <id>] [--invoice-ref <ref>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus bank backlog [--month <YYYY-M>] [--from <date>] [--to <date>] [--detail] [--fail-on-backlog] [--max-unposted <n>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
@@ -23,7 +23,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 ### Commands
 
 - `init` creates the baseline bank datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `import` ingests a bank statement file (e.g. `--file <path>`) or runs profile-driven ERP import (`--profile <path> --source <path>`, optional `--year`) into normalized datasets.
+- `import` ingests a bank statement file (e.g. `--file <path>`) or runs profile-driven ERP import (`--profile <path> --source <path>`, optional `--year`) into normalized datasets. Built-in profile `erp-tsv` provides malformed-tab-tolerant ERP TSV import with deterministic parse diagnostics (`recovered_rows`, `ambiguous_rows`, `dropped_rows`) and optional `--fail-on-ambiguity`.
 - `config` manages counterparty normalization and reference extractors. Use `config counterparty add` to add canonical names and alias patterns, and `config extractors add` to add extractor patterns (e.g. regex) so bank message/reference fields yield normalized reference hints. When configured, `list` output includes normalized counterparty and extracted reference-hint columns.
 - `list` prints bank transactions with deterministic filtering. When counterparty and extractor config are present, output includes normalized counterparty and extracted reference-hint columns (e.g. `erp_id`, `invoice_number_hint`).
 - `backlog` reports posted versus unposted bank transactions for classification coverage. It reads bank transactions and reconciliation matches and supports detail and CI-friendly failure thresholds.
@@ -31,7 +31,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 
 ### Options
 
-`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. `backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`. `statement extract` supports `--file <path>` with optional `--account`, `--iban`, and `--attachment-id <uuid>` provenance link. `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
+`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. Built-in robust ERP TSV mode uses `--profile erp-tsv` and supports optional `--fail-on-ambiguity`. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. `backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`. `statement extract` supports `--file <path>` with optional `--account`, `--iban`, and `--attachment-id <uuid>` provenance link. `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
 
 ### Profile-driven ERP history import
 

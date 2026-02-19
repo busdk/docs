@@ -9,6 +9,7 @@ description: bus journal maintains the authoritative ledger as append-only journ
 
 `bus journal init [-C <dir>] [global flags]`  
 `bus journal add --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
+`bus journal add --bulk-in <file|-> [-C <dir>] [global flags]`  
 `bus journal classify bank --profile <rules.yml> [--bank-csv <path>] [--loan-profiles <path>] [--suspense-account <acct> --bank-account <acct> --suspense-reason <text>] [-C <dir>] [global flags]`  
 `bus journal classify apply --proposal <path> [-C <dir>] [global flags]`  
 `bus journal classify suspense-propose --suspense-account <acct> [selectors] [-C <dir>] [global flags]`  
@@ -24,7 +25,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus journal` 
 ### Commands
 
 - `init` creates the journal index and baseline period datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` appends a balanced transaction (one or more debit and credit lines). Optional `--source-id <key>` records source identity; with `--if-missing`, add is a no-op when a posting with that source identity already exists (idempotent add).
+- `add` appends a balanced transaction (one or more debit and credit lines). Optional `--source-id <key>` records source identity; with `--if-missing`, add is a no-op when a posting with that source identity already exists (idempotent add). For replay-scale streams, `add --bulk-in <file|->` reads a JSON array or NDJSON and applies the same validation/idempotency semantics per transaction.
 - `template post` posts a single template-driven entry: predicate in the template file selects the rule; the template defines expense account, VAT rate, VAT account, and bank account; gross amount is split into base + VAT with deterministic rounding. Requires `--template-file <path>`, `--template <id>`, `--date <YYYY-MM-DD>`, and `--gross <amount>`.
 - `template apply` applies templates in batch from a bank CSV (or equivalent): each row is matched to a template by predicate, then the same split and posting logic as `template post` is applied. Requires `--template-file <path>` and input (e.g. bank CSV path or stdin); see template file schema and bank-CSV column expectations below.
 - `balance` prints account balances as of a given date.
@@ -36,7 +37,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus journal` 
 
 ### Options
 
-`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. Optional `--source-id <key>` records source identity; `--if-missing` makes add idempotent (no-op when a posting with that source identity already exists). See [Idempotent posting and source keys](#idempotent-posting-and-source-keys) below. The `<account>` value is the account code or name as stored in the workspace chart of accounts; use quotes when the name contains spaces. At least one debit and one credit are required; total debits must equal total credits. Unknown or invalid account names cause the command to fail. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
+`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. Optional `--source-id <key>` records source identity; `--if-missing` makes add idempotent (no-op when a posting with that source identity already exists). See [Idempotent posting and source keys](#idempotent-posting-and-source-keys) below. For bulk posting streams, use `--bulk-in <file|->`; accepted input formats are JSON array and NDJSON (one JSON object per line), and stderr prints deterministic summary `bulk add completed: applied=<n> skipped=<n> total=<n>`. `--bulk-in` is mutually exclusive with single-add flags. The `<account>` value is the account code or name as stored in the workspace chart of accounts; use quotes when the name contains spaces. At least one debit and one credit are required for each transaction; total debits must equal total credits. Unknown or invalid account names cause the command to fail. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
 
 ### Files
 
@@ -88,7 +89,7 @@ Further enhancements are tracked in repository feature-request tracking. Core cl
 
 **Current:** `tests/e2e_bus_journal.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`, `-vv`), init (index+schema only; period files on first add), idempotent and partial-init, dry-run init/add, add by code and name, balance (TSV, `--as-of`, `-o`, `-q`), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), and missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, `internal/cli/flags_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
 
-**Planned next:** Optional add-from-stdin (PLAN.md) to advance [Accounting workflow](../workflow/accounting-workflow-overview); README/help alignment (init = index+schema only).
+**Planned next:** Continued replay workflow hardening and profile-driven ingest improvements; add-from-stdin and bulk add are implemented.
 
 **Blockers:** [bus-period](./bus-period) writing closed-period file so period integrity is enforceable in full workflow.
 
