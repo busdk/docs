@@ -1,5 +1,11 @@
 Documentation from this repository is available at https://docs.busdk.com/.
 
+Operational docs in this repo (decision/update notes) include:
+
+- `docs/DOCS-UPDATE-FEATURE-REQUESTS.md` — optional enhancement decisions synced from `FEATURE_REQUESTS.md` into module plans (last update: 2026-02-19).
+- `docs/DOCS-UPDATE-BUS-VALIDATE.md` — bus-validate docs parity notes.
+- `docs/DOCS-UPDATE-BUS-FILING-PRH.md` — bus-filing-prh docs parity notes.
+
 ## Design and SDD
 
 The canonical BusDK design spec and Software Design Documents (SDDs) are published from this repo:
