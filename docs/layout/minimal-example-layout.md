@@ -56,3 +56,9 @@ my-business-books/
   <span class="busdk-prev-next-item busdk-next"><a href="./repository-readme-expectations">Repository-level README expectations</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Minimal workspace baseline](./minimal-workspace-baseline)
+- [Data directory layout (principles)](./layout-principles)
+- [Invoice PDF storage](./invoice-pdf-storage)

@@ -22,3 +22,9 @@ This section is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./append-only-and-security">Append-only discipline and security model</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Architecture index](./index)
+- [Data directory layout (principles)](../layout/layout-principles)
+- [Design goals index](../design-goals/index)

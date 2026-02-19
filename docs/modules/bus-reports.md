@@ -50,7 +50,7 @@ These layout ids are presets of the general layout mechanism documented in [bus-
 
 ### TASE / tuloslaskelma layout parity
 
-`--layout-id kpa-full` and `pma-full` run successfully and emit Finnish section labels (e.g. Pysyvät vastaavat, LIIKEVAIHTO), but output is section-level summaries, not full line-by-line parity with an original TASE or tuloslaskelma. Full line-by-line parity may require a custom layout and fine-grained account mapping so that output CSV/PDF matches the source line structure. For parity guidance and the current implementation status, see [Implementation status (Finnish full layout parity)](../sdd/bus-reports#implementation-status-finnish-full-layout-parity) in the module SDD.
+Finnish full-layout parity is implemented with built-in full layout ids (for example `kpa-full`, `pma-full`, `fi-kpa-tase-full`, `fi-pma-tase-full`, `fi-kpa-tuloslaskelma-full`, `fi-pma-tuloslaskelma-full`) and deterministic account mapping for `fi-*` layouts. Tests verify that full-detail statutory lines are emitted (for example `Aineettomat vastaavat`, `Varastot`, and `Materiaalit ja tarvikkeet`) and that output stays deterministic across formats.
 
 For `fi-*` layouts, account mapping must be deterministic per selected layout. The mapping dataset is `report-account-mapping.csv`, joined to accounts by account code and to statement output by `layout_id`. Unmapped or ambiguously mapped accounts are errors unless the account is explicitly mapped to a permitted statutory other-bucket line in the selected layout.
 
@@ -68,9 +68,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Journal coverage and parity reports
 
-`bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>]` emits a deterministic monthly comparison between imported operational totals and non-opening journal activity. [bus-validate](./bus-validate) provides `bus validate parity` and `bus validate journal-gap` for threshold pass/fail behavior but does not emit a report artifact. A suggested extension is a report in bus-reports that emits source import parity as a review/CI artifact: counts and sums by dataset and period in machine-friendly format (tsv/csv), complementing `bus validate parity`; optional thresholds for CI. When adopted, module docs will be required for the report output format and any CI threshold options. See [bus-reports SDD](../sdd/bus-reports) and [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks).
-
-**Class-aware gap report by account buckets.** Not implemented: no class/bucket breakdown in bus-reports; a single bank/journal gap mixes operational, financing, and transfer activity. A suggested extension is a report that breaks down the gap (e.g. bank vs journal coverage) by configurable account buckets (e.g. operational income/expense, financing liability/service, internal transfer). Output would be period-based, deterministic, with clear formulas, in machine-friendly format (tsv/json) for CI and prioritization of unmapped activity. When adopted, the SDD will specify the new report and bucket semantics; module docs will be required for bucket config and output schema. [bus-validate](./bus-validate) suggested capabilities include class-aware gap and per-bucket thresholds; the report in bus-reports would supply the breakdown artifact.
+`bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>]` emits a deterministic monthly comparison between imported totals and non-opening journal activity. `bus reports parity` emits source-import parity artifacts by period, and `bus reports journal-gap` emits bucket-based gap artifacts through `--account-buckets <file>`. These outputs are machine-friendly review artifacts. [bus-validate](./bus-validate) adds threshold-based pass/fail behavior for CI.
 
 ### Files
 
@@ -86,13 +84,13 @@ Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-acc
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
 
-**Completeness:** 90% — Close-step report commands and formats (text/csv/markdown/json/kpa/pma/pdf) are verified by e2e and unit tests; user can complete the report step in all three use cases. `bus reports journal-coverage` and `bus validate parity` / `journal-gap` exist; a report that emits source import parity as a review/CI artifact (counts/sums by dataset and period, tsv/csv) is a suggested extension. Profile-driven defaults (FR-REP-005), report-account-mapping (FR-REP-007), and comparatives (FR-REP-008) are not yet implemented.
+**Completeness:** 90% — Close-step report commands and formats (text/csv/markdown/json/kpa/pma/pdf) are verified by e2e and unit tests; user can complete the report step in all three use cases. `bus reports journal-coverage`, `bus reports parity`, and `bus reports journal-gap` are implemented as deterministic migration-review artifacts, and profile-driven defaults (FR-REP-005), report-account-mapping (FR-REP-007), and comparatives (FR-REP-008) are covered by tests.
 
 **Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown/kpa/pma/pdf, built-in statutory layouts (kpa, pma, kpa-full), TASE/tuloslaskelma PDF, and layout-file selection verified by e2e and unit tests; report step completable. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), statutory layouts and PDF output verified by e2e; user can produce statement outputs for compliance. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory layouts and PDF verified by e2e; evidence-pack report step completable.
 
 **Current:** `tests/e2e_bus_reports.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`), journal-area layout (journals.csv + period-segmented), ledger integrity before reports (FR-REP-002), trial-balance/balance-sheet/profit-and-loss in text/csv/json/markdown/kpa/pma/pdf, layout-file selection with custom labels and account mapping (FR-REP-004), built-in kpa-full layout, general-ledger and account-ledger, and error cases. `internal/app/run_test.go`, `internal/report/report_test.go`, and `internal/report/layout_test.go` verify CLI paths, PDF (FR-REP-003), layout resolution (default/kpa/pma/kpa-full) and mapping; `internal/workspace/load_test.go`, `internal/app/period_test.go`, and `internal/cli/flags_test.go` verify workspace load, period parsing, and flag parsing.
 
-**Planned next:** Add report that emits source import parity as review/CI artifact (counts/sums by dataset and period, tsv/csv), complementing `bus validate parity`; document output format and optional CI thresholds. Expose stable `--layout-id` and fi-* built-in identifiers, workspace reporting profile (FR-REP-005), and report-account-mapping (FR-REP-007) per PLAN.md.
+**Planned next:** None in PLAN.md.
 
 **Blockers:** None known.
 
@@ -125,4 +123,3 @@ See [Development status](../implementation/development-status).
 - [PRH: Digitaalinen iXBRL-rajapinta ohjelmistoyrityksille](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/digitaalinen-tilinpaatosraportointi/rajapinta.html)
 - [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
 - [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
-

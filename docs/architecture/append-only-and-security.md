@@ -16,3 +16,9 @@ In single-user operation on a local machine, security is primarily OS-level cont
   <span class="busdk-prev-next-item busdk-next"><a href="./architectural-overview">Architectural overview</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Architecture index](./index)
+- [Data directory layout (principles)](../layout/layout-principles)
+- [Design goals index](../design-goals/index)

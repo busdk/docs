@@ -5,7 +5,7 @@ description: In addition to mutating commands, BusDK provides read-only query an
 
 ## Reporting and query commands
 
-In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the workspace datasets. Examples include `bus accounts list`; `bus journal balance --as-of 2026-03-31`; `bus invoices list --status unpaid`; `bus vat report Q1-2026`; and `bus budget report --period 2026`. Output is expected to be human-readable and may include tabular terminal formatting; where relevant, machine-readable output options should exist for integration with scripts and downstream analysis.
+In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the workspace datasets. Examples include `bus accounts list`; `bus journal balance --as-of 2026-03-31`; `bus invoices list --status unpaid`; `bus vat report --period 2026-03`; and `bus budget report --year 2026`. Output is expected to be human-readable and may include tabular terminal formatting; where relevant, machine-readable output options should exist for integration with scripts and downstream analysis.
 
 Reporting outputs must be deterministic when used for auditing, exports, and automation. When a command offers a machine-readable output mode, the format, column set, and column order must be stable and documented, and record ordering must be stable and documented. Stable ordering should be based on stable identifiers and explicit sort keys (for example primary keys and dates) rather than on incidental file ordering.
 
@@ -15,7 +15,7 @@ Reporting commands SHOULD support audit-trail exports and period-scoped output s
 
 For Finnish statutory financial statements, reporting commands MUST use explicit layout identifiers and deterministic account mapping contracts rather than vague format labels. In BusDK this contract is defined by [bus-reports SDD](../sdd/bus-reports), which specifies built-in `fi-kpa-*` and `fi-pma-*` layout identifiers, comparative handling, and statement-level validations required for filing-readiness. The CLI reference for [bus-reports](../modules/bus-reports) documents the command-level surface (`--layout-id`, `--layout`, `--comparatives`) and points to the workspace reporting profile keys in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration).
 
-For migration-quality checks, planned reporting also includes non-opening journal coverage rows that can be compared against source-import totals. That workflow is documented in [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks).
+For migration-quality checks, reporting includes non-opening journal coverage and related parity outputs that can be compared against source-import totals. The command workflow is documented in [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

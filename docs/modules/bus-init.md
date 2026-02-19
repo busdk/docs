@@ -7,24 +7,24 @@ description: bus init creates workspace configuration (datapackage.json) by defa
 
 ### Synopsis
 
-`bus init [defaults | all] [--no-accounts] [--no-entities] [--no-period] [--no-journal] [--no-balances] [--no-invoices] [--no-vat] [--no-attachments] [--no-bank] [--no-budget] [--no-assets] [--no-inventory] [--no-loans] [--no-payroll] [--accounts] [--entities] [--period] [--journal] [--balances] [--invoices] [--vat] [--attachments] [--bank] [--budget] [--assets] [--inventory] [--loans] [--payroll] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
+`bus init [defaults | all] [--no-accounts] [--no-entities] [--no-period] [--no-journal] [--no-invoices] [--no-vat] [--no-attachments] [--no-bank] [--no-budget] [--no-assets] [--no-inventory] [--no-loans] [--no-payroll] [--accounts] [--entities] [--period] [--journal] [--invoices] [--vat] [--attachments] [--bank] [--budget] [--assets] [--inventory] [--loans] [--payroll] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`
 
 Run `bus init` or `bus init defaults` for config only; run `bus init all` for the full baseline (use `--no-<name>` to exclude modules); or pass one or more per-module flags to include only those modules’ baselines. All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`. To create or update accounting entity settings after init, use [bus config](./bus-config).
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus init` always runs `bus config init` so that `datapackage.json` and accounting entity settings exist. With no subcommand (or subcommand `defaults`) and no module-include flags, it stops after config init. When you pass subcommand `all`, it runs config init then all fourteen module inits (use `--no-<name>` to exclude). When you pass one or more module-include flags without `all` ( `--accounts`, `--entities`, `--period`, `--journal`, `--balances`, `--invoices`, `--vat`, `--attachments`, `--bank`, `--budget`, `--assets`, `--inventory`, `--loans`, `--payroll`), it then runs each selected module’s `init` in that order. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. To change accounting entity settings afterward, use `bus config configure`.
+Command names follow [CLI command naming](../cli/command-naming). `bus init` always runs `bus config init` so that `datapackage.json` and accounting entity settings exist. With no subcommand (or subcommand `defaults`) and no module-include flags, it stops after config init. When you pass subcommand `all`, it runs config init then all thirteen module inits (use `--no-<name>` to exclude). When you pass one or more module-include flags without `all` (`--accounts`, `--entities`, `--period`, `--journal`, `--invoices`, `--vat`, `--attachments`, `--bank`, `--budget`, `--assets`, `--inventory`, `--loans`, `--payroll`), it then runs each selected module’s `init` in that order. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. To change accounting entity settings afterward, use `bus config configure`.
 
 ### Commands
 
-**Initialize the workspace.** The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command always runs `bus config init` first. With no subcommand (or subcommand `defaults`) and no module-include flags, it runs only that step and exits; the workspace then has `datapackage.json` but no domain datasets. When subcommand `all` is supplied, it runs all fourteen data-owning module inits in order (minus any `--no-<name>`). When one or more module flags are supplied (and subcommand is not `all`), it then runs each selected module’s `init` in this order: accounts, entities, period, journal, balances, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed are run, in this order). Success is determined only by the exit codes of the steps that run. The command does not check for a fixed list of baseline paths afterward; each module is responsible for creating its own files and for failing its init if it cannot. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
+**Initialize the workspace.** The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command always runs `bus config init` first. With no subcommand (or subcommand `defaults`) and no module-include flags, it runs only that step and exits; the workspace then has `datapackage.json` but no domain datasets. When subcommand `all` is supplied, it runs all thirteen data-owning module inits in order (minus any `--no-<name>`). When one or more module flags are supplied (and subcommand is not `all`), it then runs each selected module’s `init` in this order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed are run, in this order). Success is determined only by the exit codes of the steps that run. The command does not check for a fixed list of baseline paths afterward; each module is responsible for creating its own files and for failing its init if it cannot. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
 
 ### Subcommands and module-include flags
 
 **Subcommands** select a named module set so that set names do not clash with module names (e.g. a future `bus init sheets` can denote a sheets-related set without conflicting with the bus-sheets module).
 
 - **`defaults`** (or no subcommand with no module flags) — Run only `bus config init`. Creates `datapackage.json` and accounting entity settings; no domain datasets.
-- **`all`** — Run config init then all fourteen data-owning module inits in order. You can exclude specific modules with **`--no-<name>`** (e.g. `--no-payroll`); for example, `bus init all --no-payroll`. When the subcommand is not `all`, `--no-<name>` flags are ignored.
+- **`all`** — Run config init then all thirteen data-owning module inits in order. You can exclude specific modules with **`--no-<name>`** (e.g. `--no-payroll`); for example, `bus init all --no-payroll`. When the subcommand is not `all`, `--no-<name>` flags are ignored.
 
 **Per-module flags** (below) add individual modules when you do not use the `all` subcommand. Each also has a matching `--no-<name>` that excludes that module when used with `bus init all`. With no subcommand and no flags (or subcommand `defaults`), only `bus config init` runs.
 
@@ -32,7 +32,6 @@ Command names follow [CLI command naming](../cli/command-naming). `bus init` alw
 - **`--entities`** — Run `bus entities init` after config init (counterparties).
 - **`--period`** — Run `bus period init` after config init (period control).
 - **`--journal`** — Run `bus journal init` after config init (journal index).
-- **`--balances`** — Run `bus balances init` after config init (balance snapshot dataset).
 - **`--invoices`** — Run `bus invoices init` after config init (sales and purchase invoices).
 - **`--vat`** — Run `bus vat init` after config init (VAT reference data and reports).
 - **`--attachments`** — Run `bus attachments init` after config init (evidence index).
@@ -45,7 +44,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus init` alw
 
 When multiple flags are given, module inits run in the order listed above. To get the full baseline (all data-owning modules), use `bus init all`.
 
-**Examples.** `bus init` or `bus init defaults` creates only `datapackage.json` and accounting entity settings. `bus init --accounts --entities --journal` creates config, then the accounts, entities, and journal baselines in that order. `bus init all` creates the full baseline (config plus all fourteen data-owning modules). `bus init all --no-payroll` creates the full baseline except payroll.
+**Examples.** `bus init` or `bus init defaults` creates only `datapackage.json` and accounting entity settings. `bus init --accounts --entities --journal` creates config, then the accounts, entities, and journal baselines in that order. `bus init all` creates the full baseline (config plus all thirteen data-owning modules). `bus init all --no-payroll` creates the full baseline except payroll.
 
 ### Global flags
 
@@ -64,7 +63,7 @@ Command results (e.g. help or version) are written to stdout. Diagnostics, progr
 
 ### Init: step order and baseline files
 
-The command always runs `bus config init` first. That step ensures `datapackage.json` exists (bus config uses the bus-data layer when the file is missing) and adds accounting entity settings. With no subcommand (or `defaults`) and no module flags, it stops after that; the workspace then has only `datapackage.json` and accounting entity settings. When subcommand `all` is supplied, it runs all fourteen data-owning module inits in order (minus any `--no-<name>`). When one or more module flags are supplied (and subcommand is not `all`), it then runs each selected module’s `init` in order: accounts, entities, period, journal, balances, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed). Each step is implemented by the corresponding module (e.g. `bus config init`, `bus accounts init`). Each module’s `init` creates its baseline data only when absent; if the data already exists in full, the module prints a warning and does nothing; if the data exists only partially, the module fails with an error and does not modify any file. The tool depends on the `bus` dispatcher being available in your `PATH`; if `bus` is not found, the command exits with a clear “bus dispatcher not found in PATH” error. When every invoked command exits with code 0, the run is complete. The command does not verify a fixed list of baseline paths afterward; each module owns its datasets and schemas and is responsible for failing its init if it cannot create them.
+The command always runs `bus config init` first. That step ensures `datapackage.json` exists (bus config uses the bus-data layer when the file is missing) and adds accounting entity settings. With no subcommand (or `defaults`) and no module flags, it stops after that; the workspace then has only `datapackage.json` and accounting entity settings. When subcommand `all` is supplied, it runs all thirteen data-owning module inits in order (minus any `--no-<name>`). When one or more module flags are supplied (and subcommand is not `all`), it then runs each selected module’s `init` in order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed). Each step is implemented by the corresponding module (e.g. `bus config init`, `bus accounts init`). Each module’s `init` creates its baseline data only when absent; if the data already exists in full, the module prints a warning and does nothing; if the data exists only partially, the module fails with an error and does not modify any file. The tool depends on the `bus` dispatcher being available in your `PATH`; if `bus` is not found, the command exits with a clear “bus dispatcher not found in PATH” error. When every invoked command exits with code 0, the run is complete. The command does not verify a fixed list of baseline paths afterward; each module owns its datasets and schemas and is responsible for failing its init if it cannot create them.
 
 The initial `datapackage.json` is created by `bus config init` and follows the [workspace configuration](../data/workspace-configuration) shape. Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, and fiscal year and VAT registration set as documented in the data package extension. You can adjust these afterward with [bus config configure](./bus-config).
 
@@ -83,7 +82,7 @@ Exit 0 on success. Non-zero in these cases:
 
 ### Development state
 
-**Value promise:** Bootstrap a BusDK workspace with config only or with a full baseline (config plus all 14 data-owning module inits) so users can complete the “create repo and baseline” step deterministically.
+**Value promise:** Bootstrap a BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits) so users can complete the “create repo and baseline” step deterministically.
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step 1: create repo and baseline).
 

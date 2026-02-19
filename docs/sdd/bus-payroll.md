@@ -1,19 +1,19 @@
 ---
-title: bus-payroll — payroll datasets and journal postings (SDD)
-description: Bus Payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for salaries and taxes.
+title: bus-payroll — validate payroll datasets and export postings (SDD)
+description: Bus Payroll validates payroll datasets and exports deterministic posting lines for final payruns.
 ---
 
-## bus-payroll — payroll datasets and journal postings
+## bus-payroll — validate payroll datasets and export postings
 
 ### Introduction and Overview
 
-Bus Payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for salaries and taxes.
+Bus Payroll validates payroll datasets and exports deterministic posting lines for final payruns so salary and withholding entries can be posted to the journal.
 
 ### Requirements
 
-FR-PAY-001 Payroll datasets. The module MUST store employee and payroll run data as schema-validated datasets with stable identifiers. Acceptance criteria: payroll rows validate against schemas and reference valid entities and accounts.
+FR-PAY-001 Payroll datasets. The module MUST read payroll data as schema-validated datasets with stable identifiers from the workspace root. Acceptance criteria: payroll rows validate against schemas and reference valid entities and accounts.
 
-FR-PAY-002 Payroll run outputs. The module MUST produce posting outputs for payroll runs suitable for the journal. Acceptance criteria: postings reference payroll run identifiers and vouchers.
+FR-PAY-002 Payroll run outputs. The module MUST produce posting outputs for final payroll runs suitable for the journal. Acceptance criteria: postings reference payroll run identifiers and employee identifiers and are deterministic for the same inputs.
 
 NFR-PAY-001 Auditability. Payroll corrections MUST be append-only and traceable to the original runs. Acceptance criteria: payroll datasets remain reviewable in repository history.
 
@@ -21,37 +21,34 @@ NFR-PAY-002 Path exposure via Go library. The module MUST expose a Go library AP
 
 ### System Architecture
 
-Bus Payroll owns the payroll datasets and produces posting outputs for the journal. It relies on `bus accounts` and `bus entities` for reference data and contributes to reporting workflows.
+Bus Payroll reads payroll datasets from the workspace root and produces posting outputs for the journal. It relies on `bus accounts` and `bus entities` for reference data and contributes to reporting workflows.
 
 ### Key Decisions
 
-KD-PAY-001 Payroll data is repository data. Payroll runs and employee records are stored as datasets for auditability and exportability.
+KD-PAY-001 Payroll data is repository data. Payroll runs, employees, payments, and posting-account mappings are kept as datasets for auditability and exportability.
 
 KD-PAY-002 Path exposure for read-only consumption. The module exposes path accessors in its Go library so that other modules can resolve the location of payroll datasets for read-only access. Write access and all payroll business logic remain in this module.
 
 ### Component Design and Interfaces
 
-Interface IF-PAY-001 (module CLI). The module exposes `bus payroll` with subcommands `init`, `run`, `list`, and `employee` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-PAY-001 (module CLI). The module exposes `bus payroll validate` and `bus payroll export <payrun-id>` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-The `init` command creates the baseline payroll datasets and schemas (employee and payroll run data) when they are absent. If all owned payroll datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+`validate` checks payroll datasets and schemas and exits non-zero on missing files, schema errors, or data constraint violations.
 
-Documented parameters for `bus payroll run` are `--month <YYYY-MM>`, `--run-id <id>`, and `--pay-date <YYYY-MM-DD>`. The `--month` value selects the calendar month for the payroll period and uses the same `YYYY-MM` form as other period-scoped commands. The run uses employee records that are active for the pay date, where `start-date` is on or before the pay date and `end-date` is either empty or after the pay date, and it posts wages and withholdings using the account identifiers recorded on each employee row.
+`export <payrun-id>` validates first, then emits deterministic posting CSV lines for the selected final payrun.
 
-Interface IF-PAY-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (employee and payroll run datasets and their schemas). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and payroll logic remain in this module.
-
-Employee management commands are `bus payroll employee add` and `bus payroll employee list`. Documented parameters for `employee add` are `--employee-id <id>`, `--entity <entity-id>`, `--start-date <YYYY-MM-DD>`, `--end-date <YYYY-MM-DD>`, `--gross <decimal>`, `--withholding-rate <percent>`, `--wage-expense <account-id>`, `--withholding-payable <account-id>`, and `--net-payable <account-id>`. The `--end-date` parameter is optional; when omitted the employee remains active after the start date. The `employee list` command accepts no module-specific filters and returns employees in stable identifier order.
+Interface IF-PAY-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to payroll datasets and their schemas. Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; payroll validation and posting logic remain in this module.
 
 Usage examples:
 
 ```bash
-bus payroll init
-bus payroll employee add --employee-id EMP-001 --entity ENT-EMP-001 --start-date 2026-01-01 --gross 3500 --withholding-rate 25 --wage-expense 5000 --withholding-payable 2940 --net-payable 2930
-bus payroll run --month 2026-01 --run-id PAY-2026-01 --pay-date 2026-01-31
+bus payroll validate
+bus payroll export pr-001
 ```
 
 ### Data Design
 
-The module reads and writes payroll datasets in the payroll area, with JSON Table Schemas stored beside each CSV dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `payroll/` or other subdirectory for its datasets and schemas.
+The module reads payroll datasets from workspace-root files, with JSON Table Schemas stored beside each CSV dataset. The expected dataset set includes `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`, each with a beside-the-table schema file. Master data owned by this module is documented as workspace-root only; module-owned datasets are not placed under a `payroll/` or other subdirectory.
 
 Other modules that need read-only access to payroll datasets MUST obtain the path(s) from this module’s Go library (IF-PAY-002). All writes and payroll-domain logic remain in this module.
 
@@ -73,7 +70,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Schema or 
 
 ### Testing Strategy
 
-Unit tests cover payroll validation and posting output logic, and command-level tests exercise `init`, `run`, and `list` against fixture workspaces.
+Unit tests cover payroll validation and posting output logic, and command-level tests exercise `validate` and `export` against fixture workspaces.
 
 ### Deployment and Operations
 
@@ -116,7 +113,7 @@ Employee record: a reference dataset row for a payroll recipient.
 Title: bus-payroll module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-PAYROLL`  
-Version: 2026-02-07  
+Version: 2026-02-19  
 Status: Draft  
-Last updated: 2026-02-07  
+Last updated: 2026-02-19  
 Owner: BusDK development team  

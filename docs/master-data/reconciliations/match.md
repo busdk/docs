@@ -9,7 +9,7 @@ Record a one-to-one reconciliation link between a bank transaction and exactly o
 
 Matching is strict and deterministic. Use match when the bank transaction amount and currency equal the target amount exactly and the bank transaction has not already been reconciled. For partial payments, settlement batches, and splits across multiple targets, use allocation instead.
 
-For high-volume reconciliation where candidates are generated and reviewed first, use the planned proposal and batch-apply workflow described in [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply).
+For high-volume reconciliation where candidates are generated and reviewed first, use the proposal and batch-apply workflow described in [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply).
 
 Owner: [bus reconcile](../../modules/bus-reconcile).
 
@@ -28,4 +28,3 @@ This action writes records in [Reconciliations](./index).
 - [Reconcile bank transactions](../../modules/bus-reconcile)
 - [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
 - [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)
-

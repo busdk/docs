@@ -18,3 +18,9 @@ For Finnish compliance, a Data Package descriptor SHOULD be used as the manifest
   <span class="busdk-prev-next-item busdk-next"><a href="./scaling-over-decades">Scaling over decades</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

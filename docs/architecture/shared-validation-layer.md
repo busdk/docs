@@ -14,3 +14,9 @@ A shared validation layer is foundational. Each module relies on schema validati
   <span class="busdk-prev-next-item busdk-next"><a href="../data/index">BusDK Design Spec: Data format and storage</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Architecture index](./index)
+- [Data directory layout (principles)](../layout/layout-principles)
+- [Design goals index](../design-goals/index)

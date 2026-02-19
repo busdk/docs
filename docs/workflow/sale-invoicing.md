@@ -29,7 +29,7 @@ Readiness for the modules involved in creating and sending sales invoices is sum
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./accounting-workflow-overview">Accounting workflow overview (current planned modules)</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./accounting-workflow-overview">Accounting workflow overview</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">BusDK Design Spec: Example end-to-end workflow</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./create-sales-invoice">Add a sales invoice (interactive workflow)</a> &rarr;</span>
 </p>

@@ -22,3 +22,9 @@ When Git is used for the canonical change history, the tamper-evident audit mode
   <span class="busdk-prev-next-item busdk-next"><a href="./link-list">Sources</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [References index](./index)
+- [Foundations summary](./foundations-summary)
+- [External link list](./link-list)

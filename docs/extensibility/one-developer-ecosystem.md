@@ -14,3 +14,9 @@ BusDK lowers the barrier for user-written extensions. A user can write small scr
   <span class="busdk-prev-next-item busdk-next"><a href="./plugin-modules-via-datasets">Plug-in modules via new datasets</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Extensibility index](./index)
+- [Independent modules](../architecture/independent-modules)
+- [Plug-in modules via new datasets](./plugin-modules-via-datasets)

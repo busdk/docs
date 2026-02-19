@@ -220,3 +220,9 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Finnish bookkeeping and tax-audit compliance](compliance/fi-bookkeeping-and-tax-audit)
 - [Finnish company reorganisation evidence pack](compliance/fi-company-reorganisation-evidence-pack)
 
+
+### Sources
+
+- [Overview](./overview/index)
+- [Module CLI reference](./modules/index)
+- [Workflow examples](./workflow/index)

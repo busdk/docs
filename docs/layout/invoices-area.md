@@ -16,3 +16,10 @@ For Finnish compliance, invoice headers and lines MUST carry identifiers and ref
   <span class="busdk-prev-next-item busdk-next"><a href="./journal-area">Journal area (general ledger transactions)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-invoices module](../modules/bus-invoices)
+- [Master data: Sales invoices](../master-data/sales-invoices/index)
+- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

@@ -14,3 +14,9 @@ A budgeting area holds planned budgets in datasets such as `budgets.csv`, where 
   <span class="busdk-prev-next-item busdk-next"><a href="./invoice-pdf-storage">Invoice PDF storage</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-budget module](../modules/bus-budget)
+- [Master data: Budgets](../master-data/budgets/index)
+- [Data directory layout (principles)](./layout-principles)

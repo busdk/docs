@@ -13,7 +13,7 @@ Command names follow [CLI command naming](../cli/command-naming). Bus Data provi
 
 Workbook-style read is available via `bus data table workbook`: cell and range access by address (e.g. `A1`, `A1:B2`), optional header or anchor-based lookup, locale options (`--decimal-sep`, `--thousands-sep`), and formula evaluation controls (`--formula`, `--formula-source`, `--formula-dialect`). Output is deterministic and machine-friendly (tsv/json). Formula options, supported functions, and locale handling for workbook formula evaluation are described in [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation). FR-DAT-025 in the module SDD includes locale-aware and source-specific formula behavior for workbook extraction; see [Implementation status](../sdd/bus-data#implementation-status-workbook-read) for current coverage and remaining parity work.
 
-For ERP migration workflows, bus-data also defines a mechanical import-profile contract for domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). This profile helper layer is specified in the module SDD and is planned for implementation so ERP mapping behavior can be reusable and deterministic across repositories.
+For ERP migration workflows, bus-data also provides a mechanical import-profile library contract for domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). This profile helper layer is specified in the module SDD and implemented as a reusable, deterministic library surface across repositories.
 
 ### Synopsis
 
@@ -280,7 +280,7 @@ Formula evaluation uses a table snapshot, so range expressions resolve against t
 
 The planned import-profile contract in the bus-data library provides deterministic, mechanical mapping primitives for ERP-to-canonical imports. Domain modules provide the profile and target semantics, and bus-data validates and executes operations such as source row filtering, field mapping, enum/status mapping, keyed lookup joins, and deterministic value transforms as pure data mechanics.
 
-This is a library contract rather than an end-user accounting command. The first end-user command surfaces are expected in domain modules such as `bus invoices import --profile ...` and `bus bank import --profile ...`, while bus-data remains responsible for profile validation and deterministic execution primitives.
+This is a library contract rather than an end-user accounting command. The first end-user command surfaces are expected in domain modules, for example `bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024` and `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`, while bus-data remains responsible for profile validation and deterministic execution primitives.
 
 ### Output formats and files
 
@@ -367,4 +367,3 @@ See [Development status](../implementation/development-status#spreadsheet-workbo
 - [Module SDD: bus-data](../sdd/bus-data)
 - [Storage contract: Storage backends and workspace store interface](../data/storage-backends)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
-

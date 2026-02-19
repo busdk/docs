@@ -35,7 +35,7 @@ Path accessors MUST be designed so that future dynamic configuration is possible
 - [`bus invoices`](./bus-invoices): Maintains sales and purchase invoices as datasets, validates totals and VAT breakdowns, can emit posting outputs for the ledger, and specifies profile-driven ERP invoice import into canonical invoice datasets.
 - [`bus journal`](./bus-journal): Maintains append-only journal entries as the authoritative ledger postings and validates balanced transaction invariants.
 - [`bus bank`](./bus-bank): Imports bank statements into normalized datasets, matches transactions to references, and specifies profile-driven ERP bank import into canonical bank datasets.
-- [`bus reconcile`](./bus-reconcile): Links bank transactions to invoices or journal entries, records allocations (partials, splits, fees), and defines planned deterministic proposal generation plus batch apply commands and coverage artifacts for reconciliation workflows.
+- [`bus reconcile`](./bus-reconcile): Links bank transactions to invoices or journal entries, records allocations (partials, splits, fees), and provides deterministic proposal generation plus batch apply commands and coverage artifacts for reconciliation workflows.
 - [`bus assets`](./bus-assets): Maintains a fixed-asset register, generates depreciation schedules, and produces depreciation postings for period workflows and the journal.
 - [`bus loans`](./bus-loans): Maintains a loan register and event logs, generates amortization schedules from contract terms, and produces posting suggestions for loan activity.
 - [`bus inventory`](./bus-inventory): Maintains inventory master data and stock movement ledgers and produces valuation outputs for accounting and reporting.

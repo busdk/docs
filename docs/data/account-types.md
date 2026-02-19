@@ -82,3 +82,9 @@ Choose the type based on the economic meaning of what the account represents. An
   <span class="busdk-prev-next-item busdk-next"><a href="./append-only-and-soft-deletion">Append-only updates and soft deletion</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

@@ -18,3 +18,9 @@ Claims that “AI reduces manual effort” should be treated as optional augment
   <span class="busdk-prev-next-item busdk-next"><a href="./append-only-auditability">Auditability through append-only changes</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

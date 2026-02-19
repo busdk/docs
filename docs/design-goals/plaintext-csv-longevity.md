@@ -18,3 +18,9 @@ CSV is a delivery convention rather than the goal. BusDK should be able to adopt
   <span class="busdk-prev-next-item busdk-next"><a href="./schema-contract">Schema-driven data contract (Frictionless Table Schema)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

@@ -16,3 +16,9 @@ For Finnish compliance, schemas MUST declare primary and foreign keys for audit-
   <span class="busdk-prev-next-item busdk-next"><a href="./vat-area">VAT area (reference data and filed summaries)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Frictionless Table Schema as the contract](../data/table-schema-contract)
+- [Data directory layout (principles)](./layout-principles)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

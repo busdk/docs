@@ -18,3 +18,9 @@ If a non-file backend such as SQL is implemented, it must provide an equivalent 
   <span class="busdk-prev-next-item busdk-next"><a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Testing index](./index)
+- [Validation and safety checks](../cli/validation-and-safety-checks)
+- [Development status](../implementation/development-status)

@@ -168,3 +168,38 @@ details, or runtime behavior.
 When this page's structure or behavior expectations change, update
 `.cursor/rules/development-status.mdc` in the same change so rule and page stay
 aligned.
+
+## Interaction-driven updates
+
+When user guidance adds or changes working rules, update this `AGENTS.md` in
+the same change so future runs follow the new rule without relying on memory.
+
+For documentation accuracy checks, treat runnable module evidence as primary
+source material: current CLI behavior from module commands, module unit tests
+under `../bus-{NAME}/`, and module e2e tests under `../bus-{NAME}/tests/`,
+alongside each module's `README.md` and `PLAN.md`.
+
+For end-user documentation pages (for example under `docs/modules`,
+`docs/workflow`, and topic guides), prefer plain language and short, direct
+sentences so the text is easy for humans and agents to follow. Keep strict,
+contract-style wording in SDD pages (`docs/sdd`) and requirement sections where
+precision is mandatory.
+
+Keep pages strictly on one topic and avoid repeating detailed content that is
+already defined on an inner topic page. Summarize only what is needed in the
+current page, then link inline to the authoritative inner page and keep the
+end-of-page Sources list for discovery.
+
+When showing Bus command examples, prefer concrete runnable commands with real
+flags and sample values. Avoid placeholder forms like `bus ...` unless omitted
+arguments are intentionally the point in that exact context.
+
+BusDK canonical datasets and schemas must be documented as workspace-root files
+(the effective working directory). Do not document module-owned datasets under
+module-specific subdirectories. The exception is attachment evidence files:
+`attachments.csv` stays at the root and may reference files under deterministic
+attachment subfolders.
+
+When runnable evidence (tests or source) conflicts with a documented BusDK
+contract, document both explicitly: keep the contract statement, and note the
+current implementation mismatch with a clear migration/align action.

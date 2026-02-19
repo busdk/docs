@@ -59,3 +59,11 @@ From this point on, the repository is the canonical source of truth for the year
   <span class="busdk-prev-next-item busdk-next"><a href="./invoice-ledger-impact">Invoice ledger impact (integration through journal entries)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Minimal workspace baseline (after initialization)](../layout/minimal-workspace-baseline)
+- [bus module CLI reference](../modules/bus)
+- [bus-init module CLI reference](../modules/bus-init)
+- [bus-config module CLI reference](../modules/bus-config)
+- [bus-validate module CLI reference](../modules/bus-validate)

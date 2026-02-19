@@ -14,3 +14,9 @@ Although CLI is the initial interface, the architecture is designed for future A
   <span class="busdk-prev-next-item busdk-next"><a href="../extensibility/index">BusDK Design Spec: Extensibility model</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Integration index](./index)
+- [CLI as the primary interface](../architecture/cli-as-primary-interface)
+- [AI and external services](../extensibility/ai-and-external-services)

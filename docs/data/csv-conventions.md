@@ -22,3 +22,9 @@ Each dataset MUST include a stable primary identifier column (`*_id`) that never
   <span class="busdk-prev-next-item busdk-next"><a href="./data-package-organization">Data Package organization</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

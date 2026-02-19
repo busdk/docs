@@ -18,3 +18,9 @@ For Finnish compliance, journal entries MUST include stable identifiers and expl
   <span class="busdk-prev-next-item busdk-next"><a href="./layout-principles">Data directory layout (principles)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-journal module](../modules/bus-journal)
+- [Data directory layout (principles)](./layout-principles)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

@@ -20,3 +20,9 @@ A particular packaging model for modules (separate executables, subcommands of a
   <span class="busdk-prev-next-item busdk-next"><a href="./plaintext-csv-longevity">Plain-text CSV for longevity</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

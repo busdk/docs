@@ -22,3 +22,9 @@ This layout preserves multi-language module support because the data contract re
   <span class="busdk-prev-next-item busdk-next"><a href="./developer-module-workflow">Developer module workflow</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Implementation index](./index)
+- [Development status](./development-status)
+- [Module CLI reference index](../modules/index)

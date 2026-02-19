@@ -16,3 +16,9 @@ For Finnish compliance, the repository MUST also include a methods description a
   <span class="busdk-prev-next-item busdk-next"><a href="./schemas-area">Schemas beside datasets (Table Schema JSON files)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data directory layout (principles)](./layout-principles)
+- [Minimal workspace baseline](./minimal-workspace-baseline)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

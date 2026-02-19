@@ -16,3 +16,9 @@ This design mirrors the practical benefits of Unix composability in modern toolc
   <span class="busdk-prev-next-item busdk-next"><a href="./cli-as-primary-interface">CLI as the primary interface (controlled read/modify/write)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Architecture index](./index)
+- [Data directory layout (principles)](../layout/layout-principles)
+- [Design goals index](../design-goals/index)

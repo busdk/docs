@@ -20,3 +20,10 @@ For Finnish compliance, the layout MUST support audit-trail review and long-term
   <span class="busdk-prev-next-item busdk-next"><a href="./minimal-workspace-baseline">Minimal workspace baseline (after initialization)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Minimal workspace baseline](./minimal-workspace-baseline)
+- [Minimal example layout](./minimal-example-layout)
+- [Data path contract for read-only cross-module access](../sdd/modules#data-path-contract-for-read-only-cross-module-access)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

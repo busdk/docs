@@ -1,32 +1,32 @@
 ---
 title: Import ERP history into canonical invoices and bank datasets
-description: Planned first-class workflow for importing ERP history into canonical BusDK invoice and bank datasets using versioned mapping profiles and auditable artifacts.
+description: Import ERP history into canonical BusDK invoice and bank datasets using versioned mapping profiles with deterministic artifacts.
 ---
 
 ## Import ERP history into canonical invoices and bank datasets
 
-Historical ERP migrations are currently deterministic but operationally heavy. Teams generate large explicit append scripts from ERP TSV mappings and then run those scripts into the workspace. This keeps behavior reviewable, but the generated scripts are difficult to maintain and reuse across repositories.
+Historical ERP migrations in BusDK are deterministic and auditable. The standard workflow uses profile-driven import commands for invoices and bank datasets, with deterministic plan and result artifacts.
 
-The target workflow is profile-driven import. A short command references a versioned mapping profile and source ERP export tables, and the module applies deterministic mapping rules into canonical Bus datasets. The profile carries mapping intent in repository data, and command output includes auditable artifacts so reviewers can verify how source rows became canonical rows.
+The profile carries mapping intent in repository data. Commands reference a versioned mapping profile and source ERP export tables, then apply deterministic mapping rules into canonical workspace datasets.
 
-### Current workflow (today)
+### Command workflow
 
-The current migration path uses generated scripts such as `exports/2024/017-erp-invoices-2024.sh` and `exports/2024/018-erp-bank-2024.sh`. Those scripts are produced from ERP TSV mapping logic and then executed as plain Bus commands. This path remains the production approach until first-class profile import commands are implemented.
-
-For reconciliation planning in this same migration flow, candidate generation and exact-match preparation are also script-driven today, including `exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`. The planned first-class command workflow for that phase is described in [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply).
-
-### Target workflow (planned first-class import)
-
-In the planned workflow, the repository stores versioned mapping profiles for invoices and bank imports. Operators run short deterministic commands that reference a profile and a source snapshot.
+Use profile-driven import commands:
 
 ```bash
 bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024
 bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024
 ```
 
-Each run emits deterministic plan and result artifacts that include source row identifiers, mapping decisions, and produced canonical identifiers. The artifacts are committed together with profile changes so reviews can focus on mapping intent and outcomes instead of generated script size.
+Each run emits deterministic plan and result artifacts that include source row identifiers, mapping decisions, and produced canonical identifiers. Commit artifacts together with profile changes so reviews can focus on mapping intent and outcomes.
 
-When replay workflows include ERP history onboarding, replay logs capture these profile-import invocations and their artifact references as plain Bus commands, preserving deterministic and auditable migration history in a reusable format.
+For reconciliation planning in this same migration flow, teams can use first-class `bus reconcile propose/apply` commands (described in [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply)). Candidate generation and exact-match preparation may still be script-driven in migration repositories when custom import-specific heuristics are needed (for example `exports/2024/025-reconcile-sales-candidates-2024.sh` and prepared `exports/2024/024-reconcile-sales-exact-2024.sh`).
+
+### Script-based alternative
+
+Generated script migrations are still valid when you need custom one-off mapping logic. For example, a repository can keep `exports/2024/017-erp-invoices-2024.sh` and `exports/2024/018-erp-bank-2024.sh` as explicit append scripts.
+
+When replay workflows include ERP history onboarding, replay logs can capture profile-import invocations and artifact references as plain Bus commands, preserving deterministic migration history in a reusable format.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

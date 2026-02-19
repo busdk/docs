@@ -32,3 +32,10 @@ See [Development status](../implementation/development-status) for the project-w
   <span class="busdk-prev-next-item busdk-next"><a href="./global-flags">Standard global flags</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [CLI command naming](./command-naming)
+- [Standard global flags](./global-flags)
+- [bus module CLI reference](../modules/bus)
+- [Development status](../implementation/development-status)

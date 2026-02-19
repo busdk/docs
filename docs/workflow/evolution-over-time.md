@@ -18,7 +18,7 @@ bus validate
 3. If the change affects derived outputs, she regenerates them deterministically from the updated repository data:
 
 ```bash
-bus reports trial-balance ...
+bus reports trial-balance --as-of 2026-12-31
 ```
 
 4. Alice records the evolution as a normal, reviewable change to repository data by creating a new revision with her version control tooling.
@@ -32,3 +32,9 @@ If Alice hires an assistant, the same sequence is executed through standard vers
   <span class="busdk-prev-next-item busdk-next"><a href="./import-bank-transactions-and-apply-payment">Import bank transactions and apply payments</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-validate module CLI reference](../modules/bus-validate)
+- [bus-reports module CLI reference](../modules/bus-reports)
+- [Accounting workflow overview](./accounting-workflow-overview)

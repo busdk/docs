@@ -20,3 +20,9 @@ This section is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./ai-and-external-services">AI and external service integration</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Extensibility index](./index)
+- [Independent modules](../architecture/independent-modules)
+- [Plug-in modules via new datasets](./plugin-modules-via-datasets)

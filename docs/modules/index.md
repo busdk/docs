@@ -28,18 +28,18 @@ Each module that owns workspace data defines where its data files live. Today th
 - [`bus entities`](./bus-entities): Manage counterparty reference data.
 - [`bus period`](./bus-period): Add, open, close, and lock accounting periods.
 - [`bus attachments`](./bus-attachments): Register evidence files and attachment metadata.
-- [`bus invoices`](./bus-invoices): Create and manage sales and purchase invoices, including planned profile-driven ERP invoice import.
+- [`bus invoices`](./bus-invoices): Create and manage sales and purchase invoices, including profile-driven ERP invoice import.
 - [`bus journal`](./bus-journal): Post and query ledger journal entries.
-- [`bus bank`](./bus-bank): Import and list bank transactions, including planned profile-driven ERP bank import.
-- [`bus reconcile`](./bus-reconcile): Match and allocate bank transactions today, with planned deterministic proposal generation, batch apply, and machine-readable coverage artifacts.
+- [`bus bank`](./bus-bank): Import and list bank transactions, including profile-driven ERP bank import.
+- [`bus reconcile`](./bus-reconcile): Match and allocate bank transactions, and run deterministic propose/apply flows for two-phase reconciliation.
 - [`bus assets`](./bus-assets): Manage fixed-asset records and depreciation.
 - [`bus loans`](./bus-loans): Manage loans and amortization schedules.
 - [`bus inventory`](./bus-inventory): Manage inventory items and movements.
-- [`bus payroll`](./bus-payroll): Run payroll and generate postings.
+- [`bus payroll`](./bus-payroll): Validate payroll datasets and export deterministic posting lines.
 - [`bus budget`](./bus-budget): Record budgets and run budget vs actual reports.
-- [`bus reports`](./bus-reports): Generate trial balance, ledger, and statement reports, with planned non-opening journal coverage reporting for migration gap checks.
+- [`bus reports`](./bus-reports): Generate trial balance, ledger, and statement reports, including journal-coverage, parity, and journal-gap migration-review artifacts.
 - [`bus replay`](./bus-replay): Export and apply deterministic replay logs for workspace migration, with planned replay support for profile-driven ERP imports.
-- [`bus validate`](./bus-validate): Validate workspace datasets and invariants, with planned source-import parity and journal-gap threshold checks for CI.
+- [`bus validate`](./bus-validate): Validate workspace datasets and invariants, including first-class parity and journal-gap checks with CI thresholds.
 - [`bus vat`](./bus-vat): Compute VAT reports and exports.
 - [`bus pdf`](./bus-pdf): Render PDFs from JSON render models.
 - [`bus filing`](./bus-filing): Build deterministic filing bundles.

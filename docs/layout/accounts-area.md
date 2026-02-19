@@ -23,3 +23,9 @@ Account numbering conventions are workspace policy. Examples in BusDK documentat
   <span class="busdk-prev-next-item busdk-next"><a href="./budget-area">Budgeting area</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-accounts module](../modules/bus-accounts)
+- [bus-accounts SDD](../sdd/bus-accounts)
+- [Data directory layout (principles)](./layout-principles)

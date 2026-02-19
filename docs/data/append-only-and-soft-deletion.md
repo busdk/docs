@@ -16,3 +16,9 @@ After a period is closed or statutory reporting is produced, BusDK MUST prevent 
   <span class="busdk-prev-next-item busdk-next"><a href="./csv-conventions">CSV conventions</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

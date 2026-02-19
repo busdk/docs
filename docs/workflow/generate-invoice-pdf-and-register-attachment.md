@@ -18,7 +18,7 @@ The module must render deterministically from the stored invoice and invoice-lin
 2. Alice registers the rendered PDF in the attachments dataset so other records can reference it:
 
 ```bash
-bus -h attachments add
+bus attachments add --help
 
 bus attachments add tmp/INV-1001.pdf \
   --desc "Invoice INV-1001 (PDF)"
@@ -40,3 +40,8 @@ bus attachments list
 </p>
 <!-- busdk-docs-nav end -->
 
+### Sources
+
+- [bus-invoices module CLI reference](../modules/bus-invoices)
+- [bus-pdf module CLI reference](../modules/bus-pdf)
+- [bus-attachments module CLI reference](../modules/bus-attachments)

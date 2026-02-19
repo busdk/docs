@@ -1,37 +1,31 @@
 ---
-title: bus-payroll — run payroll and generate postings
-description: bus payroll maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings.
+title: bus-payroll — validate payroll data and export postings
+description: bus payroll validates payroll datasets and exports deterministic journal posting lines for a selected final payrun.
 ---
 
-## `bus-payroll` — run payroll and generate postings
+## `bus-payroll` — validate payroll data and export postings
 
 ### Synopsis
 
-`bus payroll init [-C <dir>] [global flags]`  
-`bus payroll run --month <YYYY-MM> [--run-id <id>] [--pay-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
-`bus payroll list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
-`bus payroll employee add --employee-id <id> --entity <entity-id> --start-date <date> [--end-date <date>] --gross <amount> --withholding-rate <rate> --wage-expense <account> --withholding-payable <account> --net-payable <account> [-C <dir>] [global flags]`  
-`bus payroll employee list [-C <dir>] [-o <file>] [-f <format>] [global flags]`
+`bus payroll validate [-C <dir>] [global flags]`  
+`bus payroll export <payrun-id> [-C <dir>] [global flags]`
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus payroll` maintains employee and payroll run datasets, validates payroll totals, and produces journal posting outputs for wages and withholdings. Data is schema-validated and append-only for auditability.
+Command names follow [CLI command naming](../cli/command-naming). `bus payroll` validates payroll datasets and exports deterministic posting rows for a selected final payrun. Data is schema-validated and append-only for auditability.
 
 ### Commands
 
-- `init` creates the baseline payroll datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `run` runs payroll for a month and produces postings.
-- `list` lists payroll runs.
-- `employee add` adds an employee record.
-- `employee list` lists employees in stable identifier order.
+- `validate` checks payroll datasets and schemas in the workspace root.
+- `export` validates first, then emits deterministic posting CSV for the selected final payrun.
 
 ### Options
 
-`run` accepts `--month <YYYY-MM>`, `--run-id`, `--pay-date <YYYY-MM-DD>`. `employee add` accepts `--employee-id`, `--entity`, `--start-date`, `--end-date` (optional), `--gross`, `--withholding-rate`, `--wage-expense`, `--withholding-payable`, `--net-payable`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus payroll --help`.
+`export` takes `<payrun-id>` as a positional argument. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus payroll --help`.
 
 ### Files
 
-Payroll datasets and their beside-the-table schemas in the payroll area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `payroll/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Payroll datasets and their beside-the-table schemas are read from the workspace root (for example `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`). Path resolution is owned by this module; other tools obtain paths via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status
 
@@ -47,9 +41,9 @@ Payroll datasets and their beside-the-table schemas in the payroll area. Master 
 
 **Use case readiness:** Finnish payroll handling (monthly pay run): 20% — validate and export verified; init, run, list, employee not implemented; no e2e for full pay-run journey.
 
-**Current:** `run_test.go` verifies validate success, deterministic export CSV, schema/CSV/constraint validation failures, usage errors, help/version, quiet/--output/truncation, -C chdir, and invalid format/color/quiet+verbose. `internal/cli/flags_test.go` verifies -vv, -- terminator, quiet+verbose conflict, invalid color/format. `tests/e2e_bus_payroll.sh` verifies help, version, --no-color/--color=never, --format, validate and export with payroll/ fixture, -o truncation and quiet, -C, and deterministic export. All use current `payroll/` layout; workspace-root layout and init/run/list/employee are not implemented.
+**Current:** `run_test.go` verifies validate success, deterministic export CSV, schema/CSV/constraint validation failures, usage errors, help/version, quiet/--output/truncation, -C chdir, and invalid format/color/quiet+verbose. `internal/cli/flags_test.go` verifies -vv, -- terminator, quiet+verbose conflict, invalid color/format. `tests/e2e_bus_payroll.sh` verifies help, version, --no-color/--color=never, --format, validate and export with deterministic fixtures, -o truncation and quiet, -C, and deterministic export using workspace-root payroll datasets. Init/run/list/employee are not implemented.
 
-**Planned next:** Workspace-root layout and init per SDD (FR-INIT-004); run, list, employee add/list; e2e for run → export → journal (Finnish payroll journey).
+**Planned next:** Implement init, run, list, and employee add/list; add e2e for run → export → journal (Finnish payroll journey).
 
 **Blockers:** None known.
 
@@ -76,4 +70,3 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-payroll](../sdd/bus-payroll)
 - [Workflow: Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
-

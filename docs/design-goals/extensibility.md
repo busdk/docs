@@ -22,3 +22,9 @@ Shared implementation is allowed only for mechanical concerns such as the worksp
   <span class="busdk-prev-next-item busdk-next"><a href="./feature-scope">Initial feature scope (modules)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

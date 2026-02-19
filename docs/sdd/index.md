@@ -28,3 +28,9 @@ For end user CLI documentation in a man-page style, see the [BusDK module CLI re
   <span class="busdk-prev-next-item busdk-next"><a href="../sdd">BusDK Software Design Document (SDD)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Module SDD index](../modules/index)
+- [Module interaction map](./modules)
+- [CLI reference index](../cli/index)

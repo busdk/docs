@@ -21,3 +21,9 @@ This section covers how modules are structured and their current implementation 
   <span class="busdk-prev-next-item busdk-next"><a href="../data/index">BusDK Design Spec: Data format and storage</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Implementation index](./index)
+- [Development status](./development-status)
+- [Module CLI reference index](../modules/index)

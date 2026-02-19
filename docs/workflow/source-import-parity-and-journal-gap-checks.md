@@ -1,19 +1,19 @@
 ---
 title: Source import parity and journal gap checks
-description: Planned first-class migration-quality checks that compare source import totals to workspace datasets and non-opening journal activity with deterministic CI behavior.
+description: First-class migration-quality checks that compare source import totals to workspace datasets and non-opening journal activity with deterministic CI behavior.
 ---
 
 ## Source import parity and journal gap checks
 
-Migration confidence requires deterministic checks that compare imported source activity against canonical workspace data and journal coverage. The target workflow introduces first-class Bus commands for those controls so teams can run parity and gap checks without custom shell scripts.
+Migration confidence requires deterministic checks that compare imported source data with workspace datasets and journal coverage. BusDK provides first-class commands for these checks so teams can avoid custom shell scripts.
 
 ### Current workflow
 
-`bus reports journal-coverage` and `bus validate parity` / `bus validate journal-gap` exist and are partially implemented. Validate performs the check but does not emit a report artifact; script-based parity and gap diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`, `exports/2024/023-erp-journal-gap-2024.sh`) remain an alternative where a reviewable parity report is needed.
+`bus reports journal-coverage`, `bus reports parity`, and `bus reports journal-gap` create deterministic report artifacts for review. `bus validate parity` and `bus validate journal-gap` add CI pass/fail behavior with absolute, relative, and bucket-aware thresholds.
 
-### Target workflow
+### Command workflow
 
-The command flow combines deterministic reporting with CI-friendly threshold gates. A suggested extension is a report in [bus-reports](../modules/bus-reports) that emits source import parity as a review/CI artifact (counts/sums by dataset and period in tsv/csv), complementing `bus validate parity`; see the [bus-reports SDD](../sdd/bus-reports) and module reference.
+The command flow combines deterministic report artifacts with CI-friendly threshold gates.
 
 ```bash
 bus reports journal-coverage --from 2024-01 --to 2024-12 --source-summary imports/source-summary-2024.tsv --exclude-opening
@@ -25,7 +25,7 @@ bus validate journal-gap --source imports/source-summary-2024.tsv --max-abs-delt
 
 ### Scope and ownership
 
-[bus-validate](../modules/bus-validate) owns parity and threshold pass or fail behavior. [bus-reports](../modules/bus-reports) owns non-opening journal coverage reporting; a suggested extension is a report that emits source import parity (counts/sums by dataset and period, tsv/csv) as a review/CI artifact, complementing validate. [bus-reconcile](../modules/bus-reconcile) provides deterministic proposal and apply output fields that these checks can consume. A suggested extension is a [class-aware gap report by account buckets](../modules/bus-reports#journal-coverage-and-parity-reports) in bus-reports: breakdown by configurable account buckets (e.g. operational income/expense, financing liability/service, internal transfer) with period-based, machine-friendly output (tsv/json) for CI and prioritization; [bus-validate](../modules/bus-validate) suggested capabilities include per-bucket thresholds for CI pass/fail.
+[bus-validate](../modules/bus-validate) owns threshold pass-or-fail behavior. [bus-reports](../modules/bus-reports) owns deterministic review artifacts for `journal-coverage`, `parity`, and `journal-gap`, including bucket-based gap output in `journal-gap`. [bus-reconcile](../modules/bus-reconcile) provides deterministic proposal and apply outputs that these checks can consume.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

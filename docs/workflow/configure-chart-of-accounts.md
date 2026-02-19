@@ -55,3 +55,8 @@ bus accounts validate
   <span class="busdk-prev-next-item busdk-next"><a href="./create-sales-invoice">Add a sales invoice (interactive workflow)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-accounts module CLI reference](../modules/bus-accounts)
+- [Accounting workflow overview](./accounting-workflow-overview)

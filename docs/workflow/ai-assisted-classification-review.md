@@ -24,8 +24,7 @@ Suggestions might include matching a €1255 incoming payment to an open invoice
 3. The user applies the accepted outcome as explicit records rather than implicit adjustments:
 
 ```bash
-bus journal add --help
-bus journal add ...
+bus journal add --date 2026-02-14 --desc "Bank fee 2026-02-14" --debit 6570=10.00 --credit 1910=10.00
 ```
 
 For example, a payment match becomes an append-only journal entry that clears Accounts Receivable, and a bank fee becomes its own balanced journal entry. If the workflow also needs subledger updates, the user uses the relevant module commands (for example `bus invoices add` for corrections) so each module remains the owner of its datasets.

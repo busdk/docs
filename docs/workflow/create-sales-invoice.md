@@ -60,3 +60,10 @@ Generating the PDF representation and registering it as evidence is a separate w
   <span class="busdk-prev-next-item busdk-next"><a href="./evolution-over-time">Evolution over time (extending the model)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-accounts module CLI reference](../modules/bus-accounts)
+- [bus-entities module CLI reference](../modules/bus-entities)
+- [bus-invoices module CLI reference](../modules/bus-invoices)
+- [Sale invoicing (sending invoices to customers)](./sale-invoicing)

@@ -18,3 +18,9 @@ When PDFs are stored outside Git, BusDK MUST still preserve attachment metadata 
   <span class="busdk-prev-next-item busdk-next"><a href="./invoices-area">Invoices area (headers and lines)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-attachments module](../modules/bus-attachments)
+- [Master data: Documents](../master-data/documents/index)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

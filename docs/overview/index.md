@@ -37,3 +37,9 @@ This overview is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./purpose-and-scope">Purpose and scope</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Overview index](./index)
+- [Design goals index](../design-goals/index)
+- [Architecture index](../architecture/index)

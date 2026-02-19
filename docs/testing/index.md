@@ -16,3 +16,9 @@ This section defines how BusDK modules are tested and how command behavior is ve
   <span class="busdk-prev-next-item busdk-next"><a href="./testing-strategy">Testing strategy</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Testing index](./index)
+- [Validation and safety checks](../cli/validation-and-safety-checks)
+- [Development status](../implementation/development-status)

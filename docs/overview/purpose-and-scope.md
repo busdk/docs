@@ -18,3 +18,9 @@ This spec defines BusDK’s goals, system architecture, data formats and storage
   <span class="busdk-prev-next-item busdk-next"><a href="./visual-identity">Visual identity and branding on outputs</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Overview index](./index)
+- [Design goals index](../design-goals/index)
+- [Architecture index](../architecture/index)

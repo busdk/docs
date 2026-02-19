@@ -24,3 +24,9 @@ This section is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./account-types">Account types in double-entry bookkeeping</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

@@ -16,3 +16,9 @@ For Finnish compliance, VAT summaries MUST retain links to the postings and vouc
   <span class="busdk-prev-next-item busdk-next"><a href="../cli/index">BusDK Design Spec: CLI tooling and workflow</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-vat module](../modules/bus-vat)
+- [Master data: VAT rates](../master-data/vat-rates/index)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

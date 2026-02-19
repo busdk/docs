@@ -39,7 +39,7 @@ Global flags (e.g. `-C`, `-o`, `-q`, `-v`) are defined in [Standard global flags
 
 ### ERP profile-import replay workflow (planned)
 
-The target workflow captures short profile-driven import commands in replay logs, such as `bus invoices import --profile ... --source ...` and `bus bank import --profile ... --source ...`, instead of replaying thousands of generated per-row append commands. Replay keeps those operations deterministic by carrying stable operation IDs, guards, and references to import plan/result artifacts.
+The target workflow captures short profile-driven import commands in replay logs, such as `bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024` and `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`, instead of replaying thousands of generated per-row append commands. Replay keeps those operations deterministic by carrying stable operation IDs, guards, and references to import plan/result artifacts.
 
 This first-class workflow is not yet shipped. Current ERP history migration still uses generated explicit scripts, including `exports/2024/017-erp-invoices-2024.sh` and `exports/2024/018-erp-bank-2024.sh`, produced from ERP TSV mappings.
 
@@ -75,7 +75,7 @@ Export reads workspace configuration, resource list, and domain datasets (accoun
 
 **Current:** Deterministic export (empty and populated golden, `--append`, `--mode history`, `--scope all`, `--require-valid`, no workspace mutation) is verified by `internal/replay/golden_test.go`, `internal/replay/export_test.go`, and `tests/e2e_bus_replay.sh`. Apply guard evaluation, dry-run, TSV/JSON report, `--chdir`, stdin, and (when `bus` on PATH) real apply and idempotency are verified by `internal/replay/apply_test.go`, `internal/replay/executor_inprocess_test.go`, and `tests/e2e_bus_replay.sh`. Render to POSIX sh is verified by `internal/replay/render_test.go` and e2e. CLI and global flags are verified by `cmd/bus-replay/main_test.go` and `internal/cli/flags_test.go`. Profile-driven ERP import replay is not implemented.
 
-**Planned next:** First-class replay support for profile-driven ERP import operations (`bus invoices import --profile ...`, `bus bank import --profile ...`) with deterministic guards and auditable import-artifact references (SDD FR-RPL-008); advances workspace migration when [Import ERP history](../workflow/import-erp-history-into-canonical-datasets) is the workflow.
+**Planned next:** First-class replay support for profile-driven ERP import operations (`bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024`, `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`) with deterministic guards and auditable import-artifact references (SDD FR-RPL-008); advances workspace migration when [Import ERP history](../workflow/import-erp-history-into-canonical-datasets) is the workflow.
 
 **Blockers:** None known.
 

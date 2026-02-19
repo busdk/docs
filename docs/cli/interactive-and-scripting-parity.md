@@ -18,3 +18,9 @@ This contract ensures scripting parity: the same invocation works the same wheth
   <span class="busdk-prev-next-item busdk-next"><a href="./reporting-and-queries">Reporting and query commands</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
+- [Standard global flags](./global-flags)
+- [Validation and safety checks](./validation-and-safety-checks)

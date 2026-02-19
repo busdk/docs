@@ -14,3 +14,9 @@ BusDK assumes schemas will evolve as a business evolves. Schema changes are vers
   <span class="busdk-prev-next-item busdk-next"><a href="./table-schema-contract">Frictionless Table Schema as the contract</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

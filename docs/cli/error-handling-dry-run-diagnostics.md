@@ -24,3 +24,10 @@ For Finnish compliance, missing audit-trail references or retention-critical met
   <span class="busdk-prev-next-item busdk-next"><a href="./interactive-and-scripting-parity">Non-interactive use and scripting</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Standard global flags](./global-flags)
+- [Validation and safety checks](./validation-and-safety-checks)
+- [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
+- [bus-loans module CLI reference](../modules/bus-loans)

@@ -14,3 +14,9 @@ CSV is viable long-term if proactively managed. To keep repositories performant 
   <span class="busdk-prev-next-item busdk-next"><a href="./schema-evolution-and-migration">Schema evolution and migration</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)

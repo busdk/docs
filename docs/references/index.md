@@ -17,3 +17,9 @@ This section is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./foundations-summary">References and external foundations (summary)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [References index](./index)
+- [Foundations summary](./foundations-summary)
+- [External link list](./link-list)

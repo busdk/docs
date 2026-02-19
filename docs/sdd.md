@@ -211,3 +211,9 @@ Version: 2026-02-06
 Status: Draft  
 Last updated: 2026-02-06  
 Owner: BusDK development team  
+
+### Sources
+
+- [SDD index](./sdd/index)
+- [Module SDD interaction map](./sdd/modules)
+- [Module CLI reference index](./modules/index)

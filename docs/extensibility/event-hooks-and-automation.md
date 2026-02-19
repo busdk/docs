@@ -14,3 +14,9 @@ Although BusDK is CLI-driven rather than event-driven by default, the architectu
   <span class="busdk-prev-next-item busdk-next"><a href="./one-developer-ecosystem">One-developer contributions and ecosystem</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Extensibility index](./index)
+- [Independent modules](../architecture/independent-modules)
+- [Plug-in modules via new datasets](./plugin-modules-via-datasets)

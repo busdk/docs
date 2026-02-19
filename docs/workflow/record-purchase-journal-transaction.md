@@ -32,8 +32,7 @@ If she is unsure about the available flags in her pinned version, she uses `bus 
 3. Alice verifies the resulting ledger effect:
 
 ```bash
-bus journal balance --help
-bus journal balance ...
+bus journal balance --as-of 2026-01-31
 ```
 
 4. Alice records the change as a new revision using her version control tooling.
@@ -45,3 +44,9 @@ bus journal balance ...
   <span class="busdk-prev-next-item busdk-next"><a href="./scenario-introduction">Scenario introduction</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-accounts module CLI reference](../modules/bus-accounts)
+- [bus-journal module CLI reference](../modules/bus-journal)
+- [Accounting workflow overview](./accounting-workflow-overview)

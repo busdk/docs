@@ -14,3 +14,8 @@ As new modules are added, they introduce new subcommands without breaking existi
   <span class="busdk-prev-next-item busdk-next"><a href="./automated-git-commits">Git commit conventions per operation (external Git)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [BusDK module CLI reference](../modules/index)
+- [Command structure and discoverability](./command-structure)

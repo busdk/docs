@@ -22,3 +22,8 @@ The default model is “one commit per high-level operation” to maximize audit
   <span class="busdk-prev-next-item busdk-next"><a href="./command-structure">Command structure and discoverability</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-accounts module CLI reference](../modules/bus-accounts)
+- [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)

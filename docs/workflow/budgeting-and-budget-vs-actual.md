@@ -16,8 +16,8 @@ bus budget init
 2. Alice records budgets for the accounts and periods she cares about:
 
 ```bash
-bus budget add --help
-bus budget add ...
+bus budget add --account 6570 --year 2026 --period 01 --amount 500
+bus budget add --account 7310 --year 2026 --period 01 --amount 800
 ```
 
 For example, she enters rows for office supplies and travel so the budgeting dataset expresses her intent explicitly rather than embedding it in a report configuration.
@@ -25,7 +25,6 @@ For example, she enters rows for office supplies and travel so the budgeting dat
 3. Alice produces a budget-vs-actual variance report for the year or period:
 
 ```bash
-bus budget report --help
 bus budget report --year 2026
 ```
 
@@ -46,3 +45,9 @@ If Alice adjusts her plan mid-year, she appends new budget rows (or uses `bus bu
   <span class="busdk-prev-next-item busdk-next"><a href="./configure-chart-of-accounts">Configure the chart of accounts</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-budget module CLI reference](../modules/bus-budget)
+- [bus-reports module CLI reference](../modules/bus-reports)
+- [Accounting workflow overview](./accounting-workflow-overview)

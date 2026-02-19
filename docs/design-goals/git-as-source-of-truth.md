@@ -18,3 +18,9 @@ BusDK does not execute Git commands or create commits; it relies on external too
   <span class="busdk-prev-next-item busdk-next"><a href="./modularity">Modularity as a first-class requirement</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

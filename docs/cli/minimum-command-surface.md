@@ -5,7 +5,7 @@ description: This page defines the minimum CLI surface that must exist for the e
 
 ## Minimum required command surface (end-to-end workflow)
 
-This page defines the minimum CLI surface that must exist for the end-to-end bookkeeping workflow described in the design spec. It is derived from the workflow narrative in [Accounting workflow overview](../workflow/accounting-workflow-overview) and the current planned module set in [Modules](../modules/index).
+This page defines the minimum CLI surface that must exist for the end-to-end bookkeeping workflow described in the design spec. It is derived from the workflow narrative in [Accounting workflow overview](../workflow/accounting-workflow-overview) and the current module set in [Modules](../modules/index).
 
 The purpose of this contract is to make the CLI testable as a stable interface. “Minimum required” means a conforming BusDK implementation provides these commands and subcommands by name, with deterministic behavior, deterministic diagnostics, and predictable outputs suitable for both human use and scripting.
 
@@ -65,7 +65,7 @@ The following command surface is the minimum needed to execute the workflow as d
 
 ### Scope and evolution
 
-This is the minimum workflow surface implied by the spec’s current planned modules. As BusDK grows, new modules may add new commands without breaking this minimum surface, consistent with [Extensible CLI surface and API parity](./api-parity).
+This is the minimum workflow surface implied by the current module set. As BusDK grows, new modules may add new commands without breaking this minimum surface, consistent with [Extensible CLI surface and API parity](./api-parity).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -75,3 +75,12 @@ This is the minimum workflow surface implied by the spec’s current planned mod
 </p>
 <!-- busdk-docs-nav end -->
 
+### Sources
+
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [BusDK module CLI reference](../modules/index)
+- [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
+- [Non-interactive use and scripting](./interactive-and-scripting-parity)
+- [Reporting and query commands](./reporting-and-queries)
+- [Validation and safety checks](./validation-and-safety-checks)
+- [Extensible CLI surface and API parity](./api-parity)

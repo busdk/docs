@@ -26,3 +26,9 @@ This section is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./accounts-area">Accounts area (chart of accounts and references)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data directory layout (principles)](./layout-principles)
+- [Minimal workspace baseline](./minimal-workspace-baseline)
+- [Minimal example layout](./minimal-example-layout)

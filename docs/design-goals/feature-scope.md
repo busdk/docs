@@ -39,3 +39,9 @@ BusDK is intended to grow into a broader suite of tools for running a business, 
   <span class="busdk-prev-next-item busdk-next"><a href="./git-as-source-of-truth">Git as the canonical, append-only source of truth</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

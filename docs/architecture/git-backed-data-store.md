@@ -18,3 +18,9 @@ This Git-backed filesystem repository is the default implementation of the works
   <span class="busdk-prev-next-item busdk-next"><a href="./independent-modules">Independent modules (integration through shared datasets)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Architecture index](./index)
+- [Data directory layout (principles)](../layout/layout-principles)
+- [Design goals index](../design-goals/index)

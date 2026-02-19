@@ -12,14 +12,14 @@ Across this workflow, the same sequence repeats in different modules: write or i
 2. Control comes from the rule that outcomes are expressed as explicit records rather than as silent adjustments, so journal impact is appended as balanced entries:
 
 ```bash
-bus journal add ...
+bus journal add --date 2026-02-14 --desc "Bank fee" --debit 6570=10.00 --credit 1910=10.00
 ```
 
 3. Automation comes from repeatable commands that compute outputs from stored data without losing traceability, and from closing workflows that lock the period boundary:
 
 ```bash
-bus period close ...
-bus period lock ...
+bus period close --period 2026-02 --post-date 2026-02-28
+bus period lock --period 2026-02
 ```
 
 Treating evidence as data and locking periods on close keeps the audit trail intact and ensures that “January stays January.”
@@ -31,3 +31,9 @@ Treating evidence as data and locking periods on close keeps the audit trail int
   <span class="busdk-prev-next-item busdk-next"><a href="./year-end-close">Year-end close (closing entries)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-journal module CLI reference](../modules/bus-journal)
+- [bus-period module CLI reference](../modules/bus-period)
+- [Year-end close (closing entries)](./year-end-close)

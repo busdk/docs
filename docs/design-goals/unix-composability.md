@@ -18,3 +18,9 @@ Pipes and stream processing are implementation choices, not the definition of th
   <span class="busdk-prev-next-item busdk-next"><a href="../architecture/index">BusDK Design Spec: System architecture</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

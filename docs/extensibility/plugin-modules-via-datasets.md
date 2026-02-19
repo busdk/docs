@@ -5,7 +5,7 @@ description: BusDK supports adding modules by defining new datasets and schemas 
 
 ## Plug-in modules via new datasets
 
-BusDK supports adding modules by defining new datasets and schemas and implementing tooling that reads and writes them. A payroll module is a canonical example: a `payroll/` directory could contain `employees.csv` and `payruns.csv` plus schemas, and a CLI command such as `bus payroll run --month July-2026` could generate salary-related ledger entries by appending to the journal dataset. This extension does not require modifications to existing modules so long as it adheres to established schemas and references valid accounts.
+BusDK supports adding modules by defining new datasets and schemas and implementing tooling that reads and writes them. A payroll module is a canonical example: workspace-root datasets such as `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv` (with beside-the-table schemas) can be validated and exported with `bus payroll validate` and `bus payroll export pr-001` to generate deterministic posting rows for journal workflows. This extension does not require modifications to existing modules as long as it follows existing schema and reference contracts.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -14,3 +14,9 @@ BusDK supports adding modules by defining new datasets and schemas and implement
   <span class="busdk-prev-next-item busdk-next"><a href="../compliance/fi-bookkeeping-and-tax-audit">Finnish Bookkeeping and Tax-Audit Compliance (BusDK)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-payroll module](../modules/bus-payroll)
+- [bus-payroll SDD](../sdd/bus-payroll)
+- [Data directory layout (principles)](../layout/layout-principles)

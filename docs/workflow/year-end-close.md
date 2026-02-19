@@ -10,24 +10,20 @@ Year-end close is a stricter version of period close: Alice runs validation, ens
 1. Alice validates that the workspace datasets are internally consistent before generating close outputs:
 
 ```bash
-bus validate --help
 bus validate
 ```
 
 2. Alice completes VAT for the final reporting periods and exports the archived VAT artifacts:
 
 ```bash
-bus vat report --help
-bus vat report ...
-bus vat export --help
-bus vat export ...
+bus vat report --period 2026-12
+bus vat export --period 2026-12
 ```
 
 3. Alice closes the final accounting period and generates the closing entry outputs:
 
 ```bash
-bus period close --help
-bus period close ...
+bus period close --period 2026-12 --post-date 2026-12-31
 ```
 
 The close produces deterministic entries that bring the period to a clean boundary and records period-close metadata as repository data. Transfer of profit or loss to equity (retained earnings) is expressed as new append-only postings. Until [bus period](../modules/bus-period) supports automatic result-to-equity transfer, post that transfer with `bus journal add` using your chart’s equity account; see the [bus-period](../modules/bus-period) CLI reference.
@@ -35,21 +31,16 @@ The close produces deterministic entries that bring the period to a clean bounda
 4. Alice locks the closed period to prevent later edits from drifting reported results:
 
 ```bash
-bus period lock --help
-bus period lock ...
+bus period lock --period 2026-12
 ```
 
 5. Alice generates the year-end report set from the closed, locked journal:
 
 ```bash
-bus reports trial-balance --help
-bus reports trial-balance ...
-bus reports general-ledger --help
-bus reports general-ledger ...
-bus reports profit-and-loss --help
-bus reports profit-and-loss ...
-bus reports balance-sheet --help
-bus reports balance-sheet ...
+bus reports trial-balance --as-of 2026-12-31
+bus reports general-ledger --period 2026-12
+bus reports profit-and-loss --period 2026-12 --format pma
+bus reports balance-sheet --as-of 2026-12-31 --format pma
 ```
 
 6. Alice records the year-end close as a new revision using her version control tooling, so the closed year is easy to reference and export later.
@@ -63,3 +54,12 @@ If a particular jurisdiction, accountant, or workflow needs additional close out
   <span class="busdk-prev-next-item busdk-next"><a href="./finnish-payroll-monthly-pay-run">Finnish payroll handling (monthly pay run)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-validate module CLI reference](../modules/bus-validate)
+- [bus-vat module CLI reference](../modules/bus-vat)
+- [bus-period module CLI reference](../modules/bus-period)
+- [bus-journal module CLI reference](../modules/bus-journal)
+- [bus-reports module CLI reference](../modules/bus-reports)
+- [Accounting workflow overview](./accounting-workflow-overview)

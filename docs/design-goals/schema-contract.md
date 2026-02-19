@@ -18,3 +18,9 @@ Frictionless Table Schema is a preferred implementation, not the goal itself. In
   <span class="busdk-prev-next-item busdk-next"><a href="./unix-composability">Unix-style composability (micro-tools)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

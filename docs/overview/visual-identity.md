@@ -20,3 +20,9 @@ BusDK branding is therefore limited to BusDK’s own tools and BusDK’s own doc
   <span class="busdk-prev-next-item busdk-next"><a href="../design-goals/index">BusDK Design Spec: Design goals and requirements</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Overview index](./index)
+- [Design goals index](../design-goals/index)
+- [Architecture index](../architecture/index)

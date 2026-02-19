@@ -7,7 +7,7 @@ description: Produce a reviewable list of reconciliation records so that open-it
 
 Produce a reviewable list of reconciliation records so that open-item status and settlement history can be inspected without re-deriving links from bank statements and invoice notes.
 
-In the planned two-phase flow, list output is typically reviewed together with proposal and apply reports from [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply).
+In the two-phase flow, list output is typically reviewed together with proposal and apply reports from [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply).
 
 Owner: [bus reconcile](../../modules/bus-reconcile).
 
@@ -25,4 +25,3 @@ This command reads records from [Reconciliations](./index).
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
 - [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)
-

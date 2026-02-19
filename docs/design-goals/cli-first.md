@@ -24,3 +24,9 @@ BusDK may also be offered as a commercial web application and API product. That 
   <span class="busdk-prev-next-item busdk-next"><a href="./double-entry-ledger">Double-entry ledger accounting</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Design goals index](./index)
+- [Architectural overview](../architecture/architectural-overview)
+- [Purpose and scope](../overview/purpose-and-scope)

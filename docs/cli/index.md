@@ -25,3 +25,9 @@ This section is split into **single-concept** documents:
   <span class="busdk-prev-next-item busdk-next"><a href="./api-parity">Extensible CLI surface and API parity</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [BusDK module CLI reference](../modules/index)
+- [Standard global flags](./global-flags)
+- [CLI command naming](./command-naming)

@@ -14,3 +14,9 @@ As modularity increases, schema divergence becomes a risk. BusDK treats core sch
   <span class="busdk-prev-next-item busdk-next"><a href="./event-hooks-and-automation">Event hooks and automation</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Extensibility index](./index)
+- [Independent modules](../architecture/independent-modules)
+- [Plug-in modules via new datasets](./plugin-modules-via-datasets)

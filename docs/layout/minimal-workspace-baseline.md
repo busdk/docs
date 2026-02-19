@@ -53,3 +53,9 @@ The workspace’s Frictionless Data Package descriptor (`datapackage.json`) is t
 </p>
 <!-- busdk-docs-nav end -->
 
+### Sources
+
+- [Initialize a new repository](../workflow/initialize-repo)
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Data directory layout (principles)](./layout-principles)
+- [bus-init module](../modules/bus-init)

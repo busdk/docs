@@ -20,3 +20,9 @@ is expected to append new ledger rows to the journal file. The corresponding Git
   <span class="busdk-prev-next-item busdk-next"><a href="./git-backed-data-store">Git-backed data repository (the data store)</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Architecture index](./index)
+- [Data directory layout (principles)](../layout/layout-principles)
+- [Design goals index](../design-goals/index)

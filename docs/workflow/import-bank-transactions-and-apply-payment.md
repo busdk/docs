@@ -5,7 +5,7 @@ description: When the customer pays, Alice imports the bank statement as evidenc
 
 ## Import bank transactions and apply payments
 
-When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records reconciliation and any required ledger impact in append-only datasets. This keeps the workflow deterministic and reviewable while the first-class reconciliation proposal and batch-apply command flow is still being implemented.
+When the customer pays, Alice imports the bank statement as evidence, identifies the payment transaction in the normalized bank dataset, and then records reconciliation and any required ledger impact in append-only datasets. This keeps the workflow deterministic and reviewable, and it can scale from direct one-to-one matches to two-phase proposal and batch-apply reconciliation.
 
 1. Alice imports the raw bank statement evidence with Bus Bank:
 
@@ -50,7 +50,7 @@ If she is unsure about the available flags in her pinned version, she uses `bus 
 bus invoices list
 ```
 
-When the goal is high-volume or historical reconciliation with deterministic candidate planning and batch application, use [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply). In this workspace, the candidate planning phase is currently script-driven and the first-class `bus reconcile propose/apply` commands are planned.
+When the goal is high-volume or historical reconciliation with deterministic candidate planning and batch application, use [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply). The first-class `bus reconcile propose` and `bus reconcile apply` commands support that flow directly.
 
 When the goal is historical ERP onboarding of invoices and bank datasets, use [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets).
 

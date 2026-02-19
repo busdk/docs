@@ -26,3 +26,9 @@ Primary keys MUST be declared for core datasets (journal, ledger, vouchers, invo
   <span class="busdk-prev-next-item busdk-next"><a href="../layout/index">BusDK Design Spec: Data directory layout</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Data section index](./index)
+- [Schemas beside datasets](../layout/schemas-area)
+- [Data directory layout (principles)](../layout/layout-principles)
