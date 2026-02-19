@@ -1,6 +1,6 @@
 ---
 title: bus-vat — VAT computation, reports, and export
-description: bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, reconciles invoice VAT with ledger postings, and supports journal-driven VAT when invoice masters are incomplete.
+description: bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, reconciles invoice VAT with ledger postings, and supports journal-driven and reconcile-evidence cash-basis VAT modes.
 ---
 
 ## `bus-vat` — VAT computation, reports, and export
@@ -10,6 +10,8 @@ description: bus vat computes VAT totals per reporting period, validates VAT cod
 Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data so they remain reviewable and exportable for archiving and [VAT reporting and payment](../workflow/vat-reporting-and-payment). The module **owns the definition of VAT period boundaries**: the actual sequence of reporting periods (start and end dates) used for allocation and reporting. That sequence can include transitions when the period length changes within a year (e.g. monthly → yearly → quarterly), transition periods (e.g. 4 months), and non-standard first or last periods (e.g. 18-month first period after registration). Workspace-level inputs come from [bus config](./bus-config) — current `vat_reporting_period`, `vat_timing`, and optional `vat_registration_start` / `vat_registration_end` — with the canonical definition of those keys and allowed values in [Workspace configuration](../data/workspace-configuration). The module uses those settings as inputs and may maintain a period-definition dataset or logic to produce the authoritative list of periods, then allocates transactions and invoices to those periods and produces reports and exports.
 
 Where invoice master data is incomplete or absent (e.g. journal-first bookkeeping or migration), the module supports **journal-driven VAT mode**: computing VAT period totals from journal postings and VAT-related account and tax mappings, with deterministic period allocation and traceable diagnostics. The same period boundaries, allocation rules, and output formats apply as for the invoice-based path; only the input source differs. Use `bus vat validate|report|export --source journal` to run in journal-driven mode.
+
+For payment-evidence cash-basis filing (`maksuperusteinen`), the module also supports **reconcile-evidence cash mode**: `bus vat report|export --source reconcile --basis cash`. This mode derives VAT periodization from payment evidence (`matches.csv` + `bank-transactions.csv`) and splits partial payments proportionally across invoice VAT/net evidence rows with deterministic source references and deterministic cent allocation.
 
 ### Synopsis
 
@@ -26,7 +28,17 @@ Where invoice master data is incomplete or absent (e.g. journal-first bookkeepin
 
 ### Options
 
-`report` and `export` require `--period <period>`. When using `--source journal`, journal rows are read from the journal area and normalized for VAT reporting. Direction is resolved deterministically in this order: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). Amount can be provided as `amount_cents` (integer) or `amount` (decimal major units). Rate uses row-level `vat_rate_bp` first, then `vat_rate_bp` (or `rate_bp`) from `vat-account-mapping.csv`. If direction cannot be resolved for a row, the command fails with a clear diagnostic naming the row/account and required fallback data. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
+`report` and `export` require `--period <period>`. When using `--source journal`, journal rows are read from the journal area and normalized for VAT reporting. Direction is resolved deterministically in this order: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). Amount can be provided as `amount_cents` (integer) or `amount` (decimal major units). Rate uses row-level `vat_rate_bp` first, then `vat_rate_bp` (or `rate_bp`) from `vat-account-mapping.csv`. If direction cannot be resolved for a row, the command fails with a clear diagnostic naming the row/account and required fallback data.
+
+When using `--source reconcile --basis cash`, VAT rows are derived from `matches.csv` (`kind=invoice_payment`), `bank-transactions.csv` payment dates (`booked_date`/`booking_date`/`value_date`/`booked_at`), and invoice evidence rows. Partial payments are split proportionally across invoice VAT/net rows and allocated to the bank payment-date period.
+When using `--source journal --basis cash`, payment-date allocation uses journal payment-date evidence columns when present (`payment_date`/`paid_date`/`value_date`/`booked_date`/`booking_date`/`booked_at`), optional `bank_txn_id` lookup to `bank-transactions.csv`, and falls back to `posting_date` when explicit payment evidence is missing.
+Evidence-first context applies: country/party context is read from invoice evidence first; `entities.csv` is only fallback enrichment.
+
+Cash-basis treatment handling is explicit:
+- `reverse_charge`, `intra_eu_supply`, `export`, `exempt` require `vat_cents=0` on evidence rows in this mode; otherwise the command fails with a deterministic diagnostic.
+- `domestic_standard`, `domestic_reduced`, `import`, and unknown/custom treatment codes are processed from explicit line VAT/net evidence.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
 
 ### Journal source: vat-account-mapping.csv
 
@@ -41,6 +53,7 @@ The module reads invoice and journal datasets and optional VAT reference dataset
 ```bash
 bus vat init
 bus vat report --period 2026-01
+bus vat report --period 2026-01 --source reconcile --basis cash
 ```
 
 ### Exit status
@@ -88,4 +101,3 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-vat](../sdd/bus-vat)
 - [Layout: VAT area](../layout/vat-area)
 - [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
-
