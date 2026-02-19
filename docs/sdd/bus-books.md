@@ -56,7 +56,7 @@ FR-BOK-001a Workspace root and data from current directory. The workspace root M
 Acceptance criteria: started from a directory that contains valid Bus workspace data, the UI and API operate on that data; started from a different directory (or with `-C` pointing elsewhere), the server uses the data in that effective root; deterministic failure if the workspace root is not readable or not a valid workspace when the UI requires it.
 
 FR-BOK-002 Capability URL gating. On startup, the server MUST generate an unguessable random token and MUST require all UI and API requests to be scoped under a path prefix containing that token.
-Acceptance criteria: the server prints a full base URL that includes the token and a port; requests outside the token prefix return 404 (or equivalent).
+Acceptance criteria: the server computes a full base URL that includes token and port; by default `serve` opens it in a local GUI webview, and `--print-url` outputs it to stdout; requests outside the token prefix return 404 (or equivalent).
 
 FR-BOK-003 Safe default binding. The server MUST bind to `127.0.0.1` by default and MUST NOT listen on non-loopback interfaces unless explicitly requested.
 Acceptance criteria: without flags, the UI is reachable only from localhost; non-loopback bind requires an explicit `--listen` flag.
@@ -143,9 +143,11 @@ Optional:
 
 ### Routing and base URL
 
-The server prints a single capability base URL for the user to open:
+The server computes a single capability base URL:
 
 `http://127.0.0.1:<port>/{token}/`
+
+By default, `serve` opens this URL with the host GUI opener (`open`/`xdg-open`/`rundll32`). For scripting and tests, `--print-url` writes the same URL to stdout.
 
 Under that prefix:
 - UI assets and SPA routes are served under `/{token}/...`
@@ -224,7 +226,8 @@ The module exposes `bus-books` as a CLI entry point (and via dispatcher as `bus 
 
 Commands:
 - `bus-books serve` (default)
-  - Starts the server, prints the capability URL to stdout, writes diagnostics to stderr.
+  - Starts the server, opens the capability URL in local GUI by default, writes diagnostics to stderr.
+  - With `--print-url`, writes capability URL to stdout instead of auto-opening GUI.
 - `bus-books version`
   - Prints version info.
 
@@ -236,7 +239,8 @@ Serve flags (module-specific, aligned with Bus API defaults):
 - `--tls-cert <file>` optional (when used with `--tls-key`)
 - `--tls-key <file>` optional (when used with `--tls-cert`)
 - `--read-only` disables all mutating operations (403) via embedded Bus API
-- `--webview` optional best-effort local GUI launch of the capability URL using host opener (`open`/`xdg-open`/`rundll32`)
+- `--webview` best-effort local GUI launch of the capability URL using host opener (`open`/`xdg-open`/`rundll32`) (default behavior)
+- `--print-url` writes the capability URL to stdout instead of auto-opening GUI
 - `--enable-agent` enables optional agent chat integration (default: disabled)
 
 ## UI Behavior
@@ -407,7 +411,7 @@ Integration tests:
 End-to-end browser tests:
 - E2E coverage MUST drive a running `bus-books serve` process through a real browser engine, not only API-level checks or simulated DOM tests.
 - Playwright is the reference E2E runner for Bus Books and is expected in CI and local developer workflows.
-- Tests open the printed capability base URL, wait for Go/WASM bootstrap, and verify real UI navigation and rendering across core screens (at minimum Dashboard, Inbox, and Journal).
+- Tests acquire the capability base URL (typically via `--print-url` in scripted runs), wait for Go/WASM bootstrap, and verify real UI navigation and rendering across core screens (at minimum Dashboard, Inbox, and Journal).
 - At least one E2E case MUST perform a mutating bookkeeping action from the web UI and verify both user-visible confirmation and persisted workspace dataset change.
 - E2E checks MUST confirm capability scoping by asserting that requests outside the token prefix fail while in-app requests stay under `/{token}/`.
 - CI runs browser E2E in headless mode by default; developers MAY run headed mode for debugging, with identical fixtures and assertions.
