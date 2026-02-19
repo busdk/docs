@@ -14,7 +14,7 @@ With no subcommand, `bus books` runs **serve**. Global flags follow [CLI command
 
 Serve (default):
 
-`bus-books serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--tls-cert <file>] [--tls-key <file>] [--read-only] [--enable-agent] [global flags]`
+`bus-books serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--tls-cert <file>] [--tls-key <file>] [--read-only] [--webview] [--enable-agent] [global flags]`
 
 `bus-books version` — Print the tool name and version to stdout and exit 0.
 
@@ -45,6 +45,7 @@ These flags apply only to `serve`. They can appear in any order before or after 
 - **`--tls-cert <file>`** — Path to the TLS certificate file. When provided together with `--tls-key`, the server serves HTTPS instead of HTTP.
 - **`--tls-key <file>`** — Path to the TLS private key file. When provided together with `--tls-cert`, the server serves HTTPS.
 - **`--read-only`** — Disable all mutating operations in the UI. When set, create/update/delete and other mutating requests return 403 via the embedded API. Reads and validation remain available.
+- **`--webview`** — Open the capability URL in a local GUI window using the host opener (`open` on macOS, `xdg-open` on Linux, `rundll32` on Windows). This is best-effort and optional; normal browser/manual open flow still works.
 - **`--enable-agent`** — Enable the optional agent chat integration. When set, the UI shows a chat panel (which you can hide or show at runtime) and the agent can run Bus CLI tools in the workspace. Default: disabled. When disabled, the chat is not available and no agent endpoints are exposed.
 
 ### Global flags
@@ -115,13 +116,13 @@ bus books version
 
 **Use cases:** [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
-**Completeness:** 20% — Serve and capability URL, token gating, workspace checks, embedded API, default module backends, minimal UI, and read-only 403 are test-verified; no bookkeeping screen flow is covered so the user cannot complete any workflow step in the UI.
+**Completeness:** 65% — Core bookkeeping screens and API flows are implemented and covered by unit/e2e tests (Dashboard, Inbox, Journal, Periods, VAT, Bank, Reconcile, Attachments, Validate), including schema-driven columns and event-stream refresh for API mutations.
 
-**Use case readiness:** Accounting workflow (bookkeeping UI): 20% — User can start server and get capability URL; token gating, workspace-root checks, embedded API, default backends, minimal UI, and read-only 403 verified; no Inbox/Journal/Periods/VAT/Bank/Attachments/Validate screens test-covered.
+**Use case readiness:** Accounting workflow (bookkeeping UI): 65% — User can complete core workflow steps in the UI with deterministic diagnostics and module-backed operations.
 
-**Current:** Serve and capability URL, default subcommand (no args → serve), and fixed token/port verified by `tests/e2e_bus_books.sh`. Global and serve flags (help, version, quiet, verbose, color, chdir, output, `--`) by `tests/e2e_bus_books.sh`, `internal/run/run_test.go`, and `internal/cli/flags_test.go`. Workspace root validation, token gating (404 outside `/{token}/`, 200 under token), embedded API (healthz, openapi.json, module backends), read-only 403 on mutating API, minimal UI (index at base, SPA fallback, assets from embed, API routes not intercepted) by `internal/server/server_test.go` and `internal/api/api_test.go`. Default backends (journal, period, vat, bank, validate, attachments, reconcile) registration and `/v1/workspace` by `internal/backends/backends_test.go` and `internal/server/server_test.go`. No Inbox, Journal, Periods, VAT, Bank, Reconcile, Attachments, or Validate screen flows are covered by tests.
+**Current:** Serve and capability URL, default subcommand, token gating, workspace checks, read-only mode, embedded API, schema endpoints, SSE mutation events, module backend routing, and screen flows are test-covered by `tests/e2e_bus_books.sh` and `internal/*/*_test.go`. Inbox supports filters (`reviewState`, `evidenceOk`) and item actions; Journal supports list/detail/new with deterministic period-state errors; Periods supports open/close/lock transitions; VAT supports period list/report run plus source links to underlying transactions when provided by the backend; Bank supports import/list/detail; Reconcile supports suggestions and confirm with deterministic refusals; Attachments supports add/list/link; Validate supports grouped deterministic diagnostics. List views (Inbox, Journal, Bank) now support deterministic `limit`/`offset` slicing, and the UI exposes row-limit selectors to keep large lists responsive. The main view now uses full-width section backgrounds with constrained inner content, aligned to the documentation layout contract.
 
-**Planned next:** Implement Inbox, Journal, Periods, VAT, Bank, Reconcile, Attachments, and Validate screens per PLAN.md; add integration tests for validation endpoint, period transitions, journal add accept/reject. Advances Accounting workflow.
+**Planned next:** Continue UX hardening and workflow polish based on bookkeeping feedback, with additional backend-specific traceability affordances as those module APIs expose richer link metadata.
 
 **Blockers:** None known.
 

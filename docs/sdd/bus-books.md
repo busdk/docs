@@ -236,6 +236,7 @@ Serve flags (module-specific, aligned with Bus API defaults):
 - `--tls-cert <file>` optional (when used with `--tls-key`)
 - `--tls-key <file>` optional (when used with `--tls-cert`)
 - `--read-only` disables all mutating operations (403) via embedded Bus API
+- `--webview` optional best-effort local GUI launch of the capability URL using host opener (`open`/`xdg-open`/`rundll32`)
 - `--enable-agent` enables optional agent chat integration (default: disabled)
 
 ## UI Behavior
