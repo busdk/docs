@@ -10,6 +10,7 @@ description: bus reconcile links bank transactions to invoices or journal entrie
 `bus reconcile match --bank-id <id> (--invoice-id <id> | --journal-id <id>) [-C <dir>] [global flags]`  
 `bus reconcile allocate --bank-id <id> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ... [-C <dir>] [global flags]`  
 `bus reconcile list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus reconcile init [--if-missing] [--force] [-C <dir>] [global flags]`  
 `bus reconcile propose [options] [-C <dir>] [global flags]`  
 `bus reconcile apply --in <path>|- [--dry-run] [options] [-C <dir>] [global flags]`
 `bus reconcile post --kind invoice_payment --bank-account <id> --sales-account <id> --sales-vat-account <id> [--purchase-account <id> --purchase-vat-account <id>] [--if-missing] [--dry-run] [-C <dir>] [global flags]`
@@ -25,6 +26,7 @@ The first-class two-phase reconciliation workflow is implemented: `bus reconcile
 - `match` records a one-to-one link between a bank transaction and an invoice or journal transaction (amounts must match exactly).
 - `allocate` records allocations for a bank transaction split across multiple invoices or journal entries (allocations must sum to the bank amount).
 - `list` lists reconciliation records.
+- `init` bootstraps `matches.csv` and `matches.schema.json` at workspace root with deterministic defaults. Output is machine-readable TSV (`path`, `status`) and supports idempotent rerun (`unchanged`) or forced rewrite (`--force` -> `updated`).
 - `propose` generates deterministic reconciliation proposal rows from unreconciled bank and invoice/journal data; output includes confidence and reason fields.
 - `apply` consumes approved proposal rows and records match or allocation writes deterministically; supports `--dry-run` and idempotent re-apply.
 - `post` converts existing `invoice_payment` match rows to journal postings using invoice evidence (net + VAT). Sales postings are debit bank / credit sales / credit VAT; purchase postings are debit purchase / debit VAT / credit bank. Idempotency uses voucher id `bank:<bank_txn_id>` and `--if-missing` can skip already-posted vouchers.

@@ -21,6 +21,8 @@ FR-REC-004 Batch apply of approved proposals. The module MUST provide a command 
 
 FR-REC-005 Reconciliation coverage output contract. The module MUST expose deterministic reconciliation coverage fields that parity and gap checks can consume. Acceptance criteria: proposal and apply outputs include stable identifiers and statuses for matched, allocated, skipped, and rejected rows; period and target references are explicit so [bus-validate](./bus-validate) and [bus-reports](./bus-reports) can compute deterministic migration-quality checks.
 
+FR-REC-006 Deterministic reconciliation dataset bootstrap. The module MUST provide `bus reconcile init` to ensure `matches.csv` and `matches.schema.json` exist with deterministic default content. Acceptance criteria: command is idempotent, supports force rewrite semantics, and emits machine-readable status rows (`path`, `status`) for CI and replay scripts.
+
 NFR-REC-001 Auditability. Allocation history MUST be append-only and traceable to bank transactions, invoices, and vouchers. Acceptance criteria: allocation records are not overwritten and retain source references.
 
 NFR-REC-002 Idempotent re-apply semantics. Reconciliation apply operations MUST be idempotent when the same approved proposal set is applied repeatedly. Acceptance criteria: re-running apply against already-applied proposal rows yields deterministic "already applied" outcomes and does not create duplicate reconciliation records.
@@ -43,7 +45,9 @@ KD-REC-003 Reconciliation outputs feed migration controls. Proposal and apply ar
 
 ### Component Design and Interfaces
 
-Interface IF-REC-001 (module CLI). The module exposes `bus reconcile` with subcommands `match`, `allocate`, `list`, `propose`, and `apply` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-REC-001 (module CLI). The module exposes `bus reconcile` with subcommands `init`, `match`, `allocate`, `list`, `propose`, and `apply` and follows BusDK CLI conventions for deterministic output and diagnostics.
+
+Documented parameters for `bus reconcile init` are optional `--if-missing` and optional `--force`. The command ensures `matches.csv` and `matches.schema.json` exist at workspace root with deterministic default schema and header. The command prints deterministic status output (`path`, `status`) where status values are one of `created`, `unchanged`, or `updated`. Existing files are preserved by default; `--force` rewrites both files using canonical defaults.
 
 Documented parameters for `bus reconcile match` are `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`. The command records a single reconciliation link between the specified bank transaction row from `bank-transactions.csv` and the target invoice header or journal transaction. Matching is deterministic and strict: the bank transaction amount and currency must equal the target amount as stored in the invoice header total or the journal transaction total, and the bank transaction must not already be reconciled. If these conditions are not met, the command exits non-zero and writes no reconciliation rows. Partial payments, splits, and fees are handled through `bus reconcile allocate` instead of `match`.
 
@@ -63,6 +67,7 @@ Usage examples:
 
 ```bash
 bus reconcile match --bank-id BANK-001 --invoice-id INV-1001
+bus reconcile init
 bus reconcile propose --out reconcile-proposals.tsv
 bus reconcile apply --in reconcile-proposals-approved.tsv --dry-run
 bus reconcile allocate --bank-id BANK-001 --invoice INV-1001=900 --journal JRN-2026-014=40 --journal JRN-2026-015=300
