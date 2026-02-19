@@ -70,12 +70,27 @@ bus journal validate
 
 ```bash
 bus balances import --input trial-balance.csv --as-of 2025-12-31 --source "excel"
-bus balances apply --as-of 2025-12-31 --post-date 2026-01-01 --period 2026-01 --equity-account 3200
+bus balances apply \
+  --as-of 2025-12-31 \
+  --post-date 2026-01-01 \
+  --period 2026-01 \
+  --equity-account 3200
 ```
 
 ### Files
 
 `balances.csv` and `balances.schema.json` at the workspace root. The module writes journal data only through the [bus-journal](./bus-journal) APIs when you run `apply`; it does not create separate journal files. The chart of accounts and period state are read via the [bus-accounts](./bus-accounts) and [bus-period](./bus-period) libraries.
+
+### Examples
+
+```bash
+bus balances init
+bus balances add \
+  --as-of 2026-01-01 \
+  --account 1910 \
+  --amount 25000 \
+  --source "opening import"
+```
 
 ### Exit status
 

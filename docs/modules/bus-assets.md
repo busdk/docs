@@ -39,6 +39,22 @@ You must supply `--proceeds-account`, `--gain-account`, and `--loss-account` so 
 
 Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus assets init
+bus assets add \
+  --asset-id LAPTOP-001 \
+  --name "Work laptop" \
+  --acquired 2026-01-15 \
+  --cost 1800 \
+  --asset-account 1130 \
+  --depreciation-account 1190 \
+  --expense-account 6800 \
+  --method straight_line \
+  --life-months 36
+```
+
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
@@ -81,4 +97,3 @@ See [Development status](../implementation/development-status#finnish-company-re
 - [Master data: Documents (evidence)](../master-data/documents/index)
 - [Module SDD: bus-assets](../sdd/bus-assets)
 - [Audit trail expectations: Append-only and soft deletion](../data/append-only-and-soft-deletion)
-

@@ -36,6 +36,13 @@ For journal-driven VAT (`--source journal`), direction and optional rate can be 
 
 The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries and exports as repository data. VAT master data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report or return data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus vat init
+bus vat report --period 2026-01
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage or VAT mapping violations.

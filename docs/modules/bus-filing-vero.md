@@ -52,6 +52,13 @@ Subcommands accept no positional arguments. Unknown subcommands and unknown subc
 
 Reads validated datasets and VAT and report outputs from the canonical layout, with root-level VAT files by default per [bus vat](./bus-vat). `vat/` and `reports/` are optional and are used only when the path accessors return those locations. For each CSV input, the command accepts `name.schema.json` and `name.csv.schema.json`. Writes Vero-specific bundle directories or archives with manifests and hashes.
 
+### Examples
+
+```bash
+bus filing vero export --bundle filing/vero/2026-01
+bus filing vero verify --bundle filing/vero/2026-01
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.

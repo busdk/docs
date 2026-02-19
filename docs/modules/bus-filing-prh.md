@@ -21,6 +21,13 @@ Module-specific parameters are documented in the tool help. Global flags are def
 
 Reads validated datasets and report outputs; writes PRH-specific bundle directories or archives with manifests and hashes.
 
+### Examples
+
+```bash
+bus filing prh --help
+bus filing prh --format json
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.

@@ -23,6 +23,13 @@ There are no global flags consumed by the dispatcher itself. Flags and arguments
 
 The first argument to `bus` is always the command (module) name. The set of available commands is determined at runtime by the executables named `bus-<command>` found on PATH. Typical commands include `init`, `config`, `accounts`, `journal`, `vat`, `reports`, and others; run `bus` with no arguments to see the full list for your installation.
 
+### Examples
+
+```bash
+bus init all
+bus accounts list
+```
+
 ### Exit status
 
 - **0** — The invoked module completed successfully (child exit 0).

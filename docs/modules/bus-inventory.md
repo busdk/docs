@@ -31,6 +31,19 @@ Command names follow [CLI command naming](../cli/command-naming). `bus inventory
 
 Inventory item and movement datasets and their beside-the-table schemas in the inventory area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `inventory/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus inventory init
+bus inventory add \
+  --item-id ITEM-001 \
+  --name "Notebook" \
+  --unit pcs \
+  --valuation-method fifo \
+  --inventory-account 1460 \
+  --cogs-account 4100
+```
+
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
@@ -73,4 +86,3 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-inventory](../sdd/bus-inventory)
 - [Data contract: Table schema contract](../data/table-schema-contract)
-

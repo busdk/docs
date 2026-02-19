@@ -61,12 +61,28 @@ bus period lock --period 2026Q1
 ```
 
 ```bash
-bus period opening --from ../sendanor-books-2023 --as-of 2023-12-31 --post-date 2024-01-01 --period 2024-01 --equity-account 3200
+bus period opening \
+  --from ../sendanor-books-2023 \
+  --as-of 2023-12-31 \
+  --post-date 2024-01-01 \
+  --period 2024-01 \
+  --equity-account 3200
 ```
 
 ### Files
 
 `periods.csv` and its beside-the-table schema `periods.schema.json` live at the workspace root. The schema defines a composite primary key (`period_id` and `recorded_at`) so each history row is unique; the current state of a period is the latest record for that period by `recorded_at` (effective record). Period operations append records only (no overwrites). `list` and `validate` use this effective record. If two rows ever share the same `period_id` and `recorded_at` (e.g. from hand edits), `validate` fails until the dataset is repaired using normal commands. Every period record written by the CLI has a non-empty retained-earnings account so close/opening and downstream modules can rely on it; if you have an older workspace with a blank retained-earnings account on a period, use `bus period set` to repair it. Paths are root-level only — the data is not under a subdirectory such as `periods/periods.csv`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+
+### Examples
+
+```bash
+bus period init
+bus period add \
+  --period 2026-01 \
+  --start-date 2026-01-01 \
+  --end-date 2026-01-31 \
+  --retained-earnings-account 2370
+```
 
 ### Exit status
 
@@ -109,4 +125,3 @@ See [Development status](../implementation/development-status).
 - [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
 - [Module SDD: bus-period](../sdd/bus-period)
 - [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
-

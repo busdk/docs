@@ -102,6 +102,13 @@ By default the server binds only to `127.0.0.1` and is reachable from the local 
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 
+### Examples
+
+```bash
+bus books serve --port 8090 --token-bytes 32
+bus books version
+```
+
 ### Development state
 
 **Value promise:** Local bookkeeping web UI over BusDK workspaces so end users can perform accounting tasks (journal, periods, VAT, bank, invoices, attachments, validation) in a browser without using the CLI.

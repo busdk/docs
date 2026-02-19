@@ -97,6 +97,13 @@ By default the server binds only to `127.0.0.1` and is reachable from the local 
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 
+### Examples
+
+```bash
+bus api serve --port 8080 --token-bytes 32
+bus api version
+```
+
 ### Development state
 
 **Value promise:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.

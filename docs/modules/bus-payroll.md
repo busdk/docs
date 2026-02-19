@@ -27,6 +27,13 @@ Command names follow [CLI command naming](../cli/command-naming). `bus payroll` 
 
 Payroll datasets and their beside-the-table schemas are read from the workspace root (for example `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`). Path resolution is owned by this module; other tools obtain paths via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus payroll validate
+bus payroll export PAYRUN-2026-01
+```
+
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.

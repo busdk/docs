@@ -37,6 +37,13 @@ Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain ava
 
 Reads all workspace datasets and schemas. Does not write.
 
+### Examples
+
+```bash
+bus validate --format tsv
+bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
+```
+
 ### Exit status
 
 `0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found.

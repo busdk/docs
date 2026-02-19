@@ -81,7 +81,22 @@ For the integration contract and Table Schema formula metadata, see [IF-BFL-002 
 Implementations and reviewers can confirm formula and locale parity as follows. (1) In a workspace with a CSV that has formula cells and a beside-the-table schema defining formula fields, run `bus data table workbook <path> A1:C3 --formula -f tsv` and assert the output contains evaluated numeric values for formula cells, not formula text. (2) With the same setup, assert that non-formula cells and formula results appear in the same machine-friendly columns. (3) For locale: run with `--decimal-sep "," --thousands-sep " "` against a table that includes a cell whose raw value is `1 234,56` (space thousands, comma decimal). (4) Assert the output value for that cell is normalized to `1234.56` (canonical decimal form). These steps verify FR-DAT-024 and FR-DAT-025 acceptance criteria. Example command with formula and locale options:
 
 ```text
-bus data table workbook source.csv A1:C10 --formula --decimal-sep "," --thousands-sep " " -f tsv
+bus data table workbook source.csv A1:C10 \
+  --formula \
+  --decimal-sep "," \
+  --thousands-sep " " \
+  -f tsv
+```
+
+### Examples
+
+```bash
+bus data table workbook source.csv A1:C10 \
+  --formula \
+  --formula-source \
+  --decimal-sep "," \
+  --thousands-sep " " \
+  -f tsv
 ```
 
 <!-- busdk-docs-nav start -->

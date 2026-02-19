@@ -82,6 +82,13 @@ By default the server binds only to `127.0.0.1` and is reachable from the local 
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 
+### Examples
+
+```bash
+bus sheets serve --port 8091 --token-bytes 32
+bus sheets version
+```
+
 ### Development state
 
 **Value promise:** Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.

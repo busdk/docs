@@ -127,7 +127,11 @@ Workbook formula evaluation uses deterministic BFL delegation with the minimal s
 Example with formula evaluation and locale (decimal comma, space thousands):
 
 ```text
-bus data table workbook source.csv A1:C10 --formula --decimal-sep "," --thousands-sep " " -f tsv
+bus data table workbook source.csv A1:C10 \
+  --formula \
+  --decimal-sep "," \
+  --thousands-sep " " \
+  -f tsv
 ```
 
 Verification steps for formula output and locale normalization are in [Formula metadata and evaluation for workbook extraction — Verification](./bus-bfl-workbook-formula-delegation#verification).
@@ -166,7 +170,10 @@ bus data resource validate customers
 Add resources explicitly with a name and CSV path and provide `--schema` to supply the Table Schema to write beside the table. This creates the CSV and beside-the-table schema artifacts. Remove a resource with `--delete-files` to delete its CSV and schema; the command refuses removal when any foreign key references the resource.
 
 ```text
-bus data resource add --name customers --path customers.csv --schema customers.schema.json
+bus data resource add \
+  --name customers \
+  --path customers.csv \
+  --schema customers.schema.json
 bus data resource remove customers --delete-files
 ```
 
@@ -188,8 +195,21 @@ bus data schema infer products --sample 2
 Adding a field extends both the schema and the CSV. A default value is written to existing rows, and you can mark the field as required and add a description. When you need formula metadata inline, use `schema field add` with formula flags so the schema and table stay in sync.
 
 ```text
-bus data schema field add --resource products --field category --type string --default general --required --description "category"
-bus data schema field add --resource products --field total --type string --formula-mode inline --formula-prefix "=" --formula-result-type number --default "=a + b"
+bus data schema field add \
+  --resource products \
+  --field category \
+  --type string \
+  --default general \
+  --required \
+  --description "category"
+bus data schema field add \
+  --resource products \
+  --field total \
+  --type string \
+  --formula-mode inline \
+  --formula-prefix "=" \
+  --formula-result-type number \
+  --default "=a + b"
 ```
 
 Changing a field type updates the schema only when existing values are compatible with the new type.
@@ -326,6 +346,13 @@ Help and version output are printed to standard output. Diagnostics and validati
 ### Files
 
 The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files (same directory, `.csv` replaced by `.schema.json`). A workspace `datapackage.json` is stored at the workspace root and references resources by name and workspace-relative CSV path. Path ownership lies with domain modules: when a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it obtains the path from the owning module’s Go library. Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods” (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+
+### Examples
+
+```bash
+bus data init
+bus data resource list
+```
 
 ### Exit status
 

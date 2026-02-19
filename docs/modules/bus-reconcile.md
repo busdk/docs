@@ -47,6 +47,13 @@ When [bus-bank](./bus-bank) is configured with counterparty and reference extrac
 
 Reconciliation datasets and their beside-the-table schemas in the reconciliation area. Reads bank transactions and invoice/journal references. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `reconcile/` folder).
 
+### Examples
+
+```bash
+bus reconcile list
+bus reconcile propose --out ./tmp/reconcile-proposals.tsv
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage, when amounts or references are invalid, or when `--fail-if-empty` is set and propose yields no proposals or apply receives empty input. See [Deterministic proposals and batch apply](#deterministic-proposals-and-batch-apply) for CI flag behavior.
@@ -90,4 +97,3 @@ See [Development status](../implementation/development-status).
 - [Workflow: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
 - [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
-

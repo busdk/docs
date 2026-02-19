@@ -93,6 +93,19 @@ Example: for yearly VAT reporting and cash-based timing, run `bus config set vat
 
 Set requires an existing workspace. If `datapackage.json` is missing in the effective workspace directory, the command fails with “datapackage.json not found”. If the file exists but does not contain a `busdk.accounting_entity` object (e.g. a minimal package with no BusDK extension), it fails with “missing busdk.accounting_entity”. In both cases the message is on stderr and the exit code is non-zero.
 
+### Examples
+
+```bash
+bus config init \
+  --base-currency EUR \
+  --fiscal-year-start 2026-01-01 \
+  --fiscal-year-end 2026-12-31 \
+  --vat-registered true \
+  --vat-reporting-period monthly \
+  --vat-timing performance
+bus config set reporting-standard fi-pma
+```
+
 ### Files
 
 The module reads and writes `datapackage.json` at the workspace root. The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `set` subcommand updates only that subtree in place. Path resolution for the workspace configuration file is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).

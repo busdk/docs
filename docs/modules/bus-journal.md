@@ -33,6 +33,17 @@ Command names follow [CLI command naming](../cli/command-naming). `bus journal` 
 
 Every file owned by `bus journal` includes “journal” or “journals” in the filename. The journal index is `journals.csv` at the repository root; period journal files sit at the workspace root with a date prefix (e.g. `journal-2026.csv`, `journal-2025.csv`), each with a beside-the-table schema (e.g. `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not use a subdirectory for journal data. Path resolution for journal data is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)). When validating account names or period boundaries, the journal uses the workspace chart of accounts and period state from [bus accounts](./bus-accounts) and [bus period](./bus-period) respectively. The journal reads the accounts dataset using the same schema semantics as bus-accounts; valid optional schema features in `accounts.schema.json` (for example foreign keys, including self-referencing parent/child relationships) are accepted and must not cause the journal to fail or emit unsupported-schema diagnostics.
 
+### Examples
+
+```bash
+bus journal init
+bus journal add \
+  --date 2026-01-31 \
+  --desc "January rent" \
+  --debit 6300=1200 \
+  --credit 1910=1200
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage, unbalanced postings, or schema or period violations.
@@ -94,4 +105,3 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-journal](../sdd/bus-journal)
 - [Layout: Journal area](../layout/journal-area)
 - [Design: Double-entry ledger](../design-goals/double-entry-ledger)
-

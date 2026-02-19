@@ -74,6 +74,19 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-accounts) datasets and optionally budget datasets. For statutory layouts, also reads workspace reporting profile settings from [bus-config](./bus-config) (`datapackage.json`) and account mapping from `report-account-mapping.csv`. Reports are computed from validated journal data inside explicit period boundaries, including year-end close/opening transitions managed by [bus-period](./bus-period). Writes only to stdout (or the file given by global `--output`).
 
+### Examples
+
+```bash
+bus reports trial-balance \
+  --as-of 2026-01-31 \
+  --format csv \
+  -o ./out/trial-balance-2026-01.csv
+bus reports profit-and-loss \
+  --period 2026-01 \
+  --format markdown \
+  -o ./out/pl-2026-01.md
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage, integrity failures, statutory mapping failures, or statutory statement reconciliation failures.

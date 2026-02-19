@@ -31,6 +31,22 @@ Command names follow [CLI command naming](../cli/command-naming). `bus loans` ma
 
 Loan register and event datasets and their beside-the-table schemas in the loans area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `loans/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus loans init
+bus loans add \
+  --loan-id LOAN-2026-01 \
+  --counterparty "Nordic Bank" \
+  --principal 50000 \
+  --start-date 2026-01-01 \
+  --maturity-date 2029-12-31 \
+  --interest-rate 4.25 \
+  --principal-account 2350 \
+  --interest-account 8450 \
+  --cash-account 1910
+```
+
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
@@ -75,4 +91,3 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-loans](../sdd/bus-loans)
 - [Data contract: Table schema contract](../data/table-schema-contract)
-

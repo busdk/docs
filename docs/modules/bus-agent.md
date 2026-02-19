@@ -95,6 +95,13 @@ When multiple agent runtimes are available (CLI found in PATH) and no persistent
 
 You can change which agent is used first by configuring the order: supply an ordered list of runtime IDs so that the first available runtime in that list becomes the automatic default. You can also disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). Configuration is via environment variables or, when supported, [bus-preferences](./bus-preferences); the exact variable names and format are documented in the [module SDD](../sdd/bus-agent) (FR-AGT-005a). For example, you might set an order so that `gemini` is tried first, then `cursor`, and disable `codex` and `claude` for the session.
 
+### Examples
+
+```bash
+bus agent detect --first
+bus agent set runtime codex
+```
+
 ### Files
 
 `bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation. When the runner enables AGENTS.md for a runtime that requires repo-local config (e.g. Gemini or Claude), it may create or merge files only under the additive, Bus-owned rules described in [Project instructions (AGENTS.md)](#project-instructions-agentsmd) and in the [module SDD](../sdd/bus-agent); it never edits user configuration outside the project working directory.

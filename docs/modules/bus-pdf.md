@@ -25,6 +25,12 @@ The JSON render model must include a top-level `template` field: either a templa
 
 Reads a JSON render model from a file or stdin. Writes only the specified PDF output. Does not read or write workspace datasets.
 
+### Examples
+
+```bash
+bus pdf --data ./render/invoice-1001.json --out ./out/invoice-1001.pdf --overwrite
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage or rendering failure.

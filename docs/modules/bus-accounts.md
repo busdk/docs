@@ -65,6 +65,13 @@ For Finnish statutory reports, account-to-line mapping is maintained in `report-
 
 `accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For statutory statement mapping, the module also owns `report-account-mapping.csv` and `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus accounts init
+bus accounts add --code 3000 --name "Sales income" --type income
+```
+
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid usage, row-level schema violations, or an invalid or malformed schema document.

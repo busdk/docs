@@ -59,6 +59,17 @@ Export never writes to workspace datasets. The export order (see [module SDD](..
 
 Export reads workspace configuration, resource list, and domain datasets (accounts, periods, journal, attachments, and optionally VAT or report outputs when included). It writes only the replay log to the path given by `--out` or stdout. Apply reads the replay log and may run `bus` subcommands against the target workspace; it does not modify the log file. Render reads the log and writes the rendered script. The module does not perform Git operations.
 
+### Examples
+
+```bash
+bus replay export \
+  --format jsonl \
+  --out ./tmp/replay-2026-01.jsonl \
+  --mode history \
+  --scope accounting
+bus replay apply --in ./tmp/replay-2026-01.jsonl --dry-run
+```
+
 ### Exit status
 
 `0` on success. `1` on runtime or precondition failure (missing required datasets, unreadable files). `2` on invalid usage (unknown flag, missing argument, invalid enum value). Global flags follow the same exit code conventions as [Standard global flags](../cli/global-flags).

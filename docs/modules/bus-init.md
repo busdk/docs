@@ -67,6 +67,13 @@ The command always runs `bus config init` first. That step ensures `datapackage.
 
 The initial `datapackage.json` is created by `bus config init` and follows the [workspace configuration](../data/workspace-configuration) shape. Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, and fiscal year and VAT registration set as documented in the data package extension. You can adjust these afterward with [bus config configure](./bus-config).
 
+### Examples
+
+```bash
+bus init all --no-payroll --no-loans
+bus init --accounts --entities --period --journal
+```
+
 ### Files
 
 The command invokes `bus config init` (which creates or ensures `datapackage.json`) and, when module flags are supplied, each selected domain module’s init so that those modules’ datasets and schema files appear in the workspace root. With no module flags, only `datapackage.json` is created. Bus init does not write any files directly; it only orchestrates the sequence. Success is determined by each step’s exit code, not by a post-hoc check of baseline paths.

@@ -42,6 +42,13 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 `bank-imports.csv` and `bank-transactions.csv` at the repository root with beside-the-table schemas. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `bank/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
+### Examples
+
+```bash
+bus bank init
+bus bank import --file ./imports/bank/january-2026.csv
+```
+
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid filters or schema violations.

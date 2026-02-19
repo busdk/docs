@@ -29,6 +29,13 @@ Target-specific parameters are documented in each module’s help. Global flags 
 
 Reads validated datasets and reports; writes export bundle directories or archives (datasets, schemas, manifests). Does not modify canonical workspace datasets.
 
+### Examples
+
+```bash
+bus filing prh
+bus filing vero
+```
+
 ### Exit status
 
 `0` on success. Non-zero on invalid usage or missing prerequisites (e.g. unvalidated or open period).

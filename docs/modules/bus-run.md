@@ -98,6 +98,13 @@ Preferences that affect `bus run` are stored via the [bus-preferences](./bus-pre
 | `bus-run.timeout` | Bus-run default timeout (e.g. `60m`). Set with `bus run set timeout <duration>`. |
 | `bus-run.pipeline.<name>` | User-defined pipeline: a JSON array of tokens. Set with **`bus run pipeline set prefs <name> TOKEN...`** or `bus preferences set bus-run.pipeline.<name> '<json array>'`. Unset with **`bus run pipeline unset prefs <name>`**. |
 
+### Examples
+
+```bash
+bus run list
+bus run pipeline list
+```
+
 ### Files
 
 `bus run` does not read or write workspace accounting datasets. It uses the effective working directory as the project root; `.bus/run/` is under that directory. No Git is required. To enforce a single run per directory, it uses an exclusive lock file (e.g. `.bus-run.lock`) in the effective operation directory; the lock is released when the command exits. No bus-run-specific config file is required; configuration is via flags, environment, and bus-preferences. User-defined pipelines are read from bus-preferences (keys `bus-run.pipeline.<name>`) when resolving tokens; directory-local definitions are read from `.bus/run/` only. Paths under `.bus/run/` must resolve inside the project root; symlinks that point outside the project root are refused.
@@ -132,6 +139,14 @@ Deterministic results (list, context, pipeline list, action list, script list) a
 
 See [Development status](../implementation/development-status).
 
+<!-- busdk-docs-nav start -->
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-agent">bus-agent</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
+</p>
+<!-- busdk-docs-nav end -->
+
 ### Sources
 
 - [BusDK — installation and overview](https://busdk.com/)
@@ -146,11 +161,3 @@ See [Development status](../implementation/development-status).
 - [Claude Code — get started / install](https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started)
 - [Codex CLI — install](https://developers.openai.com/codex/cli/)
 - [OpenAI Help Center: Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)
-
-<!-- busdk-docs-nav start -->
-<p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-agent">bus-agent</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus-bfl">bus-bfl</a> &rarr;</span>
-</p>
-<!-- busdk-docs-nav end -->
