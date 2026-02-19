@@ -28,16 +28,18 @@ The first-class two-phase reconciliation workflow is implemented: `bus reconcile
 - `list` lists reconciliation records.
 - `init` bootstraps `matches.csv` and `matches.schema.json` at workspace root with deterministic defaults. Output is machine-readable TSV (`path`, `status`) and supports idempotent rerun (`unchanged`) or forced rewrite (`--force` -> `updated`).
 - `propose` generates deterministic reconciliation proposal rows from unreconciled bank and invoice/journal data; output includes confidence and reason fields.
-- `apply` consumes approved proposal rows and records match or allocation writes deterministically; supports `--dry-run` and idempotent re-apply.
+- `apply` consumes approved proposal rows and records match or allocation writes deterministically; supports `--dry-run` and idempotent re-apply. Incoming-mode proposals may include `target_kind=unmatched` no-op rows for deterministic backlog classification.
 - `post` converts existing `invoice_payment` match rows to journal postings using invoice evidence (net + VAT). Sales postings are debit bank / credit sales / credit VAT; purchase postings are debit purchase / debit VAT / credit bank. Idempotency uses voucher id `bank:<bank_txn_id>` and `--if-missing` can skip already-posted vouchers.
 
 ### Options
 
-`match` accepts `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`. `allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reconcile --help`.
+`match` accepts `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`. `allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`. `propose` supports `--incoming` with deterministic keyword mapping flags (`--transfer-keywords`, `--owner-loan-keywords`, `--owner-investment-keywords`) and unresolved backlog output (`--unresolved-out <path>`). Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reconcile --help`.
 
 ### Deterministic proposals and batch apply
 
 `bus reconcile propose` generates deterministic reconciliation proposal rows with confidence and reason fields. `bus reconcile apply --in <path>|-` consumes approved proposal rows and records canonical match or allocation writes deterministically, with `--dry-run` and idempotent re-apply semantics. Use `--fail-if-empty` so that propose exits non-zero when no proposals are generated; this supports CI workflows that must fail on backlog or incomplete apply.
+
+Incoming backlog classifier mode is available through propose/apply: `propose --incoming` can classify incoming rows as internal-transfer no-op pairs (`incoming_internal_transfer_paired` / one-sided no-op), owner investment, or owner loan using configurable keyword maps. Unclassified incoming rows can be exported to a deterministic backlog TSV via `--unresolved-out`. Applying these proposals writes `kind=unmatched` rows in `matches.csv` and is idempotent on re-apply.
 
 Output from propose (or apply result sets) must be redirected using the **global** `--output` flag before the subcommand: for example `bus reconcile -o proposals.tsv propose` or `bus reconcile -o applied.tsv apply --in approved.tsv`. Placing `-o` after the subcommand is invalid. Script-based candidate workflows (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remain an alternative.
 

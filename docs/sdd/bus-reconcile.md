@@ -21,6 +21,8 @@ FR-REC-004 Batch apply of approved proposals. The module MUST provide a command 
 
 FR-REC-005 Reconciliation coverage output contract. The module MUST expose deterministic reconciliation coverage fields that parity and gap checks can consume. Acceptance criteria: proposal and apply outputs include stable identifiers and statuses for matched, allocated, skipped, and rejected rows; period and target references are explicit so [bus-validate](./bus-validate) and [bus-reports](./bus-reports) can compute deterministic migration-quality checks.
 
+FR-REC-007 Incoming backlog classifier with transfer pairing. The module MUST support deterministic incoming-row backlog proposals and apply semantics for replay workspaces. Acceptance criteria: propose can classify incoming rows using configurable keyword maps (owner loan/investment and internal transfer), includes deterministic one-sided transfer no-op policy, emits unresolved incoming backlog output, and apply handles these proposals idempotently via explicit no-op/unmatched rows.
+
 FR-REC-006 Deterministic reconciliation dataset bootstrap. The module MUST provide `bus reconcile init` to ensure `matches.csv` and `matches.schema.json` exist with deterministic default content. Acceptance criteria: command is idempotent, supports force rewrite semantics, and emits machine-readable status rows (`path`, `status`) for CI and replay scripts.
 
 NFR-REC-001 Auditability. Allocation history MUST be append-only and traceable to bank transactions, invoices, and vouchers. Acceptance criteria: allocation records are not overwritten and retain source references.
@@ -55,7 +57,11 @@ Documented parameters for `bus reconcile allocate` are `--bank-id <id>` plus one
 
 Interface IF-REC-002 (proposal generation). The command surface is `bus reconcile propose --out <path>|-` with optional deterministic selectors such as date range, period, and target scope. The command reads unreconciled bank rows and eligible invoice or journal targets, computes deterministic candidate rows, and writes a proposal dataset or report. Each proposal row includes stable proposal ID, bank transaction ID, proposed target kind and target ID, proposed amount, confidence score, and reason codes. Proposal output ordering is deterministic and stable across machines.
 
+Incoming classifier extension (implemented): `bus reconcile propose --incoming` enables deterministic classification proposals for incoming bank rows. Keyword maps are configurable through `--transfer-keywords`, `--owner-loan-keywords`, and `--owner-investment-keywords` (comma-separated, deterministic matching against normalized counterparty/message/reference text). Internal-transfer pairing uses opposite-sign same-amount rows with transfer keyword matches; when only one side exists, propose emits deterministic one-sided no-op reason. `--unresolved-out <path>` writes unclassified incoming rows to a deterministic TSV backlog artifact.
+
 Interface IF-REC-003 (batch apply). The command surface is `bus reconcile apply --in <path>|-` with optional row selection and `--dry-run`. The command consumes approved proposal rows and applies each row as either a one-to-one match or an allocation write, depending on the proposal shape. Apply is deterministic, idempotent, and fail-safe: invalid rows are rejected with deterministic diagnostics and no partial writes for the rejected row; already-applied rows are reported as skipped.
+
+Incoming classifier apply extension (implemented): apply accepts proposal rows with `target_kind=unmatched` and records deterministic no-op classification rows (`kind=unmatched`) in `matches.csv`. Re-applying the same no-op proposal rows is idempotent and yields deterministic skipped status.
 
 Interface IF-REC-004 (coverage artifact contract). Proposal and apply outputs expose a deterministic row contract including at minimum proposal ID, bank transaction ID, target kind, target ID, period key, amount, confidence, reason codes, and apply status. This contract is consumed by [bus-validate](./bus-validate) parity or gap checks and [bus-reports](./bus-reports) coverage reports.
 
