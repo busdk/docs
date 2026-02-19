@@ -335,6 +335,13 @@ Use `--dry-run` on mutating commands to see what would change without writing fi
 bus data --dry-run row add products --set id=P-4 --set name="Product D"
 ```
 
+For replay performance diagnostics, set `BUSDK_PERF=1` when running `row add`. The command emits deterministic stderr diagnostics:
+
+```bash
+BUSDK_PERF=1 bus data row add customers --set id=3 --set name=Celia
+# bus-data: perf op=row.add table=customers rows=1 elapsed_ms=... rows_per_sec=...
+```
+
 If a table name starts with `-`, place `--` before the command arguments to stop flag parsing.
 
 ```text

@@ -49,6 +49,13 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 Profile-driven import is available in the current release. For example, `bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024` maps ERP export rows into canonical invoice datasets with deterministic output artifacts. Profiles can include year filtering, status normalization, VAT line synthesis, and party lookup.
 
+For replay performance diagnostics, set `BUSDK_PERF=1` when running `import`. The command emits deterministic per-table stderr diagnostics:
+
+```bash
+BUSDK_PERF=1 bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024
+# bus-invoices: perf table=sales-invoices.csv rows=... elapsed_ms=... rows_per_sec=...
+```
+
 Generated append scripts are still useful when a migration needs one-off custom logic, but they are no longer required for the standard ERP history import flow.
 
 ### Reconciliation proposal flow integration
