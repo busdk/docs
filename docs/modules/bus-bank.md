@@ -12,7 +12,9 @@ description: bus bank normalizes bank statement data into schema-validated datas
 `bus bank import --profile <path> --source <path> [--year <YYYY>] [-C <dir>] [global flags]`  
 `bus bank config [<subcommand>] [options] [-C <dir>] [global flags]`  
 `bus bank list [--month <YYYY-M>] [--from <date>] [--to <date>] [--counterparty <id>] [--invoice-ref <ref>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
-`bus bank backlog [--month <YYYY-M>] [--from <date>] [--to <date>] [--detail] [--fail-on-backlog] [--max-unposted <n>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`
+`bus bank backlog [--month <YYYY-M>] [--from <date>] [--to <date>] [--detail] [--fail-on-backlog] [--max-unposted <n>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus bank statement extract --file <path> [--account <id>] [--iban <iban>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus bank statement verify [--year <YYYY>] [--account <id>] [--fail-if-diff-over <amount>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`
 
 ### Description
 
@@ -25,10 +27,11 @@ Command names follow [CLI command naming](../cli/command-naming). `bus bank` nor
 - `config` manages counterparty normalization and reference extractors. Use `config counterparty add` to add canonical names and alias patterns, and `config extractors add` to add extractor patterns (e.g. regex) so bank message/reference fields yield normalized reference hints. When configured, `list` output includes normalized counterparty and extracted reference-hint columns.
 - `list` prints bank transactions with deterministic filtering. When counterparty and extractor config are present, output includes normalized counterparty and extracted reference-hint columns (e.g. `erp_id`, `invoice_number_hint`).
 - `backlog` reports posted versus unposted bank transactions for classification coverage. It reads bank transactions and reconciliation matches and supports detail and CI-friendly failure thresholds.
+- `statement` extracts and verifies statement balance checkpoints. `statement extract` appends normalized balance checkpoints to `bank-statement-checkpoints.csv`; `statement verify` compares checkpoints against `bank-transactions.csv` running balances and can fail when diffs exceed a threshold.
 
 ### Options
 
-`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. `backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
+`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. `backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`. `statement extract` supports `--file <path>` with optional `--account` and `--iban`. `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
 
 ### Profile-driven ERP history import
 
@@ -40,7 +43,7 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 ### Files
 
-`bank-imports.csv` and `bank-transactions.csv` at the repository root with beside-the-table schemas. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `bank/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`bank-imports.csv`, `bank-transactions.csv`, and `bank-statement-checkpoints.csv` at the repository root with beside-the-table schemas. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `bank/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)). Statement balance extraction reads a statement summary CSV with a beside-the-file schema; for PDF evidence, provide a sidecar `<base>.statement.csv` and `<base>.statement.schema.json` so extraction can proceed while preserving the PDF path as evidence.
 
 ### Examples
 
@@ -63,7 +66,7 @@ bus bank import --file ./imports/bank/january-2026.csv
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, file and profile import, list verified; user can complete bank step before reconcile. [Import ERP history](../workflow/import-erp-history-into-canonical-datasets): 70% — profile import with `--year`, dry-run, and byte-identical artifacts verified by e2e. [Finnish company reorganisation — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — import and list verified; basis for reconciliation evidence. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — import and list verified for pay-day statement flow.
 
-**Current:** `tests/e2e_bus_bank.sh` verifies help, version, invalid usage (quiet+verbose, color, format), init (four files at workspace root, idempotent warning, partial-state fail, `--dry-run`), import `--file` (schema validation, invalid currency fails, `--dry-run`), import `--profile --source` (plan/result artifacts, byte-identical re-run, `--dry-run`, `--year` filter, profile-without-source usage error), list (deterministic TSV, `--month`, `--counterparty`, `-o`, `-q`, `-f tsv`), backlog (`--detail`, TSV/JSON, `--fail-on-backlog`, `--max-unposted`), config counterparty add, config extractors add, and global flags (`-C`, `--`, `-vv`, `--no-color`). `internal/app/run_test.go` and `internal/app/import_test.go` verify init/list/import and import dry-run. `internal/bank/datasets_test.go` verifies init create/idempotent/partial and list filters (month, from/to, counterparty, invoice-ref). `internal/bank/profile_import_test.go` and `internal/bank/profile_test.go` verify profile import deterministic artifacts, year filter, dry-run no writes, and required source columns. `internal/bank/schema_test.go`, `internal/bank/output_test.go`, and `internal/cli/flags_test.go` cover schema, output formatting, and flag parsing. `path/path_test.go` verifies workspace-relative path accessors for bank datasets.
+**Current:** `tests/e2e_bus_bank.sh` verifies help, version, invalid usage (quiet+verbose, color, format), init (four files at workspace root, idempotent warning, partial-state fail, `--dry-run`), import `--file` (schema validation, invalid currency fails, `--dry-run`), import `--profile --source` (plan/result artifacts, byte-identical re-run, `--dry-run`, `--year` filter, profile-without-source usage error), list (deterministic TSV, `--month`, `--counterparty`, `-o`, `-q`, `-f tsv`), backlog (`--detail`, TSV/JSON, `--fail-on-backlog`, `--max-unposted`), config counterparty add, config extractors add, and global flags (`-C`, `--`, `-vv`, `--no-color`). `internal/app/run_test.go` and `internal/app/import_test.go` verify init/list/import, statement extract/verify, and import dry-run. `internal/bank/datasets_test.go` verifies init create/idempotent/partial and list filters (month, from/to, counterparty, invoice-ref). `internal/bank/profile_import_test.go` and `internal/bank/profile_test.go` verify profile import deterministic artifacts, year filter, dry-run no writes, and required source columns. `internal/bank/statement_checkpoints_test.go` verifies statement extract/append/verify. `internal/bank/schema_test.go`, `internal/bank/output_test.go`, and `internal/cli/flags_test.go` cover schema, output formatting, and flag parsing. `path/path_test.go` verifies workspace-relative path accessors for bank datasets.
 
 **Planned next:** None in PLAN.md; optional: help/synopsis alignment for profile and `--year` flags.
 
