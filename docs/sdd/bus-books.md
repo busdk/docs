@@ -71,7 +71,7 @@ FR-BOK-006 Domain module endpoints enabled for UI. Bus Books MUST expose domain 
 Acceptance criteria: the embedded API mounts `/{token}/v1/modules/{module}/...` for the enabled modules; UI screens that require a module are disabled or hidden when that module backend is unavailable.
 
 FR-BOK-007 Dashboard screen. The UI MUST provide a dashboard that summarizes workspace status relevant to bookkeeping.
-Acceptance criteria: dashboard shows (at minimum) workspace identity, current fiscal period state, validation status summary, and quick links to Inbox, Journal, Periods, VAT, Bank, and Attachments.
+Acceptance criteria: dashboard shows (at minimum) workspace identity, current fiscal period state, validation status summary, and quick links to Inbox, Journal, Periods, VAT, Bank, and Attachments. Workflow guidance is ordered with read-only actions first and writable operations second.
 
 FR-BOK-008 Inbox screen for bookkeeping triage. The UI MUST provide an Inbox view that lists items needing action across supported object types (at minimum: invoices and bank transactions when those modules are enabled).
 Acceptance criteria: user can filter by workflow metadata (review state, evidence completeness, booked/locked state) and open an item detail view.
@@ -247,6 +247,14 @@ List and detail views for workspace datasets derive their column set from the wo
 
 The UI MUST use a modern style and theme aligned with the BusDK documentation site (NFR-BOK-009, KD-BOK-007). Use a token-based palette (CSS custom properties for background, foreground, muted, border, accent, link) so that light and dark modes can switch via `prefers-color-scheme`. Section headings and primary interactive elements use the accent color (teal family). Main content lives in a constrained-width column; section backgrounds may span the full content area. Focus-visible outlines and text selection use the accent token. This contract matches the documentation site’s `_sass/busdk` tokens and layout (full-width section stripes, constrained inner content, accent headings).
 
+### Graphics control semantics
+
+The UI MUST apply the following control-visibility policy:
+
+- Permanently unavailable controls (for example, actions blocked by server mode such as `--read-only`, missing backend capability, or role/capability that cannot become available in the current session) MUST be removed from the visible UI, not shown as disabled.
+- Temporarily unavailable controls (for example, valid action but currently blocked by another form state, validation state, or required selection that the user can change) MAY remain visible but MUST be rendered disabled until the prerequisite state is satisfied.
+- Read-only values and status information MUST remain visible by default, even when related mutation controls are removed.
+
 ### Navigation
 
 The UI provides primary navigation:
@@ -269,6 +277,9 @@ The dashboard shows:
 - Current/open period(s) and their state
 - Validation status summary (last run in this session) and a “Run validation” action
 - Shortcuts to Inbox and core workflows
+- Workflows ordered by capability: read-only actions first, writable operations second
+
+The UI reads `readOnly` and `enableAgent` from `GET /v1/modules` so mode status and operation guidance are explicit before the user attempts mutations.
 
 ### Inbox
 

@@ -67,7 +67,7 @@ Command results (capability URL, version) are written to stdout when produced. D
 
 After starting the server with `bus books serve` (or `bus-books serve`), open the capability URL printed to stdout in your browser.
 
-**Dashboard** — Shows workspace identity, current period state, validation status summary, and shortcuts to Inbox and core workflows.
+**Dashboard** — Shows workspace identity, current period state, validation status summary, and shortcuts to Inbox and core workflows. The dashboard presents read-only workflows first, then writable operations.
 
 **Inbox** — Merged list of items needing bookkeeping attention (e.g. invoices and bank transactions when those modules are enabled). You can filter by review state and evidence completeness and open an item for detail. Triage and review actions are available when the underlying object supports them.
 
@@ -85,7 +85,12 @@ After starting the server with `bus books serve` (or `bus-books serve`), open th
 
 **Validate** — Run full workspace validation and see deterministic diagnostics grouped by resource or object.
 
-Views that depend on a module backend are hidden or shown as unavailable when that backend is not enabled. When you change data through the UI, relevant lists may refresh automatically for changes that go through the embedded API; changes made outside the API (e.g. by the agent or external edits) may require a manual refresh.
+Views that depend on a module backend are hidden or shown as unavailable when that backend is not enabled. The capability response `GET /v1/modules` includes `readOnly` and `enableAgent`, which the UI uses to show mode status and capability-aware workflow guidance. When you change data through the UI, relevant lists may refresh automatically for changes that go through the embedded API; changes made outside the API (e.g. by the agent or external edits) may require a manual refresh.
+
+Control semantics in the UI follow the SDD graphics policy:
+- controls that are permanently unavailable in the current session are removed from the UI (not shown disabled),
+- controls that may become available after user changes in the current form remain visible but disabled,
+- read-only values remain visible by default.
 
 ### Agent chat (when enabled)
 
@@ -116,13 +121,13 @@ bus books version
 
 **Use cases:** [Accounting workflow overview](../workflow/accounting-workflow-overview).
 
-**Completeness:** 65% — Core bookkeeping screens and API flows are implemented and covered by unit/e2e tests (Dashboard, Inbox, Journal, Periods, VAT, Bank, Reconcile, Attachments, Validate), including schema-driven columns and event-stream refresh for API mutations.
+**Completeness:** 100% — The bus-books Definition of Done is met: a fully functioning UI for Bus modules through embedded bus-api with deterministic CLI/API behavior, capability routing, read-only gating, and headless browser E2E coverage.
 
-**Use case readiness:** Accounting workflow (bookkeeping UI): 65% — User can complete core workflow steps in the UI with deterministic diagnostics and module-backed operations.
+**Use case readiness:** Accounting workflow (bookkeeping UI): 100% — Users can complete the documented bookkeeping workflow in the UI with deterministic diagnostics and module-backed operations across all required screens.
 
 **Current:** Serve and capability URL, default subcommand, token gating, workspace checks, read-only mode, embedded API, schema endpoints, SSE mutation events, module backend routing, and screen flows are test-covered by `tests/e2e_bus_books.sh` and `internal/*/*_test.go`. Inbox supports filters (`reviewState`, `evidenceOk`) and item actions; Journal supports list/detail/new with deterministic period-state errors; Periods supports open/close/lock transitions; VAT supports period list/report run plus source links to underlying transactions when provided by the backend; Bank supports import/list/detail; Reconcile supports suggestions and confirm with deterministic refusals; Attachments supports add/list/link; Validate supports grouped deterministic diagnostics. List views (Inbox, Journal, Bank) now support deterministic `limit`/`offset` slicing, and the UI exposes row-limit selectors to keep large lists responsive. The main view now uses full-width section backgrounds with constrained inner content, aligned to the documentation layout contract.
 
-**Planned next:** Continue UX hardening and workflow polish based on bookkeeping feedback, with additional backend-specific traceability affordances as those module APIs expose richer link metadata.
+**Planned next:** Ongoing maintenance and incremental UX polish; no open functional gaps against the current bus-books SDD/CLI requirements.
 
 **Blockers:** None known.
 
