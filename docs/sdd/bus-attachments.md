@@ -17,6 +17,8 @@ FR-ATT-002 CLI surface for evidence registration. The module MUST provide comman
 
 FR-ATT-003 Init behavior. The module MUST provide an `init` command that creates the attachments metadata dataset and schema when they are absent. When they already exist in full, `init` MUST print a warning to standard error and exit 0 without modifying anything. When they exist only partially, `init` MUST fail with a clear error and not write any file (see [bus-init](../sdd/bus-init) FR-INIT-004). Acceptance criteria: `bus attachments init` is available; idempotent and partial-state behavior as specified.
 
+FR-ATT-004 Attachment link graph and filter/audit queries. The module MUST provide deterministic attachment-to-resource linking and list/query capabilities: filters by bank row/voucher/invoice/date/unlinked status, reverse-link graph output, and strict audit flags (`fail-if-unlinked`, `fail-if-missing-kind`). Acceptance criteria: link-many workflows are supported (`add` once, then `link` multiple resources), list filters are deterministic, graph output is machine-readable, and strict flags can produce non-zero exit for CI/audit gates.
+
 NFR-ATT-001 Auditability. Attachment metadata MUST remain in the repository even if files are stored outside Git. Acceptance criteria: metadata rows are retained and list outputs remain deterministic.
 
 NFR-ATT-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (attachments metadata CSV and schema). Other modules that need read-only access to the attachment metadata raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the attachments dataset; consumers use these accessors for read-only access; no consumer hardcodes `attachments.csv` outside this module.
@@ -35,24 +37,25 @@ KD-ATT-003 Path exposure for read-only consumption. The module exposes path acce
 
 ### Component Design and Interfaces
 
-Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with subcommands `init`, `add`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-ATT-001 (module CLI). The module exposes `bus attachments` with subcommands `init`, `add`, `link`, and `list` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
-The `init` command creates the baseline attachments metadata dataset and schema (`attachments.csv` and `attachments.schema.json`) when they are absent. If both already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
+The `init` command creates baseline attachments metadata and links datasets/schemas (`attachments.csv`, `attachments.schema.json`, `attachment-links.csv`, `attachment-links.schema.json`) when they are absent. If all already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-The `add` command accepts a positional file path plus a description parameter. Documented parameters are `<file>` as a positional argument and `--desc <text>` for the attachment description.
+The `add` command accepts a positional file path plus a description parameter. Documented parameters are `<file>` as a positional argument and `--desc <text>` for the attachment description. The `link` command accepts `<attachment_id>` and target parameters (`--kind/--id`, or shortcut selectors such as `--bank-row`, `--voucher`, `--invoice`) and appends deterministic link rows to `attachment-links.csv`. The `list` command supports deterministic filters and reverse-link graph output, with strict audit flags for CI gating.
 
-Interface IF-ATT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (attachments metadata CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and attachment logic remain in this module.
+Interface IF-ATT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (attachments metadata CSV/schema and attachment-links CSV/schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and attachment logic remain in this module.
 
 Usage examples:
 
 ```bash
 bus attachments add tmp/INV-1001.pdf --desc "Invoice INV-1001 (PDF)"
+bus attachments link <attachment_id> --invoice INV-1001
 bus attachments list
 ```
 
 ### Data Design
 
-The module reads and writes `attachments.csv` in the repository root with a beside-the-table schema file. Master data (the metadata dataset and its schema) lives in the workspace root only. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` — for example `attachments/2026/01/20260115-INV-1001.pdf` — where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename begins with an eight-digit date. This is the only BusDK layout that places operational files in a subdirectory; the path is deterministic so the metadata can reference it reliably. Each `attachment_id` is a standard UUID string in canonical form so integrations can generate or validate identifiers without guessing; the expected representation is lowercase hex with hyphens in 8-4-4-4-12 grouping.
+The module reads and writes `attachments.csv` and `attachment-links.csv` in the repository root with beside-the-table schema files. Master data (metadata + links datasets and schemas) lives in the workspace root only. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` — for example `attachments/2026/01/20260115-INV-1001.pdf` — where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename begins with an eight-digit date. This is the only BusDK layout that places operational files in a subdirectory; the path is deterministic so metadata can reference it reliably. Each `attachment_id` is a standard UUID string in canonical form so integrations can generate or validate identifiers without guessing; the expected representation is lowercase hex with hyphens in 8-4-4-4-12 grouping.
 
 Other modules that need read-only access to the attachments metadata dataset MUST obtain the path from this module’s Go library (IF-ATT-002). All writes and attachment-domain logic remain in this module.
 

@@ -18,7 +18,9 @@ For payment-evidence cash-basis filing (`maksuperusteinen`), the module also sup
 `bus vat init [-C <dir>] [global flags]`  
 `bus vat validate [-C <dir>] [global flags]`  
 `bus vat report --period <period> [-C <dir>] [global flags]`  
-`bus vat export --period <period> [-C <dir>] [global flags]`
+`bus vat export --period <period> [-C <dir>] [global flags]`  
+`bus vat filed-import --period <period> --file <path> [-C <dir>] [global flags]`  
+`bus vat filed-diff --period <period> [-C <dir>] [global flags]`
 
 ### Commands
 
@@ -26,9 +28,13 @@ For payment-evidence cash-basis filing (`maksuperusteinen`), the module also sup
 
 `report` computes and emits the VAT summary for a given period. `export` writes VAT export output for a period (e.g. for filing). Both require `--period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules; VAT commands do not use a positional period argument.
 
+`filed-import` imports externally filed VAT evidence for a period with provenance (`source_path`, `source_sha256`) and writes canonical period data at workspace root (`vat-filed-<period>.csv`) plus an index row in `vat-filed.csv`. Existing period evidence is refused unless `--force`.
+
+`filed-diff` compares filed VAT totals vs replay totals for the same period and emits deterministic machine-readable TSV with filed/replay/delta values for output/input/net VAT. It exits non-zero when any absolute delta exceeds `--threshold-cents` (default `0`).
+
 ### Options
 
-`report` and `export` require `--period <period>`. When using `--source journal`, journal rows are read from the journal area and normalized for VAT reporting. Direction is resolved deterministically in this order: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). Amount can be provided as `amount_cents` (integer) or `amount` (decimal major units). Rate uses row-level `vat_rate_bp` first, then `vat_rate`/`vat_percent`, then mapping (`vat_rate_bp`/`rate_bp`/`vat_rate`/`vat_percent`) from `vat-account-mapping.csv`. For mapped VAT-account rows that have direction but no explicit rate, amount is treated as VAT amount (net 0). Legacy fallback also infers VAT amount from sided debit/credit postings on likely VAT accounts (for example `293x`) when mapping is missing and row rate is absent. Opening-balance rows are excluded from journal-source VAT reporting, including rows identifiable via opening voucher/source kind or opening-style source identifiers (for example `opening:*`). In cash basis, bank evidence references such as `bank_row:<id>:journal:<n>` are normalized to corresponding bank transaction ids (including `erp-bank-<id>` forms) for payment-date lookup. If direction cannot be resolved for a row, the command fails with a clear diagnostic naming the row/account and required fallback data.
+`report`, `export`, `filed-import`, and `filed-diff` require `--period <period>`. `filed-import` also requires `--file <path>`. `filed-diff` supports `--threshold-cents <int>` and exits `1` when any absolute VAT delta exceeds threshold. When using `--source journal`, journal rows are read from the journal area and normalized for VAT reporting. Direction is resolved deterministically in this order: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). Amount can be provided as `amount_cents` (integer) or `amount` (decimal major units). Rate uses row-level `vat_rate_bp` first, then `vat_rate`/`vat_percent`, then mapping (`vat_rate_bp`/`rate_bp`/`vat_rate`/`vat_percent`) from `vat-account-mapping.csv`. For mapped VAT-account rows that have direction but no explicit rate, amount is treated as VAT amount (net 0). Legacy fallback also infers VAT amount from sided debit/credit postings on likely VAT accounts (for example `293x`) when mapping is missing and row rate is absent. Opening-balance rows are excluded from journal-source VAT reporting, including rows identifiable via opening voucher/source kind or opening-style source identifiers (for example `opening:*`). In cash basis, bank evidence references such as `bank_row:<id>:journal:<n>` are normalized to corresponding bank transaction ids (including `erp-bank-<id>` forms) for payment-date lookup. If direction cannot be resolved for a row, the command fails with a clear diagnostic naming the row/account and required fallback data.
 
 When using `--source reconcile --basis cash`, VAT rows are derived from `matches.csv` (`kind=invoice_payment`), `bank-transactions.csv` payment dates (`booked_date`/`booking_date`/`value_date`/`booked_at`), and invoice evidence rows. Partial payments are split proportionally across invoice VAT/net rows and allocated to the bank payment-date period.
 When using `--source journal --basis cash`, payment-date allocation uses journal payment-date evidence columns when present (`payment_date`/`paid_date`/`value_date`/`booked_date`/`booking_date`/`booked_at`), optional `bank_txn_id` lookup to `bank-transactions.csv`, and falls back to `posting_date` when explicit payment evidence is missing.
@@ -46,7 +52,7 @@ For journal-driven VAT (`--source journal`), direction and optional rate can be 
 
 ### Files
 
-The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries and exports as repository data. VAT master data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report or return data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries, exports, and filed evidence as repository data. VAT master/index data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv`, `vat-filed.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report/return/filed data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`, `vat-filed-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -54,6 +60,8 @@ The module reads invoice and journal datasets and optional VAT reference dataset
 bus vat init
 bus vat report --period 2026-01
 bus vat report --period 2026-01 --source reconcile --basis cash
+bus vat filed-import --period 2026-01 --file ./authority-2026-01.csv
+bus vat filed-diff --period 2026-01 --threshold-cents 0
 ```
 
 ### Exit status
@@ -70,7 +78,7 @@ bus vat report --period 2026-01 --source reconcile --basis cash
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 80% — close-step VAT (init→validate→report→export) from invoice or journal completable with source_refs and index update. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 80% — VAT report and export with invoice/voucher refs; closed-period/--force and rate validation verified.
 
-**Current:** Init (incl. --dry-run), validate (incl. rate check, vat_registered=false, --period, --source journal), report and export from invoice or journal with source_refs, vat-returns index update, closed-period re-export/--force, and path API are verified by `tests/e2e_bus_vat.sh` and unit tests in `internal/app/run_test.go`, `internal/vat/` (export_test.go, report_test.go, init_test.go, config_test.go, journal_test.go, validate_rate_test.go, periods_test.go), `vatpath/path_test.go`, and `internal/cli/flags_test.go`. Legacy journal datasets without row-level `direction` are supported via mapping and accounts fallback (vat-account-mapping.csv by account_id, then accounts.csv account type); commands fail deterministically only when all direction sources are missing, with diagnostics that identify the row/account.
+**Current:** Init (incl. --dry-run), validate (incl. rate check, vat_registered=false, --period, --source journal), report/export from invoice or journal with source_refs, filed evidence import (`filed-import`) with provenance hash, deterministic filed-vs-replay diff (`filed-diff`) with threshold-based exit, vat-returns/vat-filed index updates, closed-period export re-run control (`--force`), and path API are verified by `tests/e2e_bus_vat.sh` and unit tests in `internal/app/run_test.go`, `internal/vat/` (export_test.go, report_test.go, filed_test.go, init_test.go, config_test.go, journal_test.go, validate_rate_test.go, periods_test.go), `vatpath/path_test.go`, and `internal/cli/flags_test.go`. Legacy journal datasets without row-level `direction` are supported via mapping and accounts fallback (vat-account-mapping.csv by account_id, then accounts.csv account type); commands fail deterministically only when all direction sources are missing, with diagnostics that identify the row/account.
 
 **Planned next:** None in PLAN.md; all documented requirements satisfied.
 
