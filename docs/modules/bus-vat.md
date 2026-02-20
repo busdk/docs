@@ -37,6 +37,15 @@ For payment-evidence cash-basis filing (`maksuperusteinen`), the module also sup
 `report`, `export`, `filed-import`, and `filed-diff` require `--period <period>`. `filed-import` also requires `--file <path>`. `filed-diff` supports `--threshold-cents <int>` and exits `1` when any absolute VAT delta exceeds threshold. When using `--source journal`, journal rows are read from the journal area and normalized for VAT reporting. Direction is resolved deterministically in this order: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). Amount can be provided as `amount_cents` (integer) or `amount` (decimal major units). Rate uses row-level `vat_rate_bp` first, then `vat_rate`/`vat_percent`, then mapping (`vat_rate_bp`/`rate_bp`/`vat_rate`/`vat_percent`) from `vat-account-mapping.csv`. For mapped VAT-account rows that have direction but no explicit rate, amount is treated as VAT amount (net 0). Legacy fallback also infers VAT amount from sided debit/credit postings on likely VAT accounts (for example `293x`) when mapping is missing and row rate is absent. Opening-balance rows are excluded from journal-source VAT reporting, including rows identifiable via opening voucher/source kind or opening-style source identifiers (for example `opening:*`). In cash basis, bank evidence references such as `bank_row:<id>:journal:<n>` are normalized to corresponding bank transaction ids (including `erp-bank-<id>` forms) for payment-date lookup. If direction cannot be resolved for a row, the command fails with a clear diagnostic naming the row/account and required fallback data.
 
 When using `--source reconcile --basis cash`, VAT rows are derived from `matches.csv` (`kind=invoice_payment`), `bank-transactions.csv` payment dates (`booked_date`/`booking_date`/`value_date`/`booked_at`), and invoice evidence rows. Partial payments are split proportionally across invoice VAT/net rows and allocated to the bank payment-date period.
+Reconcile cash mode also emits deterministic coverage diagnostics as a `COVERAGE` output row:
+- matched sales share
+- matched purchase share
+- unmatched cash rows
+and machine-readable source refs for diagnostics provenance.
+Coverage gating is configurable:
+- `--strict-coverage` to fail when coverage is below thresholds
+- `--min-sales-coverage <0..1>` and `--min-purchase-coverage <0..1>` to set required minimum shares
+Without strict mode, partial coverage continues with an explicit warning on stderr.
 When using `--source journal --basis cash`, payment-date allocation uses journal payment-date evidence columns when present (`payment_date`/`paid_date`/`value_date`/`booked_date`/`booking_date`/`booked_at`), optional `bank_txn_id` lookup to `bank-transactions.csv`, and falls back to `posting_date` when explicit payment evidence is missing.
 Evidence-first context applies: country/party context is read from invoice evidence first; `entities.csv` is only fallback enrichment.
 

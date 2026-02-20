@@ -23,6 +23,8 @@ FR-VAT-004 Journal-driven VAT mode. The module MUST support computing VAT period
 
 FR-VAT-005 Filed VAT import and deterministic period diff. The module MUST support importing externally filed VAT evidence with provenance and computing a deterministic period diff against replay VAT totals (output/input/net). Acceptance criteria: `filed-import` writes canonical period evidence plus provenance (`source_path`, `source_sha256`), `filed-diff` emits machine-readable deterministic output, and threshold-based non-zero exit is supported for CI gating.
 
+FR-VAT-006 Reconcile cash coverage diagnostics and strict gating. The module MUST emit deterministic coverage diagnostics for `--source reconcile --basis cash` and support optional strict failure when coverage is below configured thresholds. Acceptance criteria: report/export include machine-readable coverage metrics and source refs; partial coverage emits explicit warning in non-strict mode; strict mode exits non-zero when thresholds are not met.
+
 NFR-VAT-003 Decimal-safe money arithmetic. All VAT money calculations (base amounts, VAT amounts, totals, export values, and thresholds) MUST use decimal-safe arithmetic and MUST NOT rely on binary floating-point. Acceptance criteria: computations use exact decimal-safe representations (scaled cents or exact decimal/rational types), rounding behavior is explicit and deterministic, and repeated runs produce byte-identical monetary outputs for the same inputs.
 
 NFR-VAT-001 Auditability. VAT corrections MUST be append-only and traceable to original records. Acceptance criteria: corrections create new records that reference originals.
@@ -110,6 +112,8 @@ Journal-driven VAT mode: computation of VAT period totals from journal postings 
 
 Journal-driven mode is implemented on `bus vat validate|report|export --source journal`. Invoice source and journal source (with direction resolvable) work. Direction fallback is deterministic: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). VAT rate fallback is deterministic: row `vat_rate_bp` first, then row `vat_rate`/`vat_percent`, then `vat-account-mapping.csv` (`vat_rate_bp`/`rate_bp`/`vat_rate`/`vat_percent`) for `account_id`. Legacy fallbacks: (1) when mapping provides direction for a VAT account but no rate, the posting amount is treated as VAT amount (net set to 0); (2) when mapping is missing, sided debit/credit rows on likely VAT accounts (for example `293x`) are interpreted as VAT-amount rows with inferred direction. Opening-balance rows are excluded from journal-source VAT totals, including rows identified via opening voucher/source kind or opening-style source identifiers (for example `opening:*`). For cash basis date resolution, bank evidence references such as `bank_row:<id>:journal:<n>` are normalized to candidate bank transaction ids (including `erp-bank-<id>`) before lookup in `bank-transactions.csv`. If direction remains unresolved, commands fail with deterministic diagnostics that identify the row/account and required normalization input (e.g. `journal-2023.csv row N: missing direction (need direction column value sale|purchase, vat-account-mapping.csv direction for account_id "XXXX", or accounts.csv type income/expense for account_id "XXXX")`).
 
+Reconcile-evidence cash mode is implemented on `bus vat report|export --source reconcile --basis cash`, including deterministic coverage diagnostics (`COVERAGE` output line with matched sales share, matched purchase share, unmatched cash rows, and source refs), partial-coverage warning in non-strict mode, and strict gating via `--strict-coverage`, `--min-sales-coverage`, and `--min-purchase-coverage`.
+
 In workspaces where journal posts to asset/liability VAT accounts (e.g. 293x) or other non–income/expense accounts without a `direction` column, `--source journal` can fail because neither the row nor `accounts.csv` type supplies direction; adding a mapping in `vat-account-mapping.csv` for those account_ids would resolve it. Still to do: (1) Document the direction fallback and the optional `vat-account-mapping.csv` format (columns, semantics) so legacy workspaces can add mapping for asset/liability VAT accounts. (2) Optionally extend the fallback (e.g. treat known VAT account code ranges as purchase/sale by convention) or ship a default mapping for common Finnish VAT accounts. Goal: `--source journal` usable for journal-first workspaces without adding a `direction` column to legacy journal CSVs. No SDD change is required; the implementation status and module docs will be updated to document `vat-account-mapping.csv` format and any optional default mapping when that documentation is added.
 
 ### Open Questions
@@ -142,7 +146,7 @@ None. OQ-VAT-001 (journal-driven mode binding) is resolved: the binding is `--so
 Title: bus-vat module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-VAT`  
-Version: 2026-02-18  
+Version: 2026-02-20  
 Status: Draft  
-Last updated: 2026-02-18  
+Last updated: 2026-02-20  
 Owner: BusDK development team  
