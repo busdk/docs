@@ -73,28 +73,17 @@ Month runner script example:
 
 ## File rules
 
-- UTF-8 text.
-- Blank lines are ignored.
-- Lines whose first non-whitespace character is `#` are ignored.
-- A trailing `\` continues the command on the next physical line.
-- Lines ending with `.bus` are treated as nested busfile includes.
-- Other lines are parsed as one command line.
+Busfiles are UTF-8 text. Blank lines are ignored, and lines whose first non-whitespace character is `#` are treated as comments. A trailing `\` continues the command on the next physical line. Lines ending with `.bus` are nested includes, while other lines are parsed as one command line.
 
 ## Quoting rules
 
 `.bus` tokenization uses shell-like quoting:
 
-- whitespace splits tokens
-- single quotes `'...'` keep literal content
-- double quotes `"..."` keep literal content
-- backslash `\` escapes the next character
+whitespace splits tokens, single quotes `'...'` keep literal content, double quotes `"..."` keep literal content, and backslash `\` escapes the next character.
 
 Not interpreted:
 
-- variable expansion (`$VAR`)
-- command substitution (`$(...)` and backticks)
-- pipes and redirections (`|`, `>`, `<`)
-- `;` command separators
+variable expansion (`$VAR`), command substitution (`$(...)` and backticks), pipes/redirections (`|`, `>`, `<`), and `;` command separators are not interpreted.
 
 If any line has a tokenization error (for example unterminated quote), execution stops before running any command.
 
@@ -114,10 +103,7 @@ This means `bus A.bus B.bus C.bus` fails with no applied changes if any file fai
 
 Use these when invoking `.bus` files:
 
-- `--check`: validate only; do not apply changes.
-- `--trace`: print each parsed command with `file:line`.
-- `--scope file|batch`: per-file unit (`file`, default) or one batch unit (`batch`).
-- `--transaction none|git|snapshot|copy`: workspace transaction provider.
+Use `--check` for validation-only runs, `--trace` to print each parsed command with `file:line`, `--scope file|batch` to choose per-file or batch apply unit, and `--transaction none|git|snapshot|copy` to choose transaction provider.
 
 Examples:
 
@@ -130,25 +116,17 @@ bus --transaction git --scope batch 2024-01.bus 2024-02.bus 2024-03.bus
 
 Defaults can come from workspace preferences and/or `datapackage.json`:
 
-- validation level (`syntax` or `data`)
-- strict validation behavior
-- transaction provider and scope
-- fallback to `none` if configured provider is unavailable
+defaults include validation level (`syntax` or `data`), strict-validation behavior, transaction provider/scope, and fallback to `none` when the configured provider is unavailable.
 
 ## Error format and exit codes
 
 Typical errors:
 
-- `2024-02.bus:17: syntax error: unterminated quote`
-- `2024-02.bus:23: dispatch error: unknown target "bnak"`
-- `2024-01.bus:42: command failed (exit 1): journal add --date ...`
+`2024-02.bus:17: syntax error: unterminated quote`, `2024-02.bus:23: dispatch error: unknown target "bnak"`, and `2024-01.bus:42: command failed (exit 1): journal add --date ...`.
 
 Exit codes:
 
-- `0` success
-- `1` command execution failed
-- `2` usage error
-- `65` busfile syntax/tokenization error
+`0` means success, `1` means command execution failure, `2` means usage error, and `65` means busfile syntax/tokenization error.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

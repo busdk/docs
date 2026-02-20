@@ -59,9 +59,7 @@ Invalid prefix returns exit code `2`.
 
 The preferences file path is resolved in this order:
 
-1. If the environment variable **`BUS_PREFERENCES_PATH`** is set, that path is used exactly.
-2. On Windows, the default is **`%APPDATA%\BusDK\preferences.json`**.
-3. On Unix-like systems, the default is **`$XDG_CONFIG_HOME/busdk/preferences.json`**, or **`~/.config/busdk/preferences.json`** if `XDG_CONFIG_HOME` is not set.
+If the environment variable **`BUS_PREFERENCES_PATH`** is set, that path is used exactly. Otherwise, on Windows the default path is **`%APPDATA%\BusDK\preferences.json`**. On Unix-like systems, the default is **`$XDG_CONFIG_HOME/busdk/preferences.json`**, or **`~/.config/busdk/preferences.json`** when `XDG_CONFIG_HOME` is not set.
 
 The directory is created automatically on first write.
 All consumers should use this same resolution so every BusDK tool reads the same file.
@@ -131,9 +129,7 @@ Use OS credential store or external secret manager for sensitive values.
 
 ### Exit status and errors
 
-- **0** — Success. For `unset`, exit 0 even if the key was already absent.
-- **1** — Execution failure: the preferences file could not be read or written (e.g. directory not writable, disk error).
-- **2** — Invalid usage: invalid key path, invalid JSON for `set-json`, or other usage error. A deterministic message is printed to stderr.
+Exit code `0` means success; for `unset`, this includes the case where the key was already absent. Exit code `1` means execution failure, such as unreadable or unwritable preferences file path. Exit code `2` means invalid usage, such as invalid key path or invalid JSON for `set-json`, and prints a deterministic message to stderr.
 
 When `get` is called for a key that is not present, the command exits with a non-zero status and a concise error on stderr. Error messages are always on stderr.
 

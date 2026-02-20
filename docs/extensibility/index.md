@@ -7,11 +7,7 @@ description: "This section is split into **single-concept** documents:"
 
 This section is split into **single-concept** documents:
 
-- [AI and external service integration](./ai-and-external-services)
-- [Governance of core schemas](./core-schema-governance)
-- [Event hooks and automation](./event-hooks-and-automation)
-- [One-developer contributions and ecosystem](./one-developer-ecosystem)
-- [Plug-in modules via new datasets](./plugin-modules-via-datasets)
+[AI and external service integration](./ai-and-external-services), [Governance of core schemas](./core-schema-governance), [Event hooks and automation](./event-hooks-and-automation), [One-developer contributions and ecosystem](./one-developer-ecosystem), and [Plug-in modules via new datasets](./plugin-modules-via-datasets).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -13,23 +13,15 @@ Owner: [bus inventory](../../modules/bus-inventory). This module is responsible 
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus journal](../../modules/bus-journal): receives postings derived from inventory valuation decisions.
-- [bus accounts](../../modules/bus-accounts): provides inventory and COGS accounts referenced by item master data.
+[bus journal](../../modules/bus-journal) receives postings derived from inventory valuation decisions, and [bus accounts](../../modules/bus-accounts) provides inventory and COGS accounts referenced by item master data.
 
 ### Actions
 
-- [Add an inventory item](./add): Register an item so stock movements can be recorded against a stable identifier.
-- [Value inventory](./value): Compute valuation output as of a date for review and posting decisions.
+[Add an inventory item](./add) registers items so stock movements reference stable identifiers. [Value inventory](./value) computes as-of valuation output for review and posting decisions.
 
 ### Properties
 
-- [`item_id`](./item-id): Item identity.
-- [`name`](./name): Item name.
-- [`unit`](./unit): Unit of measure.
-- [`valuation_method`](./valuation-method): Valuation method.
-- [`inventory_account_id`](./inventory-account-id): Inventory account.
-- [`cogs_account_id`](./cogs-account-id): COGS account.
-- [`sku`](./sku): Stock keeping unit.
+Core item fields are [`item_id`](./item-id), [`name`](./name), [`unit`](./unit), [`valuation_method`](./valuation-method), and [`sku`](./sku). Posting-account fields are [`inventory_account_id`](./inventory-account-id) and [`cogs_account_id`](./cogs-account-id).
 
 ### Relations
 
@@ -51,4 +43,3 @@ Inventory items reference [ledger accounts](../chart-of-accounts/index) via [`in
 
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Double-entry ledger](../../design-goals/double-entry-ledger)
-

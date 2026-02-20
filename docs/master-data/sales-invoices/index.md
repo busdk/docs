@@ -13,27 +13,15 @@ Owner: [bus invoices](../../modules/bus-invoices). This module is responsible fo
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus attachments](../../modules/bus-attachments): stores evidence references used by invoices.
-- [bus journal](../../modules/bus-journal): receives posting outputs derived from invoices.
-- [bus vat](../../modules/bus-vat): reads invoice VAT for period reporting.
-- [bus reconcile](../../modules/bus-reconcile): links payments to open invoices.
+[bus attachments](../../modules/bus-attachments) stores evidence references used by invoices. [bus journal](../../modules/bus-journal) receives posting outputs derived from invoices, [bus vat](../../modules/bus-vat) reads invoice VAT for period reporting, and [bus reconcile](../../modules/bus-reconcile) links payments to open invoices.
 
 ### Actions
 
-- [Create a sales invoice](./create): Record the legal and accounting document that creates income and a receivable.
-- [Correct a sales invoice](./correct): Record credit notes or corrections so the audit trail remains consistent.
-- [Prepare sales invoice postings](./prepare-posting): Turn invoice intent into a balanced posting proposal for the journal.
+[Create a sales invoice](./create) records the legal and accounting document that creates income and receivable. [Correct a sales invoice](./correct) records credit notes or corrections so audit trail remains consistent. [Prepare sales invoice postings](./prepare-posting) turns invoice intent into balanced posting proposals for journal flow.
 
 ### Properties
 
-- [`invoice_id`](./invoice-id): Invoice identity.
-- [`client_id`](./client-id): Counterparty link.
-- [`date`](./date): Invoice date.
-- [`duedate`](./duedate): Due date.
-- [`reference_number`](./reference-number): Payment matching key.
-- [`currency`](./currency): Invoice currency.
-- [`service_start_date`](./service-start-date): Service period start.
-- [`service_end_date`](./service-end-date): Service period end.
+Core invoice fields are [`invoice_id`](./invoice-id), [`client_id`](./client-id), [`date`](./date), [`duedate`](./duedate), [`reference_number`](./reference-number), and [`currency`](./currency). Service-period fields are [`service_start_date`](./service-start-date) and [`service_end_date`](./service-end-date).
 
 Sales invoices typically also use the shared workflow fields described in [Bookkeeping status and review workflow](../workflow-metadata/index), and they belong to the workspace’s [accounting entity](../accounting-entity/index).
 
@@ -62,4 +50,3 @@ A sales invoice can have zero or more [documents (evidence)](../documents/index)
 - [Create sales invoice](../../workflow/create-sales-invoice)
 - [Invoice ledger impact](../../workflow/invoice-ledger-impact)
 - [Generate invoice PDF and register attachment](../../workflow/generate-invoice-pdf-and-register-attachment)
-

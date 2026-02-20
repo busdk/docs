@@ -7,13 +7,11 @@ description: "Module repository structure, dependency rules, and implementation 
 
 This section covers how modules are structured and their current implementation state:
 
-- [Module repository structure and dependency rules](./module-repository-structure)
-- [Developer module workflow](./developer-module-workflow): scaffold modules, run commit/work/spec/e2e, set agent and run-config (Cursor, Gemini, Claude, Codex)
-- [Development status](./development-status): implementation state of each BusDK module and the Bus as a whole, derived from each repository’s PLAN.md
-- [Regulated report PDFs (TASE and tuloslaskelma)](./regulated-report-pdfs): design for producing Finnish balance sheet and income statement as PDF from BusDK
-- [Finnish WebView bookkeeping UI requirements](./fi-webview-accounting-ui-requirements): split topic pages for IA, table-first UX, compliance/audit UX, and accessibility/performance
-- [Bus project cost summary](./cost-summary): snapshot of total commits and AI-related spend per module (2025-02-15)
-- [Module source access and pricing](./fsl-modules): modules offered under source-available licenses (e.g. FSL) with cost-based pricing and foundational cost allocation
+[Module repository structure and dependency rules](./module-repository-structure), [Developer module workflow](./developer-module-workflow), and [Development status](./development-status) define delivery structure and current state.
+
+[Regulated report PDFs (TASE and tuloslaskelma)](./regulated-report-pdfs) and [Finnish WebView bookkeeping UI requirements](./fi-webview-accounting-ui-requirements) define implementation targets for regulated reporting and UI behavior.
+
+[Bus project cost summary](./cost-summary) and [Module source access and pricing](./fsl-modules) provide project-cost and source-access context.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

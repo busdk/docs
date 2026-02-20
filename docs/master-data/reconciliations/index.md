@@ -17,25 +17,15 @@ Owner: [bus reconcile](../../modules/bus-reconcile). This module is responsible 
 
 Secondary read-only use cases are provided by these modules when they consume reconciliation records for review, validation, posting, or reporting:
 
-- [bus bank](../../modules/bus-bank): imports bank transactions that reconciliations reference.
-- [bus invoices](../../modules/bus-invoices): uses reconciliations to close open invoices deterministically.
-- [bus journal](../../modules/bus-journal): is referenced when allocations point to journal transactions.
+[bus bank](../../modules/bus-bank) imports bank transactions that reconciliations reference. [bus invoices](../../modules/bus-invoices) uses reconciliations to close open invoices deterministically, and [bus journal](../../modules/bus-journal) is referenced when allocations point to journal transactions.
 
 ### Actions
 
-- [Match a bank transaction](./match): Record a one-to-one settlement link when amounts match exactly.
-- [Allocate a bank transaction](./allocate): Record a split across multiple invoices and/or journal transactions.
-- [List reconciliations](./list): Produce a reviewable list of reconciliation records.
-- [Generate reconciliation proposals](./propose): Deterministic candidate generation with confidence and reason fields.
-- [Apply approved reconciliation proposals](./apply-proposals): Batch apply flow that consumes approved proposal rows deterministically.
+[Match a bank transaction](./match) records one-to-one settlement when amounts match exactly. [Allocate a bank transaction](./allocate) records splits across multiple invoices and journal transactions. [List reconciliations](./list) provides review output, [Generate reconciliation proposals](./propose) produces deterministic candidate rows with confidence and reason fields, and [Apply approved reconciliation proposals](./apply-proposals) batch-applies approved rows deterministically.
 
 ### Properties
 
-- [`reconciliation_id`](./reconciliation-id): Stable reconciliation record identifier.
-- [`bank_transaction_id`](./bank-transaction-id): The bank transaction being settled.
-- [`target_kind`](./target-kind): What kind of target is referenced (`invoice` or `journal`).
-- [`target_id`](./target-id): Stable identifier of the referenced target record.
-- [`amount`](./amount): Allocation amount in the bank transaction currency.
+Core fields are [`reconciliation_id`](./reconciliation-id), [`bank_transaction_id`](./bank-transaction-id), [`target_kind`](./target-kind), [`target_id`](./target-id), and [`amount`](./amount).
 
 Reconciliations bind to bank transaction currency via [`currency` on bank transactions](../bank-transactions/currency) and belong to the workspace’s [accounting entity](../accounting-entity/index) because both the bank transactions and the reconciliation records live in the same workspace.
 

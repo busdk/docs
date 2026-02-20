@@ -17,26 +17,17 @@ In the current CLI surface, `bus entities add` records the stable entity identif
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus invoices](../../modules/bus-invoices): references parties on invoices for receivables and payables.
-- [bus bank](../../modules/bus-bank): uses party data for matching and counterparty display.
-- [bus reconcile](../../modules/bus-reconcile): matches cash movement to invoices and parties.
+[bus invoices](../../modules/bus-invoices) references parties on invoices for receivables and payables. [bus bank](../../modules/bus-bank) uses party data for matching and counterparty display, and [bus reconcile](../../modules/bus-reconcile) matches cash movement to invoices and parties.
 
 ### Actions
 
-- [Register a party](./register): Create or import a counterparty record so invoices and matching can link deterministically.
-- [Deduplicate parties](./deduplicate): Merge duplicates so reports and audits refer to one legal entity consistently.
-- [Set party bookkeeping defaults](./set-defaults): Maintain default accounts, VAT handling, and payment identifiers used for pre-fill and matching.
+[Register a party](./register) creates or imports counterparties so invoices and matching can link deterministically. [Deduplicate parties](./deduplicate) merges duplicates so reporting and audit trails point to one legal entity. [Set party bookkeeping defaults](./set-defaults) maintains default accounts, VAT handling, and payment identifiers used in matching and prefill.
 
 ### Properties
 
-- [`party_name`](./party-name): Counterparty label.
-- [`business_id`](./business-id): Strong national identifier.
-- [`vat_number`](./vat-number): VAT identity for cross-border rules.
-- [`country_code`](./country-code): Jurisdiction hint.
-- [`default_sales_account_id`](./default-sales-account-id): Classification default (sales).
-- [`default_expense_account_id`](./default-expense-account-id): Classification default (purchases).
-- [`default_vat_treatment`](./default-vat-treatment): VAT handling default.
-- [`payment_identifiers`](./payment-identifiers): Matching and payment hints.
+Core identity fields are [`party_name`](./party-name), [`business_id`](./business-id), [`vat_number`](./vat-number), and [`country_code`](./country-code).
+
+Default bookkeeping fields are [`default_sales_account_id`](./default-sales-account-id), [`default_expense_account_id`](./default-expense-account-id), [`default_vat_treatment`](./default-vat-treatment), and [`payment_identifiers`](./payment-identifiers).
 
 Party defaults and identifiers support deterministic [VAT treatment](../vat-treatment/index) selection and validation, especially when cross-border rules and exemptions apply.
 
@@ -61,4 +52,3 @@ Employees reference a party record via [`entity_id`](../employees/entity-id) so 
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [AI-assisted classification review](../../workflow/ai-assisted-classification-review)
-

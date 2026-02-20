@@ -13,22 +13,15 @@ Owner: [bus bank](../../modules/bus-bank). This module is responsible for implem
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus accounts](../../modules/bus-accounts): provides the ledger accounts used for bank-to-ledger mapping.
-- [bus reconcile](../../modules/bus-reconcile): uses bank account identity for matching and allocation.
-- [bus journal](../../modules/bus-journal): posts cash movement to the mapped ledger account.
+[bus accounts](../../modules/bus-accounts) provides ledger accounts used for bank-to-ledger mapping. [bus reconcile](../../modules/bus-reconcile) uses bank-account identity for matching and allocation, and [bus journal](../../modules/bus-journal) posts cash movement to mapped ledger accounts.
 
 ### Actions
 
-- [Register a bank account](./register): Record bank account identifiers used by imports and reconciliation.
-- [Map a bank account to a ledger account](./map): Define which chart of accounts entry represents this bank account for postings.
+[Register a bank account](./register) records bank-account identifiers used by imports and reconciliation. [Map a bank account to a ledger account](./map) defines which chart-of-accounts entry represents this bank account for postings.
 
 ### Properties
 
-- [`bank_account_id`](./bank-account-id): Bank account identity.
-- [`iban`](./iban): Bank account IBAN.
-- [`bic`](./bic): Bank account BIC.
-- [`currency`](./currency): Account currency.
-- [`ledger_account_id`](./ledger-account-id): Ledger mapping.
+Core bank-account fields are [`bank_account_id`](./bank-account-id), [`iban`](./iban), [`bic`](./bic), [`currency`](./currency), and [`ledger_account_id`](./ledger-account-id).
 
 ### Relations
 
@@ -51,4 +44,3 @@ A bank account maps to one [ledger account](../chart-of-accounts/index) via [`le
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Import bank transactions and apply payment](../../workflow/import-bank-transactions-and-apply-payment)
-

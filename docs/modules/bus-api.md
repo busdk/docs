@@ -79,9 +79,9 @@ Use `--tls-cert` + `--tls-key` for HTTPS, or terminate TLS in reverse proxy.
 
 ### Exit status and errors
 
-- **0** — Success. For `serve`, the server is running until interrupted; for `openapi` and `version`, the command completed and wrote result to stdout (or `--output`).
-- **1** — Execution failure: workspace root not readable or not accessible, or TLS files missing/invalid when HTTPS is requested.
-- **2** — Invalid usage: unknown subcommand, invalid flag value (e.g. invalid `--listen` or `--port`), or conflicting flags (e.g. `--quiet` and `--verbose`).
+Exit code `0` means success. For `serve`, success means the server is running until interrupted. For `openapi` and `version`, success means the command completed and wrote output to stdout (or `--output`).
+
+Exit code `1` means execution failure, such as unreadable workspace root or missing/invalid TLS files when HTTPS is requested. Exit code `2` means invalid usage, such as unknown subcommand, invalid flag values (for example invalid `--listen` or `--port`), or conflicting flags like `--quiet` and `--verbose`.
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 

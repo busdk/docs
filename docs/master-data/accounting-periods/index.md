@@ -13,22 +13,15 @@ Owner: [bus period](../../modules/bus-period). This module is responsible for im
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the period control dataset (and effective state) via the [bus period](../../modules/bus-period) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../sdd/modules#data-path-contract-for-read-only-cross-module-access).
 
-- [bus journal](../../modules/bus-journal): respects period close and lock boundaries for postings.
-- [bus validate](../../modules/bus-validate): checks period integrity as part of workspace validation.
-- [bus filing](../../modules/bus-filing): consumes closed-period data for filing bundles.
+[bus journal](../../modules/bus-journal) respects period close and lock boundaries for postings. [bus validate](../../modules/bus-validate) checks period integrity as part of workspace validation, and [bus filing](../../modules/bus-filing) consumes closed-period data for filing bundles.
 
 ### Actions
 
-- [Add an accounting period](./add): Create a period in state **future** so it exists in the dataset and can later be opened. Periods are created before they are opened; you can add multiple future periods (e.g. all months for the year) then open them in sequence.
-- [Open an accounting period](./open): Transition a period from **future** to **open** so bookkeeping work can proceed for that period. The period must already exist (created with add).
-- [Close an accounting period](./close): Generate closing entries and transition the period from **open** to **closed** for review.
-- [Lock an accounting period](./lock): Transition the period from **closed** to **locked** to prevent further changes to closed period data.
+[Add an accounting period](./add) creates periods in **future** state so they exist before opening. You can add multiple future periods (for example all months in a year) and open them in sequence. [Open an accounting period](./open) transitions **future** to **open**, [Close an accounting period](./close) transitions **open** to **closed** and generates closing entries, and [Lock an accounting period](./lock) transitions **closed** to **locked** to prevent further period changes.
 
 ### Properties
 
-- [`period`](./period): Period identifier.
-- [`status`](./status): Period status.
-- [`post_date`](./post-date): Closing post date.
+Core period fields are [`period`](./period), [`status`](./status), and [`post_date`](./post-date).
 
 ### Relations
 
@@ -50,4 +43,3 @@ Budgets reference accounting periods via [`period`](../budgets/period) and `year
 
 - [Workflow: Year-end close (closing entries)](../../workflow/year-end-close)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
-

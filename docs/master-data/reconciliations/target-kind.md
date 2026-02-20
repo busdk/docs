@@ -9,8 +9,7 @@ description: target_kind tells which kind of record the reconciliation reference
 
 Allowed values:
 
-- `invoice`: The target is an invoice header record.
-- `journal`: The target is a journal transaction record.
+`invoice` means the target is an invoice header record, and `journal` means the target is a journal transaction record.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -24,4 +23,3 @@ Allowed values:
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
 - [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
-

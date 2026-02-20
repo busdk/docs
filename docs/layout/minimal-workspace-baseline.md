@@ -23,21 +23,13 @@ After initialization, the workspace MUST include `datapackage.json` at the works
 
 After initialization, the following root-level datasets and their beside-the-dataset schemas MUST exist. Files may be empty baseline tables, but they must be present and schema-valid so that later commands can operate deterministically.
 
-- Chart of accounts: `accounts.csv` and `accounts.schema.json` (see [Accounts area](./accounts-area))
-- Counterparties: `entities.csv` and `entities.schema.json` (see [Accounts area](./accounts-area))
-- Evidence index: `attachments.csv` and `attachments.schema.json` (see [`bus attachments`](../modules/bus-attachments) and [Invoice PDF storage](./invoice-pdf-storage))
-- Journal index: `journals.csv` and `journals.schema.json` (see [Journal area](./journal-area))
-- Sales invoices: `sales-invoices.csv` and `sales-invoices.schema.json` (see [Invoices area](./invoices-area))
-- Sales invoice lines: `sales-invoice-lines.csv` and `sales-invoice-lines.schema.json` (see [Invoices area](./invoices-area))
-- Purchase invoices: `purchase-invoices.csv` and `purchase-invoices.schema.json` (see [Invoices area](./invoices-area))
-- Purchase invoice lines: `purchase-invoice-lines.csv` and `purchase-invoice-lines.schema.json` (see [Invoices area](./invoices-area))
-- VAT reference data: `vat-rates.csv` and `vat-rates.schema.json` (see [VAT area](./vat-area))
-- VAT return index: `vat-returns.csv` and `vat-returns.schema.json` (see [VAT area](./vat-area))
-- VAT report index: `vat-reports.csv` and `vat-reports.schema.json` (see [VAT area](./vat-area))
-- Period control: `periods.csv` and `periods.schema.json` at the workspace root — not under a subdirectory such as `periods/` (see [`bus period`](../modules/bus-period))
-- Normalized bank imports and transactions:
-  
-  `bank-imports.csv` and `bank-imports.schema.json`, and `bank-transactions.csv` and `bank-transactions.schema.json` (see [`bus bank`](../modules/bus-bank))
+Required root-level baseline pairs include chart of accounts (`accounts.csv` and `accounts.schema.json`) and counterparties (`entities.csv` and `entities.schema.json`) in the [Accounts area](./accounts-area), plus evidence index (`attachments.csv` and `attachments.schema.json`) for attachment metadata.
+
+Journal and invoice baselines include `journals.csv` with `journals.schema.json`, `sales-invoices.csv` with `sales-invoices.schema.json`, `sales-invoice-lines.csv` with `sales-invoice-lines.schema.json`, `purchase-invoices.csv` with `purchase-invoices.schema.json`, and `purchase-invoice-lines.csv` with `purchase-invoice-lines.schema.json`.
+
+VAT and period baselines include `vat-rates.csv` with `vat-rates.schema.json`, `vat-returns.csv` with `vat-returns.schema.json`, `vat-reports.csv` with `vat-reports.schema.json`, and period control `periods.csv` with `periods.schema.json` at workspace root.
+
+Banking baselines include `bank-imports.csv` with `bank-imports.schema.json` and `bank-transactions.csv` with `bank-transactions.schema.json`.
 
 Budgeting is optional for the end-to-end statutory bookkeeping chain. If budgeting is enabled in a workspace, it MUST follow the same conventions (root-level datasets with beside-the-dataset schemas). A minimal example is `budgets.csv` beside `budgets.schema.json` (see [Budgeting area](./budget-area)).
 

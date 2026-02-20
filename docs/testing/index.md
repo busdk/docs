@@ -7,7 +7,7 @@ description: This section defines how BusDK modules are tested and how command b
 
 This section defines how BusDK modules are tested and how command behavior is verified end to end. The focus is on deterministic, script-friendly tests that can run in local and CI environments without external services.
 
-- [Testing strategy](./testing-strategy)
+[Testing strategy](./testing-strategy).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

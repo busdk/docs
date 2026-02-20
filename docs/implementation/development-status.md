@@ -9,18 +9,29 @@ This page summarizes the implementation state of each BusDK module using test ev
 
 ### Use cases index
 
-- [Accounting workflow](#accounting-workflow) — [Accounting workflow overview](../workflow/accounting-workflow-overview): create repo and baseline, define master data and evidence, record invoices and journal, import bank and reconcile, close period with validate/VAT/reports.
-- [Sale invoicing (sending invoices to customers)](#sale-invoicing-sending-invoices-to-customers) — [Sale invoicing](../workflow/sale-invoicing): create sales invoices, render PDFs, and send to customers (outbound journey).
-- [Inventory valuation and COGS postings](#inventory-valuation-and-cogs-postings) — [Inventory valuation and COGS](../workflow/inventory-valuation-and-cogs): define items, record movements with vouchers, compute as-of valuation for reporting and COGS postings.
-- [Spreadsheet workbooks](#spreadsheet-workbooks) — [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing): local web workbook over workspace datasets with schema-validated editing and formula projection.
-- [Finnish bookkeeping and tax-audit compliance](#finnish-bookkeeping-and-tax-audit-compliance) — [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): audit trail, retention, VAT and periodic reporting, tax-audit pack.
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) — [Finnish company reorganisation — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): evidence pack from accounting data for court-supervised reorganisation.
-- [Developer module workflow with Cursor CLI](#developer-module-workflow-with-cursor-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-cursor-cli): scaffold modules, run plan/work/spec/e2e with Cursor.
-- [Developer module workflow with Gemini CLI](#developer-module-workflow-with-gemini-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-gemini-cli): same workflow with Gemini runtime.
-- [Developer module workflow with Claude CLI](#developer-module-workflow-with-claude-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-claude-cli): same workflow with Claude runtime.
-- [Developer module workflow with Codex CLI](#developer-module-workflow-with-codex-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-codex-cli): same workflow with Codex runtime.
-- [Finnish payroll handling (monthly pay run)](#finnish-payroll-handling-monthly-pay-run) — [Finnish payroll handling](../workflow/finnish-payroll-monthly-pay-run): employee register, monthly pay run, posting intent to journal, bank reconciliation.
-- [Orphan modules](#orphan-modules) — Modules not mapped to a documented use case.
+[Accounting workflow](#accounting-workflow) — [Accounting workflow overview](../workflow/accounting-workflow-overview): create repository baseline, define master data and evidence, record invoices and journal entries, import/reconcile bank transactions, and close periods with validate/VAT/report steps.
+
+[Sale invoicing (sending invoices to customers)](#sale-invoicing-sending-invoices-to-customers) — [Sale invoicing](../workflow/sale-invoicing): create sales invoices, render PDFs, and complete outbound invoice delivery.
+
+[Inventory valuation and COGS postings](#inventory-valuation-and-cogs-postings) — [Inventory valuation and COGS](../workflow/inventory-valuation-and-cogs): define items, record voucher-backed movements, and compute as-of valuation for reporting and COGS.
+
+[Spreadsheet workbooks](#spreadsheet-workbooks) — [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing): use local web workbook flows over schema-validated workspace datasets and formula projection.
+
+[Finnish bookkeeping and tax-audit compliance](#finnish-bookkeeping-and-tax-audit-compliance) — [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): maintain audit trail/retention and produce VAT, period reporting, and tax-audit outputs.
+
+[Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) — [Finnish company reorganisation — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): produce evidence-pack outputs for court-supervised reorganisation.
+
+[Developer module workflow with Cursor CLI](#developer-module-workflow-with-cursor-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-cursor-cli): scaffold modules and run plan/work/spec/e2e workflows with Cursor runtime.
+
+[Developer module workflow with Gemini CLI](#developer-module-workflow-with-gemini-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-gemini-cli): same developer workflow path with Gemini runtime.
+
+[Developer module workflow with Claude CLI](#developer-module-workflow-with-claude-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-claude-cli): same developer workflow path with Claude runtime.
+
+[Developer module workflow with Codex CLI](#developer-module-workflow-with-codex-cli) — [Developer module workflow](../implementation/developer-module-workflow#developer-module-workflow-with-codex-cli): same developer workflow path with Codex runtime.
+
+[Finnish payroll handling (monthly pay run)](#finnish-payroll-handling-monthly-pay-run) — [Finnish payroll handling](../workflow/finnish-payroll-monthly-pay-run): maintain employee register, run monthly payroll, produce posting intent, and reconcile pay-day bank transactions.
+
+[Orphan modules](#orphan-modules) — Modules not mapped to a documented use case.
 
 ### Accounting workflow
 

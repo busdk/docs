@@ -60,10 +60,7 @@ Income and expense accounts are often split by business meaning (operating versu
 A contra account offsets another account while using the opposite normal balance of the main account it relates to. This preserves the “gross” amount in the main account while recording reductions separately.
 
 Common contra examples:
-
-* **Accumulated depreciation** (contra-asset): offsets equipment; normal balance is **credit**
-* **Allowance for doubtful accounts** (contra-asset): offsets receivables; normal balance is **credit**
-* **Sales returns/allowances** (contra-income): offsets income; normal balance is **debit**
+**Accumulated depreciation** (contra-asset) offsets equipment and normally carries a **credit** balance. **Allowance for doubtful accounts** (contra-asset) offsets receivables and also normally carries a **credit** balance. **Sales returns/allowances** (contra-income) offsets income and normally carries a **debit** balance.
 
 Contra accounts don’t break double-entry rules — they keep the economic meaning visible while reversing the “usual” side for increases.
 

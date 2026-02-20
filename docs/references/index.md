@@ -7,8 +7,7 @@ description: "This section is split into **single-concept** documents:"
 
 This section is split into **single-concept** documents:
 
-- [References and external foundations (summary)](./foundations-summary)
-- [Sources](./link-list)
+[References and external foundations (summary)](./foundations-summary) and [Sources](./link-list).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

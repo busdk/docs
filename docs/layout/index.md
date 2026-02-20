@@ -7,17 +7,11 @@ description: Workspace layout and directory structure for BusDK datasets, schema
 
 This section is split into **single-concept** documents:
 
-- [Accounts area (chart of accounts and references)](./accounts-area)
-- [Budgeting area](./budget-area)
-- [Invoice PDF storage](./invoice-pdf-storage)
-- [Invoices area (headers and lines)](./invoices-area)
-- [Journal area (general ledger transactions)](./journal-area)
-- [Data directory layout (principles)](./layout-principles)
-- [Minimal workspace baseline (after initialization)](./minimal-workspace-baseline)
-- [Minimal example layout](./minimal-example-layout)
-- [Repository-level README expectations](./repository-readme-expectations)
-- [Schemas beside datasets (Table Schema JSON files)](./schemas-area)
-- [VAT area (reference data and filed summaries)](./vat-area)
+[Accounts area (chart of accounts and references)](./accounts-area), [Budgeting area](./budget-area), [Invoice PDF storage](./invoice-pdf-storage), [Invoices area (headers and lines)](./invoices-area), and [Journal area (general ledger transactions)](./journal-area) describe area-specific layout contracts.
+
+[Data directory layout (principles)](./layout-principles), [Minimal workspace baseline (after initialization)](./minimal-workspace-baseline), and [Minimal example layout](./minimal-example-layout) define required baseline structure and examples.
+
+[Repository-level README expectations](./repository-readme-expectations), [Schemas beside datasets (Table Schema JSON files)](./schemas-area), and [VAT area (reference data and filed summaries)](./vat-area) define supporting layout and documentation contracts.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

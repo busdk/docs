@@ -19,24 +19,15 @@ Finnish statutory statement mapping is modeled as a companion dataset, `report-a
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the chart (and schema) via the [bus accounts](../../modules/bus-accounts) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../sdd/modules#data-path-contract-for-read-only-cross-module-access).
 
-- [bus invoices](../../modules/bus-invoices): references accounts for invoice row classification.
-- [bus journal](../../modules/bus-journal): posts to accounts and reports balances.
-- [bus bank](../../modules/bus-bank): maps bank accounts and statement items to ledger accounts.
-- [bus reports](../../modules/bus-reports): reads account structure and account-to-statement mapping for statutory report outputs.
+[bus invoices](../../modules/bus-invoices) references accounts for invoice-row classification. [bus journal](../../modules/bus-journal) posts to accounts and reports balances. [bus bank](../../modules/bus-bank) maps bank accounts and statement items to ledger accounts, and [bus reports](../../modules/bus-reports) reads account structure and statement mappings for statutory outputs.
 
 ### Actions
 
-- [Add a ledger account](./add): Register a new account so postings and exports can reference it deterministically.
-- [Categorize a ledger account](./categorize): Attach the account to a reporting category so statements remain readable.
-- [Deactivate a ledger account](./deactivate): Prevent new postings to an inactive account while keeping history intact.
+[Add a ledger account](./add) registers new accounts so postings and exports can reference them deterministically. [Categorize a ledger account](./categorize) attaches accounts to reporting categories so statements stay readable. [Deactivate a ledger account](./deactivate) prevents new postings to inactive accounts while preserving history.
 
 ### Properties
 
-- [`ledger_account_id`](./ledger-account-id): Account identity used for references from other objects.
-- [`number`](./number): Human-facing account number.
-- [`name`](./name): Account label used in review.
-- [`ledger_category_id`](./ledger-category-id): Reporting structure link.
-- [`is_active`](./is-active): Operational control for new postings.
+Core account fields are [`ledger_account_id`](./ledger-account-id), [`number`](./number), and [`name`](./name). Reporting/control fields are [`ledger_category_id`](./ledger-category-id) and [`is_active`](./is-active).
 
 ### Relations
 
@@ -67,4 +58,3 @@ Statutory statement mapping rows reference account ids from this chart and layou
 - [Configure chart of accounts](../../workflow/configure-chart-of-accounts)
 - [Account types in double-entry bookkeeping](../../data/account-types)
 - [bus-reports module SDD](../../sdd/bus-reports)
-

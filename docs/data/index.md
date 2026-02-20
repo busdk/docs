@@ -7,15 +7,9 @@ description: Data formats and storage section — CSV, Table Schema, data packag
 
 This section is split into **single-concept** documents:
 
-- [Account types in double-entry bookkeeping](./account-types)
-- [Append-only updates and soft deletion](./append-only-and-soft-deletion)
-- [CSV conventions](./csv-conventions)
-- [Workspace configuration (`datapackage.json` extension)](./workspace-configuration)
-- [Storage backends and workspace store interface](./storage-backends)
-- [Data Package organization](./data-package-organization)
-- [Scaling over decades](./scaling-over-decades)
-- [Schema evolution and migration](./schema-evolution-and-migration)
-- [Frictionless Table Schema as the contract](./table-schema-contract)
+[Account types in double-entry bookkeeping](./account-types), [Append-only updates and soft deletion](./append-only-and-soft-deletion), [CSV conventions](./csv-conventions), and [Workspace configuration (`datapackage.json` extension)](./workspace-configuration) define baseline data semantics.
+
+[Storage backends and workspace store interface](./storage-backends), [Data Package organization](./data-package-organization), [Scaling over decades](./scaling-over-decades), [Schema evolution and migration](./schema-evolution-and-migration), and [Frictionless Table Schema as the contract](./table-schema-contract) define long-term storage and evolution contracts.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

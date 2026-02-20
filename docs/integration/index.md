@@ -7,8 +7,7 @@ description: "This section is split into **single-concept** documents:"
 
 This section is split into **single-concept** documents:
 
-- [External system integration patterns](./external-system-integration)
-- [Future interfaces (APIs, dashboards, wrappers)](./future-interfaces)
+[External system integration patterns](./external-system-integration) and [Future interfaces (APIs, dashboards, wrappers)](./future-interfaces).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

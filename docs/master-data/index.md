@@ -13,54 +13,43 @@ This section describes the business objects and the bookkeeping properties they 
 
 #### Bookkeeping foundations (shared across workflows)
 
-- [Accounting entity](./accounting-entity/index): The bookkeeping scope defined by the workspace directory boundary, keeping journals, VAT, and reports separated per business entity.
-- [Chart of accounts](./chart-of-accounts/index): The ledger accounts and reporting structure used for posting and review.
-- [VAT treatment](./vat-treatment/index): The minimal VAT metadata that makes posting and VAT reporting deterministic.
-- [Parties (customers and suppliers)](./parties/index): The counterparties attached to invoices, transactions, and sometimes postings.
-- [Bookkeeping status and review workflow](./workflow-metadata/index): The small set of process fields that makes “inbox-style” bookkeeping possible across objects.
-- [Accounting periods](./accounting-periods/index): Period open/close/lock control data used across modules.
+[Accounting entity](./accounting-entity/index) defines bookkeeping scope through workspace boundaries, so journals, VAT, and reports stay separated per business entity. [Chart of accounts](./chart-of-accounts/index) defines posting and reporting structure, and [VAT treatment](./vat-treatment/index) carries the VAT metadata needed for deterministic posting and reporting. [Parties (customers and suppliers)](./parties/index), [bookkeeping status and review workflow](./workflow-metadata/index), and [accounting periods](./accounting-periods/index) provide counterparty, process-state, and open/close/lock controls shared across modules.
 
 #### Sales (invoicing and receivables)
 
-- [Sales invoices](./sales-invoices/index): Outgoing invoices that create income and a receivable until paid.
-- [Sales invoice rows](./sales-invoice-rows/index): Line-level intent that drives income account selection and VAT handling.
+[Sales invoices](./sales-invoices/index) represent outgoing invoices that create income and receivables, while [sales invoice rows](./sales-invoice-rows/index) carry line-level intent that drives income-account and VAT handling.
 
 #### Purchasing (vendor invoices, payables, and posting intent)
 
-- [Purchase invoices](./purchase-invoices/index): Incoming invoices that create an expense or asset and a payable until paid.
-- [Purchase posting specifications](./purchase-posting-specifications/index): The posting intent for purchases, typically split across accounts.
+[Purchase invoices](./purchase-invoices/index) represent incoming invoices that create expenses or assets and payables until paid. [Purchase posting specifications](./purchase-posting-specifications/index) describe deterministic posting intent, often split across multiple accounts.
 
 #### Cash and banking (imports, matching, and non-invoice events)
 
-- [Bank accounts](./bank-accounts/index): The financial accounts that transactions belong to and that map to ledger accounts.
-- [Bank transactions](./bank-transactions/index): Cash movements used for reconciliation and for non-invoice bookkeeping events.
-- [Reconciliations](./reconciliations/index): Append-only links and allocations that explain how cash movement settles invoices and journal transactions.
+[Bank accounts](./bank-accounts/index) identify financial accounts and their ledger mapping. [Bank transactions](./bank-transactions/index) capture cash movements used for reconciliation and non-invoice bookkeeping, and [reconciliations](./reconciliations/index) store append-only links and allocations that explain settlement against invoices and journal transactions.
 
 #### Evidence and audit support (documents)
 
-- [Documents (evidence)](./documents/index): Evidence files and metadata that keep postings auditable by period and counterparty.
+[Documents (evidence)](./documents/index) capture evidence files and metadata so postings remain auditable by period and counterparty.
 
 #### Fixed assets (depreciation and disposals)
 
-- [Fixed assets](./fixed-assets/index): The asset register used for depreciation and disposals.
+[Fixed assets](./fixed-assets/index) define the asset register used for depreciation and disposal workflows.
 
 #### Financing (loans and amortization)
 
-- [Loans](./loans/index): Loan contracts and event logs that drive amortization and postings.
+[Loans](./loans/index) define loan contracts and event logs that drive amortization and related postings.
 
 #### Payroll (employees and payroll runs)
 
-- [Employees](./employees/index): Employee reference data used for payroll runs and postings.
-- [Payroll runs](./payroll-runs/index): Month-based payroll run records that produce postings.
+[Employees](./employees/index) provide payroll reference data, and [payroll runs](./payroll-runs/index) represent period payroll records that produce postings.
 
 #### Inventory (stock and valuation)
 
-- [Inventory items](./inventory-items/index): Item master data used for stock movements and valuation.
-- [Inventory movements](./inventory-movements/index): Append-only stock movement records used for audit and valuation.
+[Inventory items](./inventory-items/index) provide item master data used in valuation, and [inventory movements](./inventory-movements/index) provide append-only stock movements for valuation and auditability.
 
 #### Planning (budgets and variance)
 
-- [Budgets](./budgets/index): Budget lines keyed by account and period for variance reporting.
+[Budgets](./budgets/index) define budget lines keyed by account and period for variance reporting.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -75,4 +64,3 @@ This section describes the business objects and the bookkeeping properties they 
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
 - [Data directory layout](../layout/index)
-

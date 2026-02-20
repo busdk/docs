@@ -19,8 +19,7 @@ Data is schema-validated and append-only for auditability.
 
 ### Commands
 
-- `validate` checks payroll datasets and schemas in the workspace root.
-- `export` validates first, then emits deterministic posting CSV for the selected final payrun.
+`validate` checks payroll datasets and schemas in the workspace root. `export` validates first, then emits deterministic posting CSV for the selected final payrun.
 
 ### Options
 

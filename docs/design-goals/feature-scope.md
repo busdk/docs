@@ -9,18 +9,9 @@ BusDK’s initial feature scope is an end-to-end bookkeeping workflow implemente
 
 The initial planned modules cover the minimum building blocks used in the intended workflow:
 
-- Chart of accounts with [`bus accounts`](../modules/bus-accounts)
-- Counterparties with [`bus entities`](../modules/bus-entities)
-- Accounting periods with [`bus period`](../modules/bus-period)
-- Evidence archiving with [`bus attachments`](../modules/bus-attachments)
-- Sales and purchase invoices with [`bus invoices`](../modules/bus-invoices)
-- Balanced ledger postings with [`bus journal`](../modules/bus-journal)
-- Bank import with [`bus bank`](../modules/bus-bank)
-- Reconciliation with [`bus reconcile`](../modules/bus-reconcile)
-- Finnish VAT (ALV) calculation and reporting with [`bus vat`](../modules/bus-vat)
-- Validation and safety checks with [`bus validate`](../modules/bus-validate)
-- Reporting outputs with [`bus reports`](../modules/bus-reports)
-- Fixed-asset tracking with [`bus assets`](../modules/bus-assets)
+Core planned modules are [`bus accounts`](../modules/bus-accounts) for chart of accounts, [`bus entities`](../modules/bus-entities) for counterparties, [`bus period`](../modules/bus-period) for period control, [`bus attachments`](../modules/bus-attachments) for evidence archiving, [`bus invoices`](../modules/bus-invoices) for sales and purchase invoices, and [`bus journal`](../modules/bus-journal) for balanced ledger postings.
+
+Transaction and control modules are [`bus bank`](../modules/bus-bank) for bank import, [`bus reconcile`](../modules/bus-reconcile) for reconciliation, [`bus vat`](../modules/bus-vat) for VAT calculation/reporting, [`bus validate`](../modules/bus-validate) for validation and safety checks, [`bus reports`](../modules/bus-reports) for reporting outputs, and [`bus assets`](../modules/bus-assets) for fixed-asset tracking.
 
 Budgeting and budget-versus-actual reporting with [`bus budget`](../modules/bus-budget) is in scope as an analysis and planning capability, but it is not the defining backbone of the statutory bookkeeping chain in BusDK terms.
 

@@ -15,53 +15,29 @@ This page specifies command names and output expectations at a contract level. T
 
 The following command surface is the minimum needed to execute the workflow as described in the spec.
 
-- `bus init`
-  
-  Creates a workspace by orchestrating module-owned initialization so each module remains the authoritative owner of its datasets and schemas. If the command emits a result on standard output, it must be stable across machines and should be limited to workspace-relative paths and stable identifiers.
+`bus init` creates workspaces by orchestrating module-owned initialization so each module remains owner of its datasets and schemas. If it emits stdout results, they must be stable across machines and limited to workspace-relative paths and stable identifiers.
 
-- `bus accounts add`
-  
-  Appends chart-of-accounts reference data. The command must fail with deterministic diagnostics when inputs violate schema or invariants. If it emits a result on standard output, it should be limited to stable identifiers (for example the account code) and must not rely on unstable row numbering.
+`bus accounts add` appends chart-of-accounts reference data and must fail with deterministic diagnostics when schema or invariants are violated. Any stdout result should contain stable identifiers, such as account code, and must not depend on row order.
 
-- `bus entities add`
-  
-  Appends counterparty reference data and establishes stable entity identifiers for cross-dataset links. If it emits a result on standard output, it should include the stable entity identifier.
+`bus entities add` appends counterparty reference data and establishes stable entity identifiers used by cross-dataset links. If it emits stdout results, they should include stable entity identifiers.
 
-- `bus period add`, `bus period open`, `bus period close`, `bus period lock`
-  
-  Creates periods in state **future** (`add`) and establishes the state transitions that make period close repeatable and prevent later drift (`open` → `close` → `lock`). These commands must fail deterministically when asked to violate add or state invariants (e.g. add when period already exists, open when period not found or not in state future). If they emit results, they should reference stable period identifiers.
+`bus period add`, `bus period open`, `bus period close`, and `bus period lock` create periods in **future** state and enforce deterministic state transitions (`open` → `close` → `lock`) for repeatable period control. They must fail deterministically on state/invariant violations and should emit stable period identifiers when returning results.
 
-- `bus attachments add`
-  
-  Registers evidence files and creates attachment identifiers that other datasets can reference. If it emits a result on standard output, it should include the stable attachment identifier and any workspace-relative path needed to locate the evidence.
+`bus attachments add` registers evidence files and creates attachment identifiers that other datasets can reference. Any stdout result should include stable attachment identifiers and, when needed, workspace-relative evidence paths.
 
-- `bus invoices add`
-  
-  Appends invoice datasets and validates totals and VAT breakdowns. If it emits a result on standard output, it should include the stable invoice identifier.
+`bus invoices add` appends invoice datasets and validates totals and VAT breakdowns. If it emits stdout results, they should include stable invoice identifiers.
 
-- `bus journal add`
-  
-  Appends balanced journal transactions and enforces balance invariants. If it emits a result on standard output, it should include the stable transaction or voucher identifier used for traceability.
+`bus journal add` appends balanced journal transactions and enforces balance invariants. If it emits stdout results, they should include stable transaction or voucher identifiers used for traceability.
 
-- `bus bank import`
-  
-  Imports and normalizes bank statement data into workspace datasets. The command must be usable non-interactively so it can run in automation. If it emits a result on standard output, it should be a stable summary that does not depend on environment-specific strings.
+`bus bank import` imports and normalizes bank statement data into workspace datasets and must be fully non-interactive for automation. Any stdout result should be a stable summary that is not environment-dependent.
 
-- `bus reconcile match`
-  
-  Links bank transactions to invoices or journal entries and records allocations as reconciliation datasets. If it emits a result on standard output, it should reference stable identifiers (bank transaction IDs and the linked record IDs).
+`bus reconcile match` links bank transactions to invoices or journal entries and writes reconciliation datasets. Any stdout result should reference stable identifiers for both bank transactions and linked records.
 
-- `bus validate`
-  
-  Validates workspace datasets against schemas and cross-table invariants. This command must be usable in CI and other scripted contexts, and it must emit deterministic diagnostics that cite datasets and stable identifiers. In addition to human-readable diagnostics, it should provide at least one machine-readable diagnostics mode suitable for automation.
+`bus validate` checks workspace datasets against schemas and cross-table invariants. It must work in CI and scripted contexts and emit deterministic diagnostics with dataset names and stable identifiers. Alongside human-readable diagnostics, it should provide at least one machine-readable diagnostics mode.
 
-- `bus vat report`, `bus vat export`
-  
-  Computes VAT summaries per reporting period and produces export material as repository data for archiving and filing. These commands must support a machine-readable output mode for the computed result set, with a stable schema, stable column order, and stable record ordering as described in [Reporting and query commands](./reporting-and-queries).
+`bus vat report` and `bus vat export` compute period VAT summaries and generate export artifacts as repository data for archiving and filing. They must support machine-readable output with stable schema, column order, and record ordering as defined in [Reporting and query commands](./reporting-and-queries).
 
-- `bus reports trial-balance`
-  
-  Produces the period-close report output set. This command must support a machine-readable output mode, with a stable schema, stable column order, and stable record ordering.
+`bus reports trial-balance` produces period-close reporting output and must support machine-readable output with stable schema, column order, and record ordering.
 
 ### Scope and evolution
 

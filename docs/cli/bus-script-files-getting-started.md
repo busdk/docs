@@ -81,17 +81,11 @@ bus --check --trace first-run.bus
 
 ## Minimal file rules
 
-- Lines starting with `#` are comments.
-- Blank lines are ignored.
-- A trailing `\` continues the command on the next physical line.
-- Lines ending with `.bus` include another bus file.
-- Use quotes when values contain spaces.
+Lines starting with `#` are comments and blank lines are ignored. A trailing `\` continues the command on the next physical line. Lines ending with `.bus` include another busfile, and quoted values should be used when arguments contain spaces.
 
 ## Common first errors
 
-- Unknown module or typo in command name.
-- Unbalanced journal posting (debits and credits differ).
-- Unterminated quote in a line.
+Common first failures are unknown module/command typos, unbalanced `journal add` postings where debit and credit totals differ, and unterminated quotes in command lines.
 
 ## Next step
 

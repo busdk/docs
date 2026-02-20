@@ -13,41 +13,21 @@ Owner: [bus bank](../../modules/bus-bank). This module is responsible for implem
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus reconcile](../../modules/bus-reconcile): records matches and allocations that reference bank transaction identity.
-- [bus invoices](../../modules/bus-invoices): is matched against payments for open item workflows.
-- [bus journal](../../modules/bus-journal): receives postings for non-invoice bank events.
+[bus reconcile](../../modules/bus-reconcile) records matches and allocations that reference bank transaction identity. [bus invoices](../../modules/bus-invoices) is matched against payments for open-item workflows, and [bus journal](../../modules/bus-journal) receives postings for non-invoice bank events.
 
 ### Actions
 
-- [Import bank transactions](./import): Ingest a statement feed into normalized transactions suitable for reconciliation.
-- [Match a bank transaction](./match): Link cash movement to an invoice or journal entry so open items close deterministically.
-- [Classify a non-invoice bank transaction](./classify): Record the target ledger account and VAT intent for fees, taxes, and other events.
+[Import bank transactions](./import) ingests statement feeds into normalized transactions suitable for reconciliation. [Match a bank transaction](./match) links cash movement to invoices or journal entries so open items close deterministically. [Classify a non-invoice bank transaction](./classify) records target ledger account and VAT intent for fees, taxes, and other events.
 
 ### Properties
 
-- [`bank_transaction_id`](./bank-transaction-id): Bank transaction identity.
-- [`bank_account_id`](./bank-account-id): Bank account link.
-- [`booking_date`](./booking-date): Posting period date.
-- [`value_date`](./value-date): Value date.
-- [`amount`](./amount): Money movement amount.
-- [`currency`](./currency): Money movement currency.
-- [`reference`](./reference): Payment reference.
-- [`rf_reference`](./rf-reference): RF reference.
-- [`debtor_name`](./debtor-name): Counterparty name (debtor).
-- [`creditor_name`](./creditor-name): Counterparty name (creditor).
-- [`debtor_account`](./debtor-account): Counterparty account (debtor).
-- [`creditor_account`](./creditor-account): Counterparty account (creditor).
-- [`matched_sale_invoice_id`](./matched-sale-invoice-id): Sales invoice match.
-- [`matched_purchase_invoice_id`](./matched-purchase-invoice-id): Purchase invoice match.
-- [`client_id`](./client-id): Party link (customer-side).
-- [`purchase_company_id`](./purchase-company-id): Party link (supplier-side).
-- [`ledger_account_id`](./ledger-account-id): Classification target for non-invoice events.
-- [`vat_treatment`](./vat-treatment): VAT handling code (when relevant).
-- [`vat_deductible_percent`](./vat-deductible-percent): VAT deductibility (when relevant).
-- [`accounting_status`](./accounting-status): Review state.
-- [`booked_at`](./booked-at): Booking timestamp.
-- [`booked_by`](./booked-by): Booking actor.
-- [`accounting_note`](./accounting-note): Exception explanation.
+Core properties are [`bank_transaction_id`](./bank-transaction-id), [`bank_account_id`](./bank-account-id), [`booking_date`](./booking-date), [`value_date`](./value-date), [`amount`](./amount), [`currency`](./currency), [`reference`](./reference), and [`rf_reference`](./rf-reference).
+
+Counterparty fields include [`debtor_name`](./debtor-name), [`creditor_name`](./creditor-name), [`debtor_account`](./debtor-account), and [`creditor_account`](./creditor-account).
+
+Matching and classification fields include [`matched_sale_invoice_id`](./matched-sale-invoice-id), [`matched_purchase_invoice_id`](./matched-purchase-invoice-id), [`client_id`](./client-id), [`purchase_company_id`](./purchase-company-id), [`ledger_account_id`](./ledger-account-id), [`vat_treatment`](./vat-treatment), and [`vat_deductible_percent`](./vat-deductible-percent).
+
+Workflow metadata fields include [`accounting_status`](./accounting-status), [`booked_at`](./booked-at), [`booked_by`](./booked-by), and [`accounting_note`](./accounting-note).
 
 Bank transactions belong to the workspace’s [accounting entity](../accounting-entity/index) and attach to a statement source via [`bank_account_id`](../bank-accounts/bank-account-id).
 
@@ -75,4 +55,3 @@ A bank transaction can have zero or more [documents (evidence)](../documents/ind
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Import bank transactions and apply payment](../../workflow/import-bank-transactions-and-apply-payment)
 - [Reconcile bank transactions](../../modules/bus-reconcile)
-

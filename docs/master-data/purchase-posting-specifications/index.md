@@ -15,27 +15,19 @@ Owner: [bus invoices](../../modules/bus-invoices). This module is responsible fo
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus journal](../../modules/bus-journal): receives posting outputs derived from purchase specs.
-- [bus vat](../../modules/bus-vat): validates VAT logic from purchase posting lines.
+[bus journal](../../modules/bus-journal) receives posting outputs derived from purchase specifications, and [bus vat](../../modules/bus-vat) validates VAT logic from purchase posting lines.
 
 ### Actions
 
-- [Split a purchase across accounts](./split): Record multi-line intent so expenses and assets are posted to the correct accounts.
-- [Decide purchase VAT handling](./decide-vat): Record VAT treatment and deductibility at the posting decision level.
-- [Mark a line as capitalizable](./mark-capitalizable): Capture asset intent so later fixed-asset workflows remain consistent.
+[Split a purchase across accounts](./split) records multi-line intent so expenses and assets post to correct accounts. [Decide purchase VAT handling](./decide-vat) records VAT treatment and deductibility at posting-decision level. [Mark a line as capitalizable](./mark-capitalizable) captures asset intent so later fixed-asset flows stay consistent.
 
 ### Properties
 
-- [`ledger_account_id`](./ledger-account-id): Classification target.
-- [`amount`](./amount): Posted amount.
-- [`description`](./description): Review aid.
-- [`vat_treatment`](./vat-treatment): VAT handling code.
-- [`vat_rate`](./vat-rate): VAT percentage.
-- [`vat_amount`](./vat-amount): VAT amount.
-- [`vat_deductible_percent`](./vat-deductible-percent): Purchase-side deductibility.
-- [`dimension`](./dimension): Lightweight reporting tag.
-- [`is_capitalizable`](./is-capitalizable): Asset vs expense intent.
-- [`asset_class_hint`](./asset-class-hint): Asset class hint.
+Core posting fields are [`ledger_account_id`](./ledger-account-id), [`amount`](./amount), and optional review note [`description`](./description).
+
+VAT fields are [`vat_treatment`](./vat-treatment), [`vat_rate`](./vat-rate), [`vat_amount`](./vat-amount), and [`vat_deductible_percent`](./vat-deductible-percent).
+
+Optional classification fields are [`dimension`](./dimension), [`is_capitalizable`](./is-capitalizable), and [`asset_class_hint`](./asset-class-hint).
 
 ### Relations
 
@@ -57,4 +49,3 @@ When `is_capitalizable` is set, the line indicates fixed-asset intent that later
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Record purchase journal transaction](../../workflow/record-purchase-journal-transaction)
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
-

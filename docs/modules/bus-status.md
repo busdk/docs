@@ -21,25 +21,17 @@ The standalone `bus-status` binary is still valid for direct script usage.
 
 ### Commands
 
-- `readiness` checks core workspace readiness and latest period close state.
+`readiness` checks core workspace readiness and latest period close state.
 
 ### Options
 
-`readiness` supports:
-- `-f <text|json|tsv>`
-- `-o <file>`
-- `-C <dir>`
+`readiness` supports `-f <text|json|tsv>`, `-o <file>`, and `-C <dir>`.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus status --help`.
 
 ### Output fields
 
-- `accounts_ready`: `accounts.csv` and `accounts.schema.json` are present.
-- `journal_ready`: journal dataset and schema are present.
-- `periods_ready`: period dataset and schema are present.
-- `latest_period`: latest period id from period control data.
-- `latest_state`: latest period state (`future|open|closed|locked|...`).
-- `close_flow_ready`: true only when core datasets exist and latest state is `closed` or `locked`.
+`accounts_ready` reports whether `accounts.csv` and `accounts.schema.json` are present. `journal_ready` reports whether journal dataset and schema are present. `periods_ready` reports whether period dataset and schema are present. `latest_period` gives the latest period id from period control data, and `latest_state` gives the latest state (`future|open|closed|locked|...`). `close_flow_ready` is true only when core datasets exist and latest state is `closed` or `locked`.
 
 ### Examples
 

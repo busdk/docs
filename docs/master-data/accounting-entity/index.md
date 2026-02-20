@@ -13,16 +13,11 @@ Owner: [bus init](../../modules/bus-init). This module creates a new workspace a
 
 Other modules consume the accounting entity settings as read-only workspace configuration when they validate, post, reconcile, report, or produce filings:
 
-- [bus accounts](../../modules/bus-accounts): reads workspace scope and entity settings to keep charts and validations consistent.
-- [bus invoices](../../modules/bus-invoices): reads entity settings to interpret invoice dates, currency, and VAT context.
-- [bus vat](../../modules/bus-vat): reads VAT registration, reporting period, timing basis, and registration dates for period allocation and reporting.
-- [bus journal](../../modules/bus-journal): posts and reports per entity scope.
-- [bus reports](../../modules/bus-reports): reads Finnish statutory reporting profile keys for layout defaults, comparatives, and PDF signature metadata.
+[bus accounts](../../modules/bus-accounts) reads workspace scope and entity settings to keep charts and validations consistent. [bus invoices](../../modules/bus-invoices) reads entity settings for invoice dates, currency, and VAT context. [bus vat](../../modules/bus-vat) reads VAT registration, reporting cadence, timing basis, and registration dates for period allocation/reporting. [bus journal](../../modules/bus-journal) posts and reports per entity scope, and [bus reports](../../modules/bus-reports) reads Finnish statutory profile keys for layout defaults, comparatives, and signature metadata.
 
 ### Actions
 
-- [Create an accounting entity](./create): Create a new workspace directory so journals and VAT never mix across business entities.
-- [Configure accounting entity settings](./configure): Edit workspace configuration that controls currency, fiscal year boundaries, VAT reporting, VAT timing, and optional VAT registration dates.
+[Create an accounting entity](./create) creates a new workspace directory so journals and VAT never mix across business entities. [Configure accounting entity settings](./configure) updates workspace-level currency, fiscal-year, VAT, and reporting-profile settings.
 
 ### Properties
 
@@ -52,4 +47,3 @@ Multi-company workflows are expressed as multi-workspace operations; see [Worksp
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
 - [bus-reports module CLI reference](../../modules/bus-reports)
 - [bus-reports SDD](../../sdd/bus-reports)
-

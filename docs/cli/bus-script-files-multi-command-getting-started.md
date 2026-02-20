@@ -7,9 +7,7 @@ description: "Step-by-step guide to run multiple BusDK module commands in one .b
 
 This guide shows how to run several module commands in one `.bus` file. It includes two practical starter flows:
 
-1. bookkeeping commands together in one run
-2. developer and agent tooling commands (`dev`, `agent`, `run`) in one run
-3. focused GUI handoff with `books` for end-user form input
+bookkeeping commands together in one run, developer/agent tooling commands (`dev`, `agent`, `run`) in one run, and focused GUI handoff with `books` for end-user form input.
 
 ## Flow A: bookkeeping starter file
 
@@ -120,17 +118,13 @@ The URL includes the target route and launch values (hash query). In `--view-onl
 
 ## Practical notes
 
-- In `.bus` files, write module targets directly (`journal ...`, `dev ...`, `agent ...`, `run ...`), not `bus <module> ...`.
-- One logical command is one command; use trailing `\` for line continuation when needed.
-- Use `bus --check` before applying bookkeeping changes.
-- Use `--trace` when debugging line-by-line behavior.
+In `.bus` files, write module targets directly (`journal ...`, `dev ...`, `agent ...`, `run ...`) instead of `bus <module> ...`. Keep one logical command per command line, using trailing `\` for continuation when needed. Run `bus --check` before applying bookkeeping changes, and use `--trace` for line-by-line debugging.
 
 ## Next step
 
 After these starter flows, continue with:
 
-- [`.bus` files — getting started step by step](./bus-script-files-getting-started)
-- [`.bus` script files — writing and execution guide](./bus-script-files)
+[`.bus` files — getting started step by step](./bus-script-files-getting-started) and [`.bus` script files — writing and execution guide](./bus-script-files).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

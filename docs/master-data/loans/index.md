@@ -13,27 +13,17 @@ Owner: [bus loans](../../modules/bus-loans). This module is responsible for impl
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus journal](../../modules/bus-journal): receives posting outputs derived from loan events and amortization.
-- [bus entities](../../modules/bus-entities): provides counterparties referenced by loans.
-- [bus accounts](../../modules/bus-accounts): provides the accounts referenced by loan posting fields.
+[bus journal](../../modules/bus-journal) receives postings derived from loan events and amortization. [bus entities](../../modules/bus-entities) provides referenced counterparties, and [bus accounts](../../modules/bus-accounts) provides accounts used by loan posting fields.
 
 ### Actions
 
-- [Register a loan](./register): Record a loan contract so repayments and interest can be booked consistently.
-- [Record a loan event](./record-event): Append disbursements, repayments, interest, fees, and adjustments as an auditable event log.
-- [Amortize a loan](./amortize): Generate amortization schedule and posting intent for a period.
+[Register a loan](./register) records loan contracts so repayments and interest can be booked consistently. [Record a loan event](./record-event) appends disbursements, repayments, interest, fees, and adjustments as auditable event history. [Amortize a loan](./amortize) generates period amortization schedule and posting intent.
 
 ### Properties
 
-- [`loan_id`](./loan-id): Loan identity.
-- [`counterparty_id`](./counterparty-id): Lender or borrower party reference.
-- [`principal_amount`](./principal-amount): Principal amount.
-- [`start_date`](./start-date): Start date.
-- [`maturity_date`](./maturity-date): Maturity date.
-- [`interest_rate`](./interest-rate): Nominal interest rate.
-- [`principal_account_id`](./principal-account-id): Principal account.
-- [`interest_account_id`](./interest-account-id): Interest expense account.
-- [`cash_account_id`](./cash-account-id): Cash or bank account.
+Core contract fields are [`loan_id`](./loan-id), [`counterparty_id`](./counterparty-id), [`principal_amount`](./principal-amount), [`start_date`](./start-date), [`maturity_date`](./maturity-date), and [`interest_rate`](./interest-rate).
+
+Posting-account fields are [`principal_account_id`](./principal-account-id), [`interest_account_id`](./interest-account-id), and [`cash_account_id`](./cash-account-id).
 
 ### Relations
 
@@ -57,4 +47,3 @@ Amortization is produced for a given [accounting period](../accounting-periods/i
 
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
-

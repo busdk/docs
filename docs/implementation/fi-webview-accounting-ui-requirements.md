@@ -11,10 +11,7 @@ The requirements complement [bus-books module SDD](../sdd/bus-books), [bus-books
 
 ## Topic pages
 
-- [Finnish WebView IA and navigation model](./fi-webview-ia-and-navigation-model)
-- [Finnish WebView table-first UX contract](./fi-webview-table-first-ux-contract)
-- [Finnish WebView compliance and audit UX](./fi-webview-compliance-and-audit-ux)
-- [Finnish WebView accessibility and performance](./fi-webview-accessibility-and-performance)
+[Finnish WebView IA and navigation model](./fi-webview-ia-and-navigation-model), [Finnish WebView table-first UX contract](./fi-webview-table-first-ux-contract), [Finnish WebView compliance and audit UX](./fi-webview-compliance-and-audit-ux), and [Finnish WebView accessibility and performance](./fi-webview-accessibility-and-performance).
 
 ## Scope guard
 

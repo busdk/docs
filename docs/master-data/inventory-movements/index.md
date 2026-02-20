@@ -13,22 +13,15 @@ Owner: [bus inventory](../../modules/bus-inventory). This module is responsible 
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus validate](../../modules/bus-validate): checks movement integrity and reference validity.
+[bus validate](../../modules/bus-validate) checks movement integrity and reference validity.
 
 ### Actions
 
-- [Record an inventory movement](./record): Append stock movements so inventory levels and valuation remain auditable.
-- [Adjust inventory](./adjust): Record an adjustment movement when physical count differs from book stock.
+[Record an inventory movement](./record) appends stock movements so inventory levels and valuation remain auditable. [Adjust inventory](./adjust) records adjustment movements when physical count differs from book stock.
 
 ### Properties
 
-- [`item_id`](./item-id): Item reference.
-- [`date`](./date): Movement date.
-- [`qty`](./qty): Quantity moved.
-- [`direction`](./direction): Movement direction.
-- [`unit_cost`](./unit-cost): Unit cost (when relevant).
-- [`description`](./description): Movement description.
-- [`voucher`](./voucher): Voucher or evidence reference.
+Core movement fields are [`item_id`](./item-id), [`date`](./date), [`qty`](./qty), [`direction`](./direction), [`unit_cost`](./unit-cost), [`description`](./description), and [`voucher`](./voucher).
 
 ### Relations
 
@@ -48,4 +41,3 @@ An inventory movement references one [inventory item](../inventory-items/index) 
 
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
-

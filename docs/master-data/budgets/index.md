@@ -13,20 +13,15 @@ Owner: [bus budget](../../modules/bus-budget). This module is responsible for im
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus reports](../../modules/bus-reports): compares actuals to budgets in reporting outputs.
-- [bus journal](../../modules/bus-journal): provides actuals used for variance calculations.
+[bus reports](../../modules/bus-reports) compares actuals to budgets in reporting outputs, and [bus journal](../../modules/bus-journal) provides actuals used for variance calculations.
 
 ### Actions
 
-- [Set a budget line](./set): Record a budget amount for an account and period so variance reports are deterministic.
-- [Report budget vs actual](./report): Emit variance output for a year or period based on budget lines and journal actuals.
+[Set a budget line](./set) records budget amounts per account and period so variance output is deterministic. [Report budget vs actual](./report) emits period or yearly variance results based on budget lines and journal actuals.
 
 ### Properties
 
-- [`ledger_account_id`](./ledger-account-id): Account reference.
-- [`year`](./year): Budget year.
-- [`period`](./period): Budget period identifier.
-- [`amount`](./amount): Budget amount.
+Core budget fields are [`ledger_account_id`](./ledger-account-id), [`year`](./year), [`period`](./period), and [`amount`](./amount).
 
 ### Relations
 
@@ -46,4 +41,3 @@ A budget line references one [ledger account](../chart-of-accounts/index) via [`
 
 - [Workflow: Budgeting and budget vs actual](../../workflow/budgeting-and-budget-vs-actual)
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
-

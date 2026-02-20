@@ -48,9 +48,11 @@ Required: `--as-of`, `--post-date`, `--period`.
 Preconditions: target period open, journal initialized, snapshot has at least one effective row, every account in snapshot exists in chart.
 
 Use `--replace` to remove a previous apply for same as-of and period and write a new one.
-- **`validate`** checks the snapshot dataset against its schema. With `--as-of`, it also validates that snapshot’s effective set (e.g. all accounts in chart, amounts parse).
-- **`list`** prints effective balances (one row per as-of and account, latest `recorded_at` wins). Use `--as-of` to restrict to one snapshot date. Optional `--history` may show all rows instead of effective only.
-- **`template`** prints a CSV template (header and example row) to stdout for use with `import`. It does not read or write workspace files.
+**`validate`** checks the snapshot dataset against its schema. With `--as-of`, it also validates the effective set for that snapshot, including account existence and amount parsing.
+
+**`list`** prints effective balances (one row per as-of and account, latest `recorded_at` wins). Use `--as-of` to restrict output to one snapshot date, and use `--history` when you need all rows instead of only effective rows.
+
+**`template`** prints a CSV template (header plus example row) to stdout for `import` and does not read or write workspace files.
 
 ### Options
 

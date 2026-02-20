@@ -13,27 +13,17 @@ Owner: [bus assets](../../modules/bus-assets). This module is responsible for im
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus journal](../../modules/bus-journal): receives depreciation and disposal postings produced from asset records.
-- [bus accounts](../../modules/bus-accounts): provides the accounts referenced by asset posting fields.
-- [bus validate](../../modules/bus-validate): checks schema and reference integrity for asset datasets.
+[bus journal](../../modules/bus-journal) receives depreciation and disposal postings produced from asset records. [bus accounts](../../modules/bus-accounts) provides accounts referenced by asset posting fields, and [bus validate](../../modules/bus-validate) checks schema and reference integrity for asset datasets.
 
 ### Actions
 
-- [Register a fixed asset](./register): Record a new asset acquisition so depreciation and disposals can be booked deterministically.
-- [Depreciate fixed assets](./depreciate): Generate depreciation postings for a period based on the asset register.
-- [Dispose of a fixed asset](./dispose): Record an asset disposal and produce the disposal posting intent for the journal.
+[Register a fixed asset](./register) records acquisitions so depreciation and disposals can be booked deterministically. [Depreciate fixed assets](./depreciate) generates period depreciation from register data, and [Dispose of a fixed asset](./dispose) records disposals and produces journal posting intent.
 
 ### Properties
 
-- [`asset_id`](./asset-id): Asset identity.
-- [`name`](./name): Asset name.
-- [`acquired_date`](./acquired-date): Acquisition date.
-- [`cost`](./cost): Acquisition cost.
-- [`asset_account_id`](./asset-account-id): Balance sheet asset account.
-- [`depreciation_account_id`](./depreciation-account-id): Accumulated depreciation account.
-- [`expense_account_id`](./expense-account-id): Depreciation expense account.
-- [`depreciation_method`](./depreciation-method): Depreciation method.
-- [`life_months`](./life-months): Depreciation life in months.
+Core asset fields are [`asset_id`](./asset-id), [`name`](./name), [`acquired_date`](./acquired-date), and [`cost`](./cost).
+
+Posting and method fields are [`asset_account_id`](./asset-account-id), [`depreciation_account_id`](./depreciation-account-id), [`expense_account_id`](./expense-account-id), [`depreciation_method`](./depreciation-method), and [`life_months`](./life-months).
 
 ### Relations
 
@@ -56,4 +46,3 @@ Depreciation and disposal workflows are period-based and produce posting intent 
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 - [Double-entry ledger](../../design-goals/double-entry-ledger)
 - [Journal area](../../layout/journal-area)
-

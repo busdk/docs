@@ -13,25 +13,15 @@ Owner: [bus attachments](../../modules/bus-attachments). This module is responsi
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus invoices](../../modules/bus-invoices): links evidence to invoices for audit trails.
-- [bus bank](../../modules/bus-bank): links evidence to statement items when needed.
-- [bus journal](../../modules/bus-journal): is reviewable through links from postings back to evidence.
+[bus invoices](../../modules/bus-invoices) links evidence to invoices for audit trails. [bus bank](../../modules/bus-bank) links evidence to statement items when needed, and [bus journal](../../modules/bus-journal) is reviewable through links from postings back to evidence.
 
 ### Actions
 
-- [Register an evidence document](./register): Add the evidence file and its metadata so bookkeeping can retrieve it deterministically.
-- [Link evidence to a record](./link): Attach evidence to an invoice or bank transaction so audit navigation is one step.
-- [Review evidence completeness](./review): Mark evidence status so items are not booked without acceptable attachments.
+[Register an evidence document](./register) adds evidence files and metadata for deterministic retrieval. [Link evidence to a record](./link) attaches evidence to invoices or bank transactions for one-step audit navigation. [Review evidence completeness](./review) marks evidence status so items are not booked without acceptable attachments.
 
 ### Properties
 
-- [`document_id`](./document-id): Document identity.
-- [`doc_date`](./doc-date): Document date.
-- [`content_type`](./content-type): File type.
-- [`path`](./path): File locator.
-- [`document_role`](./document-role): Purpose classification.
-- [`evidence_status`](./evidence-status): Evidence completeness signal.
-- [`linked_entity_reference`](./linked-entity-reference): Navigable evidence trail.
+Core document fields are [`document_id`](./document-id), [`doc_date`](./doc-date), [`content_type`](./content-type), [`path`](./path), and [`document_role`](./document-role). Workflow and linkage fields are [`evidence_status`](./evidence-status) and [`linked_entity_reference`](./linked-entity-reference).
 
 ### Relations
 
@@ -53,4 +43,3 @@ A document can be linked to one or more bookkeeping records using [`linked_entit
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Invoice PDF storage](../../layout/invoice-pdf-storage)
 - [Generate invoice PDF and register attachment](../../workflow/generate-invoice-pdf-and-register-attachment)
-

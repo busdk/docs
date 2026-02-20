@@ -38,12 +38,10 @@ Use standard global flags (see [Standard global flags](../cli/global-flags)).
 Global flags appear before subcommand.
 
 Subcommands:
-- `export` with `--bundle <dir>` and optional `--dry-run`
-- `verify` with `--bundle <dir>`
+`export` accepts `--bundle <dir>` and optional `--dry-run`. `verify` accepts `--bundle <dir>`.
 
 Defaults:
-- bundle path: `filing/vero/bundle`
-- format: `tsv`
+default bundle path is `filing/vero/bundle`, and default format is `tsv`.
 
 Unknown subcommands/flags and empty `--bundle` are usage errors (`2`).
 For full flag matrix and edge-case semantics, see [Module SDD: bus-filing-vero](../sdd/bus-filing-vero).

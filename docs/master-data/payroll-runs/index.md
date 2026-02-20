@@ -13,19 +13,15 @@ Owner: [bus payroll](../../modules/bus-payroll). This module is responsible for 
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus journal](../../modules/bus-journal): receives the balanced postings produced by payroll runs.
-- [bus period](../../modules/bus-period): provides period control for month-based payroll workflows.
+[bus journal](../../modules/bus-journal) receives balanced postings produced by payroll runs, and [bus period](../../modules/bus-period) provides period control for month-based payroll workflows.
 
 ### Actions
 
-- [Run payroll](./run): Compute payroll for a month and produce posting intent for wages and withholdings.
-- [List payroll runs](./list): List runs so a reviewer can confirm what has been produced for a month.
+[Run payroll](./run) computes monthly payroll and produces posting intent for wages and withholdings. [List payroll runs](./list) provides review visibility for what has been produced by month.
 
 ### Properties
 
-- [`run_id`](./run-id): Payroll run identity.
-- [`month`](./month): Payroll month.
-- [`pay_date`](./pay-date): Pay date.
+Core payroll-run fields are [`run_id`](./run-id), [`month`](./month), and [`pay_date`](./pay-date).
 
 ### Relations
 
@@ -47,4 +43,3 @@ Payroll runs are month-based and rely on [accounting periods](../accounting-peri
 
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Double-entry ledger](../../design-goals/double-entry-ledger)
-

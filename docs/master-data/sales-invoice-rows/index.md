@@ -13,28 +13,19 @@ Owner: [bus invoices](../../modules/bus-invoices). This module is responsible fo
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus accounts](../../modules/bus-accounts): provides the chart used for income account selection.
-- [bus vat](../../modules/bus-vat): uses line-level VAT fields for reporting and validation.
+[bus accounts](../../modules/bus-accounts) provides the chart used for income-account selection, and [bus vat](../../modules/bus-vat) uses line-level VAT fields for reporting and validation.
 
 ### Actions
 
-- [Classify a sales invoice row](./classify): Record income account and VAT treatment so sales bookkeeping is deterministic.
-- [Set sales row service period](./periodize): Record service dates when period allocation depends on the delivered period.
+[Classify a sales invoice row](./classify) records income account and VAT treatment so sales bookkeeping remains deterministic. [Set sales row service period](./periodize) records service dates when period allocation depends on delivered period.
 
 ### Properties
 
-- [`invoice_row_id`](./invoice-row-id): Invoice row identity.
-- [`invoice_id`](./invoice-id): Parent invoice link.
-- [`description`](./description): What was sold.
-- [`amount`](./amount): Quantity.
-- [`price`](./price): Unit price.
-- [`discount_percent`](./discount-percent): Discount impact.
-- [`vat_percent`](./vat-percent): Applied VAT percentage.
-- [`ledger_account_id`](./ledger-account-id): Income account intent.
-- [`vat_treatment`](./vat-treatment): VAT handling code.
-- [`dimension`](./dimension): Lightweight reporting tag.
-- [`service_start_date`](./service-start-date): Line-level service period start.
-- [`service_end_date`](./service-end-date): Line-level service period end.
+Core row identity and amount fields are [`invoice_row_id`](./invoice-row-id), [`invoice_id`](./invoice-id), [`description`](./description), [`amount`](./amount), [`price`](./price), and [`discount_percent`](./discount-percent).
+
+Tax and posting-intent fields are [`vat_percent`](./vat-percent), [`ledger_account_id`](./ledger-account-id), [`vat_treatment`](./vat-treatment), and optional reporting tag [`dimension`](./dimension).
+
+Service-period fields are [`service_start_date`](./service-start-date) and [`service_end_date`](./service-end-date).
 
 Sales invoice rows belong to the workspace’s [accounting entity](../accounting-entity/index). Scope is derived from the workspace root directory, and rows typically reference accounts via [`ledger_account_id`](../chart-of-accounts/ledger-account-id).
 
@@ -58,4 +49,3 @@ A sales invoice row references one [ledger account](../chart-of-accounts/index) 
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Invoice ledger impact](../../workflow/invoice-ledger-impact)
 - [Create sales invoice](../../workflow/create-sales-invoice)
-

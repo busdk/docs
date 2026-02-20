@@ -15,22 +15,15 @@ Owner: [bus vat](../../modules/bus-vat). This module is responsible for implemen
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus invoices](../../modules/bus-invoices): records VAT rate and treatment at line level for evidence and validation.
-- [bus journal](../../modules/bus-journal): is reconciled against invoice VAT for period reporting.
-- [bus validate](../../modules/bus-validate): checks VAT mappings and invariants across datasets.
+[bus invoices](../../modules/bus-invoices) records VAT rate and treatment at line level for evidence and validation. [bus journal](../../modules/bus-journal) is reconciled against invoice VAT for period reporting, and [bus validate](../../modules/bus-validate) checks VAT mappings and invariants across datasets.
 
 ### Actions
 
-- [Define VAT treatment codes](./define): Maintain the allowed treatment codes so 0% and special cases stay deterministic.
-- [Invoice markings for VAT treatments](./invoice-markings): Map each treatment code to the invoice text and identifiers that must be present for reviewable evidence.
-- [Validate VAT mappings](./validate): Check that VAT rates, treatment codes, and reporting expectations align with datasets.
+[Define VAT treatment codes](./define) maintains allowed treatment codes so 0% and special cases stay deterministic. [Invoice markings for VAT treatments](./invoice-markings) maps treatment codes to required invoice markings and identifiers. [Validate VAT mappings](./validate) checks alignment between rates, treatment codes, and reporting expectations.
 
 ### Properties
 
-- [`vat_rate`](./vat-rate): Applied percentage.
-- [`vat_percent`](./vat-percent): Applied percentage (alias).
-- [`vat_treatment`](./vat-treatment): Reason and handling code.
-- [`vat_deductible_percent`](./vat-deductible-percent): Purchase-side deductibility.
+Core VAT fields are [`vat_rate`](./vat-rate), [`vat_percent`](./vat-percent), [`vat_treatment`](./vat-treatment), and [`vat_deductible_percent`](./vat-deductible-percent).
 
 ### Relations
 
@@ -55,4 +48,3 @@ Parties can carry a default VAT treatment via [`default_vat_treatment`](../parti
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
-

@@ -13,31 +13,17 @@ Owner: [bus invoices](../../modules/bus-invoices). This module is responsible fo
 
 Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting:
 
-- [bus attachments](../../modules/bus-attachments): stores evidence references used by purchases.
-- [bus vat](../../modules/bus-vat): uses purchase VAT for period reporting.
-- [bus reconcile](../../modules/bus-reconcile): matches payments to vendor invoices.
+[bus attachments](../../modules/bus-attachments) stores evidence references used by purchases. [bus vat](../../modules/bus-vat) uses purchase VAT for period reporting, and [bus reconcile](../../modules/bus-reconcile) matches payments to vendor invoices.
 
 ### Actions
 
-- [Record a purchase invoice](./record): Register the incoming invoice as evidence and as the basis for payables and VAT.
-- [Classify a purchase invoice](./classify): Create the posting intent split across accounts and VAT treatment decisions.
-- [Prepare purchase invoice postings](./prepare-posting): Turn purchase intent into a balanced posting proposal for the journal.
+[Record a purchase invoice](./record) registers incoming invoices as evidence and as the payable/VAT basis. [Classify a purchase invoice](./classify) creates posting intent split across accounts and VAT treatment decisions. [Prepare purchase invoice postings](./prepare-posting) turns that intent into balanced posting proposals for journal flow.
 
 ### Properties
 
-- [`purchase_invoice_id`](./purchase-invoice-id): Invoice identity.
-- [`purchase_company_id`](./purchase-company-id): Supplier link.
-- [`invoice_number`](./invoice-number): Supplier invoice number.
-- [`date`](./date): Invoice date.
-- [`duedate`](./duedate): Due date.
-- [`reference_number`](./reference-number): Payment matching key.
-- [`iban`](./iban): Supplier payment account.
-- [`total_sum`](./total-sum): Invoice total (net).
-- [`total_vat`](./total-vat): Invoice total VAT.
-- [`total_sum_including_vat`](./total-sum-including-vat): Invoice total (gross).
-- [`currency`](./currency): Invoice currency.
-- [`service_start_date`](./service-start-date): Service period start.
-- [`service_end_date`](./service-end-date): Service period end.
+Core purchase-invoice fields are [`purchase_invoice_id`](./purchase-invoice-id), [`purchase_company_id`](./purchase-company-id), [`invoice_number`](./invoice-number), [`date`](./date), [`duedate`](./duedate), [`reference_number`](./reference-number), and [`iban`](./iban).
+
+Amount and currency fields are [`total_sum`](./total-sum), [`total_vat`](./total-vat), [`total_sum_including_vat`](./total-sum-including-vat), and [`currency`](./currency). Service-period fields are [`service_start_date`](./service-start-date) and [`service_end_date`](./service-end-date).
 
 Purchase invoices also use shared workflow and evidence fields. See [`accounting_status`](../workflow-metadata/accounting-status), [`evidence_status`](../workflow-metadata/evidence-status), and [`accounting_note`](../workflow-metadata/accounting-note).
 
@@ -65,4 +51,3 @@ A purchase invoice can have zero or more [documents (evidence)](../documents/ind
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Record purchase journal transaction](../../workflow/record-purchase-journal-transaction)
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
-
