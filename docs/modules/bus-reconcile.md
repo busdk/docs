@@ -72,6 +72,20 @@ bus reconcile post --kind invoice_payment --bank-account 1910 --sales-account 30
 
 `0` on success. Non-zero on invalid usage, when amounts or references are invalid, when `--fail-if-empty` is set and propose yields no proposals, or when posting/apply validation fails. See [Deterministic proposals and batch apply](#deterministic-proposals-and-batch-apply) for CI flag behavior.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus reconcile --help
+reconcile --help
+
+# same as: bus reconcile -V
+reconcile -V
+```
+
+
 ### Development state
 
 **Value promise:** Link bank transactions to invoices or journal entries so the accounting workflow can reconcile bank activity and keep an explicit reconciliation history.

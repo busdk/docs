@@ -48,6 +48,20 @@ bus inventory add \
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus inventory --help
+inventory --help
+
+# same as: bus inventory -V
+inventory -V
+```
+
+
 ### Development state
 
 **Value promise:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.

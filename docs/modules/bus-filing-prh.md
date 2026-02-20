@@ -32,6 +32,20 @@ bus filing prh --format json
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus filing-prh --help
+filing-prh --help
+
+# same as: bus filing-prh -V
+filing-prh -V
+```
+
+
 ### Development state
 
 **Value promise:** Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the `prh` target of [bus-filing](./bus-filing).

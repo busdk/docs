@@ -117,6 +117,20 @@ Exit 0 on success. Non-zero in these cases:
 - **Invalid usage (exit 2)** — Unknown or invalid flag value (e.g. invalid `--color`, invalid `--base-currency` or date or `--vat-reporting-period` on `init` or `set`), combining `--quiet` and `--verbose`, extra positional arguments for `init`, or unknown `<key>` in `bus config set <key> <value>`. The tool prints a short usage-style error to stderr.
 - **Set preconditions (exit non-zero)** — `set` was run in a directory without `datapackage.json` or without `busdk.accounting_entity`; see above.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus config --help
+config --help
+
+# same as: bus config -V
+config -V
+```
+
+
 ### Development state
 
 **Value promise:** Create and update workspace configuration (`datapackage.json`) and accounting-entity settings so every BusDK workspace has a single, schema-valid source for currency, fiscal year, and VAT settings.

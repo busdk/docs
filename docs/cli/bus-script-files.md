@@ -1,13 +1,16 @@
 ---
-title: `.bus` script files — writing and execution guide
-description: How to write deterministic .bus files, run them with bus, and understand preflight, validation, scope, and transaction behavior.
+title: "`.bus` script files — writing and execution guide"
+description: "How to write deterministic .bus files, run them with bus, and understand preflight, validation, scope, and transaction behavior."
 ---
 
 ## `.bus` script files
 
 `.bus` files are deterministic command files executed by `bus`. They are intended for repeatable bookkeeping runs (for example one file per month), replay, and review in version control.
 
-This feature is fully open source under the MIT license, and source code is already available in the BusDK repositories.
+If this is your first `.bus` file, use the simpler [`.bus` files — getting started step by step](./bus-script-files-getting-started) first, then return to this page.
+For a practical multi-command starter that also includes `dev`, `agent`, and `run`, see [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started).
+
+This feature is available under FSL-1.1-MIT (Functional Source License 1.1, MIT Future License), and source code is already available in the BusDK repositories.
 
 ## Quick start
 
@@ -16,10 +19,27 @@ Create a file:
 ```bus
 #!/usr/bin/env bus
 
-# 2024-02-29 Bank erp-bank-26246
-bank add transactions --set bank_txn_id=erp-bank-26246 --set import_id=erp-bank-2024 --set booked_date=2024-02-29 --set value_date=2024-02-29 --set amount=-861.6800000000 --set currency=EUR --set counterparty_name='Qred Visa' --set counterparty_iban='' --set reference='411050319' --set message='700 / TILISIIRTO / 240229593619234599' --set end_to_end_id=erp-e2e-26246 --set source_id='bank_row:26246'
+# 2024-02-29 Bank import-bank-00001
+bank add transactions \
+  --set bank_txn_id=import-bank-00001 \
+  --set import_id=import-bank-2024 \
+  --set booked_date=2024-02-29 \
+  --set value_date=2024-02-29 \
+  --set amount=-861.6800000000 \
+  --set currency=EUR \
+  --set counterparty_name='Example Vendor' \
+  --set counterparty_iban='' \
+  --set reference='REF-00001' \
+  --set message='EXAMPLE PAYMENT MESSAGE' \
+  --set end_to_end_id=import-e2e-00001 \
+  --set source_id='bank_row:00001'
 
-journal add --date 2024-02-29 --desc 'Bank erp-bank-26246 Qred Visa lyhennys' --debit 2949=861.68 --credit 1910=861.68 --source-id bank_row:26246:journal:1
+journal add \
+  --date 2024-02-29 \
+  --desc 'Bank import-bank-00001 Example Vendor payment' \
+  --debit 2949=861.68 \
+  --credit 1910=861.68 \
+  --source-id bank_row:00001:journal:1
 ```
 
 Run it:
@@ -56,6 +76,7 @@ Month runner script example:
 - UTF-8 text.
 - Blank lines are ignored.
 - Lines whose first non-whitespace character is `#` are ignored.
+- A trailing `\` continues the command on the next physical line.
 - Lines ending with `.bus` are treated as nested busfile includes.
 - Other lines are parsed as one command line.
 
@@ -78,6 +99,8 @@ Not interpreted:
 If any line has a tokenization error (for example unterminated quote), execution stops before running any command.
 
 For include lines (`*.bus`), `bus` resolves and loads the referenced file and applies the same preflight rules.
+
+When `--check` is used, modules referenced by the busfile set should provide non-mutating `--check` validation. The dispatcher also rejects clearly invalid common forms such as unbalanced `journal add` postings and malformed `bank add transactions --set` values.
 
 ## Execution model
 
@@ -129,7 +152,7 @@ Exit codes:
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./interactive-and-scripting-parity">Non-interactive use and scripting</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-script-files-getting-started">`.bus` files — getting started step by step</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">CLI tooling and workflow</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../modules/bus">bus module reference</a> &rarr;</span>
 </p>
@@ -137,6 +160,8 @@ Exit codes:
 
 ### Sources
 
+- [`.bus` files — getting started step by step](./bus-script-files-getting-started)
+- [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started)
 - [bus module reference](../modules/bus)
 - [Module SDD: bus](../sdd/bus)
 - [BusDK module CLI reference](../modules/index)

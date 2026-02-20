@@ -18,6 +18,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 ### Principles
 
 - [CLI-first interfaces](design-goals/cli-first)
+- [Deterministic `.bus` command files](design-goals/deterministic-busfiles)
 - [Modularity](design-goals/modularity)
 - [Schema-driven contract](design-goals/schema-contract)
 - [Git as source of truth](design-goals/git-as-source-of-truth)

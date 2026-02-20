@@ -24,9 +24,9 @@ Use `bus` in two modes:
 
 When running busfiles, `bus` always does a full syntax preflight across all provided files before executing any command. If preflight fails, nothing is executed.
 
-For a step-by-step authoring guide, see [`.bus` script files (writing and execution guide)](../cli/bus-script-files).
+For first use, start with [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started), then continue with the full [`.bus` script files (writing and execution guide)](../cli/bus-script-files).
 
-This feature is fully open source under the MIT license, and source code is already available.
+This feature is available under FSL-1.1-MIT (Functional Source License 1.1, MIT Future License), and source code is already available.
 
 ### Normal dispatch
 
@@ -54,7 +54,9 @@ Busfile line rules:
 These flags are interpreted only in busfile mode:
 
 - `--check`: preflight (and optional data validation) only; do not apply changes.
-- `--transaction <provider>`: `none` (default), `git`, `snapshot`, or `copy`.
+  - `--check` is expected to use module-native non-mutating validation (`--check`) for dispatched commands.
+  - Core dispatcher validation additionally rejects clearly invalid common patterns (for example unbalanced `journal add` postings and malformed `bank add transactions --set` values).
+- `--transaction <provider>`: `none` (default), `fs`, `git`, `snapshot`, or `copy`.
 - `--scope <scope>`: `file` (default) or `batch`.
 - `--trace`: print `file:line` command trace before execution.
 
@@ -94,10 +96,27 @@ Single busfile:
 ```bus
 #!/usr/bin/env bus
 
-# 2024-02-29 Bank erp-bank-26246
-bank add transactions --set bank_txn_id=erp-bank-26246 --set import_id=erp-bank-2024 --set booked_date=2024-02-29 --set value_date=2024-02-29 --set amount=-861.6800000000 --set currency=EUR --set counterparty_name='Qred Visa' --set counterparty_iban='' --set reference='411050319' --set message='700 / TILISIIRTO / 240229593619234599' --set end_to_end_id=erp-e2e-26246 --set source_id='bank_row:26246'
+# 2024-02-29 Bank import-bank-00001
+bank add transactions \
+  --set bank_txn_id=import-bank-00001 \
+  --set import_id=import-bank-2024 \
+  --set booked_date=2024-02-29 \
+  --set value_date=2024-02-29 \
+  --set amount=-861.6800000000 \
+  --set currency=EUR \
+  --set counterparty_name='Example Vendor' \
+  --set counterparty_iban='' \
+  --set reference='REF-00001' \
+  --set message='EXAMPLE PAYMENT MESSAGE' \
+  --set end_to_end_id=import-e2e-00001 \
+  --set source_id='bank_row:00001'
 
-journal add --date 2024-02-29 --desc 'Bank erp-bank-26246 Qred Visa lyhennys' --debit 2949=861.68 --credit 1910=861.68 --source-id bank_row:26246:journal:1
+journal add \
+  --date 2024-02-29 \
+  --desc 'Bank import-bank-00001 Example Vendor payment' \
+  --debit 2949=861.68 \
+  --credit 1910=861.68 \
+  --source-id bank_row:00001:journal:1
 ```
 
 Run monthly files directly:
@@ -128,11 +147,29 @@ Force transaction settings for one run:
 bus --transaction git --scope batch 2024-01.bus 2024-02.bus 2024-03.bus
 ```
 
+### Using from `.bus` files
+
+`bus` is the dispatcher itself. In `.bus` files you normally call module targets directly and include other `.bus` files.
+
+```bus
+# include another .bus file
+2026-02.bus
+
+# module command line (same as: bus journal --help)
+journal --help
+```
+
 ### Notes
 
 - Atomicity is configurable. Default provider is `none` (fast, no workspace-level rollback).
 - Git-based atomicity is optional, not required.
 - Prefer `.bus` extension for deterministic recognition.
+- For robust batch safety, keep `--check` support enabled across modules referenced by your `.bus` files.
+- Dispatch selection during busfile runs is automatic:
+  - If an in-process module runner is available, `bus` uses it.
+  - Otherwise `bus` falls back to shell lookup (`bus-<module>` on `PATH`) when enabled.
+- Shell lookup can be disabled with `bus.busfile.dispatch.shell_lookup_enabled=false` in `bus-preferences` or `datapackage.json`.
+- Current implementation detail: `fs` transaction mode requires in-process transaction-capable runners for all busfile targets. If any target must use external shell dispatch, `bus` either falls back to `none` (when `fallback_to_none=true`) or exits with a provider error.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -145,6 +182,7 @@ bus --transaction git --scope batch 2024-01.bus 2024-02.bus 2024-03.bus
 ### Sources
 
 - [Module SDD: bus (dispatcher)](../sdd/bus)
+- [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started)
 - [`.bus` script files (writing and execution guide)](../cli/bus-script-files)
 - [CLI command structure](../cli/command-structure)
 - [Standard global flags](../cli/global-flags)

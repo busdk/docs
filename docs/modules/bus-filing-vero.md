@@ -63,6 +63,20 @@ bus filing vero verify --bundle filing/vero/2026-01
 
 `0` on success. Non-zero on invalid usage or missing prerequisites.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus filing-vero --help
+filing-vero --help
+
+# same as: bus filing-vero -V
+filing-vero -V
+```
+
+
 ### Development state
 
 **Value promise:** Produce Vero (Finnish Tax Administration) export bundles from closed-period data when invoked as the `vero` target of [bus-filing](./bus-filing).

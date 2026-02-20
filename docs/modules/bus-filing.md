@@ -40,6 +40,20 @@ bus filing vero
 
 `0` on success. Non-zero on invalid usage or missing prerequisites (e.g. unvalidated or open period).
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus filing --help
+filing --help
+
+# same as: bus filing -V
+filing -V
+```
+
+
 ### Development state
 
 **Value promise:** Orchestrate filing by delegating to target executables (e.g. [bus-filing-prh](./bus-filing-prh), [bus-filing-vero](./bus-filing-vero)) so users can run `bus filing <target>` and produce PRH/Vero bundles from closed-period data.

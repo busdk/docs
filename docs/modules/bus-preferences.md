@@ -109,6 +109,20 @@ Preferences are stored in a user-local file and may contain operational defaults
 
 When `get` is called for a key that is not present, the command exits with a non-zero status and a concise error on stderr. Error messages are always on stderr.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus preferences --help
+preferences --help
+
+# same as: bus preferences -V
+preferences -V
+```
+
+
 ### Development state
 
 **Value promise:** Store and retrieve user-level preferences (e.g. default agent runtime, output format) so [bus-agent](./bus-agent) and other CLI callers get consistent defaults across invocations without workspace-specific config.

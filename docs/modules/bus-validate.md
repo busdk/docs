@@ -48,6 +48,20 @@ bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta
 
 `0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus validate --help
+validate --help
+
+# same as: bus validate -V
+validate -V
+```
+
+
 ### Development state
 
 **Value promise:** Validate workspace datasets and invariants so the accounting workflow can run a single check before period close and filing and get deterministic diagnostics.

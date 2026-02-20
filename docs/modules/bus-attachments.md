@@ -46,6 +46,20 @@ bus attachments list --by-voucher VCH-1 --graph --fail-if-unlinked
 
 `0` on success. Non-zero on errors, including missing files or schema violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus attachments --help
+attachments --help
+
+# same as: bus attachments -V
+attachments -V
+```
+
+
 ### Development state
 
 **Value promise:** Register evidence files and maintain attachment metadata so other modules can reference stable attachment identifiers and the accounting workflow treats evidence as first-class.

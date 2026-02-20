@@ -89,6 +89,20 @@ bus sheets serve --port 8091 --token-bytes 32
 bus sheets version
 ```
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus sheets --help
+sheets --help
+
+# same as: bus sheets -V
+sheets -V
+```
+
+
 ### Development state
 
 **Value promise:** Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.

@@ -24,6 +24,8 @@ Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These 
 
 Command names follow [CLI command naming](../cli/command-naming). `bus agent` is a thin CLI on top of the BusDK agent runner library. The runner centralizes how external agent runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI) are invoked so that other modules can use a single, deterministic contract for templating, timeout handling, and output capture. This CLI exposes that contract for diagnostics and development: you can see which runtimes are enabled, render a template without running an agent, run an agent with a prompt under explicit timeout and workdir, and format raw agent output for readability. The tool does not execute Git, does not read or write workspace datasets, and does not define workflow semantics; those belong to modules such as [bus dev](./bus-dev), which depend on the agent runner library. All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. Command results go to stdout; diagnostics and progress go to stderr.
 
+For a practical `.bus` file that combines `agent` with `dev` and `run` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
+
 From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the standard runtime set. Codex CLI sign-in works with an active ChatGPT Plus subscription (and other eligible ChatGPT plans), so no API key setup is required for subscription-based access. Gemini and Claude integrations are under active development and are not yet fully verified by end-to-end coverage.
 
 ### Commands
@@ -114,6 +116,20 @@ bus agent set runtime codex
 
 Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% endraw %}) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus agent --help
+agent --help
+
+# same as: bus agent -V
+agent -V
+```
+
+
 ### Development state
 
 **Value promise:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and [bus-dev](./bus-dev) can use a configured default runtime without hard-coding it.
@@ -147,6 +163,7 @@ See [Development status](../implementation/development-status).
 ### Sources
 
 - [Module SDD: bus-agent](../sdd/bus-agent)
+- [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)
 - [bus-preferences CLI reference](./bus-preferences)
 - [bus-dev CLI reference](./bus-dev)
 - [CLI: Global flags](../cli/global-flags)

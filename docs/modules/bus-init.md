@@ -87,6 +87,20 @@ Exit 0 on success. Non-zero in these cases:
 - **Module init failure (exit non-zero)** — A module’s `init` command fails. The tool stops immediately after that step and reports “step failed: bus *module* init” (with the actual module name) on stderr. It does not run later steps.
 - **Module compatibility (exit non-zero)** — A module exits with code 2, indicating a version or compatibility issue. The tool reports that the module “must be upgraded” and stops.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus init --help
+init --help
+
+# same as: bus init -V
+init -V
+```
+
+
 ### Development state
 
 **Value promise:** Bootstrap a BusDK workspace with config only or with a full baseline (config plus all 13 data-owning module inits) so users can complete the “create repo and baseline” step deterministically.

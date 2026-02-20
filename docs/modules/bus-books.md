@@ -118,6 +118,20 @@ bus books serve --port 8090 --token-bytes 32
 bus books version
 ```
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus books --help
+books --help
+
+# same as: bus books -V
+books -V
+```
+
+
 ### Development state
 
 **Value promise:** Local bookkeeping web UI over BusDK workspaces so end users can perform accounting tasks (journal, periods, VAT, bank, invoices, attachments, validation) in a browser without using the CLI.

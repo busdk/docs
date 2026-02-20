@@ -56,6 +56,20 @@ bus bank import --file ./imports/bank/january-2026.csv
 
 `0` on success. Non-zero on errors, including invalid filters or schema violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus bank --help
+bank --help
+
+# same as: bus bank -V
+bank -V
+```
+
+
 ### Development state
 
 **Value promise:** Initialize bank transaction datasets and import normalized statement data (file or profile-driven ERP) so [bus-reconcile](./bus-reconcile) and the [accounting workflow](../workflow/accounting-workflow-overview) can match bank activity to invoices and journal entries.

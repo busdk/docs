@@ -365,6 +365,20 @@ bus data resource list
 
 `0` on success. `2` on invalid usage. Non-zero on missing files, schema validation failure, or foreign key integrity failure.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus data --help
+data --help
+
+# same as: bus data -V
+data -V
+```
+
+
 ### Development state
 
 **Value promise:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.

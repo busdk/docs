@@ -96,6 +96,20 @@ bus balances add \
 
 `0` on success. Non-zero on invalid usage (e.g. missing required flag, both amount and debit/credit on add, unknown `--format`), precondition failure (e.g. period not open for apply, empty snapshot, journal not initialized), or validation failure (unknown account, invalid number, balancing account missing). For import with `--allow-unknown-accounts` and one or more missing account codes, the command reports them and exits non-zero without appending any row. On failure, no snapshot rows are appended (add/import) and no journal data is written (apply).
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus balances --help
+balances --help
+
+# same as: bus balances -V
+balances -V
+```
+
+
 ### Development state
 
 **Value promise:** Own an append-only balance snapshot dataset; build snapshots with add or import; materialize a snapshot into one balanced journal transaction for opening or cutover so users can adopt BusDK without a prior workspace.

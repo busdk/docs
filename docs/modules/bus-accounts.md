@@ -76,6 +76,20 @@ bus accounts add --code 3000 --name "Sales income" --type income
 
 `0` on success. Non-zero on errors, including invalid usage, row-level schema violations, or an invalid or malformed schema document.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus accounts --help
+accounts --help
+
+# same as: bus accounts -V
+accounts -V
+```
+
+
 ### Development state
 
 **Value promise:** Manage the chart of accounts as schema-validated workspace data so downstream modules and reports can rely on stable account identifiers and types.

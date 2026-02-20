@@ -46,6 +46,20 @@ bus entities add --id FI-1234567-8 --name "Acme Oy"
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus entities --help
+entities --help
+
+# same as: bus entities -V
+entities -V
+```
+
+
 ### Development state
 
 **Value promise:** Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.

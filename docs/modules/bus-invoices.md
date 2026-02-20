@@ -84,6 +84,20 @@ bus invoices list --status unpaid
 
 `0` on success. Non-zero on errors, including invalid usage, schema violations, or reference errors.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus invoices --help
+invoices --help
+
+# same as: bus invoices -V
+invoices -V
+```
+
+
 ### Development state
 
 **Value promise:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the accounting and sale-invoicing journeys.

@@ -93,6 +93,20 @@ bus reports profit-and-loss \
 
 `0` on success. Non-zero on invalid usage, integrity failures, statutory mapping failures, or statutory statement reconciliation failures.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus reports --help
+reports --help
+
+# same as: bus reports -V
+reports -V
+```
+
+
 ### Development state
 
 **Value promise:** Produce trial balance, general-ledger, account-ledger, and statement-style reports from journal and period data so the accounting workflow can generate financial output after close.

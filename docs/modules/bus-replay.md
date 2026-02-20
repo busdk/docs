@@ -74,6 +74,20 @@ bus replay apply --in ./tmp/replay-2026-01.jsonl --dry-run
 
 `0` on success. `1` on runtime or precondition failure (missing required datasets, unreadable files). `2` on invalid usage (unknown flag, missing argument, invalid enum value). Global flags follow the same exit code conventions as [Standard global flags](../cli/global-flags).
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus replay --help
+replay --help
+
+# same as: bus replay -V
+replay -V
+```
+
+
 ### Development state
 
 **Value promise:** Export a workspace to a deterministic, append-only replay log and apply it into a clean workspace so migrations and parity work can be reviewed in Git and re-run reproducibly.

@@ -21,6 +21,8 @@ Directory-local content is under the effective working directory (project root);
 
 Command names follow [CLI command naming](../cli/command-naming). `bus run` is an end-user module for running your own prompts, pipelines, and scripts. It does not implement developer workflows: there are no built-in operations like plan, work, spec, e2e, triage, stage, or commit, and no dependency on [bus dev](./bus-dev). Agent execution is provided entirely by the [bus-agent](./bus-agent) Go library so that runtime selection, prompt templating, and timeout handling stay consistent across BusDK. The normative design (requirements, token resolution, and catalog) is in the [module SDD](../sdd/bus-run). You define prompts (`.bus/run/<name>.txt`), pipelines (`.bus/run/<name>.yml` or preference `bus-run.pipeline.<name>`), and scripts (`.bus/run/<name>.sh`, `.bat`, or `.ps1`), then run them by name with `bus run <name>` or by chaining multiple tokens in one invocation. Pipelines expand first, then repeated step names in the final sequence are merged so each appears once in first-appearance order, and execution follows that normalized sequence with stop-on-first-failure. The tool uses a per-directory lock so only one run (or directory-writing management) operates on a given directory at a time; a second invocation for the same directory waits until the first exits.
 
+For a practical `.bus` file that combines `run` with `dev` and `agent` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
+
 From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-agent` runtime layer (`--agent codex`, `BUS_RUN_AGENT=codex`, `BUS_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans), so prompt and pipeline runs can use subscription-based Codex access. Gemini and Claude runtime paths are available but are still in development and not yet fully end-to-end verified.
 
 **Shorthand: `bux`.** You can add a short alias or wrapper so that `bux` invokes `bus run`, similar to how `npx` is used with `npm`. For example, define a shell alias `alias bux='bus run'` or install a small script named `bux` that runs `bus run "$@"`. Then `bux my-pipeline` or `bux my-action` runs the same as `bus run my-pipeline` or `bus run my-action`. The BusDK install does not create `bux` by default; adding it is optional and left to the user or their environment.
@@ -117,6 +119,20 @@ bus run pipeline list
 
 Deterministic results (list, context, pipeline list, action list, script list) are written to stdout. Diagnostics and errors are written to stderr.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus run --help
+run --help
+
+# same as: bus run -V
+run -V
+```
+
+
 ### Development state
 
 **Value promise.** Run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint; list and help show every available token without running; no built-in developer workflows and no dependency on [bus-dev](./bus-dev).
@@ -151,6 +167,7 @@ See [Development status](../implementation/development-status).
 
 - [BusDK — installation and overview](https://busdk.com/)
 - [Module SDD: bus-run](../sdd/bus-run)
+- [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)
 - [Module SDD: bus-agent](../sdd/bus-agent)
 - [Module SDD: bus-preferences](../sdd/bus-preferences)
 - [bus-preferences CLI reference](./bus-preferences)

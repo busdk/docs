@@ -42,6 +42,20 @@ bus budget add --account 6100 --year 2026 --period 01 --amount 1200
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus budget --help
+budget --help
+
+# same as: bus budget -V
+budget -V
+```
+
+
 ### Development state
 
 **Value promise:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and planning workflows have a single source for budget figures.

@@ -35,6 +35,20 @@ bus pdf --data ./render/invoice-1001.json --out ./out/invoice-1001.pdf --overwri
 
 `0` on success. Non-zero on invalid usage or rendering failure.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus pdf --help
+pdf --help
+
+# same as: bus pdf -V
+pdf -V
+```
+
+
 ### Development state
 
 **Value promise:** Render deterministic PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.

@@ -195,6 +195,10 @@ already defined on an inner topic page. Summarize only what is needed in the
 current page, then link inline to the authoritative inner page and keep the
 end-of-page Sources list for discovery.
 
+For end-user module pages under `docs/docs/modules/` (each `docs/docs/modules/{name}.md`),
+include a short `### Using from \`.bus\` files` section with at least one concrete
+`.bus` command example that maps to the module's CLI usage.
+
 When showing Bus command examples, prefer concrete runnable commands with real
 flags and sample values. Avoid placeholder forms like `bus ...` unless omitted
 arguments are intentionally the point in that exact context.

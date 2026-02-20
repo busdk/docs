@@ -44,6 +44,9 @@ Workspace-level atomicity is optional and configurable because Git-based approac
 - Keep default behavior fast:
   - default validation is syntax-only
   - data validation is optional (best-effort/configurable)
+- Standardize module check mode:
+  - BusDK modules are expected to implement `--check` for non-mutating validation
+  - `bus --check <file.bus>` must fail fast when a referenced module does not support `--check`
 - Make workspace-level atomicity configurable:
   - Git is optional
   - alternative providers are allowed
@@ -66,7 +69,7 @@ Workspace-level atomicity is optional and configurable because Git-based approac
 
 - Not a general scripting language (no loops, variables, conditionals, pipes).
 - Not guaranteed rollback for external side effects (network calls, filings, emails).
-- Not requiring modules to implement `--check` or dry-run modes.
+- Not a replacement for module-level validation contracts (`--check` remains module-owned behavior).
 
 ## Terminology
 
@@ -104,7 +107,7 @@ Busfile options are parsed only while in busfile mode:
   - MUST NOT apply workspace changes
 - `--transaction <provider>`
   - overrides configured transaction provider for this invocation
-  - allowed values: `none`, `git`, `snapshot`, `copy`
+  - allowed values: `none`, `fs`, `git`, `snapshot`, `copy`
 - `--scope <scope>`
   - overrides how multiple busfiles are applied
   - `file` (default): each file is its own unit (syntax preflight remains global)
@@ -131,6 +134,7 @@ A busfile is UTF-8 text.
 
 - Blank lines are ignored.
 - Comment lines are ignored when first non-whitespace char is `#`.
+- A trailing `\` continues the command on the next physical line.
 - All other lines are treated as one `bus` command line.
 
 ### Tokenization and quoting
@@ -191,10 +195,11 @@ Degrade gracefully if module lacks non-mutating validation:
 - default: skip validation for that command
 - strict mode: fail early if `bus.busfile.validation.strict=true`
 
-Recommended convention (not mandatory):
+Required convention for BusDK modules:
 
-- module supports `--check` or `--dry-run`, or
-- module supports `BUS_MODE=check` no-mutation behavior
+- module supports `--check` (or an explicitly documented compatibility alias)
+- `--check` performs non-mutating validation and exits non-zero on clearly invalid input
+- when module-level check is unavailable, `bus --check` treats that command as unsupported and fails
 
 ### Phase 3: Apply (execution)
 
@@ -235,6 +240,16 @@ Workspace atomicity is implemented by a transaction provider. Providers are opti
 - atomicity via temporary copy, execute there, apply on success
 - may be slow on large datasets
 
+### Current implementation status
+
+- `none` is fully implemented and default.
+- busfile dispatch is automatic per target:
+  - use in-process module runner when available
+  - otherwise use external `bus-<target>` shell lookup when enabled
+- shell lookup is configurable via `bus.busfile.dispatch.shell_lookup_enabled` (default `true`) from `bus-preferences` or `datapackage.json`.
+- `fs` configuration is recognized and implemented for in-process transaction-capable module runners.
+- If any target requires external shell dispatch, `fs` is treated as unavailable: `bus` falls back to `none` only if `fallback_to_none=true`; otherwise it exits with usage error.
+
 ### Provider interface (internal)
 
 - `Begin(scope) -> context`
@@ -271,6 +286,9 @@ Precedence:
         "provider": "none",
         "scope": "file",
         "fallback_to_none": true
+      },
+      "dispatch": {
+        "shell_lookup_enabled": true
       }
     }
   }
@@ -324,10 +342,27 @@ Once busfile support exists, `bus-replay` should export deterministic command lo
 ```bus
 #!/usr/bin/env bus
 
-# 2024-02-29 Bank erp-bank-26246
-bank add transactions --set bank_txn_id=erp-bank-26246 --set import_id=erp-bank-2024 --set booked_date=2024-02-29 --set value_date=2024-02-29 --set amount=-861.6800000000 --set currency=EUR --set counterparty_name='Qred Visa' --set counterparty_iban='' --set reference='411050319' --set message='700 / TILISIIRTO / 240229593619234599' --set end_to_end_id=erp-e2e-26246 --set source_id='bank_row:26246'
+# 2024-02-29 Bank import-bank-00001
+bank add transactions \
+  --set bank_txn_id=import-bank-00001 \
+  --set import_id=import-bank-2024 \
+  --set booked_date=2024-02-29 \
+  --set value_date=2024-02-29 \
+  --set amount=-861.6800000000 \
+  --set currency=EUR \
+  --set counterparty_name='Example Vendor' \
+  --set counterparty_iban='' \
+  --set reference='REF-00001' \
+  --set message='EXAMPLE PAYMENT MESSAGE' \
+  --set end_to_end_id=import-e2e-00001 \
+  --set source_id='bank_row:00001'
 
-journal add --date 2024-02-29 --desc 'Bank erp-bank-26246 Qred Visa lyhennys' --debit 2949=861.68 --credit 1910=861.68 --source-id bank_row:26246:journal:1
+journal add \
+  --date 2024-02-29 \
+  --desc 'Bank import-bank-00001 Example Vendor payment' \
+  --debit 2949=861.68 \
+  --credit 1910=861.68 \
+  --source-id bank_row:00001:journal:1
 ```
 
 ### Multi-file busfile orchestration
@@ -394,6 +429,11 @@ Track:
   - verify preflight then fail-fast execution
 - provider `git` (when Git available):
   - verify all-or-nothing semantics for `file` and `batch` scopes
+
+### Cross-module conformance tests (required)
+
+- validate that each `bus-*` module used by busfile workloads accepts `--check`
+- verify that invalid inputs fail in `--check` mode without mutating workspace data
 
 ### Performance tests (required)
 

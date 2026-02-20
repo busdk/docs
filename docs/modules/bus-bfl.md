@@ -131,6 +131,20 @@ bus bfl eval --expr "a+b" --context ./examples/bfl-context.json
 
 The tool exits with status 0 on success. It exits with status 2 on invalid usage such as invalid `--color`, unknown `--format`, both `--quiet` and `--verbose`, or a subcommand invoked without required arguments after `--` terminates global flag parsing. It exits with status 1 when a required file or directory is missing or unreadable, or when an output file cannot be written. It exits with a non-zero status on parse errors, validation failures, or evaluation failures. Error messages are always written to standard error.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus bfl --help
+bfl --help
+
+# same as: bus bfl -V
+bfl -V
+```
+
+
 ### Development state
 
 **Value promise:** Parse, format, validate, and evaluate BFL expressions so [bus-data](./bus-data) and the workbook can use formula-enabled fields with deterministic, testable semantics.

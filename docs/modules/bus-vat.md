@@ -100,6 +100,20 @@ bus vat filed-diff --period 2026-01 --threshold-cents 0
 
 `0` on success. Non-zero on invalid usage or VAT mapping violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus vat --help
+vat --help
+
+# same as: bus vat -V
+vat -V
+```
+
+
 ### Development state
 
 **Value promise:** Compute VAT reports and export period returns from workspace invoice or journal data so users can complete the close-period VAT step and archive returns for filing with traceable source refs.

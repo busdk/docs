@@ -10,6 +10,7 @@ This section is split into **single-concept** documents:
 - [AI-readiness (objective, not dependency)](./ai-readiness)
 - [Auditability and append-only discipline](./append-only-auditability)
 - [CLI-first and human-friendly interfaces](./cli-first)
+- [Deterministic `.bus` command files](./deterministic-busfiles)
 - [Double-entry ledger accounting](./double-entry-ledger)
 - [Extensibility as a first-class goal](./extensibility)
 - [Initial feature scope (modules)](./feature-scope)

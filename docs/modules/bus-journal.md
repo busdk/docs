@@ -74,6 +74,20 @@ Loan-payment classification is available via `classify bank --loan-profiles <fil
 
 Further enhancements are tracked in repository feature-request tracking. Core classify/learn/template/suspense flows are available as first-class commands.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus journal --help
+journal --help
+
+# same as: bus journal -V
+journal -V
+```
+
+
 ### Development state
 
 **Value promise:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream.

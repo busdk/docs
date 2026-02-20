@@ -59,6 +59,20 @@ bus assets add \
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus assets --help
+assets --help
+
+# same as: bus assets -V
+assets -V
+```
+
+
 ### Development state
 
 **Value promise:** Maintain fixed-asset register and depreciation so schedule and post produce journal postings, and asset data supports the significant-assets list for the evidence pack.

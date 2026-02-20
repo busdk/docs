@@ -88,6 +88,20 @@ bus period add \
 
 `0` on success. Non-zero on invalid usage or violations: `add` when the period already exists or when the (default or provided) retained-earnings account is missing from the chart or not an equity account; `open` when the period is not found, not in state future, is closed/locked (re-open may be refused), or when the period’s effective record has no retained-earnings account (use `set` first); `close` when the period does not exist or is not open; `lock` when the period does not exist or is not closed; `set` when the period does not exist, is closed or locked, or the account code is invalid or not in the chart; `validate` when any effective period record is invalid (e.g. missing retained-earnings account) or when the dataset has a duplicate primary key (same `period_id` and `recorded_at` in two rows); `opening` when the target period is not open or is closed/locked, when an opening entry already exists without `--replace`, when any account code from the prior workspace is missing from the current chart, or when the prior workspace's fiscal year end differs from `--as-of` without `--allow-as-of-mismatch`.
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus period --help
+period --help
+
+# same as: bus period -V
+period -V
+```
+
+
 ### Development state
 
 **Value promise:** Add periods in future state and manage period control (open, close, lock) and year-rollover opening so the accounting workflow can close and lock periods, carry forward opening balances from a prior workspace, and downstream modules can rely on closed state.

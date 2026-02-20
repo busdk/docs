@@ -99,6 +99,15 @@ bus data table workbook source.csv A1:C10 \
   -f tsv
 ```
 
+### Using from `.bus` files
+
+This page describes formula delegation behavior used by `bus data`. In a `.bus` file, use the `data` module target directly.
+
+```bus
+# same as: bus data table workbook source.csv A1:C10 --formula -f tsv
+data table workbook source.csv A1:C10 --formula -f tsv
+```
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-bfl">bus-bfl</a></span>

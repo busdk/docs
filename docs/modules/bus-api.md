@@ -106,6 +106,20 @@ bus api serve --port 8080 --token-bytes 32
 bus api version
 ```
 
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write this module target without the `bus` prefix.
+
+```bus
+# same as: bus api --help
+api --help
+
+# same as: bus api -V
+api -V
+```
+
+
 ### Development state
 
 **Value promise:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
