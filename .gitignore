@@ -7,3 +7,6 @@ docs/.well-known/
 # bus-dev per-directory lock; do not track.
 .bus-dev.lock
 .bus-run.lock
+
+# Local BusDK workspace descriptor used in docs repo during tool runs; do not commit.
+datapackage.json
