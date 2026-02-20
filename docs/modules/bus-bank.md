@@ -18,20 +18,33 @@ description: bus bank normalizes bank statement data into schema-validated datas
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets and provides listing output used for reconciliation and posting workflows. Ingest supports both single-statement files (`--file`) and profile-driven ERP import (`--profile --source`, optional `--year`), with deterministic artifacts verified by tests.
+Command names follow [CLI command naming](../cli/command-naming). `bus bank` normalizes bank statement data into schema-validated datasets.
+
+It provides deterministic listing output used by reconciliation and posting workflows.
+
+Ingest supports both single-statement files (`--file`) and profile-driven ERP import (`--profile --source`, optional `--year`).
 
 ### Commands
 
-- `init` creates the baseline bank datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `import` ingests a bank statement file (e.g. `--file <path>`) or runs profile-driven ERP import (`--profile <path> --source <path>`, optional `--year`) into normalized datasets. Built-in profile `erp-tsv` provides malformed-tab-tolerant ERP TSV import with deterministic parse diagnostics (`recovered_rows`, `ambiguous_rows`, `dropped_rows`) and optional `--fail-on-ambiguity`.
-- `config` manages counterparty normalization and reference extractors. Use `config counterparty add` to add canonical names and alias patterns, and `config extractors add` to add extractor patterns (e.g. regex) so bank message/reference fields yield normalized reference hints. When configured, `list` output includes normalized counterparty and extracted reference-hint columns.
-- `list` prints bank transactions with deterministic filtering. When counterparty and extractor config are present, output includes normalized counterparty and extracted reference-hint columns (e.g. `erp_id`, `invoice_number_hint`).
-- `backlog` reports posted versus unposted bank transactions for classification coverage. It reads bank transactions and reconciliation matches and supports detail and CI-friendly failure thresholds.
-- `statement` extracts and verifies statement balance checkpoints. `statement extract` appends normalized balance checkpoints to `bank-statement-checkpoints.csv`; `statement verify` compares checkpoints against `bank-transactions.csv` running balances and can fail when diffs exceed a threshold. Raw extract supports summary-column auto-detect and transaction-export inference when date, amount, and running balance are available.
+`init` creates baseline bank datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
+
+`import` ingests either a statement file (`--file <path>`) or profile-driven ERP input (`--profile <path> --source <path>`, optional `--year`) into normalized datasets. Built-in `erp-tsv` mode adds malformed-tab-tolerant import with deterministic parse diagnostics (`recovered_rows`, `ambiguous_rows`, `dropped_rows`) and optional `--fail-on-ambiguity`.
+
+`config` manages counterparty normalization and reference extractors. `config counterparty add` stores canonical names and aliases, and `config extractors add` stores extraction patterns for message/reference fields. With config present, `list` output includes normalized counterparty and extracted hint columns.
+
+`list` prints filtered bank transactions deterministically. `backlog` reports posted versus unposted transactions for coverage checks and CI gates. `statement extract` appends normalized checkpoints to `bank-statement-checkpoints.csv`, and `statement verify` compares checkpoints to running balances in `bank-transactions.csv` with optional fail thresholds.
 
 ### Options
 
-`import` accepts `--file <path>` for statement files, or `--profile <path> --source <path>` with optional `--year` for profile-driven ERP import. Built-in robust ERP TSV mode uses `--profile erp-tsv` and supports optional `--fail-on-ambiguity`. `list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`. `backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`. `statement extract` supports `--file <path>` with optional `--profile <name>` (from `statement-extract-profiles.csv`), `--account`, `--iban`, `--attachment-id <uuid>`, raw header selection `--header-row <n>`, and repeatable raw mapping `--map <field=header-or-column>` (CLI maps override profile fields). Raw mapping fields include summary mode (`opening_balance`, `closing_balance`) and transaction-inference mode (`date`, `amount`, `balance`). `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
+`import` supports `--file <path>` for statement files, profile-driven mode with `--profile <path> --source <path>` and optional `--year`, and robust ERP TSV mode with `--profile erp-tsv` and optional `--fail-on-ambiguity`.
+
+`list` supports `--month`, `--from`, `--to`, `--counterparty`, and `--invoice-ref`.
+
+`backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`.
+
+`statement extract` supports `--file <path>` plus optional profile/account/IBAN/attachment selectors, `--header-row`, and repeatable `--map <field=header-or-column>`. `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
 
 ### Profile-driven ERP history import
 
@@ -43,13 +56,23 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 ### Files
 
-`bank-imports.csv`, `bank-transactions.csv`, and `bank-statement-checkpoints.csv` at the repository root with beside-the-table schemas. `bank-statement-checkpoints.csv` includes checkpoint provenance columns (`attachment_id`, `source_path`, `extracted_at`). Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `bank/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)). Statement balance extraction reads a statement summary CSV with a beside-the-file schema. For raw CSV/TSV/TXT files without schema, extraction auto-detects common summary headers and can be configured with `--header-row` and `--map` for non-standard layouts. When summary columns are missing, extraction can infer checkpoints from transaction-export rows that include mapped `date`, `amount`, and `balance` columns. Reusable mappings can be stored in `statement-extract-profiles.csv` (`profile,header_row,field,selector`) and selected with `--profile <name>`. For raw evidence files where auto-detect/inference is not applicable (including PDF), provide sidecars `<base>.statement.csv` and `<base>.statement.schema.json`; extraction preserves the original `--file` path in `source_path`.
+`bank-imports.csv`, `bank-transactions.csv`, and `bank-statement-checkpoints.csv` live at workspace root with beside schemas.
+
+`bank-statement-checkpoints.csv` includes provenance columns (`attachment_id`, `source_path`, `extracted_at`).
+
+The module does not use a `bank/` subdirectory. Path resolution is owned by this module.
+
+For raw CSV/TSV/TXT files without schema, extraction auto-detects common summary headers and can be configured with `--header-row` and `--map`.
+
+When summary columns are missing, extraction can infer checkpoints from transaction-export rows with mapped `date`, `amount`, and `balance`.
 
 ### Examples
 
 ```bash
 bus bank init
 bus bank import --file ./imports/bank/january-2026.csv
+bus bank import --profile erp-tsv --source ./imports/erp-bank.tsv --year 2026
+bus bank backlog --month 2026-1 --detail --max-unposted 10
 ```
 
 ### Exit status
@@ -67,6 +90,10 @@ bank --help
 
 # same as: bus bank -V
 bank -V
+
+# file import + review backlog
+bank import --file ./imports/bank/january-2026.csv
+bank backlog --month 2026-1 --detail
 ```
 
 

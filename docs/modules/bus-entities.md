@@ -13,17 +13,24 @@ description: bus entities maintains counterparty reference datasets with stable 
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus entities` maintains counterparty reference datasets with stable entity identifiers used by invoices, bank imports, reconciliation, and other modules. Entity data is schema-validated and append-only for auditability.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus entities` maintains counterparty reference datasets with stable entity identifiers used by invoices, bank imports, reconciliation, and other modules.
+Entity data is schema-validated and append-only for auditability.
 
 ### Commands
 
-- `init` creates the baseline entity datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `list` prints the entity registry in stable identifier order.
-- `add` adds a new entity record.
+`init` creates baseline entity datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
+
+`list` prints the registry in stable identifier order. `add` appends a new entity record.
 
 ### Options
 
-`add` accepts `--id <entity-id>` and `--name <display-name>`. `list` has no module-specific filters. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus entities --help`.
+`add` accepts `--id <entity-id>` and `--name <display-name>`.
+
+`list` has no module-specific filters.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus entities --help`.
 
 ### Write path and field coverage
 
@@ -40,6 +47,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 ```bash
 bus entities init
 bus entities add --id FI-1234567-8 --name "Acme Oy"
+bus entities list --format tsv --output ./out/entities.tsv
 ```
 
 ### Exit status
@@ -52,11 +60,11 @@ bus entities add --id FI-1234567-8 --name "Acme Oy"
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus entities --help
-entities --help
+# same as: bus entities add --id FI-7654321-0 --name "Northwind Oy"
+entities add --id FI-7654321-0 --name "Northwind Oy"
 
-# same as: bus entities -V
-entities -V
+# same as: bus entities list --format tsv
+entities list --format tsv
 ```
 
 
@@ -70,7 +78,8 @@ entities -V
 
 **Use case readiness:** Accounting workflow: 50% — init, add, list verified; user can define counterparties. Sale invoicing: 50% — init, add, list verified; user can define customers. Finnish payroll handling: 50% — init, add, list and `--id`/`--name` verified by e2e; user can define party references for employees.
 
-**Current:** Verified in `tests/e2e_bus_entities.sh` and `internal/app/run_test.go`: help, version, global-flag errors (quiet+verbose, color, format, chdir), init (create CSV and schema, idempotent warning, partial-state fail, dry-run no write), add (missing-param exit 2, full add, duplicate reject, `--id`/`--name` aliases, dry-run no append), list (empty and populated TSV, `--output`, `--quiet`, `-f tsv`, `--`, `-vv`, `--no-color`). Flag parsing in `internal/cli/flags_test.go`; schema and foreign-key validation in `internal/entities/validator_test.go`.
+**Current:** Init/add/list and global-flag behavior are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-entities](../sdd/bus-entities).
 
 **Planned next:** Expose Go library path accessors for entities dataset and schema (NFR-ENT-002, IF-ENT-002) so other modules obtain paths from this module; no use-case-specific next.
 
@@ -98,4 +107,3 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module SDD: bus-entities](../sdd/bus-entities)
 - [Data organization: Data package organization](../data/data-package-organization)
-

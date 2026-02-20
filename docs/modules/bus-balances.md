@@ -5,9 +5,23 @@ description: bus balances owns an append-only snapshot dataset; use add or impor
 
 ## Overview
 
-`bus balances` owns a **balance snapshot dataset** (trial balance snapshot) at the workspace root and lets you build snapshots from manual entry or CSV, then **materialize** a snapshot into exactly one balanced journal transaction for opening or cutover. The workflow is two steps: (1) build the snapshot with **`add`** (one row at a time) or **`import`** (bulk from CSV); (2) run **`apply`** to write one journal transaction from that snapshot. The snapshot is append-only and reviewable in Git; only **`apply`** writes to the journal. Command names follow [CLI command naming](../cli/command-naming).
+`bus balances` owns a **balance snapshot dataset** (trial balance snapshot) at workspace root.
 
-The **core primitive** is **`bus balances add`** — one balance row per run. **`import`** is a convenience that appends many rows into the same snapshot dataset; it does **not** write journal data. To get a journal entry, you run **`bus balances apply`** after the snapshot is ready. The workspace must have a chart of accounts ([bus accounts](./bus-accounts)) and, for `apply`, an open period ([bus period](./bus-period)) and an initialized journal ([bus journal](./bus-journal)). Every account code in the snapshot must exist in the chart.
+You can build snapshots from manual entry or CSV, then **materialize** a snapshot into one balanced journal transaction for opening/cutover.
+
+Workflow:
+Build a snapshot with **`add`** (single row) or **`import`** (bulk CSV), then run **`apply`** to write one journal transaction from that snapshot.
+
+The snapshot is append-only and reviewable in Git. Only **`apply`** writes journal data.
+
+The **core primitive** is **`bus balances add`** (one balance row per run).
+
+`import` is a convenience for appending many rows into the same snapshot dataset. It does **not** write journal data.
+
+To create a journal entry, run **`bus balances apply`** after snapshot preparation.
+
+Workspace prerequisites:
+Workspace prerequisites are a chart of accounts from [bus accounts](./bus-accounts), an open period from [bus period](./bus-period) for `apply`, and an initialized journal from [bus journal](./bus-journal) for `apply`.
 
 ### Synopsis
 
@@ -21,10 +35,19 @@ The **core primitive** is **`bus balances add`** — one balance row per run. **
 
 ### Commands
 
-- **`init`** creates the snapshot dataset and schema (`balances.csv`, `balances.schema.json`) when absent. If both already exist and are consistent, it prints a warning to stderr and exits 0. It does not create or change accounts, period, or journal data.
-- **`add`** appends exactly one row to the snapshot. You must give `--as-of` and `--account`, and either `--amount <signed>` or both `--debit` and `--credit` (net = debit − credit). You cannot supply both amount and debit/credit, or neither. The account must exist in the workspace chart. Use this to build a snapshot one balance at a time or to correct a balance by appending a new row (latest row per as-of and account wins).
-- **`import`** reads a CSV and appends one row per data line into the snapshot dataset (same effect as many `add` runs). It does **not** write journal data. Required: `--input`, `--as-of`. Optional: `--format signed` (default) or `dc`, `--source`, `--allow-unknown-accounts`. If any account in the CSV is missing from the chart and you do not set `--allow-unknown-accounts`, the command fails and appends no rows. With `--allow-unknown-accounts`, it reports missing account codes and exits non-zero without appending any row.
-- **`apply`** reads the **effective** snapshot for a given as-of date (latest row per account) and writes **exactly one** balanced journal transaction in the current workspace. Required: `--as-of`, `--post-date`, `--period`. The target period must be open; the journal must be initialized; the snapshot must have at least one effective row for that as-of; every account in the snapshot must exist in the chart. Use `--replace` to remove a previous apply for the same as-of and period and write a new one. Only `apply` writes to the journal.
+**`init`** creates the snapshot dataset and schema (`balances.csv`, `balances.schema.json`) when absent. If both already exist and are consistent, it warns and exits 0. It does not create or modify accounts, period, or journal data.
+
+**`add`** appends exactly one row to the snapshot. You must pass `--as-of` and `--account`, plus either `--amount <signed>` or both `--debit` and `--credit` (net = debit − credit). Supplying both forms, or neither, is invalid. The account must exist in the chart. Corrections are done by appending newer rows, where latest `recorded_at` wins per as-of/account.
+
+**`import`** appends one row per CSV data line into the same snapshot dataset, equivalent to many `add` runs. It never writes journal data. Required flags are `--input` and `--as-of`, with optional `--format signed|dc`, `--source`, and `--allow-unknown-accounts`. If accounts are missing from the chart, import fails and appends nothing.
+
+**`apply`** reads the effective snapshot for an as-of date and writes exactly one balanced journal transaction.
+
+Required: `--as-of`, `--post-date`, `--period`.
+
+Preconditions: target period open, journal initialized, snapshot has at least one effective row, every account in snapshot exists in chart.
+
+Use `--replace` to remove a previous apply for same as-of and period and write a new one.
 - **`validate`** checks the snapshot dataset against its schema. With `--as-of`, it also validates that snapshot’s effective set (e.g. all accounts in chart, amounts parse).
 - **`list`** prints effective balances (one row per as-of and account, latest `recorded_at` wins). Use `--as-of` to restrict to one snapshot date. Optional `--history` may show all rows instead of effective only.
 - **`template`** prints a CSV template (header and example row) to stdout for use with `import`. It does not read or write workspace files.
@@ -49,13 +72,11 @@ The CSV must have a header. For `--format signed` (default): columns `account_co
 
 ### Typical workflow (opening or cutover)
 
-1. **Prepare workspace:** Chart of accounts (`bus accounts init` and add accounts, including e.g. 3200 for equity), period (`bus period init`, `bus period add --period <YYYY-MM>`, `bus period open --period <YYYY-MM>`), journal (`bus journal init`), and snapshot dataset (`bus balances init`).
-2. **Build the snapshot** — either:
-   - **Manual:** Run `bus balances add --as-of <date> --account <code> --amount <signed>` (or `--debit`/`--credit`) for each balance.
-   - **From CSV:** Run `bus balances import --input <path> --as-of <date> [--format signed|dc]`. Optionally run import with `--allow-unknown-accounts` first to see missing accounts, then fix the chart or CSV.
-3. **Check:** `bus balances validate --as-of <date>` and `bus balances list --as-of <date>`.
-4. **Materialize to journal:** `bus balances apply --as-of <date> --post-date <YYYY-MM-DD> --period <YYYY-MM> [--equity-account 3200]`. If you need to re-run for the same as-of and period, add `--replace`.
-5. **Verify:** `bus journal validate`.
+Prepare the workspace first: initialize and populate chart of accounts, create and open target period, initialize journal, and run `bus balances init`.
+
+Build the snapshot either by repeated `bus balances add --as-of <date> --account <code> --amount <signed>` (or `--debit`/`--credit`) calls, or by `bus balances import --input <path> --as-of <date> [--format signed|dc]`. When needed, use `--allow-unknown-accounts` as a diagnostic pass, then fix chart or CSV and import again.
+
+Check snapshot quality with `bus balances validate --as-of <date>` and `bus balances list --as-of <date>`. Then materialize with `bus balances apply --as-of <date> --post-date <YYYY-MM-DD> --period <YYYY-MM> [--equity-account 3200]`. If rerunning for the same as-of and period, use `--replace`. Finally, run `bus journal validate`.
 
 **Examples.**
 
@@ -79,7 +100,11 @@ bus balances apply \
 
 ### Files
 
-`balances.csv` and `balances.schema.json` at the workspace root. The module writes journal data only through the [bus-journal](./bus-journal) APIs when you run `apply`; it does not create separate journal files. The chart of accounts and period state are read via the [bus-accounts](./bus-accounts) and [bus-period](./bus-period) libraries.
+`balances.csv` and `balances.schema.json` live at workspace root.
+
+The module writes journal data only through [bus-journal](./bus-journal) APIs when running `apply`; it does not create separate journal files.
+
+Chart-of-accounts and period-state checks are read through [bus-accounts](./bus-accounts) and [bus-period](./bus-period).
 
 ### Examples
 
@@ -107,6 +132,11 @@ balances --help
 
 # same as: bus balances -V
 balances -V
+
+# snapshot build + apply
+balances add --as-of 2025-12-31 --account 1000 --amount 5000
+balances add --as-of 2025-12-31 --account 3200 --amount -5000
+balances apply --as-of 2025-12-31 --post-date 2026-01-01 --period 2026-01
 ```
 
 

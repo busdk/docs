@@ -11,11 +11,19 @@ description: bus filing prh converts validated workspace data into PRH-ready exp
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus filing prh` converts validated workspace data into PRH-ready export bundles with deterministic packaging, manifests, and hashes. It is invoked via `bus filing prh` and consumes outputs from `bus reports`, `bus vat`, and closed-period data.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus filing prh` converts validated workspace data into PRH-ready export bundles.
+Packaging, manifests, and hashes are deterministic.
+
+It is usually invoked as `bus filing prh`.
+Inputs come from closed-period data and upstream reporting/VAT outputs.
 
 ### Options
 
-Module-specific parameters are documented in the tool help. Global flags are defined in [Standard global flags](../cli/global-flags). For the full list, run `bus filing prh --help`.
+Module-specific parameters are documented in command help.
+Global flags are defined in [Standard global flags](../cli/global-flags).
+For the full list, run `bus filing prh --help`.
 
 ### Files
 
@@ -26,6 +34,8 @@ Reads validated datasets and report outputs; writes PRH-specific bundle director
 ```bash
 bus filing prh --help
 bus filing prh --format json
+bus filing prh --output ./out/prh-export.json --format json
+bus filing -C ./workspace prh
 ```
 
 ### Exit status
@@ -38,11 +48,11 @@ bus filing prh --format json
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus filing-prh --help
-filing-prh --help
+# same as: bus filing-prh --format json
+filing-prh --format json
 
-# same as: bus filing-prh -V
-filing-prh -V
+# same as: bus filing-prh --output ./out/prh-export.tsv
+filing-prh --output ./out/prh-export.tsv
 ```
 
 
@@ -56,7 +66,8 @@ filing-prh -V
 
 **Use case readiness:** Finnish bookkeeping and tax-audit compliance: High — validate, bundle, PRH-required content (FR-PRH-002), and PRH SBR taxonomy in iXBRL are implemented and covered by e2e; module is ready for PRH filing within the current bundle contract. Depends on bus-filing bundle contract stability.
 
-**Current:** OQ-PRH-001 is closed; FR-PRH-002 and full PRH SBR iXBRL are implemented and covered by e2e. E2e `tests/e2e_bus_filing-prh.sh` proves help, version, subcommand help, invalid usage (quiet+verbose, unknown `--color`/`--format`), `--` stops parsing, validate success, bundle with fixture (manifest, iXBRL, inputs), `--output`, `--quiet`, `--format json`, `--dry-run`, `-C`, and errors on stderr. Unit tests in `internal/app/run_test.go`, `internal/bundle/bundle_test.go`, `internal/bundle/sanitize_test.go`, and `internal/cli/flags_test.go` prove run dispatch and global flags, deterministic bundle and validation gating, path sanitization, and flag parsing.
+**Current:** Validate and bundle flows, deterministic packaging, and global-flag behavior are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-filing-prh](../sdd/bus-filing-prh).
 
 **Planned next:** Extended bundle metadata when filing-target specs are available; README and doc links alignment; any follow-ups from bus-filing bundle contract. FR-PRH-002 and full PRH SBR iXBRL are implemented.
 

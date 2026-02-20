@@ -9,6 +9,7 @@ This guide shows how to run several module commands in one `.bus` file. It inclu
 
 1. bookkeeping commands together in one run
 2. developer and agent tooling commands (`dev`, `agent`, `run`) in one run
+3. focused GUI handoff with `books` for end-user form input
 
 ## Flow A: bookkeeping starter file
 
@@ -94,6 +95,28 @@ bus --trace automation-starter.bus
 ```
 
 If `agent detect` returns no runtimes, install one runtime and run the file again.
+
+## Flow C: collect end-user details in a focused GUI form
+
+Use this when a `.bus` flow needs human-provided details (for example bank transaction context) before continuing.
+
+### Step 1: add `books` launch command in your `.bus` file
+
+```bus
+# Open only journal/new in GUI and prefill known values.
+# User can fill remaining fields and close when done.
+books serve --print-url --open-view /journal/new --view-only \
+  --view-param date=2026-02-20 \
+  --view-param desc="Provide bank transaction details"
+```
+
+### Step 2: run and open the printed URL
+
+```bash
+bus --trace your-flow.bus
+```
+
+The URL includes the target route and launch values (hash query). In `--view-only` mode, Bus Books hides the normal navigation shell so the user sees only the intended form.
 
 ## Practical notes
 

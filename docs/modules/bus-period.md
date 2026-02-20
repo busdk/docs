@@ -5,7 +5,15 @@ description: bus period adds periods in future state and manages period state (o
 
 ## Overview
 
-`bus period` manages the period control dataset: periods are created in state **future** with `add`, then transitioned **open** → **closed** → **locked** with `open`, `close`, and `lock`. Only periods in state **open** accept new journal postings; closed and locked periods reject writes. Re-opening a closed or locked period is not part of the normal workflow and may be refused. The `opening` subcommand generates the opening entry for a new fiscal year in the current workspace from the closing balances of a prior workspace (e.g. a separate repository for the previous year), producing a single balanced journal transaction so year rollover stays CLI-driven and auditable. Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`. Command names follow [CLI command naming](../cli/command-naming).
+`bus period` manages the period control dataset.
+
+Periods are created in state **future** with `add`, then transitioned **open** → **closed** → **locked** with `open`, `close`, and `lock`.
+
+Only periods in state **open** accept new journal postings. Closed and locked periods reject writes.
+
+The `opening` subcommand generates the opening entry for a new fiscal year in the current workspace from a prior workspace’s closing balances, producing one balanced journal transaction.
+
+Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`. Command names follow [CLI command naming](../cli/command-naming).
 
 ### Synopsis
 
@@ -21,21 +29,36 @@ description: bus period adds periods in future state and manages period state (o
 
 ### Commands
 
-- `init` creates the period control dataset and schema when absent (empty or header-only; no period rows). If both files already exist and are consistent, `init` prints a warning to stderr and exits 0. If only one exists or data is inconsistent, `init` fails and does not modify any file.
-- `add` creates one period row in state **future**. The period must not already exist; adding the same period twice fails with a clear diagnostic. Every new period has a non-empty retained-earnings account: use `--retained-earnings-account <code>` or omit it to use the default `3200`. The account must exist in the workspace chart of accounts (and, when determinable, must be an equity account); otherwise `add` fails and writes nothing. Optional `--start-date` and `--end-date` override the dates derived from the period identifier (e.g. 2024-01 → 2024-01-01 and 2024-01-31; 2024Q1 → 2024-01-01 and 2024-03-31).
-- `open` transitions a period from **future** to **open**. The period must already exist (e.g. created with `add`). The current period record must have a non-empty retained-earnings account; if it does not (e.g. after upgrading from an older workspace), run `bus period set --period <period> --retained-earnings-account <code>` first. If the period is not in the dataset, the command exits non-zero with a clear diagnostic (e.g. "period … not found"). If the period is already open, the command is idempotent (exit 0, no change). If the period is closed or locked, the command exits non-zero; re-opening is not required by the workflow and may be refused.
-- `close` generates closing entries and transitions the period from **open** to **closed**. The period must exist and be open. Optional `--post-date` defaults to the last date of the period.
-- `lock` transitions a period from **closed** to **locked**. The period must exist and be closed. Lock does not generate postings; it only updates state so the period cannot be modified.
-- `set` repairs the retained-earnings account for an existing period without overwriting rows (append-only). Use it when the period record has a blank retained-earnings account (e.g. workspaces created by older versions). Requires `--period` and `--retained-earnings-account <code>`. Allowed only for periods in state **future** or **open**; the command refuses if the period is closed or locked. The account must exist in the workspace chart (and, when determinable, must be an equity account).
-- `list` shows the current state of each period (one row per period, the effective record). Optional `--history` may show full history when supported.
-- `validate` checks the period control dataset; it fails if any effective period record is invalid (e.g. missing retained-earnings account) or if the dataset has a duplicate primary key (two rows with the same `period_id` and `recorded_at`). Duplicate keys must be repaired using normal commands, not hand edits.
-- `opening` generates the opening entry for the current workspace from a prior workspace’s closing balances (one balanced journal transaction with deterministic provenance). It requires `--from`, `--as-of`, `--post-date`, and `--period`; see Options and the [module SDD](../sdd/bus-period) for optional flags and validation rules. It does not change [bus-config](./bus-config) settings such as VAT reporting period.
+`init` creates the period control dataset and schema when absent. If both files already exist and are consistent, `init` warns and exits 0. If only one exists or data is inconsistent, `init` fails without modifying files.
+
+`add` creates a single period row in state **future**. The period must not exist yet. Each new period must have a retained-earnings account: pass `--retained-earnings-account <code>` or rely on default `3200`. The account must exist in chart of accounts and, when determinable, be equity. Optional `--start-date` and `--end-date` override dates derived from the period id.
+
+`open` moves a period from **future** to **open**. The period must exist and must have a retained-earnings account. If a legacy workspace has blank retained earnings, run `bus period set` first. `open` is idempotent if already open and fails for closed or locked periods.
+
+`close` creates closing entries and transitions **open** to **closed**. `lock` transitions **closed** to **locked** without creating postings. `set` appends a retained-earnings account repair record for an existing period and is allowed only in **future** or **open**.
+
+`list` shows effective current state per period and supports `--history` where available. `validate` checks dataset integrity and rejects invalid effective records and duplicate primary keys. `opening` generates one balanced opening transaction from a prior workspace’s closing balances and requires `--from`, `--as-of`, `--post-date`, and `--period`.
 
 ### Options
 
-`add` requires `--period <period>` and accepts optional `--start-date <YYYY-MM-DD>`, `--end-date <YYYY-MM-DD>`, and `--retained-earnings-account <code>`. When `--retained-earnings-account` is omitted, the default is `3200`; the account must exist in the chart (and, when determinable, be an equity account) or `add` fails. When start or end date is omitted, the implementation derives them from the period identifier (e.g. 2024-01 → 2024-01-01 and 2024-01-31; 2024Q1 → 2024-01-01 and 2024-03-31). `open`, `close`, `lock`, and `set` require `--period <period>`. `set` also requires `--retained-earnings-account <code>` and applies only to periods in state future or open. `close` accepts optional `--post-date <YYYY-MM-DD>`; when omitted, the closing entry date defaults to the last date of the selected period.
+`add` requires `--period <period>` and accepts optional `--start-date <YYYY-MM-DD>`, `--end-date <YYYY-MM-DD>`, and `--retained-earnings-account <code>`.
 
-`opening` requires `--from <path>`, `--as-of <YYYY-MM-DD>`, `--post-date <YYYY-MM-DD>`, and `--period <YYYY-MM>`. Optional flags: `--equity-account <code>` (balancing equity account; default `3200`; override to match your chart if you use a different equity account for year rollover); `--include-zero` (include zero-balance accounts; default false, so only non-zero balances are included); `--description <text>` (override the default transaction description, which otherwise includes normalized source path and as-of date); `--replace` (remove any existing opening entry for the target period that was created by this command, then create the new entry; does not remove other postings); `--allow-as-of-mismatch` (allow running when the prior workspace’s fiscal year end does not match `--as-of`; default false). The path in `--from` is the prior workspace root; the command resolves paths to that workspace’s accounts, journal, and period datasets via the owning modules (see [Module SDD](../sdd/bus-period)). The path is resolved relative to the process working directory (before `-C`). The command fails if the target period is not open or is closed/locked, if an opening entry for the period already exists and `--replace` is not set, if any account code from the prior workspace is missing from the current chart, or if the prior workspace’s fiscal year end differs from `--as-of` and `--allow-as-of-mismatch` is not set.
+When `--retained-earnings-account` is omitted, the default is `3200`. The account must exist in the chart (and, when determinable, be an equity account) or `add` fails.
+
+When start or end date is omitted, dates are derived from the period ID (for example 2024-01 → 2024-01-01/2024-01-31, 2024Q1 → 2024-01-01/2024-03-31).
+
+`open`, `close`, `lock`, and `set` require `--period <period>`. `set` also requires `--retained-earnings-account <code>` and applies only to periods in state future or open.
+
+`close` accepts optional `--post-date <YYYY-MM-DD>`. When omitted, closing date defaults to the period end date.
+
+`opening` requires `--from <path>`, `--as-of <YYYY-MM-DD>`, `--post-date <YYYY-MM-DD>`, and `--period <YYYY-MM>`.
+
+Optional flags:
+`--equity-account <code>` (balancing account, default `3200`), `--include-zero`, `--description <text>`, `--replace`, and `--allow-as-of-mismatch`.
+
+`--from` points to prior workspace root. Paths are resolved relative to process working directory (before `-C`).
+
+The command fails when target period is not open, opening already exists without `--replace`, prior account codes are missing in current chart, or prior fiscal-year-end differs from `--as-of` without `--allow-as-of-mismatch`.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus period --help`.
 
@@ -71,7 +94,15 @@ bus period opening \
 
 ### Files
 
-`periods.csv` and its beside-the-table schema `periods.schema.json` live at the workspace root. The schema defines a composite primary key (`period_id` and `recorded_at`) so each history row is unique; the current state of a period is the latest record for that period by `recorded_at` (effective record). Period operations append records only (no overwrites). `list` and `validate` use this effective record. If two rows ever share the same `period_id` and `recorded_at` (e.g. from hand edits), `validate` fails until the dataset is repaired using normal commands. Every period record written by the CLI has a non-empty retained-earnings account so close/opening and downstream modules can rely on it; if you have an older workspace with a blank retained-earnings account on a period, use `bus period set` to repair it. Paths are root-level only — the data is not under a subdirectory such as `periods/periods.csv`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`periods.csv` and `periods.schema.json` live at workspace root.
+
+The schema defines a composite primary key (`period_id`, `recorded_at`) so each history row is unique. Current state is the latest row per period by `recorded_at` (effective record).
+
+Period operations are append-only. `list` and `validate` use effective records.
+
+If two rows share the same primary key (for example from hand edits), `validate` fails until repaired through normal commands.
+
+Every period record written by the CLI has a non-empty retained-earnings account. For older workspaces with blank values, use `bus period set` to repair.
 
 ### Examples
 
@@ -86,7 +117,10 @@ bus period add \
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage or violations: `add` when the period already exists or when the (default or provided) retained-earnings account is missing from the chart or not an equity account; `open` when the period is not found, not in state future, is closed/locked (re-open may be refused), or when the period’s effective record has no retained-earnings account (use `set` first); `close` when the period does not exist or is not open; `lock` when the period does not exist or is not closed; `set` when the period does not exist, is closed or locked, or the account code is invalid or not in the chart; `validate` when any effective period record is invalid (e.g. missing retained-earnings account) or when the dataset has a duplicate primary key (same `period_id` and `recorded_at` in two rows); `opening` when the target period is not open or is closed/locked, when an opening entry already exists without `--replace`, when any account code from the prior workspace is missing from the current chart, or when the prior workspace's fiscal year end differs from `--as-of` without `--allow-as-of-mismatch`.
+`0` on success.
+
+Non-zero on invalid usage or command violations, including:
+`add` when the period exists or retained-earnings account is missing/invalid; `open` when period is missing, in wrong state, or missing retained earnings; `close` when period is missing or not open; `lock` when period is missing or not closed; `set` when period is missing, closed/locked, or account is invalid; `validate` when effective records are invalid or composite keys duplicate; and `opening` when target period is not open, opening already exists without `--replace`, accounts are missing in current chart, or as-of mismatches without override.
 
 
 ### Using from `.bus` files
@@ -99,6 +133,11 @@ period --help
 
 # same as: bus period -V
 period -V
+
+# lifecycle
+period add --period 2026-01 --retained-earnings-account 3200
+period open --period 2026-01
+period close --period 2026-01 --post-date 2026-01-31
 ```
 
 

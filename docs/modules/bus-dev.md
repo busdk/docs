@@ -9,8 +9,21 @@ description: "bus dev is a developer-only companion that centralizes workflow lo
 
 `bus dev [-h] [-V] [--check] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|gemini|claude>] <operation> [operation ...]`
 
-Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**. Each operation token can be a base operation name, a **pipeline name** (built-in, repository-local, or preference), or a **user-defined action name** (repository-local prompt or script). Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) runs at a time for that directory; a second invocation for the same directory waits until the first exits. The **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`** subcommands are management operations: they do not participate in workflow chaining (you cannot list them with plan, work, stage, etc. to form a runnable pipeline). Repository-writing management commands (**pipeline set repo**, **pipeline unset repo**, **action set**, **action unset**, **action generate**, **script set**, **script unset**, **script generate**) take the same per-directory lock as workflow operations; **pipeline set prefs**, **pipeline unset prefs**, **list**, **pipeline list**, **pipeline preview**, **action list**, **script list**, and **context** do not take the lock. The workflow operations **plan**, **spec**, **work**, **e2e**, **triage**, **stage**, and **commit** — or pipeline or action names that expand to them — can be run in any order and combination in a single invocation (pipeline chaining): for example `bus dev plan spec work`, `bus dev round`, `bus dev round refresh`, or `bus dev plan work stage commit`. All tokens are resolved and expanded into a flat sequence of runnable steps (base operations and user-defined actions) before any step runs; then repeated step names in the final sequence are merged so each step appears once in first-appearance order. The normalized sequence runs one step at a time and stops on first failure. **init** accepts an optional directory, then zero or more workflow tokens that expand only to plan, spec, work, and e2e (triage, stage, commit, and user-defined actions are not accepted after init).
-Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**. Each operation token can be a base operation name, a **pipeline name** (built-in, repository-local, or preference), or a **user-defined action name** (repository-local prompt or script). Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) runs at a time for that directory; a second invocation for the same directory waits until the first exits. The **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`** subcommands are management operations: they do not participate in workflow chaining (you cannot list them with plan, work, stage, etc. to form a runnable pipeline). Repository-writing management commands (**pipeline set repo**, **pipeline unset repo**, **action set**, **action unset**, **action generate**, **script set**, **script unset**, **script generate**) take the same per-directory lock as workflow operations; **pipeline set prefs**, **pipeline unset prefs**, **list**, **pipeline list**, **pipeline preview**, **action list**, **script list**, and **context** do not take the lock. The workflow operations **plan**, **spec**, **work**, **e2e**, **triage**, **stage**, and **commit** — or pipeline or action names that expand to them — can be run in any order and combination in a single invocation (pipeline chaining): for example `bus dev plan spec work`, `bus dev round`, `bus dev round refresh`, or `bus dev plan work stage commit`. All tokens are resolved and expanded into a flat sequence of runnable steps (base operations and user-defined actions) before any step runs; then repeated step names in the final sequence are merged so each step appears once in first-appearance order. The normalized sequence runs one step at a time and stops on first failure. With global **`--check`**, bus-dev performs this validation/expansion and script-runnability checks without executing steps. **init** accepts an optional directory, then zero or more workflow tokens that expand only to plan, spec, work, and e2e (triage, stage, commit, and user-defined actions are not accepted after init).
+Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
+
+Each operation token can be a base operation name, a **pipeline name** (built-in, repository-local, or preference), or a **user-defined action name** (repository-local prompt or script).
+
+Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) runs at a time for that directory. A second invocation for the same directory waits until the first exits.
+
+The **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`** subcommands are management operations. They do not participate in workflow chaining.
+
+Repository-writing management commands (**pipeline set repo**, **pipeline unset repo**, **action set**, **action unset**, **action generate**, **script set**, **script unset**, **script generate**) take the same per-directory lock as workflow operations.
+
+The workflow operations **plan**, **spec**, **work**, **e2e**, **triage**, **stage**, and **commit** can be run in any order and combination in one invocation (for example `bus dev plan spec work` or `bus dev plan work stage commit`). All tokens are resolved and expanded before execution. Repeated step names are merged so each step appears once in first-appearance order.
+
+With global **`--check`**, bus-dev validates token expansion and script runnability without executing steps.
+
+`init` accepts an optional directory, then zero or more workflow tokens that expand only to plan, spec, work, and e2e.
 
 `bus dev init [DIR] [--lang go] [plan|spec|work|e2e ...]` — initialize module files in the current directory by default, or in `DIR` when provided; does not run plan/spec/work/e2e unless explicitly listed.  
 `bus dev commit` — commit staged changes with high-quality messages (no remote, no history rewrite).  
@@ -45,7 +58,19 @@ Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`wo
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus dev` is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`: module scaffolding, commit workflows, planning from documentation coverage gaps, agent-runner workflows, AGENTS.md creation and refinement (from online SDD and user docs when missing), e2e test scaffolding, and development-state documentation triage. It provides a single entry point so behavior and prompts stay consistent and maintainable in one place, as described in the [module SDD](../sdd/bus-dev). Agent runtime execution (invoking Cursor CLI, Codex, Gemini CLI, or Claude CLI) is provided by the [bus-agent](../sdd/bus-agent) library so that runtimes, detection, and diagnostics are consistent across BusDK; bus-dev supplies the workflow prompts and repository context. Bus-dev uses the same instruction model as bus-agent: **AGENTS.md** at the repository root is the canonical, vendor-neutral source of project instructions for commit, work, spec, e2e, and triage; per-runtime adapters (Codex, Cursor, Gemini CLI, Claude Code) follow the contract defined in the [bus-agent SDD](../sdd/bus-agent), so the agent instruction contract is shared and testable across modules. The CLI accepts a single operation (e.g. `bus dev work`) or multiple operations in one invocation. You can use base operation names, **pipeline names** (built-in, repository-local, or preference), or **user-defined action names** (repository-local prompt or script). The workflow operations — plan, spec, work, e2e, triage, stage, and commit — and user-defined actions can be combined in any order and any combination (pipeline chaining), including by using built-in or user-defined pipelines (e.g. `bus dev round`, `bus dev round refresh`, or `bus dev plan work stage commit`). All tokens are resolved and expanded into a flat sequence of runnable steps before any step runs; then repeated step names are merged so each step appears once in first-appearance order, and the normalized sequence runs one at a time in order with stop-on-first-failure. Repositories can extend `bus dev` with repository-local prompt actions, script actions, and pipelines under `.bus/dev/`; see [Pipelines and repository-local extensions](#pipelines-shorthand-workflow-commands) below. Global **`bus dev --help`** lists every built-in operation and pipeline with a one-line description and (for pipelines) the normalized expanded step sequence, and directs you to **`bus dev list`**, **`bus dev pipeline list`**, **`bus dev action list`**, and **`bus dev script list`** to discover user-defined pipelines, prompt actions, and script actions. Help is available from any working directory and does not run any agent, script, or Git operation. The **`bus dev list`** command prints a unified catalog of every runnable token in the current context: outside a repo it shows only built-ins; inside a repo it adds repository-local and preference pipelines, prompt actions (`.bus/dev/<name>.txt`), and script actions with source and (for pipelines) the normalized expanded step sequence. **`bus dev list`** does not execute any step. The **`pipeline preview`** management command prints the same fully expanded and normalized final sequence that a runnable invocation would use, without executing any step, so users can inspect commands such as `bus dev iterate triage stage commit` safely before running them. The **`context`** subcommand prints the prompt-variable catalog (the same variables used in prompts and injected into script actions) so prompt and script authors can see the exact values in use. Use **stage** when you want to prepare the working tree for commit in the same run as plan, work, or commit: the agent ensures temporary files, e2e test leftovers, and other unintended files are either added to `.gitignore` or removed before staging, so you do not accidentally commit them. Most subcommands operate on the **current Git repository** (source code and agent instructions in AGENTS.md); `bus dev init` is the exception — it can initialize files in place for the current directory, or in an explicitly provided target directory, without creating or touching a Git repository unless you do that yourself later. The tool does not operate on workspace accounting datasets. End users running `bus accounts`, `bus journal`, or `bus validate` do not need `bus dev`; it exists for contributors and automation working inside (or creating) a BusDK module repository.
+Command names follow [CLI command naming](../cli/command-naming). `bus dev` is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`.
+
+It provides one entry point for module scaffolding, commit workflows, planning, AGENTS.md maintenance, e2e scaffolding, and development-state documentation triage.
+
+Agent runtime execution (Cursor CLI, Codex, Gemini CLI, Claude CLI) is provided by the [bus-agent](../sdd/bus-agent) library so runtime detection and diagnostics stay consistent across modules.
+
+`bus dev` accepts one operation (`bus dev work`) or multiple operations in one invocation (`bus dev plan work stage commit`). It also supports built-in and user-defined pipelines, plus repository-local actions/scripts under `.bus/dev/`.
+
+Use **`bus dev list`** to see every runnable token in the current context, and **`bus dev pipeline preview TOKEN...`** to inspect the normalized execution order before running steps.
+
+Most subcommands operate on the current Git repository. `bus dev init` is the exception: it can initialize files in place or in an explicit target directory without creating or modifying a Git repository.
+
+The tool does not operate on workspace accounting datasets. End-user accounting workflows should use module CLIs such as `bus accounts`, `bus journal`, and `bus validate`.
 
 For a practical `.bus` file that runs `dev`, `agent`, and `run` commands together in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
@@ -53,9 +78,21 @@ From **BusDK v0.0.26** onward, `bus dev` can select Codex through the shared `bu
 
 All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. The tool discovers the repository root from the effective working directory and does not require a config file for repository-scoped commands. Subcommands that need a module name in repository scope (for example for e2e script naming) derive it deterministically from the repository: the module name is the base name of the repository root directory (the last path component of the absolute path to the repo root). For `init`, which can run outside a Git repository, the module name is derived from the base name of the init target directory.
 
-Only one `bus dev` run that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) executes at a time for that directory. A second invocation that targets the same directory blocks until the first exits, then proceeds. This avoids concurrent edits to PLAN.md, AGENTS.md, and the staging area. The `set`, **`list`**, and `context` subcommands do not take the lock and do not block. The management subcommands **pipeline**, **action**, and **script** take the lock only when they write to `.bus/dev/` (e.g. pipeline set repo, action set, script set, action generate, script generate); list, pipeline set prefs, pipeline unset prefs, pipeline list, pipeline preview, action list, and script list do not take the lock. If the lock cannot be acquired (for example the directory is not writable), the command exits with code 1 and a clear message; see Exit status and errors.
+Only one `bus dev` run that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) executes at a time for that directory. A second invocation for the same directory waits until the first exits.
 
-**Safety.** `bus dev` never runs remote Git operations (no push, pull, fetch, clone) and never rewrites history (no amend, rebase, squash). It may run the agent (for **stage**, **plan**, **work**, **spec**, **e2e**, **triage**), local `git add` after the agent has cleaned the working tree (for **stage**), and local `git commit` only on already-staged content (commit never stages; use **stage** to stage). Bus-dev never edits any user configuration outside the project working directory; when it creates or modifies repo-local files for instruction or adapter support, changes are additive only (append-only Bus-owned blocks, no removal or rewrite of your content). The only exception is the legacy Cursor rule file at `.cursor/rules/<module-name>.mdc`, which may be replaced or migrated into AGENTS.md during `bus dev spec`. Diagnostics and progress go to stderr; stdout is reserved for deterministic results when a subcommand produces them. When run from a script or CI (headless), workflows remain non-interactive and do not perform prohibited actions such as network operations or modifying user-global agent configuration.
+This avoids concurrent edits to `PLAN.md`, `AGENTS.md`, and the staging area.
+
+`set`, **`list`**, and `context` do not take the lock. Management subcommands **pipeline**, **action**, and **script** take the lock only for repository-writing operations.
+
+If the lock cannot be acquired (for example the directory is not writable), the command exits with code 1 and a clear message.
+
+**Safety.** `bus dev` never runs remote Git operations (`push`, `pull`, `fetch`, `clone`) and never rewrites history (`--amend`, rebase, squash).
+
+It may run the agent for workflow steps, run local `git add` after stage cleanup, and run local `git commit` on already staged content. `commit` does not stage files by itself.
+
+Bus-dev does not edit user-global configuration. Repository-local instruction/config updates are additive, except for the legacy Cursor rule file `.cursor/rules/<module-name>.mdc`, which may be migrated into `AGENTS.md` during `bus dev spec`.
+
+Diagnostics and progress go to stderr. Deterministic command results are written to stdout.
 
 ### Commands
 
@@ -117,6 +154,34 @@ Example: `bus dev round` runs work, then e2e, then stage, then commit in one inv
 
 **Repository-local extensions** live under **`.bus/dev/`** at the repository root. You can define and remove them with **`bus dev pipeline`**, **`bus dev action`**, and **`bus dev script`** (see those commands above). Discovery is limited to that directory and to the repository; paths must stay inside the repo (symlinks that point outside the repo are refused). Three kinds of definitions are supported. (1) **Prompt action:** a file **`.bus/dev/<name>.txt`** is a UTF-8 prompt template using the same `{{VARIABLE}}` placeholders as built-in prompts. When you invoke the token `<name>`, the tool loads that file, substitutes the prompt-variable catalog (same variables as for built-in prompts; see the [module SDD](../sdd/bus-dev) for the full list), and invokes the agent with the rendered text. Missing or unresolved placeholders cause the command to fail (exit 2) before any agent run. (2) **Pipeline:** a file **`.bus/dev/<name>.yml`** must be a YAML sequence of strings only (a list of scalar strings). Each string is a token resolved with the same rules as command-line tokens; pipelines can reference other pipelines and actions. Invalid YAML (e.g. mappings or non-string scalars) causes exit 2. Cycles and expansion limits are detected and reported with a clear diagnostic. (3) **Script action:** **`.bus/dev/<name>.sh`** (non-Windows) or **`.bus/dev/<name>.bat`** or **`.bus/dev/<name>.ps1`** (Windows) runs as a script when you invoke the token `<name>`. On non-Windows the `.sh` file must have at least one execute bit set; on Windows, `.bat` must be tracked by Git with executable mode 100755, and `.ps1` is enabled when the file exists and is readable. When both `.bat` and `.ps1` exist for the same name, the tool uses `.ps1`. The tool runs `.sh` via exec (shebang respected) or a fixed shell; `.bat` via `cmd.exe /C`; `.ps1` via PowerShell (e.g. `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <path>`). Scripts run with the repository root as the working directory and receive the full prompt-variable catalog as environment variables (e.g. `DOCS_BASE_URL`, `MAIN_SDD_URL`, `MODULE_NAME`, `MODULE_SDD_URL`, `MODULE_DOCS_URL`, `E2E_SCRIPT`, `E2E_SCRIPT_PATH`, `PLAN_FILE`, `PLAN_FILE_PATH`); these override any existing environment variables of the same name. Use **`bus dev context`** to print the exact KEY=VALUE set your scripts will see. `.sh`, `.bat`, and `.ps1` can exist for the same name (platform variants); the tool uses the platform-appropriate one and that is not considered an ambiguity.
 
+**Quick start for `.bus/dev/`.** In your repository root, keep reusable items in `.bus/dev/`:
+
+```text
+.bus/dev/
+  review-pr.txt
+  check-local.sh
+  release-ready.yml
+```
+
+Create and use them:
+
+```bash
+cat <<'EOF' | bus dev action set review-pr
+Review local changes and list commit risks.
+EOF
+cat <<'EOF' | bus dev script set check-local --platform=unix
+#!/usr/bin/env sh
+set -eu
+make check
+EOF
+bus dev pipeline set repo release-ready plan work e2e check-local stage commit
+bus dev list
+bus dev pipeline preview release-ready
+bus dev release-ready
+```
+
+Use `bus dev context` to inspect the prompt/script variables that `.txt` and script actions receive.
+
 **After init.** When you use **init**, only operations from the set plan, spec, work, and e2e may follow. Pipeline and action tokens are allowed after init only if their expansion contains just those four base operations. If you use a pipeline or action that expands to stage, commit, triage, or any user-defined action after init (for example `bus dev init round`), the command fails with invalid usage (exit 2) before running any step.
 
 **Preference-based user-defined pipelines** are stored in [bus-preferences](./bus-preferences) under keys **`bus-dev.pipeline.<name>`**. The value is a JSON array of strings; each string is either a base operation name, another pipeline name, or an @-prefixed built-in (e.g. `"@plan"`, `"@round"`). The name `<name>` must start with a letter and contain only lowercase ASCII letters (a–z), digits, hyphens, and underscores (e.g. `my-workflow`, `quick_refresh`). You cannot use a name that matches a base operation (plan, spec, work, e2e, triage, stage, commit); those are reserved. Define or remove pipelines with **`bus dev pipeline set prefs NAME TOKEN...`** and **`bus dev pipeline unset prefs NAME`** (bus-dev uses the bus-preferences library directly; no shell-out to `bus preferences`). You can also set a preference pipeline with `bus preferences set bus-dev.pipeline.<name> '<json array>'` (e.g. `bus preferences set bus-dev.pipeline.quick-refresh '["spec","plan","stage","commit"]'`). List all pipelines (repo, prefs, and built-in) with **`bus dev pipeline list [all|repo|prefs|builtin]`**. When defining a pipeline (repo or prefs), the tool refuses the write with exit 2 if another definition already exists for that name (e.g. an action `.txt`, a script `.sh`/`.bat`/`.ps1`, or the other pipeline scope); the diagnostic identifies the conflicting path(s) or key(s). Bus-dev reads pipeline definitions via the bus-preferences library when resolving tokens. Invalid JSON, a non-array value, an invalid name, or an invalid token in the array causes the command to fail with exit 2 before any agent or git step. If a pipeline references another pipeline (including itself indirectly), cycles are detected and reported with exit 2 and a diagnostic that includes the cycle path; expansion depth and token limits also apply to avoid pathological configs. See the [module SDD](../sdd/bus-dev) for the full token-resolution rules, @ semantics, and validation requirements.
@@ -125,16 +190,15 @@ Example: `bus dev round` runs work, then e2e, then stage, then commit in one inv
 
 These flags apply to all subcommands. The common subset matches the [standard global flags](../cli/global-flags); `bus dev` adds `--agent` for runtime selection. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
 
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Help lists every built-in workflow operation (plan, spec, work, e2e, triage, stage, commit) with a one-line description, every built-in pipeline (snapshot, refresh, round, cycle, iterate) with a one-line description and the normalized expanded step sequence, and directs you to **`bus dev list`**, **`bus dev pipeline list`**, **`bus dev action list`**, and **`bus dev script list`** to discover user-defined pipelines, prompt actions, and script actions. No agent, script, or Git operation is run. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
-- **`--check`** — Validate workflow token expansion and script-runnability checks without executing workflow steps. Supported with workflow tokens and `each`.
-- **`-v`**, **`--verbose`** — Send verbose progress and diagnostics to stderr. You can repeat the flag (e.g. `-vv`) to increase verbosity. Verbose output does not change what is written to stdout.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage (exit 2).
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective working directory. The repository root and all paths are resolved from this directory. If it does not exist or is not accessible, the command exits with code 1. If the effective directory is not inside a Git repository, subcommands that require a repo exit with code 2 and a clear message.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. The file is created or truncated. Errors and diagnostics still go to stderr. If both `--output` and `--quiet` are used, quiet wins: no output is written to the file.
-- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. Invalid value is usage error (exit 2).
-- **`--no-color`** — Same as `--color=never`.
-- **`--agent <runtime>`** — Select the agent runtime for this invocation only. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid value is usage error (exit 2). This overrides the default set by `BUS_DEV_AGENT`, `BUS_AGENT`, and any persistent preferences (see Agent runtime selection below).
+`-h` and `--help` print help to stdout and exit 0. Help describes built-in operations and pipelines and points to `bus dev list`, `bus dev pipeline list`, `bus dev action list`, and `bus dev script list` for repository-local discovery. `-V` and `--version` print tool name and version and exit 0.
+
+`--check` validates workflow-token expansion and script-runnability without executing steps. This works with normal workflow-token runs and with `each`.
+
+`-v` and `--verbose` increase diagnostics on stderr and can be repeated, for example `-vv`. `-q` and `--quiet` suppress normal output and keep only errors. Quiet and verbose cannot be combined; that is usage error exit 2.
+
+`-C <dir>` and `--chdir <dir>` set the effective working directory used for repository resolution and path handling. `-o <file>` and `--output <file>` redirect normal output to a file; diagnostics still go to stderr. If output and quiet are both set, quiet wins and nothing is written.
+
+`--color <auto|always|never>` controls colored stderr output. `--no-color` is the same as `--color=never`. `--agent <runtime>` selects runtime for this invocation only; valid values are `cursor`, `codex`, `gemini`, and `claude`, and invalid values return usage error exit 2.
 
 Command results are written to stdout when a subcommand produces them. Diagnostics, progress, and human-readable agent output are written to stderr.
 
@@ -178,7 +242,16 @@ Because the specs are public and machine-readable, this flow lets you regenerate
 
 ```bash
 bus dev list
-bus dev plan work stage commit
+bus dev --check plan work stage commit
+bus dev -C ./bus-books --agent codex plan work stage commit
+bus dev -C ./bus-books stage commit
+bus dev -C ./bus-books set model gpt-5-codex
+bus dev -C ./bus-books set timeout 45m
+bus dev pipeline set repo release-ready plan work e2e stage commit
+bus dev action set release-note < .bus/dev/release-note.txt
+bus dev script set verify-local --platform=unix < .bus/dev/verify-local.sh
+bus dev pipeline preview release-ready
+bus dev release-ready
 bus dev each --check --skip bus-docs stage commit
 bus dev each --skip bus-docs,bus-legacy stage commit
 bus dev each --skip bus-docs --skip bus-legacy stage commit
@@ -190,10 +263,11 @@ bus dev each --skip bus-docs --skip bus-legacy stage commit
 
 ### Exit status and errors
 
-- **0** — Success. For `bus dev commit`, “nothing to commit” is success.
-- **1** — Execution failure: Git command failed, hook failed, agent failed or timed out, selected agent runtime not found or not executable, no agent enabled when the automatic default would apply, working-directory lock could not be acquired (e.g. directory not writable), `each` preflight found a non-runnable script action (for example Unix `.sh` missing `+x`), failure to set the executable bit when writing a script (e.g. **script set** or **script generate** writing `.sh`), or inability to create or write a file under `.bus/dev/` for pipeline/action/script set or generate.
+Exit code `0` means success. For `bus dev commit`, “nothing to commit” is still success.
 
-- **2** — Invalid usage: unknown subcommand or unknown operation/pipeline token, unknown **@** name, invalid flag (including invalid `--agent` or `set agent` runtime name), precondition not met (e.g. not in a Git repository for commands that require one — including **`bus dev context`** — or init target path is not a directory), ambiguous triage project context (run from docs repo, super-project, or module repo as appropriate), invalid pipeline definition or name, pipeline recursion detected, expansion limit exceeded, a pipeline or action after init that expands to stage, commit, triage, or user-defined actions, repository-local ambiguity (same name in more than one of .txt, .yml, preference, or script), disabled script action invoked, invalid repository-local YAML or symlink escape, **`bus dev context`** run outside a Git repository, `bus dev each` outside a superproject, without at least one token after `each` (or after `each --check` / `--skip` options), with unknown modules in `--skip`, or with tokens that cannot be resolved in every target module during preflight, invalid or reserved name for pipeline/action/script (e.g. does not start with a letter or uses disallowed characters), conflicting definition when defining a pipeline/action/script (another artifact with that name already exists — diagnostic identifies the conflict), or empty stdin for **action set**.
+Exit code `1` means execution failed. Common causes are Git or hook failure, agent failure or timeout, missing or non-executable selected runtime, no available enabled runtime for automatic selection, lock-acquisition failure, non-runnable script detected by `each` preflight, failure to set execute bit for generated `.sh`, or failure to create/write repository-local files under `.bus/dev/`.
+
+Exit code `2` means invalid usage. Common causes are unknown subcommands or tokens, unknown `@` names, invalid flags or runtime names, missing required repo context, invalid init target, invalid or recursive pipelines, expansion-limit failures, invalid post-init token expansion, repository-local name ambiguity across `.txt`/`.yml`/preference/script definitions, disabled or invalid script action invocation, path or YAML validation failures, invalid `each` usage, invalid or reserved names, conflicting definitions, or empty stdin for `action set`.
 
 Deterministic results (e.g. **list**, **pipeline list**, **action list**, **script list**, **context**) are written to stdout. Diagnostics and errors are written to stderr.
 
@@ -210,6 +284,23 @@ dev --help
 
 # same as: bus dev -V
 dev -V
+
+# run staged commit flow in one module
+dev -C ./bus-books stage commit
+
+# validate then run a full cycle in one command
+dev -C ./bus-books --check plan work stage commit
+dev -C ./bus-books plan work stage commit
+
+# use repo-local definitions under .bus/dev/
+dev -C ./bus-books list
+dev -C ./bus-books context
+dev -C ./bus-books pipeline set repo nightly plan e2e triage stage commit
+dev -C ./bus-books pipeline preview nightly
+dev -C ./bus-books nightly
+
+# run stage+commit in each module except selected ones (superproject)
+dev each --skip bus-docs,bus-legacy stage commit
 ```
 
 

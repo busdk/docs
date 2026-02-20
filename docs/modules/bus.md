@@ -15,8 +15,7 @@ bus [--check] [--transaction <provider>] [--scope <scope>] [--trace] <file.bus> 
 
 Use `bus` in two modes:
 
-- Normal dispatch: `bus <module> [args...]` calls `bus-<module>` from PATH.
-- Busfile mode: `bus <file>.bus [...]` executes one or more `.bus` command files.
+Normal dispatch uses `bus <module> [args...]` and calls `bus-<module>` from PATH. Busfile mode uses `bus <file>.bus [...]` and executes one or more `.bus` command files.
 
 ### Description
 
@@ -30,35 +29,28 @@ This feature is available under FSL-1.1-MIT (Functional Source License 1.1, MIT 
 
 ### Normal dispatch
 
-- `bus <module> <args...>` dispatches to `bus-<module>`.
-- Example: `bus journal add ...` runs `bus-journal add ...`.
-- `bus run ...` is treated like any other module dispatch target.
+`bus <module> <args...>` dispatches to `bus-<module>`. For example, `bus journal add ...` runs `bus-journal add ...`. `bus run ...` is treated like any other module dispatch target.
 
 ### Busfile mode
 
 A path is treated as a busfile when:
 
-- it ends with `.bus`, or
-- it is executable and starts with `#!/usr/bin/bus` or `#!/usr/bin/env bus`
+it ends with `.bus`, or it is executable and starts with `#!/usr/bin/bus` or `#!/usr/bin/env bus`.
 
 Busfile line rules:
 
-- Blank lines are ignored.
-- Lines whose first non-whitespace character is `#` are comments.
-- Lines ending with `.bus` are treated as nested busfile includes.
-- Other lines are parsed as one command line using shell-like quoting.
-- Variable expansion, command substitution, pipes/redirection, and `;` separators are not interpreted.
+Blank lines are ignored. Lines whose first non-whitespace character is `#` are comments. Lines ending with `.bus` are treated as nested includes. Other lines are parsed as a single command line with shell-like quoting.
+
+Variable expansion, command substitution, pipes and redirection, and `;` separators are not interpreted.
 
 ### Busfile options
 
 These flags are interpreted only in busfile mode:
 
-- `--check`: preflight (and optional data validation) only; do not apply changes.
-  - `--check` is expected to use module-native non-mutating validation (`--check`) for dispatched commands.
-  - Core dispatcher validation additionally rejects clearly invalid common patterns (for example unbalanced `journal add` postings and malformed `bank add transactions --set` values).
-- `--transaction <provider>`: `none` (default), `fs`, `git`, `snapshot`, or `copy`.
-- `--scope <scope>`: `file` (default) or `batch`.
-- `--trace`: print `file:line` command trace before execution.
+`--check` runs preflight (and optional validation) only and does not apply changes. `--transaction <provider>` accepts `none` (default), `fs`, `git`, `snapshot`, or `copy`. `--scope <scope>` accepts `file` (default) or `batch`. `--trace` prints `file:line` traces before execution.
+
+`--check` should rely on module-native non-mutating validation where available.
+Dispatcher also rejects clearly invalid common patterns during preflight.
 
 ### Execution model
 
@@ -66,18 +58,11 @@ These flags are interpreted only in busfile mode:
 2. Optional data validation (workspace/module support dependent).
 3. Apply in order with fail-fast semantics.
 
-Scopes:
-
-- `file` scope (default): each file is applied independently after global preflight.
-- `batch` scope: all files are one apply unit (all-or-nothing only if provider supports it).
+Scope `file` is the default and applies each file independently after global preflight. Scope `batch` treats all files as one apply unit, with all-or-nothing behavior only when the chosen provider supports it.
 
 ### Exit status
 
-- **0** — Success.
-- **1** — Command execution failed.
-- **2** — Usage error (invalid flags, missing file, or no subcommand in normal dispatch usage).
-- **65** — Busfile syntax/tokenization error.
-- **127** — Missing subcommand in normal dispatch mode (`bus-<command>` not found on PATH).
+Exit `0` means success. Exit `1` means command execution failed. Exit `2` means usage error such as invalid flags, missing file, or missing subcommand in normal dispatch usage. Exit `65` means busfile syntax or tokenization error. Exit `127` means missing normal-dispatch target (`bus-<command>` not found on PATH).
 
 If a dispatched module returns a specific non-zero code, `bus` returns that code.
 
@@ -155,21 +140,20 @@ bus --transaction git --scope batch 2024-01.bus 2024-02.bus 2024-03.bus
 # include another .bus file
 2026-02.bus
 
-# module command line (same as: bus journal --help)
-journal --help
+# module command line (same as: bus journal add --date 2026-02-28 --desc "Adjust" --debit 1910=100 --credit 3000=100)
+journal add --date 2026-02-28 --desc "Adjust" --debit 1910=100 --credit 3000=100
+
+# module command line (same as: bus run send-feedback --message "Close run complete")
+run send-feedback --message "Close run complete"
 ```
 
 ### Notes
 
-- Atomicity is configurable. Default provider is `none` (fast, no workspace-level rollback).
-- Git-based atomicity is optional, not required.
-- Prefer `.bus` extension for deterministic recognition.
-- For robust batch safety, keep `--check` support enabled across modules referenced by your `.bus` files.
-- Dispatch selection during busfile runs is automatic:
-  - If an in-process module runner is available, `bus` uses it.
-  - Otherwise `bus` falls back to shell lookup (`bus-<module>` on `PATH`) when enabled.
-- Shell lookup can be disabled with `bus.busfile.dispatch.shell_lookup_enabled=false` in `bus-preferences` or `datapackage.json`.
-- Current implementation detail: `fs` transaction mode requires in-process transaction-capable runners for all busfile targets. If any target must use external shell dispatch, `bus` either falls back to `none` (when `fallback_to_none=true`) or exits with a provider error.
+Atomicity is configurable and the default transaction provider is `none`. Prefer the `.bus` extension for deterministic recognition. For safer batch runs, keep `--check` support enabled in referenced modules.
+
+Dispatch during busfile runs is automatic: an in-process runner is used when available, otherwise shell lookup (`bus-<module>` on `PATH`) is used when enabled. Shell lookup can be disabled with `bus.busfile.dispatch.shell_lookup_enabled=false` in preferences or workspace config.
+
+For deeper transaction/dispatch internals, see [Module SDD: bus (dispatcher)](../sdd/bus).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -20,13 +20,21 @@ Serve (default):
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). Bus Sheets provides a local web UI that presents your BusDK workspace as a multi-tab workbook: each workspace resource (a CSV file with its beside-the-table Table Schema) appears as a sheet tab, and you can view and edit rows, inspect and edit schemas, and run validation from the browser. The UI delegates all data and schema semantics to the [bus-api](./bus-api) core embedded in-process; no Bus module CLI is executed for grid or schema operations. Intended users are system administrators and power users who want a familiar spreadsheet experience over workspace datasets without installing a separate runtime. For accounting-focused screens (journal, periods, VAT, bank, invoices), use [bus books](../sdd/bus-books).
+Command names follow [CLI command naming](../cli/command-naming).
 
-When you start the server, it prints a **capability URL** to stdout. That URL includes an unguessable path token; you must open the full URL in a browser to use the UI. Requests that do not include the token path return 404. By default the server binds only to `127.0.0.1`, so the UI is reachable only from the local machine. The binary embeds everything needed to serve the UI (HTML, CSS, JavaScript); no extra template files or build directories are required after installation.
+Bus Sheets provides a local web UI over BusDK workspace resources.
+It presents datasets as sheet tabs, with row editing, schema operations, and validation actions.
 
-The workbook shows resources in the same order as the API (from `datapackage.json` when present, otherwise from beside-the-table schema discovery). Column order follows the Table Schema; cells show typed values and, for formula-enabled fields, computed values. Row add, update, and delete respect schema constraints and BusDK mutation policies (`busdk.update_policy`, `busdk.delete_policy`). Schema view and mechanical schema edits (field add/remove/rename, key operations) call the embedded API; destructive changes are refused unless explicitly forced per [bus-data](./bus-data) semantics. Validation actions run against the current resource or the full workspace and display deterministic diagnostics. Formula source can be shown alongside computed values via an opt-in toggle when the API supports it.
+Data and schema semantics are delegated in-process to [bus-api](./bus-api).
+No separate module CLI is executed for grid/schema operations.
 
-Optionally you can enable an **agent chat** (IDE-style). When started with `--enable-agent`, the UI exposes a chat panel that you can hide or show at runtime. In the chat you can ask an AI agent to perform operations; the agent runs with the workspace as its working directory and can run Bus CLI tools, so you can request data changes, validation, or other Bus commands and then refresh the sheet view to see results. Agent integration is disabled by default and can be turned on only at startup; see [Serve flags](#serve-flags) and [Agent chat](#agent-chat-when-enabled). The [bus-sheets SDD](../sdd/bus-sheets) defines the full design, security model, and integration with [bus-api](../sdd/bus-api) and [bus-agent](../sdd/bus-agent).
+On startup, server prints a capability URL to stdout.
+The URL includes an unguessable token path; requests outside token path return `404`.
+Default bind is `127.0.0.1`, so UI is local-only unless you change `--listen`.
+
+Optional agent chat is enabled only with `--enable-agent`.
+When enabled, you can run agent-assisted workspace commands from the UI.
+For full design/security details, see [Module SDD: bus-sheets](../sdd/bus-sheets).
 
 ### Commands
 
@@ -36,43 +44,38 @@ Optionally you can enable an **agent chat** (IDE-style). When started with `--en
 
 ### Serve flags
 
-These flags apply only to `serve`. They can appear in any order before or after the subcommand name.
-
-- **`--listen <addr>`** — Bind address. Default `127.0.0.1`. The server listens only on this address; use a non-loopback address only when you intend the UI to be reachable from other hosts.
-- **`--port <n>`** — Port number. Default `0` (choose a free port). The printed capability URL includes the actual port in use.
-- **`--token <string>`** — Use this token instead of generating one. Useful for scripts or tests that need a stable URL. If omitted, a random token is generated.
-- **`--token-bytes <n>`** — Length of the generated token in bytes when `--token` is not set. Default `32`.
-- **`--tls-cert <file>`** — Path to the TLS certificate file. When provided together with `--tls-key`, the server serves HTTPS instead of HTTP.
-- **`--tls-key <file>`** — Path to the TLS private key file. When provided together with `--tls-cert`, the server serves HTTPS.
-- **`--read-only`** — Disable all mutating operations in the UI. When set, create/update/delete and schema mutation requests return 403. Reads and validation remain available.
-- **`--enable-agent`** — Enable the optional agent chat integration. When set, the UI shows a chat panel (which you can hide or show at runtime) and the agent can run Bus CLI tools in the workspace. Default: disabled. When disabled, the chat is not available and no agent endpoints are exposed.
+Serve-specific flags are `--listen <addr>` (default `127.0.0.1`), `--port <n>` (default `0`, auto-choose), `--token <string>`, `--token-bytes <n>`, `--tls-cert <file>` with `--tls-key <file>` for HTTPS, `--read-only` to disable mutating operations, and `--enable-agent` to expose the optional chat panel.
 
 ### Global flags
 
-These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
-
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
-- **`-v`**, **`--verbose`** — Send verbose diagnostics to stderr. You can repeat the flag (e.g. `-vv`) to increase verbosity. Verbose output does not change what is written to stdout.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage (exit 2).
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective workspace root. All dataset and schema paths are resolved relative to this directory. The server treats this as the filesystem boundary. If the directory does not exist or is not accessible, the command exits with code 1.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. For `serve`, the capability URL is still printed to stdout unless you redirect it. Errors and diagnostics still go to stderr.
-- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. Invalid value is usage error (exit 2).
-- **`--no-color`** — Same as `--color=never`.
-
-Command results (capability URL, version) are written to stdout when produced. Diagnostics and logs are written to stderr.
+Standard global flags are supported; see [Standard global flags](../cli/global-flags).
+`--quiet` and `--verbose` are mutually exclusive.
+Diagnostics/logs are written to stderr.
 
 ### Using the workbook
 
-After starting the server with `bus sheets serve` (or `bus-sheets serve`), open the capability URL printed to stdout in your browser. The UI shows a tab for each workspace resource; tab order matches the API. Select a tab to load that resource’s schema and rows. Column headers follow the Table Schema field order; cells show typed values and formula-projected computed values where applicable. You can edit cells (subject to schema and mutation policy), add rows, and delete rows; the UI calls the embedded API and surfaces validation and policy errors. Primary key fields are treated as row identity and are typically not editable. Use the schema panel to inspect or mechanically edit the schema (field add/remove/rename, key operations); destructive changes are refused unless explicitly forced. Use “Validate sheet” or “Validate workbook” to run validation and see diagnostics grouped by resource and row. To see formula source for formula-enabled fields, use the formula-source toggle when the API supports it. After the agent (when enabled) performs mutating operations, refresh the sheet view to see updated data.
+After `bus sheets serve`, open the capability URL from stdout.
+Tabs map to workspace resources in API order.
+You can view/edit rows, inspect schema, and run sheet/workbook validation.
+Edits follow schema constraints and mutation policies.
+
+If agent chat is enabled and performs changes, refresh sheet view to load latest data.
 
 ### Agent chat (when enabled)
 
-When you start the server with `--enable-agent`, the UI exposes an optional chat panel, similar to IDE AI integrations. You can hide or show this panel at runtime without restarting the server. In the chat you can ask the AI agent to perform operations; the agent runs with the workspace as its working directory and can run Bus CLI tools (e.g. add rows, validate, run module commands). After the agent completes mutating operations, refresh the sheet view to see the changes. Agent runtimes (e.g. Cursor CLI, Codex, Gemini CLI, Claude CLI) are configured or detected per [bus-agent](../sdd/bus-agent); bus-sheets only exposes the chat UI and delegates execution to the bus-agent library. When agent integration is disabled (default), the chat is not shown and no agent endpoints are available.
+With `--enable-agent`, UI exposes optional chat panel.
+Agent runs with workspace as working directory and can execute Bus CLI commands.
+When disabled (default), no chat panel or agent endpoints are available.
 
 ### Security and binding
 
-By default the server binds only to `127.0.0.1` and is reachable from the local machine. To listen on a non-loopback interface you must set `--listen` explicitly. The random token in the capability URL is a bearer capability: anyone who has the full URL can access the UI and the embedded API. The server does not implement user accounts, sessions, or stored credentials. All filesystem paths are confined to the workspace root. When you supply `--tls-cert` and `--tls-key`, the server serves HTTPS on the same address and port; otherwise it serves HTTP.
+Default binding is `127.0.0.1` (local machine only).
+Use non-loopback `--listen` only when remote access is intended.
+Capability URL token works as bearer capability.
+
+The server has no user/session authentication layer.
+Filesystem access is confined to workspace root.
+With `--tls-cert` + `--tls-key`, server uses HTTPS.
 
 ### Exit status and errors
 
@@ -86,6 +89,8 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ```bash
 bus sheets serve --port 8091 --token-bytes 32
+bus sheets serve --read-only --port 8091
+bus sheets -C ./workspace serve --enable-agent --port 8092
 bus sheets version
 ```
 
@@ -95,11 +100,11 @@ bus sheets version
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus sheets --help
-sheets --help
+# same as: bus sheets serve --read-only --port 8091
+sheets serve --read-only --port 8091
 
-# same as: bus sheets -V
-sheets -V
+# same as: bus sheets serve --enable-agent --port 8092
+sheets serve --enable-agent --port 8092
 ```
 
 
@@ -113,7 +118,8 @@ sheets -V
 
 **Use case readiness:** Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; token gating (404 outside token, 200 under token) in unit tests; grid, schema panel, validation UI not test-backed; no workbook journey step completable.
 
-**Current:** `tests/e2e_bus_sheets.sh` verifies help, version, global flags (color, quiet, chdir, output), invalid usage (unknown subcommand, invalid color, quiet+verbose), serve printing capability URL with fixed token and port, quiet serve (no stdout/output file), and `-C` missing dir → exit 1. `internal/cli/flags_test.go` covers flag parsing, chdir, quiet+verbose. `internal/serve/serve_test.go` covers requests outside token → 404 and under token → 200. `internal/run/run_test.go` covers help, version, quiet, output. No test covers embedded API, workbook tabs, or grid CRUD.
+**Current:** Serve flow, capability URL behavior, token gating, and global-flag handling are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-sheets](../sdd/bus-sheets).
 
 **Planned next:** Embed [bus-api](./bus-api) in-process and mount under `/{token}/v1/`; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI. Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 

@@ -13,38 +13,15 @@ If you need architectural background on why modules are independent and how they
 
 Each module that owns workspace data defines where its data files live. Today these are conventional names at the workspace root (for example `accounts.csv`, `periods.csv`, `datapackage.json`). Only the owning module may write to those files or apply business logic to them; other tools that need read-only access to another module’s data obtain the path from that module (see the [Data path contract for read-only cross-module access](../sdd/modules#data-path-contract-for-read-only-cross-module-access) in the module SDDs). The design allows future configuration of paths (for example in a data package) so that end users can customize where data is stored without breaking how other tools discover it.
 
-- [`bus`](./bus): Top-level dispatcher; run `bus <command> [args...]` to invoke a module (e.g. `bus init`, `bus accounts add`).
-- [`bus init`](./bus-init): Initialize a new workspace by orchestrating `bus config init` and module-owned `init` commands.
-- [`bus config`](./bus-config): Create and update workspace configuration (accounting entity settings in `datapackage.json`).
-- [`bus data`](./bus-data): Inspect workspace datasets and schemas through a minimal data-layer CLI and provide deterministic import-profile primitives for domain modules.
-- [`bus api`](./bus-api): Local REST JSON API gateway for BusDK workspaces.
-- [`bus sheets`](./bus-sheets): Local spreadsheet-like web UI for workspaces (workbook, sheet tabs, optional agent chat).
-- [`bus books`](./bus-books): Local bookkeeping web UI for end users (accounting screens over modules).
-- [`bus dev`](./bus-dev): Developer workflows for module repos (commit, work, spec, e2e); not for end-user bookkeeping. From BusDK v0.0.26 onward, includes Codex runtime support through bus-agent; Gemini and Claude integration remains in-progress and not fully verified.
-- [`bus agent`](./bus-agent): Diagnostics and development helper for the agent runner (detect, render, run, format). From BusDK v0.0.26 onward, includes Codex runtime support; Gemini and Claude integration remains in-progress and not fully verified.
-- [`bus run`](./bus-run): Run user-defined prompts, pipelines, and scripts with agentic support; no built-in developer workflows. Optional `bux` shorthand for `bus run`. From BusDK v0.0.26 onward, includes Codex runtime support through bus-agent; Gemini and Claude integration remains in-progress and not fully verified.
-- [`bus bfl`](./bus-bfl): Developer CLI for BusDK Formula Language expressions.
-- [`bus accounts`](./bus-accounts): Manage the chart of accounts.
-- [`bus entities`](./bus-entities): Manage counterparty reference data.
-- [`bus period`](./bus-period): Add, open, close, and lock accounting periods.
-- [`bus attachments`](./bus-attachments): Register evidence files and attachment metadata.
-- [`bus invoices`](./bus-invoices): Create and manage sales and purchase invoices, including profile-driven ERP invoice import.
-- [`bus journal`](./bus-journal): Post and query ledger journal entries.
-- [`bus bank`](./bus-bank): Import and list bank transactions, including profile-driven ERP bank import.
-- [`bus reconcile`](./bus-reconcile): Match and allocate bank transactions, and run deterministic propose/apply flows for two-phase reconciliation.
-- [`bus assets`](./bus-assets): Manage fixed-asset records and depreciation.
-- [`bus loans`](./bus-loans): Manage loans and amortization schedules.
-- [`bus inventory`](./bus-inventory): Manage inventory items and movements.
-- [`bus payroll`](./bus-payroll): Validate payroll datasets and export deterministic posting lines.
-- [`bus budget`](./bus-budget): Record budgets and run budget vs actual reports.
-- [`bus reports`](./bus-reports): Generate trial balance, ledger, and statement reports, including journal-coverage, parity, and journal-gap migration-review artifacts.
-- [`bus replay`](./bus-replay): Export and apply deterministic replay logs for workspace migration, with planned replay support for profile-driven ERP imports.
-- [`bus validate`](./bus-validate): Validate workspace datasets and invariants, including first-class parity and journal-gap checks with CI thresholds.
-- [`bus vat`](./bus-vat): Compute VAT reports and exports.
-- [`bus pdf`](./bus-pdf): Render PDFs from JSON render models.
-- [`bus filing`](./bus-filing): Build deterministic filing bundles.
-- [`bus filing prh`](./bus-filing-prh): Produce PRH export bundles.
-- [`bus filing vero`](./bus-filing-vero): Produce Vero export bundles.
+Core entrypoints are [`bus`](./bus), [`bus init`](./bus-init), [`bus config`](./bus-config), and [`bus data`](./bus-data). Use these to dispatch commands, initialize workspaces, maintain `datapackage.json`, and inspect low-level datasets and schemas.
+
+Local interfaces are [`bus api`](./bus-api), [`bus sheets`](./bus-sheets), and [`bus books`](./bus-books). They expose workspace data through HTTP or browser-facing UIs.
+
+Automation and developer tooling live in [`bus dev`](./bus-dev), [`bus agent`](./bus-agent), [`bus run`](./bus-run), and [`bus bfl`](./bus-bfl). `bus dev` focuses on module-repository workflows, `bus run` focuses on user-defined prompts/scripts/pipelines, and both rely on `bus-agent` for runtime execution. From BusDK v0.0.26 onward, Codex runtime support is available through that shared layer.
+
+Accounting domain modules are [`bus accounts`](./bus-accounts), [`bus entities`](./bus-entities), [`bus period`](./bus-period), [`bus attachments`](./bus-attachments), [`bus invoices`](./bus-invoices), [`bus journal`](./bus-journal), [`bus bank`](./bus-bank), [`bus reconcile`](./bus-reconcile), [`bus assets`](./bus-assets), [`bus loans`](./bus-loans), [`bus inventory`](./bus-inventory), [`bus payroll`](./bus-payroll), and [`bus budget`](./bus-budget).
+
+Reporting, quality, and filing modules are [`bus reports`](./bus-reports), [`bus replay`](./bus-replay), [`bus validate`](./bus-validate), [`bus vat`](./bus-vat), [`bus pdf`](./bus-pdf), [`bus filing`](./bus-filing), [`bus filing prh`](./bus-filing-prh), and [`bus filing vero`](./bus-filing-vero).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

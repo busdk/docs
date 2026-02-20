@@ -13,9 +13,15 @@ description: bus validate checks all workspace datasets against their schemas an
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus validate` checks all workspace datasets against their schemas and enforces cross-table invariants (e.g. balanced debits/credits, valid references, period integrity). It does not modify data. Use before period close and filing. Diagnostics go to stderr; stdout is empty on success.
+Command names follow [CLI command naming](../cli/command-naming).
 
-The module provides first-class parity and journal-gap subcommands (`bus validate parity`, `bus validate journal-gap`) for source-import parity and journal-gap checks. Script-based fallbacks (e.g. `exports/2024/022-erp-parity-2024.sh`) remain optional.
+`bus validate` checks workspace datasets against schemas and cross-table invariants (for example balanced debits/credits, valid references, and period integrity).
+It does not modify data.
+
+Use it before period close and filing.
+Diagnostics go to stderr; stdout is empty on success.
+
+The module also provides first-class parity and journal-gap checks through `bus validate parity` and `bus validate journal-gap`.
 
 ### Commands
 
@@ -27,9 +33,21 @@ Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide val
 
 ### Parity and gap checks (first-class)
 
-The module exposes deterministic migration checks as subcommands: `bus validate parity --source <file>` (source-import parity: counts and sums by dataset and period) and `bus validate journal-gap --source <file>` (journal gap: imported operational vs non-opening journal by month). Both consume a deterministic source-summary file whose format is defined by the module: typically counts and sums by dataset and period (or by month for journal-gap), with stable column names so that the same source artifact can be produced by [bus-reports](./bus-reports) or export scripts. Global threshold flags apply to the aggregate result: `--max-abs-delta` (and optionally `--max-count-delta`, `--max-pct-delta-*`) define the allowed deviation; when a row exceeds the threshold, the command exits non-zero (CI-friendly). `--dry-run` emits planned thresholds and scope to stderr without writing a result set. Output is a result set (TSV) to stdout or to the file given by global `--output`.
+`bus validate parity --source <file>` runs deterministic source-import parity checks.
+`bus validate journal-gap --source <file>` runs deterministic journal gap checks.
 
-**Per-bucket thresholds (optional).** When `--bucket-thresholds <file>` is provided, the file defines named buckets (e.g. operational, financing, internal transfer) and a threshold value per bucket. File format: one row per bucket, with columns for bucket name and threshold (e.g. `bucket_name`, `max_abs_delta`). The gap is evaluated per bucket; the command exits non-zero when any bucket exceeds its configured threshold. When not provided, a single aggregate gap is evaluated against the global `--max-abs-delta` (and related) flags only. Class-aware gap reporting (breakdown by account bucket) is under [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope); the current CLI supports global thresholds and optional bucket thresholds when the implementation supplies them.
+Both commands consume a deterministic source-summary artifact with stable columns.
+That source artifact can be produced by [bus-reports](./bus-reports) or by scripts.
+
+Threshold flags (for example `--max-abs-delta` and `--max-count-delta`) control pass/fail behavior.
+When a row exceeds threshold, the command exits non-zero.
+`--dry-run` prints planned scope and thresholds to stderr without result output.
+
+**Per-bucket thresholds (optional).** `--bucket-thresholds <file>` defines bucket-specific thresholds (for example operational, financing, internal transfer).
+When provided, gap checks are evaluated per bucket and fail when any configured threshold is exceeded.
+Without this file, only aggregate thresholds apply.
+
+For extended capability notes, see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope).
 
 Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain available as an alternative.
 
@@ -42,6 +60,8 @@ Reads all workspace datasets and schemas. Does not write.
 ```bash
 bus validate --format tsv
 bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
+bus validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
+bus validate parity --source ./imports/legacy/parity-2026-01.csv --dry-run
 ```
 
 ### Exit status
@@ -54,11 +74,14 @@ bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus validate --help
-validate --help
+# same as: bus validate --format tsv
+validate --format tsv
 
-# same as: bus validate -V
-validate -V
+# same as: bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
+validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
+
+# same as: bus validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
+validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
 ```
 
 
@@ -72,7 +95,8 @@ validate -V
 
 **Use case readiness:** Accounting workflow: high — run, schema/invariant checks, empty stdout, format, and output no-op are in place; parity and journal-gap available. Finnish bookkeeping and tax-audit compliance: high — workspace validation and migration checks available; audit and closed-period would strengthen. Finnish company reorganisation: high — same as above.
 
-**Current:** Verified. `cmd/bus-validate/run_test.go` and `tests/e2e_bus_validate.sh` verify success/failure exit codes, missing CSV, schema and invariant errors, journal double-entry balance, FK handling, and global flags (help, version, quiet, output no-op for validate, chdir, color, format text/tsv and unknown format, quiet+verbose, terminator, errors to stderr). Parity and journal-gap subcommands, dry-run, and threshold/CI behavior are covered. Success path leaves stdout empty.
+**Current:** Workspace validation, parity, and journal-gap flows are test-verified, including threshold and dry-run behavior.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-validate](../sdd/bus-validate).
 
 **Planned next:** Table Schema min/max and audit/closed-period checks for [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack). Class-aware gap reporting with per-bucket thresholds (see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope) in the module SDD) as a possible extension.
 

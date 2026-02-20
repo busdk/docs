@@ -7,11 +7,19 @@ description: bus vat computes VAT totals per reporting period, validates VAT cod
 
 ### Overview
 
-Command names follow [CLI command naming](../cli/command-naming). `bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings against reference data, and reconciles invoice VAT with ledger postings. It writes VAT summaries and export data as repository data so they remain reviewable and exportable for archiving and [VAT reporting and payment](../workflow/vat-reporting-and-payment). The module **owns the definition of VAT period boundaries**: the actual sequence of reporting periods (start and end dates) used for allocation and reporting. That sequence can include transitions when the period length changes within a year (e.g. monthly → yearly → quarterly), transition periods (e.g. 4 months), and non-standard first or last periods (e.g. 18-month first period after registration). Workspace-level inputs come from [bus config](./bus-config) — current `vat_reporting_period`, `vat_timing`, and optional `vat_registration_start` / `vat_registration_end` — with the canonical definition of those keys and allowed values in [Workspace configuration](../data/workspace-configuration). The module uses those settings as inputs and may maintain a period-definition dataset or logic to produce the authoritative list of periods, then allocates transactions and invoices to those periods and produces reports and exports.
+Command names follow [CLI command naming](../cli/command-naming).
 
-Where invoice master data is incomplete or absent (e.g. journal-first bookkeeping or migration), the module supports **journal-driven VAT mode**: computing VAT period totals from journal postings and VAT-related account and tax mappings, with deterministic period allocation and traceable diagnostics. The same period boundaries, allocation rules, and output formats apply as for the invoice-based path; only the input source differs. Use `bus vat validate|report|export --source journal` to run in journal-driven mode.
+`bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings.
+It writes VAT summaries and exports as repository data for review and filing workflows.
 
-For payment-evidence cash-basis filing (`maksuperusteinen`), the module also supports **reconcile-evidence cash mode**: `bus vat report|export --source reconcile --basis cash`. This mode derives VAT periodization from payment evidence (`matches.csv` + `bank-transactions.csv`) and splits partial payments proportionally across invoice VAT/net evidence rows with deterministic source references and deterministic cent allocation.
+The module owns VAT period boundary definition and period allocation logic.
+Workspace settings from [bus config](./bus-config) (`vat_reporting_period`, `vat_timing`, and optional registration dates) are inputs to that logic.
+
+When invoice data is incomplete, use journal-driven mode:
+`bus vat validate|report|export --source journal`.
+
+For payment-evidence cash-basis filing, use reconcile-evidence mode:
+`bus vat report|export --source reconcile --basis cash`.
 
 ### Synopsis
 
@@ -40,38 +48,40 @@ For payment-evidence cash-basis filing (`maksuperusteinen`), the module also sup
 `explain` emits deterministic row-level FI filing trace grouped by FI field keys (`tsv|json`) for audit verification.
 
 `period-profile` manages named filing period profiles in `vat-period-profiles.csv`:
-- `list` outputs deterministic profile rows.
-- `import --file <csv>` normalizes/imports profile definitions for `--period-profile` runs.
+`list` outputs deterministic profile rows. `import --file <csv>` normalizes and imports profile definitions for `--period-profile` runs.
 
 ### Options
 
 `report`, `export`, `fi-file`, `explain`, `filed-import`, and `filed-diff` support period selection via one of:
-- `--period <period>`
-- `--from <date> --to <date>`
-- `--period-profile <id>` (resolved from `vat-period-profiles.csv`)
+`--period <period>`, `--from <date> --to <date>`, or `--period-profile <id>` resolved from `vat-period-profiles.csv`.
 
 `fi-file` supports `--payload-format json|csv|tsv` and outputs one-command filing-ready FI field values.
 `explain` supports `--format tsv|json`.
 `--strict-fi-eu-rc` enables strict FI reverse-charge classification marker validation (non-zero exit on unresolved rows).
 
-`filed-import` requires `--file <path>`. `filed-diff` supports `--threshold-cents <int>` and exits `1` when any absolute VAT delta exceeds threshold. When using `--source journal`, journal rows are read from the journal area and normalized for VAT reporting. Direction is resolved deterministically in this order: row `direction` (`sale`/`purchase`), then `vat-account-mapping.csv` direction by `account_id`, then `accounts.csv` account type (`income` => `sale`, `expense` => `purchase`). Amount can be provided as `amount_cents` (integer) or `amount` (decimal major units). Rate uses row-level `vat_rate_bp` first, then `vat_rate`/`vat_percent`, then mapping (`vat_rate_bp`/`rate_bp`/`vat_rate`/`vat_percent`) from `vat-account-mapping.csv`. For mapped VAT-account rows that have direction but no explicit rate, amount is treated as VAT amount (net 0). Legacy fallback also infers VAT amount from sided debit/credit postings on likely VAT accounts (for example `293x`) when mapping is missing and row rate is absent. Opening-balance rows are excluded from journal-source VAT reporting, including rows identifiable via opening voucher/source kind or opening-style source identifiers (for example `opening:*`). In cash basis, bank evidence references such as `bank_row:<id>:journal:<n>` are normalized to corresponding bank transaction ids (including `erp-bank-<id>` forms) for payment-date lookup. If direction cannot be resolved for a row, the command fails with a clear diagnostic naming the row/account and required fallback data.
+`filed-import` requires `--file <path>`.
+`filed-diff` supports `--threshold-cents <int>` and exits `1` when any absolute delta exceeds threshold.
 
-When using `--source reconcile --basis cash`, VAT rows are derived from `matches.csv` (`kind=invoice_payment`), `bank-transactions.csv` payment dates (`booked_date`/`booking_date`/`value_date`/`booked_at`), and invoice evidence rows. Partial payments are split proportionally across invoice VAT/net rows and allocated to the bank payment-date period.
-Reconcile cash mode also emits deterministic coverage diagnostics as a `COVERAGE` output row:
-- matched sales share
-- matched purchase share
-- unmatched cash rows
-and machine-readable source refs for diagnostics provenance.
+In `--source journal` mode, direction and rate are resolved deterministically from row values, account mapping (`vat-account-mapping.csv`), and account type fallbacks.
+Opening-balance rows are excluded.
+If direction cannot be resolved, the command fails with a clear diagnostic.
+
+When using `--source reconcile --basis cash`, VAT rows come from `matches.csv`, `bank-transactions.csv`, and invoice evidence rows.
+Partial payments are split proportionally across VAT and net rows and allocated by bank payment date.
+
+Reconcile cash mode emits deterministic coverage diagnostics as a `COVERAGE` output row:
+matched sales share, matched purchase share, and unmatched cash rows.
 Coverage gating is configurable:
-- `--strict-coverage` to fail when coverage is below thresholds
-- `--min-sales-coverage <0..1>` and `--min-purchase-coverage <0..1>` to set required minimum shares
+use `--strict-coverage` to fail when coverage is below thresholds, and use `--min-sales-coverage <0..1>` with `--min-purchase-coverage <0..1>` to set required minimum shares.
 Without strict mode, partial coverage continues with an explicit warning on stderr.
-When using `--source journal --basis cash`, payment-date allocation uses journal payment-date evidence columns when present (`payment_date`/`paid_date`/`value_date`/`booked_date`/`booking_date`/`booked_at`), optional `bank_txn_id` lookup to `bank-transactions.csv`, and falls back to `posting_date` when explicit payment evidence is missing.
-Evidence-first context applies: country/party context is read from invoice evidence first; `entities.csv` is only fallback enrichment.
 
-Cash-basis treatment handling is explicit:
-- `reverse_charge`, `intra_eu_supply`, `export`, `exempt` require `vat_cents=0` on evidence rows in this mode; otherwise the command fails with a deterministic diagnostic.
-- `domestic_standard`, `domestic_reduced`, `import`, and unknown/custom treatment codes are processed from explicit line VAT/net evidence.
+In `--source journal --basis cash`, payment-date allocation uses payment evidence columns first, optional bank transaction lookup second, and posting date fallback last.
+Evidence-first context applies: invoice evidence is primary, `entities.csv` is fallback enrichment.
+
+Cash-basis treatment handling:
+`reverse_charge`, `intra_eu_supply`, `export`, and `exempt` require `vat_cents=0` on evidence rows in this mode; otherwise the command fails with a deterministic diagnostic. `domestic_standard`, `domestic_reduced`, `import`, and unknown/custom treatment codes are processed from explicit line VAT/net evidence.
+
+Detailed resolution and fallback rules are maintained in [Module SDD: bus-vat](../sdd/bus-vat).
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
 
@@ -88,7 +98,9 @@ The module reads invoice and journal datasets and optional VAT reference dataset
 ```bash
 bus vat init
 bus vat report --period 2026-01
+bus vat report --from 2026-01-01 --to 2026-01-31 --source journal
 bus vat report --period 2026-01 --source reconcile --basis cash
+bus vat export --period-profile monthly-2026-q1 --strict-coverage --min-sales-coverage 0.95 --min-purchase-coverage 0.90
 bus vat fi-file --period 2026-01 --payload-format json
 bus vat explain --period 2026-01 --format tsv
 bus vat period-profile import --file ./vat-period-profiles.csv
@@ -106,11 +118,14 @@ bus vat filed-diff --period 2026-01 --threshold-cents 0
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus vat --help
-vat --help
+# same as: bus vat report --period 2026-01 --source journal
+vat report --period 2026-01 --source journal
 
-# same as: bus vat -V
-vat -V
+# same as: bus vat export --period 2026-01 --source reconcile --basis cash --strict-coverage
+vat export --period 2026-01 --source reconcile --basis cash --strict-coverage
+
+# same as: bus vat filed-diff --period 2026-01 --threshold-cents 0
+vat filed-diff --period 2026-01 --threshold-cents 0
 ```
 
 
@@ -124,7 +139,8 @@ vat -V
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 80% — close-step VAT (init→validate→report→export) from invoice or journal completable with source_refs and index update. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 80% — VAT report and export with invoice/voucher refs; closed-period/--force and rate validation verified.
 
-**Current:** Init (incl. --dry-run), validate (incl. rate check, vat_registered=false, --period, --source journal), report/export from invoice or journal with source_refs, FI filing payload (`fi-file`), FI row-level explain output (`explain`), strict FI reverse-charge marker validation (`--strict-fi-eu-rc`), period profile import/list and `--period-profile` selection, filed evidence import (`filed-import`) with provenance hash, deterministic filed-vs-replay diff (`filed-diff`) with threshold-based exit, vat-returns/vat-filed index updates, closed-period export re-run control (`--force`), and path API are verified by `tests/e2e_bus_vat.sh` and unit tests in `internal/app/run_test.go`, `internal/vat/` (including `fi_filing_test.go` and `period_profiles_test.go`), `vatpath/path_test.go`, and `internal/cli/flags_test.go`.
+**Current:** Init/validate/report/export, journal-source mode, reconcile cash mode, FI filing payload/explain, period profiles, and filed import/diff are test-verified.
+Detailed test and implementation notes are maintained in [Module SDD: bus-vat](../sdd/bus-vat).
 
 **Planned next:** None in PLAN.md; all documented requirements satisfied.
 

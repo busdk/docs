@@ -14,18 +14,25 @@ description: bus loans maintains loan contracts and event logs as schema-validat
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus loans` maintains loan contracts and event logs as schema-validated repository data, generates amortization schedules, and produces posting suggestions for the journal. Corrections are append-only and traceable.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus loans` maintains loan contracts and event logs as schema-validated repository data.
+It generates amortization schedules and posting suggestions for the journal.
+Corrections are append-only and traceable.
 
 ### Commands
 
-- `init` creates the baseline loan datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` records a new loan contract in the loan register.
-- `event` appends an event (disbursement, repayment, interest, fee, adjustment) and optionally produces postings.
-- `amortize` generates amortization and posting output for a period.
+`init` creates the baseline loan datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
+
+`add` records a loan contract in the register. `event` appends a disbursement, repayment, interest, fee, or adjustment event and can produce postings. `amortize` generates amortization and posting output for a period.
 
 ### Options
 
-`add` accepts `--loan-id`, `--counterparty`, `--principal`, `--start-date`, `--maturity-date`, `--interest-rate`, `--principal-account`, `--interest-account`, `--cash-account`, and optional `--name`, `--rate-type`, `--payment-frequency`, `--desc`. `event` accepts `--loan-id`, `--date`, `--type`, `--amount`, and optional allocation and voucher flags. `amortize` accepts `--period` and optional `--loan-id`, `--post-date`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus loans --help`.
+For `add`, required flags are `--loan-id`, `--counterparty`, `--principal`, `--start-date`, `--maturity-date`, `--interest-rate`, `--principal-account`, `--interest-account`, and `--cash-account`. Optional flags are `--name`, `--rate-type`, `--payment-frequency`, and `--desc`.
+
+`event` requires `--loan-id`, `--date`, `--type`, and `--amount`, and also supports allocation and voucher flags. `amortize` requires `--period` and supports `--loan-id` and `--post-date`.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus loans --help`.
 
 ### Files
 
@@ -45,13 +52,17 @@ bus loans add \
   --principal-account 2350 \
   --interest-account 8450 \
   --cash-account 1910
+bus loans event --loan-id LOAN-2026-01 --date 2026-02-28 --type repayment --amount 1200
+bus loans amortize --period 2026-02 --loan-id LOAN-2026-01 --post-date 2026-02-28
 ```
 
 ### Exit status
 
 `0` on success. Non-zero on errors, including invalid usage or schema violations.
 
-bus-loans does not classify arbitrary bank rows into principal vs interest; financing-style bank payments still require manual split or custom code. A [loan-payment classifier with principal/interest split](../sdd/bus-journal#suggested-capabilities-out-of-current-scope) may be implemented in [bus-journal](./bus-journal) or by integration with this module; when adopted, the SDD and module docs will document profiles, split policy, and proposal output (see [Suggested extensions](../sdd/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows) in the bus-loans SDD).
+`bus loans` does not currently classify arbitrary bank rows into principal vs interest automatically.
+Financing-style bank payments still need manual split or custom integration.
+For planned extension notes, see [Suggested extensions](../sdd/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows).
 
 
 ### Using from `.bus` files
@@ -59,11 +70,14 @@ bus-loans does not classify arbitrary bank rows into principal vs interest; fina
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus loans --help
-loans --help
+# same as: bus loans add --loan-id LOAN-2026-02 --counterparty "Example Bank" --principal 25000 --start-date 2026-03-01 --maturity-date 2028-12-31 --interest-rate 3.75 --principal-account 2350 --interest-account 8450 --cash-account 1910
+loans add --loan-id LOAN-2026-02 --counterparty "Example Bank" --principal 25000 --start-date 2026-03-01 --maturity-date 2028-12-31 --interest-rate 3.75 --principal-account 2350 --interest-account 8450 --cash-account 1910
 
-# same as: bus loans -V
-loans -V
+# same as: bus loans event --loan-id LOAN-2026-02 --date 2026-03-31 --type interest --amount 78.50
+loans event --loan-id LOAN-2026-02 --date 2026-03-31 --type interest --amount 78.50
+
+# same as: bus loans amortize --period 2026-03 --loan-id LOAN-2026-02
+loans amortize --period 2026-03 --loan-id LOAN-2026-02
 ```
 
 
@@ -77,7 +91,8 @@ loans -V
 
 **Use case readiness:** Finnish company reorganisation: 70% — core loan lifecycle (register, events, amortization, validation, balances, schedules, postings) is implemented and test-covered.
 
-**Current:** Verified by tests in `internal/app/run_test.go` and `internal/cli/flags_test.go`, including event/amortize command tests (for example `TestRunEvent*` and `TestRunAmortize*`) and global-flag behavior; end-to-end coverage in `tests/e2e_bus_loans.sh` includes init, add, event, amortize, validate, list, balances, schedule, postings, and key global flags.
+**Current:** Init/add/event/amortize and related lifecycle commands are test-verified, including global-flag behavior.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-loans](../sdd/bus-loans).
 
 **Planned next:** Follow-up priorities are incremental SDD alignment and additional output-format/integration coverage; implementing event and amortize is no longer planned work.
 

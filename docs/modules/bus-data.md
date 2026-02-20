@@ -7,13 +7,24 @@ description: bus data provides the shared tabular data layer for BusDK with dete
 
 ### Overview
 
-Command names follow [CLI command naming](../cli/command-naming). Bus Data provides the shared tabular data layer for BusDK by implementing deterministic [Frictionless](https://specs.frictionlessdata.io/) Table Schema and Data Package handling for workspace datasets. Its primary surface is a Go library that other modules import for schema, data package, and CSV operations. The canonical way to run the module’s CLI is via the BusDK dispatcher as `bus data`; the `bus-data` binary remains available for scripts or direct invocation, but end users and documentation should prefer `bus data`. The module is library-first, deterministic, and non-interactive, with no Git or network behavior. Modules that need to create or ensure `datapackage.json` (e.g. [bus-config](./bus-config), [bus-init](./bus-init)) use the bus-data Go library to initialize the empty descriptor first, not by invoking the CLI.
+Command names follow [CLI command naming](../cli/command-naming).
 
-`bus data` reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes in a deterministic way. It remains a mechanical data layer and does not implement domain-specific accounting logic; domain invariants are enforced by domain modules. Paths to domain datasets (e.g. accounts, journal) are owned by the module that owns each dataset; callers obtain paths from that module, and bus-data accepts table paths as input and performs schema-validated I/O on them.
+Bus Data provides shared deterministic [Frictionless](https://specs.frictionlessdata.io/) Table Schema and Data Package handling for workspace datasets.
+Its primary surface is a Go library that other modules import for schema, data package, and CSV operations.
 
-Workbook-style read is available via `bus data table workbook`: cell and range access by address (e.g. `A1`, `A1:B2`), optional header or anchor-based lookup, locale options (`--decimal-sep`, `--thousands-sep`), and formula evaluation controls (`--formula`, `--formula-source`, `--formula-dialect`). Output is deterministic and machine-friendly (tsv/json). Formula options, supported functions, and locale handling for workbook formula evaluation are described in [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation). FR-DAT-025 in the module SDD includes locale-aware and source-specific formula behavior for workbook extraction; see [Implementation status](../sdd/bus-data#implementation-status-workbook-read) for current coverage and remaining parity work.
+The canonical CLI entry is `bus data`.
+The standalone `bus-data` binary remains available for direct script usage.
 
-For ERP migration workflows, bus-data also provides a mechanical import-profile library contract for domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). This profile helper layer is specified in the module SDD and implemented as a reusable, deterministic library surface across repositories.
+`bus data` reads tables, schemas, and data packages, validates records and foreign keys, and performs schema-governed changes.
+It is a mechanical data layer and does not implement domain accounting logic.
+
+Workbook-style read is available via `bus data table workbook`.
+It supports cell/range addresses (for example `A1`, `A1:B2`), optional header or anchor lookup, locale options, and formula controls.
+Output is deterministic and machine-friendly (`tsv`/`json`).
+
+For workbook formula details and parity notes, see [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation) and [Module SDD: bus-data](../sdd/bus-data#implementation-status-workbook-read).
+
+For ERP migration workflows, bus-data provides a mechanical import-profile library contract used by domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank).
 
 ### Synopsis
 
@@ -155,7 +166,15 @@ bus data row delete customers --key id=2
 
 ### Manage data packages and resources
 
-Use `bus data init` to create an empty `datapackage.json` at the workspace root. Use `package discover` to scan the workspace for tables with beside-the-table schemas and add them as resources. Use `package show` to inspect the descriptor, `package patch` to apply a JSON merge patch, and `package validate` to validate the full workspace package including foreign keys. Resource ordering is deterministic. Use `resource list` to see the current resources in deterministic order, and `resource validate` to validate a single resource without modifying files. Validation outputs a status row per resource, and when foreign key validation fails the command exits non-zero and reports the failure on standard error.
+Use `bus data init` to create an empty `datapackage.json` at the workspace root.
+Use `package discover` to find tables with beside-the-table schemas and add or update resources.
+
+Use `package show` to inspect the descriptor.
+Use `package patch` for JSON merge patches.
+Use `package validate` to validate the full package, including foreign keys.
+
+Use `resource list` for deterministic resource order.
+Use `resource validate` to validate one resource without modifying files.
 
 ```text
 bus data init
@@ -298,9 +317,11 @@ Formula evaluation uses a table snapshot, so range expressions resolve against t
 
 ### Import mapping profiles (planned)
 
-The planned import-profile contract in the bus-data library provides deterministic, mechanical mapping primitives for ERP-to-canonical imports. Domain modules provide the profile and target semantics, and bus-data validates and executes operations such as source row filtering, field mapping, enum/status mapping, keyed lookup joins, and deterministic value transforms as pure data mechanics.
+The import-profile contract is a library surface, not an end-user accounting command.
+Domain modules provide target semantics and profiles; bus-data provides deterministic profile validation and mapping primitives.
 
-This is a library contract rather than an end-user accounting command. The first end-user command surfaces are expected in domain modules, for example `bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024` and `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`, while bus-data remains responsible for profile validation and deterministic execution primitives.
+End-user imports are run via domain modules such as `bus invoices import` and `bus bank import`.
+Detailed contract and roadmap details are maintained in [Module SDD: bus-data](../sdd/bus-data).
 
 ### Output formats and files
 
@@ -359,6 +380,10 @@ The module operates on workspace datasets as CSV resources with beside-the-table
 ```bash
 bus data init
 bus data resource list
+bus data schema init customers --schema ./schemas/customers.schema.json
+bus data row add customers --set id=C-100 --set name="Northwind Oy" --set status=active
+bus data table read customers --filter status=active --column id --column name
+bus data package validate --format json --output ./out/package-validate.json
 ```
 
 ### Exit status
@@ -371,11 +396,14 @@ bus data resource list
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus data --help
-data --help
+# same as: bus data schema show --resource customers
+data schema show --resource customers
 
-# same as: bus data -V
-data -V
+# same as: bus data table workbook reports/sales.csv A1:C8 --header --format json
+data table workbook reports/sales.csv A1:C8 --header --format json
+
+# same as: bus data row update customers --key id=C-100 --set status=archived
+data row update customers --key id=C-100 --set status=archived
 ```
 
 
@@ -389,7 +417,8 @@ data -V
 
 **Use case readiness:** Workbook and validated tabular editing: 80% — User can complete package/resource lifecycle, schema evolution, table and workbook-style read (cell/range, --header, --anchor-col/--anchor-row, --decimal-sep, --formula), and row mutate.
 
-**Current:** E2e script `tests/e2e_bus_data.sh` verifies init, package discover/show/patch/validate, resource list/validate/add/remove/rename (FK refusal, --delete-files, --rename-files, FK update), schema init/show/infer/patch, schema key set and foreign-key add/remove (--dry-run and refusal), schema field add/remove/rename/set-type/set-format/set-constraints/set-missing-values, table list/read (--row, --column, --filter, --key) and table workbook (address/range, --header, --anchor-col, --anchor-row, --decimal-sep, --formula), row add/update/delete (in-place and soft-delete), formula projection (--formula-source, on_error=null), and global flags (--chdir, --output, --quiet, --dry-run, --). Unit tests in `internal/cli/package_resource_test.go`, `internal/cli/run_test.go`, `internal/cli/flags_test.go`, `internal/cli/write_commands_test.go`, `pkg/data/datapackage_test.go`, `pkg/data/mutate_test.go`, `pkg/data/formula_test.go`, `pkg/data/workbook_test.go`, `pkg/data/schema_key_set_test.go`, and `pkg/data/schema_foreign_key_test.go` cover resource remove when referenced, help/version/quiet/format/chdir/output, mutate/patch/validate/formula/serialization, and key set and foreign-key behavior.
+**Current:** Package/resource/schema/table/workbook and row operations are verified by e2e and unit tests, including formula and foreign-key behavior.
+For detailed test matrix and implementation notes, see [Module SDD: bus-data](../sdd/bus-data).
 
 **Planned next:** Add and document the import-profile library contract (descriptor validation and deterministic mapping primitives) for [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing) and ERP migration workflows.
 

@@ -12,7 +12,10 @@ description: bus payroll validates payroll datasets and exports deterministic jo
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus payroll` validates payroll datasets and exports deterministic posting rows for a selected final payrun. Data is schema-validated and append-only for auditability.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus payroll` validates payroll datasets and exports deterministic posting rows for a selected final payrun.
+Data is schema-validated and append-only for auditability.
 
 ### Commands
 
@@ -21,7 +24,8 @@ Command names follow [CLI command naming](../cli/command-naming). `bus payroll` 
 
 ### Options
 
-`export` takes `<payrun-id>` as a positional argument. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus payroll --help`.
+`export` takes `<payrun-id>` as a positional argument.
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus payroll --help`.
 
 ### Files
 
@@ -32,6 +36,7 @@ Payroll datasets and their beside-the-table schemas are read from the workspace 
 ```bash
 bus payroll validate
 bus payroll export PAYRUN-2026-01
+bus payroll -C ./workspace export PAYRUN-2026-01 --format tsv --output ./out/payroll-postings-2026-01.tsv
 ```
 
 ### Exit status
@@ -44,11 +49,11 @@ bus payroll export PAYRUN-2026-01
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus payroll --help
-payroll --help
+# same as: bus payroll validate
+payroll validate
 
-# same as: bus payroll -V
-payroll -V
+# same as: bus payroll export PAYRUN-2026-02 --format tsv
+payroll export PAYRUN-2026-02 --format tsv
 ```
 
 
@@ -62,7 +67,8 @@ payroll -V
 
 **Use case readiness:** Finnish payroll handling (monthly pay run): 20% — validate and export verified; init, run, list, employee not implemented; no e2e for full pay-run journey.
 
-**Current:** `run_test.go` verifies validate success, deterministic export CSV, schema/CSV/constraint validation failures, usage errors, help/version, quiet/--output/truncation, -C chdir, and invalid format/color/quiet+verbose. `internal/cli/flags_test.go` verifies -vv, -- terminator, quiet+verbose conflict, invalid color/format. `tests/e2e_bus_payroll.sh` verifies help, version, --no-color/--color=never, --format, validate and export with deterministic fixtures, -o truncation and quiet, -C, and deterministic export using workspace-root payroll datasets. Init/run/list/employee are not implemented.
+**Current:** Validate/export behavior and global-flag handling are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-payroll](../sdd/bus-payroll).
 
 **Planned next:** Implement init, run, list, and employee add/list; add e2e for run → export → journal (Finnish payroll journey).
 

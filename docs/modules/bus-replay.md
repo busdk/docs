@@ -23,17 +23,19 @@ For ERP history migrations, the intended first-class workflow is profile-driven 
 
 ### Commands
 
-- **`export`** — Read the current workspace snapshot and emit a deterministic replay log. Export covers the full accounting snapshot (see [module SDD](../sdd/bus-replay)): config init, module inits, accounts add, period add and state transitions, journal add, and optionally VAT/report actions when enabled; verified by golden and roundtrip tests. Use `--mode history` for best-effort export of raw row history where the domain supports it. Export does **not** include row-level facts for canonical invoice and bank datasets (sales-invoices, purchase-invoices, bank-transactions row data). For full migration replay you may still need hand-written or generated append scripts for those datasets in addition to the exported replay script.
-- **`apply`** — Execute a replay log against a target workspace. Reads operations from the path given by `--in` (or stdin with `--in -`). For each operation, evaluates the idempotency guard; if the guard is satisfied the operation is skipped, otherwise the command is run. Produces a deterministic report (TSV or JSON) of applied, skipped, and failed operations. Use `--dry-run` to print what would run without executing.
-- **`render`** — Transform a replay log (JSONL) into another format. Currently supports `--format sh` to produce a POSIX shell script with deterministic quoting.
+`export` reads the current workspace snapshot and emits a deterministic replay log. Export covers the accounting snapshot (config init, module inits, accounts, periods, journal, and optionally VAT/report actions when enabled), and is verified by golden and roundtrip tests. `--mode history` is best-effort row-history export where domain support exists. Export does **not** include row-level facts for canonical invoice and bank datasets, so full migration replay may still require hand-written or generated append scripts for those datasets.
+
+`apply` executes a replay log against a target workspace. It reads operations from `--in` (or stdin with `--in -`), evaluates idempotency guards, skips satisfied operations, and runs the rest. It produces a deterministic TSV/JSON report of applied/skipped/failed operations. Use `--dry-run` for preview.
+
+`render` transforms a replay log into another format. Currently supported target is `--format sh`, which produces a deterministically quoted POSIX shell script.
 
 ### Options
 
-**Export.** `--format jsonl` (default) or `sh` selects the output format; `--out <path>` or `--out -` writes to a file or stdout. `--append` adds missing operations to an existing log without rewriting existing lines. `--mode snapshot` (default) exports effective state; `--mode history` is best-effort row history. `--scope accounting` exports only accounting-critical surfaces; `--scope all` also includes optional modules when their datasets exist and are schema-valid. `--include vat,reports` is opt-in and includes VAT and report actions when those datasets exist.
+For `export`, `--format jsonl` (default) or `sh` selects output format, and `--out <path>` or `--out -` writes to file or stdout. `--append` adds missing operations to an existing log without rewriting existing lines. `--mode snapshot` (default) exports effective state, while `--mode history` is best-effort row history. `--scope accounting` exports accounting-critical surfaces, and `--scope all` also includes optional modules when datasets exist and are schema-valid. `--include vat,reports` opt-in adds VAT/report actions when those datasets exist.
 
-**Apply.** `--in <path>` or `--in -` specifies the replay log file or stdin. `--chdir <dir>` sets the effective working directory for the target workspace. `--dry-run` prints what would run and why without executing. `--stop-on-error` stops on first failure (default behavior).
+For `apply`, `--in <path>` or `--in -` selects replay log input, `--chdir <dir>` sets target workspace root, `--dry-run` previews execution, and `--stop-on-error` stops on first failure.
 
-**Render.** `--in <path>` or `--in -` is the replay log input; `--format sh` is required; `--out <path>` or `--out -` is the script output.
+For `render`, `--in <path>` or `--in -` is required input, `--format sh` is required output format, and `--out <path>` or `--out -` controls output destination.
 
 Global flags (e.g. `-C`, `-o`, `-q`, `-v`) are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus replay <subcommand> --help`.
 
@@ -72,7 +74,7 @@ bus replay apply --in ./tmp/replay-2026-01.jsonl --dry-run
 
 ### Exit status
 
-`0` on success. `1` on runtime or precondition failure (missing required datasets, unreadable files). `2` on invalid usage (unknown flag, missing argument, invalid enum value). Global flags follow the same exit code conventions as [Standard global flags](../cli/global-flags).
+Exit code `0` means success. Exit code `1` means runtime or precondition failure (for example missing required datasets or unreadable files). Exit code `2` means invalid usage (for example unknown flag, missing argument, or invalid enum value). Global flags follow the same exit-code conventions as [Standard global flags](../cli/global-flags).
 
 
 ### Using from `.bus` files
@@ -80,11 +82,11 @@ bus replay apply --in ./tmp/replay-2026-01.jsonl --dry-run
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus replay --help
-replay --help
+# same as: bus replay export --format jsonl --out ./tmp/replay.jsonl
+replay export --format jsonl --out ./tmp/replay.jsonl
 
-# same as: bus replay -V
-replay -V
+# same as: bus replay apply --in ./tmp/replay.jsonl --dry-run
+replay apply --in ./tmp/replay.jsonl --dry-run
 ```
 
 

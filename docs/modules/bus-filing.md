@@ -13,17 +13,21 @@ description: bus filing produces deterministic filing bundles from validated, cl
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus filing` produces deterministic filing bundles from validated, closed-period workspace data. It assembles manifests and checksums and delegates target-specific formats to `bus filing prh` and `bus filing vero`. Use after validation and period close.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus filing` orchestrates deterministic filing bundle creation from validated, closed-period data.
+It delegates target-specific formats to `bus filing prh` and `bus filing vero`.
+Use after validation and period close.
 
 ### Commands
 
-- `prh` produces a PRH-ready export bundle (invokes the bus-filing-prh module).
-- `vero` produces a Vero-ready export bundle (invokes the bus-filing-vero module).
-- `tax-audit-pack` produces a tax-audit filing bundle.
+`prh` produces a PRH-ready export bundle by invoking [bus-filing-prh](./bus-filing-prh). `vero` produces a Vero-ready export bundle by invoking [bus-filing-vero](./bus-filing-vero). `tax-audit-pack` produces a tax-audit filing bundle.
 
 ### Options
 
-Target-specific parameters are documented in each module’s help. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus filing --help`.
+Target-specific parameters are documented in each target module help.
+Global flags are defined in [Standard global flags](../cli/global-flags).
+For command-specific help, run `bus filing --help`.
 
 ### Files
 
@@ -34,6 +38,8 @@ Reads validated datasets and reports; writes export bundle directories or archiv
 ```bash
 bus filing prh
 bus filing vero
+bus filing tax-audit-pack --format json --output ./out/tax-audit-pack.json
+bus filing -C ./workspace prh --output ./out/prh-run.tsv
 ```
 
 ### Exit status
@@ -46,11 +52,14 @@ bus filing vero
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus filing --help
-filing --help
+# same as: bus filing prh
+filing prh
 
-# same as: bus filing -V
-filing -V
+# same as: bus filing vero --format json
+filing vero --format json
+
+# same as: bus filing tax-audit-pack --output ./out/tax-audit-pack.tsv
+filing tax-audit-pack --output ./out/tax-audit-pack.tsv
 ```
 
 
@@ -64,7 +73,8 @@ filing -V
 
 **Use case readiness:** Finnish bookkeeping and tax-audit compliance: 60% — user can run `bus filing prh` / `vero` / `tax-audit-pack` with correct delegation; bundle delivery depends on targets and stable contract.
 
-**Current:** E2e `tests/e2e_bus_filing.sh` proves help, version, usage errors (no subcommand, invalid color/format, quiet+verbose), list (sorted), `--output`/`--chdir`/`--quiet`, target-not-found, args pass-through for prh, vero, and tax-audit-pack, exit code propagation, and target workdir. Unit tests `internal/busfiling/run_test.go`, `internal/busfiling/list_targets_test.go`, and `internal/cli/flags_test.go` prove run, list targets, and flag parsing.
+**Current:** Delegation to `prh`, `vero`, and `tax-audit-pack`, plus global-flag and exit propagation behavior, are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-filing](../sdd/bus-filing).
 
 **Planned next:** Clarify or implement FR-FIL-001 (bundle assembly from validated closed-period data or document delegation to targets); define parameter set for tax-audit-pack (OQ-FIL-001). Both advance Finnish bookkeeping and tax-audit compliance when bundle contract is stable.
 

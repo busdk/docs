@@ -14,18 +14,25 @@ description: "CLI reference for bus budget: maintain budget datasets by account 
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus budget` maintains budget datasets keyed by account and period and produces budget versus actual variance outputs from journal data. Budgets are stored as schema-validated repository data.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus budget` maintains budget datasets keyed by account and period.
+It also produces budget-vs-actual variance outputs from journal data.
+Budgets are stored as schema-validated repository data.
 
 ### Commands
 
-- `init` creates the baseline budget datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` adds a budget row for an account and period.
-- `set` upserts a budget row by account, year, and period.
-- `report` emits budget vs actual variance output.
+`init` creates baseline budget datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
+
+`add` inserts a budget row for an account and period. `set` upserts by account, year, and period. `report` emits budget-versus-actual variance output.
 
 ### Options
 
-`report` accepts `--year <YYYY>` or `--period <period>`. `add` and `set` accept `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus budget --help`.
+`add` and `set` accept `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`.
+
+`report` accepts either `--year <YYYY>` or `--period <period>`.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus budget --help`.
 
 ### Files
 
@@ -36,6 +43,9 @@ Budget datasets such as `budgets.csv` and their beside-the-table schemas in the 
 ```bash
 bus budget init
 bus budget add --account 6100 --year 2026 --period 01 --amount 1200
+bus budget set --account 6100 --year 2026 --period 01 --amount 1500
+bus budget report --year 2026 --format tsv --output ./out/budget-vs-actual-2026.tsv
+bus budget report --period 2026Q1 --format json --output ./out/budget-vs-actual-2026q1.json
 ```
 
 ### Exit status
@@ -48,11 +58,14 @@ bus budget add --account 6100 --year 2026 --period 01 --amount 1200
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus budget --help
-budget --help
+# same as: bus budget add --account 6200 --year 2026 --period 02 --amount 800
+budget add --account 6200 --year 2026 --period 02 --amount 800
 
-# same as: bus budget -V
-budget -V
+# same as: bus budget set --account 6200 --year 2026 --period 02 --amount 900
+budget set --account 6200 --year 2026 --period 02 --amount 900
+
+# same as: bus budget report --period 2026Q1 --format tsv
+budget report --period 2026Q1 --format tsv
 ```
 
 
@@ -66,7 +79,8 @@ budget -V
 
 **Use case readiness:** Finnish company reorganisation: 70% — init/add/set/report are verified; users can maintain budgets and produce budget-vs-actual output for evidence workflows.
 
-**Current:** E2E `tests/e2e_bus_budget.sh` verifies help, version, global flags (`--color`, `--format`, `-q/-v`, `--`, `-C`, `-o`), init (root-level `budgets.csv` and `budgets.schema.json`, idempotent warning, partial-state failure), add, set, and report (`--year`, deterministic TSV output, output file behavior, quiet suppresses output file). Unit tests in `cmd/bus-budget/main_test.go` and `internal/*` cover usage, init/add/set/report behavior, deterministic variance output, and flag parsing.
+**Current:** Init/add/set/report and global-flag behavior are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-budget](../sdd/bus-budget).
 
 **Planned next:** Improve variance summaries and validation detail for large datasets, and expand schema constraint support (README roadmap). Advances Finnish reorganisation evidence-pack and [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual) workflow.
 

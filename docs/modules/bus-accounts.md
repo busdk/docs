@@ -16,20 +16,30 @@ description: "CLI reference for bus accounts: init, list, add, set, validate, an
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus accounts` maintains the chart of accounts as schema-validated repository data. It enforces uniqueness and allowed account types so downstream modules can rely on stable account identifiers. For Finnish statutory statement output in [bus-reports](./bus-reports), this module also owns the account-to-statement mapping dataset contract.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus accounts` maintains the chart of accounts as schema-validated repository data.
+It enforces uniqueness and valid account types so downstream modules can rely on stable identifiers.
+
+For Finnish statutory statements in [bus-reports](./bus-reports), this module also owns the account-to-statement mapping dataset contract.
 
 ### Commands
 
-- `init` creates the baseline accounts datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `list` prints the current chart of accounts in deterministic order.
-- `add` creates a new account. It fails (non-zero exit, diagnostic on stderr, no change to the dataset) if an account with the same `--code` already exists. To change an existing account, use `set`.
-- `set` modifies an existing account identified by `--code`. It updates only the attributes you supply (for example `--name` or `--type`). It fails if no account with that code exists.
-- `validate` checks both the accounts CSV and the schema document (`accounts.schema.json`). It reports row-level violations and schema-document errors (for example malformed foreign key definitions). Invalid schema causes a clear error pointing to the schema file and the offending path so issues are caught in bus-accounts rather than in downstream tools such as bus-journal.
-- `sole-proprietor` suggests balanced double-entry lines for owner withdrawal (yksityisotto) or investment (yksityissijoitus). Subcommands: `withdrawal`, `investment`. Requires `--equity-code`, `--cash-code`, and `--amount`. Does not read or write `accounts.csv`; output is TSV (code, side, amount per line) for use with `bus journal add`.
+`init` creates baseline accounts datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
+
+`list` prints the current chart in deterministic order. `add` creates a new account and fails if `--code` already exists. `set` updates an existing account by `--code` and changes only attributes you provide, such as `--name` or `--type`. `validate` checks both data rows and `accounts.schema.json`, including malformed schema-level definitions.
+
+`sole-proprietor` emits balanced double-entry lines for owner withdrawal (`withdrawal`) and owner investment (`investment`). It requires `--equity-code`, `--cash-code`, and `--amount`, does not modify `accounts.csv`, and outputs TSV lines that can be used with `bus journal add`.
 
 ### Options
 
-The `add` command requires `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`. The `set` command requires `--code <account-id>` to identify the account and accepts optional `--name` and `--type` to update those attributes. The `sole-proprietor` subcommands require `--equity-code <code>`, `--cash-code <code>`, and `--amount <positive number>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help` or `bus accounts --help sole-proprietor`.
+`add` requires `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`.
+
+`set` requires `--code <account-id>` and supports `--name <account-name>` and `--type <asset|liability|equity|income|expense>`.
+
+`sole-proprietor withdrawal|investment` requires `--equity-code <code>`, `--cash-code <code>`, and `--amount <positive number>`.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help` or `bus accounts --help sole-proprietor`.
 
 ### Choosing account type: Finnish numbering convention (practical guide)
 
@@ -51,7 +61,9 @@ For sole proprietors, use `bus accounts sole-proprietor withdrawal` or `bus acco
 
 **8xxx–9xxx — financial and result/summary accounts.** These ranges are often used for financial income/expense and for result or summary accounts. As a conservative default: 80xx–81xx are often financial income or expense — map them to `income` or `expense` according to their meaning. Many 9xxx “result” and “summary” accounts are used for reporting or closing rather than day-to-day posting; if you include them, still assign a BusDK type (`income` or `expense`) consistent with their meaning. BusDK does not enforce a specific national numbering scheme.
 
-**Rules of thumb.** Prefer consistency over perfection: use the same mapping logic across your chart. If in doubt, follow the chart used in the previous year or the one your accountant uses. When migrating from Excel or ledger headers that only have code and name, you must assign `type` explicitly — BusDK needs it for reporting and validation.
+**Rules of thumb.** Prefer consistency over perfection and use the same mapping logic across your chart.
+If in doubt, follow the previous-year chart or your accountant’s guidance.
+When migrating from code/name-only ledgers, assign `type` explicitly.
 
 ### Write path and field coverage
 
@@ -59,7 +71,9 @@ The CLI surface covers the core lifecycle needed for scripts and UIs to create, 
 
 If your `accounts.csv` schema includes additional reporting and control columns (for example `ledger_category_id` and `is_active`), those fields are currently maintained by editing `accounts.csv` directly and then validating with `bus accounts validate` (and, for whole-workspace checks, `bus validate`). This keeps the authoritative dataset explicit while avoiding documentation that implies unsupported flags exist.
 
-For Finnish statutory reports, account-to-line mapping is maintained in `report-account-mapping.csv` with beside-the-table schema `report-account-mapping.schema.json`. Minimum mapping fields are `layout_id`, `account_code`, `statement_target`, `layout_line_id`, and `normal_side` (with optional `rollup_rule`). The mapping is deterministic per selected statement layout (`fi-kpa-*` or `fi-pma-*`) and is consumed by [bus-reports](./bus-reports). Unmapped and ambiguous mappings are treated as errors for `fi-*` statutory layouts.
+For Finnish statutory reports, account-to-line mapping is maintained in `report-account-mapping.csv` with beside-the-table schema `report-account-mapping.schema.json`.
+Minimum fields are `layout_id`, `account_code`, `statement_target`, `layout_line_id`, and `normal_side` (optional `rollup_rule`).
+The mapping is deterministic per selected layout and consumed by [bus-reports](./bus-reports).
 
 ### Files
 
@@ -70,6 +84,9 @@ For Finnish statutory reports, account-to-line mapping is maintained in `report-
 ```bash
 bus accounts init
 bus accounts add --code 3000 --name "Sales income" --type income
+bus accounts set --code 3000 --name "Domestic sales income"
+bus accounts list --format tsv --output ./out/accounts.tsv
+bus accounts sole-proprietor withdrawal --equity-code 2010 --cash-code 1910 --amount 2500
 ```
 
 ### Exit status
@@ -82,11 +99,14 @@ bus accounts add --code 3000 --name "Sales income" --type income
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus accounts --help
-accounts --help
+# same as: bus accounts add --code 4100 --name "Service revenue" --type income
+accounts add --code 4100 --name "Service revenue" --type income
 
-# same as: bus accounts -V
-accounts -V
+# same as: bus accounts set --code 4100 --name "Service revenue FI"
+accounts set --code 4100 --name "Service revenue FI"
+
+# same as: bus accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
+accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
 ```
 
 
@@ -100,7 +120,8 @@ accounts -V
 
 **Use case readiness:** Accounting workflow: 70% — chart lifecycle and sole-proprietor verified; define-master-data step completable. Sale invoicing: 70% — chart for income/VAT accounts verified. Finnish payroll handling: 70% — chart for wage expense, withholding, net payable verified.
 
-**Current:** Init (files, datapackage resource, FR-ACC-005 schema, idempotent and failure paths), add (all five types, FR-ACC-004 duplicate fails, dry-run), set (modify, not-found fails, dry-run), list (deterministic TSV, `--output`, `--format tsv`, `--quiet`), validate (malformed foreignKeys diagnostic), and sole-proprietor (withdrawal, investment, `-o`) are verified. Global flags and `--` are covered. Proved by `tests/e2e_bus_accounts.sh`, `run_test.go`, `run_sole_proprietor_test.go`, `run_flags_test.go`, `run_set_test.go`, `run_property_test.go`, `run_workspace_test.go`, `internal/cli/help_test.go`, `internal/cli/flags_test.go`, `internal/storage/storage_test.go`, `internal/validate/validate_test.go`, `internal/accounts/accounts_test.go`, `run_helpers_test.go`.
+**Current:** Init/add/set/list/validate and sole-proprietor flows are test-verified, including global-flag behavior.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-accounts](../sdd/bus-accounts).
 
 **Planned next:** Define and own report-account-mapping schema contract (FR-ACC-006) for [bus-reports](./bus-reports) fi-* layouts (PLAN.md); advances compliance and reporting. Document where bus journal add regression test is maintained or add when [bus-journal](./bus-journal) is available; advances accounting workflow.
 
@@ -127,4 +148,3 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-reports](../sdd/bus-reports)
 - [Module SDD: bus-accounts](../sdd/bus-accounts)
 - [Accounts layout: Accounts area](../layout/accounts-area)
-

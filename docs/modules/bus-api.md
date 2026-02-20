@@ -21,11 +21,18 @@ Serve (default):
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). Bus API provides a local REST JSON API over the BusDK workspace in the selected root. When you start the server, it serves a CRUD API over the workspace datasets by delegating all dataset semantics to the [bus-data](./bus-data) library (Table Schema, Data Package, CSV operations, mutation policies, and validation). No Bus module CLI is ever executed; the server calls only Go libraries. The API supports the same operations as bus-data — row CRUD, schema and resource mutation, package and validation — so that system administrators and tools can manage tables and schemas over HTTP and maintain custom data outside of Bus domain modules. Optional operation gating (e.g. `--read-only`) lets you start a restricted API when needed; by default all operations are enabled.
+Command names follow [CLI command naming](../cli/command-naming).
 
-Intended users are system administrators, developers, and tools that integrate with BusDK via HTTP. The server binds to localhost by default and prints a **capability URL** that includes an unguessable random path prefix. Clients must use that full URL to access the API; requests outside the prefix return 404. The server can optionally serve HTTPS when you supply certificate and key via `--tls-cert` and `--tls-key`; in many deployments TLS is handled by a reverse proxy in front of the API. User accounts, session management, and OAuth are out of scope for this module. To support change detection without polling, the API exposes an event stream: clients can subscribe to a long-lived stream and receive events whenever mutations are performed through the API (row create/update/delete, schema changes, resource and package changes). Events are emitted only for mutations that occur via this API instance.
+Bus API provides a local REST JSON API over the selected BusDK workspace root.
+On startup, it serves CRUD/validation endpoints over datasets by delegating semantics to [bus-data](./bus-data).
 
-Domain modules (e.g. bus-accounts) can expose their data through the API when enabled with `--enable-module`. Module endpoints live under `/{token}/v1/modules/{module}/...` and are served by the module’s Go library only. The [bus-api SDD](../sdd/bus-api) defines the full API contract, security model, and integration points.
+No module CLI is executed; server calls Go libraries directly.
+Default bind is localhost and server prints a capability URL with random token path.
+Requests outside token prefix return `404`.
+
+`--read-only` can restrict mutating endpoints.
+`--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...`.
+For complete API contract and security model, see [Module SDD: bus-api](../sdd/bus-api).
 
 ### Commands
 
@@ -37,51 +44,24 @@ Domain modules (e.g. bus-accounts) can expose their data through the API when en
 
 ### Serve flags
 
-These flags apply only to `serve`. They can appear in any order before or after the subcommand name.
-
-- **`--listen <addr>`** — Bind address. Default `127.0.0.1`. The server listens only on this address; use an explicit non-loopback address only when you intend the API to be reachable from other hosts.
-- **`--port <n>`** — Port number. Default `0` (choose a free port). The printed capability URL includes the actual port in use.
-- **`--token <string>`** — Use this token instead of generating one. Useful for scripts or tests that need a stable URL. If omitted, a random token is generated.
-- **`--token-bytes <n>`** — Length of the generated token in bytes when `--token` is not set. Default `32` (256 bits of entropy).
-- **`--base-path <path>`** — Path prefix template. Default `/{token}/v1`. All API endpoints are rooted under this prefix with the token substituted.
-- **`--cors-origin <origin>`** — Allow the given CORS origin. Repeatable to allow multiple origins. Default: none (CORS disabled).
-- **`--tls-cert <file>`** — Path to the TLS certificate file. When provided together with `--tls-key`, the server serves HTTPS instead of HTTP on the same listen address and port.
-- **`--tls-key <file>`** — Path to the TLS private key file. When provided together with `--tls-cert`, the server serves HTTPS.
-- **`--read-only`** — Disable all mutating endpoints. When set, create/update/delete and schema or package mutation requests return 403. By default all operations are enabled.
-- **`--enable-module <name>`** — Enable the module with the given identifier (e.g. `accounts` for bus-accounts). Repeatable. Use `all` to enable all built-in BusDK module adapters. Only enabled modules are mounted under `/{token}/v1/modules/{module}/...`. When no `--enable-module` is given, no module endpoints are exposed.
+Serve-specific flags are `--listen <addr>` (default `127.0.0.1`), `--port <n>` (default `0`, auto-choose), `--token <string>`, `--token-bytes <n>`, `--base-path <path>` (default `/{token}/v1`), repeatable `--cors-origin <origin>`, `--tls-cert <file>` with `--tls-key <file>` for HTTPS, `--read-only` to block mutating endpoints, and repeatable `--enable-module <name>` (`all` for built-in adapters).
 
 ### Global flags
 
-These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
-
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
-- **`-v`**, **`--verbose`** — Send verbose diagnostics to stderr. You can repeat the flag (e.g. `-vv`) to increase verbosity. Verbose output does not change what is written to stdout.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage (exit 2).
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective workspace root. All dataset and schema paths are resolved relative to this directory. The server treats this as the filesystem security boundary and rejects path traversal outside it. If the directory does not exist or is not accessible, the command exits with code 1.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. For `serve`, the capability URL is still printed to stdout unless you redirect it; for `openapi`, the document is written to the file when this flag is set. Errors and diagnostics still go to stderr.
-- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. Invalid value is usage error (exit 2).
-- **`--no-color`** — Same as `--color=never`.
-
-Command results (capability URL, OpenAPI JSON, version) are written to stdout when produced. Diagnostics and logs are written to stderr.
+Standard global flags are supported; see [Standard global flags](../cli/global-flags).
+`--quiet` and `--verbose` are mutually exclusive.
+Command results go to stdout (or `--output`), diagnostics/logs to stderr.
 
 ### Using the API
 
-After starting the server with `bus api serve` (or `bus-api serve`), use the capability URL printed to stdout as the base for all requests. For example if the server prints `http://127.0.0.1:38472/abc123def/v1`, then:
+After starting `bus api serve`, use printed capability URL as base for all requests.
+If base is `http://127.0.0.1:38472/abc123def/v1`, common endpoints include `GET {base}/healthz`, `GET {base}/openapi.json`, `GET {base}/events` (SSE mutation stream), `GET {base}/resources`, `GET/PATCH {base}/package`, `GET/PATCH {base}/resources/{name}/schema` (and related schema subpaths), row CRUD under `{base}/resources/{name}/...`, and validation endpoints `POST {base}/resources/{name}/validate` and `POST {base}/validate`.
 
-- **Health:** `GET {base}/healthz` returns `{ "status": "ok" }`.
-- **OpenAPI:** `GET {base}/openapi.json` returns the OpenAPI document from the running server.
-- **Events:** `GET {base}/events` returns a Server-Sent Events stream of mutation events (row create/update/delete, schema changes, resource and package changes). Events are emitted only for mutations performed through this API instance. Optional query parameters `resource` and `type` filter the stream.
-- **Resources:** `GET {base}/resources` returns a deterministically ordered list of workspace resources.
-- **Package:** `GET {base}/package` returns `datapackage.json` when present (404 otherwise). `PATCH {base}/package` applies a merge patch (delegates to bus-data).
-- **Schema:** `GET {base}/resources/{name}/schema` returns the Table Schema for a resource. Schema mutation is available via `PATCH {base}/resources/{name}/schema` (merge patch) and via fine-grained endpoints: `POST .../schema/fields`, `PATCH .../schema/fields/{field}`, `DELETE .../schema/fields/{field}`, `PUT .../schema/primaryKey`, `POST .../schema/foreignKeys`, `DELETE .../schema/foreignKeys/{index}`. All delegate to bus-data semantics.
-- **Rows:** `GET {base}/resources/{name}/rows` supports query parameters such as `row`, `key`, `filter`, `column`, and `include_formula_source`. Single-row read uses `GET {base}/resources/{name}/row/{pk}` where `{pk}` is the percent-encoded JSON array of primary key values in schema order.
-- **Validation:** `POST {base}/resources/{name}/validate` returns a validation report for a single resource; `POST {base}/validate` returns a workspace-wide validation report.
-- **Mutate:** `POST {base}/resources/{name}/rows`, `PATCH {base}/resources/{name}/row/{pk}`, and `DELETE {base}/resources/{name}/row/{pk}` perform row add, update, and delete subject to schema constraints and update/delete policies. Resource add/remove/rename and package patch also delegate to bus-data. When `--read-only` is in effect, all mutating endpoints return 403.
+Mutation operations are atomic and leave workspace unchanged on failure.
+Error responses use stable JSON shape.
 
-All mutation operations are atomic and leave the workspace unchanged on failure. Error responses use a stable JSON shape with at least `code`, and when applicable `resource`, `field` or `fields`, and `row` or `rowKey`. The [bus-api SDD](../sdd/bus-api) specifies the full HTTP API surface and error contract.
-
-When module adapters are enabled, each module exposes adapter endpoints implemented in `bus-api` and backed by Go library calls (`bus-data`): `GET /{token}/v1/modules/{module}/`, `GET /{token}/v1/modules/{module}/resources`, `GET /{token}/v1/modules/{module}/resources/{name}/schema`, row endpoints under `.../resources/{name}/rows` and `.../resources/{name}/row/{pk}`, `POST /{token}/v1/modules/{module}/resources/{name}/validate`, and `POST /{token}/v1/modules/{module}/validate`. Module root/resources/validate responses are runtime contract-validated and modeled via shared OpenAPI schemas (`ModuleInfoResponse`, `ModuleValidateResponse`, `ModuleValidateError`). Module resource schema/rows/row/validate payloads are also runtime contract-validated and modeled via shared OpenAPI schemas (`ModuleResourceSchemaResponse`, `ModuleResourceRowsResponse`, `ModuleResourceRowResponse`, `ModuleResourceValidateResponse`); module endpoint error schemas compose a shared base `ModuleEndpointError` (`code`, `message`); resource endpoint failures use stable resource-scoped error payloads via `ModuleResourceError` (`code`, `message`, `resource`). Modules also expose semantic entity endpoints `GET /{token}/v1/modules/{module}/entities`, `GET /{token}/v1/modules/{module}/entities/{alias}`, and `GET /{token}/v1/modules/{module}/entities/{alias}/summary`, plus workflow endpoints `GET /{token}/v1/modules/{module}/workflows`, `GET /{token}/v1/modules/{module}/workflows/{name}`, and `POST /{token}/v1/modules/{module}/workflows/{name}/run` for module-level operations (`module-overview`, `validate-module`, `entity-healthcheck`) and module-specific workflows (`accounts-catalog-overview`, `accounts-structure-audit`, `journal-entries-overview`, `journal-batch-health`, `vat-readiness`, `vat-period-rollup`). Entity list/detail/summary responses are runtime contract-validated and use shared OpenAPI schemas (`ModuleEntityItem`, `ModuleEntityListResponse`, `ModuleEntitySummaryResponse`); entity endpoint failures use stable entity-scoped payloads via `ModuleEntityError` (`code`, `message`, `entity`, `resource`). Workflow list items include `name`, stable `workflowId`, `description`, and `category`, and workflow detail returns one normalized metadata object by name or workflow ID token. Rich workflow outputs include journal imbalance signals and VAT period rollup signals; strict workflow contracts return `422` with `code=missing_business_fields` when required business fields are missing (`debit`/`credit` for journal health, period-like field for VAT rollup). OpenAPI models module workflow requests/responses with shared schemas and typed run responses (`oneOf`) using workflow-specific component schemas (for example `WorkflowJournalBatchHealthResponse`, `WorkflowVATPeriodRollupResponse`) plus workflow error schema `ModuleWorkflowError`; these schemas include canonical `example` payloads for client integration and use discriminator mapping on `workflow` for tool-friendly response typing. Workflow path parameter `{name}` is enum-constrained per module in OpenAPI to currently exposed workflow names and workflow ID tokens; runtime accepts either token and returns canonical workflow `name` plus contract-validated `workflowId`; workflow endpoint failures use stable workflow-scoped payloads via `ModuleWorkflowError` (`code`, `message`, `workflow`). Module profiles expose module-specific alias paths (for example `/{token}/v1/modules/accounts/accounts/...`, `/{token}/v1/modules/journal/entries/...`, `/{token}/v1/modules/data/items/...`) including alias summaries (`.../{alias}/summary`) through the same Go library backend; alias endpoint failures use stable alias-scoped payloads via `ModuleAliasError` (`code`, `message`, `alias`, `resource`) and alias validate success uses `ModuleAliasValidateResponse`. Adapter mutating endpoints honor `--read-only` and return 403 when writes are disabled.
+When module adapters are enabled, module endpoints are mounted under `/{token}/v1/modules/{module}/...`.
+For full endpoint matrix and error contracts, see [Module SDD: bus-api](../sdd/bus-api).
 
 ### OpenAPI document
 
@@ -89,7 +69,13 @@ You can obtain the OpenAPI document in two ways. From the CLI without starting a
 
 ### Security and binding
 
-By default the server binds only to `127.0.0.1` and is reachable from the local machine. To listen on a non-loopback interface you must set `--listen` explicitly. The random token in the capability URL is treated as a bearer capability: anyone who has the full URL can access the API. The server does not implement user accounts, sessions, or stored credentials. All filesystem paths are confined to the workspace root; path traversal outside that root is rejected. When you supply `--tls-cert` and `--tls-key`, the server serves HTTPS on the same address and port; otherwise it serves HTTP. Many deployments use an external reverse proxy or load balancer for TLS and keep the API on HTTP behind it.
+Default bind is `127.0.0.1` (local machine only).
+Non-loopback bind must be set explicitly with `--listen`.
+Capability URL token is treated as bearer capability.
+
+Server does not implement user/session auth.
+Filesystem paths are confined to workspace root.
+Use `--tls-cert` + `--tls-key` for HTTPS, or terminate TLS in reverse proxy.
 
 ### Exit status and errors
 
@@ -103,6 +89,8 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ```bash
 bus api serve --port 8080 --token-bytes 32
+bus api serve --read-only --enable-module accounts --enable-module journal
+bus api openapi --output ./out/openapi.json
 bus api version
 ```
 
@@ -112,11 +100,11 @@ bus api version
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus api --help
-api --help
+# same as: bus api serve --read-only --port 8080
+api serve --read-only --port 8080
 
-# same as: bus api -V
-api -V
+# same as: bus api openapi --output ./out/openapi.json
+api openapi --output ./out/openapi.json
 ```
 
 
@@ -130,7 +118,8 @@ api -V
 
 **Use case readiness:** Workbook and validated tabular editing: 90% — User can complete API-driven discovery, CRUD, validation, schema read/mutation, event stream, read-only; stable validate success key ordering verified in e2e.
 
-**Current:** E2E `tests/e2e_bus_api.sh` verifies global help, serve/version/openapi, flags, capability URL, base-path/CORS/HTTPS/enable-module, resource and package CRUD, schema GET/PATCH and fine-grained fields/primaryKey, single and workspace validate (stable key ordering and failure payloads), row CRUD and dry_run, read-only 403, deterministic OpenAPI, and NFR-API-008 health within 5s. Unit tests `internal/server/server_test.go` and `internal/server/backend_test.go` verify token gating, healthz, events, path safety, stable error payloads, resource add/remove/rename, CORS, module paths, ListResources, GetPackageRaw, ReadRows, ValidatePackage, and GetSchemaBytes. `internal/cli/run_test.go` and `internal/cli/flags_test.go` verify flag parsing and serve behavior (missing workdir, TLS cert-only, quiet+output).
+**Current:** Serve/openapi/version flows, CRUD/validation/schema operations, module adapter mounts, and global-flag behavior are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-api](../sdd/bus-api).
 
 **Planned next:** None in PLAN.md.
 

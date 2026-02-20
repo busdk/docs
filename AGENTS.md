@@ -176,6 +176,23 @@ aligned.
 When user guidance adds or changes working rules, update this `AGENTS.md` in
 the same change so future runs follow the new rule without relying on memory.
 
+For end-user documentation (all non-SDD pages under `docs/docs/`), use short,
+readable paragraphs and avoid oversized blocks of text. Split long explanations
+into smaller paragraphs and reduce repeated wording across a page.
+
+For non-SDD pages, do not default to bullet lists. Use paragraph text unless a
+list or table is the only meaningful way to present tightly structured data.
+
+For non-SDD pages, move deep implementation background and exhaustive behavior
+detail into module/system SDD pages under `docs/docs/sdd/`. Keep user pages
+task-oriented, and when extra depth is needed, create or link focused topic
+pages instead of overloading module reference pages.
+
+For module docs that cover developer automation (`bus dev`, `bus run`, and
+related `.bus` usage), include practical chained examples with concrete sample
+options and include repository-local extension examples (`.bus/dev` and
+`.bus/run`) where relevant.
+
 For documentation accuracy checks, treat runnable module evidence as primary
 source material: current CLI behavior from module commands, module unit tests
 under `../bus-{NAME}/`, and module e2e tests under `../bus-{NAME}/tests/`,

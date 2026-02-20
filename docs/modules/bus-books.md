@@ -14,19 +14,41 @@ With no subcommand, `bus books` runs **serve**. Global flags follow [CLI command
 
 Serve (default):
 
-`bus-books serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--tls-cert <file>] [--tls-key <file>] [--read-only] [--webview] [--print-url] [--enable-agent] [global flags]`
+`bus-books serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--open-view <route>] [--view-only] [--view-param <key=value>]... [--tls-cert <file>] [--tls-key <file>] [--read-only] [--webview] [--print-url] [--enable-agent] [global flags]`
 
 `bus-books version` — Print the tool name and version to stdout and exit 0.
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). Bus Books provides a local web UI for doing bookkeeping work in a BusDK workspace. It focuses on accounting screens and workflows: dashboard, Inbox (items needing action), Journal (view and post), Periods (open/close/lock), VAT (compute and review), Bank (import and list), optional Reconcile, Attachments (evidence), and Validate. The UI does not implement accounting logic itself; all domain behavior is delegated to existing BusDK modules through the [bus-api](./bus-api) core embedded in-process. No `bus-*` CLI is executed for normal UI operations. Intended users are people who do day-to-day bookkeeping and want a browser-based interface over the same workspace data as the [accounting workflow](../workflow/accounting-workflow-overview), without learning the CLI. For a generic spreadsheet over workspace resources, use [bus sheets](./bus-sheets) instead.
+Command names follow [CLI command naming](../cli/command-naming). Bus Books provides a local web UI for bookkeeping in a BusDK workspace.
 
-When you start the server, it opens the **capability URL** in a local GUI webview by default. The capability URL includes an unguessable path token. Use `--print-url` to print that URL to stdout for scripting or manual open flows. Requests that do not include the token path return 404. By default the server binds only to `127.0.0.1`, so the UI is reachable only from the local machine. The binary embeds everything needed to serve the UI (HTML, CSS, JavaScript); no extra template files or build directories are required after installation.
+It focuses on accounting workflows: Dashboard, Inbox, Journal, Periods, VAT, Bank, optional Reconcile, Attachments, and Validate.
+
+The UI does not implement accounting logic itself. Domain behavior is delegated to BusDK modules through embedded [bus-api](./bus-api) handlers.
+
+No `bus-*` CLI is executed for normal UI actions.
+
+Intended users are day-to-day bookkeepers who want a browser UI over the same workspace data as the [accounting workflow](../workflow/accounting-workflow-overview). For generic spreadsheet-style editing, use [bus sheets](./bus-sheets).
+
+When the server starts, it opens the **capability URL** in a local GUI webview by default.
+
+The capability URL includes an unguessable token path. Use `--print-url` to print this URL to stdout for scripts or manual browser flows.
+
+Requests outside the token path return 404.
+
+By default, the server binds only to `127.0.0.1`, so the UI is local-only.
+
+The binary embeds all UI assets (HTML/CSS/JS); no extra template files or build directories are required after installation.
 
 Screens that depend on a module backend (e.g. Journal, Periods, VAT, Bank) are shown when that backend is enabled in the embedded API and hidden or marked unavailable otherwise. All reads and writes go through the embedded API and module libraries, so workspace data stays consistent with CLI-driven workflows.
 
-Optionally you can enable an **agent chat** (IDE-style). When started with `--enable-agent`, the UI exposes a chat panel that you can hide or show at runtime. In the chat you can ask an AI agent to perform operations; the agent runs with the workspace as its working directory and can run Bus CLI tools. Agent integration is disabled by default and can be turned on only at startup; see [Serve flags](#serve-flags) and [Agent chat](#agent-chat-when-enabled). The [bus-books SDD](../sdd/bus-books) defines the full design, security model, and integration with [bus-api](../sdd/bus-api) and domain modules.
+You can optionally enable **agent chat** (IDE-style).
+
+With `--enable-agent`, the UI exposes a chat panel you can hide/show at runtime. The agent runs with workspace working directory and can run Bus CLI tools.
+
+Agent integration is disabled by default and can be enabled only at startup.
+
+See [Serve flags](#serve-flags), [Agent chat](#agent-chat-when-enabled), and [bus-books SDD](../sdd/bus-books) for full behavior and security model.
 
 Finland-focused UI requirements are documented as split topic pages in [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements), with dedicated pages for IA/navigation, table-first UX, compliance and audit UX, and accessibility/performance.
 
@@ -38,62 +60,24 @@ Finland-focused UI requirements are documented as split topic pages in [Finnish 
 
 ### Serve flags
 
-These flags apply only to `serve`. They can appear in any order before or after the subcommand name.
-
-- **`--listen <addr>`** — Bind address. Default `127.0.0.1`. The server listens only on this address; use a non-loopback address only when you intend the UI to be reachable from other hosts.
-- **`--port <n>`** — Port number. Default `0` (choose a free port). The capability URL uses the actual port in use.
-- **`--token <string>`** — Use this token instead of generating one. Useful for scripts or tests that need a stable URL. If omitted, a random token is generated.
-- **`--token-bytes <n>`** — Length of the generated token in bytes when `--token` is not set. Default `32`.
-- **`--tls-cert <file>`** — Path to the TLS certificate file. When provided together with `--tls-key`, the server serves HTTPS instead of HTTP.
-- **`--tls-key <file>`** — Path to the TLS private key file. When provided together with `--tls-cert`, the server serves HTTPS.
-- **`--read-only`** — Disable all mutating operations in the UI. When set, create/update/delete and other mutating requests return 403 via the embedded API. Reads and validation remain available.
-- **`--webview`** — Open the capability URL in a local GUI window using the host opener (`open` on macOS, `xdg-open` on Linux, `rundll32` on Windows). This is best-effort and is the default behavior for `serve`.
-- **`--print-url`** — Print the capability URL to stdout instead of auto-opening the GUI webview. Use this for scripts, tests, and manual browser flows.
-- **`--enable-agent`** — Enable the optional agent chat integration. When set, the UI shows a chat panel (which you can hide or show at runtime) and the agent can run Bus CLI tools in the workspace. Default: disabled. When disabled, the chat is not available and no agent endpoints are exposed.
+Serve flags can appear before or after the subcommand. `--listen` and `--port` control bind address and port, `--token` and `--token-bytes` control capability token behavior, and `--tls-cert` with `--tls-key` enables HTTPS. For launch behavior, use `--webview` (default), `--print-url`, `--open-view`, `--view-only`, and repeatable `--view-param <key=value>`. For access control, `--read-only` blocks mutating requests and `--enable-agent` enables the optional chat panel.
 
 ### Global flags
 
-These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
-
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
-- **`-v`**, **`--verbose`** — Send verbose diagnostics to stderr. You can repeat the flag (e.g. `-vv`) to increase verbosity. Verbose output does not change what is written to stdout.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage (exit 2).
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective workspace root. All dataset and schema paths are resolved relative to this directory. The server treats this as the filesystem boundary. If the directory does not exist or is not accessible, the command exits with code 1.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. For `serve`, this applies when `--print-url` is used. Errors and diagnostics still go to stderr.
-- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. Invalid value is usage error (exit 2).
-- **`--no-color`** — Same as `--color=never`.
-
-Command results (version, and capability URL when `--print-url` is used) are written to stdout when produced. Diagnostics and logs are written to stderr.
+Standard global flags are supported; see [Standard global flags](../cli/global-flags). In this module, the most common are `-C/--chdir` for workspace selection, `-o/--output` with `--print-url` for scripted startup flows, and `-q/-v` for output control. `--quiet` and `--verbose` are mutually exclusive (usage error `2`). Normal results go to stdout (or `--output`), while diagnostics/logs go to stderr.
 
 ### Using the bookkeeping UI
 
 After starting the server with `bus books serve` (or `bus-books serve`), the app opens in a local GUI webview by default. If you start with `--print-url`, open the printed capability URL in your browser.
 
-**Dashboard** — Shows workspace identity, current period state, validation status summary, and shortcuts to Inbox and core workflows. The dashboard presents read-only workflows first, then writable operations.
+The Dashboard shows workspace identity, current period state, validation summary, and shortcuts to core workflows. Inbox merges items that need attention (for example invoices and bank transactions), with filters for review/evidence state. Journal supports listing, inspection, and balanced entry creation, and refuses postings into closed/locked periods with deterministic errors.
 
-**Inbox** — Merged list of items needing bookkeeping attention (e.g. invoices and bank transactions when those modules are enabled). You can filter by review state and evidence completeness and open an item for detail. Triage and review actions are available when the underlying object supports them.
-
-**Journal** — List and inspect transactions; create a new balanced transaction through the journal backend. Postings into closed or locked periods are rejected with deterministic errors.
-
-**Periods** — List periods and their states; open, close, and lock periods through the period backend. The UI shows why an action is refused when preconditions or validation fail.
-
-**VAT** — Select a VAT reporting period, run VAT calculation via the VAT/reporting backends, and view totals and diagnostics.
-
-**Bank** — Trigger import and browse imported bank transactions; view reconciliation and evidence status where supported.
-
-**Reconcile** — When reconciliation backends are enabled, view suggested matches and confirm links; diagnostics are shown for refused matches.
-
-**Attachments** — List evidence items, add evidence (upload or reference), and link evidence to bookkeeping objects. Evidence completeness is visible in item views and the Inbox.
-
-**Validate** — Run full workspace validation and see deterministic diagnostics grouped by resource or object.
+Periods view handles open/close/lock transitions and explains refusals. VAT view runs period calculations and shows totals/diagnostics. Bank and Reconcile views support import and matching flows when those backends are enabled. Attachments view handles evidence add/list/link operations. Validate runs full workspace checks and groups diagnostics by resource or object.
 
 Views that depend on a module backend are hidden or shown as unavailable when that backend is not enabled. The capability response `GET /v1/modules` includes `readOnly` and `enableAgent`, which the UI uses to show mode status and capability-aware workflow guidance. When you change data through the UI, relevant lists may refresh automatically for changes that go through the embedded API; changes made outside the API (e.g. by the agent or external edits) may require a manual refresh.
 
 Control semantics in the UI follow the SDD graphics policy:
-- controls that are permanently unavailable in the current session are removed from the UI (not shown disabled),
-- controls that may become available after user changes in the current form remain visible but disabled,
-- read-only values remain visible by default.
+controls permanently unavailable in current session are removed (not shown disabled), controls that may become available after user input stay visible but disabled, and read-only values remain visible by default.
 
 ### Agent chat (when enabled)
 
@@ -105,9 +89,7 @@ By default the server binds only to `127.0.0.1` and is reachable from the local 
 
 ### Exit status and errors
 
-- **0** — Success. For `serve`, the server is running until interrupted; for `version`, the command completed and wrote result to stdout (or `--output`).
-- **1** — Execution failure: workspace root not readable or not accessible, or TLS files missing or invalid when HTTPS is requested.
-- **2** — Invalid usage: unknown subcommand, invalid flag value (e.g. invalid `--listen` or `--port`), or conflicting flags (e.g. `--quiet` and `--verbose`).
+Exit code `0` means success. For `serve`, process stays running until interrupted. Exit code `1` means runtime failure such as unreadable workspace root or invalid TLS files. Exit code `2` means invalid usage, for example unknown subcommand, invalid flag value, or conflicting flags.
 
 Error messages are written to stderr. When the workspace root does not exist or is not readable, startup fails with a clear diagnostic and exit code 1.
 
@@ -115,6 +97,9 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ```bash
 bus books serve --port 8090 --token-bytes 32
+bus books serve --print-url --enable-agent
+bus books -C ./workspace --read-only serve --print-url
+bus books serve --print-url --open-view /journal/new --view-only --view-param date=2026-02-20 --view-param desc="Collect details"
 bus books version
 ```
 
@@ -129,7 +114,35 @@ books --help
 
 # same as: bus books -V
 books -V
+
+# print a deterministic URL for scripts
+books serve --print-url --port 8090
+
+# read-only UI mode from a specific workspace
+books -C ./workspace serve --read-only --print-url
+
+# launch a focused single-view GUI form and prefill fields for user input
+books serve --print-url --open-view /journal/new --view-only \
+  --view-param date=2026-02-20 \
+  --view-param desc="Provide bank transaction details"
 ```
+
+### `.bus` form-view examples (add or edit a record)
+
+Use these patterns when a `.bus` flow needs a human to fill or adjust values in the GUI before continuing.
+
+```bus
+# Add record flow: open "new journal entry" form with prefilled fields.
+books serve --print-url --open-view /journal/new --view-only \
+  --view-param date=2026-02-20 \
+  --view-param desc="Add missing bank transaction details"
+
+# Edit record flow: open one existing bank record detail view directly.
+# Replace btx-2026-00017 with your transaction id.
+books serve --print-url --open-view /bank/btx-2026-00017 --view-only
+```
+
+In both cases, the user gets a focused single-view window, enters or edits data, and closes when ready.
 
 
 ### Development state

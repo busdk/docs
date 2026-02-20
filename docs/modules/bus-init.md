@@ -13,34 +13,39 @@ Run `bus init` or `bus init defaults` for config only; run `bus init all` for th
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus init` always runs `bus config init` so that `datapackage.json` and accounting entity settings exist. With no subcommand (or subcommand `defaults`) and no module-include flags, it stops after config init. When you pass subcommand `all`, it runs config init then all thirteen module inits (use `--no-<name>` to exclude). When you pass one or more module-include flags without `all` (`--accounts`, `--entities`, `--period`, `--journal`, `--invoices`, `--vat`, `--attachments`, `--bank`, `--budget`, `--assets`, `--inventory`, `--loans`, `--payroll`), it then runs each selected module’s `init` in that order. Each module owns its own datasets and schemas; `bus init` does not perform Git or network operations. To change accounting entity settings afterward, use `bus config configure`.
+Command names follow [CLI command naming](../cli/command-naming). `bus init` always runs `bus config init` so `datapackage.json` and accounting entity settings exist.
+
+With no subcommand (or `defaults`) and no module flags, it stops after config init.
+
+With subcommand `all`, it runs config init and then all thirteen module inits (optionally excluding some with `--no-<name>`).
+
+With selected module flags (without `all`), it runs only those modules in deterministic order.
+
+Each module owns its own datasets and schemas. `bus init` itself does not perform Git or network operations.
 
 ### Commands
 
-**Initialize the workspace.** The effective workspace root is the current directory, or the directory given by `-C` / `--chdir`. The command always runs `bus config init` first. With no subcommand (or subcommand `defaults`) and no module-include flags, it runs only that step and exits; the workspace then has `datapackage.json` but no domain datasets. When subcommand `all` is supplied, it runs all thirteen data-owning module inits in order (minus any `--no-<name>`). When one or more module flags are supplied (and subcommand is not `all`), it then runs each selected module’s `init` in this order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed are run, in this order). Success is determined only by the exit codes of the steps that run. The command does not check for a fixed list of baseline paths afterward; each module is responsible for creating its own files and for failing its init if it cannot. The command does not accept extra positional arguments — anything after the subcommand is rejected with a usage error.
+**Initialize the workspace.** Effective root is current directory or `-C` / `--chdir`.
+
+The command always runs `bus config init` first.
+
+With no subcommand (or `defaults`) and no module flags, only config init runs.
+
+With subcommand `all`, all thirteen data-owning module inits run in deterministic order (minus `--no-<name>` exclusions).
+
+With explicit module flags, only selected modules run in deterministic order.
+
+Success depends on exit codes of executed steps. `bus init` does not validate a fixed baseline-file list afterward.
 
 ### Subcommands and module-include flags
 
 **Subcommands** select a named module set so that set names do not clash with module names (e.g. a future `bus init sheets` can denote a sheets-related set without conflicting with the bus-sheets module).
 
-- **`defaults`** (or no subcommand with no module flags) — Run only `bus config init`. Creates `datapackage.json` and accounting entity settings; no domain datasets.
-- **`all`** — Run config init then all thirteen data-owning module inits in order. You can exclude specific modules with **`--no-<name>`** (e.g. `--no-payroll`); for example, `bus init all --no-payroll`. When the subcommand is not `all`, `--no-<name>` flags are ignored.
+`defaults` (or no subcommand with no module flags) runs only `bus config init`, creating `datapackage.json` and accounting entity settings but no domain datasets. `all` runs config init and then all thirteen data-owning module inits in order. You can exclude modules with `--no-<name>`, for example `bus init all --no-payroll`. When the subcommand is not `all`, `--no-<name>` flags are ignored.
 
 **Per-module flags** (below) add individual modules when you do not use the `all` subcommand. Each also has a matching `--no-<name>` that excludes that module when used with `bus init all`. With no subcommand and no flags (or subcommand `defaults`), only `bus config init` runs.
 
-- **`--accounts`** — Run `bus accounts init` after config init (chart of accounts).
-- **`--entities`** — Run `bus entities init` after config init (counterparties).
-- **`--period`** — Run `bus period init` after config init (period control).
-- **`--journal`** — Run `bus journal init` after config init (journal index).
-- **`--invoices`** — Run `bus invoices init` after config init (sales and purchase invoices).
-- **`--vat`** — Run `bus vat init` after config init (VAT reference data and reports).
-- **`--attachments`** — Run `bus attachments init` after config init (evidence index).
-- **`--bank`** — Run `bus bank init` after config init (bank imports and transactions).
-- **`--budget`** — Run `bus budget init` after config init (budget dataset; optional for statutory bookkeeping).
-- **`--assets`** — Run `bus assets init` after config init (fixed-asset register and depreciation datasets).
-- **`--inventory`** — Run `bus inventory init` after config init (item master and movement datasets).
-- **`--loans`** — Run `bus loans init` after config init (loan register and event datasets).
-- **`--payroll`** — Run `bus payroll init` after config init (employee and payroll run datasets).
+The module flags are `--accounts`, `--entities`, `--period`, `--journal`, `--invoices`, `--vat`, `--attachments`, `--bank`, `--budget`, `--assets`, `--inventory`, `--loans`, and `--payroll`. Each flag runs that module’s `init` after config init. When several flags are provided, they run in deterministic order.
 
 When multiple flags are given, module inits run in the order listed above. To get the full baseline (all data-owning modules), use `bus init all`.
 
@@ -50,20 +55,27 @@ When multiple flags are given, module inits run in the order listed above. To ge
 
 These flags apply to `init`. They match the [standard global flags](../cli/global-flags) shared by most BusDK modules. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are treated as positional arguments (extra positional arguments for `init` are invalid).
 
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Help lists subcommands `defaults` and `all`, each module-include flag, and the `--no-<name>` exclusion flags (for use with `all`), and states that with no subcommand and no flags only workspace configuration is initialized. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0. Other flags and arguments are ignored.
-- **`-v`**, **`--verbose`** — Send verbose progress and diagnostics to stderr. You can repeat the flag (e.g. `-vv` or `--verbose --verbose`) to increase verbosity. Verbose output does not change what is written to stdout or to the file given by `--output`.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, nothing is written to stdout and no output file is created or written even if `--output` is given; only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage and exits with code 2.
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective working directory for the command. All workspace paths (e.g. `datapackage.json`, module datasets) are resolved relative to this directory. The same directory is used when invoking `bus config init` and each module’s `init`. If the directory does not exist or is not accessible, the command exits with code 1 and a clear error on stderr.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. The path is relative to the effective working directory (after `-C`). The file is created or truncated. Errors and diagnostics still go to stderr. If both `--output` and `--quiet` are used, quiet wins: no output is written to the file.
-- **`--color <mode>`** — Control colored output for human-facing messages on stderr. `<mode>` must be one of `auto`, `always`, or `never`. `auto` uses color only when stderr is a terminal; `always` forces color; `never` disables it. An invalid value (e.g. `neon`) is a usage error and exits with code 2.
-- **`--no-color`** — Same as `--color=never`. If both are present, color is disabled.
+`-h` and `--help` print help to stdout and exit 0. `-V` and `--version` print tool name and version and exit 0.
+
+`-v` and `--verbose` increase diagnostics on stderr and can be repeated. `-q` and `--quiet` suppress normal output and keep only errors. Quiet and verbose cannot be combined; that is usage error exit 2.
+
+`-C <dir>` and `--chdir <dir>` set the effective workspace directory used by `bus config init` and module init steps. `-o <file>` and `--output <file>` redirect normal output to a file under that effective directory. If output and quiet are both set, quiet wins and no output file is written.
+
+`--color <auto|always|never>` controls colored human-facing stderr output. `--no-color` is the same as `--color=never`.
 
 Command results (e.g. help or version) are written to stdout. Diagnostics, progress, and error messages are written to stderr so that scripts can capture results without mixing in human-oriented text.
 
 ### Init: step order and baseline files
 
-The command always runs `bus config init` first. That step ensures `datapackage.json` exists (bus config uses the bus-data layer when the file is missing) and adds accounting entity settings. With no subcommand (or `defaults`) and no module flags, it stops after that; the workspace then has only `datapackage.json` and accounting entity settings. When subcommand `all` is supplied, it runs all thirteen data-owning module inits in order (minus any `--no-<name>`). When one or more module flags are supplied (and subcommand is not `all`), it then runs each selected module’s `init` in order: accounts, entities, period, journal, invoices, vat, attachments, bank, budget, assets, inventory, loans, payroll (only the modules whose flag was passed). Each step is implemented by the corresponding module (e.g. `bus config init`, `bus accounts init`). Each module’s `init` creates its baseline data only when absent; if the data already exists in full, the module prints a warning and does nothing; if the data exists only partially, the module fails with an error and does not modify any file. The tool depends on the `bus` dispatcher being available in your `PATH`; if `bus` is not found, the command exits with a clear “bus dispatcher not found in PATH” error. When every invoked command exits with code 0, the run is complete. The command does not verify a fixed list of baseline paths afterward; each module owns its datasets and schemas and is responsible for failing its init if it cannot create them.
+The command always runs `bus config init` first.
+
+That step ensures `datapackage.json` exists and adds accounting entity settings.
+
+Each selected module step is implemented by that module’s own `init` command.
+
+If a module baseline already exists in full, that module warns and exits 0. If baseline exists partially, that module fails without modifying files.
+
+The tool depends on `bus` dispatcher being available in `PATH`.
 
 The initial `datapackage.json` is created by `bus config init` and follows the [workspace configuration](../data/workspace-configuration) shape. Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, and fiscal year and VAT registration set as documented in the data package extension. You can adjust these afterward with [bus config configure](./bus-config).
 
@@ -72,6 +84,7 @@ The initial `datapackage.json` is created by `bus config init` and follows the [
 ```bash
 bus init all --no-payroll --no-loans
 bus init --accounts --entities --period --journal
+bus init defaults
 ```
 
 ### Files
@@ -82,10 +95,11 @@ The command invokes `bus config init` (which creates or ensures `datapackage.jso
 
 Exit 0 on success. Non-zero in these cases:
 
-- **Invalid usage (exit 2)** — Unknown or invalid flag value (e.g. invalid `--color`), combining `--quiet` and `--verbose`, or extra positional arguments for `init`. The tool prints a short usage-style error to stderr.
-- **Missing bus dispatcher (exit 1)** — `bus` is not found in `PATH`. Message: “bus dispatcher not found in PATH”.
-- **Module init failure (exit non-zero)** — A module’s `init` command fails. The tool stops immediately after that step and reports “step failed: bus *module* init” (with the actual module name) on stderr. It does not run later steps.
-- **Module compatibility (exit non-zero)** — A module exits with code 2, indicating a version or compatibility issue. The tool reports that the module “must be upgraded” and stops.
+Invalid usage returns exit `2`, for example unknown flags, invalid flag values, quiet+verbose conflicts, or extra positional arguments.
+
+Missing dispatcher returns exit `1` when `bus` is not found in `PATH`.
+
+If any module init step fails, `bus init` stops immediately and returns that failure. If a module exits `2` for compatibility/version reasons, the command reports that the module must be upgraded and stops.
 
 
 ### Using from `.bus` files
@@ -98,6 +112,12 @@ init --help
 
 # same as: bus init -V
 init -V
+
+# config only
+init defaults
+
+# selected modules
+init --accounts --entities --period --journal
 ```
 
 

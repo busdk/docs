@@ -30,9 +30,25 @@ All paths and the workspace directory are resolved relative to the current direc
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root. The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, legal-form profile, fiscal year boundaries, VAT registration, VAT reporting cadence, VAT timing basis, optional VAT registration dates, and Finnish statutory reporting profile keys) as BusDK metadata so other modules can read them without duplicating settings in row-level datasets. The Finnish statutory reporting profile lives under `busdk.accounting_entity.reporting_profile.fi_statutory` in the workspace descriptor. All VAT-related configuration keys and Finnish statutory reporting-profile keys are defined here; [bus vat](./bus-vat), [bus reports](./bus-reports), and filing modules consume these settings. The **current** reporting period and registration dates are inputs; the actual sequence of VAT period boundaries (including transitions within a year, 4-month or 18-month periods, and partial first/last periods) is owned and defined by [bus vat](./bus-vat). The reporting profile keys are presentation settings for statement output and filing-readiness metadata, not posting business logic.
+Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root.
 
-`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object. When the file is missing, it uses the bus-data library to create the empty descriptor first, then adds the accounting entity subtree. You can pass the same optional accounting-entity flags as for `set` (e.g. `--base-currency`, `--vat-registered`) so that the initial descriptor has the correct values from the start; any flag you omit uses the default for that property. When the file already has that object, init prints a warning and does nothing (flags are ignored). [bus init](./bus-init) always runs `bus config init` first; when you pass module-include flags (e.g. `--accounts`, `--journal`), it then runs each selected domain module’s init. You can also run `bus config init` on its own when you need only the workspace descriptor. To create only an empty `datapackage.json` without accounting entity settings, use [bus data init](./bus-data) instead.
+The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (base currency, legal-form profile, fiscal year boundaries, VAT registration, VAT cadence/timing, optional VAT registration dates, and Finnish statutory reporting profile keys). Other modules read these values instead of duplicating settings in row-level datasets.
+
+The Finnish statutory reporting profile lives under `busdk.accounting_entity.reporting_profile.fi_statutory` in the workspace descriptor.
+
+All VAT-related configuration keys and Finnish statutory reporting-profile keys are defined here. [bus vat](./bus-vat), [bus reports](./bus-reports), and filing modules consume these settings.
+
+The **current** reporting period and registration dates are inputs. The actual sequence of VAT period boundaries (including transitions and partial periods) is owned by [bus vat](./bus-vat).
+
+`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object.
+
+When the file is missing, it uses the bus-data library to create the empty descriptor first, then adds the accounting entity subtree.
+
+You can pass the same optional accounting-entity flags as for `set` (for example `--base-currency`, `--vat-registered`) so the initial descriptor starts with correct values. Omitted flags use property defaults.
+
+When the file already has that object, init prints a warning and does nothing (flags are ignored).
+
+[bus init](./bus-init) always runs `bus config init` first. You can also run `bus config init` on its own when you only need the workspace descriptor.
 
 `bus config set` updates accounting entity settings in an existing workspace `datapackage.json`. You can pass one or more optional flags (e.g. `bus config set --base-currency=EUR --vat-registered=true`) to change multiple properties in one call, or use the per-property form `bus config set <key> <value>` (e.g. `bus config set base-currency SEK`). Only the properties you specify are changed; others remain unchanged. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object. Running `bus config set` with no property flags or values exits 0 without modifying the file.
 
@@ -42,22 +58,15 @@ To set a default agent runtime for [bus agent](./bus-agent) or [bus dev](./bus-d
 
 `init` — Create or ensure `datapackage.json` at the effective workspace root with a `busdk.accounting_entity` object. Accepts the same optional flags as `set` (batch form): `--base-currency`, `--legal-form`, `--fiscal-year-start`, `--fiscal-year-end`, `--vat-registered`, `--vat-reporting-period`, `--vat-timing`, `--vat-registration-start`, `--vat-registration-end`, `--reporting-standard`, `--report-language`, `--income-statement-scheme`, `--comparatives`, `--presentation-currency`, `--presentation-unit`, `--prepared-under-pma`, `--signature-date`, and repeatable `--signature-signer`. When the file is missing or does not contain that object, it is created or updated; any provided flag sets that property (others use defaults). When the file already contains `busdk.accounting_entity`, the command prints a warning to stderr and exits 0 without modifying the file; flags are ignored. No extra positional arguments are accepted.
 
-`set` — Update accounting entity settings in the workspace `datapackage.json`. Two forms are supported. (1) **Batch:** `bus config set [--base-currency <code>] [--legal-form <tmi|oy|ay|ky|osk>] [--fiscal-year-start <date>] [--fiscal-year-end <date>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly|yearly>] [--vat-timing <performance|invoice|cash>] [--vat-registration-start <YYYY-MM-DD>] [--vat-registration-end <YYYY-MM-DD>] [--reporting-standard <fi-kpa|fi-pma>] [--report-language <fi>] [--income-statement-scheme <by_nature|by_function>] [--comparatives <true|false>] [--presentation-currency <EUR>] [--presentation-unit <EUR|TEUR>] [--prepared-under-pma <true|false>] [--signature-date <YYYY-MM-DD>] [--signature-signer <name[:role]> ...]` — only the flags you provide are applied; no flags means no change. (2) **Per-property:** `bus config set <key> <value>` where `<key>` is one of `base-currency`, `legal-form`, `fiscal-year-start`, `fiscal-year-end`, `vat-registered`, `vat-reporting-period`, `vat-timing`, `vat-registration-start`, `vat-registration-end`, `reporting-standard`, `report-language`, `income-statement-scheme`, `comparatives`, `presentation-currency`, `presentation-unit`, `prepared-under-pma`, `signature-date`. Requires an existing workspace that already has `datapackage.json` and a `busdk.accounting_entity` object. Unknown `<key>` is invalid usage (exit 2).
+`set` — Update accounting entity settings in the workspace `datapackage.json`.
+
+Two forms are supported. Batch form is `bus config set [--base-currency ...] [--signature-signer ...]`, where only provided flags are applied and no flags means no change. Per-property form is `bus config set <key> <value>`, where `<key>` must be one of the documented accounting-entity keys.
+
+`set` requires an existing workspace with `datapackage.json` and `busdk.accounting_entity`. Unknown `<key>` is invalid usage (exit 2).
 
 ### Global flags
 
-These flags apply to both `init` and `set`. They match the [standard global flags](../cli/global-flags) shared by most BusDK modules. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are treated as positional arguments (and for `init`, extra positionals are invalid; for `set`, the per-property form expects exactly `<key> <value>` after `set`).
-
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0. Other flags and arguments are ignored.
-- **`-v`**, **`--verbose`** — Send verbose progress and diagnostics to stderr. You can repeat the flag (e.g. `-vv` or `--verbose --verbose`) to increase verbosity. Verbose output does not change what is written to stdout or to the file given by `--output`.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, nothing is written to stdout and no output file is created or written even if `--output` is given; only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage and exits with code 2.
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective working directory for the command. All workspace paths (e.g. `datapackage.json`) are resolved relative to this directory. If the directory does not exist or is not accessible, the command exits with code 1 and a clear error on stderr.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. The path is relative to the effective working directory (after `-C`). The file is created or truncated. Errors and diagnostics still go to stderr. If both `--output` and `--quiet` are used, quiet wins: no output is written to the file.
-- **`--color <mode>`** — Control colored output for human-facing messages on stderr. `<mode>` must be one of `auto`, `always`, or `never`. `auto` uses color only when stderr is a terminal; `always` forces color; `never` disables it. An invalid value is a usage error and exits with code 2.
-- **`--no-color`** — Same as `--color=never`. If both are present, color is disabled.
-
-Command results (e.g. help or version) are written to stdout. Diagnostics, progress, and error messages are written to stderr so that scripts can capture results without mixing in human-oriented text.
+These commands use [Standard global flags](../cli/global-flags). In practice, the most used here are `-C/--chdir` for workspace selection, `-o/--output` for machine output capture, and `-q`/`-v` for output control. `--quiet` and `--verbose` are mutually exclusive (usage error `2`). Results go to stdout (or `--output`), diagnostics to stderr.
 
 ### Init: behavior and defaults
 
@@ -67,27 +76,9 @@ Command results (e.g. help or version) are written to stdout. Diagnostics, progr
 
 `bus config set` updates only the fields you pass. You can use the batch form with optional flags or the per-property form `bus config set <key> <value>`.
 
-**Batch form.** Omit a flag to leave that property unchanged. The following flags map to [accounting entity](../master-data/accounting-entity/index) properties in `datapackage.json`:
+In batch form, omit a flag to leave that property unchanged. Supported properties cover base currency, fiscal-year boundaries, VAT registration/cadence/timing, optional VAT registration date bounds, Finnish statutory reporting profile defaults, and optional statement signature metadata. All values use strict validation (for example ISO currency code and `YYYY-MM-DD` dates), and invalid values return usage error `2`.
 
-- **`--base-currency <code>`** — ISO 4217 currency code. Must be uppercase (e.g. `EUR`, `SEK`). Lowercase or invalid codes are a usage error (exit 2).
-- **`--fiscal-year-start <date>`** — Fiscal year start in `YYYY-MM-DD` form. Slash or other formats are invalid and yield a usage error.
-- **`--fiscal-year-end <date>`** — Fiscal year end in `YYYY-MM-DD` form. Same validation as start.
-- **`--vat-registered <true|false>`** — Exactly `true` or `false`. Any other value is a usage error.
-- **`--vat-reporting-period <period>`** — Allowed values: `monthly`, `quarterly`, `yearly`. Under Finnish rules, quarterly is allowed when turnover is below 100 000 EUR; yearly when below 30 000 EUR or for certain primary producers and visual artists. See [workspace configuration](../data/workspace-configuration). Other values are invalid (exit 2).
-- **`--vat-timing <basis>`** — Which date determines VAT period allocation: `performance` (delivery/performance date; suoriteperuste), `invoice` (period in which customer is charged; laskutusperuste), or `cash` (payment date for sales and purchases; maksuperuste). Cash basis is subject to turnover eligibility (500 000 EUR) and a 12‑month latest-allocation rule per [Vero guidance](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/vahainen-liiketoiminta-on-arvonlisaverotonta/pienyrityksen-maksuperusteinen-alv). Other values are invalid (exit 2).
-- **`--vat-registration-start <YYYY-MM-DD>`** — Optional. Date from which the entity is VAT registered; used for partial first VAT period. Omit to leave unchanged; set only when applicable.
-- **`--vat-registration-end <YYYY-MM-DD>`** — Optional. Date on which VAT registration ends; used for partial last VAT period. Omit to leave unchanged.
-- **`--reporting-standard <fi-kpa|fi-pma>`** — Default statutory scheme family for Finnish statement layouts in [bus-reports](./bus-reports). `fi-kpa` and `fi-pma` are explicit user choices; this setting does not auto-classify company size.
-- **`--report-language <fi>`** — Statement label language in statutory outputs. Current default is `fi`; `sv` is reserved for later support.
-- **`--income-statement-scheme <by_nature|by_function>`** — Default income statement scheme (`kululajikohtainen` or `toimintokohtainen`) for layout selection.
-- **`--comparatives <true|false>`** — Enable or disable comparative columns by default. Default is `true`; first fiscal year remains the normal no-comparative exception when prior data does not exist.
-- **`--presentation-currency <EUR>`** — Statement presentation currency. Current supported value is `EUR`.
-- **`--presentation-unit <EUR|TEUR>`** — Statement presentation unit. Current default is `EUR`; `TEUR` is reserved for later support.
-- **`--prepared-under-pma <true|false>`** — Controls whether statement outputs include the PMA small/micro preparation indication when applicable.
-- **`--signature-date <YYYY-MM-DD>`** — Statement signature date metadata for PDF outputs.
-- **`--signature-signer <name[:role]>`** — Repeatable signer metadata for PDF output (for example board signers). Omit to keep existing signer list unchanged.
-
-**Per-property form.** `bus config set <key> <value>` where `<key>` is one of: `base-currency`, `fiscal-year-start`, `fiscal-year-end`, `vat-registered`, `vat-reporting-period`, `vat-timing`, `vat-registration-start`, `vat-registration-end`, `reporting-standard`, `report-language`, `income-statement-scheme`, `comparatives`, `presentation-currency`, `presentation-unit`, `prepared-under-pma`, `signature-date`. The same value rules apply as for the batch form. Unknown `<key>` is invalid usage (exit 2). The signer list is managed via repeatable `--signature-signer` in batch form.
+In per-property form, `bus config set <key> <value>`, `<key>` must be one of the documented accounting-entity keys. Unknown keys return usage error `2`. Signer metadata is managed through repeatable `--signature-signer` in batch form.
 
 Example: for yearly VAT reporting and cash-based timing, run `bus config set vat-reporting-period yearly` and `bus config set vat-timing cash`, or in one call `bus config set --vat-reporting-period=yearly --vat-timing=cash`. For Finnish statutory reporting defaults, run `bus config set --reporting-standard=fi-kpa --income-statement-scheme=by_nature --comparatives=true --signature-date=2026-03-31 --signature-signer "Board Chair:board"`.
 
@@ -113,9 +104,7 @@ The module reads and writes `datapackage.json` at the workspace root. The `init`
 ### Exit status and errors
 
 Exit 0 on success. Non-zero in these cases:
-
-- **Invalid usage (exit 2)** — Unknown or invalid flag value (e.g. invalid `--color`, invalid `--base-currency` or date or `--vat-reporting-period` on `init` or `set`), combining `--quiet` and `--verbose`, extra positional arguments for `init`, or unknown `<key>` in `bus config set <key> <value>`. The tool prints a short usage-style error to stderr.
-- **Set preconditions (exit non-zero)** — `set` was run in a directory without `datapackage.json` or without `busdk.accounting_entity`; see above.
+invalid usage returns exit `2` (for example invalid flag value, unknown key, or conflicting flags), and `set` precondition failures return non-zero when `datapackage.json` or `busdk.accounting_entity` is missing.
 
 
 ### Using from `.bus` files
@@ -123,11 +112,11 @@ Exit 0 on success. Non-zero in these cases:
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus config --help
-config --help
+# same as: bus config set --base-currency EUR --vat-registered true --vat-reporting-period monthly
+config set --base-currency EUR --vat-registered true --vat-reporting-period monthly
 
-# same as: bus config -V
-config -V
+# same as: bus config set reporting-standard fi-pma
+config set reporting-standard fi-pma
 ```
 
 
@@ -141,7 +130,8 @@ config -V
 
 **Use case readiness:** Accounting workflow: 90% — workspace-config step verified; user can create/update entity before domain inits; set no-flags no-op not verified.
 
-**Current:** `tests/e2e_bus_config.sh` proves init creates `datapackage.json` with default entity and exact JSON shape, init idempotent when entity already present (warn, no write), set batch and per-property with deterministic output, precondition failures (missing file or entity), and global flags (help, version, invalid color, quiet+verbose, --output, --quiet, -C, --). `internal/run/run_test.go` covers init, set, chdir, output, quiet, and unknown subcommand. `internal/cli/flags_test.go`, `internal/config/validate_test.go`, and `internal/config/datapackage_test.go` cover flag parsing, entity validation, and datapackage read/write.
+**Current:** Init and set (batch and per-property), plus global-flag behavior, are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-config](../sdd/bus-config).
 
 **Planned next:** Set with no property flags: exit 0 without writing and without printing "Updated datapackage.json." (PLAN.md); advances scriptability for the accounting workflow.
 

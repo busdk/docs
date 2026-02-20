@@ -18,23 +18,25 @@ description: BusDK Formula Language (BFL) is a small, deterministic expression l
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). BusDK Formula Language (BFL) is a small, deterministic expression language used to define computed fields in workspace datasets. It supports spreadsheet-style references and ranges and can return array values from ranges or registered functions. The `bus-bfl` CLI lets you parse, format, validate, and evaluate BFL expressions from the command line. It does not read workspace datasets or write results back; it operates only on the expression and JSON files you provide. Output goes to standard output unless redirected, and diagnostics go to standard error. Colored output only applies to human-facing text on stderr.
+Command names follow [CLI command naming](../cli/command-naming).
+
+BusDK Formula Language (BFL) is a small deterministic expression language for computed fields.
+It supports spreadsheet-style references and ranges.
+
+`bus-bfl` lets you parse, format, validate, and evaluate expressions from the command line.
+It does not read workspace datasets or write results back.
+It operates only on the expression and JSON files you pass in.
 
 ### Getting started
 
-Install the BusDK toolchain and run `bus-bfl` from your PATH, or invoke the binary directly (for example `./bin/bus-bfl`). The tool accepts the [standard global flags](../cli/global-flags). To see available commands and flags, run `bus-bfl --help`. To see the tool version, run `bus-bfl --version`. Both help and version exit immediately and ignore any other flags or arguments.
+Run `bus-bfl --help` to see commands and options.
+Run `bus-bfl --version` for version.
 
-You can control colored output for help and error messages with `--color auto`, `--color always`, or `--color never`. The default is `auto` (color when stderr is a terminal). `--color always` forces ANSI color escapes on stderr diagnostics, while `--color never` disables them. The `--no-color` flag is an alias for `--color never`, and if both are provided, color is disabled. If you pass an invalid color mode, the tool prints a usage error to stderr and exits with status 2. The flags `--quiet` and `--verbose` cannot be used together; combining them is invalid usage and exits with status 2.
+Standard global flags are supported; see [Standard global flags](../cli/global-flags).
+The most common in this module are `--format json` for machine-readable output, `--output <file>` to write results, `--chdir <dir>` to resolve relative file paths, and `--color <mode>` (or `--no-color`) for diagnostics coloring.
 
-Structured command output can be requested with `--format json`. The default format is plain text. If you specify an unsupported format, the tool reports invalid usage and exits with status 2. The short form `--json` is an alias for `--format json`. Format selection affects only command result output and never changes validation behavior or diagnostics.
-
-To send command output to a file instead of stdout, use `--output <file>`. The file is created or truncated. If you also use `--quiet`, the command still runs but nothing is written to the output file or to stdout. If the file cannot be created or written, the tool prints an error to stderr and exits with status 1. Errors are always written to stderr.
-
-When your schema or context files live in another directory, use `--chdir <dir>` so that relative paths are resolved from that directory. The working directory is changed before any file reads. If the directory does not exist or is not accessible, the tool prints an error to stderr and exits with status 1.
-
-If you need to pass arguments that look like flags to a subcommand, use `--` to stop global flag parsing. Everything after `--` is passed to the subcommand as positional arguments and is not interpreted as a global flag, even if it begins with `-`.
-
-The `--help` and `--version` flags are immediate-exit flags. They ignore all other flags and arguments and return status 0. The short forms `-h` and `-V` behave the same way. When a subcommand name is present, help output is for that subcommand and includes its usage, options, and which global flags affect it. The version output is a single line in the form `bus-bfl <version>`. The `--verbose` flag (`-v`) can be repeated and accumulates (`-vv` is verbosity level 2 and `--verbose --verbose` is also level 2); verbose output goes to stderr and does not change the command result on stdout or in `--output`. The `--quiet` flag (`-q`) suppresses normal output to stdout or `--output` but still performs the command work.
+`--quiet` and `--verbose` are mutually exclusive.
+Invalid global flag combinations and unknown format/color values return usage error (`2`).
 
 ### Listing function sets
 
@@ -137,11 +139,14 @@ The tool exits with status 0 on success. It exits with status 2 on invalid usage
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus bfl --help
-bfl --help
+# same as: bus bfl parse --expr "a + b"
+bfl parse --expr "a + b"
 
-# same as: bus bfl -V
-bfl -V
+# same as: bus bfl validate --expr "price * qty" --schema ./schema.json
+bfl validate --expr "price * qty" --schema ./schema.json
+
+# same as: bus bfl eval --expr "price * qty" --context ./context.json --format json
+bfl eval --expr "price * qty" --context ./context.json --format json
 ```
 
 
@@ -155,7 +160,8 @@ bfl -V
 
 **Use case readiness:** Workbook and validated tabular editing: 60% — CLI and library contract verified; formula engine ready for [bus-data](./bus-data) projection.
 
-**Current:** E2e `tests/e2e_bus_bfl.sh` proves help, version, color/format/quiet/verbose, chdir, output, `--`, funcset list, parse (expr, range, JSON), format (expr, stdin, dialect), validate (ok, range, array symbol, missing schema exit), eval (scalar, array, infer schema, exit 2 without `--context`), and error/stderr behavior. Unit tests: `pkg/bfl/conformance_test.go` (conformance vectors), `pkg/bfl/expr_test.go`, `pkg/bfl/decimal_test.go`, `pkg/bfl/datetime_test.go`, `pkg/bfl/range_array_test.go` (eval, limits, ranges), `internal/cli/run_test.go`, `internal/cli/flags_test.go`, `internal/cli/json_test.go`, `internal/cli/render_test.go`.
+**Current:** Parse/format/validate/eval/funcset flows and global-flag behavior are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-bfl](../sdd/bus-bfl).
 
 **Planned next:** None in PLAN; optional benchmark metadata and CI artifact follow-ups per SDD.
 
@@ -180,4 +186,3 @@ See [Development status](../implementation/development-status).
 - [Master data: Master data (business objects)](../master-data/index)
 - [Module SDD: bus-bfl](../sdd/bus-bfl)
 - [Data model: Table Schema contract](../data/table-schema-contract)
-

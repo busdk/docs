@@ -15,18 +15,31 @@ description: "CLI reference for bus attachments: register evidence files, store 
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus attachments` registers evidence files and stores attachment metadata in `attachments.csv` so other modules can link to evidence without embedding file paths directly in domain datasets.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus attachments` registers evidence files and stores metadata in `attachments.csv`.
+Other modules then link to attachments without embedding file paths directly in domain datasets.
 
 ### Commands
 
-- `init` creates baseline attachments metadata and link datasets/schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` registers a file and writes attachment metadata.
-- `link` adds deterministic links from an attachment to domain resources (bank row, voucher, invoice, or custom kind/id). Repeated identical links are idempotent. In replay scripts, attachments can be selected without UUID lookup via `--path`, `--desc-exact`, or `--source-hash`; selector resolution is deterministic and fails on zero or multiple matches.
-- `list` prints registered attachments in deterministic order, with filters, reverse-link graph mode, and strict audit flags.
+`init` creates baseline attachment metadata and link datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
+
+`add` registers a file and writes attachment metadata. `link` adds deterministic links from attachments to domain resources such as bank rows, vouchers, invoices, or custom kind/id targets. Repeated identical links are idempotent.
+
+For replay flows, `link` can select attachments without UUID lookup by using `--path`, `--desc-exact`, or `--source-hash`. Resolution is deterministic and fails if there are zero or multiple matches.
+
+`list` prints registered attachments in deterministic order and supports filters, reverse-link graph output, and strict audit flags.
 
 ### Options
 
-`add` accepts a positional `<file>` plus `--desc <text>`. `list` supports `--by-bank-row`, `--by-voucher`, `--by-invoice`, `--date-from`, `--date-to`, `--unlinked-only`, `--graph`, `--fail-if-unlinked`, and repeatable `--fail-if-missing-kind <kind>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus attachments --help`.
+`add` accepts positional `<file>` and optional `--desc <text>`.
+
+`link` accepts an attachment selector (id or selector flags) and a target (`--bank-row`, `--voucher`, `--invoice`, or `--kind` + `--id`).
+Use `--if-missing` for idempotent replay runs.
+
+`list` supports `--by-bank-row`, `--by-voucher`, `--by-invoice`, `--date-from`, `--date-to`, `--unlinked-only`, `--graph`, `--fail-if-unlinked`, and repeatable `--fail-if-missing-kind <kind>`.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus attachments --help`.
 
 ### Files
 
@@ -37,9 +50,10 @@ Command names follow [CLI command naming](../cli/command-naming). `bus attachmen
 ```bash
 bus attachments init
 bus attachments add ./evidence/INV-1001.pdf --desc "Sales invoice 1001 PDF"
-bus attachments link <attachment_id> --invoice INV-1001
+bus attachments link ATT-000123 --invoice INV-1001
 bus attachments link --path attachments/2026/01/20260115-INV-1001.pdf --bank-row bank_row:27201 --if-missing
 bus attachments list --by-voucher VCH-1 --graph --fail-if-unlinked
+bus attachments list --unlinked-only --format tsv --output ./out/unlinked-attachments.tsv
 ```
 
 ### Exit status
@@ -52,11 +66,14 @@ bus attachments list --by-voucher VCH-1 --graph --fail-if-unlinked
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus attachments --help
-attachments --help
+# same as: bus attachments add ./evidence/BANK-2026-01.csv --desc "January bank statement"
+attachments add ./evidence/BANK-2026-01.csv --desc "January bank statement"
 
-# same as: bus attachments -V
-attachments -V
+# same as: bus attachments link --source-hash 9f0d2c... --voucher VCH-2026-003 --if-missing
+attachments link --source-hash 9f0d2c... --voucher VCH-2026-003 --if-missing
+
+# same as: bus attachments list --by-invoice INV-1001 --graph
+attachments list --by-invoice INV-1001 --graph
 ```
 
 
@@ -70,7 +87,8 @@ attachments -V
 
 **Use case readiness:** Accounting workflow: 85% — Register evidence, link to bank/voucher/invoice resources, filter by linkage, and enforce audit gates. Finnish company reorganisation: 85% — Link source documents and verify linkage coverage with deterministic audit flags.
 
-**Current:** Verified capabilities: help/version, global flags (color, format, quiet, `--`, chdir, output), init (attachments + links datasets/schemas), idempotent init, add with file and `--desc`, link-many (`link`), list filters (`--by-bank-row|--by-voucher|--by-invoice`, date range, `--unlinked-only`), reverse-link graph (`--graph`), strict audit flags (`--fail-if-unlinked`, `--fail-if-missing-kind`), `--dry-run` for init/add/link (no writes, stderr preview), Go library path accessors for metadata+links datasets (NFR-ATT-002), quiet with `--output` (no file written), and workspace-relative diagnostics (errors cite dataset basenames, no absolute paths). Proved by `tests/e2e_bus_attachments.sh`, `cmd/bus-attachments/run_test.go`, `paths/paths_test.go`, `internal/attachments/validate_test.go`, `internal/attachments/csvio_test.go`, and `internal/cli/flags_test.go`.
+**Current:** Init/add/link/list flows, filters, audit flags, dry-run behavior, and global-flag handling are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-attachments](../sdd/bus-attachments).
 
 **Planned next:** None in PLAN.md.
 

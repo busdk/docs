@@ -248,6 +248,9 @@ Serve flags (module-specific, aligned with Bus API defaults):
 - `--port <n>` default `0` (auto)
 - `--token <string>` optional (tests)
 - `--token-bytes <n>` default `32`
+- `--open-view <route>` optional route to launch directly in GUI (for focused flows)
+- `--view-only` optional focused shell mode: only target view is shown, with a Done/Close action
+- `--view-param <key=value>` optional repeated launch values used to prefill GUI form inputs
 - `--tls-cert <file>` optional (when used with `--tls-key`)
 - `--tls-key <file>` optional (when used with `--tls-cert`)
 - `--read-only` disables all mutating operations (403) via embedded Bus API
@@ -285,6 +288,12 @@ The UI provides primary navigation:
 - Validate
 
 Views that depend on a module backend are hidden or shown as “unavailable” when that backend is not enabled.
+
+### Focused form-launch mode
+
+When `serve` is started with `--open-view`, the launch URL includes the requested hash route. When `--view-only` is used, Bus Books renders a focused shell that hides surrounding navigation/chrome and shows a Done/Close affordance for short user-input sessions. Repeated `--view-param key=value` values are passed as route query parameters and applied as initial GUI field values where matching form fields exist.
+
+This mode is intended for script-assisted user input collection (including `.bus` driven workflows) where automation needs a deterministic GUI handoff for one specific task, such as collecting bank transaction details before continuing the scripted flow.
 
 ### Dashboard
 

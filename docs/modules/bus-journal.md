@@ -20,28 +20,51 @@ description: bus journal maintains the authoritative ledger as append-only journ
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus journal` maintains the authoritative ledger as append-only journal entries. It enforces balanced debits and credits and respects period close and lock boundaries. Account names in `--debit` and `--credit` must exist in the workspace [chart of accounts](../master-data/chart-of-accounts/index) (maintained by [bus accounts](./bus-accounts)); postings to closed or locked periods are rejected (period state is maintained by [bus period](./bus-period)). Other modules post into the journal; this CLI adds entries and reports balances.
+Command names follow [CLI command naming](../cli/command-naming). `bus journal` maintains the authoritative ledger as append-only journal entries.
+
+It enforces balanced debits/credits and respects period close/lock boundaries.
+
+Account names in `--debit` and `--credit` must exist in the workspace [chart of accounts](../master-data/chart-of-accounts/index) (maintained by [bus accounts](./bus-accounts)).
+
+Postings to closed or locked periods are rejected (period state comes from [bus period](./bus-period)).
+
+Other modules post into the journal; this CLI adds entries and reports balances.
 
 ### Commands
 
-- `init` creates the journal index and baseline period datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` appends a balanced transaction (one or more debit and credit lines). Optional `--source-id <key>` records source identity; with `--if-missing`, add is a no-op when a posting with that source identity already exists (idempotent add). For replay-scale streams, `add --bulk-in <file|->` reads a JSON array or NDJSON and applies the same validation/idempotency semantics per transaction.
-- `template post` posts a single template-driven entry: predicate in the template file selects the rule; the template defines expense account, VAT rate, VAT account, and bank account; gross amount is split into base + VAT with deterministic rounding. Requires `--template-file <path>`, `--template <id>`, `--date <YYYY-MM-DD>`, and `--gross <amount>`.
-- `template apply` applies templates in batch from a bank CSV (or equivalent): each row is matched to a template by predicate, then the same split and posting logic as `template post` is applied. Requires `--template-file <path>` and input (e.g. bank CSV path or stdin); see template file schema and bank-CSV column expectations below.
-- `balance` prints account balances as of a given date.
-- `classify` supports deterministic bank-driven proposal/apply workflows:
-  - `classify bank` emits proposal rows from bank CSV via rules and/or loan profiles; optional suspense fallback marks unmatched rows as `suspense_fallback` and proposes postings to a configured suspense account.
-  - `classify apply` posts applicable proposal rows with idempotent voucher ids (`bank:<bank_txn_id>`).
-  - `classify suspense-propose` scans posted suspense rows and emits deterministic reclassification proposals (selectors: bank id/date/counterparty/reference/amount).
-  - `classify suspense-apply` posts approved reclassification rows with idempotent voucher ids (`reclass:bank:<bank_txn_id>:<target_account>`); supports dry-run.
+`init` creates the journal index and baseline datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
+
+`add` appends a balanced transaction with one or more debit and credit lines. Optional `--source-id <key>` records source identity, and `--if-missing` makes add idempotent when a posting with the same source identity already exists. For replay-scale streams, `add --bulk-in <file|->` reads JSON array or NDJSON and applies the same validation and idempotency semantics per transaction.
+
+`template post` posts a single template-driven entry. A predicate in the template file selects a rule, then gross amount is split into base plus VAT with deterministic rounding. `template apply` runs the same logic in batch from bank CSV (or equivalent) input.
+
+`balance` prints account balances as of a given date.
+
+`classify` supports deterministic bank-driven proposal and apply flows. `classify bank` emits proposal rows from bank CSV via rules and loan profiles, and can fall back to configured suspense posting for unmatched rows. `classify apply` posts applicable proposal rows with idempotent voucher ids (`bank:<bank_txn_id>`). `classify suspense-propose` scans posted suspense rows and emits deterministic reclassification proposals, and `classify suspense-apply` posts approved reclassifications with ids such as `reclass:bank:<bank_txn_id>:<target_account>`.
 
 ### Options
 
-`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` and `--credit <account>=<amount>`. Optional `--source-id <key>` records source identity; `--if-missing` makes add idempotent (no-op when a posting with that source identity already exists). See [Idempotent posting and source keys](#idempotent-posting-and-source-keys) below. For bulk posting streams, use `--bulk-in <file|->`; accepted input formats are JSON array and NDJSON (one JSON object per line), and stderr prints deterministic summary `bulk add completed: applied=<n> skipped=<n> total=<n>`. `--bulk-in` is mutually exclusive with single-add flags. The `<account>` value is the account code or name as stored in the workspace chart of accounts; use quotes when the name contains spaces. At least one debit and one credit are required for each transaction; total debits must equal total credits. Unknown or invalid account names cause the command to fail. `balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus journal --help`.
+`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` / `--credit <account>=<amount>`.
+
+Optional `--source-id <key>` records source identity. `--if-missing` makes add idempotent (no-op when a posting with the same source identity already exists).
+
+For bulk streams, use `--bulk-in <file|->`. Accepted formats are JSON array and NDJSON (one JSON object per line). Stderr prints deterministic summary: `bulk add completed: applied=<n> skipped=<n> total=<n>`.
+
+`--bulk-in` is mutually exclusive with single-add flags.
+
+At least one debit and one credit are required per transaction, and total debits must equal total credits.
+
+`balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags).
 
 ### Files
 
-Every file owned by `bus journal` includes “journal” or “journals” in the filename. The journal index is `journals.csv` at the repository root; period journal files sit at the workspace root with a date prefix (e.g. `journal-2026.csv`, `journal-2025.csv`), each with a beside-the-table schema (e.g. `journal-2026.schema.json`). The journal index, its schema, and all period journal files live in the workspace root only; the module does not use a subdirectory for journal data. Path resolution for journal data is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)). When validating account names or period boundaries, the journal uses the workspace chart of accounts and period state from [bus accounts](./bus-accounts) and [bus period](./bus-period) respectively. The journal reads the accounts dataset using the same schema semantics as bus-accounts; valid optional schema features in `accounts.schema.json` (for example foreign keys, including self-referencing parent/child relationships) are accepted and must not cause the journal to fail or emit unsupported-schema diagnostics.
+Every file owned by `bus journal` includes `journal` or `journals` in its filename.
+
+The journal index is `journals.csv` at repository root. Period journal files are also at workspace root with date prefixes (for example `journal-2026.csv`) and beside schemas (for example `journal-2026.schema.json`).
+
+The module does not use a journal subdirectory. Path resolution is owned by this module.
+
+When validating accounts or period boundaries, journal uses [bus accounts](./bus-accounts) and [bus period](./bus-period) datasets through module-owned paths/APIs.
 
 ### Examples
 
@@ -64,7 +87,17 @@ bus journal add \
 
 ### Posting templates (VAT split for bank-driven entries)
 
-Posting templates with automatic VAT split are first-class. A template file defines one or more templates: each has an identifier, a predicate (e.g. match on counterparty, reference, or amount sign), and posting rule fields (expense account, VAT rate, VAT account, bank account). Predicate semantics: the first template whose predicate matches the current row (or the single gross amount for `template post`) is used; predicates are evaluated in file order. For `template post`, required flags are `--template-file <path>`, `--template <id>`, `--date <YYYY-MM-DD>`, and `--gross <amount>`. For `template apply`, the input is a bank CSV (or equivalent) whose columns must include the fields referenced by the predicates (e.g. counterparty, reference, amount, date); column names and expected types are defined by the template file schema. The module splits the gross amount into base + VAT by the configured rate, posts balanced lines with deterministic rounding and trace fields, and supports dry-run and optional link to the source bank row. Template file schema (YAML or JSON), predicate syntax, and bank-CSV column expectations are documented in the [module SDD](../sdd/bus-journal) and in the relevant workflow pages.
+Posting templates with automatic VAT split are first-class.
+
+A template file defines one or more templates. Each template has an identifier, a predicate, and posting rule fields (expense account, VAT rate/account, bank account).
+
+The first matching predicate in file order is used.
+
+For `template post`, required flags are `--template-file`, `--template`, `--date`, and `--gross`.
+
+For `template apply`, input is bank CSV (or equivalent) whose columns must satisfy predicate fields.
+
+The module splits gross into base + VAT with deterministic rounding and posts balanced lines with trace fields.
 
 ### Loan-payment classifier (principal/interest split)
 
@@ -85,6 +118,10 @@ journal --help
 
 # same as: bus journal -V
 journal -V
+
+# simple posting + balance check
+journal add --date 2026-01-31 --desc "Bank fee" --debit 6570=12.50 --credit 1910=12.50
+journal balance --as-of 2026-01-31
 ```
 
 
@@ -97,9 +134,7 @@ journal -V
 **Completeness:** 70% — Record-postings and balance steps are journey-complete; init (index+schema only; period files on first add), add by code/name, balance, dry-run, and NFR-JRN-001 closed-period reject are test-verified.
 
 **Use case readiness:**  
-- [Accounting workflow](../workflow/accounting-workflow-overview): 70% — Record-postings and balance steps usable; init, add, balance, dry-run, NFR-JRN-001 verified.  
-- [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — Append path, balance, NFR-JRN-001 verified; audit columns in period CSV.  
-- [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — Posting path ready for payroll export; init, add, balance, closed-period reject verified.
+[Accounting workflow](../workflow/accounting-workflow-overview): 70% — record-postings and balance steps are usable, and init/add/balance/dry-run/NFR-JRN-001 are verified. [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — append path, balances, NFR-JRN-001, and audit columns in period CSV are verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — posting path is ready for payroll export, including init/add/balance and closed-period rejection checks.
 
 **Current:** `tests/e2e_bus_journal.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`, `-vv`), init (index+schema only; period files on first add), idempotent and partial-init, dry-run init/add, add by code and name, balance (TSV, `--as-of`, `-o`, `-q`), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), and missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, `internal/cli/flags_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
 

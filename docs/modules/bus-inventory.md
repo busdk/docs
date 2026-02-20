@@ -14,18 +14,27 @@ description: bus inventory maintains item master data and stock movement ledgers
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus inventory` maintains item master data and stock movement ledgers as schema-validated repository data. It produces valuation outputs for accounting and reporting. Movements are append-only; corrections are new records.
+Command names follow [CLI command naming](../cli/command-naming).
+
+`bus inventory` maintains item master data and stock movement ledgers as schema-validated repository data.
+It produces valuation output for accounting and reporting.
+Movements are append-only; corrections are new records.
 
 ### Commands
 
-- `init` creates the baseline inventory datasets and schemas. If they already exist in full, `init` prints a warning to stderr and exits 0 without changing anything. If they exist only partially, `init` fails with an error and does not modify any file.
-- `add` adds a new inventory item to the item master.
-- `move` appends a stock movement (in, out, or adjust) for an item.
-- `valuation` computes valuation output as of a given date.
+`init` creates the baseline inventory datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
+
+`add` inserts an item into item master data. `move` appends stock movement records (`in`, `out`, or `adjust`). `valuation` computes valuation output as of the selected date.
 
 ### Options
 
-`add` accepts `--item-id`, `--name`, `--unit`, `--valuation-method`, `--inventory-account`, `--cogs-account`, and optional `--desc`, `--sku`. `move` accepts `--item-id`, `--date`, `--qty`, `--direction <in|out|adjust>`, and optional `--unit-cost`, `--desc`, `--voucher`. `valuation` accepts `--as-of <YYYY-MM-DD>` and optional `--item-id`. Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus inventory --help`.
+For `add`, required flags are `--item-id`, `--name`, `--unit`, `--valuation-method`, `--inventory-account`, and `--cogs-account`. Optional flags are `--desc` and `--sku`.
+
+For `move`, required flags are `--item-id`, `--date`, `--qty`, and `--direction <in|out|adjust>`. Optional flags are `--unit-cost`, `--desc`, and `--voucher`.
+
+For `valuation`, `--as-of <YYYY-MM-DD>` is required and `--item-id` is optional.
+
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus inventory --help`.
 
 ### Files
 
@@ -42,6 +51,9 @@ bus inventory add \
   --valuation-method fifo \
   --inventory-account 1460 \
   --cogs-account 4100
+bus inventory move --item-id ITEM-001 --date 2026-01-10 --qty 100 --direction in --unit-cost 2.40
+bus inventory move --item-id ITEM-001 --date 2026-01-20 --qty 35 --direction out
+bus inventory valuation --as-of 2026-01-31 --format tsv --output ./out/inventory-valuation-2026-01.tsv
 ```
 
 ### Exit status
@@ -54,11 +66,14 @@ bus inventory add \
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus inventory --help
-inventory --help
+# same as: bus inventory add --item-id SKU-100 --name "Widget A" --unit pcs --valuation-method fifo --inventory-account 1460 --cogs-account 4100
+inventory add --item-id SKU-100 --name "Widget A" --unit pcs --valuation-method fifo --inventory-account 1460 --cogs-account 4100
 
-# same as: bus inventory -V
-inventory -V
+# same as: bus inventory move --item-id SKU-100 --date 2026-02-15 --qty 20 --direction in --unit-cost 3.10
+inventory move --item-id SKU-100 --date 2026-02-15 --qty 20 --direction in --unit-cost 3.10
+
+# same as: bus inventory valuation --as-of 2026-02-28 --item-id SKU-100 --format json
+inventory valuation --as-of 2026-02-28 --item-id SKU-100 --format json
 ```
 
 
@@ -72,7 +87,8 @@ inventory -V
 
 **Use case readiness:** Inventory valuation and COGS postings: core workflow implemented and test-covered; remaining work focuses on incremental SDD alignment and broader integration confidence.
 
-**Current:** Tests in `internal/app` and `tests/e2e` cover command behavior, global flags, deterministic outputs, and validation diagnostics aligned with current CLI behavior.
+**Current:** Core command behavior, validation diagnostics, deterministic outputs, and global-flag handling are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-inventory](../sdd/bus-inventory).
 
 **Planned next:** Next priorities: further SDD alignment, additional tests, or integration with bus-reports. Root layout, init, add, move, and valuation are implemented and no longer planned.
 

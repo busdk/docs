@@ -22,19 +22,40 @@ Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These 
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus agent` is a thin CLI on top of the BusDK agent runner library. The runner centralizes how external agent runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI) are invoked so that other modules can use a single, deterministic contract for templating, timeout handling, and output capture. This CLI exposes that contract for diagnostics and development: you can see which runtimes are enabled, render a template without running an agent, run an agent with a prompt under explicit timeout and workdir, and format raw agent output for readability. The tool does not execute Git, does not read or write workspace datasets, and does not define workflow semantics; those belong to modules such as [bus dev](./bus-dev), which depend on the agent runner library. All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. Command results go to stdout; diagnostics and progress go to stderr.
+Command names follow [CLI command naming](../cli/command-naming). `bus agent` is a thin CLI on top of the BusDK agent runner library.
+
+The runner centralizes how external runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI) are invoked.
+Modules share one deterministic contract for templating, timeout handling, and output capture.
+
+This CLI exposes that contract for diagnostics and development:
+detect runtimes, render templates, run an agent with explicit timeout/workdir, and format raw output.
+
+The tool does not execute Git, does not read or write workspace datasets, and does not define workflow semantics. Workflow behavior belongs to modules such as [bus dev](./bus-dev).
+
+Paths are resolved relative to the current directory unless you set `-C` / `--chdir`. Command results go to stdout; diagnostics and progress go to stderr.
 
 For a practical `.bus` file that combines `agent` with `dev` and `run` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
-From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the standard runtime set. Codex CLI sign-in works with an active ChatGPT Plus subscription (and other eligible ChatGPT plans), so no API key setup is required for subscription-based access. Gemini and Claude integrations are under active development and are not yet fully verified by end-to-end coverage.
+From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the standard runtime set.
+Gemini and Claude integrations are still in-progress and not yet fully verified by end-to-end coverage.
 
 ### Commands
 
-**`detect`** — List the agent runtimes that are currently available. A runtime is available if its CLI executable is found in PATH and is executable and not disabled by user configuration. Output is one runtime identifier per line, in the same effective order used for automatic default selection (user-configured order if present, otherwise alphabetical by runtime ID), so the first line is always the runtime that would be selected for `bus agent run` when no `--agent` or preference override is set. Use this to verify that at least one runtime is available before running workflow commands in [bus dev](./bus-dev), or to see at a glance which agent would be used by default. With **`--first`** (or **`-1`**), output only that default runtime as a single line; if no runtime is available, the command exits with code 1. Scripts can use `bus agent detect --first` to obtain the default agent ID without parsing the full list.
+**`detect`** — List currently available agent runtimes. A runtime is available when its CLI executable is in `PATH`, executable, and not disabled by configuration.
+
+Output is one runtime ID per line, in the same effective order used for automatic default selection (configured order if present, otherwise alphabetical).
+
+With **`--first`** (or **`-1`**), output only the default runtime. If no runtime is available, exit code is 1.
 
 **`render`** — Render a prompt template with the supplied variables and print the result to stdout. You must supply either `--template <file>` (path to a UTF-8 file containing the template) or `--text <text>` (the template string). Variables are passed with `--var KEY=VALUE`; you can repeat `--var` for multiple keys. Templates use {% raw %}`{{VARIABLE}}`{% endraw %} placeholders. Rendering is deterministic; every placeholder must be supplied. If a required variable is missing or any {% raw %}`{{...}}`{% endraw %} token remains after substitution, the command fails with invalid usage (exit 2) and no external process is run. Use this to test template expansion or to produce a final prompt for inspection before passing it to `bus agent run`.
 
-**`run`** — Run the selected agent runtime with a prompt and stream its output. You must supply either `--prompt <file>` (path to a UTF-8 file whose contents are the prompt) or `--text <text>` (the prompt string). The effective working directory for the agent is the current directory unless you set `--workdir <dir>`. The run is subject to a timeout; use `--timeout <duration>` (e.g. `30s`, `5m`) or rely on the default. Which runtime is used is determined by the resolution order: `--agent`, then `BUS_AGENT`, then `bus-agent.runtime`, then first available in the effective order (see Agent runtimes and installation below). If a configured runtime is disabled, the tool prints a warning and uses the next source. At the start of the run, the tool prints to stderr which agent and model are in use. Output is streamed in a script-safe, non-interactive manner. If the selected runtime is not installed or not in PATH, the command fails with a clear diagnostic and the canonical installation URL for that runtime.
+**`run`** — Run the selected agent runtime with a prompt and stream output.
+
+Supply either `--prompt <file>` or `--text <text>`. Agent working directory defaults to the current directory unless you set `--workdir <dir>`. Timeout comes from `--timeout <duration>` or defaults.
+
+Runtime resolution order is: `--agent`, `BUS_AGENT`, `bus-agent.runtime`, then first available runtime in effective order. If a selected runtime is disabled, the tool warns and continues with the next source.
+
+At start, bus-agent prints the active agent and model to stderr. If the selected runtime is missing from `PATH`, the command exits with a clear diagnostic and installation URL.
 
 **`set`** — Set a bus-agent persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). The CLI provides a dedicated subcommand for each key: **`bus agent set runtime <runtime>`** (e.g. `cursor`, `gemini`), **`bus agent set model <value>`** (default when unset: `auto`), **`bus agent set output-format <ndjson|text>`** (default when unset: `text`), **`bus agent set timeout <duration>`** (e.g. `60m`). Each writes the corresponding key in the table under Preference settings below. Invalid value yields exit 2.
 
@@ -42,45 +63,34 @@ From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the
 
 ### Global flags
 
-These flags apply to all subcommands. They match the [standard global flags](../cli/global-flags) shared by BusDK modules. They can appear in any order before the subcommand. A lone `--` ends flag parsing; any following tokens are passed to the subcommand.
-
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Other flags and arguments are ignored when help is requested.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
-- **`-v`**, **`--verbose`** — Send verbose progress and diagnostics to stderr. You can repeat the flag (e.g. `-vv`) to increase verbosity. Verbose output does not change what is written to stdout or to the file given by `--output`.
-- **`-q`**, **`--quiet`** — Suppress normal command result output. When quiet is set, only errors go to stderr. Exit codes are unchanged. You cannot combine `--quiet` with `--verbose`; doing so is invalid usage (exit 2).
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective working directory. All paths and the agent run directory are resolved from this directory. If it does not exist or is not accessible, the command exits with code 1.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>` instead of stdout. The file is created or truncated. Errors and diagnostics still go to stderr. If both `--output` and `--quiet` are used, quiet wins: no output is written to the file.
-- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. Invalid value is usage error (exit 2).
-- **`--no-color`** — Same as `--color=never`.
-
-Command results (e.g. detect list, rendered prompt, formatted output) are written to stdout. Diagnostics, progress, and agent stream output are written to stderr unless otherwise documented for a subcommand.
+Standard global flags are supported; see [Standard global flags](../cli/global-flags).
+`--quiet` and `--verbose` are mutually exclusive (usage error `2`).
+Normal command results go to stdout (or `--output`), diagnostics to stderr.
 
 ### Project instructions (AGENTS.md)
 
-The agent runner treats **AGENTS.md** at the repository root as the canonical, vendor-neutral source of project instructions for each run. Instruction discovery follows a root-to-cwd layering model; where a runtime supports directory-scoped instructions, the one closest to the current working directory takes precedence for that scope. The runner prefers per-invocation flags and environment variables to enable AGENTS.md; it uses repo-local file creation or merge only when necessary, and when it does, it never removes or rewrites your existing content — changes are additive only, with clearly marked Bus-owned blocks. The only exception is the legacy Cursor rule file at `.cursor/rules/{bus-NAME}.mdc`, which may be replaced or migrated as part of standardizing on AGENTS.md. If AGENTS.md is missing or too large for the runtime's limits, the run still proceeds with the prompt you supplied and any instruction content that fits; the runner does not fail solely because AGENTS.md is absent or over limit. The full contract (per-runtime knobs, allowed repo-local files, and fallback behavior) is defined in the [module SDD](../sdd/bus-agent); the list below summarizes how each runtime is configured.
-
-**Codex.** The child process runs with its working directory set to the project (repo root or your chosen workdir). `CODEX_HOME` is set to a repo-local directory so no global state is used or mutated; all state and caches stay inside the repository. AGENTS.md is discovered natively by Codex when the workdir is the repo root; no repo-local file changes are required.
-
-**Cursor.** The agent is invoked from the repository root so Cursor's native AGENTS.md loading applies. No global Cursor configuration is edited. When stricter enforcement is needed, Bus may add Bus-owned rule files under `.cursor/rules/` in an additive way only; existing user rules are not touched. The legacy file `.cursor/rules/{bus-NAME}.mdc` may be replaced or migrated (e.g. merged into AGENTS.md and removed) as part of standardization.
-
-**Gemini CLI.** Repo-local `.gemini/settings.json` can be added or merged to configure context discovery to prefer or include AGENTS.md; `.geminiignore` controls scan scope. Merges are additive with Bus-owned markers; your existing content is never removed or rewritten. Per-run environment or flag-based system-instruction injection is used only as a fallback when repo-local config is undesirable.
-
-**Claude Code.** The preferred approach is to inject AGENTS.md via command-line system prompt append on each run (with safeguards for command length and size). If that is not possible, a last-resort compatibility shim is to create or append a clearly marked Bus-owned block in `CLAUDE.md` that imports or references `@AGENTS.md`; existing CLAUDE.md content is never modified or removed.
+The runner treats root `AGENTS.md` as canonical project instruction source.
+It uses runtime-specific mechanisms to load those instructions with additive, non-destructive behavior.
+If `AGENTS.md` is missing or too large, execution still proceeds with best-effort prompt content.
+Per-runtime implementation details are documented in [Module SDD: bus-agent](../sdd/bus-agent).
 
 ### Agent runtimes and installation
 
-The agent runner supports four runtimes: **Gemini CLI**, **Cursor CLI**, **Claude CLI**, and **Codex**. From **BusDK v0.0.26** onward, Codex is part of this supported runtime set. Each is a separate external CLI; Bus Agent does not embed provider SDKs or call model APIs directly. When a selected runtime is not installed or not in PATH, the tool reports that on stderr and directs you to the canonical installation reference for that runtime. Those references are:
+Supported runtimes: **Gemini CLI**, **Cursor CLI**, **Claude CLI**, and **Codex**.
+Each runtime is an external CLI binary; bus-agent does not embed provider SDKs.
+When selected runtime is missing from `PATH`, command exits with clear install guidance.
 
-- **Gemini CLI** — https://geminicli.com/
-- **Cursor CLI** — https://cursor.com/docs/cli/overview
-- **Claude CLI** — https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started
-- **Codex** — https://developers.openai.com/codex/cli/ (sign in with ChatGPT; ChatGPT Plus is supported)
+Install references: Gemini CLI (<https://geminicli.com/>), Cursor CLI (<https://cursor.com/docs/cli/overview>), Claude CLI (<https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started>), and Codex CLI (<https://developers.openai.com/codex/cli/>).
 
-Runtime selection for `bus agent run` uses this order (same logic as [bus dev](./bus-dev) when it delegates to the bus-agent library, but without bus-dev-only sources): (1) **`--agent`** for that invocation, (2) **`BUS_AGENT`** (session default), (3) **`bus-agent.runtime`** from [bus-preferences](./bus-preferences), (4) **first available** runtime in the effective order. When multiple agents are available and no earlier source is set, the order is alphabetical by runtime ID unless you configure a different order; you can also disable or enable specific agents (see Agent order and enable/disable below). At any step, if the configured runtime is **disabled** by user configuration, the tool prints a warning to stderr and continues with the next source instead of selecting it. Invalid runtime names produce a usage error (exit 2).
+Runtime selection order for `bus agent run`:
+`--agent`, then `BUS_AGENT`, then `bus-agent.runtime` from [bus-preferences](./bus-preferences), then the first available runtime in effective order.
+
+Invalid runtime names return usage error (`2`).
 
 ### Preference settings (bus-preferences)
 
-Default settings for the agent runner are read and written through the [bus-preferences](./bus-preferences) Go library (user-level preferences file). Session default can also be set with **`BUS_AGENT`** (e.g. `export BUS_AGENT=gemini`); it is consulted after `--agent` and before persistent preferences. The CLI uses these values when resolving the runtime and building run config for `run` when you do not pass `--agent` or a session env.
+Default settings are read/written through the [bus-preferences](./bus-preferences) Go library.
+Session default can also be set with `BUS_AGENT`.
 
 | Key | Description |
 |-----|-------------|
@@ -89,7 +99,8 @@ Default settings for the agent runner are read and written through the [bus-pref
 | `bus-agent.output_format` | Default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable; NDJSON formatted to text). When unset, the default is `text`. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. |
 | `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. |
 
-Set preferences with **`bus agent set runtime <runtime>`**, **`bus agent set model <value>`**, **`bus agent set output-format <value>`**, or **`bus agent set timeout <duration>`** (e.g. `bus agent set runtime gemini`), or with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). Inspect with `bus preferences get bus-agent.runtime`. The bus-agent CLI uses the bus-preferences Go library directly; it does not shell out to `bus preferences`. The bus-agent library exposes helpers such as `GetDefaultRuntime`, `SetDefaultRuntime`, `GetDefaultRunConfig`, and `SetDefault*` so that callers and the CLI can read and write these values without touching the preferences file path.
+Set preferences with `bus agent set ...` subcommands or with [bus preferences](./bus-preferences).
+Inspect current value with `bus preferences get <key>`.
 
 ### Agent order and enable/disable
 
@@ -102,6 +113,13 @@ You can change which agent is used first by configuring the order: supply an ord
 ```bash
 bus agent detect --first
 bus agent set runtime codex
+bus agent detect
+bus agent render --text "Module={{MODULE}} Ticket={{TICKET}}" \
+  --var MODULE=bus-books \
+  --var TICKET=FR-1234
+bus agent run --agent codex --timeout 15m \
+  --workdir ./bus-books \
+  --text "Review PLAN.md and propose the next three tasks."
 ```
 
 ### Files
@@ -110,9 +128,7 @@ bus agent set runtime codex
 
 ### Exit status and errors
 
-- **0** — Success.
-- **1** — Execution failure: agent run failed, timeout exceeded, selected runtime not found or not executable, could not execute the agent CLI, or no runtime available when using `detect --first`.
-- **2** — Invalid usage: unknown command or flag, missing required argument (e.g. `--template` or `--text` for render), unresolved template placeholder, invalid runtime name, invalid `set` value, or invalid `--timeout` or path.
+Exit code `0` means success. Exit code `1` means execution failure, such as agent run failure, timeout, missing runtime binary, or no runtime available for `detect --first`. Exit code `2` means invalid usage, such as unknown command/flag, missing required argument, unresolved template placeholder, invalid runtime name, invalid `set` value, or invalid timeout/path.
 
 Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% endraw %}) occur before any external execution and always result in exit 2. When the selected runtime is missing, the tool exits with code 1 and includes the canonical installation URL for that runtime in the diagnostic.
 
@@ -122,11 +138,15 @@ Template rendering failures (missing variable, unresolved {% raw %}`{{...}}`{% e
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus agent --help
-agent --help
+# runtime diagnostics and explicit run
+agent detect --first
+agent run --agent codex --timeout 15m --workdir ./bus-books --text "Summarize open TODO items."
 
-# same as: bus agent -V
-agent -V
+# render a deterministic prompt from inline variables
+agent render --text "Module={{MODULE}} Ticket={{TICKET}}" --var MODULE=bus-books --var TICKET=FR-1234
+
+# set default runtime for future runs
+agent set runtime codex
 ```
 
 
@@ -140,7 +160,8 @@ agent -V
 
 **Use case readiness:** Developer module workflow with Cursor CLI: 40% — detect, render, set, run with Cursor stub, and resolution order (prefs, BUS_AGENT, --agent) verified by e2e; user can select runtime and run a prompt. Spreadsheet workbooks: 40% — optional agent chat in [bus-sheets](./bus-sheets) not verified by tests.
 
-**Current:** E2e `tests/e2e_bus_agent.sh` proves help, version, subcommand help, global flags (color, format, quiet+verbose, chdir, output), detect (empty PATH, --first no-runtime exit 1, resolution order), render (template+vars, -C, -o, quiet no output file, unresolved exit 2), set (invalid exit 2, valid with temp prefs), run (no runtime exit 1 with install message, run --agent cursor with stub), and format (cursor NDJSON→text). Unit tests in `internal/cli/flags_test.go`, `internal/cli/run_test.go`, `internal/template/render_test.go`, `internal/runner/run_test.go`, `internal/runner/detect_test.go`, `internal/runner/resolve_test.go`, `agent/prefs_test.go`, `agent/lib_test.go`, `internal/format/format_test.go` cover flags, template, resolve/detect, runner, prefs, and formatter. No e2e with real agent CLI.
+**Current:** detect/set/render/run/format and global-flag behavior are test-verified.
+Detailed test matrix and implementation notes are maintained in [Module SDD: bus-agent](../sdd/bus-agent).
 
 **Planned next:** Agent order and enable/disable (FR-AGT-005a); AGENTS.md discovery and per-runtime adapters; fallback when AGENTS.md missing or over-size (PLAN.md). Advances developer workflow use case.
 

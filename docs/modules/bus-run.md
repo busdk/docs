@@ -9,9 +9,13 @@ description: "bus run executes user-defined prompts, pipelines, and scripts with
 
 `bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | list | pipeline | action | script ) [options]`
 
-**Run:** `bus run <token> [<token> ...]` — Execute one or more user-defined prompt actions, script actions, or pipeline names. Tokens are resolved and pipeline names are expanded to a flat sequence of prompt and script steps; the final sequence is then normalized by merging repeated steps so each step name appears once in first-appearance order. The normalized sequence runs in order and the run stops on first failure. All agent execution uses the [bus-agent](./bus-agent) library; there are no built-in developer operations (no plan, work, spec, e2e, commit, or init).
+**Run:** `bus run <token> [<token> ...]` — Execute one or more user-defined prompt actions, script actions, or pipeline names.
 
-**Management:** **`set`** — persist bus-run defaults (agent, model, output-format, timeout) via the [bus-preferences](./bus-preferences) library. **`context`** — print the prompt-variable catalog and resolved values (one `KEY=VALUE` per line, sorted by key) for prompt and script authors; uses the effective working directory to build the catalog (no Git required). **`list`** — print every runnable token (pipelines, prompt actions, script actions) and what each executes, without running any step; requires the project root (exit 1 when inaccessible). **`pipeline`** — define, list, or preview pipelines (directory-local `.bus/run/<NAME>.yml` or preference `bus-run.pipeline.<name>`). **`action`** — define or list directory-local prompt actions (`.bus/run/<NAME>.txt`). **`script`** — define or list directory-local script actions (`.bus/run/<NAME>.sh`, `.bat`, or `.ps1`).
+Tokens are resolved and pipeline names are expanded to a flat step sequence. The final sequence is normalized by merging repeated step names in first-appearance order, then run with stop-on-first-failure.
+
+All agent execution uses the [bus-agent](./bus-agent) library. There are no built-in developer operations (no plan, work, spec, e2e, commit, or init).
+
+Management subcommands keep defaults and local definitions organized. Use **`set`** to persist bus-run defaults (agent, model, output-format, timeout) via [bus-preferences](./bus-preferences). Use **`context`** to print the resolved prompt-variable catalog as sorted `KEY=VALUE` lines. Use **`list`** to print runnable tokens and expansions without running steps. Use **`pipeline`** to define, list, or preview pipelines from `.bus/run/<NAME>.yml` or `bus-run.pipeline.<name>`. Use **`action`** for prompt actions in `.bus/run/<NAME>.txt`, and **`script`** for script actions in `.bus/run/<NAME>.sh`, `.bat`, or `.ps1`.
 
 Global **`bus run --help`** shows usage, states that runnable tokens are user-defined only (no built-in operations or pipelines), and directs you to **`bus run list`**, **`bus run pipeline list`**, **`bus run action list`**, and **`bus run script list`** to discover available tokens. No agent or script is run to produce help. **`bus run list`** prints a unified catalog of every runnable token in the current context (directory-local and preference pipelines, prompt actions, script actions) with source and, for pipelines, the normalized expanded step sequence; it does not execute any step.
 
@@ -19,7 +23,15 @@ Directory-local content is under the effective working directory (project root);
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). `bus run` is an end-user module for running your own prompts, pipelines, and scripts. It does not implement developer workflows: there are no built-in operations like plan, work, spec, e2e, triage, stage, or commit, and no dependency on [bus dev](./bus-dev). Agent execution is provided entirely by the [bus-agent](./bus-agent) Go library so that runtime selection, prompt templating, and timeout handling stay consistent across BusDK. The normative design (requirements, token resolution, and catalog) is in the [module SDD](../sdd/bus-run). You define prompts (`.bus/run/<name>.txt`), pipelines (`.bus/run/<name>.yml` or preference `bus-run.pipeline.<name>`), and scripts (`.bus/run/<name>.sh`, `.bat`, or `.ps1`), then run them by name with `bus run <name>` or by chaining multiple tokens in one invocation. Pipelines expand first, then repeated step names in the final sequence are merged so each appears once in first-appearance order, and execution follows that normalized sequence with stop-on-first-failure. The tool uses a per-directory lock so only one run (or directory-writing management) operates on a given directory at a time; a second invocation for the same directory waits until the first exits.
+Command names follow [CLI command naming](../cli/command-naming). `bus run` is an end-user module for running your own prompts, pipelines, and scripts.
+
+It does not implement developer workflows. There are no built-in operations like plan, work, spec, e2e, triage, stage, or commit, and no dependency on [bus dev](./bus-dev).
+
+Agent execution is provided by the [bus-agent](./bus-agent) Go library so runtime selection, prompt templating, and timeout handling stay consistent across BusDK.
+
+You define prompts (`.bus/run/<name>.txt`), pipelines (`.bus/run/<name>.yml` or preference `bus-run.pipeline.<name>`), and scripts (`.bus/run/<name>.sh`, `.bat`, or `.ps1`), then run them by name with `bus run <name>` or by chaining tokens.
+
+For normative behavior and edge cases, see the [module SDD](../sdd/bus-run).
 
 For a practical `.bus` file that combines `run` with `dev` and `agent` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
@@ -39,7 +51,15 @@ From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-a
 
 **`bus run list`** — Print every runnable token available in the current context and what each executes, without running any agent, script, or other step. When the effective working directory does not exist or is not accessible, exit 1 with a clear message (same as **bus run context**). When the project root is accessible, output includes directory-local pipelines (source path and normalized expanded step sequence), directory-local prompt actions (`.bus/run/<NAME>.txt`), directory-local script actions (source and platform variants), and preference pipelines (source key and expanded step sequence). Each entry includes token name, type (pipeline, action prompt, or action script), short description or source, and for pipelines the normalized expanded step sequence. Output format is stable and parseable. Does not take the per-directory lock.
 
-**`bus run pipeline set repo NAME TOKEN...`** — Write or overwrite `.bus/run/NAME.yml` with a YAML sequence of tokens under the project root (effective workdir). Takes the lock. If the project root does not exist or is not writable, exit 1. **`bus run pipeline unset repo NAME`** — Remove `.bus/run/NAME.yml` if present; exit 0 if absent. **`bus run pipeline set prefs NAME TOKEN...`** — Write preference `bus-run.pipeline.NAME` as a JSON array via bus-preferences. **`bus run pipeline unset prefs NAME`** — Remove that preference key if present; exit 0 if absent. **`bus run pipeline list [all|repo|prefs]`** — Print a deterministic listing of pipelines and their source; output lexicographic by name then source. **`bus run pipeline preview TOKEN...`** — Resolve and fully expand tokens, apply the same duplicate-merge normalization used by `bus run <token...>`, print one normalized step name per line to stdout, and exit without executing any prompt or script step.
+**`bus run pipeline set repo NAME TOKEN...`** — Write or overwrite `.bus/run/NAME.yml` under the project root. Takes the lock and exits 1 if the root is missing or not writable.
+
+**`bus run pipeline unset repo NAME`** — Remove `.bus/run/NAME.yml` if present; exit 0 if absent.
+
+**`bus run pipeline set prefs NAME TOKEN...`** and **`bus run pipeline unset prefs NAME`** — Manage preference pipelines under `bus-run.pipeline.NAME`.
+
+**`bus run pipeline list [all|repo|prefs]`** — Print deterministic pipeline listings.
+
+**`bus run pipeline preview TOKEN...`** — Resolve and expand tokens, apply the same normalization as runnable invocations, print normalized step names, and exit without running prompts/scripts.
 
 **`bus run action set NAME`** — Read content from stdin until EOF and write `.bus/run/NAME.txt`; stdin must be non-empty (empty → exit 2). **`bus run action unset NAME`** — Remove `.bus/run/NAME.txt` if present; exit 0 if absent. **`bus run action list`** — Print available directory-local prompt actions (from `.bus/run/`) by name.
 
@@ -55,9 +75,45 @@ User-defined content lives under **`.bus/run/`** at the project root (effective 
 
 **Script action:** **`.bus/run/<name>.sh`** (non-Windows) or **`.bus/run/<name>.bat`** or **`.bus/run/<name>.ps1`** (Windows) runs as a script when you invoke the token `<name>`. On non-Windows the `.sh` file must have at least one execute bit set; otherwise the script action is disabled and invoking the name yields exit 2. On Windows, when both `.bat` and `.ps1` exist for the same name, the tool uses `.ps1`. The tool runs `.sh` via exec of the file path (shebang respected) or a fixed shell; on Windows it runs `.bat` via `cmd.exe /C` and `.ps1` via PowerShell (e.g. `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <path>`). Scripts run with the project root (effective working directory) as the working directory and receive the prompt-variable catalog as environment variables; these override any existing variables of the same name. Use **bus run context** to see the exact KEY=VALUE set your scripts will see.
 
+**Quick start for `.bus/run/`.** In your project root, keep runnable items in `.bus/run/`:
+
+```text
+.bus/run/
+  summarize-plan.txt
+  lint-unix.sh
+  daily-check.yml
+```
+
+Create and use them:
+
+```bash
+cat <<'EOF' | bus run action set summarize-plan
+Summarize open work items for {{PROJECT_NAME}} from {{WORKDIR_ROOT}}.
+EOF
+cat <<'EOF' | bus run script set lint-unix --platform=unix
+#!/usr/bin/env sh
+set -eu
+make check
+EOF
+bus run pipeline set repo daily-check summarize-plan lint-unix
+bus run list
+bus run pipeline preview daily-check
+bus run --agent codex --timeout 20m daily-check
+```
+
+Use `bus run context` to inspect the prompt/script variables that `.txt` and script actions receive.
+
 Name grammar: names must start with a letter and contain only lowercase ASCII letters, digits, hyphens, and underscores. The same name cannot be used for more than one type (e.g. both a prompt and a pipeline); that ambiguity yields exit 2.
 
-**Token resolution.** When you pass one or more tokens to `bus run`, each token is resolved in this order: (1) directory-local prompt (`.bus/run/<name>.txt`), (2) directory-local script (platform-selected: non-Windows uses `.sh`; Windows uses `.ps1` if present, else `.bat`), (3) directory-local pipeline (`.bus/run/<name>.yml`), (4) preference pipeline (`bus-run.pipeline.<name>`). There are no built-in operations or built-in pipelines; unknown tokens and pipeline cycles or expansion limits yield exit 2 before any step runs. After expansion succeeds, bus-run merges repeated step names so each step appears once in first-appearance order; this normalized sequence is what runs and what `pipeline preview` prints. Having `.sh`, `.bat`, and/or `.ps1` for the same name is allowed (one script action, platform-specific variants; on Windows `.ps1` is preferred over `.bat` when both exist).
+**Token resolution.** When you pass tokens to `bus run`, resolution order is:
+1. Directory-local prompt (`.bus/run/<name>.txt`)
+2. Directory-local script (non-Windows `.sh`; Windows `.ps1` if present, else `.bat`)
+3. Directory-local pipeline (`.bus/run/<name>.yml`)
+4. Preference pipeline (`bus-run.pipeline.<name>`)
+
+There are no built-in operations or built-in pipelines. Unknown tokens, cycles, and expansion-limit failures exit 2 before any step runs.
+
+After expansion succeeds, bus-run merges repeated step names in first-appearance order. This normalized sequence is what runs and what `pipeline preview` prints.
 
 Example normalization: `bus run my-step my-step my-step` normalizes to one `my-step` step. `bus run my-pipeline my-pipeline my-pipeline` expands first, then repeated step names in the final sequence are merged so each step runs once.
 
@@ -73,16 +129,15 @@ Example normalization: `bus run my-step my-step my-step` normalizes to one `my-s
 
 ### Global flags
 
-These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). They can appear in any order before the subcommand. A lone `--` ends flag parsing.
+These flags apply to all subcommands and match the [standard global flags](../cli/global-flags). Flags can appear in any order before the subcommand, and a lone `--` ends flag parsing.
 
-- **`-h`**, **`--help`** — Print help to stdout and exit 0. Help shows usage and global flags, states that Bus Run has no built-in operations or pipelines (runnable tokens are user-defined only: prompt actions, script actions, and pipelines under `.bus/run/` or in preferences), and directs you to **`bus run list`**, **`bus run pipeline list`**, **`bus run action list`**, and **`bus run script list`** to discover available tokens. No agent or script is run to produce help.
-- **`-V`**, **`--version`** — Print the tool name and version to stdout and exit 0.
-- **`-v`**, **`--verbose`** — Verbose progress and diagnostics to stderr; repeatable (e.g. `-vv`).
-- **`-q`**, **`--quiet`** — Suppress normal command result output; only errors to stderr. Cannot combine with `--verbose` (exit 2).
-- **`-C <dir>`**, **`--chdir <dir>`** — Use `<dir>` as the effective working directory. If it does not exist or is not accessible, exit 1.
-- **`-o <file>`**, **`--output <file>`** — Redirect normal command output to `<file>`. Errors still go to stderr. If both `--output` and `--quiet` are used, quiet wins.
-- **`--color <mode>`** — Control colored output on stderr. `<mode>` must be `auto`, `always`, or `never`. **`--no-color`** — Same as `--color=never`.
-- **`--agent <runtime>`** — Select the agent runtime for this invocation only. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Overrides the default from `BUS_RUN_AGENT`, `BUS_AGENT`, and persistent preferences.
+`-h` and `--help` print help to stdout and exit 0. Help states that Bus Run has no built-in operations or pipelines and points you to `bus run list`, `bus run pipeline list`, `bus run action list`, and `bus run script list` for discovery. `-V` and `--version` print the tool name and version and exit 0.
+
+`-v` and `--verbose` increase diagnostic output on stderr and can be repeated, for example `-vv`. `-q` and `--quiet` suppress normal results and keep only errors. Quiet and verbose cannot be combined; that is usage error exit 2.
+
+`-C <dir>` and `--chdir <dir>` change the effective working directory. `-o <file>` and `--output <file>` redirect normal output to a file, while diagnostics still go to stderr; if both output and quiet are set, quiet wins. `--color <auto|always|never>` controls color on stderr, and `--no-color` is the same as `--color=never`.
+
+`--agent <runtime>` selects the runtime for this invocation only. Valid values are `cursor`, `codex`, `gemini`, and `claude`. This overrides `BUS_RUN_AGENT`, `BUS_AGENT`, and persistent preference defaults.
 
 ### Agent runtime selection
 
@@ -104,7 +159,20 @@ Preferences that affect `bus run` are stored via the [bus-preferences](./bus-pre
 
 ```bash
 bus run list
+bus run context
 bus run pipeline list
+cat <<'EOF' | bus run action set summarize-plan
+Summarize open work items for {{PROJECT_NAME}} from {{WORKDIR_ROOT}}.
+EOF
+cat <<'EOF' | bus run script set lint-unix --platform=unix
+#!/usr/bin/env sh
+set -eu
+make check
+EOF
+bus run pipeline set repo daily-check summarize-plan lint-unix
+bus run pipeline preview daily-check
+bus run summarize-plan lint-unix
+bus run --agent codex --timeout 20m daily-check
 ```
 
 ### Files
@@ -113,11 +181,11 @@ bus run pipeline list
 
 ### Exit status and errors
 
-- **0** — Success.
-- **1** — Execution failure: agent run failed or timed out, selected agent runtime not found or not executable, script execution failed, no agent available when the automatic default would apply, working-directory lock could not be acquired, or effective working directory does not exist or is not accessible when required.
-- **2** — Invalid usage: unknown token or subcommand, invalid flag, invalid pipeline definition or name, pipeline recursion or expansion limit exceeded, ambiguity (same name in more than one definition), invalid name grammar, empty stdin for **action set**, or disabled script action invoked.
+Exit code `0` means success. Exit code `1` means execution failed, such as agent failure or timeout, missing or non-executable selected runtime, script execution failure, unavailable default runtime, lock-acquisition failure, or inaccessible required working directory.
 
-Deterministic results (list, context, pipeline list, action list, script list) are written to stdout. Diagnostics and errors are written to stderr.
+Exit code `2` means invalid usage, such as unknown tokens or subcommands, invalid flags, invalid pipeline definitions or names, recursion or expansion-limit failures, ambiguous names across definitions, invalid name grammar, empty stdin for `action set`, or invoking a disabled script action.
+
+Deterministic command results (`list`, `context`, `pipeline list`, `action list`, `script list`) go to stdout. Diagnostics and errors go to stderr.
 
 
 ### Using from `.bus` files
@@ -130,6 +198,14 @@ run --help
 
 # same as: bus run -V
 run -V
+
+# inspect project-local definitions in .bus/run/
+run list
+run context
+run pipeline set repo daily-check summarize-plan lint-unix
+run pipeline preview daily-check
+run summarize-plan lint-unix
+run --agent codex --timeout 20m daily-check
 ```
 
 
