@@ -114,6 +114,8 @@ Diagnostics and progress go to stderr. Deterministic command results are written
 
 **`each [--check] [--skip MODULE[,MODULE...]]... TOKEN...`** — Superproject-only helper that dispatches the remaining command as `bus dev TOKEN...` in each child module. Child discovery is deterministic and sourced from a deduplicated union of `.gitmodules` paths and top-level directories containing `.bus/dev`; if `bus` is present it runs first, then remaining discovered child paths are sorted lexicographically. A discovered child is selected when its directory contains a `Makefile` or `.bus/dev`. Before any module command runs, `each` preflights every selected module with the same tokens and fails immediately if any module cannot resolve the token sequence or has a non-runnable script action (Unix script actions require `.sh` with `+x`). The command stops on first failure and returns that exit code. With `--check`, only preflight is run and no module command is executed. Use `--skip` to exclude modules by directory name (`--skip` can be repeated and accepts comma-separated names). `each` itself is not a workflow step and is not expanded by pipelines. Example: `bus dev each --skip bus-docs,bus-legacy stage commit` runs `bus dev stage commit` in each non-skipped child module; `bus dev each --check --skip bus-docs stage commit` validates readiness only for selected modules.
 
+When you run `each`, the remaining tokens are exactly the command that each child module receives. For example, `bus dev each --check --skip bus-docs pipeline preview round` validates that every selected child can resolve `pipeline preview round` without executing a workflow step.
+
 **`set`** — Set a persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). Bus-dev provides a dedicated subcommand for each key that affects agent use:
 
 **`set agent <runtime>`** — Set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library. Only the `bus-dev` namespace is written; no other namespace is modified. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid runtime yields exit 2.
@@ -252,6 +254,12 @@ bus dev action set release-note < .bus/dev/release-note.txt
 bus dev script set verify-local --platform=unix < .bus/dev/verify-local.sh
 bus dev pipeline preview release-ready
 bus dev release-ready
+bus dev each context
+bus dev each --check stage commit
+bus dev each --check --skip bus-docs pipeline preview cycle
+bus dev each --check --skip bus-docs,bus-legacy plan work stage commit
+bus dev each --skip bus-docs context
+bus dev -C .. each --skip bus-docs,bus-legacy stage commit
 bus dev each --check --skip bus-docs stage commit
 bus dev each --skip bus-docs,bus-legacy stage commit
 bus dev each --skip bus-docs --skip bus-legacy stage commit
@@ -301,6 +309,12 @@ dev -C ./bus-books nightly
 
 # run stage+commit in each module except selected ones (superproject)
 dev each --skip bus-docs,bus-legacy stage commit
+
+# validate each child module can resolve and run a full cycle without executing it
+dev each --check --skip bus-docs,bus-legacy plan work stage commit
+
+# run from a different directory by setting the superproject root explicitly
+dev -C .. each --skip bus-docs context
 ```
 
 
