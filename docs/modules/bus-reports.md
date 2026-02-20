@@ -13,6 +13,7 @@ description: bus reports computes financial reports from journal and reference d
 `bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports parity [options] [-C <dir>] [global flags]`  
 `bus reports journal-gap [options] [-C <dir>] [global flags]`  
+`bus reports compliance-checklist --period <YYYY|YYYY-MM|YYYYQn> [--format <tsv|csv|json|text>] [-C <dir>] [global flags]`  
 `bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
@@ -28,6 +29,7 @@ Migration-quality reporting is implemented: `bus reports parity`, `bus reports j
 - `profit-and-loss` prints profit and loss for a period.
 - `balance-sheet` prints balance sheet as of a date.
 - `parity` and `journal-gap` emit deterministic parity or gap result sets for use with [bus-validate](./bus-validate) threshold and CI behavior.
+- `compliance-checklist` emits a legal-form-aware Finnish compliance checklist/report for the selected period (`required`, `conditionally_required`, `not_applicable`) using workspace profile fields in `datapackage.json`.
 - `journal-coverage` emits a deterministic monthly comparison between imported operational totals and non-opening journal activity.
 
 ### Finnish statutory financial statements
