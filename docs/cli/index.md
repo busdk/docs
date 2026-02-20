@@ -15,6 +15,7 @@ This section is split into **single-concept** documents:
 - [Minimum required command surface (end-to-end workflow)](./minimum-command-surface)
 - [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics)
 - [Non-interactive use and scripting](./interactive-and-scripting-parity)
+- [`.bus` script files (writing and execution guide)](./bus-script-files)
 - [Reporting and query commands](./reporting-and-queries)
 - [Validation and safety checks](./validation-and-safety-checks)
 

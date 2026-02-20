@@ -1,65 +1,138 @@
 ---
-title: bus — top-level CLI dispatcher
-description: The bus command is the single entrypoint that invokes bus-<command> executables; run bus &lt;command&gt; [args...] to use any module.
+title: bus — dispatcher and `.bus` command-file runner
+description: Use bus as the single entrypoint for modules and to execute deterministic .bus command files with global syntax preflight.
 ---
 
-## `bus` — top-level CLI dispatcher for BusDK
+## `bus` — dispatcher for modules and `.bus` files
 
 ### Synopsis
 
-`bus [<command> [args...]]`
+```bash
+bus [<command> [args...]]
+bus [--check] [--transaction <provider>] [--scope <scope>] [--trace] <file.bus> [<file2.bus> ...]
+./file.bus
+```
 
-With no arguments, `bus` prints usage and available commands to stderr and exits with code 2. With one or more arguments, the first argument is the **command** (subcommand); the dispatcher runs the executable `bus-<command>` from PATH and passes any remaining arguments to it. Standard input, output, and error and the environment are passed through unchanged. The exit code of the child process is the exit code of `bus`.
+Use `bus` in two modes:
+
+- Normal dispatch: `bus <module> [args...]` calls `bus-<module>` from PATH.
+- Busfile mode: `bus <file>.bus [...]` executes one or more `.bus` command files.
 
 ### Description
 
-Command names follow [CLI command naming](../cli/command-naming). The `bus` binary does not implement domain logic. It delegates every invocation to a module binary: `bus init` runs `bus-init`, `bus accounts add` runs `bus-accounts add`, and so on. All modules are invoked the same way: ensure the `bus` and `bus-<module>` binaries are on your PATH (for example by running `make install` in the BusDK superproject and adding the install directory to PATH), then run `bus <module> [subcommand] [args...]`.
+`bus` is the single CLI entrypoint for BusDK. It does not implement accounting logic itself; it routes commands to module CLIs (`bus-journal`, `bus-bank`, and so on), and it can execute deterministic `.bus` files.
 
-When you run `bus` with no arguments, the dispatcher prints a short usage line and a list of available commands (discovered by scanning PATH for `bus-*` executables) and exits with code 2. When you run `bus <command>` and `bus-<command>` is not found on PATH, the dispatcher prints an error that includes the expected executable name and the same usage and command list, then exits with code 127. For successful invocations, the dispatcher does not consume or modify stdout or stderr; all output comes from the module binary.
+When running busfiles, `bus` always does a full syntax preflight across all provided files before executing any command. If preflight fails, nothing is executed.
 
-There are no global flags consumed by the dispatcher itself. Flags and arguments are passed through to the module; see each module’s page (e.g. [bus init](./bus-init), [bus config](./bus-config)) for the flags and subcommands that module supports.
+For a step-by-step authoring guide, see [`.bus` script files (writing and execution guide)](../cli/bus-script-files).
 
-### Commands
+This feature is fully open source under the MIT license, and source code is already available.
 
-The first argument to `bus` is always the command (module) name. The set of available commands is determined at runtime by the executables named `bus-<command>` found on PATH. Typical commands include `init`, `config`, `accounts`, `journal`, `vat`, `reports`, and others; run `bus` with no arguments to see the full list for your installation.
+### Normal dispatch
+
+- `bus <module> <args...>` dispatches to `bus-<module>`.
+- Example: `bus journal add ...` runs `bus-journal add ...`.
+- `bus run ...` is treated like any other module dispatch target.
+
+### Busfile mode
+
+A path is treated as a busfile when:
+
+- it ends with `.bus`, or
+- it is executable and starts with `#!/usr/bin/bus` or `#!/usr/bin/env bus`
+
+Busfile line rules:
+
+- Blank lines are ignored.
+- Lines whose first non-whitespace character is `#` are comments.
+- Lines ending with `.bus` are treated as nested busfile includes.
+- Other lines are parsed as one command line using shell-like quoting.
+- Variable expansion, command substitution, pipes/redirection, and `;` separators are not interpreted.
+
+### Busfile options
+
+These flags are interpreted only in busfile mode:
+
+- `--check`: preflight (and optional data validation) only; do not apply changes.
+- `--transaction <provider>`: `none` (default), `git`, `snapshot`, or `copy`.
+- `--scope <scope>`: `file` (default) or `batch`.
+- `--trace`: print `file:line` command trace before execution.
+
+### Execution model
+
+1. Global syntax preflight: read/tokenize all provided busfiles first.
+2. Optional data validation (workspace/module support dependent).
+3. Apply in order with fail-fast semantics.
+
+Scopes:
+
+- `file` scope (default): each file is applied independently after global preflight.
+- `batch` scope: all files are one apply unit (all-or-nothing only if provider supports it).
+
+### Exit status
+
+- **0** — Success.
+- **1** — Command execution failed.
+- **2** — Usage error (invalid flags, missing file, or no subcommand in normal dispatch usage).
+- **65** — Busfile syntax/tokenization error.
+- **127** — Missing subcommand in normal dispatch mode (`bus-<command>` not found on PATH).
+
+If a dispatched module returns a specific non-zero code, `bus` returns that code.
 
 ### Examples
+
+Normal dispatch:
 
 ```bash
 bus init all
 bus accounts list
+bus journal add --date 2024-02-29 --desc "Example" --debit 1910=10 --credit 3000=10
 ```
 
-### Exit status
+Single busfile:
 
-- **0** — The invoked module completed successfully (child exit 0).
-- **1** — The invoked module failed or the dispatcher could not run it (e.g. execution error).
-- **2** — Invalid usage: no arguments (no subcommand supplied). Usage and available commands are printed to stderr.
-- **127** — Missing subcommand: the requested `bus-<command>` executable was not found on PATH. An error message, usage, and available commands are printed to stderr.
+```bus
+#!/usr/bin/env bus
 
-Any other non-zero exit code is the exit code returned by the module binary (e.g. 2 for usage errors in the module).
+# 2024-02-29 Bank erp-bank-26246
+bank add transactions --set bank_txn_id=erp-bank-26246 --set import_id=erp-bank-2024 --set booked_date=2024-02-29 --set value_date=2024-02-29 --set amount=-861.6800000000 --set currency=EUR --set counterparty_name='Qred Visa' --set counterparty_iban='' --set reference='411050319' --set message='700 / TILISIIRTO / 240229593619234599' --set end_to_end_id=erp-e2e-26246 --set source_id='bank_row:26246'
 
-### Development state
+journal add --date 2024-02-29 --desc 'Bank erp-bank-26246 Qred Visa lyhennys' --debit 2949=861.68 --credit 1910=861.68 --source-id bank_row:26246:journal:1
+```
 
-**Value promise:** Single entrypoint that delegates to `bus-<module>` binaries so users can run one command (`bus <module> …`) to set up or use any module without knowing individual binary names.
+Run monthly files directly:
 
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (dispatcher for all workflow steps).
+```bash
+bus 2024-01.bus 2024-02.bus 2024-03.bus
+```
 
-**Completeness:** 50% (Primary journey) — no-args and missing-subcommand behavior verified by unit tests; successful dispatch and exit-code pass-through tested. `bus help` when bus-help is missing is not yet implemented.
+Example month runner file:
 
-**Use case readiness:** Accounting workflow: 50% — dispatch and exit codes verified; e2e for no-args and successful dispatch would raise confidence.
+```bus
+#!/usr/bin/env bus
 
-**Current:** With no arguments the dispatcher prints usage and available commands and exits 2 (`internal/dispatch/run_test.go`). When the subcommand is missing or not on PATH it exits 127 and reports the missing command. Successful delegation and exit-code pass-through are covered by the same tests.
+2024-01.bus
+2024-02.bus
+2024-03.bus
+```
 
-**Planned next:** When the first argument is `help` and `bus-help` is not on PATH, show usage and available commands then exit 2; add e2e tests for no-args, missing subcommand, and successful dispatch.
+Check-only and trace:
 
-**Blockers:** None known.
+```bash
+bus --check --trace 2024-01.bus 2024-02.bus 2024-03.bus
+```
 
-**Depends on:** None.
+Force transaction settings for one run:
 
-**Used by:** Every [module](./index) is invoked through it when users run `bus <module> …` (e.g. `bus init`, `bus accounts add`).
+```bash
+bus --transaction git --scope batch 2024-01.bus 2024-02.bus 2024-03.bus
+```
 
-See [Development status](../implementation/development-status).
+### Notes
+
+- Atomicity is configurable. Default provider is `none` (fast, no workspace-level rollback).
+- Git-based atomicity is optional, not required.
+- Prefer `.bus` extension for deterministic recognition.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -72,6 +145,6 @@ See [Development status](../implementation/development-status).
 ### Sources
 
 - [Module SDD: bus (dispatcher)](../sdd/bus)
+- [`.bus` script files (writing and execution guide)](../cli/bus-script-files)
 - [CLI command structure](../cli/command-structure)
 - [Standard global flags](../cli/global-flags)
-- [Development status](../implementation/development-status)

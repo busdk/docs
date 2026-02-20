@@ -203,6 +203,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 
 - [CLI tooling (index)](cli/index)
 - [Standard global flags](cli/global-flags)
+- [`.bus` script files (writing and execution guide)](cli/bus-script-files)
 - [CLI command naming](cli/command-naming)
 - [Required command surface](cli/minimum-command-surface)
 - [Validation and safety checks](cli/validation-and-safety-checks)
