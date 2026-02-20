@@ -115,3 +115,4 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-journal](../sdd/bus-journal)
 - [Layout: Journal area](../layout/journal-area)
 - [Design: Double-entry ledger](../design-goals/double-entry-ledger)
+- [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

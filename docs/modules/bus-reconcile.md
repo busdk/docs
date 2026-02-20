@@ -111,3 +111,4 @@ See [Development status](../implementation/development-status).
 - [Workflow: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
 - [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

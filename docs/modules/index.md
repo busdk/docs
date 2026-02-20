@@ -62,4 +62,6 @@ Each module that owns workspace data defines where its data files live. Today th
 - [Modules (SDD)](../sdd/modules)
 - [Independent modules](../architecture/independent-modules)
 - [Modularity](../design-goals/modularity)
+- [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements)
+- [Finnish balance sheet and income statement regulation](../compliance/fi-balance-sheet-and-income-statement-regulation)
 - [OpenAI Help Center: Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)

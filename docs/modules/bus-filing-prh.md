@@ -70,4 +70,4 @@ See [Development status](../implementation/development-status).
 - [Master data: Documents (evidence)](../master-data/documents/index)
 - [Module SDD: bus-filing-prh](../sdd/bus-filing-prh)
 - [Compliance: Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
-
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

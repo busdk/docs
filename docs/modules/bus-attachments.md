@@ -82,3 +82,4 @@ See [Development status](../implementation/development-status).
 - [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
 - [Module SDD: bus-attachments](../sdd/bus-attachments)
 - [Attachment storage: Invoice PDF storage](../layout/invoice-pdf-storage)
+- [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

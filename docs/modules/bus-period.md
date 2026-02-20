@@ -125,3 +125,5 @@ See [Development status](../implementation/development-status).
 - [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
 - [Module SDD: bus-period](../sdd/bus-period)
 - [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

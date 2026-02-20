@@ -157,3 +157,5 @@ See [Development status](../implementation/development-status).
 - [bus-agent SDD](../sdd/bus-agent)
 - [Standard global flags](../cli/global-flags)
 - [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements)
+- [Finnish WebView compliance and audit UX](../implementation/fi-webview-compliance-and-audit-ux)
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

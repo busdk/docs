@@ -133,3 +133,4 @@ See [Development status](../implementation/development-status).
 - [Workflow: Create a sales invoice](../workflow/create-sales-invoice)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
 - [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

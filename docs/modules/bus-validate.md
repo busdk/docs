@@ -90,4 +90,5 @@ See [Development status](../implementation/development-status).
 - [Architecture: Shared validation layer](../architecture/shared-validation-layer)
 - [CLI: Validation and safety checks](../cli/validation-and-safety-checks)
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
-
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)
+- [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

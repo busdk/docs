@@ -109,3 +109,5 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-vat](../sdd/bus-vat)
 - [Layout: VAT area](../layout/vat-area)
 - [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

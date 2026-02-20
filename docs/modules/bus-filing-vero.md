@@ -103,4 +103,4 @@ See [Development status](../implementation/development-status).
 - [Master data: Purchase invoices](../master-data/purchase-invoices/index)
 - [Module SDD: bus-filing-vero](../sdd/bus-filing-vero)
 - [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
-
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

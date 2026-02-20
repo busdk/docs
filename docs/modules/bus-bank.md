@@ -96,3 +96,4 @@ See [Development status](../implementation/development-status).
 - [Workflow context: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
 - [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

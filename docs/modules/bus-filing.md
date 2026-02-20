@@ -79,4 +79,5 @@ See [Development status](../implementation/development-status).
 - [Module SDD: bus-filing](../sdd/bus-filing)
 - [Compliance: Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 - [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
-
+- [Finnish balance sheet and income statement regulation](../compliance/fi-balance-sheet-and-income-statement-regulation)
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
