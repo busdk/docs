@@ -25,6 +25,7 @@ Path accessors MUST be designed so that future dynamic configuration is possible
 - [`bus data`](./bus-data): Tabular data layer: schema-validated dataset I/O and validation for BusDK workspaces (CSV + JSON Table Schema), providing a Go library (and a thin 'bus data ...' CLI) for deterministic CRUD-style table and schema handling, including mechanical import-profile parsing and execution helpers used by domain modules.
 - [`bus dev`](./bus-dev): Developer-only companion: centralizes workflow logic for BusDK module repositories (commit, work, spec, e2e); operates on source repositories and developer workflows, not on accounting datasets.
 - [`bus run`](./bus-run): End-user runner for user-defined prompts, pipelines, and scripts with agentic execution via the bus-agent library; no built-in developer workflows and no dependency on bus-dev.
+- [`bus shell`](./bus-shell): Interactive and one-shot shell wrapper that executes BusDK commands through the `bus` dispatcher.
 - [`bus books`](./bus-books): Local bookkeeping web UI for end users; accounting screens (journal, periods, VAT, bank, invoices, attachments) over workspace; embeds Bus API.
 - [`bus bfl`](./bus-bfl): Defines the deterministic formula language used for computed fields; end users interact with it through schema metadata, validation, and projections rather than a dedicated CLI.
 - [`bus accounts`](./bus-accounts): Maintains the chart of accounts as schema-validated CSV datasets used as shared reference data across the workspace.
