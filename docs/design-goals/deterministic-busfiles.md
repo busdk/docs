@@ -1,6 +1,6 @@
 ---
-title: Deterministic `.bus` command files
-description: `.bus` files are deterministic, reviewable command batches with mandatory syntax preflight before execution.
+title: "Deterministic `.bus` command files"
+description: "`.bus` files are deterministic, reviewable command batches with mandatory syntax preflight before execution."
 ---
 
 ## Deterministic `.bus` command files

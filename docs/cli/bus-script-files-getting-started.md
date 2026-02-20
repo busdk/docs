@@ -1,6 +1,6 @@
 ---
-title: `.bus` files — getting started step by step
-description: A simple step-by-step guide for first-time users to create, check, and run .bus files with the bus dispatcher.
+title: "`.bus` files — getting started step by step"
+description: "A simple step-by-step guide for first-time users to create, check, and run .bus files with the bus dispatcher."
 ---
 
 ## `.bus` files — first run

@@ -1,6 +1,6 @@
 ---
-title: `.bus` getting started — multiple commands together
-description: Step-by-step guide to run multiple BusDK module commands in one .bus file, including a starter flow for bus-dev, bus-agent, and bus-run.
+title: "`.bus` getting started — multiple commands together"
+description: "Step-by-step guide to run multiple BusDK module commands in one .bus file, including a starter flow for bus-dev, bus-agent, and bus-run."
 ---
 
 ## `.bus` getting started with multiple commands
