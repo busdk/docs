@@ -37,6 +37,8 @@
           url: /implementation/development-status#orphan-modules
     - label: Regulated report PDFs (TASE, tuloslaskelma)
       url: /implementation/regulated-report-pdfs
+    - label: Finnish WebView UI requirements
+      url: /implementation/fi-webview-accounting-ui-requirements
     - label: Cost summary
       url: /implementation/cost-summary
 
@@ -209,5 +211,13 @@
   links:
     - label: Finnish bookkeeping and tax-audit
       url: /compliance/fi-bookkeeping-and-tax-audit
+    - label: Finnish balance sheet and income statement regulation
+      url: /compliance/fi-balance-sheet-and-income-statement-regulation
+    - label: Finnish closing deadlines and legal milestones
+      url: /compliance/fi-closing-deadlines-and-legal-milestones
+    - label: Finnish closing checklist and reconciliations
+      url: /compliance/fi-closing-checklist-and-reconciliations
+    - label: Finnish closing adjustments and evidence controls
+      url: /compliance/fi-closing-adjustments-and-evidence-controls
     - label: Finnish company reorganisation (yrityssaneeraus)
       url: /compliance/fi-company-reorganisation-evidence-pack

@@ -109,6 +109,18 @@ Acceptance criteria: when mutations occur via the embedded API, relevant lists r
 FR-BOK-019 Schema-driven columns for datasets. The UI and embedded API MUST derive the set of columns for dataset tables from the workspace schema (e.g. Table Schema) at runtime. Adding a new column to a dataset and its schema in the workspace MUST cause that column to appear in the relevant Bus Books list and detail views without recompilation, redeployment, or configuration change.
 Acceptance criteria: (1) For any dataset exposed in the UI, the columns shown are those present in the schema (or inferred from the data) for that dataset. (2) After a new column is added to the CSV and schema, refreshing or reopening the view shows the new column. (3) No code or binary change is required to display the new column.
 
+FR-BOK-020 Table-first enterprise workflow model. The UI MUST treat high-volume list views as first-class work surfaces and MUST support find/filter, compare, row open/edit, and row or bulk actions in the same list workflow.
+Acceptance criteria: Inbox, Journal, Bank, and other high-volume screens use a consistent table interaction model with deterministic sorting/filtering, row selection, and explicit bulk actions.
+
+FR-BOK-021 Finland filing and close timeline visibility. The UI MUST surface Finnish statutory close/filling timeline anchors relevant to end-user workflow guidance (preparation target at 4 months, Oy general meeting at 6 months, and filing risk after 8 months for Oy/cooperative filing paths).
+Acceptance criteria: users can see due-date status and late-risk guidance in close/filling workflows without leaving the UI.
+
+FR-BOK-022 Audit lineage to statements and notes. The UI MUST expose traceability from bookkeeping records to reporting outputs so users can navigate from transactions and vouchers to statement outputs and associated disclosure evidence where available.
+Acceptance criteria: audit and reporting views include object links or references that let reviewers follow the chain from source record to statement output and back.
+
+FR-BOK-023 Finnish statement form guardrails. When generating or preparing Finnish statement-facing outputs, UI guidance MUST reflect that statements are prepared in Finnish or Swedish and in euros, and are dated and signed in the formal process.
+Acceptance criteria: statement-facing workflow screens include these form constraints in user-visible guidance or checklist text.
+
 ### Non-Functional Requirements
 
 NFR-BOK-001 Minimal authentication surface. The MVP MUST rely on loopback binding + capability URL token and MUST NOT implement accounts, sessions, OAuth, cookies, or stored credentials.
@@ -437,13 +449,17 @@ Operators MAY run the server on non-loopback interfaces or behind a reverse prox
 - [bus-agent module SDD](./bus-agent) (optional agent chat)
 - [Playwright documentation](https://playwright.dev/docs/intro) (reference for browser-based E2E coverage)
 - BusDK documentation site styling (`docs/_sass/busdk/` tokens, typography, components) — visual theme reference for NFR-BOK-009
+- [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements)
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)
+- [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)
 
 ### Document control
 
 Title: bus-books module SDD  
 Project: BusDK  
 Document identifier: sdd/bus-books  
-Version: 1  
+Version: 2  
 Status: Draft  
-Last updated: 2026-02-18  
+Last updated: 2026-02-20  
 Owner: BusDK maintainers

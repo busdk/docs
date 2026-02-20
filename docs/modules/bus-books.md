@@ -28,6 +28,8 @@ Screens that depend on a module backend (e.g. Journal, Periods, VAT, Bank) are s
 
 Optionally you can enable an **agent chat** (IDE-style). When started with `--enable-agent`, the UI exposes a chat panel that you can hide or show at runtime. In the chat you can ask an AI agent to perform operations; the agent runs with the workspace as its working directory and can run Bus CLI tools. Agent integration is disabled by default and can be turned on only at startup; see [Serve flags](#serve-flags) and [Agent chat](#agent-chat-when-enabled). The [bus-books SDD](../sdd/bus-books) defines the full design, security model, and integration with [bus-api](../sdd/bus-api) and domain modules.
 
+Finland-focused UI requirements are documented as split topic pages in [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements), with dedicated pages for IA/navigation, table-first UX, compliance and audit UX, and accessibility/performance.
+
 ### Commands
 
 **`serve`** (default) — Start the local HTTP server that serves the Bus Books web UI. The effective workspace root is the current directory or the directory given by `-C` / `--chdir`. The server generates an unguessable token (unless you pass `--token`), binds to the address and port given by `--listen` and `--port`, and opens the capability URL in a local GUI webview by default. Use `--print-url` to print the capability base URL to **stdout** instead. All diagnostics go to **stderr**. The server does not mutate workspace data until you perform an action in the UI (or until the agent performs an action when agent is enabled). If the workspace root is not readable, startup fails with a deterministic diagnostic and a non-zero exit code.
@@ -154,3 +156,4 @@ See [Development status](../implementation/development-status).
 - [bus-sheets CLI reference](./bus-sheets)
 - [bus-agent SDD](../sdd/bus-agent)
 - [Standard global flags](../cli/global-flags)
+- [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements)

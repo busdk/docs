@@ -187,6 +187,9 @@ sentences so the text is easy for humans and agents to follow. Keep strict,
 contract-style wording in SDD pages (`docs/sdd`) and requirement sections where
 precision is mandatory.
 
+Write documentation pages in English unless the user explicitly requests another
+language for that page.
+
 Keep pages strictly on one topic and avoid repeating detailed content that is
 already defined on an inner topic page. Summarize only what is needed in the
 current page, then link inline to the authoritative inner page and keep the

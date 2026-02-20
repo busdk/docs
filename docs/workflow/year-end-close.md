@@ -7,6 +7,8 @@ description: "Year-end close is a stricter version of period close: Alice runs v
 
 Year-end close is a stricter version of period close: Alice runs validation, ensures VAT is complete, generates closing entries deterministically, locks the final period, and then produces the year-end report set. The outcome is a repository revision that makes the derivation of opening balances for the next year straightforward to review.
 
+In Finnish closing practice, this workflow should be aligned with statutory milestones: prepare the financial statement package within 4 months from year end, complete Oy general meeting approval within 6 months, and complete Trade Register filing in the applicable filing window (commonly 8 months for Oy/cooperative filing paths). Statement-facing outputs are prepared for Finnish/Swedish presentation in euros and move to formal dating/signing in the governance step.
+
 1. Alice validates that the workspace datasets are internally consistent before generating close outputs:
 
 ```bash
@@ -47,6 +49,8 @@ bus reports balance-sheet --as-of 2026-12-31 --format pma
 
 If a particular jurisdiction, accountant, or workflow needs additional close outputs beyond what the pinned modules provide, the schema-defined repository data still allows Alice to derive those outputs with a script and store them as additional repository data, without rewriting earlier records.
 
+For detailed legal timeline anchors and close-control topics, use [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones), [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations), and [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls).
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./workflow-takeaways">Workflow takeaways (transparency, control, automation)</a></span>
@@ -63,3 +67,6 @@ If a particular jurisdiction, accountant, or workflow needs additional close out
 - [bus-journal module CLI reference](../modules/bus-journal)
 - [bus-reports module CLI reference](../modules/bus-reports)
 - [Accounting workflow overview](./accounting-workflow-overview)
+- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
+- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)
+- [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

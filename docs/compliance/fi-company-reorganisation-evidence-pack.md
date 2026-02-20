@@ -15,7 +15,7 @@ Which BusDK modules contribute to the evidence pack and what is verified today (
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./fi-bookkeeping-and-tax-audit">Finnish bookkeeping and tax-audit compliance</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./fi-closing-adjustments-and-evidence-controls">Finnish closing adjustments and evidence controls</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../implementation/development-status">Development status — BusDK modules</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a> &rarr;</span>
 </p>
@@ -25,4 +25,4 @@ Which BusDK modules contribute to the evidence pack and what is verified today (
 
 - [Development status — BusDK modules](../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
-- [Finnish bookkeeping and tax-audit compliance](./fi-bookkeeping-and-tax-audit)
+- [Finnish closing adjustments and evidence controls](./fi-closing-adjustments-and-evidence-controls)

@@ -71,6 +71,8 @@ Tax-audit readiness (G) relies on VML 14 § and OVML 24 §, which define inspect
 
 Financial statement output requirements for reports reference Kirjanpitoasetus (KPA 1339/1997) and the small/micro entity regulation (PMA 1753/2015), which BusDK supports through explicit layout identifiers and mapping contracts defined in [bus-reports SDD](../../sdd/bus-reports). Requirement (I) adds that the balance sheet and income statement must be producible as PDF; the chosen implementation approach is documented in [Regulated report PDFs (TASE and tuloslaskelma)](../../implementation/regulated-report-pdfs). (KPA 1339/1997; PMA 1753/2015)
 
+Detailed topic pages for Finnish statement and close requirements are split into [Finnish balance sheet and income statement regulation](./fi-balance-sheet-and-income-statement-regulation), [Finnish closing deadlines and legal milestones](./fi-closing-deadlines-and-legal-milestones), [Finnish closing checklist and reconciliations](./fi-closing-checklist-and-reconciliations), and [Finnish closing adjustments and evidence controls](./fi-closing-adjustments-and-evidence-controls).
+
 ### Maintenance process
 
 Re-check Finlex and Verohallinto sources at least annually and whenever legislation changes, update citations and requirements when source sections move or are amended, and treat temporary exceptions as historical context only rather than as MUST-level requirements unless they are currently in force.
