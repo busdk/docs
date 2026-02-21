@@ -47,6 +47,10 @@ From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-a
 
 **`bus run set model <value>`** — Set the bus-run default model (`bus-run.model`). **`bus run set output-format <ndjson|text>`** — Set the bus-run default output format (`bus-run.output_format`). **`bus run set timeout <duration>`** — Set the bus-run default timeout (`bus-run.timeout`). Each writes only the corresponding `bus-run.*` key. Invalid value → exit 2.
 
+**`bus run set agent-for <token|@token> <runtime>`** — Set per-step runtime preference (`bus-run.agent_for.*`). `token` is a generic selector. `@token` is built-in-only selector form for parity with modules that have built-in steps.
+
+**`bus run set model-for <token|@token> <value>`** — Set per-step model preference (`bus-run.model_for.*`) with the same selector semantics as `agent-for`.
+
 **`bus run context`** — Print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout. Use this when authoring prompt templates or scripts so you can see the same variables the tool injects. Uses the effective working directory to derive catalog values; no Git required. If the effective working directory does not exist or is not accessible, exit 1. Does not take the per-directory lock.
 
 **`bus run list`** — Print every runnable token available in the current context and what each executes, without running any agent, script, or other step. When the effective working directory does not exist or is not accessible, exit 1 with a clear message (same as **bus run context**). When the project root is accessible, output includes directory-local pipelines (source path and normalized expanded step sequence), directory-local prompt actions (`.bus/run/<NAME>.txt`), directory-local script actions (source and platform variants), and preference pipelines (source key and expanded step sequence). Each entry includes token name, type (pipeline, action prompt, or action script), short description or source, and for pipelines the normalized expanded step sequence. Output format is stable and parseable. Does not take the per-directory lock.
@@ -111,7 +115,7 @@ Name grammar: names must start with a letter and contain only lowercase ASCII le
 3. Directory-local pipeline (`.bus/run/<name>.yml`)
 4. Preference pipeline (`bus-run.pipeline.<name>`)
 
-There are no built-in operations or built-in pipelines. Unknown tokens, cycles, and expansion-limit failures exit 2 before any step runs.
+There are no built-in runnable operations or pipelines. Unknown tokens, cycles, and expansion-limit failures exit 2 before any step runs. Selector settings still support `@token` for built-in-only preference targeting parity, but in bus-run today only user-defined steps are runnable.
 
 After expansion succeeds, bus-run merges repeated step names in first-appearance order. This normalized sequence is what runs and what `pipeline preview` prints.
 
@@ -141,7 +145,7 @@ These flags apply to all subcommands and match the [standard global flags](../cl
 
 ### Agent runtime selection
 
-Subcommands that invoke an agent (when a token resolves to a prompt action) use the [bus-agent](./bus-agent) library and one of its supported runtimes: Cursor CLI, Codex, Gemini CLI, and Claude CLI. Resolution order: (1) **`--agent`** for that invocation; (2) **`BUS_RUN_AGENT`** (bus-run session default); (3) **`BUS_AGENT`** (shared session default); (4) **bus-run persistent preference** (`bus-run.agent`); (5) **bus-agent persistent preference** (`bus-agent.runtime`); (6) **first available** runtime in the effective order. Set bus-run’s default with **`bus run set agent <runtime>`** or `bus preferences set bus-run.agent <runtime>`. At the start of each agent step, the tool prints to stderr which agent and model are in use. Invalid runtime name or missing selected runtime yields a clear error and exit 2 or 1; the diagnostic includes the canonical installation URL for the runtime when it is missing.
+Subcommands that invoke an agent (when a token resolves to a prompt action) use the [bus-agent](./bus-agent) library and one of its supported runtimes: Cursor CLI, Codex, Gemini CLI, and Claude CLI. Resolution order: (1) **`--agent`** for that invocation; (2) **`BUS_RUN_AGENT`** (bus-run session default); (3) **`BUS_AGENT`** (shared session default); (4) per-step selector preference (`bus-run.agent_for.<selector>`; built-in step uses `@token` then `token`, user-defined step uses `token`); (5) **bus-run persistent preference** (`bus-run.agent`); (6) **bus-agent persistent preference** (`bus-agent.runtime`); (7) **first available** runtime in the effective order. Set bus-run’s defaults with **`bus run set agent <runtime>`**, **`bus run set agent-for <token|@token> <runtime>`**, and **`bus run set model-for <token|@token> <value>`**. At the start of each agent step, the tool prints to stderr which agent and model are in use. Invalid runtime name or missing selected runtime yields a clear error and exit 2 or 1; the diagnostic includes the canonical installation URL for the runtime when it is missing.
 
 ### Preference settings (bus-run namespace)
 
@@ -153,6 +157,8 @@ Preferences that affect `bus run` are stored via the [bus-preferences](./bus-pre
 | `bus-run.model` | Bus-run default model. Set with `bus run set model <value>`. |
 | `bus-run.output_format` | Bus-run default output format (`ndjson` or `text`). Set with `bus run set output-format <ndjson|text>`. |
 | `bus-run.timeout` | Bus-run default timeout (e.g. `60m`). Set with `bus run set timeout <duration>`. |
+| `bus-run.agent_for.<selector>` | Per-step runtime preference where `<selector>` is `token` or `@token`. Built-in step lookup uses `@token` then `token`; user-defined step lookup uses `token`. Set with `bus run set agent-for <token|@token> <runtime>`. |
+| `bus-run.model_for.<selector>` | Per-step model preference with same selector semantics as `agent_for`. Set with `bus run set model-for <token|@token> <value>`. |
 | `bus-run.pipeline.<name>` | User-defined pipeline: a JSON array of tokens. Set with **`bus run pipeline set prefs <name> TOKEN...`** or `bus preferences set bus-run.pipeline.<name> '<json array>'`. Unset with **`bus run pipeline unset prefs <name>`**. |
 
 ### Examples
