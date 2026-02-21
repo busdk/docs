@@ -131,7 +131,7 @@ init --accounts --entities --period --journal
 
 **Use case readiness:** Accounting workflow: 70% — Config-only and full baseline (subcommand `all` or `--all`) verified; step order and `--no-<module>` exclusions proven by tests.
 
-**Current:** `tests/e2e_bus_init.sh` verifies config-only (no subcommand or `defaults`), subcommand `all` and `all --no-payroll`, per-module flags, `-C`/`--output`/`--quiet`, missing bus and step-failure diagnostics, and extra-positional rejection. `internal/businit/run_test.go` covers config-only, `--all` and subcommand `all`/`defaults`, exclusions, step failure and exit-code-2 upgrade message, and `internal/cli/flags_test.go` covers flag parsing (`-vv`, `--`, quiet+verbose, color, subcommand parsing).
+**Current:** `tests/e2e.sh` verifies config-only (no subcommand or `defaults`), subcommand `all` and `all --no-payroll`, per-module flags, `-C`/`--output`/`--quiet`, missing bus and step-failure diagnostics, and extra-positional rejection. `internal/businit/run_test.go` covers config-only, `--all` and subcommand `all`/`defaults`, exclusions, step failure and exit-code-2 upgrade message, and `internal/cli/flags_test.go` covers flag parsing (`-vv`, `--`, quiet+verbose, color, subcommand parsing).
 
 **Planned next:** Help text that lists each per-module flag and each `--no-<module>` explicitly (PLAN.md; FR-INIT-005 acceptance). Advances SDD/help completeness, not a new journey step.
 

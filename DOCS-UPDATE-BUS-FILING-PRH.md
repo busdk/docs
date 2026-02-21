@@ -40,5 +40,5 @@ When this repo adds features, changes behaviour, or closes further open question
 ## Reference (bus-filing-prh module repo)
 
 - **OQ-PRH-001 closure:** [CHANGELOG.md](CHANGELOG.md), [README.md](README.md) (Roadmap), [AGENTS.md](AGENTS.md).
-- **FR-PRH-002 and SBR iXBRL:** [CHANGELOG.md](CHANGELOG.md), E2E script `tests/e2e_bus_filing-prh.sh`.
+- **FR-PRH-002 and SBR iXBRL:** [CHANGELOG.md](CHANGELOG.md), E2E script `tests/e2e.sh`.
 - **Implementation plan:** [PLAN.md](PLAN.md).
