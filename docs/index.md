@@ -62,6 +62,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 ### Advanced
 
 - [AI-assisted classification](workflow/ai-assisted-classification-review)
+- [Codex-assisted accountant workflow](workflow/codex-accountant-workflow)
 - [Budgeting and budget-vs-actual reporting](workflow/budgeting-and-budget-vs-actual)
 - [Finnish payroll](workflow/finnish-payroll-monthly-pay-run)
 - [Inventory valuation and COGS postings](workflow/inventory-valuation-and-cogs)

@@ -22,14 +22,15 @@ The recommended reading order is:
 11. [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets)
 12. [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)
 13. [AI-assisted classification (review before recording a revision)](./ai-assisted-classification-review)
-14. [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
-15. [VAT reporting and payment](./vat-reporting-and-payment)
-16. [Year-end close (closing entries)](./year-end-close)
-17. [Finnish payroll handling (monthly pay run)](./finnish-payroll-monthly-pay-run)
-18. [Inventory valuation and COGS postings](./inventory-valuation-and-cogs)
-19. [Workbook and validated tabular editing](./workbook-and-validated-tabular-editing)
-20. [Evolution over time (extending the model)](./evolution-over-time)
-21. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
+14. [Codex-assisted accountant workflow](./codex-accountant-workflow)
+15. [Budgeting and budget-vs-actual reporting](./budgeting-and-budget-vs-actual)
+16. [VAT reporting and payment](./vat-reporting-and-payment)
+17. [Year-end close (closing entries)](./year-end-close)
+18. [Finnish payroll handling (monthly pay run)](./finnish-payroll-monthly-pay-run)
+19. [Inventory valuation and COGS postings](./inventory-valuation-and-cogs)
+20. [Workbook and validated tabular editing](./workbook-and-validated-tabular-editing)
+21. [Evolution over time (extending the model)](./evolution-over-time)
+22. [Workflow takeaways (transparency, control, automation)](./workflow-takeaways)
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -46,3 +47,4 @@ The recommended reading order is:
 - [Deterministic reconciliation proposals and batch apply](./deterministic-reconciliation-proposals-and-batch-apply)
 - [Import ERP history into canonical invoices and bank datasets](./import-erp-history-into-canonical-datasets)
 - [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)
+- [Codex-assisted accountant workflow](./codex-accountant-workflow)

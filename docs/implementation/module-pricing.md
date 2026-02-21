@@ -25,7 +25,7 @@ All-inclusive total price is `{{ total_price_eur | eur_rounded }} EUR`. Full pac
 
 ### Pricing model
 
-Each module has a base price and a dependency-inclusive price. Base price gives access only to that specific module's source release and does not include dependencies unless those modules are purchased separately. Dependency-inclusive price includes the module's own base price plus prices of its dependencies. Dependencies are shown as a unique transitive set.
+Each module has a base price and a dependency-inclusive price. Base price covers only that module’s source release. Dependency-inclusive price covers that module plus its dependencies, calculated as a unique transitive set.
 
 {% assign category_core = "bus-init,bus-config,bus-data,bus-preferences" | split: "," %}
 {% assign category_ui = "bus-sheets,bus-books" | split: "," %}

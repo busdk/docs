@@ -32,7 +32,7 @@ Requests outside token prefix return `404`.
 
 `--read-only` can restrict mutating endpoints.
 `--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...`.
-For built-in adapters, module resource ownership for `accounts`, `period`, `balances`, `journal`, `bank`, `invoices`, and `vat` is resolved via the owning module Go libraries; other modules use deterministic fallback matching until direct backends are integrated.
+For built-in adapters, module resource ownership is explicit and library-based for all built-ins. Data-owning modules resolve paths through their Go path APIs (including reports through `bus-reports/path`); modules without owned datasets return empty module resource lists.
 For complete API contract and security model, see [Module SDD: bus-api](../sdd/bus-api).
 
 ### Commands
