@@ -4,6 +4,9 @@ vendor
 _site
 # Chrome DevTools workspace JSON is generated in dest by plugin (dev only); never commit a copy in source.
 docs/.well-known/
+# Local pricing snapshots and filters are regenerated on demand.
+docs/_data/prices-data.json
+docs/_plugins/busdk_price_filters.rb
 # bus-dev per-directory lock; do not track.
 .bus-dev.lock
 .bus-run.lock

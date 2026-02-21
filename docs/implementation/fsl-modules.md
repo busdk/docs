@@ -1,66 +1,203 @@
 ---
-title: Module source access and pricing
-description: Pricing for BusDK modules offered under source-available licenses, including foundational cost allocation and how to request source access.
+title: BusDK module pricing
+description: Pricing for BusDK modules offered under source-available licenses, including dependency-inclusive totals and how to request source access.
 ---
 
-## Module source access and pricing
+## Overview
 
-This page defines how BusDK module source access is licensed and priced. Sellable modules are offered under source-available terms using the [Functional Source License (FSL)](https://fsl.software/). FSL converts each released version to Apache 2.0 or MIT after two years. This price list excludes foundational modules from source-access sales pricing, but not all foundational modules are binary-only: the dispatcher `bus`, the documentation site, and `busdk.com` are already open source. The pricing below uses the [Bus project cost summary](./cost-summary) snapshot (2026-02-18) and combines each module’s own cost with a commit-based share of foundational cost to produce one module price.
+This page defines how BusDK module source access is licensed and priced.
 
-### Foundational modules (cost allocation pool)
+### Licenses
 
-The following components are excluded from this source-access sale list and used as the foundational cost allocation pool. `bus`, `docs`, and `busdk.com` are open source, and their source repositories are available at `https://github.com/busdk/{NAME}` (for example [`bus`](https://github.com/busdk/bus), [`docs`](https://github.com/busdk/docs), and [`busdk.com`](https://github.com/busdk/busdk.com)). The remaining foundational modules are currently distributed as binaries.
+Sellable modules are offered under source-available terms using the [Functional Source License (FSL)](https://fsl.software/). Under FSL, each released version converts to Apache 2.0 or MIT after two years. Alternative commercial license terms are also available by contract.
 
-| Module | Total (AI + human) USD |
-|--------|-------------------------|
-| [bus](../modules/bus) | 685.69 |
-| docs | 5,622.54 |
-| busdk.com | 313.46 |
-| [bus-dev](../modules/bus-dev) | 1,175.47 |
-| [bus-agent](../modules/bus-agent) | 293.87 |
-| **Total foundational cost** | **8,091.03** |
+{% assign pricing = site.data["prices-data"] %}
 
-Total commits in the snapshot are 1,388; the foundational modules account for 413 of those. The remaining 975 commits belong to the sellable modules. Each sellable module’s price is its **Total (AI + human) USD** from the cost summary plus its **commit-based share** of the 8,091.03 USD foundational cost (i.e. module_commits ÷ 975 × 8,091.03).
+{% if pricing and pricing.modules %}
+{% assign total_price_eur = pricing.total_price_eur | plus: 0 %}
+{% assign discounted_total_eur = total_price_eur | times: 0.8 | round: 2 %}
 
-### Source-available modules and price
+### Package pricing summary
 
-Module order matches the cost summary. *Module cost* is the module’s own Total (AI + human) USD. *Foundational share* is (commits ÷ 975) × 8,091.03. *Price (USD)* is the sum of those two and is the listed sale price for that module.
+All-inclusive total price is `{{ total_price_eur | eur_rounded }} EUR`. Full package price with 20% discount is `{{ discounted_total_eur | eur_rounded }} EUR`.
 
-| Module | Commits | Module cost (USD) | Foundational share (USD) | Price (USD) |
-|--------|---------|-------------------|--------------------------|-------------|
-| [bus-accounts](../modules/bus-accounts) | 54 | 1,057.92 | 448.12 | 1,506.04 |
-| [bus-api](../modules/bus-api) | 24 | 470.19 | 199.16 | 669.35 |
-| [bus-assets](../modules/bus-assets) | 43 | 842.42 | 356.84 | 1,199.26 |
-| [bus-attachments](../modules/bus-attachments) | 28 | 548.55 | 232.36 | 780.91 |
-| [bus-balances](../modules/bus-balances) | 16 | 313.46 | 132.78 | 446.24 |
-| [bus-bank](../modules/bus-bank) | 40 | 783.65 | 331.94 | 1,115.59 |
-| [bus-bfl](../modules/bus-bfl) | 17 | 333.05 | 141.07 | 474.12 |
-| [bus-books](../modules/bus-books) | 44 | 862.01 | 365.13 | 1,227.14 |
-| [bus-budget](../modules/bus-budget) | 27 | 528.96 | 224.06 | 753.02 |
-| [bus-config](../modules/bus-config) | 10 | 195.91 | 82.98 | 278.89 |
-| [bus-data](../modules/bus-data) | 49 | 959.97 | 406.63 | 1,366.60 |
-| [bus-entities](../modules/bus-entities) | 48 | 940.38 | 398.33 | 1,338.71 |
-| [bus-filing](../modules/bus-filing) | 24 | 470.19 | 199.16 | 669.35 |
-| [bus-filing-prh](../modules/bus-filing-prh) | 22 | 431.01 | 182.57 | 613.58 |
-| [bus-filing-vero](../modules/bus-filing-vero) | 35 | 685.69 | 290.45 | 976.14 |
-| [bus-init](../modules/bus-init) | 19 | 372.24 | 157.67 | 529.91 |
-| [bus-inventory](../modules/bus-inventory) | 20 | 391.83 | 165.97 | 557.80 |
-| [bus-invoices](../modules/bus-invoices) | 42 | 822.83 | 348.54 | 1,171.37 |
-| [bus-journal](../modules/bus-journal) | 66 | 1,293.03 | 547.70 | 1,840.73 |
-| [bus-loans](../modules/bus-loans) | 28 | 548.55 | 232.36 | 780.91 |
-| [bus-payroll](../modules/bus-payroll) | 23 | 450.59 | 190.87 | 641.46 |
-| [bus-pdf](../modules/bus-pdf) | 27 | 528.96 | 224.06 | 753.02 |
-| [bus-period](../modules/bus-period) | 74 | 1,449.76 | 614.09 | 2,063.85 |
-| [bus-preferences](../modules/bus-preferences) | 4 | 78.37 | 33.19 | 111.56 |
-| [bus-reconcile](../modules/bus-reconcile) | 33 | 646.51 | 273.85 | 920.36 |
-| [bus-replay](../modules/bus-replay) | 17 | 333.05 | 141.07 | 474.12 |
-| [bus-reports](../modules/bus-reports) | 44 | 862.01 | 365.13 | 1,227.14 |
-| [bus-run](../modules/bus-run) | 16 | 313.46 | 132.78 | 446.24 |
-| [bus-sheets](../modules/bus-sheets) | 6 | 117.55 | 49.79 | 167.34 |
-| [bus-validate](../modules/bus-validate) | 26 | 509.38 | 215.76 | 725.14 |
-| [bus-vat](../modules/bus-vat) | 49 | 959.97 | 406.63 | 1,366.60 |
+### Pricing model
+
+Each module has a base price and a dependency-inclusive price. Dependency-inclusive price includes the module’s own base price plus prices of its dependencies. The table lists dependencies as a unique transitive set for each module.
+
+{% assign category_core = "bus-init,bus-config,bus-data,bus-preferences" | split: "," %}
+{% assign category_ui = "bus-sheets,bus-books" | split: "," %}
+{% assign category_automation = "bus-api,bus-run,bus-agent,bus-secrets,bus-dev" | split: "," %}
+{% assign category_ledger = "bus-bfl,bus-accounts,bus-entities,bus-period,bus-balances" | split: "," %}
+{% assign category_journal = "bus-journal,bus-invoices,bus-bank,bus-reconcile,bus-attachments" | split: "," %}
+{% assign category_assets = "bus-assets,bus-loans,bus-inventory,bus-payroll,bus-budget" | split: "," %}
+{% assign category_validation = "bus-reports,bus-replay,bus-validate,bus-vat,bus-pdf,bus-filing" | split: "," %}
+{% assign category_filing_targets = "bus-filing-prh,bus-filing-vero" | split: "," %}
+{% assign all_frontpage_categories = "bus-init,bus-config,bus-data,bus-preferences,bus-sheets,bus-books,bus-api,bus-run,bus-agent,bus-secrets,bus-dev,bus-bfl,bus-accounts,bus-entities,bus-period,bus-balances,bus-journal,bus-invoices,bus-bank,bus-reconcile,bus-attachments,bus-assets,bus-loans,bus-inventory,bus-payroll,bus-budget,bus-reports,bus-replay,bus-validate,bus-vat,bus-pdf,bus-filing,bus-filing-prh,bus-filing-vero" | split: "," %}
+
+### Core commands
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_core contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### User interfaces
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_ui contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Automation and integration
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_automation contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Ledger foundation
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_ledger contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Journal flow
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_journal contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Assets and resources
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_assets contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Validation and reports
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_validation contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Filing targets
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% if category_filing_targets contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endif %}{% endfor %}
+  </tbody>
+</table>
+
+### Other modules
+<table>
+  <thead>
+    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+  </thead>
+  <tbody>
+    {% for module in pricing.modules %}{% unless all_frontpage_categories contains module.name %}
+    <tr>
+      <td><a href="../modules/{{ module.name }}">{{ module.name }}</a></td>
+      <td>{{ module.price_eur | eur_rounded }}</td>
+      <td>{{ module.base_price_eur | eur_rounded }}</td>
+      <td>{% if module.dependencies and module.dependencies.size > 0 %}{% for dep in module.dependencies %}<a href="../modules/{{ dep }}">{{ dep }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}none{% endif %}</td>
+    </tr>
+    {% endunless %}{% endfor %}
+  </tbody>
+</table>
+{% else %}
+Pricing data is not available. Run `scripts/update-prices-data.sh` in the repository root to generate `docs/docs/_data/prices-data.json`, then rebuild the docs site.
+{% endif %}
 
 To buy source access for one or more modules, email [sales@hg.fi](mailto:sales@hg.fi) and include the module names you are interested in.
+
+{% if pricing and pricing.modules %}
+### Pricing data timestamp
+
+Pricing dataset timestamp (UTC): `{{ pricing.prices_utc_time }}`.
+{% endif %}
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -72,5 +209,7 @@ To buy source access for one or more modules, email [sales@hg.fi](mailto:sales@h
 
 ### Sources
 
-- [Bus project cost summary](./cost-summary) (snapshot 2026-02-18)
+- [Generated pricing data (`docs/docs/_data/prices-data.json`)](https://github.com/busdk/busdk/blob/main/docs/docs/_data/prices-data.json)
+- [Price generation script (`scripts/get-prices-data.sh`)](https://github.com/busdk/busdk/blob/main/scripts/get-prices-data.sh)
+- [Price update script (`scripts/update-prices-data.sh`)](https://github.com/busdk/busdk/blob/main/scripts/update-prices-data.sh)
 - [Functional Source License (FSL)](https://fsl.software/)
