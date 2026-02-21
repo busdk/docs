@@ -28,7 +28,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 
 - [Development status](implementation/development-status)
 - [Development cost summary](implementation/cost-summary)
-- [Module source access and pricing](implementation/fsl-modules)
+- [BusDK module pricing](implementation/module-pricing)
 - [Module repository structure](implementation/module-repository-structure)
 - [Developer workflow](implementation/developer-module-workflow)
 - [BusDK SDD (single page)](sdd)

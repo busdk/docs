@@ -92,7 +92,7 @@ The script applies a fixed cost per commit (implementation, review, and upkeep) 
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./regulated-report-pdfs">Regulated report PDFs (TASE and tuloslaskelma)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Implementation and development status</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./fsl-modules">Module source access and pricing</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./module-pricing">BusDK module pricing</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

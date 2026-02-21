@@ -11,7 +11,9 @@ This section covers how modules are structured and their current implementation 
 
 [Regulated report PDFs (TASE and tuloslaskelma)](./regulated-report-pdfs) and [Finnish WebView bookkeeping UI requirements](./fi-webview-accounting-ui-requirements) define implementation targets for regulated reporting and UI behavior.
 
-[Bus project cost summary](./cost-summary) and [Module source access and pricing](./fsl-modules) provide project-cost and source-access context.
+[Go optimization guide](./go-optimization-guide) defines the default reproducibility-focused Go build and test profile used in module Makefiles.
+
+[Bus project cost summary](./cost-summary) and [BusDK module pricing](./module-pricing) provide project-cost and source-access context.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
