@@ -125,7 +125,7 @@ The module does not read/write workspace files or network resources.
 Preferences may contain runtime defaults and local behavior settings.
 They are **not** for secrets.
 Do not store passwords, API keys, or credentials in this file.
-Use OS credential store or external secret manager for sensitive values.
+Use OS credential store or external secret manager for sensitive values, or use [bus-secrets](./bus-secrets) so workflows can reference `secret:<name>` values without hardcoding credentials into command definitions.
 
 ### Exit status and errors
 
