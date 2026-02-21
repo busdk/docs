@@ -1,56 +1,68 @@
 ---
 title: bus-secrets
-description: "How to store and resolve secret references for BusDK workflows with user and repository scopes, and how to use them from bus dev and bus run."
+description: "How to store and resolve repository-local secret references for BusDK workflows, and how to use them from bus dev and bus run."
 ---
 
 ## `bus-secrets` - manage secret references for BusDK workflows
 
 ### Synopsis
 
-`bus secrets [global flags] set <name> <value> [--scope user|repo]`  
-`bus secrets [global flags] get <name> [--scope auto|user|repo]`  
-`bus secrets [global flags] list [--scope auto|user|repo]`  
-`bus secrets [global flags] resolve <value> [--scope auto|user|repo]`
+`bus secrets [global flags] set <name> <value> [--scope auto|repo|user]`  
+`bus secrets [global flags] get <name> [--scope auto|repo|user]`  
+`bus secrets [global flags] list [--scope auto|repo|user]`  
+`bus secrets [global flags] resolve <value> [--scope auto|repo|user]`  
+`bus secrets [global flags] init [--print-env sh|powershell] [--secure-enclave]`  
+`bus secrets [global flags] uninit`  
+`bus secrets [global flags] doctor`
 
 ### Description
 
-`bus-secrets` stores and resolves secret values by name. It supports user scope and repository scope so you can keep per-user credentials local while still defining repository-level defaults.
-
-A secret reference uses the form `secret:<name>`. When a value is resolved in `auto` scope, lookup order is repository first, then user.
+`bus-secrets` stores and resolves secret values by name. Secrets are persisted in repository-local files under `.bus/secrets`, and secret references use the form `secret:<name>`.
 
 ### Commands
 
-`bus secrets set <name> <value> [--scope user|repo]` writes a secret value as a SOPS-encrypted envelope. Scope defaults to `user` for `set`.
+`bus secrets set <name> <value> [--scope auto|repo|user]` writes a secret value as a SOPS-encrypted envelope.
 
-`bus secrets get <name> [--scope auto|user|repo]` reads one secret value and prints the decrypted value to stdout.
+`bus secrets get <name> [--scope auto|repo|user]` reads one secret value and prints the decrypted value to stdout.
 
-`bus secrets list [--scope auto|user|repo]` prints known secret names in sorted order.
+`bus secrets list [--scope auto|repo|user]` prints known secret names in sorted order.
 
-`bus secrets resolve <value> [--scope auto|user|repo]` resolves plain values and `secret:<name>` references. Plain values are returned unchanged.
+`bus secrets resolve <value> [--scope auto|repo|user]` resolves plain values and `secret:<name>` references. Plain values are returned unchanged.
+
+`bus secrets init [--print-env sh|powershell] [--secure-enclave]` initializes SOPS age configuration for `bus secrets` and creates a no-space key path by default. By default it prints only a completion message; use `--print-env` only when you want optional session override exports.
+
+`bus secrets uninit` reverts init state by clearing repository recipients and local key-source preferences.
+
+`bus secrets doctor` validates SOPS/key setup with an encrypt/decrypt self-test.
+
+Recipient precedence for encryption is:
+
+1. `.bus/secrets/recipients.txt` written by `bus secrets init`
+2. `SOPS_AGE_RECIPIENTS` environment variable (fallback)
+
+Key source precedence for decrypt/encrypt is:
+
+1. Repository profile from `.bus/secrets/config.json` selects user preferences `bus-secrets.profiles.<profile>.age_key_file` and optional `.age_key_cmd`
+2. Legacy user preferences `bus-secrets.age_key_file` / `bus-secrets.age_key_cmd`
+3. `SOPS_AGE_KEY_FILE` / `SOPS_AGE_KEY_CMD` / `SOPS_AGE_KEY` environment variables (fallback)
 
 ### Secret name format
 
 Secret names must be lowercase and may contain lowercase letters, digits, `.`, `-`, and `_`.
 
-### Scope and precedence
+### Storage and precedence
 
-User scope is stored via [bus-preferences](./bus-preferences) keys under `secrets.<name>`.
+Secret blobs are stored at `.bus/secrets/<name>.sops.json` and public recipients are stored at `.bus/secrets/recipients.txt`.
+Repository key profile is stored at `.bus/secrets/config.json`.
 
-Repository scope is stored in workspace `datapackage.json` under `busdk.secrets.<name>`.
-
-Auto scope resolves in this order:
-
-1. Repository scope (`datapackage.json`, `busdk.secrets.<name>`)
-2. User scope (`bus-preferences`, `secrets.<name>`)
-
-This keeps repository-level configuration deterministic while still allowing user-scope fallback when the repository value is not set.
+Private keys are not stored in the repository by `bus-secrets`. Key source configuration is local through preferences or environment variables, and can use hardware-backed providers.
 
 ### Typical workflow
 
-Set a local API key in user scope, then use a reference in step-level env configuration:
+Set a secret value, then use a reference in step-level env configuration:
 
 ```bash
-bus secrets set openai_api_key 'sk-...' --scope user
+bus secrets set openai_api_key 'sk-...'
 bus dev set env-for @work OPENAI_API_KEY secret:openai_api_key
 bus run set env-for summarize OPENAI_API_KEY secret:openai_api_key
 ```
@@ -58,24 +70,12 @@ bus run set env-for summarize OPENAI_API_KEY secret:openai_api_key
 Check what is stored and how resolution works:
 
 ```bash
-bus secrets list --scope auto
-bus secrets get openai_api_key --scope user
-bus secrets resolve secret:openai_api_key --scope auto
-```
-
-Define both values and verify repository override in `auto` scope:
-
-```bash
-bus secrets set openai_api_key '<set-this-in-user-scope>' --scope repo
-bus secrets set openai_api_key 'sk-local-user-key' --scope user
-bus secrets resolve secret:openai_api_key --scope auto
+bus secrets list
+bus secrets get openai_api_key
+bus secrets resolve secret:openai_api_key
 ```
 
 ### Security guidance
-
-User scope is the safer default for real credentials because values stay in user preferences and are not meant to be committed with repository data.
-
-Repository scope writes to `datapackage.json`. Treat repository-scoped secrets as visible project configuration and avoid storing production credentials there unless your repository policy explicitly allows it.
 
 The module enforces encrypted-at-rest behavior. Plaintext secret values in storage are treated as invalid and commands fail until values are re-written through `bus secrets set`.
 
@@ -87,43 +87,66 @@ Standard global flags are supported: `-h`, `-V`, `-C`, `-o`, and `-q`.
 
 If `sops` is not installed, `bus secrets` fails with an explicit diagnostic that tells you to install `sops` and retry. Install instructions: <https://getsops.io/>.
 
-### macOS setup
+### SOPS setup
 
-On macOS, install `sops` and `age`, then create an age identity and configure SOPS recipient and key location in your shell profile.
+`bus secrets` requires `sops` plus a configured key backend. For most teams, `age` is the simplest backend.
 
-```bash
-brew install sops age
-mkdir -p "$HOME/Library/Application Support/sops/age"
-age-keygen -o "$HOME/Library/Application Support/sops/age/keys.txt"
-age-keygen -y "$HOME/Library/Application Support/sops/age/keys.txt"
-```
-
-The last command prints your public recipient (`age1...`). Add this to your shell profile:
+### Setup guide
 
 ```bash
-export SOPS_AGE_RECIPIENTS="age1replace_with_your_recipient"
-export SOPS_AGE_KEY_FILE="$HOME/Library/Application Support/sops/age/keys.txt"
+brew install sops age-plugin-se
+bus secrets init
 ```
 
-Open a new shell and verify:
+On macOS, if you want Secure Enclave-backed keys, run:
+
+```bash
+bus secrets init --secure-enclave
+```
+
+`bus secrets init` already writes persistent local key-source preferences and repository recipients.
+
+### Verify setup
 
 ```bash
 sops --version
-bus secrets set smoke.test value --scope user
-bus secrets get smoke.test --scope user
+bus secrets init
+bus secrets set smoke.test value
+bus secrets get smoke.test
+bus secrets doctor
 ```
 
-SOPS also supports alternative key sources with environment variables such as `SOPS_AGE_KEY`, `SOPS_AGE_KEY_CMD`, and `SOPS_AGE_KEY_FILE`, so teams can integrate password managers or external key commands.
+SOPS supports additional key-source variables such as `SOPS_AGE_KEY`, `SOPS_AGE_KEY_CMD`, and `SOPS_AGE_KEY_FILE` for password manager or external key-command integrations.
 
-### Secure Enclave option on Mac
+Keep at least one recovery-capable backup recipient in your SOPS policy so secrets remain decryptable if a device-bound key becomes unavailable.
 
-You can use Apple Secure Enclave through the age plugin ecosystem, for example with `age-plugin-se`. This is an age-level setup that can be used by tools that use age in the backend. In practice this means you can keep your age private key material bound to your Mac Secure Enclave and still use `bus secrets` through SOPS.
+### Use with bus dev and bus run envs
 
-This path is optional and depends on your team’s operational requirements. Keep at least one recovery-capable backup recipient in your SOPS policy so secrets remain decryptable if a device-bound key becomes unavailable.
+`bus secrets` is most useful when you reference secrets from per-step environment settings instead of writing raw keys into command definitions.
+
+Set your secret once:
+
+```bash
+bus secrets set openai_api_key "sk-..."
+```
+
+Bind it to a `bus dev` step env:
+
+```bash
+bus dev set env-for @work OPENAI_API_KEY secret:openai_api_key
+```
+
+Bind it to a `bus run` step env:
+
+```bash
+bus run set env-for summarize OPENAI_API_KEY secret:openai_api_key
+```
+
+When the `work` or `summarize` step runs, `bus dev` or `bus run` resolves `secret:openai_api_key` through `bus secrets` and injects the decrypted value into the step process environment.
 
 ### Files
 
-`bus-secrets` reads and writes user-scope values through [bus-preferences](./bus-preferences). It reads and writes repository-scope values through [bus-config](./bus-config) workspace configuration path resolution and `datapackage.json`.
+`bus-secrets` reads and writes repository-local secrets in `.bus/secrets`. It uses [bus-preferences](./bus-preferences) for local key-source preferences (`bus-secrets.age_key_file` and `bus-secrets.age_key_cmd`).
 
 ### Exit status and errors
 
@@ -134,11 +157,11 @@ Exit code `0` means success. Exit code `1` means execution failure, such as not 
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus secrets set openai_api_key 'sk-...' --scope user
-secrets set openai_api_key 'sk-...' --scope user
+# same as: bus secrets set openai_api_key 'sk-...'
+secrets set openai_api_key 'sk-...'
 
-# same as: bus secrets resolve secret:openai_api_key --scope auto
-secrets resolve secret:openai_api_key --scope auto
+# same as: bus secrets resolve secret:openai_api_key
+secrets resolve secret:openai_api_key
 ```
 
 <!-- busdk-docs-nav start -->
