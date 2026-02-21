@@ -12,7 +12,7 @@ description: "CLI reference for bus agent: detect enabled runtimes, render promp
 Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These operations are intended for diagnostics and development (for example, checking which agent runtimes are available, testing prompt templates, or formatting raw agent output). They do not implement business workflows; higher-level modules such as [bus dev](./bus-dev) use the same agent runner via the library and provide workflow-specific behavior (commit, work, spec, e2e).
 
 `bus agent detect [-1|--first]` — list available agent runtimes (first is the default); with `-1` or `--first`, output only the default runtime.  
-`bus agent set runtime <runtime>` — set the default agent (e.g. `cursor`, `gemini`) via the bus-preferences Go library.  
+`bus agent set runtime <runtime>` — set the default agent (e.g. `cursor`, `codex`, `codex:local`, `gemini`) via the bus-preferences Go library.  
 `bus agent set model <value>` — set the default model (default when unset is `auto`).  
 `bus agent set output-format <ndjson|text>` — set the default output format (default when unset: `text`).  
 `bus agent set timeout <duration>` — set the default run timeout (e.g. `60m`).  
@@ -25,6 +25,7 @@ Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These 
 Command names follow [CLI command naming](../cli/command-naming). `bus agent` is a thin CLI on top of the BusDK agent runner library.
 
 The runner centralizes how external runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI) are invoked.
+The runtime token `codex:local` selects the Codex backend in local mode (`--oss`).
 Modules share one deterministic contract for templating, timeout handling, and output capture.
 
 This CLI exposes that contract for diagnostics and development:
@@ -57,7 +58,7 @@ Runtime resolution order is: `--agent`, `BUS_AGENT`, `bus-agent.runtime`, then f
 
 At start, bus-agent prints the active agent and model to stderr. If the selected runtime is missing from `PATH`, the command exits with a clear diagnostic and installation URL.
 
-**`set`** — Set a bus-agent persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). The CLI provides a dedicated subcommand for each key: **`bus agent set runtime <runtime>`** (e.g. `cursor`, `gemini`), **`bus agent set model <value>`** (default when unset: `auto`), **`bus agent set output-format <ndjson|text>`** (default when unset: `text`), **`bus agent set timeout <duration>`** (e.g. `60m`). Each writes the corresponding key in the table under Preference settings below. Invalid value yields exit 2.
+**`set`** — Set a bus-agent persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). The CLI provides a dedicated subcommand for each key: **`bus agent set runtime <runtime>`** (e.g. `cursor`, `codex:local`, `gemini`), **`bus agent set model <value>`** (default when unset: `auto`), **`bus agent set output-format <ndjson|text>`** (default when unset: `text`), **`bus agent set timeout <duration>`** (e.g. `60m`). Each writes the corresponding key in the table under Preference settings below. Invalid value yields exit 2.
 
 **`format`** — Read raw agent output from stdin and write formatted text to stdout. This is useful when you have captured NDJSON or other backend-specific output and want human-readable text. Use `--runtime <runtime>` to select the formatter for the given backend (e.g. Cursor-style NDJSON). If the runtime is omitted, the tool may use a default or infer from the input where possible; see `bus agent format --help` for the current behavior.
 
@@ -94,7 +95,7 @@ Session default can also be set with `BUS_AGENT`.
 
 | Key | Description |
 |-----|-------------|
-| `bus-agent.runtime` | Default agent runtime when no `--agent` or `BUS_AGENT` is set (e.g. `cursor`, `gemini`). |
+| `bus-agent.runtime` | Default agent runtime when no `--agent` or `BUS_AGENT` is set (e.g. `cursor`, `codex:local`, `gemini`). |
 | `bus-agent.model` | Default model (e.g. for Cursor). When unset, the default is `auto`. Overridable by `CURSOR_AGENT_MODEL`. |
 | `bus-agent.output_format` | Default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable; NDJSON formatted to text). When unset, the default is `text`. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. |
 | `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. |

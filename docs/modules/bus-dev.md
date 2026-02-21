@@ -7,7 +7,7 @@ description: "bus dev is a developer-only companion that centralizes workflow lo
 
 ### Synopsis
 
-`bus dev [-h] [-V] [--check] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|gemini|claude>] <operation> [operation ...]`
+`bus dev [-h] [-V] [--check] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|codex:local|gemini|claude>] <operation> [operation ...]`
 
 Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
 
@@ -34,11 +34,11 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.  
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.  
 `bus dev each [--check] [--skip MODULE[,MODULE...]]... TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every discovered child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names.  
-`bus dev set agent <cursor|codex|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.  
+`bus dev set agent <cursor|codex|codex:local|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.  
 `bus dev set model <value>` — set the bus-dev persistent default model (`bus-dev.model`).  
 `bus dev set output-format <ndjson|text>` — set the bus-dev persistent default output format (`bus-dev.output_format`).  
 `bus dev set timeout <duration>` — set the bus-dev persistent default timeout (`bus-dev.timeout`).  
-`bus dev set agent-for <token|@token> <cursor|codex|gemini|claude>` — set the bus-dev per-step runtime default (`bus-dev.agent_for.*`).  
+`bus dev set agent-for <token|@token> <cursor|codex|codex:local|gemini|claude>` — set the bus-dev per-step runtime default (`bus-dev.agent_for.*`).  
 `bus dev set model-for <token|@token> <value>` — set the bus-dev per-step model default (`bus-dev.model_for.*`).  
 `bus dev context` — print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) for use by prompt and script authors; requires a Git repository and exits 2 when not in one.  
 `bus dev list` — print every runnable token (operations, pipelines, prompt actions, script actions) and what they execute, without running any agent, script, or Git operation; outside a repo shows only built-in operations and pipelines with descriptions and expanded steps; inside a repo adds repository-local and preference pipelines, prompt actions, and script actions with source and expansion.  
@@ -64,7 +64,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus dev` is a
 
 It provides one entry point for module scaffolding, commit workflows, planning, AGENTS.md maintenance, e2e scaffolding, and development-state documentation triage.
 
-Agent runtime execution (Cursor CLI, Codex, Gemini CLI, Claude CLI) is provided by the [bus-agent](../sdd/bus-agent) library so runtime detection and diagnostics stay consistent across modules.
+Agent runtime execution (Cursor CLI, Codex, Gemini CLI, Claude CLI) is provided by the [bus-agent](../sdd/bus-agent) library so runtime detection and diagnostics stay consistent across modules. The `codex:local` runtime token is also supported and runs Codex in local mode (`--oss`).
 
 `bus dev` accepts one operation (`bus dev work`) or multiple operations in one invocation (`bus dev plan work stage commit`). It also supports built-in and user-defined pipelines, plus repository-local actions/scripts under `.bus/dev/`.
 
@@ -76,7 +76,7 @@ The tool does not operate on workspace accounting datasets. End-user accounting 
 
 For a practical `.bus` file that runs `dev`, `agent`, and `run` commands together in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
-From **BusDK v0.0.26** onward, `bus dev` can select Codex through the shared `bus-agent` runtime layer (`--agent codex`, `BUS_DEV_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans), so contributors can use Codex-backed workflows without API-key-only setup. Gemini and Claude runtime paths exist but remain in-progress and not fully verified by end-to-end tests.
+From **BusDK v0.0.26** onward, `bus dev` can select Codex through the shared `bus-agent` runtime layer (`--agent codex`, `--agent codex:local`, `BUS_DEV_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans), so contributors can use Codex-backed workflows without API-key-only setup. Gemini and Claude runtime paths exist but remain in-progress and not fully verified by end-to-end tests.
 
 For ChatGPT Pro users, a practical research-preview setup is to pin Codex as the default runtime for both `bus dev` and `bus run`, then use a faster Codex model only for stage and commit steps.
 
@@ -135,7 +135,7 @@ When you run `each`, the remaining tokens are exactly the command that each chil
 
 **`set`** — Set a persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). Bus-dev provides a dedicated subcommand for each key that affects agent use:
 
-**`set agent <runtime>`** — Set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library. Only the `bus-dev` namespace is written; no other namespace is modified. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid runtime yields exit 2.
+**`set agent <runtime>`** — Set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library. Only the `bus-dev` namespace is written; no other namespace is modified. `<runtime>` must be one of `cursor`, `codex`, `codex:local`, `gemini`, or `claude`. Invalid runtime yields exit 2.
 
 **`set model <value>`** — Set the bus-dev persistent default model (`bus-dev.model`) via the bus-preferences Go library. Only the `bus-dev` namespace is written. Invalid value yields exit 2.
 
@@ -143,7 +143,7 @@ When you run `each`, the remaining tokens are exactly the command that each chil
 
 **`set timeout <duration>`** — Set the bus-dev persistent default timeout (`bus-dev.timeout`) via the bus-preferences Go library (e.g. `60m`). Only the `bus-dev` namespace is written. Invalid value yields exit 2.
 
-**`set agent-for <token|@token> <runtime>`** — Set a per-step runtime preference via `bus-dev.agent_for.*`. Use `token` for the generic selector (applies to both built-in and user-defined steps with that name) and `@token` for built-in-only selector matching. Runtime values are `cursor`, `codex`, `gemini`, or `claude`. Invalid selector or runtime yields exit 2.
+**`set agent-for <token|@token> <runtime>`** — Set a per-step runtime preference via `bus-dev.agent_for.*`. Use `token` for the generic selector (applies to both built-in and user-defined steps with that name) and `@token` for built-in-only selector matching. Runtime values are `cursor`, `codex`, `codex:local`, `gemini`, or `claude`. Invalid selector or runtime yields exit 2.
 
 **`set model-for <token|@token> <value>`** — Set a per-step model preference via `bus-dev.model_for.*`. Use `token` for generic matching and `@token` for built-in-only matching. Invalid selector yields exit 2.
 
@@ -221,13 +221,13 @@ These flags apply to all subcommands. The common subset matches the [standard gl
 
 `-C <dir>` and `--chdir <dir>` set the effective working directory used for repository resolution and path handling. `-o <file>` and `--output <file>` redirect normal output to a file; diagnostics still go to stderr. If output and quiet are both set, quiet wins and nothing is written.
 
-`--color <auto|always|never>` controls colored stderr output. `--no-color` is the same as `--color=never`. `--agent <runtime>` selects runtime for this invocation only; valid values are `cursor`, `codex`, `gemini`, and `claude`, and invalid values return usage error exit 2.
+`--color <auto|always|never>` controls colored stderr output. `--no-color` is the same as `--color=never`. `--agent <runtime>` selects runtime for this invocation only; valid values are `cursor`, `codex`, `codex:local`, `gemini`, and `claude`, and invalid values return usage error exit 2.
 
 Command results are written to stdout when a subcommand produces them. Diagnostics, progress, and human-readable agent output are written to stderr.
 
 ### Agent runtime selection
 
-Subcommands that invoke an external agent (`plan`, `work`, `spec`, `e2e`, and `triage`, including when plan/spec/work/e2e are requested after `init`) use the [bus-agent](../sdd/bus-agent) library and one of its supported runtimes: **Cursor CLI**, **Codex**, **Gemini CLI**, and **Claude CLI**. At the start of each such step, the tool prints to stderr which internal agent and which model are in use so that logs and scripts can see the active runtime and model.
+Subcommands that invoke an external agent (`plan`, `work`, `spec`, `e2e`, and `triage`, including when plan/spec/work/e2e are requested after `init`) use the [bus-agent](../sdd/bus-agent) library and one of its supported runtimes: **Cursor CLI**, **Codex**, **Gemini CLI**, and **Claude CLI**. The runtime token `codex:local` selects Codex in local mode (`--oss`). At the start of each such step, the tool prints to stderr which internal agent and which model are in use so that logs and scripts can see the active runtime and model.
 
 The active runtime is chosen in this order: (1) **`--agent <runtime>`** for that invocation; (2) **`BUS_DEV_AGENT`** (bus-dev-only session default; when set, used for every `bus dev` command in that session until unset or overridden); (3) **`BUS_AGENT`** (shared session default, used when `BUS_DEV_AGENT` is not set); (4) **bus-dev persistent preference** (e.g. `bus-dev.agent` via [bus-preferences](./bus-preferences), affects only bus-dev); (5) **bus-agent persistent preference** (`bus-agent.runtime`); (6) **first available** runtime in the effective order (alphabetic by runtime ID by default). Set bus-dev’s default with `bus preferences set bus-dev.agent <runtime>` and the shared default with `bus preferences set bus-agent.runtime <runtime>`. At any step, if the configured runtime is **disabled** by user configuration, the tool prints a warning to stderr and continues with the next source. You can configure agent order and enable/disable; see the [bus-agent](../sdd/bus-agent) SDD and [bus-agent module docs](./bus-agent).
 
@@ -243,7 +243,7 @@ Preferences that affect `bus dev` are stored via the [bus-preferences](./bus-pre
 | `bus-dev.model` | Bus-dev default model (e.g. for Cursor). Resolution order: per-command override (if any) → `BUS_DEV_MODEL` → `bus-dev.model` → `bus-agent.model` → bus-agent default (`auto`). Set with `bus dev set model <value>`. |
 | `bus-dev.output_format` | Bus-dev default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable). Resolution order: per-command override (if any) → `BUS_DEV_OUTPUT_FORMAT` → `bus-dev.output_format` → `bus-agent.output_format` → bus-agent default (`text`). Set with `bus dev set output-format <ndjson|text>`. |
 | `bus-dev.timeout` | Bus-dev default run timeout as a duration string (e.g. `60m`). Resolution order: per-command override (if any) → `BUS_DEV_TIMEOUT` → `bus-dev.timeout` → `bus-agent.timeout` → bus-agent default. Set with `bus dev set timeout <duration>`. |
-| `bus-dev.agent_for.<selector>` | Bus-dev per-step runtime default. `<selector>` is encoded from `token` or `@token` (`@token` means built-in-only selector). Selector resolution: built-in step uses `@token` first, then `token`; user-defined step uses `token` only. Runtime values are `cursor`, `codex`, `gemini`, `claude`. Set with `bus dev set agent-for <token|@token> <runtime>`. |
+| `bus-dev.agent_for.<selector>` | Bus-dev per-step runtime default. `<selector>` is encoded from `token` or `@token` (`@token` means built-in-only selector). Selector resolution: built-in step uses `@token` first, then `token`; user-defined step uses `token` only. Runtime values are `cursor`, `codex`, `codex:local`, `gemini`, `claude`. Set with `bus dev set agent-for <token|@token> <runtime>`. |
 | `bus-dev.model_for.<selector>` | Bus-dev per-step model default. Same selector semantics as `agent_for`: built-in step uses `@token` first, then `token`; user-defined step uses `token` only. Set with `bus dev set model-for <token|@token> <value>`. |
 | `bus-dev.pipeline.<name>` | User-defined pipeline: a JSON array of tokens (base operation names, pipeline names, or @-prefixed built-ins). `<name>` must start with a letter and use only lowercase ASCII letters, digits, hyphens, and underscores; it must not match a base operation name. Set with **`bus dev pipeline set prefs <name> TOKEN...`** or `bus preferences set bus-dev.pipeline.<name> '<json array>'`. Unset with **`bus dev pipeline unset prefs <name>`**. See [Pipelines and repository-local extensions](#pipelines-and-repository-local-extensions) above. |
 

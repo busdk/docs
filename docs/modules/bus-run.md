@@ -7,7 +7,7 @@ description: "bus run executes user-defined prompts, pipelines, and scripts with
 
 ### Synopsis
 
-`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | list | pipeline | action | script ) [options]`
+`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|codex:local|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | list | pipeline | action | script ) [options]`
 
 **Run:** `bus run <token> [<token> ...]` — Execute one or more user-defined prompt actions, script actions, or pipeline names.
 
@@ -35,7 +35,7 @@ For normative behavior and edge cases, see the [module SDD](../sdd/bus-run).
 
 For a practical `.bus` file that combines `run` with `dev` and `agent` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
-From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-agent` runtime layer (`--agent codex`, `BUS_RUN_AGENT=codex`, `BUS_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans), so prompt and pipeline runs can use subscription-based Codex access. Gemini and Claude runtime paths are available but are still in development and not yet fully end-to-end verified.
+From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-agent` runtime layer (`--agent codex`, `--agent codex:local`, `BUS_RUN_AGENT=codex`, `BUS_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans), so prompt and pipeline runs can use subscription-based Codex access. Gemini and Claude runtime paths are available but are still in development and not yet fully end-to-end verified.
 
 **Shorthand: `bux`.** You can add a short alias or wrapper so that `bux` invokes `bus run`, similar to how `npx` is used with `npm`. For example, define a shell alias `alias bux='bus run'` or install a small script named `bux` that runs `bus run "$@"`. Then `bux my-pipeline` or `bux my-action` runs the same as `bus run my-pipeline` or `bus run my-action`. The BusDK install does not create `bux` by default; adding it is optional and left to the user or their environment.
 
@@ -43,7 +43,7 @@ From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-a
 
 **`bus run <token> [<token> ...]`** — Run one or more user-defined steps. Each token is a prompt action name, script action name, or pipeline name. Pipeline names expand to a sequence of prompt and script actions; there are no built-in operations or built-in pipelines. After full expansion, bus-run normalizes the final sequence by merging repeated step names so each name appears once in first-appearance order, then runs the normalized sequence. The first non-zero exit stops the run and becomes the process exit code. When any token resolves to directory-local content, `.bus/run/` is read from the effective working directory (project root); no Git is required. If the project root does not exist or is not accessible, exit 1. Takes the per-directory lock.
 
-**`bus run set agent <runtime>`** — Set the bus-run persistent default agent (`bus-run.agent`) via the bus-preferences library. `<runtime>` must be one of `cursor`, `codex`, `gemini`, or `claude`. Invalid value → exit 2.
+**`bus run set agent <runtime>`** — Set the bus-run persistent default agent (`bus-run.agent`) via the bus-preferences library. `<runtime>` must be one of `cursor`, `codex`, `codex:local`, `gemini`, or `claude`. Invalid value → exit 2.
 
 **`bus run set model <value>`** — Set the bus-run default model (`bus-run.model`). **`bus run set output-format <ndjson|text>`** — Set the bus-run default output format (`bus-run.output_format`). **`bus run set timeout <duration>`** — Set the bus-run default timeout (`bus-run.timeout`). Each writes only the corresponding `bus-run.*` key. Invalid value → exit 2.
 
@@ -141,11 +141,11 @@ These flags apply to all subcommands and match the [standard global flags](../cl
 
 `-C <dir>` and `--chdir <dir>` change the effective working directory. `-o <file>` and `--output <file>` redirect normal output to a file, while diagnostics still go to stderr; if both output and quiet are set, quiet wins. `--color <auto|always|never>` controls color on stderr, and `--no-color` is the same as `--color=never`.
 
-`--agent <runtime>` selects the runtime for this invocation only. Valid values are `cursor`, `codex`, `gemini`, and `claude`. This overrides `BUS_RUN_AGENT`, `BUS_AGENT`, and persistent preference defaults.
+`--agent <runtime>` selects the runtime for this invocation only. Valid values are `cursor`, `codex`, `codex:local`, `gemini`, and `claude`. This overrides `BUS_RUN_AGENT`, `BUS_AGENT`, and persistent preference defaults.
 
 ### Agent runtime selection
 
-Subcommands that invoke an agent (when a token resolves to a prompt action) use the [bus-agent](./bus-agent) library and one of its supported runtimes: Cursor CLI, Codex, Gemini CLI, and Claude CLI. Resolution order: (1) **`--agent`** for that invocation; (2) **`BUS_RUN_AGENT`** (bus-run session default); (3) **`BUS_AGENT`** (shared session default); (4) per-step selector preference (`bus-run.agent_for.<selector>`; built-in step uses `@token` then `token`, user-defined step uses `token`); (5) **bus-run persistent preference** (`bus-run.agent`); (6) **bus-agent persistent preference** (`bus-agent.runtime`); (7) **first available** runtime in the effective order. Set bus-run’s defaults with **`bus run set agent <runtime>`**, **`bus run set agent-for <token|@token> <runtime>`**, and **`bus run set model-for <token|@token> <value>`**. At the start of each agent step, the tool prints to stderr which agent and model are in use. Invalid runtime name or missing selected runtime yields a clear error and exit 2 or 1; the diagnostic includes the canonical installation URL for the runtime when it is missing.
+Subcommands that invoke an agent (when a token resolves to a prompt action) use the [bus-agent](./bus-agent) library and one of its supported runtimes: Cursor CLI, Codex, Gemini CLI, and Claude CLI. The runtime token `codex:local` selects Codex in local mode (`--oss`). Resolution order: (1) **`--agent`** for that invocation; (2) **`BUS_RUN_AGENT`** (bus-run session default); (3) **`BUS_AGENT`** (shared session default); (4) per-step selector preference (`bus-run.agent_for.<selector>`; built-in step uses `@token` then `token`, user-defined step uses `token`); (5) **bus-run persistent preference** (`bus-run.agent`); (6) **bus-agent persistent preference** (`bus-agent.runtime`); (7) **first available** runtime in the effective order. Set bus-run’s defaults with **`bus run set agent <runtime>`**, **`bus run set agent-for <token|@token> <runtime>`**, and **`bus run set model-for <token|@token> <value>`**. At the start of each agent step, the tool prints to stderr which agent and model are in use. Invalid runtime name or missing selected runtime yields a clear error and exit 2 or 1; the diagnostic includes the canonical installation URL for the runtime when it is missing.
 
 ### Preference settings (bus-run namespace)
 
