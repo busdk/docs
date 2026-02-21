@@ -13,7 +13,7 @@ This section covers how modules are structured and their current implementation 
 
 [Go optimization guide](./go-optimization-guide) defines the default reproducibility-focused Go build and test profile used in module Makefiles.
 
-[Bus project cost summary](./cost-summary) and [BusDK module pricing](./module-pricing) provide project-cost and source-access context.
+[Bus project cost summary](./cost-summary) and [BusDK source package pricing](./module-pricing) provide project-cost and source-access context.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

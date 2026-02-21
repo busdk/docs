@@ -1,15 +1,19 @@
 ---
-title: BusDK module pricing
-description: Pricing for BusDK modules offered under source-available licenses, including dependency-inclusive totals and package pricing.
+title: BusDK source package pricing
+description: Pricing for BusDK source packages offered under source-available licenses, including dependency-inclusive totals and package pricing.
 ---
 
 ## Overview
 
-This page defines how BusDK module source access is priced.
+This page is about pricing for access to BusDK source code releases.
+
+**All BusDK modules are currently available to test for free as binary releases.** Source code release access is sold separately on this page. Binary releases are free for now, and are planned to move to a subscription model later.
 
 ### Licenses
 
-Sellable modules use the source-available [Functional Source License (FSL)](https://fsl.software/). Each release becomes Apache 2.0 or MIT after two years. Commercial license terms are also available by contract.
+Source code packages use the source-available [Functional Source License (FSL)](https://fsl.software/). After two years, each release converts to Apache 2.0 or MIT. Alternative commercial licensing is available by contract.
+
+To buy source access for one or more modules, email [sales@hg.fi](mailto:sales@hg.fi) and include the module names you are interested in.
 
 {% assign pricing = site.data["prices-data"] %}
 
@@ -17,13 +21,11 @@ Sellable modules use the source-available [Functional Source License (FSL)](http
 {% assign total_price_eur = pricing.total_price_eur | plus: 0 %}
 {% assign discounted_total_eur = total_price_eur | times: 0.8 | round: 2 %}
 
-### Package pricing summary
-
 All-inclusive total price is `{{ total_price_eur | eur_rounded }} EUR`. Full package price with 20% discount is `{{ discounted_total_eur | eur_rounded }} EUR`.
 
 ### Pricing model
 
-Each module has a base price and a dependency-inclusive price. Dependency-inclusive price includes the module's own base price plus prices of its dependencies. Dependencies are shown as a unique transitive set.
+Each module has a base price and a dependency-inclusive price. Base price gives access only to that specific module's source release and does not include dependencies unless those modules are purchased separately. Dependency-inclusive price includes the module's own base price plus prices of its dependencies. Dependencies are shown as a unique transitive set.
 
 {% assign category_core = "bus-init,bus-config,bus-data,bus-preferences" | split: "," %}
 {% assign category_ui = "bus-sheets,bus-books" | split: "," %}
@@ -190,8 +192,6 @@ Each module has a base price and a dependency-inclusive price. Dependency-inclus
 {% else %}
 Pricing data is not available. Run `scripts/update-prices-data.sh` in the repository root to generate `docs/docs/_data/prices-data.json`, then rebuild the docs site.
 {% endif %}
-
-To buy source access for one or more modules, email [sales@hg.fi](mailto:sales@hg.fi) and include the module names you are interested in.
 
 {% if pricing and pricing.modules %}
 ### Pricing data timestamp
