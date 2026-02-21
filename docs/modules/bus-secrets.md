@@ -20,9 +20,9 @@ A secret reference uses the form `secret:<name>`. When a value is resolved in `a
 
 ### Commands
 
-`bus secrets set <name> <value> [--scope user|repo]` writes a secret value. Scope defaults to `user` for `set`.
+`bus secrets set <name> <value> [--scope user|repo]` writes a secret value as a SOPS-encrypted envelope. Scope defaults to `user` for `set`.
 
-`bus secrets get <name> [--scope auto|user|repo]` reads one secret value and prints it to stdout.
+`bus secrets get <name> [--scope auto|user|repo]` reads one secret value and prints the decrypted value to stdout.
 
 `bus secrets list [--scope auto|user|repo]` prints known secret names in sorted order.
 
@@ -77,9 +77,49 @@ User scope is the safer default for real credentials because values stay in user
 
 Repository scope writes to `datapackage.json`. Treat repository-scoped secrets as visible project configuration and avoid storing production credentials there unless your repository policy explicitly allows it.
 
+The module enforces encrypted-at-rest behavior. Plaintext secret values in storage are treated as invalid and commands fail until values are re-written through `bus secrets set`.
+
 ### Global flags
 
 Standard global flags are supported: `-h`, `-V`, `-C`, `-o`, and `-q`.
+
+`sops` must be available in `PATH`, and SOPS key configuration must be available for encrypt/decrypt operations.
+
+If `sops` is not installed, `bus secrets` fails with an explicit diagnostic that tells you to install `sops` and retry. Install instructions: <https://getsops.io/>.
+
+### macOS setup
+
+On macOS, install `sops` and `age`, then create an age identity and configure SOPS recipient and key location in your shell profile.
+
+```bash
+brew install sops age
+mkdir -p "$HOME/Library/Application Support/sops/age"
+age-keygen -o "$HOME/Library/Application Support/sops/age/keys.txt"
+age-keygen -y "$HOME/Library/Application Support/sops/age/keys.txt"
+```
+
+The last command prints your public recipient (`age1...`). Add this to your shell profile:
+
+```bash
+export SOPS_AGE_RECIPIENTS="age1replace_with_your_recipient"
+export SOPS_AGE_KEY_FILE="$HOME/Library/Application Support/sops/age/keys.txt"
+```
+
+Open a new shell and verify:
+
+```bash
+sops --version
+bus secrets set smoke.test value --scope user
+bus secrets get smoke.test --scope user
+```
+
+SOPS also supports alternative key sources with environment variables such as `SOPS_AGE_KEY`, `SOPS_AGE_KEY_CMD`, and `SOPS_AGE_KEY_FILE`, so teams can integrate password managers or external key commands.
+
+### Secure Enclave option on Mac
+
+You can use Apple Secure Enclave through the age plugin ecosystem, for example with `age-plugin-se`. This is an age-level setup that can be used by tools that use age in the backend. In practice this means you can keep your age private key material bound to your Mac Secure Enclave and still use `bus secrets` through SOPS.
+
+This path is optional and depends on your team’s operational requirements. Keep at least one recovery-capable backup recipient in your SOPS policy so secrets remain decryptable if a device-bound key becomes unavailable.
 
 ### Files
 

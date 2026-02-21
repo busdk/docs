@@ -27,13 +27,17 @@ FR-SEC-005 Reference resolution. `resolve` returns plain values unchanged and re
 
 FR-SEC-006 Deterministic listing. `list` outputs names in deterministic sorted order.
 
+FR-SEC-007 Encrypted at rest enforcement. Secret values persisted in user and repository scopes must be SOPS-encrypted envelopes; plaintext stored values are invalid and must cause deterministic command failure until migrated.
+
 NFR-SEC-001 Determinism. For the same inputs and workspace state, command outputs and exit behavior are deterministic.
 
 NFR-SEC-002 No implicit external services. Secret operations do not require network access.
 
+NFR-SEC-003 SOPS runtime requirement. Encrypt/decrypt operations require a working `sops` executable in `PATH` and valid SOPS key configuration.
+
 ### System Architecture
 
-The module has a small CLI layer and a reusable package layer. The CLI parses global flags, command tokens, and optional scope, then delegates to `pkg/secrets`. The package layer handles validation, scope-specific read and write behavior, and `secret:` reference resolution.
+The module has a small CLI layer and a reusable package layer. The CLI parses global flags, command tokens, and optional scope, then delegates to `pkg/secrets`. The package layer handles validation, scope-specific read and write behavior, SOPS encrypt/decrypt enforcement, and `secret:` reference resolution.
 
 User-scope storage is delegated to the `bus-preferences` Go library. Repository-scope storage is delegated to workspace config path resolution via `bus-config` path helpers and `datapackage.json` data.
 
@@ -50,9 +54,9 @@ CLI commands map directly to these package operations and keep stdout/stderr and
 
 ### Data Design
 
-User scope persists key-value data under user preferences keys with prefix `secrets.`.
+User scope persists key-value data under user preferences keys with prefix `secrets.`. Persisted values are SOPS-encrypted envelope strings.
 
-Repository scope persists key-value data in `datapackage.json` under the `busdk.secrets` object. Keys are secret names and values are string values.
+Repository scope persists key-value data in `datapackage.json` under the `busdk.secrets` object. Keys are secret names and values are SOPS-encrypted envelope strings.
 
 `auto` scope combines both sources with repository values overriding user values for the same name.
 
