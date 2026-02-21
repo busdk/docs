@@ -15,7 +15,7 @@ Tokens are resolved and pipeline names are expanded to a flat step sequence. The
 
 All agent execution uses the [bus-agent](./bus-agent) library. There are no built-in developer operations (no plan, work, spec, e2e, commit, or init).
 
-Management subcommands keep defaults and local definitions organized. Use **`set`** to persist bus-run defaults (agent, model, output-format, timeout) via [bus-preferences](./bus-preferences). Use **`context`** to print the resolved prompt-variable catalog as sorted `KEY=VALUE` lines. Use **`list`** to print runnable tokens and expansions without running steps. Use **`pipeline`** to define, list, or preview pipelines from `.bus/run/<NAME>.yml` or `bus-run.pipeline.<name>`. Use **`action`** for prompt actions in `.bus/run/<NAME>.txt`, and **`script`** for script actions in `.bus/run/<NAME>.sh`, `.bat`, or `.ps1`.
+Management subcommands keep defaults and local definitions organized. Use **`set`** to persist bus-run defaults (agent, model, model reasoning effort, model verbosity, output-format, timeout) via [bus-preferences](./bus-preferences). Use **`context`** to print the resolved prompt-variable catalog as sorted `KEY=VALUE` lines. Use **`list`** to print runnable tokens and expansions without running steps. Use **`pipeline`** to define, list, or preview pipelines from `.bus/run/<NAME>.yml` or `bus-run.pipeline.<name>`. Use **`action`** for prompt actions in `.bus/run/<NAME>.txt`, and **`script`** for script actions in `.bus/run/<NAME>.sh`, `.bat`, or `.ps1`.
 
 Global **`bus run --help`** shows usage, states that runnable tokens are user-defined only (no built-in operations or pipelines), and directs you to **`bus run list`**, **`bus run pipeline list`**, **`bus run action list`**, and **`bus run script list`** to discover available tokens. No agent or script is run to produce help. **`bus run list`** prints a unified catalog of every runnable token in the current context (directory-local and preference pipelines, prompt actions, script actions) with source and, for pipelines, the normalized expanded step sequence; it does not execute any step.
 
@@ -45,11 +45,15 @@ From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-a
 
 **`bus run set agent <runtime>`** — Set the bus-run persistent default agent (`bus-run.agent`) via the bus-preferences library. `<runtime>` must be one of `cursor`, `codex`, `codex:local`, `gemini`, or `claude`. Invalid value → exit 2.
 
-**`bus run set model <value>`** — Set the bus-run default model (`bus-run.model`). **`bus run set output-format <ndjson|text>`** — Set the bus-run default output format (`bus-run.output_format`). **`bus run set timeout <duration>`** — Set the bus-run default timeout (`bus-run.timeout`). Each writes only the corresponding `bus-run.*` key. Invalid value → exit 2.
+**`bus run set model <value>`** — Set the bus-run default model (`bus-run.model`). **`bus run set model-reasoning-effort <minimal|low|medium|high|xhigh>`** — Set default model reasoning effort (`bus-run.model_reasoning_effort`). **`bus run set model-verbosity <low|medium|high>`** — Set default model verbosity (`bus-run.model_verbosity`). **`bus run set output-format <ndjson|text>`** — Set the bus-run default output format (`bus-run.output_format`). **`bus run set timeout <duration>`** — Set the bus-run default timeout (`bus-run.timeout`). Each writes only the corresponding `bus-run.*` key. Invalid value → exit 2.
 
 **`bus run set agent-for <token|@token> <runtime>`** — Set per-step runtime preference (`bus-run.agent_for.*`). `token` is a generic selector. `@token` is built-in-only selector form for parity with modules that have built-in steps.
 
 **`bus run set model-for <token|@token> <value>`** — Set per-step model preference (`bus-run.model_for.*`) with the same selector semantics as `agent-for`.
+**`bus run set model-reasoning-effort-for <token|@token> <minimal|low|medium|high|xhigh>`** — Set per-step model reasoning effort preference (`bus-run.model_reasoning_effort_for.*`).
+**`bus run set model-verbosity-for <token|@token> <low|medium|high>`** — Set per-step model verbosity preference (`bus-run.model_verbosity_for.*`).
+**`bus run set model-reasoning-effort-for-model <model> <minimal|low|medium|high|xhigh>`** — Set per-model model reasoning effort preference (`bus-run.model_reasoning_effort_for_model.*`).
+**`bus run set model-verbosity-for-model <model> <low|medium|high>`** — Set per-model model verbosity preference (`bus-run.model_verbosity_for_model.*`).
 
 **`bus run context`** — Print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout. Use this when authoring prompt templates or scripts so you can see the same variables the tool injects. Uses the effective working directory to derive catalog values; no Git required. If the effective working directory does not exist or is not accessible, exit 1. Does not take the per-directory lock.
 
@@ -155,10 +159,16 @@ Preferences that affect `bus run` are stored via the [bus-preferences](./bus-pre
 |-----|-------------|
 | `bus-run.agent` | Bus-run default agent runtime. Set with `bus run set agent <runtime>`. |
 | `bus-run.model` | Bus-run default model. Set with `bus run set model <value>`. |
+| `bus-run.model_reasoning_effort` | Bus-run default model reasoning effort (`minimal`, `low`, `medium`, `high`, `xhigh`). Set with `bus run set model-reasoning-effort <value>`. |
+| `bus-run.model_verbosity` | Bus-run default model verbosity (`low`, `medium`, `high`). Set with `bus run set model-verbosity <value>`. |
 | `bus-run.output_format` | Bus-run default output format (`ndjson` or `text`). Set with `bus run set output-format <ndjson|text>`. |
 | `bus-run.timeout` | Bus-run default timeout (e.g. `60m`). Set with `bus run set timeout <duration>`. |
 | `bus-run.agent_for.<selector>` | Per-step runtime preference where `<selector>` is `token` or `@token`. Built-in step lookup uses `@token` then `token`; user-defined step lookup uses `token`. Set with `bus run set agent-for <token|@token> <runtime>`. |
 | `bus-run.model_for.<selector>` | Per-step model preference with same selector semantics as `agent_for`. Set with `bus run set model-for <token|@token> <value>`. |
+| `bus-run.model_reasoning_effort_for.<selector>` | Per-step model reasoning effort with same selector semantics as `agent_for`. Set with `bus run set model-reasoning-effort-for <token|@token> <value>`. |
+| `bus-run.model_verbosity_for.<selector>` | Per-step model verbosity with same selector semantics as `agent_for`. Set with `bus run set model-verbosity-for <token|@token> <value>`. |
+| `bus-run.model_reasoning_effort_for_model.<model>` | Per-model model reasoning effort override, applied when resolved model equals `<model>`. Set with `bus run set model-reasoning-effort-for-model <model> <value>`. |
+| `bus-run.model_verbosity_for_model.<model>` | Per-model model verbosity override, applied when resolved model equals `<model>`. Set with `bus run set model-verbosity-for-model <model> <value>`. |
 | `bus-run.pipeline.<name>` | User-defined pipeline: a JSON array of tokens. Set with **`bus run pipeline set prefs <name> TOKEN...`** or `bus preferences set bus-run.pipeline.<name> '<json array>'`. Unset with **`bus run pipeline unset prefs <name>`**. |
 
 ### Examples

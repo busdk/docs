@@ -14,6 +14,10 @@ Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These 
 `bus agent detect [-1|--first]` — list available agent runtimes (first is the default); with `-1` or `--first`, output only the default runtime.  
 `bus agent set runtime <runtime>` — set the default agent (e.g. `cursor`, `codex`, `codex:local`, `gemini`) via the bus-preferences Go library.  
 `bus agent set model <value>` — set the default model (default when unset is `auto`).  
+`bus agent set model-reasoning-effort <minimal|low|medium|high|xhigh>` — set default model reasoning effort (for runtimes that support it).  
+`bus agent set model-verbosity <low|medium|high>` — set default model verbosity (for runtimes that support it).  
+`bus agent set model-reasoning-effort-for-model <model> <minimal|low|medium|high|xhigh>` — set model-specific reasoning effort override.  
+`bus agent set model-verbosity-for-model <model> <low|medium|high>` — set model-specific verbosity override.  
 `bus agent set output-format <ndjson|text>` — set the default output format (default when unset: `text`).  
 `bus agent set timeout <duration>` — set the default run timeout (e.g. `60m`).  
 `bus agent render (--template <file> | --text <text>) --var KEY=VALUE [--var KEY=VALUE ...]` — render a prompt template with the given variables and fail if any {% raw %}`{{PLACEHOLDER}}`{% endraw %} remains unresolved.  
@@ -58,7 +62,7 @@ Runtime resolution order is: `--agent`, `BUS_AGENT`, `bus-agent.runtime`, then f
 
 At start, bus-agent prints the active agent and model to stderr. If the selected runtime is missing from `PATH`, the command exits with a clear diagnostic and installation URL.
 
-**`set`** — Set a bus-agent persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). The CLI provides a dedicated subcommand for each key: **`bus agent set runtime <runtime>`** (e.g. `cursor`, `codex:local`, `gemini`), **`bus agent set model <value>`** (default when unset: `auto`), **`bus agent set output-format <ndjson|text>`** (default when unset: `text`), **`bus agent set timeout <duration>`** (e.g. `60m`). Each writes the corresponding key in the table under Preference settings below. Invalid value yields exit 2.
+**`set`** — Set a bus-agent persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). The CLI provides a dedicated subcommand for each key: **`bus agent set runtime <runtime>`** (e.g. `cursor`, `codex:local`, `gemini`), **`bus agent set model <value>`** (default when unset: `auto`), **`bus agent set model-reasoning-effort <minimal|low|medium|high|xhigh>`**, **`bus agent set model-verbosity <low|medium|high>`**, **`bus agent set model-reasoning-effort-for-model <model> <minimal|low|medium|high|xhigh>`**, **`bus agent set model-verbosity-for-model <model> <low|medium|high>`**, **`bus agent set output-format <ndjson|text>`** (default when unset: `text`), **`bus agent set timeout <duration>`** (e.g. `60m`). Each writes the corresponding key in the table under Preference settings below. Invalid value yields exit 2.
 
 **`format`** — Read raw agent output from stdin and write formatted text to stdout. This is useful when you have captured NDJSON or other backend-specific output and want human-readable text. Use `--runtime <runtime>` to select the formatter for the given backend (e.g. Cursor-style NDJSON). If the runtime is omitted, the tool may use a default or infer from the input where possible; see `bus agent format --help` for the current behavior.
 
@@ -97,6 +101,10 @@ Session default can also be set with `BUS_AGENT`.
 |-----|-------------|
 | `bus-agent.runtime` | Default agent runtime when no `--agent` or `BUS_AGENT` is set (e.g. `cursor`, `codex:local`, `gemini`). |
 | `bus-agent.model` | Default model (e.g. for Cursor). When unset, the default is `auto`. Overridable by `CURSOR_AGENT_MODEL`. |
+| `bus-agent.model_reasoning_effort` | Default reasoning effort for runtimes that support it (Codex: `minimal`, `low`, `medium`, `high`, `xhigh`). Overridable by `BUS_AGENT_MODEL_REASONING_EFFORT`. |
+| `bus-agent.model_verbosity` | Default verbosity for runtimes that support it (Codex: `low`, `medium`, `high`). Overridable by `BUS_AGENT_MODEL_VERBOSITY`. |
+| `bus-agent.model_reasoning_effort_for_model.<model>` | Per-model reasoning effort override, used when resolved model matches `<model>`. |
+| `bus-agent.model_verbosity_for_model.<model>` | Per-model verbosity override, used when resolved model matches `<model>`. |
 | `bus-agent.output_format` | Default output format. Valid values: **`ndjson`** (raw structured output), **`text`** (human-readable; NDJSON formatted to text). When unset, the default is `text`. Overridable by `CURSOR_AGENT_OUTPUT_FORMAT`. |
 | `bus-agent.timeout` | Default run timeout as a duration string (e.g. `60m`). Overridable by `CURSOR_AGENT_TIMEOUT` or `--timeout`. |
 

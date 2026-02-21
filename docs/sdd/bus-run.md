@@ -59,7 +59,7 @@ FR-RUN-007a Agent output and disclosure on each step. When the tool executes an 
 
 FR-RUN-008 Agent runtimes. The implementation MUST use bus-agent’s supported runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI). The active runtime MUST be selectable via a documented flag (e.g. `--agent cursor|codex|codex:local|gemini|claude`) and via bus-run persistent preferences (`bus-run.agent`) written through the [bus-preferences](./bus-preferences) Go library. `codex:local` MUST select the Codex backend in local mode (`--oss`). Acceptance criteria: user can select any supported runtime token; invalid runtime yields exit 2; bus-run only writes `bus-run.*` preference keys.
 
-FR-RUN-009 Set and context subcommands. The implementation MUST provide **bus run set agent \<runtime\>**, **bus run set model \<value\>**, **bus run set output-format \<ndjson|text\>**, and **bus run set timeout \<duration\>**, each writing only the corresponding `bus-run.*` key via the bus-preferences library (no shell-out to `bus preferences`). The implementation MUST also provide **bus run set agent-for \<token|@token\> \<runtime\>** and **bus run set model-for \<token|@token\> \<value\>** writing only `bus-run.agent_for.<selector>` and `bus-run.model_for.<selector>`. Selector semantics for these preferences: `token` is a generic selector; `@token` is built-in-only selector form. The implementation MUST provide **bus run context**, which prints the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout; context uses the effective working directory to derive catalog values and does not require Git. When the effective working directory does not exist or is not accessible, context MUST exit with code 1. Acceptance criteria: set subcommands persist only bus-run keys; context output is deterministic and script-friendly; context does not require Git; inaccessible workdir yields exit 1.
+FR-RUN-009 Set and context subcommands. The implementation MUST provide **bus run set agent \<runtime\>**, **bus run set model \<value\>**, **bus run set model-reasoning-effort \<minimal|low|medium|high|xhigh\>**, **bus run set model-verbosity \<low|medium|high\>**, **bus run set output-format \<ndjson|text\>**, and **bus run set timeout \<duration\>**, each writing only the corresponding `bus-run.*` key via the bus-preferences library (no shell-out to `bus preferences`). The implementation MUST also provide **bus run set agent-for \<token|@token\> \<runtime\>**, **bus run set model-for \<token|@token\> \<value\>**, **bus run set model-reasoning-effort-for \<token|@token\> \<value\>**, **bus run set model-verbosity-for \<token|@token\> \<value\>**, **bus run set model-reasoning-effort-for-model \<model\> \<value\>**, and **bus run set model-verbosity-for-model \<model\> \<value\>** writing only `bus-run.agent_for.<selector>`, `bus-run.model_for.<selector>`, `bus-run.model_reasoning_effort_for.<selector>`, `bus-run.model_verbosity_for.<selector>`, `bus-run.model_reasoning_effort_for_model.<model>`, and `bus-run.model_verbosity_for_model.<model>`. Selector semantics for these preferences: `token` is a generic selector; `@token` is built-in-only selector form. The implementation MUST provide **bus run context**, which prints the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) to stdout; context uses the effective working directory to derive catalog values and does not require Git. When the effective working directory does not exist or is not accessible, context MUST exit with code 1. Acceptance criteria: set subcommands persist only bus-run keys; context output is deterministic and script-friendly; context does not require Git; inaccessible workdir yields exit 1.
 
 FR-RUN-010 Prompt variable catalog. Bus Run MUST define a prompt-variable catalog used for rendering directory-local prompt templates and for environment injection into script actions. At minimum: `DOCS_BASE_URL` (configurable via `BUS_RUN_DOCS_BASE_URL`, default `https://docs.busdk.com`), and workdir-derived values: `WORKDIR_ROOT` (absolute path to the effective working directory) and `PROJECT_NAME` (base name of that directory). The catalog MUST be documented in this SDD; **bus run context** MUST print all catalog variables. Acceptance criteria: catalog is fixed and documented; context output matches catalog; scripts receive same variables as env with override semantics.
 
@@ -151,6 +151,10 @@ Additional variables MAY be added in this SDD or in the implementation and MUST 
 
 **bus run set model \<value\>** — Set `bus-run.model` via bus-preferences. Invalid value → exit 2.
 
+**bus run set model-reasoning-effort \<minimal|low|medium|high|xhigh\>** — Set `bus-run.model_reasoning_effort` via bus-preferences. Invalid value → exit 2.
+
+**bus run set model-verbosity \<low|medium|high\>** — Set `bus-run.model_verbosity` via bus-preferences. Invalid value → exit 2.
+
 **bus run set output-format \<ndjson|text\>** — Set `bus-run.output_format` via bus-preferences. Invalid value → exit 2.
 
 **bus run set timeout \<duration\>** — Set `bus-run.timeout` via bus-preferences. Invalid value → exit 2.
@@ -158,6 +162,14 @@ Additional variables MAY be added in this SDD or in the implementation and MUST 
 **bus run set agent-for \<token|@token\> \<runtime\>** — Set `bus-run.agent_for.<selector>` via bus-preferences. `token` selector is generic; `@token` selector is built-in-only form.
 
 **bus run set model-for \<token|@token\> \<value\>** — Set `bus-run.model_for.<selector>` via bus-preferences with same selector semantics.
+
+**bus run set model-reasoning-effort-for \<token|@token\> \<value\>** — Set `bus-run.model_reasoning_effort_for.<selector>` via bus-preferences with same selector semantics.
+
+**bus run set model-verbosity-for \<token|@token\> \<value\>** — Set `bus-run.model_verbosity_for.<selector>` via bus-preferences with same selector semantics.
+
+**bus run set model-reasoning-effort-for-model \<model\> \<value\>** — Set `bus-run.model_reasoning_effort_for_model.<model>` via bus-preferences.
+
+**bus run set model-verbosity-for-model \<model\> \<value\>** — Set `bus-run.model_verbosity_for_model.<model>` via bus-preferences.
 
 **bus run context** — Print the prompt-variable catalog and resolved values (one `KEY=VALUE` per line, sorted by key) to stdout. Uses the effective working directory to derive catalog values; no Git required. If the effective working directory does not exist or is not accessible, exit 1. Does not take the lock.
 
@@ -215,7 +227,7 @@ All error messages MUST be written to stderr.
 
 - **Directory-local extension directory.** `.bus/run/` at the project root (effective working directory). Only `<NAME>.txt`, `<NAME>.yml`, `<NAME>.sh`, `<NAME>.bat`, `<NAME>.ps1` are considered. Paths must resolve inside the project root; symlinks that escape are refused. On Windows, when both .bat and .ps1 exist for the same NAME, .ps1 is used.
 
-- **Preferences.** Bus Run reads and writes only the `bus-run` namespace via the bus-preferences library: `bus-run.agent`, `bus-run.model`, `bus-run.output_format`, `bus-run.timeout`, `bus-run.pipeline.<name>`. No shell-out to `bus preferences`.
+- **Preferences.** Bus Run reads and writes only the `bus-run` namespace via the bus-preferences library: `bus-run.agent`, `bus-run.model`, `bus-run.model_reasoning_effort`, `bus-run.model_verbosity`, `bus-run.output_format`, `bus-run.timeout`, selector variants under `*_for.<selector>`, model-selector variants under `*_for_model.<model>`, and `bus-run.pipeline.<name>`. No shell-out to `bus preferences`.
 
 - No workspace datasets; no Git is used or required. No dependency on bus-dev or `.bus/dev/`.
 
