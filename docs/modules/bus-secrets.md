@@ -11,7 +11,7 @@ description: "How to store and resolve repository-local secret references for Bu
 `bus secrets [global flags] get <name> [--scope auto|repo|user]`  
 `bus secrets [global flags] list [--scope auto|repo|user]`  
 `bus secrets [global flags] resolve <value> [--scope auto|repo|user]`  
-`bus secrets [global flags] init [--print-env sh|powershell] [--secure-enclave]`  
+`bus secrets [global flags] init [--secure-enclave]`  
 `bus secrets [global flags] uninit`  
 `bus secrets [global flags] doctor`
 
@@ -29,7 +29,7 @@ description: "How to store and resolve repository-local secret references for Bu
 
 `bus secrets resolve <value> [--scope auto|repo|user]` resolves plain values and `secret:<name>` references. Plain values are returned unchanged.
 
-`bus secrets init [--print-env sh|powershell] [--secure-enclave]` initializes SOPS age configuration for `bus secrets` and creates a no-space key path by default. By default it prints only a completion message; use `--print-env` only when you want optional session override exports.
+`bus secrets init [--secure-enclave]` initializes SOPS age configuration for `bus secrets` and creates a no-space key path by default.
 
 `bus secrets uninit` reverts init state by clearing repository recipients and local key-source preferences.
 
@@ -93,18 +93,20 @@ If `sops` is not installed, `bus secrets` fails with an explicit diagnostic that
 
 ### Setup guide
 
+Run this once in each repository that will use `bus secrets`:
+
 ```bash
-brew install sops age-plugin-se
 bus secrets init
 ```
 
-On macOS, if you want Secure Enclave-backed keys, run:
+On macOS, if you want Secure Enclave-backed identities, install the plugin and run:
 
 ```bash
+brew install sops age-plugin-se
 bus secrets init --secure-enclave
 ```
 
-`bus secrets init` already writes persistent local key-source preferences and repository recipients.
+`bus secrets init` writes repository recipients and key profile under `.bus/secrets`, and writes user-local key source preferences for the active profile.
 
 ### Verify setup
 
