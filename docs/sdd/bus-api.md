@@ -168,6 +168,8 @@ Serve flags (module-specific):
 
 Bus-modules expose their data through bus-api by implementing a backend contract (Go interface) and registering with the server. The API is path-based: module-provided endpoints live under `/{token}/v1/modules/{module}/...`, where `{module}` is a stable, lowercase module identifier (e.g. `accounts` for bus-accounts). Which modules are exposed is controlled by configuration or CLI: only modules explicitly enabled (e.g. via `ModulesEnabled` in `Options` or repeatable `--enable-module <name>`) are mounted; when none are enabled, no module paths are served. Modules implement `http.Handler` (or `http.HandlerFunc`). The server mounts each enabled backend at `/{token}/v1/modules/{module}/` and forwards requests; the handler receives the request with that prefix stripped so it sees only the module-relative path. The module uses its own Go library (and the bus-data library where appropriate) to serve the response. All integration is library-only; no Bus module CLI is ever executed (NFR-API-007). The OpenAPI document MUST describe the combined surface including module-provided paths for all enabled backends (FR-API-013).
 
+Provider-based API backends for auth, plan, entitlement, Stripe, and artifact delivery are documented in [bus-api providers — architecture and operation catalog](./bus-api-providers).
+
 ### HTTP API Surface (v1)
 
 All endpoints are rooted under the capability prefix:
@@ -285,6 +287,7 @@ Not Applicable. The module is additive; it does not change dataset formats.
 ### Sources
 
 - [BusDK Software Design Document (SDD)](https://docs.busdk.com/sdd)
+- [bus-api providers — architecture and operation catalog](./bus-api-providers)
 - [bus-data SDD](./bus-data)
 - [bus-bfl SDD](./bus-bfl)
 - [Standard global flags](https://docs.busdk.com/cli/global-flags)

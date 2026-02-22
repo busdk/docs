@@ -1228,3 +1228,78 @@ Preferred optimization direction is to reduce repeated commit bookkeeping and sy
 - preserve atomic replace behavior for files (tmp+rename or equivalent safety),
 - do not regress tombstone semantics or overlay-to-root precedence,
 - retain crash-recovery expectations for fs provider transaction flow.
+
+### Avoid full-content compares for unchanged-file detection in workspace merge paths
+
+In `bus/internal/dispatch`, `mergeWorkspaceChangesToTxFS` walks both trees and calls `filesEqual` for same-path files. `filesEqual` opens both files and performs full byte-by-byte reads for equal-content files. For unchanged trees, this means merge cost scales with total bytes scanned even when no writes are produced.
+
+Benchmarks in `bus/internal/dispatch/run_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkMergeWorkspaceChangesToTxFSUnchangedTree/files_64_size_4096` about `24599246 ns/op`, `422585 B/op`, `2794 allocs/op`
+- `BenchmarkMergeWorkspaceChangesToTxFSUnchangedTree/files_128_size_65536` about `194114535 ns/op`, `852587 B/op`, `5606 allocs/op`
+- Supporting primitive cost: `BenchmarkFilesEqualSameSizeEqualContent` about `237542 ns/op`, `1072 B/op`, `10 allocs/op`
+
+Use this benchmark loop when iterating on unchanged-file detection changes:
+
+```bash
+go test ./internal/dispatch -run '^$' \
+  -bench 'Benchmark(MergeWorkspaceChangesToTxFSUnchangedTree|FilesEqualSameSize(EqualContent|DifferentContent))$' \
+  -benchmem
+```
+
+Preferred optimization direction is to short-circuit unchanged files before full-content scan when safe (for example, stable metadata gate and optional digest path) while preserving transactional correctness. Guardrails:
+
+- never skip real content differences (no false-equal outcomes),
+- maintain exact replace/delete behavior in the TxFS overlay,
+- keep deterministic behavior across filesystems and platforms,
+- preserve existing error handling and non-regular file filtering semantics.
+
+### Avoid full workspace clone and full-tree snapshot/merge for each fs-transaction command
+
+In `bus/internal/dispatch`, `runModuleViaTempWorkspaceAndMerge` currently performs a full workspace copy into a temp directory, captures a full snapshot, runs the module, then walks/merges the full tree back into TxFS. This happens per command in `provider=fs` mode and scales with workspace size even when nothing changes or only one file changes.
+
+Benchmarks in `bus/internal/dispatch/run_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkRunModuleViaTempWorkspaceAndMerge/unchanged_files_32_size_4096` about `153254095 ns/op`, `1411168 B/op`, `2749 allocs/op`
+- `BenchmarkRunModuleViaTempWorkspaceAndMerge/mutate_one_file_files_32_size_4096` about `163503684 ns/op`, `1447438 B/op`, `2782 allocs/op`
+- `BenchmarkRunModuleViaTempWorkspaceAndMerge/unchanged_files_64_size_16384` about `421904750 ns/op`, `2831296 B/op`, `5493 allocs/op`
+- `BenchmarkRunModuleViaTempWorkspaceAndMerge/mutate_one_file_files_64_size_16384` about `460369958 ns/op`, `2866765 B/op`, `5527 allocs/op`
+
+Use this benchmark loop when iterating on fs-transaction staging changes:
+
+```bash
+go test ./internal/dispatch -run '^$' \
+  -bench 'BenchmarkRunModuleViaTempWorkspaceAndMerge$' \
+  -benchmem
+```
+
+Preferred optimization direction is change-scoped staging/merge instead of whole-tree clone/diff per command, while preserving behavior:
+
+- preserve exact command-side filesystem view semantics for in-process fs transactions,
+- keep `.git` and `.bus/tx` ignore semantics unchanged,
+- retain deterministic merge/delete behavior and transactional failure handling,
+- do not regress final committed workspace results or diagnostics.
+
+### Avoid repeated OpenFile setup work on already-materialized TxFS paths
+
+In `bus/internal/txfs`, repeated `FS.OpenFile` calls on the same path still execute path normalization/index bookkeeping and overlay-directory setup logic each time. In append-heavy command loops this overhead is measurable even after the file is already materialized in overlay.
+
+Benchmarks in `bus/internal/txfs/txfs_bench_test.go` on Apple M2 Max (darwin/arm64) show the current steady-state shape:
+
+- `BenchmarkOpenFileRepeatedExistingPath/file.txt` about `82299 ns/op`, `520 B/op`, `7 allocs/op`
+- `BenchmarkOpenFileRepeatedExistingPath/deep/nested/tree/path/file.txt` about `85468 ns/op`, `792 B/op`, `7 allocs/op`
+
+Use this benchmark loop when iterating on TxFS write-path fast paths:
+
+```bash
+go test ./internal/txfs -run '^$' \
+  -bench 'BenchmarkOpenFileRepeatedExistingPath$' \
+  -benchmem
+```
+
+Preferred optimization direction is a lower-overhead fast path for already-materialized files (for example, minimizing repeated per-call normalization/index churn) while preserving correctness:
+
+- keep tombstone semantics and delete precedence unchanged,
+- keep overlay-write precedence and path safety checks intact,
+- preserve behavior for deep paths and missing parent directories,
+- avoid stale or bypassed change tracking in commit/rollback flows.
