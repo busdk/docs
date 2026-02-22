@@ -1,6 +1,6 @@
 ---
 title: Go optimization guide
-description: Default Go build and test optimization profile used in BusDK module Makefiles, with reproducibility-focused flags and practical overrides.
+description: Practical Go performance guide for production services: anti-pattern fixes with bad-vs-better code, pprof/trace/bench workflows, and reproducible build/runtime tuning flags.
 ---
 
 ## Practical optimization workflow
@@ -1071,6 +1071,22 @@ Prefer safe conversions unless performance evidence and safety constraints are b
 func bytesToStringBetter(b []byte) string { return string(b) }
 ```
 
+### Validate monetary CLI inputs without per-item `big.Rat` churn
+
+Command validation can become a measurable cost when large `.bus` batches are preflighted before dispatch. In `bus/internal/dispatch`, the journal and bank validators currently parse monetary strings with fresh `big.Rat` values on each posting or `--set amount=...` field. That preserves exactness, but it also introduces high allocation rates when repeated across hundreds of commands.
+
+Benchmarks in `bus/internal/dispatch/run_bench_test.go` show this pattern clearly on a representative development machine: `BenchmarkValidateJournalAddSingle` is about `859 ns/op` with `28 allocs/op`, `BenchmarkValidateBankAddTransactionsSingle` is about `314 ns/op` with `7 allocs/op`, and batch-level validation scales that overhead linearly (`BenchmarkValidateBusfileCommandsJournalAdd` about `214641 ns/op` with `7168 allocs/op` for 256 commands).
+
+Use this benchmark loop to verify baseline and any optimization candidate before changing parser behavior:
+
+```bash
+go test ./internal/dispatch -run '^$' \
+  -bench 'BenchmarkValidate(JournalAddSingle|BankAddTransactionsSingle|BusfileCommandsJournalAdd|BusfileCommandsBankAddTransactions)$' \
+  -benchmem
+```
+
+The safer optimization direction is to keep exact decimal semantics while reducing temporary object churn, for example by using a lower-allocation decimal parser for validation-only checks and reusing parse buffers where possible. Keep error messages and accepted input formats stable, and rerun the same benchmarks plus command-level tests after each parser change.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./developer-module-workflow">Developer module workflow</a></span>
@@ -1101,6 +1117,7 @@ func bytesToStringBetter(b []byte) string { return string(b) }
 - [Go package: net/http](https://pkg.go.dev/net/http)
 - [Go package: encoding/json](https://pkg.go.dev/encoding/json)
 - [Go package: log/slog](https://pkg.go.dev/log/slog)
+- [Go package: math/big](https://pkg.go.dev/math/big)
 - [benchstat](https://pkg.go.dev/golang.org/x/perf/cmd/benchstat)
 - [json-iterator/go](https://github.com/json-iterator/go)
 - [Pyroscope documentation](https://grafana.com/docs/pyroscope/latest/)
