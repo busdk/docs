@@ -1087,6 +1087,38 @@ go test ./internal/dispatch -run '^$' \
 
 The safer optimization direction is to keep exact decimal semantics while reducing temporary object churn, for example by using a lower-allocation decimal parser for validation-only checks and reusing parse buffers where possible. Keep error messages and accepted input formats stable, and rerun the same benchmarks plus command-level tests after each parser change.
 
+### Treat `.bus` preflight parsing as a measurable hot path
+
+For larger batch runs, parsing and tokenization can be a first-order cost before command execution even starts. In `bus/internal/dispatch`, `collectBusfileCommands` scans and tokenizes each logical line, and benchmark results show notable allocation pressure on this path.
+
+Current benchmarks in `bus/internal/dispatch/run_bench_test.go` show `BenchmarkTokenizeBusLineJournalAdd` around `590 ns/op` with `15 allocs/op`, and `BenchmarkCollectBusfileCommands` around `491824 ns/op` with `385356 B/op` and `8709 allocs/op` for a 512-line busfile. This suggests optimization work should target parser memory churn first (token buffers, token slice growth, and repeated temporary string construction), not only downstream dispatch.
+
+Use this benchmark command when iterating on parser changes:
+
+```bash
+go test ./internal/dispatch -run '^$' \
+  -bench 'Benchmark(TokenizeBusLineJournalAdd|CollectBusfileCommands)$' \
+  -benchmem
+```
+
+Maintain exact parser behavior while optimizing: quoted/escaped token handling, disallowed token diagnostics, include-cycle detection, and line-numbered syntax error reporting must remain unchanged. Pair parser benchmarks with existing busfile syntax tests on each change.
+
+### Avoid redundant filesystem checks in command discovery scans
+
+CLI command discovery often starts with `ReadDir` and then filters entries by naming convention. A common performance trap is calling `os.Stat` again for candidates that were already surfaced as directory entries, especially when PATH directories are large.
+
+In `bus/internal/dispatch`, `BenchmarkListSubcommandsDensePath` currently measures around `1323191 ns/op` with `302920 B/op` and `3458 allocs/op` for a directory containing 256 command-like files and 1024 non-command files. This is a useful signal that subcommand listing can become a visible cost in help/usage paths for larger developer environments.
+
+Use this benchmark to validate discovery-path optimizations:
+
+```bash
+go test ./internal/dispatch -run '^$' \
+  -bench 'BenchmarkListSubcommandsDensePath$' \
+  -benchmem
+```
+
+Preferred optimization direction is to reduce duplicate metadata probes and short-lived allocations while preserving behavior: PATH left-to-right precedence, deterministic dedupe, and lexicographic output sorting must remain identical.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./developer-module-workflow">Developer module workflow</a></span>
@@ -1122,3 +1154,77 @@ The safer optimization direction is to keep exact decimal semantics while reduci
 - [json-iterator/go](https://github.com/json-iterator/go)
 - [Pyroscope documentation](https://grafana.com/docs/pyroscope/latest/)
 - [Parca documentation](https://www.parca.dev/docs/)
+
+### Avoid unconditional overlay existence probes on TxFS read paths
+
+In `bus/internal/txfs`, both `FS.Open` and `FS.Stat` currently probe `overlay/<rel>` with `os.Stat` before falling back to the base workspace path. For unchanged files that only exist in the base tree, this adds an extra filesystem metadata syscall and path work on every read/stat call.
+
+Benchmarks in `bus/internal/txfs/txfs_bench_test.go` on Apple M2 Max (darwin/arm64) show the current shape:
+
+- `BenchmarkOpenReadExistingPath/file.txt` about `100569 ns/op`, `840 B/op`, `8 allocs/op`
+- `BenchmarkOpenReadExistingPath/deep/nested/tree/path/file.txt` about `100664 ns/op`, `1000 B/op`, `8 allocs/op`
+- `BenchmarkStatExistingPath/file.txt` about `3216 ns/op`, `928 B/op`, `7 allocs/op`
+- `BenchmarkStatExistingPath/deep/nested/tree/path/file.txt` about `3410 ns/op`, `1104 B/op`, `7 allocs/op`
+
+Use this benchmark loop when iterating on read-path fast paths:
+
+```bash
+go test ./internal/txfs -run '^$' \
+  -bench 'Benchmark(OpenReadExistingPath|StatExistingPath)$' \
+  -benchmem
+```
+
+Preferred optimization direction is to avoid unconditional overlay metadata probes for clearly unchanged paths (for example, by using change/tombstone tracking as a fast-path gate) while preserving behavior:
+
+- overlay content must still take precedence over base files,
+- tombstoned files/trees must continue to return `os.ErrNotExist`,
+- no stale reads are allowed after overlay writes/renames/removes.
+
+### Avoid full PATH rescans per command during busfile preflight
+
+In `bus/internal/dispatch`, `preflightDispatchTargets` currently calls `lookPathEnv("bus-"+target, env)` for each command. Each lookup re-reads and re-splits PATH, then linearly probes directories again. For batch runs with many unique targets and wider PATH values, this creates avoidable O(commands*path_dirs) scan work plus repeated allocation churn.
+
+Benchmarks in `bus/internal/dispatch/run_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkPreflightDispatchTargetsRepeatedLookups` about `477254 ns/op`, `126983 B/op`, `1280 allocs/op`
+- `BenchmarkPreflightDispatchTargetsUniqueLookups` about `494364 ns/op`, `127030 B/op`, `1280 allocs/op`
+- `BenchmarkPreflightDispatchTargetsUniqueLookupsWidePath` about `3466793 ns/op`, `1203652 B/op`, `8388 allocs/op`
+
+Use this benchmark loop when iterating on preflight path-resolution changes:
+
+```bash
+go test ./internal/dispatch -run '^$' \
+  -bench 'BenchmarkPreflightDispatchTargets(Repeated|Unique)Lookups(WidePath)?$' \
+  -benchmem
+```
+
+Preferred optimization direction is to prepare path lookup state once per preflight (for example, a one-time executable index or cached PATH split/search structure) and reuse it across commands. Preserve behavior while optimizing:
+
+- in-process runner precedence and shell-lookup gating semantics must remain unchanged,
+- PATH left-to-right resolution behavior must stay identical,
+- missing-target diagnostics and exit codes must remain stable.
+
+### Avoid full change-map sort and per-file sync-heavy commit loops in TxFS
+
+In `bus/internal/txfs`, `FS.Commit` builds a full key slice from `fs.changes`, sorts it, and then applies each replace/delete entry with filesystem operations that include file syncs. For large replace sets, this compounds sort work with high syscall churn and makes commit latency scale steeply with changed-file count.
+
+Benchmarks in `bus/internal/txfs/txfs_bench_test.go` on Apple M2 Max (darwin/arm64) show the current shape:
+
+- `BenchmarkCommitReplaceManyFiles/files_10` about `45771068 ns/op`, `355190 B/op`, `234 allocs/op`
+- `BenchmarkCommitReplaceManyFiles/files_100` about `682742000 ns/op`, `3564589 B/op`, `2477 allocs/op`
+- `BenchmarkCommitReplaceManyFiles/files_500` about `3482517125 ns/op`, `18012672 B/op`, `14030 allocs/op`
+
+Use this benchmark loop when iterating on commit-path changes:
+
+```bash
+go test ./internal/txfs -run '^$' \
+  -bench 'BenchmarkCommitReplaceManyFiles$' \
+  -benchmem
+```
+
+Preferred optimization direction is to reduce repeated commit bookkeeping and syscall overhead while preserving transactional safety. Guardrails:
+
+- keep deterministic and safe application of deletes/replaces (no partial write visibility),
+- preserve atomic replace behavior for files (tmp+rename or equivalent safety),
+- do not regress tombstone semantics or overlay-to-root precedence,
+- retain crash-recovery expectations for fs provider transaction flow.
