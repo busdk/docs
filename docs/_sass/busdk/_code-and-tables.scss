@@ -23,6 +23,7 @@
   border-radius: 10px;
   padding: 0.9rem 1rem;
   overflow: auto;
+  margin: 1.35rem 0 1.5rem;
 }
 
 // Rouge block wrapper (e.g. .language-plaintext.highlighter-rouge).
@@ -31,6 +32,7 @@
   color: var(--busdk-code-fg);
   border: 1px solid var(--busdk-border);
   border-radius: 10px;
+  margin: 1.35rem 0 1.5rem;
 }
 
 .markdown-body .highlighter-rouge .highlight,
@@ -38,6 +40,8 @@
   background: var(--busdk-code-bg);
   border: 1px solid var(--busdk-border);
   border-radius: 10px;
+  margin: 0;
+  padding: 0.9rem 1rem;
 }
 
 .markdown-body .highlighter-rouge .highlight {
@@ -57,6 +61,8 @@
 .markdown-body .highlighter-rouge pre {
   border: 0;
   border-radius: 0;
+  margin: 0;
+  padding: 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -87,8 +93,10 @@
 }
 
 .markdown-body pre code {
+  display: block;
   background: transparent;
   color: inherit;
+  margin: 0;
   padding: 0;
 }
 

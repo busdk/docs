@@ -204,6 +204,11 @@ sentences so the text is easy for humans and agents to follow. Keep strict,
 contract-style wording in SDD pages (`docs/sdd`) and requirement sections where
 precision is mandatory.
 
+For practical engineering guides (for example performance and optimization
+topics), include concrete bad-versus-better code snippets that are easy to grep
+from repository code. Keep abstract framing brief and prioritize runnable
+command and code examples.
+
 Write documentation pages in English unless the user explicitly requests another
 language for that page.
 

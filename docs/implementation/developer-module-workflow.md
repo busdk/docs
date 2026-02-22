@@ -7,6 +7,8 @@ description: Scaffold BusDK modules, run commit/work/spec/e2e, and set agent and
 
 This use case covers the workflow for contributors developing BusDK modules: scaffolding a new module, running commit/work/spec/e2e operations, and setting agent and run-config. The same [bus-dev](../modules/bus-dev) CLI supports multiple agent runtimes; each runtime has its own integration details and test coverage.
 
+For reproducible Go build/test defaults and performance-oriented tuning choices used by module repositories, see the [Go optimization guide](./go-optimization-guide).
+
 Module readiness per runtime is summarised in [Development status — BusDK modules](./development-status) under the sections below.
 
 ### Developer module workflow with Cursor CLI
@@ -37,5 +39,6 @@ From **BusDK v0.0.26** onward, Codex is supported as a bus-agent runtime in this
 
 - [bus-dev](../modules/bus-dev)
 - [bus-agent](../modules/bus-agent)
+- [Go optimization guide](./go-optimization-guide)
 - [Development status — BusDK modules](./development-status)
 - [OpenAI Help Center: Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)

@@ -27,6 +27,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 ### Status
 
 - [Development status](implementation/development-status)
+- [Go optimization guide](implementation/go-optimization-guide)
 - [Development cost summary](implementation/cost-summary)
 - [BusDK module pricing](implementation/module-pricing)
 - [Module repository structure](implementation/module-repository-structure)

@@ -39,6 +39,8 @@
       url: /implementation/regulated-report-pdfs
     - label: Finnish WebView UI requirements
       url: /implementation/fi-webview-accounting-ui-requirements
+    - label: Go optimization guide
+      url: /implementation/go-optimization-guide
     - label: Cost summary
       url: /implementation/cost-summary
 

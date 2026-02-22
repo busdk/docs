@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}{% if site.github.build_revision %}?v={{ site.github.build_revision }}{% endif %}">
     {% include head-custom.html %}
   </head>
-  <body class="busdk-docs-page">
+  {% assign page_slug = page.url | default: page.permalink | default: "index" | slugify %}
+  <body class="busdk-docs-page busdk-page-{{ page_slug }}">
     <div class="busdk-docs">
       <header class="busdk-site-header">
         <div class="busdk-site-header-inner">

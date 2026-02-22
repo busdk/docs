@@ -103,11 +103,19 @@
 }
 
 .busdk-main-inner > .busdk-chapter + .busdk-chapter {
-  margin-top: 1.5rem;
+  margin-top: 0;
+}
+
+// Keep top-level chapter stripes contiguous with no outer gap.
+.busdk-main-inner > .busdk-chapter.busdk-chapter--level-2 {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .busdk-chapter-inner {
-  padding-top: 1.25rem;
+  padding-top: 0;
   padding-bottom: 0;
 }
 
@@ -135,8 +143,8 @@
   margin-right: 0;
   padding-left: 0;
   padding-right: 0;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding-top: clamp(2.25rem, 3.5vw, 3.2rem);
+  padding-bottom: clamp(2.25rem, 3.5vw, 3.2rem);
   width: auto;
   max-width: none;
   box-sizing: border-box;
@@ -148,23 +156,37 @@
   padding-bottom: 0;
 }
 
-// Section headings: accent color so chapter headings stand out clearly.
-// Support both wrappers used by the chapter plugin:
-// - .busdk-chapter-section-inner (nested chapter sections)
-// - .busdk-chapter-inner (top-level chapter title/content blocks)
+// Section headings: h2 should read as a clear section boundary even when
+// adjacent chapter backgrounds are the same color, without introducing a boxed
+// surface that fights the full-width chapter stripe design.
 .busdk-chapter-inner > h2,
+.busdk-chapter-section-inner > h2 {
+  color: var(--busdk-link);
+  border-bottom: 1px solid var(--busdk-border);
+  padding: 0 0 0.35rem;
+  margin-top: 0;
+  margin-bottom: 1.1rem;
+  position: relative;
+}
+
+.busdk-chapter-inner > h2::before,
+.busdk-chapter-section-inner > h2::before {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-bottom: 0.55rem;
+  background: linear-gradient(
+    90deg,
+    var(--busdk-link) 0 9rem,
+    var(--busdk-border) 9rem 100%
+  );
+}
+
 .busdk-chapter-inner > h3,
-.busdk-chapter-section-inner > h2,
 .busdk-chapter-section-inner > h3 {
   color: var(--busdk-link);
   border-bottom: 1px solid var(--busdk-border);
   padding-bottom: 0.2rem;
-}
-
-.busdk-chapter-inner > h2,
-.busdk-chapter-inner > h3,
-.busdk-chapter-section-inner > h2,
-.busdk-chapter-section-inner > h3 {
   margin-top: 0;
 }
 
@@ -172,7 +194,7 @@
 .busdk-chapter-section-inner > .busdk-chapter {
   margin-left: 0;
   margin-right: 0;
-  padding: 0.75rem 0 1rem;
+  padding: clamp(1.15rem, 2vw, 1.8rem) 0 clamp(1.35rem, 2.4vw, 2rem);
   width: auto;
   max-width: none;
 }
