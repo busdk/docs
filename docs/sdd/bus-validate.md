@@ -7,7 +7,7 @@ description: Bus Validate validates all workspace datasets against their schemas
 
 ### Introduction and Overview
 
-Bus Validate validates all workspace datasets against their schemas, verifies cross-table integrity and double-entry invariants, and produces actionable diagnostics for invalid workspaces. This SDD defines first-class migration parity and gap checks between source imports and workspace or journal activity; those checks are implemented as subcommands `bus validate parity` and `bus validate journal-gap` (IF-VAL-002).
+Bus Validate validates all workspace datasets against their schemas, verifies cross-table integrity and double-entry invariants, and produces actionable diagnostics for invalid workspaces. This SDD defines first-class migration parity and gap checks between source imports and workspace or journal activity; those checks are implemented as subcommands `bus validate parity` and `bus validate journal-gap` (IF-VAL-002). It also defines evidence coverage auditing via `bus validate evidence-coverage` (IF-VAL-003).
 
 ### Requirements
 
@@ -20,6 +20,8 @@ FR-VAL-003 Source import parity report. The module MUST provide a deterministic 
 FR-VAL-004 Journal gap check. The module MUST provide a deterministic gap check that compares imported operational activity to non-opening journal activity by month. Acceptance criteria: output includes period, imported operational totals, journal non-opening totals, delta, and status fields; opening entries can be explicitly excluded from coverage calculations.
 
 FR-VAL-005 Threshold and CI exit behavior. Parity and gap checks MUST support optional threshold flags and CI-friendly exit behavior. Acceptance criteria: users can define absolute or relative thresholds for counts and sums; commands exit non-zero when thresholds are exceeded and zero otherwise; dry-run emits planned thresholds and evaluated scope without writing artifacts.
+
+FR-VAL-006 Evidence coverage audit. The module MUST provide a deterministic evidence coverage audit that reports per-scope totals and missing evidence links for journal, bank, sales, and purchase scopes. Acceptance criteria: output includes stable identifiers for missing evidence (`source_id`, `voucher_id`, `bank_txn_id`, `invoice_id`); summary totals are deterministic; exit status is non-zero when any missing evidence exists.
 
 NFR-VAL-001 Auditability. Validation diagnostics MUST reference datasets and stable identifiers for traceability. Acceptance criteria: diagnostics cite workspace-relative paths and identifiers.
 
@@ -43,6 +45,8 @@ Validation scope is fixed to the full workspace datasets and schemas, including 
 
 Interface IF-VAL-002 (parity and gap checks). The command surface includes `bus validate parity --source <file>` and `bus validate journal-gap --source <file>` with optional threshold flags and `--dry-run`. The module consumes deterministic source-summary inputs and canonical workspace datasets, emits machine-readable parity or gap rows (TSV to stdout or `--output`), and applies optional threshold flags for CI exit behavior.
 
+Interface IF-VAL-003 (evidence coverage). The command surface includes `bus validate evidence-coverage`. The module reads attachment links and domain datasets (journal, bank, invoices) and emits a deterministic TSV result set to stdout (or `--output`) with summary totals per scope and missing IDs. Exit status is `0` when all scopes are fully covered and `1` when any missing evidence exists.
+
 Validation results are diagnostics. The command supports a machine-readable diagnostics format by accepting `--format text` (default) or `--format tsv`, with the selected diagnostics written to standard error. The `tsv` format emits a stable column set of `dataset`, `record_id`, `field`, `rule`, and `message` so automation can filter and join diagnostics across revisions. Standard output remains reserved for command results and is empty on success, so automation should capture diagnostics via standard error redirection. The `--output` flag does not apply because `bus validate` does not emit a result set; when present it has no effect on diagnostics.
 
 For parity and gap subcommands, output is a deterministic result set (TSV) suitable for CI ingestion. Suggested stable columns include `check_id`, `dataset_or_scope`, `period`, `source_value`, `workspace_or_journal_value`, `delta`, `threshold`, and `status`.
@@ -56,6 +60,7 @@ bus validate
 ### Data Design
 
 The module reads all workspace datasets and schemas and does not write to the repository.
+Evidence coverage reads `attachment-links.csv` along with journal, bank, and invoice datasets to compute coverage totals and missing identifiers.
 
 ### Assumptions and Dependencies
 
@@ -76,6 +81,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Validation
 ### Testing Strategy
 
 Unit tests cover schema and invariant checks, and command-level tests exercise `bus validate` against fixture workspaces with known errors. Parity and gap tests MUST verify deterministic counts and sums by period, non-opening journal coverage behavior, threshold semantics, CI exit-code behavior, and byte-identical output for repeated runs with identical inputs.
+Evidence coverage tests MUST verify deterministic summary ordering and missing list output, plus CI exit behavior when missing evidence exists.
 
 ### Deployment and Operations
 
@@ -129,7 +135,7 @@ Invariant: a cross-table rule that must hold for repository data to be valid.
 Title: bus-validate module SDD  
 Project: BusDK  
 Document ID: `BUSDK-MOD-VALIDATE`  
-Version: 2026-02-18  
+Version: 2026-02-23  
 Status: Draft  
-Last updated: 2026-02-18  
+Last updated: 2026-02-23  
 Owner: BusDK development team  

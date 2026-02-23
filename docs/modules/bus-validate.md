@@ -9,7 +9,8 @@ description: bus validate checks all workspace datasets against their schemas an
 
 `bus validate [--format <text|tsv>] [-C <dir>] [global flags]`  
 `bus validate parity --source <file> [--max-abs-delta <n>] [--max-count-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`  
-`bus validate journal-gap --source <file> [--max-abs-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`
+`bus validate journal-gap --source <file> [--max-abs-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`  
+`bus validate evidence-coverage [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
@@ -21,11 +22,11 @@ It does not modify data.
 Use it before period close and filing.
 Diagnostics go to stderr; stdout is empty on success.
 
-The module also provides first-class parity and journal-gap checks through `bus validate parity` and `bus validate journal-gap`.
+The module also provides first-class parity and journal-gap checks through `bus validate parity` and `bus validate journal-gap`, plus evidence coverage auditing through `bus validate evidence-coverage`.
 
 ### Commands
 
-Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide validation. Subcommands `parity` and `journal-gap` provide first-class migration checks; see [Parity and gap checks (first-class)](#parity-and-gap-checks-first-class) below.
+Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide validation. Subcommands `parity` and `journal-gap` provide first-class migration checks; see [Parity and gap checks (first-class)](#parity-and-gap-checks-first-class) below. Subcommand `evidence-coverage` provides evidence link coverage totals and missing IDs; see [Evidence coverage](#evidence-coverage) below.
 
 ### Options
 
@@ -51,6 +52,10 @@ For extended capability notes, see [Suggested capabilities](../sdd/bus-validate#
 
 Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain available as an alternative.
 
+### Evidence coverage
+
+`bus validate evidence-coverage` audits attachments coverage for journal vouchers, bank transactions, and invoices using `attachment-links.csv`. The command emits a deterministic TSV result set with columns `row_kind`, `scope`, `source_id`, `voucher_id`, `bank_txn_id`, `invoice_id`, `total`, `linked`, `missing`. Summary rows provide totals per scope; missing rows list uncovered IDs. It exits `0` when all scopes are fully covered and `1` when any missing evidence exists.
+
 ### Files
 
 Reads all workspace datasets and schemas. Does not write.
@@ -62,11 +67,12 @@ bus validate --format tsv
 bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
 bus validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
 bus validate parity --source ./imports/legacy/parity-2026-01.csv --dry-run
+bus validate evidence-coverage
 ```
 
 ### Exit status
 
-`0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found.
+`0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found. `bus validate evidence-coverage` exits `0` only when all scopes are fully covered; missing evidence exits `1`.
 
 
 ### Using from `.bus` files
