@@ -37,7 +37,7 @@ Teams can still use generated scripts for migration-specific one-off logic.
 
 `add` creates invoice headers, and `<invoice-id> add` appends line items for an existing invoice. `validate` checks full invoice datasets, while `<invoice-id> validate` checks one invoice’s lines and totals.
 
-`list` returns invoice rows with optional filters (combined with logical `AND`). `import` maps ERP export data into canonical invoice datasets using a versioned profile and supports `--dry-run`. `pdf` delegates rendering to [bus-pdf](./bus-pdf). `postings` emits invoice posting rows for [bus-journal](./bus-journal).
+`list` returns invoice rows with optional filters (combined with logical `AND`). When `--type` is set, list validation and output apply only to the matching invoice kind; non-target datasets do not block the filtered listing. With `--legacy-replay`, list tolerates legacy rows where `due_date` is earlier than `issue_date` and emits deterministic warnings instead of hard failure. `import` maps ERP export data into canonical invoice datasets using a versioned profile and supports `--dry-run`. `pdf` delegates rendering to [bus-pdf](./bus-pdf). `postings` emits invoice posting rows for [bus-journal](./bus-journal).
 
 `--legacy-replay` enables legacy-safe replay for mutating commands. In strict mode (default), add/import reject rows where `due_date` is earlier than `issue_date`; with `--legacy-replay`, those rows are preserved and emitted with deterministic warnings.
 
