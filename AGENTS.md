@@ -198,6 +198,12 @@ source material: current CLI behavior from module commands, module unit tests
 under `../bus-{NAME}/`, and module e2e tests under `../bus-{NAME}/tests/`,
 alongside each module's `README.md` and `PLAN.md`.
 
+## Gitignore Rule
+
+1. .bus MUST be tracked; never add .bus or .bus/ to .gitignore.
+2. In private repositories, .bus/ must be tracked; .bus/secrets may be tracked in private repositories only and must not be tracked otherwise.
+3. Runtime lock artifacts such as .bus-dev.lock may be ignored.
+
 For end-user documentation pages (for example under `docs/modules`,
 `docs/workflow`, and topic guides), prefer plain language and short, direct
 sentences so the text is easy for humans and agents to follow. Keep strict,

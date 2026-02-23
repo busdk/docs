@@ -1303,3 +1303,172 @@ Preferred optimization direction is a lower-overhead fast path for already-mater
 - keep overlay-write precedence and path safety checks intact,
 - preserve behavior for deep paths and missing parent directories,
 - avoid stale or bypassed change tracking in commit/rollback flows.
+
+### Avoid recursive key re-sorting and custom re-marshaling in OpenAPI JSON generation
+
+In `bus-api/internal/server/server.go`, `openAPIDocBytes` currently calls `sortMapKeysRecursive` and then marshals a custom `sortedMap` tree where each `MarshalJSON` step calls `json.Marshal` again per key/value entry. This introduces extra full-tree allocations and repeated encoding work.
+
+Benchmarks in `bus-api/internal/server/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkOpenAPIDoc_EncodeWithRecursiveSort` about `3985584 ns/op`, `2828501 B/op`, `23927 allocs/op`
+- `BenchmarkOpenAPIDoc_EncodeDirectMap_NoRecursiveSort` about `1228124 ns/op`, `1418766 B/op`, `11455 allocs/op`
+
+Use this benchmark loop when iterating on OpenAPI serialization changes:
+
+```bash
+go test ./internal/server -run '^$' \
+  -bench 'BenchmarkOpenAPIDoc_' \
+  -benchmem
+```
+
+Preferred optimization direction is to rely on deterministic map encoding from `encoding/json` and/or cache rendered OpenAPI bytes per server/options tuple instead of re-sorting/re-encoding on each call. Guardrails:
+
+- preserve deterministic OpenAPI output across repeated runs (NFR-API-001),
+- keep JSON schema/path content unchanged (no dropped keys or operations),
+- preserve pretty-printed output shape expected by CLI and HTTP clients,
+- do not introduce shared mutable cache state races across requests.
+
+### Avoid per-event JSON unmarshal+marshal round-trips in SSE emission
+
+In `bus-api/internal/server/server.go`, `handleEvents` currently unmarshals each event payload into `MutationEvent` and then marshals it again before writing the SSE frame. For events already emitted as JSON payloads by the same process, this doubles encode/decode work per message.
+
+Benchmarks in `bus-api/internal/server/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkSSEWrite_CurrentRoundTrip` about `1728 ns/op`, `849 B/op`, `21 allocs/op`
+- `BenchmarkSSEWrite_RawPayload_WithValidation` about `406.1 ns/op`, `0 B/op`, `0 allocs/op`
+
+Use this benchmark loop when iterating on SSE write-path changes:
+
+```bash
+go test ./internal/server -run '^$' \
+  -bench 'BenchmarkSSEWrite_' \
+  -benchmem
+```
+
+Preferred optimization direction is framing validated raw payload bytes directly (`data: <json>\n\n`) rather than decoding/encoding every event. Guardrails:
+
+- preserve SSE framing exactly (`data:` line + blank line terminator),
+- preserve JSON payload semantics delivered to clients,
+- keep behavior for malformed payloads deterministic (drop/skip or error path as designed),
+- avoid blocking regressions in long-lived stream handling.
+
+### Avoid full schema JSON unmarshal when only primary key fields are needed
+
+In `bus-api/internal/server/handlers.go`, `handleResourceRow` PATCH/DELETE decodes whole schema JSON on each request to read `primaryKey.values` and build the key map for row mutation calls. Decoding the full schema object (including large `fields`) on every mutation request adds avoidable CPU and allocation cost on hot write paths.
+
+Benchmarks in `bus-api/internal/server/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkPKLookup_FullSchemaUnmarshalPerRequest` about `67033 ns/op`, `60360 B/op`, `1432 allocs/op`
+- `BenchmarkPKLookup_PrimaryKeyOnlyUnmarshalPerRequest` about `24441 ns/op`, `816 B/op`, `16 allocs/op`
+- `BenchmarkPKLookup_CachedPrimaryKeyFields_NoUnmarshal` about `88.79 ns/op`, `336 B/op`, `2 allocs/op`
+
+Use this benchmark loop when iterating on row-mutation key mapping changes:
+
+```bash
+go test ./internal/server -run '^$' \
+  -bench 'BenchmarkPKLookup_' \
+  -benchmem
+```
+
+Preferred optimization direction is decoding only `primaryKey.values` (instead of full schema) or caching per-resource PK fields with invalidation on schema mutations. Guardrails:
+
+- preserve primary key field order exactly when mapping URL row keys to field names,
+- preserve error behavior when schema JSON is absent/invalid or key lengths differ,
+- avoid stale PK mappings after schema updates (cache invalidation on schema-changing operations),
+- keep read-only and dry-run mutation semantics unchanged.
+
+### Avoid rebuilding header index maps for every primary-key row filter
+
+In `bus-api/internal/server/backend.go`, `filterRowsByKey` currently rebuilds a `map[string]int` from the header row on each call before scanning rows. On read-heavy paths where primary key width is small and stable, this repeated map construction adds avoidable allocations and CPU per request.
+
+Benchmarks in `bus-api/internal/server/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkFilterRowsByKey_CurrentHeaderMap` about `43415 ns/op`, `1432 B/op`, `6 allocs/op`
+- `BenchmarkFilterRowsByKey_LinearHeaderScan` about `11572 ns/op`, `48 B/op`, `1 allocs/op`
+
+Use this benchmark loop when iterating on row-filter key-index lookup changes:
+
+```bash
+go test ./internal/server -run '^$' \
+  -bench 'BenchmarkFilterRowsByKey_' \
+  -benchmem
+```
+
+Preferred optimization direction is to avoid map allocation in the hot path (for example, resolving PK header indices via direct scan for small PK sets or reusing cached indices when safe). Guardrails:
+
+- preserve exact PK matching semantics and row-selection determinism,
+- preserve behavior when rows are short or fields are missing,
+- preserve header-first output shape (`records[0]` retained),
+- avoid introducing stale index reuse when schema/header shape changes.
+
+### Avoid rebuilding column header lookup maps for each projection request
+
+In `bus-api/internal/server/backend.go`, `selectColumns` rebuilds a `map[string]int` header index and resolves column names on every call. For repeated `column=` query shapes, this lookup work is repeated even when the header and selected columns are unchanged.
+
+Benchmarks in `bus-api/internal/server/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkSelectColumns_CurrentHeaderMapPerCall` about `223915 ns/op`, `896522 B/op`, `4107 allocs/op`
+- `BenchmarkSelectColumns_PrecomputedIndices` about `205672 ns/op`, `893121 B/op`, `4098 allocs/op`
+
+Use this benchmark loop when iterating on column-projection lookup changes:
+
+```bash
+go test ./internal/server -run '^$' \
+  -bench 'BenchmarkSelectColumns_' \
+  -benchmem
+```
+
+Preferred optimization direction is to precompute/reuse column index slices for repeated projection shapes rather than rebuilding name-index maps every request. Guardrails:
+
+- preserve unknown-column behavior (`nil`/error path) exactly,
+- preserve projected column order as requested by the client,
+- preserve fill-with-empty-string behavior for short rows,
+- avoid stale index reuse when header/schema changes.
+
+### Avoid full-slice path splitting for resource route dispatch
+
+In `bus-api/internal/server/handlers.go`, `handleResourceScoped` currently uses `strings.Split` on the full resource subpath to get the resource name and first segment. This allocates a full segment slice per request even though dispatch mostly needs only the first and second segments.
+
+Benchmarks in `bus-api/internal/server/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkResourceScopedPathParse_CurrentSplit` about `46.02 ns/op`, `48 B/op`, `1 allocs/op`
+- `BenchmarkResourceScopedPathParse_CutBased` about `8.265 ns/op`, `0 B/op`, `0 allocs/op`
+
+Use this benchmark loop when iterating on resource-route parsing changes:
+
+```bash
+go test ./internal/server -run '^$' \
+  -bench 'BenchmarkResourceScopedPathParse_' \
+  -benchmem
+```
+
+Preferred optimization direction is cut/index-based parsing (`strings.Cut` or equivalent) that extracts only required segments without allocating full split slices. Guardrails:
+
+- preserve exact routing semantics for `/resources/{name}` and nested paths,
+- preserve 404 behavior for empty/malformed segment shapes,
+- preserve URL unescape and row-key dispatch behavior for nested handlers,
+- keep deterministic method dispatch and error responses unchanged.
+
+### Avoid full-slice path splitting in module adapter route dispatch
+
+In `bus-api/internal/backends/stub.go`, module route handlers currently use `strings.Split` for request path parsing in dispatch methods such as `handleWorkflowPath`, `handleEntityPath`, `handleSemanticPath`, and `handleResourcePath`. These handlers only need the first few segments, so splitting the whole path allocates unnecessary slices on every request.
+
+Benchmarks in `bus-api/internal/backends/perf_bench_test.go` on Apple M2 Max (darwin/arm64) show this shape:
+
+- `BenchmarkModuleAdapterSemanticPathParse_CurrentSplit` about `42.02 ns/op`, `48 B/op`, `1 allocs/op`
+- `BenchmarkModuleAdapterSemanticPathParse_CutBased` about `12.89 ns/op`, `0 B/op`, `0 allocs/op`
+
+Use this benchmark loop when iterating on module adapter route parsing changes:
+
+```bash
+go test ./internal/backends -run '^$' \
+  -bench 'BenchmarkModuleAdapterSemanticPathParse_' \
+  -benchmem
+```
+
+Preferred optimization direction is to parse only needed leading segments with `strings.Cut`/index-based extraction instead of full `Split`. Guardrails:
+
+- preserve exact method dispatch and 404/405 behavior for module endpoints,
+- preserve percent-decoding behavior for aliases/workflow names/row keys,
+- preserve deterministic error payload shapes and status codes,
+- preserve path handling for both canonical and edge-case segment shapes (empty, trailing slash, nested tails).

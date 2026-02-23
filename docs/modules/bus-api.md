@@ -14,7 +14,7 @@ With no subcommand, `bus api` runs **serve**. Global flags follow [CLI command n
 
 Serve (default):
 
-`bus-api serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--base-path <path>] [--cors-origin <origin>] ... [--tls-cert <file>] [--tls-key <file>] [--read-only] [--enable-module <name> ...] [global flags]`
+`bus-api serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--base-path <path>] [--cors-origin <origin>] ... [--tls-cert <file>] [--tls-key <file>] [--read-only] [--provider <id> ...] [--enable-module <name> ...] [--route-config <file>] [global flags]`
 
 `bus-api openapi` — Print the OpenAPI document (JSON) to stdout.  
 `bus-api version` — Print the tool name and version to stdout and exit 0.
@@ -24,14 +24,16 @@ Serve (default):
 Command names follow [CLI command naming](../cli/command-naming).
 
 Bus API provides a local REST JSON API over the selected BusDK workspace root.
-On startup, it serves CRUD/validation endpoints over datasets by delegating semantics to [bus-data](./bus-data).
+On startup, it serves CRUD/validation endpoints over datasets by delegating semantics to [bus-data](./bus-data), and it can dispatch configured HTTP routes to provider events through `bus-events`.
 
 No module CLI is executed; server calls Go libraries directly.
 Default bind is localhost and server prints a capability URL with random token path.
 Requests outside token prefix return `404`.
 
 `--read-only` can restrict mutating endpoints.
-`--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...`.
+`--provider` controls explicit built-in provider allowlisting for module endpoints.
+`--route-config` configures HTTP method/path dispatch to request/reply events and provider capability declarations.
+`--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...` when matching providers are allowlisted.
 For built-in adapters, module resource ownership is explicit and library-based for all built-ins. Data-owning modules resolve paths through their Go path APIs (including reports through `bus-reports/path`); modules without owned datasets return empty module resource lists.
 For complete API contract and security model, see [Module SDD: bus-api](../sdd/bus-api).
 
@@ -45,7 +47,7 @@ For complete API contract and security model, see [Module SDD: bus-api](../sdd/b
 
 ### Serve flags
 
-Serve-specific flags are `--listen <addr>` (default `127.0.0.1`), `--port <n>` (default `0`, auto-choose), `--token <string>`, `--token-bytes <n>`, `--base-path <path>` (default `/{token}/v1`), repeatable `--cors-origin <origin>`, `--tls-cert <file>` with `--tls-key <file>` for HTTPS, `--read-only` to block mutating endpoints, and repeatable `--enable-module <name>` (`all` for built-in adapters).
+Serve-specific flags are `--listen <addr>` (default `127.0.0.1`), `--port <n>` (default `0`, auto-choose), `--token <string>`, `--token-bytes <n>`, `--base-path <path>` (default `/{token}/v1`), repeatable `--cors-origin <origin>`, `--tls-cert <file>` with `--tls-key <file>` for HTTPS, `--read-only` to block mutating endpoints, repeatable `--provider <id>` for explicit built-in provider allowlisting, repeatable `--enable-module <name>` (`all` for allowlisted built-ins), and `--route-config <file>` for HTTP-to-event mapping plus provider capabilities.
 
 ### Global flags
 
@@ -56,7 +58,7 @@ Command results go to stdout (or `--output`), diagnostics/logs to stderr.
 ### Using the API
 
 After starting `bus api serve`, use printed capability URL as base for all requests.
-If base is `http://127.0.0.1:38472/abc123def/v1`, common endpoints include `GET {base}/healthz`, `GET {base}/openapi.json`, `GET {base}/events` (SSE mutation stream), `GET {base}/resources`, `GET/PATCH {base}/package`, `GET/PATCH {base}/resources/{name}/schema` (and related schema subpaths), row CRUD under `{base}/resources/{name}/...`, and validation endpoints `POST {base}/resources/{name}/validate` and `POST {base}/validate`.
+If base is `http://127.0.0.1:38472/abc123def/v1`, common endpoints include `GET {base}/healthz`, `GET {base}/openapi.json`, `GET {base}/events` (SSE mutation stream), `GET {base}/diagnostics` (route-dispatch diagnostics), `GET {base}/resources`, `GET/PATCH {base}/package`, `GET/PATCH {base}/resources/{name}/schema` (and related schema subpaths), row CRUD under `{base}/resources/{name}/...`, and validation endpoints `POST {base}/resources/{name}/validate` and `POST {base}/validate`.
 
 Mutation operations are atomic and leave workspace unchanged on failure.
 Error responses use stable JSON shape.
@@ -115,14 +117,14 @@ api openapi --output ./out/openapi.json
 
 **Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
 
-**Completeness:** 90% — Core API journey verified by e2e and unit tests; discovery, CRUD, validation (workspace and per-resource with stable key ordering), schema read/mutation, event stream, read-only; PLAN.md lists no remaining work.
+**Completeness:** 80% — Core API journey, explicit provider allowlisting, route-config dispatch, and event envelope/capability validation are test-covered; provider-domain extraction is tracked in provider module plans.
 
-**Use case readiness:** Workbook and validated tabular editing: 90% — User can complete API-driven discovery, CRUD, validation, schema read/mutation, event stream, read-only; stable validate success key ordering verified in e2e.
+**Use case readiness:** Workbook and validated tabular editing: 80% — API-driven discovery, CRUD, validation, schema read/mutation, event stream, read-only, and route-config dispatch are available; full provider-domain extraction is in progress.
 
 **Current:** Serve/openapi/version flows, CRUD/validation/schema operations, module adapter mounts, and global-flag behavior are test-verified.
 Detailed test matrix and implementation notes are maintained in [Module SDD: bus-api](../sdd/bus-api).
 
-**Planned next:** None in PLAN.md.
+**Planned next:** Continue extraction in provider modules: `bus-api-provider-data`, `bus-api-provider-books`, and `bus-api-provider-session`.
 
 **Blockers:** None known.
 
