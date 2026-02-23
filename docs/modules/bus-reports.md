@@ -8,7 +8,8 @@ description: bus reports computes financial reports from journal and reference d
 ### Synopsis
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports day-book --period <period> [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports parity [options] [-C <dir>] [global flags]`  
@@ -30,7 +31,7 @@ Migration-quality outputs are available through `parity`, `journal-gap`, and `jo
 
 ### Commands
 
-`trial-balance` prints trial balance as of a date and supports `text` (default) or `csv`. `general-ledger` prints ledger detail for a period and can be filtered by account. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
+`trial-balance` prints trial balance as of a date and supports `text` (default) or `csv`. `general-ledger` prints ledger detail for a period and can be filtered by account. `day-book` prints postings in date order (päiväkirja) for the period. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
 
 `parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish legal-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity.
 
@@ -59,7 +60,7 @@ When prior-period data exists, comparative columns are expected.
 
 ### Options
 
-`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger` and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. Trial-balance accepts `-f text` (default) or `-f csv` only (not `tsv`). Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported.
+`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. Trial-balance accepts `-f text` (default) or `-f csv` only (not `tsv`). Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger` and `day-book` also support `--format pdf` for filing-grade ledger exports.
 
 For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
 
@@ -93,6 +94,10 @@ bus reports balance-sheet \
   --layout-id fi-kpa-tase \
   --format pdf \
   -o ./out/tase-2026.pdf
+bus reports day-book \
+  --period 2026-01 \
+  --format pdf \
+  -o ./out/paivakirja-2026-01.pdf
 bus reports journal-coverage \
   --from 2026-01 \
   --to 2026-03 \
@@ -118,6 +123,9 @@ reports balance-sheet --as-of 2026-12-31 --layout-id fi-pma-tase --comparatives 
 
 # same as: bus reports parity --format csv
 reports parity --format csv
+
+# same as: bus reports day-book --period 2026-01 --format pdf
+reports day-book --period 2026-01 --format pdf
 ```
 
 
@@ -129,7 +137,7 @@ reports parity --format csv
 
 **Completeness:** 90% — Close-step report commands and formats (text/csv/markdown/json/kpa/pma/pdf) are verified by e2e and unit tests; user can complete the report step in all three use cases. `bus reports journal-coverage`, `bus reports parity`, and `bus reports journal-gap` are implemented as deterministic migration-review artifacts, and profile-driven defaults (FR-REP-005), report-account-mapping (FR-REP-007), and comparatives (FR-REP-008) are covered by tests.
 
-**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown/kpa/pma/pdf, built-in statutory layouts (kpa, pma, kpa-full), TASE/tuloslaskelma PDF, and layout-file selection verified by e2e and unit tests; report step completable. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), statutory layouts and PDF output verified by e2e; user can produce statement outputs for compliance. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory layouts and PDF verified by e2e; evidence-pack report step completable.
+**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, day-book, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown/kpa/pma/pdf, built-in statutory layouts (kpa, pma, kpa-full), TASE/tuloslaskelma PDF, and layout-file selection verified by e2e and unit tests; report step completable. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), statutory layouts and PDF output verified by e2e; user can produce statement outputs for compliance. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory layouts and PDF verified by e2e; evidence-pack report step completable.
 
 **Current:** Trial balance, ledger, statutory statement outputs, layout selection, and migration-quality reports are test-verified.
 Detailed test matrix and implementation notes are maintained in [Module SDD: bus-reports](../sdd/bus-reports).

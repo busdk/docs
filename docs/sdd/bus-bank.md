@@ -23,7 +23,7 @@ FR-BNK-005 Reconciliation proposal input contract. The module MUST expose determ
 
 FR-BNK-006 Add command. The module MUST provide an `add` command that allows adding one bank account or one bank transaction at a time. Acceptance criteria: `bus bank add account` and `bus bank add transaction` (or equivalent) are available; each invocation adds exactly one record to the corresponding dataset with schema validation; invalid or duplicate input fails with clear diagnostics and does not modify any file.
 
-FR-BNK-007 Statement balance checkpoints. The module MUST provide deterministic extraction and verification of statement opening/closing balances from evidence files. Acceptance criteria: `bus bank statement extract` ingests statement balance summaries (CSV or PDF with sidecar CSV+schema), appends normalized checkpoints to `bank-statement-checkpoints.csv` with provenance, and `bus bank statement verify` compares checkpoints against `bank-transactions.csv` running balances with optional failure threshold (`--fail-if-diff-over`).
+FR-BNK-007 Statement balance checkpoints. The module MUST provide deterministic extraction and verification of statement opening/closing balances from evidence files. Acceptance criteria: `bus bank statement extract` ingests statement balance summaries (CSV, or PDF via native extraction with fallback to sidecar CSV+schema), appends normalized checkpoints to `bank-statement-checkpoints.csv` with provenance, and `bus bank statement verify` compares checkpoints against `bank-transactions.csv` running balances with optional failure threshold (`--fail-if-diff-over`).
 
 NFR-BNK-001 Auditability. Imports MUST preserve source statement identifiers and evidence links. Acceptance criteria: each normalized transaction records a source reference and can be traced to attachments metadata.
 
@@ -76,7 +76,7 @@ bus bank add transaction --bank-account acct-01 --date 2026-02-18 --amount 100.0
 
 ### Data Design
 
-The module reads and writes `bank-imports.csv`, `bank-transactions.csv`, and `bank-statement-checkpoints.csv` at the repository root, each with a beside-the-table schema file. `bank-statement-checkpoints.csv` includes deterministic provenance fields (`attachment_id`, `source_path`, `extracted_at`) so extracted balances can be traced back to evidence metadata. When the add account subcommand is implemented, the module also owns a bank account dataset (e.g. `bank-accounts.csv`) and its beside-the-table schema at the workspace root; path accessors (IF-BNK-002) then include that dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `bank/` or other subdirectory for its datasets and schemas. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments. Statement balance extraction reads a statement summary CSV with a beside-the-file schema; for PDF evidence, provide a sidecar `<base>.statement.csv` and `<base>.statement.schema.json` so extraction can proceed while preserving the PDF path as evidence.
+The module reads and writes `bank-imports.csv`, `bank-transactions.csv`, and `bank-statement-checkpoints.csv` at the repository root, each with a beside-the-table schema file. `bank-statement-checkpoints.csv` includes deterministic provenance fields (`attachment_id`, `source_path`, `extracted_at`) so extracted balances can be traced back to evidence metadata. When the add account subcommand is implemented, the module also owns a bank account dataset (e.g. `bank-accounts.csv`) and its beside-the-table schema at the workspace root; path accessors (IF-BNK-002) then include that dataset. Master data owned by this module is stored in the workspace root only; the module does not create or use a `bank/` or other subdirectory for its datasets and schemas. Source bank statement files live in the repository root and may be named with a date prefix such as `202602-bank-statement.csv`, and they can be registered as attachments. Statement balance extraction reads a statement summary CSV with a beside-the-file schema; for PDF evidence, the module attempts native text extraction first, then falls back to sibling text exports or sidecars `<base>.statement.csv` and `<base>.statement.schema.json` while preserving the PDF path as evidence.
 
 Other modules that need read-only access to bank datasets MUST obtain the path(s) from this module’s Go library (IF-BNK-002). All writes and bank-domain logic remain in this module.
 
@@ -159,5 +159,5 @@ Project: BusDK
 Document ID: `BUSDK-MOD-BANK`  
 Version: 2026-02-19  
 Status: Draft  
-Last updated: 2026-02-19  
+Last updated: 2026-02-23  
 Owner: BusDK development team  

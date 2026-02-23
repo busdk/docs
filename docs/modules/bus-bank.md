@@ -42,7 +42,7 @@ Ingest supports both single-statement files (`--file`) and profile-driven ERP im
 
 `backlog` supports `--month`, `--from`, `--to`, `--detail`, `--fail-on-backlog`, and `--max-unposted <n>`.
 
-`statement extract` supports `--file <path>` plus optional profile/account/IBAN/attachment selectors, `--header-row`, and repeatable `--map <field=header-or-column>`. `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`.
+`statement extract` supports `--file <path>` plus optional profile/account/IBAN/attachment selectors, `--header-row`, and repeatable `--map <field=header-or-column>`. For PDF evidence, extraction attempts native text extraction first, then sibling text exports, then statement sidecars. `statement verify` supports `--year`, `--account`, and `--fail-if-diff-over`.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus bank --help`.
 
@@ -62,7 +62,7 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 The module does not use a `bank/` subdirectory. Path resolution is owned by this module.
 
-For raw CSV/TSV/TXT files without schema, extraction auto-detects common summary headers and can be configured with `--header-row` and `--map`.
+For raw CSV/TSV/TXT files without schema, extraction auto-detects common summary headers and can be configured with `--header-row` and `--map`. For PDF evidence, extraction attempts native text extraction (using `pdftotext` when available), then falls back to sibling text exports or statement sidecars.
 
 When summary columns are missing, extraction can infer checkpoints from transaction-export rows with mapped `date`, `amount`, and `balance`.
 

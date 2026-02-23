@@ -23,6 +23,8 @@ NFR-REP-002 Decimal-safe money arithmetic. All report money calculations (trial-
 
 FR-REP-003 Regulated report PDFs. The toolchain MUST support producing the balance sheet (TASE) and the income statement (tuloslaskelma) as PDF suitable for Finnish regulated reporting (archiving, auditors, authorities). Acceptance criteria: users can obtain deterministic TASE and tuloslaskelma PDFs from workspace data via the CLI without relying on external conversion tools; the PDF includes the metadata defined in FR-REP-011.
 
+FR-REP-014 Filing-grade ledgers. The module MUST support filing-grade outputs for Pääkirja (general ledger) and Päiväkirja (day book), including PDF export for each. Acceptance criteria: users can produce Pääkirja and Päiväkirja outputs via `bus reports` for a period, with deterministic ordering and stable identifiers, and PDF output includes the metadata block and page numbering suitable for archival.
+
 FR-REP-004 Configurable report layout (TASE / tuloslaskelma). The module MUST support selecting a built-in statutory layout or a custom layout definition that specifies report-line hierarchy, labels, and account-to-line mapping. Acceptance criteria: (1) a report layout is expressible as a schema (line tree, label set, mapping contract); (2) users can select a built-in layout id or supply a layout file; (3) `bus reports balance-sheet` and `bus reports profit-and-loss` emit the same line structure and labels for text, CSV, JSON, KPA/PMA, and PDF outputs when the same layout is selected.
 
 FR-REP-005 Finnish reporting profile contract. The module MUST read a deterministic Finnish reporting profile from workspace configuration and apply it as the default statutory-report behavior. Acceptance criteria: profile keys and semantics are documented in this SDD and in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration); report generation is deterministic for the same profile and dataset revision.
@@ -75,7 +77,7 @@ KD-REP-005 Coverage reporting is a report concern. Monthly non-opening journal c
 
 ### Component Design and Interfaces
 
-Interface IF-REP-001 (module CLI). The module exposes `bus reports` with subcommands `trial-balance`, `general-ledger`, `profit-and-loss`, `balance-sheet`, and `journal-coverage` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-REP-001 (module CLI). The module exposes `bus reports` with subcommands `trial-balance`, `general-ledger`, `day-book`, `profit-and-loss`, `balance-sheet`, and `journal-coverage` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 Interface IF-REP-002 (coverage report). The command surface includes `bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>]`. The command emits a deterministic monthly comparison between imported operational totals and non-opening journal totals. It does not make pass/fail threshold decisions; it emits coverage data that can be consumed by [bus-validate](./bus-validate) parity or gap checks. Partially implemented: `bus reports journal-coverage` and `bus validate parity` / `bus validate journal-gap` exist; validate performs the check but does not emit a report artifact.
 
@@ -83,9 +85,9 @@ Source import parity report (suggested extension). Add a report in bus-reports t
 
 Class-aware gap report by account buckets (suggested extension). Not implemented: there is no class or bucket breakdown in bus-reports; a single bank/journal gap mixes operational, financing, and transfer activity. A suggested extension is a report that breaks down the gap (e.g. bank vs journal coverage) by configurable account buckets (e.g. operational income/expense, financing liability/service, internal transfer). Output would be period-based and deterministic with clear formulas, in machine-friendly format (tsv/json) for CI and for prioritization of unmapped activity. When adopted, the SDD will specify the new report subcommand and bucket semantics; module docs will be required for bucket configuration and output schema. Related: [bus-validate](./bus-validate) suggested capabilities include class-aware gap reporting and per-bucket thresholds for CI pass/fail; the report in bus-reports would supply the breakdown artifact that validate or scripts can consume.
 
-Report scoping is explicit and deterministic. `trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>` and include postings on or before the as-of date. `general-ledger` and `profit-and-loss` require `--period <period>` using the same period identifier form as `bus period` and `bus vat`. `general-ledger` accepts an optional `--account <account-id>` to emit a single-account ledger; when omitted it emits all accounts in deterministic order.
+Report scoping is explicit and deterministic. `trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>` and include postings on or before the as-of date. `general-ledger`, `day-book`, and `profit-and-loss` require `--period <period>` using the same period identifier form as `bus period` and `bus vat`. `general-ledger` accepts an optional `--account <account-id>` to emit a single-account ledger; when omitted it emits all accounts in deterministic order. `day-book` emits postings in date order for the period.
 
-All report commands accept `--format <format>` with supported values `text`, `csv`, and `markdown`. For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. The default is `text`, which emits a plain, non-aligned table with stable column order and a literal `|` separator so output does not vary by terminal width. The `csv` format emits UTF-8 CSV with a header row and the same deterministic row ordering as text output. The `markdown` format emits a Markdown table with the same row ordering. The `pdf` format writes a PDF to the path given by `-o` and includes the statutory metadata contract in FR-REP-011.
+All report commands accept `--format <format>` with supported values `text`, `csv`, and `markdown`. For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. For general-ledger and day-book, `pdf` is also supported. The default is `text`, which emits a plain, non-aligned table with stable column order and a literal `|` separator so output does not vary by terminal width. The `csv` format emits UTF-8 CSV with a header row and the same deterministic row ordering as text output. The `markdown` format emits a Markdown table with the same row ordering. The `pdf` format writes a PDF to the path given by `-o` and includes the metadata contract in FR-REP-011.
 
 For `profit-and-loss` and `balance-sheet`, layout selection is explicit. Built-in statutory layouts are selected with `--layout-id <id>` and custom layouts are selected with `--layout <file>`. The selected layout controls the line hierarchy and labels for all output formats. For Finnish statutory reporting, the module provides at least the following built-in layout ids:
 
@@ -106,6 +108,7 @@ Usage example:
 
 ```bash
 bus reports trial-balance --as-of 2026-03-31 --format csv
+bus reports day-book --period 2026-01 --format pdf -o paivakirja-2026-01.pdf
 bus reports profit-and-loss --period 2026 --layout-id fi-kpa-tuloslaskelma-kululaji --format pdf -o tuloslaskelma-2026.pdf
 bus reports balance-sheet --as-of 2026-12-31 --layout-id fi-kpa-tase --format pdf -o tase-2026.pdf
 ```
@@ -246,5 +249,5 @@ Project: BusDK
 Document ID: `BUSDK-MOD-REPORTS`  
 Version: 2026-02-18  
 Status: Draft  
-Last updated: 2026-02-18  
+Last updated: 2026-02-23  
 Owner: BusDK development team  
