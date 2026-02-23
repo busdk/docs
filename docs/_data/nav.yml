@@ -61,6 +61,8 @@
   links:
     - label: Modules overview
       url: /modules/
+    - label: Module feature table
+      url: /modules/features
     - label: bus
       url: /modules/bus
     - label: bus init

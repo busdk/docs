@@ -1,6 +1,6 @@
 ---
 title: Go optimization guide
-description: Practical Go performance guide for production services: anti-pattern fixes with bad-vs-better code, pprof/trace/bench workflows, and reproducible build/runtime tuning flags.
+description: "Practical Go performance guide for production services: anti-pattern fixes with bad-vs-better code, pprof/trace/bench workflows, and reproducible build/runtime tuning flags."
 ---
 
 ## Practical optimization workflow

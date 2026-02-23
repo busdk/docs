@@ -9,6 +9,8 @@ This section is the end user reference for the BusDK module CLIs. Each page is s
 
 If you need architectural background on why modules are independent and how they integrate, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
+For cross-module capability scanning, use the [BusDK module feature table](./features). It aggregates feature rows from each module repository `FEATURES.md` and shows user-visible capability, interface type, evidence, coverage, and maturity in one table.
+
 ### Data files and path ownership
 
 Each module that owns workspace data defines where its data files live. Today these are conventional names at the workspace root (for example `accounts.csv`, `periods.csv`, `datapackage.json`). Only the owning module may write to those files or apply business logic to them; other tools that need read-only access to another module’s data obtain the path from that module (see the [Data path contract for read-only cross-module access](../sdd/modules#data-path-contract-for-read-only-cross-module-access) in the module SDDs). The design allows future configuration of paths (for example in a data package) so that end users can customize where data is stored without breaking how other tools discover it.
@@ -37,6 +39,7 @@ Reporting, quality, and filing modules are [`bus reports`](./bus-reports), [`bus
 - [Standard global flags](../cli/global-flags)
 - [Module SDD index](../sdd/index)
 - [Modules (SDD)](../sdd/modules)
+- [BusDK module feature table](./features)
 - [Independent modules](../architecture/independent-modules)
 - [Modularity](../design-goals/modularity)
 - [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements)

@@ -27,6 +27,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 ### Status
 
 - [Development status](implementation/development-status)
+- [Module feature table](modules/features)
 - [Go optimization guide](implementation/go-optimization-guide)
 - [Development cost summary](implementation/cost-summary)
 - [BusDK module pricing](implementation/module-pricing)
@@ -70,6 +71,8 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Workbook editing](workflow/workbook-and-validated-tabular-editing)
 
 ## Browse Modules by Task {#find-modules-by-task}
+
+- [Module feature table](modules/features)
 
 ### Core commands
 

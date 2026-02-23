@@ -43,7 +43,9 @@ KD-ACC-003 Path exposure for read-only consumption. The module exposes path acce
 
 ### Component Design and Interfaces
 
-Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `add`, `set`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-ACC-001 (module CLI). The module exposes `bus accounts` with subcommands `init`, `list`, `report`, `add`, `set`, and `validate` and follows BusDK CLI conventions for deterministic output and diagnostics.
+
+The `report` command produces a filing-grade chart-of-accounts (tililuettelo) with deterministic ordering. Supported output formats include `text`, `tsv`, `csv`, `markdown`, and `pdf`, and PDF output includes generation metadata and page numbering suitable for statutory archive packages.
 
 The `init` command creates the baseline accounts dataset and schema when they are absent. It MUST use the [bus-data](./bus-data) Go library only (no CLI invocation). Init sequence: (1) Call the bus-data library to ensure the workspace data package is initialized — i.e. create an empty `datapackage.json` at the workspace root when the file is missing, matching bus-data init behavior. (2) Create `accounts.csv` and `accounts.schema.json` via the bus-data library (e.g. schema init or resource add). The emitted schema MUST conform to the foreign key contract in FR-ACC-005: if `foreignKeys` is present for `parent_code`, each entry’s `reference` MUST include both `resource` and `fields` (self-referencing: `reference.resource` empty string, `reference.fields` `"code"`); if hierarchy is not enforced via foreign keys, `foreignKeys` MUST be omitted entirely. (3) Ensure `datapackage.json` contains a resource entry for the accounts table (path to `accounts.csv` and schema reference) so that after init the data package describes the accounts dataset. If both `accounts.csv` and `accounts.schema.json` already exist and are consistent and the data package already contains the accounts resource, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of the files exists, or the data is inconsistent, or the data package is missing when it should exist, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](./bus-init) FR-INIT-003).
 
@@ -60,6 +62,7 @@ Usage examples:
 ```bash
 bus accounts init
 bus accounts list
+bus accounts report --format pdf --output ./reports/tililuettelo.pdf
 ```
 
 ```bash

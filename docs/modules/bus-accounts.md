@@ -9,6 +9,7 @@ description: "CLI reference for bus accounts: init, list, add, set, validate, an
 
 `bus accounts init [-C <dir>] [global flags]`  
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus accounts report [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
 `bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
 `bus accounts validate [-C <dir>] [global flags]`  
@@ -27,7 +28,7 @@ For Finnish statutory statements in [bus-reports](./bus-reports), this module al
 
 `init` creates baseline accounts datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
 
-`list` prints the current chart in deterministic order. `add` creates a new account and fails if `--code` already exists. `set` updates an existing account by `--code` and changes only attributes you provide, such as `--name` or `--type`. `validate` checks both data rows and `accounts.schema.json`, including malformed schema-level definitions.
+`list` prints the current chart in deterministic order. `report` renders a filing-grade tililuettelo in `text`, `tsv`, `csv`, `markdown`, or `pdf` format with deterministic ordering and optional workspace metadata from `datapackage.json`. `add` creates a new account and fails if `--code` already exists. `set` updates an existing account by `--code` and changes only attributes you provide, such as `--name` or `--type`. `validate` checks both data rows and `accounts.schema.json`, including malformed schema-level definitions.
 
 `sole-proprietor` emits balanced double-entry lines for owner withdrawal (`withdrawal`) and owner investment (`investment`). It requires `--equity-code`, `--cash-code`, and `--amount`, does not modify `accounts.csv`, and outputs TSV lines that can be used with `bus journal add`.
 
@@ -86,6 +87,7 @@ bus accounts init
 bus accounts add --code 3000 --name "Sales income" --type income
 bus accounts set --code 3000 --name "Domestic sales income"
 bus accounts list --format tsv --output ./out/accounts.tsv
+bus accounts report --format pdf --output ./out/tililuettelo.pdf
 bus accounts sole-proprietor withdrawal --equity-code 2010 --cash-code 1910 --amount 2500
 ```
 
@@ -105,6 +107,9 @@ accounts add --code 4100 --name "Service revenue" --type income
 # same as: bus accounts set --code 4100 --name "Service revenue FI"
 accounts set --code 4100 --name "Service revenue FI"
 
+# same as: bus accounts report --format pdf --output ./out/tililuettelo.pdf
+accounts report --format pdf --output ./out/tililuettelo.pdf
+
 # same as: bus accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
 accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
 ```
@@ -116,11 +121,11 @@ accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — chart lifecycle and sole-proprietor verified by e2e and unit tests; user can complete define-master-data and produce owner withdrawal/investment lines for journal.
+**Completeness:** 75% — chart lifecycle, tililuettelo report, and sole-proprietor flows verified by e2e and unit tests; user can complete define-master-data and produce owner withdrawal/investment lines for journal.
 
-**Use case readiness:** Accounting workflow: 70% — chart lifecycle and sole-proprietor verified; define-master-data step completable. Sale invoicing: 70% — chart for income/VAT accounts verified. Finnish payroll handling: 70% — chart for wage expense, withholding, net payable verified.
+**Use case readiness:** Accounting workflow: 75% — chart lifecycle, tililuettelo report, and sole-proprietor verified; define-master-data step completable. Sale invoicing: 75% — chart for income/VAT accounts verified with filing-grade tililuettelo available. Finnish payroll handling: 75% — chart for wage expense, withholding, net payable verified with tililuettelo output.
 
-**Current:** Init/add/set/list/validate and sole-proprietor flows are test-verified, including global-flag behavior.
+**Current:** Init/add/set/list/report/validate and sole-proprietor flows are test-verified, including global-flag behavior.
 Detailed test matrix and implementation notes are maintained in [Module SDD: bus-accounts](../sdd/bus-accounts).
 
 **Planned next:** Define and own report-account-mapping schema contract (FR-ACC-006) for [bus-reports](./bus-reports) fi-* layouts (PLAN.md); advances compliance and reporting. Document where bus journal add regression test is maintained or add when [bus-journal](./bus-journal) is available; advances accounting workflow.

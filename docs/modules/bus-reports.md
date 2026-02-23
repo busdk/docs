@@ -12,10 +12,12 @@ description: bus reports computes financial reports from journal and reference d
 `bus reports day-book --period <period> [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [--layout-id <id>] [--layout <file>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports parity [options] [-C <dir>] [global flags]`  
 `bus reports journal-gap [options] [-C <dir>] [global flags]`  
 `bus reports compliance-checklist --period <YYYY|YYYY-MM|YYYYQn> [--format <tsv|csv|json|text>] [-C <dir>] [global flags]`  
-`bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>] [-C <dir>] [-o <file>] [global flags]`
+`bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
@@ -33,7 +35,7 @@ Migration-quality outputs are available through `parity`, `journal-gap`, and `jo
 
 `trial-balance` prints trial balance as of a date and supports `text` (default) or `csv`. `general-ledger` prints ledger detail for a period and can be filtered by account. `day-book` prints postings in date order (päiväkirja) for the period. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
 
-`parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish legal-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity.
+`parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish legal-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity. `materials-register` emits a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) based on `datapackage.json` resources and their schemas, including linkage fields and retention classes for audit evidence packs. `balance-sheet-specification` emits an internal-only balance-sheet breakdown (tase-erittely) by statement line and account with evidence references for audit packs; it is not a public filing document.
 
 ### Finnish statutory financial statements
 
@@ -76,7 +78,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-accounts) datasets and optionally budget datasets. For statutory layouts, also reads workspace reporting profile settings from [bus-config](./bus-config) (`datapackage.json`) and account mapping from `report-account-mapping.csv`. Reports are computed from validated journal data inside explicit period boundaries, including year-end close/opening transitions managed by [bus-period](./bus-period). Writes only to stdout (or the file given by global `--output`).
+Reads [journal](./bus-journal), [period](./bus-period), and [accounts](./bus-accounts) datasets and optionally budget datasets. For statutory layouts, also reads workspace reporting profile settings from [bus-config](./bus-config) (`datapackage.json`) and account mapping from `report-account-mapping.csv`. `materials-register` reads `datapackage.json` resources and their schemas to enumerate storage paths and linkage fields. `balance-sheet-specification` uses the balance-sheet layout and account mapping to emit internal evidence drill-downs; it is internal-only and not a public filing output. Reports are computed from validated journal data inside explicit period boundaries, including year-end close/opening transitions managed by [bus-period](./bus-period). Writes only to stdout (or the file given by global `--output`).
 
 ### Examples
 
@@ -103,6 +105,14 @@ bus reports journal-coverage \
   --to 2026-03 \
   --format json \
   -o ./out/journal-coverage-2026q1.json
+bus reports materials-register \
+  --format pdf \
+  -o ./out/materials-register.pdf
+bus reports \
+  --format pdf \
+  -o ./out/tase-erittely-2026.pdf \
+  balance-sheet-specification \
+  --as-of 2026-12-31
 ```
 
 ### Exit status

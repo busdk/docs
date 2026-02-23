@@ -41,9 +41,13 @@ FR-REP-010 Income-result reconciliation validation. For `fi-*` layouts, the peri
 
 FR-REP-011 Statutory PDF metadata and signature section. For statutory PDF outputs, the module MUST include compliance-critical metadata and a dated-and-signed section. Acceptance criteria: the PDF includes entity legal name, Business ID when available, financial period start and end, balance-sheet date, currency and presentation unit, selected statutory scheme and layout id, and comparative column when enabled and available; the signature section contains either provided signer names and dates or a deterministic signing placeholder block.
 
-FR-REP-012 Scope boundary for filing-readiness. The module MUST keep scope boundaries explicit between statements, notes, and balance-sheet specifications. Acceptance criteria: statement output (balance sheet and income statement) is in scope; notes are identified as separate filing documents that may be produced by other modules or external workflows; balance-sheet specifications (`tase-erittelyt`) are explicitly out of filing output scope for PRH and out of generation scope for this module unless a future requirement adds them.
+FR-REP-012 Scope boundary for filing-readiness. The module MUST keep scope boundaries explicit between statements, notes, and balance-sheet specifications. Acceptance criteria: statement output (balance sheet and income statement) is in scope; notes are identified as separate filing documents that may be produced by other modules or external workflows; balance-sheet specifications (`tase-erittelyt`) are internal-only and MUST NOT be treated as public filing outputs.
 
 FR-REP-013 Non-opening journal coverage report. The module MUST provide a deterministic report that compares monthly imported operational totals against non-opening journal activity. Acceptance criteria: the report includes period, imported operational total, non-opening journal total, delta, and status fields; opening entries are excluded by explicit rule; output is deterministic and machine-readable for CI workflows.
+
+FR-REP-015 Materials register. The module MUST emit a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) from workspace configuration and dataset metadata. Acceptance criteria: `bus reports materials-register` lists each dataset with storage path, schema reference, linkage fields, and retention class; JSON and PDF outputs are supported for audit packs.
+
+FR-REP-016 Balance-sheet specification. The module MUST emit a deterministic balance-sheet specification (tase-erittely) that drills down from statement lines to account balances and evidence references. Acceptance criteria: `bus reports balance-sheet-specification` lists line id/label, account, amount, and voucher/entry references; outputs include machine-readable `json` and internal evidence `pdf`.
 
 ### Finnish statutory financial statements
 
@@ -53,7 +57,7 @@ The statutory minimum for this module is that statements are prepared from valid
 
 Comparative figures for the preceding period are part of the default statutory contract when prior-period data is available. The first fiscal year is the standard exception where comparative statement columns are not expected. The module does not infer exceptions from heuristics; it derives comparative behavior from deterministic profile settings plus available period data.
 
-`Tase-erittelyt` (balance-sheet specifications) are not filed to PRH and are therefore out of filing output scope for bus-reports. They may still be required for internal bookkeeping evidence and audit trail work, but that generation responsibility is outside this module in the current scope.
+`Tase-erittelyt` (balance-sheet specifications) are not filed to PRH and are therefore internal-only outputs. Bus Reports provides a deterministic `balance-sheet-specification` report for internal evidence packs while explicitly keeping these out of public filing outputs.
 
 Bus Reports targets statutory scheme support through explicit layout choices. Income statement output supports both decree-level Finnish schemes: expense-by-nature (`kululajikohtainen`) and function-of-expense (`toimintokohtainen`). Balance sheet output follows the Finnish `Vastaavaa` and `Vastattavaa` structure with statutory groupings including `pysyvät vastaavat`, `vaihtuvat vastaavat`, `oma pääoma`, `tilinpäätössiirtojen kertymä`, `pakolliset varaukset`, and `vieras pääoma`. Where scheme rules require long-term portions to be shown separately for receivables or liabilities, built-in layouts and validators enforce that split.
 
@@ -77,7 +81,7 @@ KD-REP-005 Coverage reporting is a report concern. Monthly non-opening journal c
 
 ### Component Design and Interfaces
 
-Interface IF-REP-001 (module CLI). The module exposes `bus reports` with subcommands `trial-balance`, `general-ledger`, `day-book`, `profit-and-loss`, `balance-sheet`, and `journal-coverage` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-REP-001 (module CLI). The module exposes `bus reports` with subcommands `trial-balance`, `general-ledger`, `day-book`, `profit-and-loss`, `balance-sheet`, `balance-sheet-specification`, `journal-coverage`, `parity`, `journal-gap`, `compliance-checklist`, `filing-package`, `annual-template`, `annual-validate`, and `materials-register` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 Interface IF-REP-002 (coverage report). The command surface includes `bus reports journal-coverage --from <YYYY-MM> --to <YYYY-MM> [--source-summary <path>] [--exclude-opening] [--format <text|csv|json>]`. The command emits a deterministic monthly comparison between imported operational totals and non-opening journal totals. It does not make pass/fail threshold decisions; it emits coverage data that can be consumed by [bus-validate](./bus-validate) parity or gap checks. Partially implemented: `bus reports journal-coverage` and `bus validate parity` / `bus validate journal-gap` exist; validate performs the check but does not emit a report artifact.
 
@@ -87,7 +91,7 @@ Class-aware gap report by account buckets (suggested extension). Not implemented
 
 Report scoping is explicit and deterministic. `trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>` and include postings on or before the as-of date. `general-ledger`, `day-book`, and `profit-and-loss` require `--period <period>` using the same period identifier form as `bus period` and `bus vat`. `general-ledger` accepts an optional `--account <account-id>` to emit a single-account ledger; when omitted it emits all accounts in deterministic order. `day-book` emits postings in date order for the period.
 
-All report commands accept `--format <format>` with supported values `text`, `csv`, and `markdown`. For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. For general-ledger and day-book, `pdf` is also supported. The default is `text`, which emits a plain, non-aligned table with stable column order and a literal `|` separator so output does not vary by terminal width. The `csv` format emits UTF-8 CSV with a header row and the same deterministic row ordering as text output. The `markdown` format emits a Markdown table with the same row ordering. The `pdf` format writes a PDF to the path given by `-o` and includes the metadata contract in FR-REP-011.
+All report commands accept `--format <format>` with supported values `text`, `csv`, and `markdown`. For balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. For general-ledger, day-book, balance-sheet-specification, and materials-register, `pdf` is also supported; materials-register and balance-sheet-specification also support `json`. The default is `text`, which emits a plain, non-aligned table with stable column order and a literal `|` separator so output does not vary by terminal width. The `csv` format emits UTF-8 CSV with a header row and the same deterministic row ordering as text output. The `markdown` format emits a Markdown table with the same row ordering. The `pdf` format writes a PDF to the path given by `-o` and includes the metadata contract in FR-REP-011.
 
 For `profit-and-loss` and `balance-sheet`, layout selection is explicit. Built-in statutory layouts are selected with `--layout-id <id>` and custom layouts are selected with `--layout <file>`. The selected layout controls the line hierarchy and labels for all output formats. For Finnish statutory reporting, the module provides at least the following built-in layout ids:
 
@@ -111,6 +115,7 @@ bus reports trial-balance --as-of 2026-03-31 --format csv
 bus reports day-book --period 2026-01 --format pdf -o paivakirja-2026-01.pdf
 bus reports profit-and-loss --period 2026 --layout-id fi-kpa-tuloslaskelma-kululaji --format pdf -o tuloslaskelma-2026.pdf
 bus reports balance-sheet --as-of 2026-12-31 --layout-id fi-kpa-tase --format pdf -o tase-2026.pdf
+bus reports --format pdf -o tase-erittely-2026.pdf balance-sheet-specification --as-of 2026-12-31
 ```
 
 ### Data Design
@@ -154,6 +159,8 @@ Account mapping for statutory layouts (FR-REP-007) is stored in a dedicated data
 For `fi-*` layouts, unmapped accounts are hard errors unless the account is explicitly assigned to a permitted statutory other-bucket line in the selected layout. Deterministic diagnostics include account code, layout id, missing or conflicting line id, and a direct resolution action.
 
 Report layout schema (FR-REP-004) is a structured definition that drives balance-sheet and profit-and-loss line structure and labels. It comprises a line schema (ordered tree with stable ids), account-mapping contract, and label set. Layouts may be built-in or supplied as a custom layout file (YAML or JSON).
+
+Materials register data (FR-REP-015) is derived from `datapackage.json` resources and their schema metadata (inline schema or schema path). The report enumerates storage paths, schema references, linkage fields derived from schema fields and foreign keys, and retention class classification for statutory evidence packages.
 
 ### Assumptions and Dependencies
 
@@ -205,7 +212,7 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 **Report line:** A single row in a balance-sheet or profit-and-loss report, identified by a stable id and optional parent, with a display label and aggregated amount(s).
 
-**Tase-erittelyt:** Balance-sheet specifications used for internal bookkeeping evidence and audit support, not filed to PRH with the standard financial-statement filing package.
+**Tase-erittelyt:** Balance-sheet specifications used for internal bookkeeping evidence and audit support, not filed to PRH with the standard financial-statement filing package. Produced by `bus reports balance-sheet-specification` as internal-only evidence output.
 
 **TASE:** Tasapainolaskelma; the Finnish balance sheet. Required for regulated reporting and archiving.
 
