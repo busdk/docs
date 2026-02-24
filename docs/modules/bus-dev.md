@@ -9,17 +9,19 @@ description: "bus dev is a developer-only companion that centralizes workflow lo
 
 `bus dev [-h] [-V] [--check] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|codex:local|gemini|claude>] <operation> [operation ...]`
 
-Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
+Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`retry`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
 
 Each operation token can be a base operation name, a **pipeline name** (built-in, repository-local, or preference), or a **user-defined action name** (repository-local prompt or script).
 
-Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) runs at a time for that directory. A second invocation for the same directory waits until the first exits.
+Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage, retry) runs at a time for that directory. A second invocation for the same directory waits until the first exits.
 
 The **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`** subcommands are management operations. They do not participate in workflow chaining.
 
 Repository-writing management commands (**pipeline set repo**, **pipeline unset repo**, **action set**, **action unset**, **action generate**, **script set**, **script unset**, **script generate**) take the same per-directory lock as workflow operations.
 
 The workflow operations **plan**, **spec**, **work**, **e2e**, **triage**, **stage**, and **commit** can be run in any order and combination in one invocation (for example `bus dev plan spec work` or `bus dev plan work stage commit`). All tokens are resolved and expanded before execution. Repeated step names are merged so each step appears once in first-appearance order.
+
+`retry` is an executable workflow control command with its own flag contract (`--on-fail`, `--attempts`) and is intended to run as a standalone operation. It is not mixed with other workflow tokens in the same top-level invocation.
 
 With global **`--check`**, bus-dev validates token expansion and script runnability without executing steps.
 
@@ -34,6 +36,7 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.  
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.  
 `bus dev each [--check] [--skip MODULE[,MODULE...]]... TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every discovered child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names.  
+`bus dev retry --on-fail|-f <TOKEN>[,<TOKEN>...] [--attempts N] <workflow-token>...` — run the workflow token sequence, and if it fails, run the fallback token list and retry the workflow up to `N` additional times with exponential backoff (`1s`, `2s`, `4s`, ...). Workflow and fallback token lists are each resolved and normalized before execution. Omit `--attempts` to default to one additional retry. `--attempts 0` is valid, runs the workflow once, and skips fallback execution. Built-in-only fallback tokens can be forced with `@` (for example `@commit`).
 `bus dev set agent <cursor|codex|codex:local|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.  
 `bus dev set model <value>` — set the bus-dev persistent default model (`bus-dev.model`).  
 `bus dev set model-reasoning-effort <minimal|low|medium|high|xhigh>` — set default model reasoning effort (`bus-dev.model_reasoning_effort`).  
@@ -104,7 +107,7 @@ bus-run.agent=codex
 
 All paths and the working directory are resolved relative to the current directory unless you set `-C` / `--chdir`. The tool discovers the repository root from the effective working directory and does not require a config file for repository-scoped commands. Subcommands that need a module name in repository scope (for example for e2e script naming) derive it deterministically from the repository: the module name is the base name of the repository root directory (the last path component of the absolute path to the repo root). For `init`, which can run outside a Git repository, the module name is derived from the base name of the init target directory.
 
-Only one `bus dev` run that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage) executes at a time for that directory. A second invocation for the same directory waits until the first exits.
+Only one `bus dev` run that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage, retry) executes at a time for that directory. A second invocation for the same directory waits until the first exits.
 
 This avoids concurrent edits to `PLAN.md`, `AGENTS.md`, and the staging area.
 
@@ -138,9 +141,13 @@ Diagnostics and progress go to stderr. Deterministic command results are written
 
 **`triage`** — Keep development-state documentation accurate, compact, and evidence-based by reconciling what users can actually do (as proven by tests) with what is planned next (PLAN.md) and what depends on what. Updates **only** documentation: the overall [development-status](../implementation/development-status) page and each module’s end-user docs page (the “Development state” section). Never modifies source code or test files. The command detects the project context automatically: run from the **docs repo** to update the development-status page and all module pages; run from the **BusDK super-project** to update the docs submodule’s same targets; run from a **single module repo** to update only that module’s page and the overall development-status page in the sibling docs repo. If the context is ambiguous, the command exits with code 2 and guidance on where to run it. May be combined with **plan**, **spec**, **work**, **e2e**, **stage**, and **commit** in any order (e.g. `bus dev triage plan work`); operations run in the order you list them and stop on first failure. At the start of the triage step, the tool prints to stderr which agent runtime and model are in use. See the [module SDD](../sdd/bus-dev) for the normative behavior, project-context detection rules, and the structure of the “Development state” sections triage writes.
 
-**`each [--check] [--skip MODULE[,MODULE...]]... TOKEN...`** — Superproject-only helper that dispatches the remaining command as `bus dev TOKEN...` in each child module. Child discovery is deterministic and sourced from a deduplicated union of `.gitmodules` paths and top-level directories containing `.bus/dev`; if `bus` is present it runs first, then remaining discovered child paths are sorted lexicographically. A discovered child is selected when its directory contains a `Makefile` or `.bus/dev`. Before any module command runs, `each` preflights every selected module with the same tokens and fails immediately if any module cannot resolve the token sequence or has a non-runnable script action (Unix script actions require `.sh` with `+x`). The command stops on first failure and returns that exit code. With `--check`, only preflight is run and no module command is executed. Use `--skip` to exclude modules by directory name (`--skip` can be repeated and accepts comma-separated names). `each` itself is not a workflow step and is not expanded by pipelines. Example: `bus dev each --skip bus-docs,bus-legacy stage commit` runs `bus dev stage commit` in each non-skipped child module; `bus dev each --check --skip bus-docs stage commit` validates readiness only for selected modules.
+**`each [--check] [--skip MODULE[,MODULE...]]... TOKEN...`** — Superproject-only helper that dispatches the remaining command as `bus dev TOKEN...` in each child module. Child discovery is deterministic and sourced from a deduplicated union of `.gitmodules` paths and top-level directories containing `.bus/dev`; if `bus` is present it runs first, then remaining discovered child paths are sorted lexicographically. A discovered child is selected when its directory contains a `Makefile` or `.bus/dev`. Before any module command runs, `each` preflights every selected module with the same tokens and fails immediately if any module cannot resolve the token sequence or has a non-runnable script action (Unix script actions require `.sh` with `+x`). The command stops on first failure and returns that exit code. With `--check`, only preflight is run and no module command is executed. Use `--skip` to exclude modules by directory name (`--skip` can be repeated and accepts comma-separated names). `each` itself is not a workflow step and is not expanded by pipelines. Example: `bus dev each --skip bus-docs,bus-legacy stage commit` runs `bus dev stage commit` in each non-skipped child module; `bus dev each --check --skip bus-docs stage commit` validates readiness only for selected modules; `bus dev each --check retry -f fix-tests test` preflights retry fallback/target resolution in each selected module.
 
 When you run `each`, the remaining tokens are exactly the command that each child module receives. For example, `bus dev each --check --skip bus-docs pipeline preview round` validates that every selected child can resolve `pipeline preview round` without executing a workflow step.
+
+**`retry --on-fail|-f <TOKEN>[,<TOKEN>...] [--attempts N] <workflow-token>...`** — Run one workflow sequence, and if it fails, run the fallback token list before retrying. `--on-fail` (or `-f`) is required and each token list is expanded and normalized using standard token rules before execution. Workflow tokens may include multiple entries (for example `test test_2`) so both run together on each attempt. `--attempts` defaults to one additional retry and accepts zero or greater. `--attempts 0` means the workflow runs once and exits with its original failure code without fallback. Fallback execution only occurs after a workflow failure. If fallback has no runnable steps (including after normalization), or if any token is invalid, execution fails with usage error. Built-in-only fallback tokens can be forced with `@` (for example `@commit`).
+
+The retry loop uses exponential backoff (`1s`, `2s`, `4s`, ...) between workflow attempts and stops as soon as the workflow succeeds. If fallback returns non-zero, that code is returned immediately. Examples: `bus dev retry --on-fail fix-tests,fix-tests-2 --attempts 2 test test_2`, `bus dev retry -f fix-tests,fix-tests-2 --attempts 1 test`.
 
 **`set`** — Set a persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). Bus-dev provides a dedicated subcommand for each key that affects agent use:
 
@@ -230,6 +237,8 @@ bus dev pipeline preview release-ready
 bus dev release-ready
 ```
 
+If you add a full busfile at `.bus/dev/<name>.bus`, you can run it as `bus dev <name>` without the extension.
+
 Use `bus dev context` to inspect the prompt/script variables that `.txt` and script actions receive.
 
 **After init.** When you use **init**, only operations from the set plan, spec, work, and e2e may follow. Pipeline and action tokens are allowed after init only if their expansion contains just those four base operations. If you use a pipeline or action that expands to stage, commit, triage, or any user-defined action after init (for example `bus dev init round`), the command fails with invalid usage (exit 2) before running any step.
@@ -314,6 +323,9 @@ bus dev script set verify-local --platform=unix < .bus/dev/verify-local.sh
 bus dev pipeline preview release-ready
 bus dev release-ready
 bus dev each context
+bus dev each --check retry -f fix-tests,fix-tests-2 --attempts 1 test test_2
+bus dev retry -f fix-tests,fix-tests-2 --attempts 1 test test_2
+bus dev retry --on-fail @commit test_2
 bus dev each --check stage commit
 bus dev each --check --skip bus-docs pipeline preview cycle
 bus dev each --check --skip bus-docs,bus-legacy plan work stage commit
@@ -358,6 +370,7 @@ dev -C ./bus-books stage commit
 # validate then run a full cycle in one command
 dev -C ./bus-books --check plan work stage commit
 dev -C ./bus-books plan work stage commit
+dev -C ./bus-books retry --on-fail fix-tests,fix-tests-2 --attempts 1 test test_2
 
 # use repo-local definitions under .bus/dev/
 dev -C ./bus-books list

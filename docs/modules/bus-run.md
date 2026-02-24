@@ -7,7 +7,7 @@ description: "bus run executes user-defined prompts, pipelines, and scripts with
 
 ### Synopsis
 
-`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|codex:local|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | set | context | list | pipeline | action | script ) [options]`
+`bus run [-h] [-V] [-v] [-q] [-C <dir>] [-o <file>] [--agent <cursor|codex|codex:local|gemini|claude>] [--color <auto|always|never>] [--no-color] ( <token> [<token> ...] | retry | set | context | list | pipeline | action | script ) [options]`
 
 **Run:** `bus run <token> [<token> ...]` — Execute one or more user-defined prompt actions, script actions, or pipeline names.
 
@@ -15,7 +15,7 @@ Tokens are resolved and pipeline names are expanded to a flat step sequence. The
 
 All agent execution uses the [bus-agent](./bus-agent) library. There are no built-in developer operations (no plan, work, spec, e2e, commit, or init).
 
-Management subcommands keep defaults and local definitions organized. Use **`set`** to persist bus-run defaults (agent, model, model reasoning effort, model verbosity, output-format, timeout) via [bus-preferences](./bus-preferences). Use **`context`** to print the resolved prompt-variable catalog as sorted `KEY=VALUE` lines. Use **`list`** to print runnable tokens and expansions without running steps. Use **`pipeline`** to define, list, or preview pipelines from `.bus/run/<NAME>.yml` or `bus-run.pipeline.<name>`. Use **`action`** for prompt actions in `.bus/run/<NAME>.txt`, and **`script`** for script actions in `.bus/run/<NAME>.sh`, `.bat`, or `.ps1`.
+Management subcommands keep defaults and local definitions organized. Use **`retry`** to rerun a failing workflow with fallback tokens and exponential backoff. Use **`set`** to persist bus-run defaults (agent, model, model reasoning effort, model verbosity, output-format, timeout) via [bus-preferences](./bus-preferences). Use **`context`** to print the resolved prompt-variable catalog as sorted `KEY=VALUE` lines. Use **`list`** to print runnable tokens and expansions without running steps. Use **`pipeline`** to define, list, or preview pipelines from `.bus/run/<NAME>.yml` or `bus-run.pipeline.<name>`. Use **`action`** for prompt actions in `.bus/run/<NAME>.txt`, and **`script`** for script actions in `.bus/run/<NAME>.sh`, `.bat`, or `.ps1`.
 
 Global **`bus run --help`** shows usage, states that runnable tokens are user-defined only (no built-in operations or pipelines), and directs you to **`bus run list`**, **`bus run pipeline list`**, **`bus run action list`**, and **`bus run script list`** to discover available tokens. No agent or script is run to produce help. **`bus run list`** prints a unified catalog of every runnable token in the current context (directory-local and preference pipelines, prompt actions, script actions) with source and, for pipelines, the normalized expanded step sequence; it does not execute any step.
 
@@ -42,6 +42,8 @@ From **BusDK v0.0.26** onward, `bus run` can use Codex through the shared `bus-a
 ### Commands
 
 **`bus run <token> [<token> ...]`** — Run one or more user-defined steps. Each token is a prompt action name, script action name, or pipeline name. Pipeline names expand to a sequence of prompt and script actions; there are no built-in operations or built-in pipelines. After full expansion, bus-run normalizes the final sequence by merging repeated step names so each name appears once in first-appearance order, then runs the normalized sequence. The first non-zero exit stops the run and becomes the process exit code. When any token resolves to directory-local content, `.bus/run/` is read from the effective working directory (project root); no Git is required. If the project root does not exist or is not accessible, exit 1. Takes the per-directory lock.
+
+**`bus run retry --on-fail|-f <token>[,<token>...] [--attempts N] <workflow-token>...`** — Run one or more workflow tokens. If the workflow fails, the fallback tokens are run, then the workflow is retried with exponential backoff (`1s`, `2s`, `4s`, …). `--attempts` is the number of additional retries after the first attempt; `0` disables retries and fallback. Each retry cycle reruns the full target sequence. If any attempt succeeds, run exits `0`; otherwise exits with the last workflow exit code. Uses the same token resolution and normalization as normal run.
 
 **`bus run set agent <runtime>`** — Set the bus-run persistent default agent (`bus-run.agent`) via the bus-preferences library. `<runtime>` must be one of `cursor`, `codex`, `codex:local`, `gemini`, or `claude`. Invalid value → exit 2.
 
@@ -187,6 +189,7 @@ make check
 EOF
 bus run pipeline set repo daily-check summarize-plan lint-unix
 bus run pipeline preview daily-check
+bus run retry --on-fail lint-unix --attempts 1 summarize-plan
 bus run summarize-plan lint-unix
 bus run --agent codex --timeout 20m daily-check
 ```
