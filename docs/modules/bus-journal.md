@@ -32,7 +32,7 @@ Other modules post into the journal; this CLI adds entries and reports balances.
 
 ### Commands
 
-`init` creates the journal index and baseline datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
+`init` creates the journal index and baseline datasets and schemas, including `journals.csv`, `journals.schema.json`, `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. If all required files exist, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
 
 `add` appends a balanced transaction with one or more debit and credit lines. Optional `--source-id <key>` records source identity, and `--if-missing` makes add idempotent when a posting with the same source identity already exists. For replay-scale streams, `add --bulk-in <file|->` reads JSON array or NDJSON and applies the same validation and idempotency semantics per transaction.
 
@@ -60,7 +60,7 @@ At least one debit and one credit are required per transaction, and total debits
 
 Every file owned by `bus journal` includes `journal` or `journals` in its filename.
 
-The journal index is `journals.csv` at repository root. Period journal files are also at workspace root with date prefixes (for example `journal-2026.csv`) and beside schemas (for example `journal-2026.schema.json`).
+The journal index is `journals.csv` at repository root. Dimension metadata is stored in `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. Period journal files are also at workspace root with date prefixes (for example `journal-2026.csv`) and beside schemas (for example `journal-2026.schema.json`).
 
 The module does not use a journal subdirectory. Path resolution is owned by this module.
 
@@ -131,12 +131,12 @@ journal balance --as-of 2026-01-31
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
 
-**Completeness:** 70% — Record-postings and balance steps are journey-complete; init (index+schema only; period files on first add), add by code/name, balance, dry-run, and NFR-JRN-001 closed-period reject are test-verified.
+**Completeness:** 70% — Record-postings and balance steps are journey-complete; init (index, dimension metadata, period files on first add), add by code/name, balance, dry-run, and NFR-JRN-001 closed-period reject are test-verified.
 
 **Use case readiness:**  
 [Accounting workflow](../workflow/accounting-workflow-overview): 70% — record-postings and balance steps are usable, and init/add/balance/dry-run/NFR-JRN-001 are verified. [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — append path, balances, NFR-JRN-001, and audit columns in period CSV are verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — posting path is ready for payroll export, including init/add/balance and closed-period rejection checks.
 
-**Current:** `tests/e2e.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`, `-vv`), init (index+schema only; period files on first add), idempotent and partial-init, dry-run init/add, add by code and name, balance (TSV, `--as-of`, `-o`, `-q`), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), and missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, `internal/cli/flags_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
+**Current:** `tests/e2e.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`, `-vv`), init (journal index, dimension metadata, period files on first add), idempotent and partial-init, dry-run init/add, add by code and name, balance (TSV, `--as-of`, `-o`, `-q`), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), and missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, `internal/cli/flags_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
 
 **Planned next:** Continued replay workflow hardening and profile-driven ingest improvements; add-from-stdin and bulk add are implemented.
 
