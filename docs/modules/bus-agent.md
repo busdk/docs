@@ -30,6 +30,7 @@ Command names follow [CLI command naming](../cli/command-naming). `bus agent` is
 
 The runner centralizes how external runtimes (Cursor CLI, Codex, Gemini CLI, Claude CLI) are invoked.
 The runtime token `codex:local` selects the Codex backend in local mode (`--oss`).
+Codex-specific argument behavior and setup guidance are documented in [Codex CLI reference and argument patterns](../references/codex-cli).
 Modules share one deterministic contract for templating, timeout handling, and output capture.
 
 This CLI exposes that contract for diagnostics and development:
@@ -86,6 +87,7 @@ Each runtime is an external CLI binary; bus-agent does not embed provider SDKs.
 When selected runtime is missing from `PATH`, command exits with clear install guidance.
 
 Install references: Gemini CLI (<https://geminicli.com/>), Cursor CLI (<https://cursor.com/docs/cli/overview>), Claude CLI (<https://github.com/anthropics/claude-code?tab=readme-ov-file#get-started>), and Codex CLI (<https://developers.openai.com/codex/cli/>).
+For Codex-specific argv details (`--oss`, `--model`, `-c model_reasoning_effort=...`, `-c model_verbosity=...`, workdir and add-dir handling), use [Codex CLI reference and argument patterns](../references/codex-cli).
 
 Runtime selection order for `bus agent run`:
 `--agent`, then `BUS_AGENT`, then `bus-agent.runtime` from [bus-preferences](./bus-preferences), then the first available runtime in effective order.
@@ -193,6 +195,7 @@ See [Development status](../implementation/development-status).
 ### Sources
 
 - [Module SDD: bus-agent](../sdd/bus-agent)
+- [Codex CLI reference and argument patterns](../references/codex-cli)
 - [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)
 - [bus-preferences CLI reference](./bus-preferences)
 - [bus-dev CLI reference](./bus-dev)

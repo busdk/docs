@@ -27,6 +27,8 @@ FR-VAT-006 Reconcile cash coverage diagnostics and strict gating. The module MUS
 
 FR-VAT-007 FI filing payload/explain/profile tooling. The module MUST provide one-command FI filing payload output, row-level FI field explain output, strict reverse-charge marker validation, and named period profile import/list/selection. Acceptance criteria: `fi-file` emits machine-consumable filing payload with deterministic formulas and calculation version metadata; `explain` emits deterministic row-level field trace; `--strict-fi-eu-rc` can fail unresolved classification markers; `period-profile import|list` exists and `--period-profile` can be used in period-scoped VAT commands.
 
+FR-VAT-008 Authority-support review packet. The module MUST provide a deterministic review packet per period that includes VAT summary totals, row-level explain trace, and coverage diagnostics when `--source reconcile --basis cash` is used, and MUST support PDF output for archival. Acceptance criteria: `review` outputs packet data in TSV/JSON, `--format pdf` produces deterministic PDF output, and `--section summary|explain|coverage` can emit machine-readable CSV when requested.
+
 NFR-VAT-003 Decimal-safe money arithmetic. All VAT money calculations (base amounts, VAT amounts, totals, export values, and thresholds) MUST use decimal-safe arithmetic and MUST NOT rely on binary floating-point. Acceptance criteria: computations use exact decimal-safe representations (scaled cents or exact decimal/rational types), rounding behavior is explicit and deterministic, and repeated runs produce byte-identical monetary outputs for the same inputs.
 
 NFR-VAT-001 Auditability. VAT corrections MUST be append-only and traceable to original records. Acceptance criteria: corrections create new records that reference originals.
@@ -49,11 +51,11 @@ KD-VAT-004 Journal-driven mode supports migration and legacy scenarios. Where in
 
 ### Component Design and Interfaces
 
-Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `validate`, `report`, `export`, `fi-file`, `explain`, `period-profile`, `filed-import`, and `filed-diff` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-VAT-001 (module CLI). The module exposes `bus vat` with subcommands `init`, `validate`, `report`, `export`, `fi-file`, `explain`, `review`, `period-profile`, `filed-import`, and `filed-diff` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 The `init` command creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-Documented parameters include `bus vat report --period <period>`, `bus vat export --period <period>`, `bus vat fi-file --period <period> [--payload-format json|csv|tsv]`, `bus vat explain --period <period> [--format tsv|json]`, `bus vat period-profile import --file <path>`, `bus vat period-profile list`, `bus vat filed-import --period <period> --file <path>`, and `bus vat filed-diff --period <period> [--threshold-cents <int>]`. Period selection supports `--period`, `--from/--to`, and `--period-profile <id>` for period-scoped VAT commands. Journal-driven VAT mode (FR-VAT-004) is invoked with `--source journal` on `bus vat validate|report|export|filed-diff|fi-file|explain`.
+Documented parameters include `bus vat report --period <period>`, `bus vat export --period <period>`, `bus vat fi-file --period <period> [--payload-format json|csv|tsv]`, `bus vat explain --period <period> [--format tsv|json]`, `bus vat --format <fmt> review --period <period> [--section packet|summary|explain|coverage]`, `bus vat period-profile import --file <path>`, `bus vat period-profile list`, `bus vat filed-import --period <period> --file <path>`, and `bus vat filed-diff --period <period> [--threshold-cents <int>]`. Period selection supports `--period`, `--from/--to`, and `--period-profile <id>` for period-scoped VAT commands. Journal-driven VAT mode (FR-VAT-004) is invoked with `--source journal` on `bus vat validate|report|export|filed-diff|fi-file|explain|review`.
 
 Interface IF-VAT-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (vat-rates, vat-reports, vat-returns, and any period-definition or period-scoped files and their schemas). Given a workspace root path and optionally a period identifier, the library returns the relevant path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and VAT logic remain in this module.
 
@@ -62,6 +64,7 @@ Usage examples:
 ```bash
 bus vat report --period 2026Q1
 bus vat export --period 2026Q1
+bus vat --format pdf --output vat-review-2026Q1.pdf review --period 2026Q1
 ```
 
 ### Data Design
@@ -90,7 +93,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Schema or 
 
 ### Testing Strategy
 
-Unit tests cover VAT computations and mapping validation, and command-level tests exercise `report` and `export` against fixture workspaces.
+Unit tests cover VAT computations and mapping validation, and command-level tests exercise `report`, `export`, `explain`, and `review` against fixture workspaces.
 
 ### Deployment and Operations
 

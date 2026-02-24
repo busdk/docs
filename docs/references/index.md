@@ -7,7 +7,7 @@ description: "This section is split into **single-concept** documents:"
 
 This section is split into **single-concept** documents:
 
-[References and external foundations (summary)](./foundations-summary) and [Sources](./link-list).
+[References and external foundations (summary)](./foundations-summary), [Codex CLI reference and argument patterns](./codex-cli), and [Sources](./link-list).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -21,4 +21,5 @@ This section is split into **single-concept** documents:
 
 - [References index](./index)
 - [Foundations summary](./foundations-summary)
+- [Codex CLI reference and argument patterns](./codex-cli)
 - [External link list](./link-list)

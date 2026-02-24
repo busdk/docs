@@ -1,19 +1,19 @@
 ---
-title: bus-period — accounting period open/close and locking (SDD)
-description: Bus Period adds periods in future state, opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace, and locks periods to prevent changes after close.
+title: bus-period — accounting period open/close/reopen and locking (SDD)
+description: Bus Period adds periods in future state, opens, closes, and reopens accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace, and locks periods to prevent changes after close.
 ---
 
-## bus-period — accounting period open/close and locking
+## bus-period — accounting period open/close/reopen and locking
 
 ### Introduction and Overview
 
-Bus Period opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace into the current workspace, and locks periods to prevent changes after close. Periods can be created in advance in a **future** state; **open** and **close** are then pure state transitions (future → open → closed → locked).
+Bus Period opens and closes accounting periods, generates closing and opening balance entries, carries forward opening entries from a prior workspace into the current workspace, and locks periods to prevent changes after close. Periods can be created in advance in a **future** state; **open**, **close**, **reopen**, and **lock** are state transitions (future → open → closed → reopened → closed → locked).
 
 ### Requirements
 
-FR-PER-001 Period control datasets. The module MUST store period state (future, open, closed, locked) as schema-validated repository data. Acceptance criteria: period rows validate against schemas and are append-only; allowed state values are exactly future, open, closed, locked; every period record appended by `add`, `open`, `close`, or `lock` MUST include a non-empty `retained_earnings_account`.
+FR-PER-001 Period control datasets. The module MUST store period state (future, open, closed, reopened, locked) as schema-validated repository data. Acceptance criteria: period rows validate against schemas and are append-only; allowed state values are exactly future, open, closed, reopened, locked; every period record appended by `add`, `open`, `close`, `reopen`, or `lock` MUST include a non-empty `retained_earnings_account`.
 
-FR-PER-004 Period state lifecycle. The module MUST support creating periods in a future state and transitioning them open → closed → locked. Acceptance criteria: only periods in state open accept new postings; closed and locked periods reject writes; future periods exist in the dataset but do not accept postings until opened; transitions are future → open → closed → locked (re-opening a closed or locked period is not required and may be refused); every period record appended by `add`, `open`, `close`, or `lock` MUST include a non-empty `retained_earnings_account`.
+FR-PER-004 Period state lifecycle. The module MUST support creating periods in a future state and transitioning them open → closed → reopened → closed → locked. Acceptance criteria: only periods in state open or reopened accept new postings; closed and locked periods reject writes; future periods exist in the dataset but do not accept postings until opened; transitions are future → open → closed, closed → reopened, reopened → closed, and closed → locked; every period record appended by `add`, `open`, `close`, `reopen`, or `lock` MUST include a non-empty `retained_earnings_account`.
 
 FR-PER-002 Close and lock operations. The module MUST generate closing entries and enforce period locks. Acceptance criteria: close outputs are deterministic and locked periods reject writes.
 
@@ -24,6 +24,8 @@ NFR-PER-001 Auditability. Period transitions MUST remain reviewable in repositor
 NFR-PER-002 Path exposure via Go library. The module MUST expose a Go library API that returns the workspace-relative path(s) to its owned data file(s) (period control dataset and schema). Other modules that need read-only access to period control raw file(s) MUST obtain the path(s) from this module’s library, not by hardcoding file names. The API MUST be designed so that future dynamic path configuration can be supported without breaking consumers. Acceptance criteria: the library provides path accessor(s) for the period dataset (and schema); consumers use these accessors for read-only access; no consumer hardcodes `periods.csv` outside this module.
 
 FR-PER-005 Repair of retained_earnings_account. The module MUST provide a CLI command to set or fix `retained_earnings_account` for an existing period in an append-only manner (no overwriting of rows). Acceptance criteria: the command appends a new record for the same period_id carrying forward start_date, end_date, and state from the effective record but with `retained_earnings_account` populated or updated; the command refuses if the effective state is closed or locked (or only in states explicitly allowed by the contract); the command enables repair of workspaces created by older versions where the field was blank, without manual file editing.
+
+FR-PER-006 Deterministic reopen workflow. The module MUST allow a closed period to be reopened with explicit audit metadata and then re-closed. Acceptance criteria: reopen appends a new history row with state `reopened`, records a `reopened_at` timestamp and audit fields (`reopen_reason`, `reopen_approved_by`, optional `reopen_voucher_ids`), clears `closed_at` and `locked_at`, and refuses to run when the period is locked or not closed; a configurable policy window (for example `--max-open-days`) MUST be enforced when provided; re-closing a reopened period appends a new closed row and records `reclosed_at`.
 
 Planned: automatic result-to-equity transfer at year end (profit/loss to equity account as part of close or a dedicated step). Until implemented, users post the transfer via [bus-journal](../sdd/bus-journal).
 
@@ -47,13 +49,13 @@ KD-PER-004 Append-only state model. The period control dataset is an **append-on
 
 ### Component Design and Interfaces
 
-Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `add`, `open`, `close`, `lock`, `set`, `list`, `validate`, and `opening` and follows BusDK CLI conventions for deterministic output and diagnostics.
+Interface IF-PER-001 (module CLI). The module exposes `bus period` with subcommands `init`, `add`, `open`, `close`, `lock`, `reopen`, `set`, `list`, `validate`, and `opening` and follows BusDK CLI conventions for deterministic output and diagnostics.
 
 Interface IF-PER-002 (path accessors, Go library). The module exposes Go library functions that return the workspace-relative path(s) to its owned data file(s) (e.g. period control CSV and schema). Given a workspace root path, the library returns the path(s); resolution MUST allow future override from workspace or data package configuration. Other modules use these accessors for read-only access only; all writes and period logic remain in this module. The SDD requires **path** accessors only; it does not require the module to expose a separate API that returns effective period state (e.g. “is period open”). Consumers that need open/closed state obtain the path from this library and may read the dataset using the effective-record rule (KD-PER-004) until the module optionally provides a state API.
 
 The `init` command creates the baseline period control dataset and schema when they are absent. The baseline consists of the schema and a period control file that may be empty or contain only a header row; it does not pre-create any period rows. If both `periods.csv` and `periods.schema.json` already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If only one of them exists or the data is inconsistent, `init` fails with a clear error to standard error, does not write any file, and exits non-zero (see [bus-init](../sdd/bus-init) FR-INIT-004).
 
-**Period state lifecycle.** The period control dataset records exactly four states: **future**, **open**, **closed**, **locked**. Valid transitions are: future → open (via `open`); open → closed (via `close`); closed → locked (via `lock`). Only periods in state open accept new journal postings. Re-opening a closed or locked period is not required by the workflow; the implementation MAY refuse it and MUST exit non-zero with a clear diagnostic when it refuses.
+**Period state lifecycle.** The period control dataset records exactly five states: **future**, **open**, **closed**, **reopened**, **locked**. Valid transitions are: future → open (via `open`); open → closed (via `close`); closed → reopened (via `reopen`); reopened → closed (via `close`); closed → locked (via `lock`). Only periods in state open or reopened accept new journal postings. Re-opening a locked period is not required by the workflow; the implementation MUST refuse it and MUST exit non-zero with a clear diagnostic.
 
 #### Subcommand: add
 
@@ -72,11 +74,19 @@ The `add` command creates a period row in state **future**. The period MUST NOT 
 
 #### Subcommand: open
 
-The `open` command transitions a period from state **future** to **open**. The period MUST already exist in the period control dataset; if it does not exist, the command MUST exit non-zero with a clear diagnostic (e.g. “period … not found”) and MUST NOT create a row. If the period exists and is in state future, the command MUST append a new record (per KD-PER-004) with state **open** and MUST include `retained_earnings_account` copied from the effective prior record. The `open` command MUST refuse (exit non-zero, no write) if the effective record for the period lacks a non-empty `retained_earnings_account`; the user MUST repair the period first via `bus period set --period <period> --retained-earnings-account <code>`. If the period exists and is already open, the command is idempotent (exit 0, no change). If the period exists and is closed or locked, the command MUST exit non-zero with a clear diagnostic and MUST NOT change state (re-open is not required by the design and may be refused).
+The `open` command transitions a period from state **future** to **open**. The period MUST already exist in the period control dataset; if it does not exist, the command MUST exit non-zero with a clear diagnostic (e.g. “period … not found”) and MUST NOT create a row. If the period exists and is in state future, the command MUST append a new record (per KD-PER-004) with state **open** and MUST include `retained_earnings_account` copied from the effective prior record. The `open` command MUST refuse (exit non-zero, no write) if the effective record for the period lacks a non-empty `retained_earnings_account`; the user MUST repair the period first via `bus period set --period <period> --retained-earnings-account <code>`. If the period exists and is already open, the command is idempotent (exit 0, no change). If the period exists and is closed or locked, the command MUST exit non-zero with a clear diagnostic and MUST NOT change state; closed periods are reopened only via `reopen`.
 
 Period selection is always explicit and flag-based. The `open`, `close`, and `lock` commands accept `--period <period>` as a required parameter and do not use positional period arguments. A period identifier is a stable string in one of three forms: `YYYY` for a full-year period, `YYYY-MM` for a calendar month, or `YYYYQn` for a quarter (where `n` is 1 through 4). This mirrors period usage in other modules such as `bus vat`, `bus loans`, and `bus payroll`, which also use `--period` and `YYYY-MM` or `YYYYQn` formats rather than positional arguments.
 
-**Close and lock (state transitions).** The `close` command transitions a period from **open** to **closed**. The period MUST exist and be in state open; otherwise the command MUST exit non-zero with a clear diagnostic. Close generates closing entries and then appends a new record (per KD-PER-004) with state **closed**; the new record MUST carry forward `retained_earnings_account` from the effective prior record. It accepts optional `--post-date <YYYY-MM-DD>` (when omitted, the closing entry date defaults to the last date of the selected period). The `lock` command transitions a period from **closed** to **locked**. The period MUST exist and be in state closed; if it is open or already locked, the command MUST exit non-zero with a clear diagnostic. Lock appends a new record with state **locked** and MUST carry forward `retained_earnings_account` from the effective prior record. Lock does not generate postings; it only updates state so that the period cannot be modified.
+**Close and lock (state transitions).** The `close` command transitions a period from **open** to **closed**, or re-closes a **reopened** period. The period MUST exist and be in state open or reopened; otherwise the command MUST exit non-zero with a clear diagnostic. Close generates closing entries and then appends a new record (per KD-PER-004) with state **closed**; the new record MUST carry forward `retained_earnings_account` from the effective prior record. When re-closing a reopened period, the new row MUST record `reclosed_at`. The command accepts optional `--post-date <YYYY-MM-DD>` (when omitted, the closing entry date defaults to the last date of the selected period). The `lock` command transitions a period from **closed** to **locked**. The period MUST exist and be in state closed; if it is open, reopened, or already locked, the command MUST exit non-zero with a clear diagnostic. Lock appends a new record with state **locked** and MUST carry forward `retained_earnings_account` from the effective prior record. Lock does not generate postings; it only updates state so that the period cannot be modified.
+
+#### Subcommand: reopen
+
+The `reopen` command transitions a period from **closed** to **reopened** with mandatory audit metadata. It is used for controlled correction windows after a period has been closed and before it is locked.
+
+**Command signature.** `bus period reopen --period <period> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`.
+
+**Contract.** The command MUST refuse if the period does not exist, is not closed, or is locked. The command MUST append a new record with state **reopened**, set `reopened_at` to the new record timestamp, clear `closed_at` and `locked_at`, and populate `reopen_reason`, `reopen_approved_by`, and `reopen_voucher_ids` (when provided). When `--max-open-days` is provided, the command MUST compare the prior `closed_at` to the current time and refuse if the window is exceeded. Reopen is idempotent if the effective state is already reopened.
 
 #### Subcommand: validate
 
@@ -139,9 +149,11 @@ The module reads and writes the period control dataset at the workspace root as 
 
 **Files and primary key.** The schema file `periods.schema.json` defines the table schema for `periods.csv`. The **primary key** MUST support append-only history and therefore MUST NOT be `period_id` alone. The primary key MUST be a composite that uniquely identifies each history row; it MUST include `recorded_at` (for example `primaryKey: [ "period_id", "recorded_at" ]`) or another explicit event-identity column if the schema uses that approach. Row identity is thus `(period_id, recorded_at)` (or equivalent). The effective-record rule is **greatest `recorded_at` wins** for each `period_id`. A **deterministic tie rule** applies: ties on the primary key (e.g. two rows with the same `period_id` and `recorded_at`) MUST NOT exist. If they do exist, `validate` MUST fail with a clear diagnostic and `list` MUST refuse to produce an effective state for that period until the dataset is repaired using normal CLI commands (not hand edits).
 
-The field `retained_earnings_account` is **required** for all period records written by the CLI. It is needed for deterministic close/opening workflows and for downstream modules that depend on a known equity account for balance carry-forward. Successful commands (`add`, `open`, `close`, `lock`, `set`) MUST never leave this field blank in any appended row; the dataset is always valid immediately after any successful command in the sense that every effective record has a non-empty `retained_earnings_account`.
+The field `retained_earnings_account` is **required** for all period records written by the CLI. It is needed for deterministic close/opening workflows and for downstream modules that depend on a known equity account for balance carry-forward. Successful commands (`add`, `open`, `close`, `reopen`, `lock`, `set`) MUST never leave this field blank in any appended row; the dataset is always valid immediately after any successful command in the sense that every effective record has a non-empty `retained_earnings_account`.
 
-Period rows enter the dataset when the user runs `add --period <id>`. The `add` command creates the row in state **future** with a non-empty `retained_earnings_account` (default or provided). The `init` command creates only the dataset file and schema (empty or header-only); it does not insert any period rows. The `open`, `close`, and `lock` commands append new records (effective-record semantics) and carry forward `retained_earnings_account`; `set` appends a record to repair the field for existing periods in future or open state.
+Reopen metadata fields are append-only audit data. `reopened_at`, `reopen_reason`, and `reopen_approved_by` are required when state is `reopened`. `reopen_voucher_ids` holds a deterministic, comma-separated list of affected voucher identifiers when provided. `reclosed_at` records the timestamp when a reopened period is closed again. For states other than `reopened` and re-closed periods, these fields remain empty.
+
+Period rows enter the dataset when the user runs `add --period <id>`. The `add` command creates the row in state **future** with a non-empty `retained_earnings_account` (default or provided). The `init` command creates only the dataset file and schema (empty or header-only); it does not insert any period rows. The `open`, `close`, `reopen`, and `lock` commands append new records (effective-record semantics) and carry forward `retained_earnings_account`; `set` appends a record to repair the field for existing periods in future or open state.
 
 Other modules that need read-only access to the period control dataset (e.g. to check open/closed state in another workspace) MUST obtain the path from this module’s Go library (IF-PER-002). All writes and period-domain logic remain in this module.
 
@@ -163,7 +175,7 @@ Invalid usage exits with a non-zero status and a concise usage error. Close, loc
 
 ### Testing Strategy
 
-Unit tests cover period state transitions and close calculations, and command-level tests exercise `open`, `close`, `lock`, `set`, and `opening` against fixture workspaces.
+Unit tests cover period state transitions and close calculations, and command-level tests exercise `open`, `close`, `reopen`, `lock`, `set`, and `opening` against fixture workspaces.
 
 End-to-end invariant (required). The test suite MUST prove the following. After `bus period init`, `bus period add --period 2024-01`, and `bus period open --period 2024-01`, the workspace MUST be in a state where `bus period validate` and `bus period list` succeed. **Regression (add+open):** a test MUST run `bus period add --period <id>` then immediately `bus period open --period <id>` (back-to-back, same second) and assert that `periods.csv` ends up with two rows with distinct `recorded_at` values and that `bus period validate` passes. **Regression (duplicate key):** a test MUST verify that when two rows share the same `period_id` and `recorded_at`, `validate` detects and reports an explicit error (e.g. duplicate primary key or invalid `recorded_at` tie). Regression: a scenario MUST cover legacy workspaces where the effective period record has a blank `retained_earnings_account`; repair MUST be achievable via `bus period set --period <period> --retained-earnings-account <code>` so that `validate` and `list` then succeed, with no manual file editing in the primary workflow.
 
@@ -183,9 +195,10 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
 
 **Period control dataset:** the repository dataset that records period boundaries, state, and locks. It is an append-only event log; the effective state of a period is given by the effective record.  
 **Effective record:** for a given `period_id`, the record with the greatest `recorded_at` (latest wins). All commands and validation resolve period state from the effective record only.  
-**Effective state:** the state (future, open, closed, locked) and all other fields of a period as given by its effective record.  
-**Period state:** one of **future**, **open**, **closed**, **locked**. Future periods exist in the dataset but do not accept postings until opened.  
+**Effective state:** the state (future, open, closed, reopened, locked) and all other fields of a period as given by its effective record.  
+**Period state:** one of **future**, **open**, **closed**, **reopened**, **locked**. Future periods exist in the dataset but do not accept postings until opened.  
 **Future period:** a period in state future, created by `bus period add`, not yet open for posting.  
+**Reopened period:** a previously closed period in state reopened for controlled corrections, with required audit metadata recorded on the reopen row.  
 **Period lock:** a state (locked) that prevents edits to closed period data.  
 **Opening entry:** a single balanced journal transaction that carries forward account balances from a prior workspace into the current workspace, produced by `bus period opening`.  
 **Prior workspace:** the workspace (e.g. a separate repository for the previous fiscal year) whose closing balances are used as the source for an opening entry in the current workspace.
@@ -197,6 +210,12 @@ Not Applicable. Module-specific risks are not enumerated beyond the general need
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Module CLI reference: bus-period](../modules/bus-period)
+- [Accounting workflow overview](../workflow/accounting-workflow-overview)
+- [Year-end close](../workflow/year-end-close)
 
 ### Sources
 

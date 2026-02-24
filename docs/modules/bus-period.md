@@ -1,13 +1,13 @@
 ---
-title: bus-period — add, open, close, lock, and opening from prior workspace
-description: bus period adds periods in future state and manages period state (open, close, lock) and opening balances from a prior workspace as schema-validated repository data.
+title: bus-period — add, open, close, reopen, lock, and opening from prior workspace
+description: bus period adds periods in future state, manages period state transitions (open, close, reopen, lock), and generates opening balances from a prior workspace as schema-validated repository data.
 ---
 
 ## Overview
 
 `bus period` manages the period control dataset.
 
-Periods are created in state **future** with `add`, then transitioned **open** → **closed** → **locked** with `open`, `close`, and `lock`.
+Periods are created in state **future** with `add`, then transitioned **open** → **closed** → **locked** with `open`, `close`, and `lock`. Closed periods can be reopened with `reopen`, which records audit metadata before a period is re-closed with `close`.
 
 Only periods in state **open** accept new journal postings. Closed and locked periods reject writes.
 
@@ -22,6 +22,7 @@ Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`. Command names follow [CLI
 `bus period open --period <period> [-C <dir>] [global flags]`  
 `bus period close --period <period> [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
 `bus period lock --period <period> [-C <dir>] [global flags]`  
+`bus period reopen --period <period> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`  
 `bus period set --period <period> --retained-earnings-account <code> [-C <dir>] [global flags]`  
 `bus period list [--history] [-C <dir>] [global flags]`  
 `bus period validate [-C <dir>] [global flags]`  
@@ -35,7 +36,7 @@ Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`. Command names follow [CLI
 
 `open` moves a period from **future** to **open**. The period must exist and must have a retained-earnings account. If a legacy workspace has blank retained earnings, run `bus period set` first. `open` is idempotent if already open and fails for closed or locked periods.
 
-`close` creates closing entries and transitions **open** to **closed**. `lock` transitions **closed** to **locked** without creating postings. `set` appends a retained-earnings account repair record for an existing period and is allowed only in **future** or **open**.
+`close` creates closing entries and transitions **open** to **closed**, or re-closes a period that was reopened. `lock` transitions **closed** to **locked** without creating postings. `reopen` transitions **closed** to **reopened** with required audit metadata and an optional maximum reopen window from the prior `closed_at`. `set` appends a retained-earnings account repair record for an existing period and is allowed only in **future** or **open**.
 
 `list` shows effective current state per period and supports `--history` where available. `validate` checks dataset integrity and rejects invalid effective records and duplicate primary keys. `opening` generates one balanced opening transaction from a prior workspace’s closing balances and requires `--from`, `--as-of`, `--post-date`, and `--period`.
 
@@ -47,7 +48,7 @@ When `--retained-earnings-account` is omitted, the default is `3200`. The accoun
 
 When start or end date is omitted, dates are derived from the period ID (for example 2024-01 → 2024-01-01/2024-01-31, 2024Q1 → 2024-01-01/2024-03-31).
 
-`open`, `close`, `lock`, and `set` require `--period <period>`. `set` also requires `--retained-earnings-account <code>` and applies only to periods in state future or open.
+`open`, `close`, `lock`, `reopen`, and `set` require `--period <period>`. `set` also requires `--retained-earnings-account <code>` and applies only to periods in state future or open. `reopen` also requires `--reason <text>` and `--approved-by <id>`, with optional `--voucher-id <id>` (repeatable) and `--max-open-days <n>` for policy enforcement.
 
 `close` accepts optional `--post-date <YYYY-MM-DD>`. When omitted, closing date defaults to the period end date.
 
@@ -76,6 +77,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 bus period add --period 2026-02
 bus period open --period 2026-02
 bus period close --period 2026-02
+bus period reopen --period 2026-02 --reason "Correction" --approved-by reviewer@example.com
 ```
 
 ```bash
@@ -120,7 +122,7 @@ bus period add \
 `0` on success.
 
 Non-zero on invalid usage or command violations, including:
-`add` when the period exists or retained-earnings account is missing/invalid; `open` when period is missing, in wrong state, or missing retained earnings; `close` when period is missing or not open; `lock` when period is missing or not closed; `set` when period is missing, closed/locked, or account is invalid; `validate` when effective records are invalid or composite keys duplicate; and `opening` when target period is not open, opening already exists without `--replace`, accounts are missing in current chart, or as-of mismatches without override.
+`add` when the period exists or retained-earnings account is missing/invalid; `open` when period is missing, in wrong state, or missing retained earnings; `close` when period is missing or not open; `lock` when period is missing or not closed; `reopen` when period is missing, not closed, locked, or missing audit metadata; `set` when period is missing, closed/locked, or account is invalid; `validate` when effective records are invalid or composite keys duplicate; and `opening` when target period is not open, opening already exists without `--replace`, accounts are missing in current chart, or as-of mismatches without override.
 
 
 ### Using from `.bus` files
@@ -138,6 +140,7 @@ period -V
 period add --period 2026-01 --retained-earnings-account 3200
 period open --period 2026-01
 period close --period 2026-01 --post-date 2026-01-31
+period reopen --period 2026-01 --reason "Correction window" --approved-by reviewer@example.com
 ```
 
 
@@ -151,7 +154,7 @@ period close --period 2026-01 --post-date 2026-01-31
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 90% — add/open/close/lock and year-rollover opening verified; user can complete period lifecycle. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 90% — close, lock, opening with append-only and locked state verified. [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack): 90% — close, lock, opening for snapshots verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 90% — period open/close/lock and opening for payroll month verified.
 
-**Current:** E2e `tests/e2e.sh` verifies init (root, idempotent), add (future, default 3200, duplicate/account/equity/dry-run), add+open same-second (distinct `recorded_at`, validate/list pass), open (blank retained→set repair, reject closed/locked, idempotent), close (dry-run, append close_entries/opening_balances, journal-closed-periods.csv, refuse unbalanced/already closed), lock (closed→locked), set (repair future/open, refuse closed/locked/not found/invalid account), opening (prior→current, required flags, already-exists, dry-run, `--replace`, `--allow-as-of-mismatch`), validate (duplicate key, unbalanced, merge conflict), list/default and list `--history`, and global flags (-C, -o, -q, -v, --color, --format, --). Unit tests in `internal/app/run_test.go`, `internal/period/period_test.go`, `internal/period/periodid_test.go`, `internal/period/add_test.go`, `internal/period/set_test.go`, `internal/period/state_test.go`, `internal/period/opening_test.go`, `internal/period/closed_periods_file_test.go`, `internal/period/recorded_at_test.go`, `internal/validate/validate_test.go`, `internal/cli/flags_test.go`, and `path_test.go` cover run, list, init, add, open, close, set, opening, path accessors, chdir, output, quiet, and invalid usage.
+**Current:** E2e `tests/e2e.sh` verifies init (root, idempotent), add (future, default 3200, duplicate/account/equity/dry-run), add+open same-second (distinct `recorded_at`, validate/list pass), open (blank retained→set repair, reject closed/locked, idempotent), close (dry-run, append close_entries/opening_balances, journal-closed-periods.csv, refuse unbalanced/already closed), lock (closed→locked), reopen (closed→reopened with required metadata and optional max-open-days), set (repair future/open, refuse closed/locked/not found/invalid account), opening (prior→current, required flags, already-exists, dry-run, `--replace`, `--allow-as-of-mismatch`), validate (duplicate key, unbalanced, merge conflict), list/default and list `--history`, and global flags (-C, -o, -q, -v, --color, --format, --). Unit tests in `internal/app/run_test.go`, `internal/period/period_test.go`, `internal/period/periodid_test.go`, `internal/period/add_test.go`, `internal/period/set_test.go`, `internal/period/state_test.go`, `internal/period/opening_test.go`, `internal/period/closed_periods_file_test.go`, `internal/period/recorded_at_test.go`, `internal/validate/validate_test.go`, `internal/cli/flags_test.go`, and `path_test.go` cover run, list, init, add, open, close, reopen, set, opening, path accessors, chdir, output, quiet, and invalid usage.
 
 **Planned next:** Optional automatic result-to-equity transfer at year end (advances [Accounting workflow](../workflow/accounting-workflow-overview) and [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)); SDD and CLI reference; PLAN.md currently empty.
 

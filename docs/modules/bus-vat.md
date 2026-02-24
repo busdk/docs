@@ -29,6 +29,7 @@ For payment-evidence cash-basis filing, use reconcile-evidence mode:
 `bus vat export --period <period> [-C <dir>] [global flags]`  
 `bus vat fi-file --period <period> [-C <dir>] [global flags]`  
 `bus vat explain --period <period> [-C <dir>] [global flags]`  
+`bus vat review --period <period> [-C <dir>] [global flags]`  
 `bus vat period-profile <list|import> [-C <dir>] [global flags]`  
 `bus vat filed-import --period <period> --file <path> [-C <dir>] [global flags]`  
 `bus vat filed-diff --period <period> [-C <dir>] [global flags]`
@@ -47,16 +48,21 @@ For payment-evidence cash-basis filing, use reconcile-evidence mode:
 
 `explain` emits deterministic row-level FI filing trace grouped by FI field keys (`tsv|json`) for audit verification.
 
+`review` emits an authority-support review packet for the period. The packet contains summary totals, row-level FI explain trace, and reconcile coverage diagnostics when running in `--source reconcile --basis cash` mode. It supports `tsv` (default), `json`, `csv` (per-section), and `pdf` output formats for archival.
+
+Archive review packets alongside filed VAT evidence for statutory retention (minimum 6 years unless local requirements mandate longer).
+
 `period-profile` manages named filing period profiles in `vat-period-profiles.csv`:
 `list` outputs deterministic profile rows. `import --file <csv>` normalizes and imports profile definitions for `--period-profile` runs.
 
 ### Options
 
-`report`, `export`, `fi-file`, `explain`, `filed-import`, and `filed-diff` support period selection via one of:
+`report`, `export`, `fi-file`, `explain`, `review`, `filed-import`, and `filed-diff` support period selection via one of:
 `--period <period>`, `--from <date> --to <date>`, or `--period-profile <id>` resolved from `vat-period-profiles.csv`.
 
 `fi-file` supports `--payload-format json|csv|tsv` and outputs one-command filing-ready FI field values.
 `explain` supports `--format tsv|json`.
+`review` supports `--format tsv|json|csv|pdf` and `--section packet|summary|explain|coverage` (default packet). `--section coverage` requires `--source reconcile --basis cash`.
 `--strict-fi-eu-rc` enables strict FI reverse-charge classification marker validation (non-zero exit on unresolved rows).
 
 `filed-import` requires `--file <path>`.
@@ -103,6 +109,7 @@ bus vat report --period 2026-01 --source reconcile --basis cash
 bus vat export --period-profile monthly-2026-q1 --strict-coverage --min-sales-coverage 0.95 --min-purchase-coverage 0.90
 bus vat fi-file --period 2026-01 --payload-format json
 bus vat explain --period 2026-01 --format tsv
+bus vat --format pdf --output vat-review-2026-01.pdf review --period 2026-01
 bus vat period-profile import --file ./vat-period-profiles.csv
 bus vat filed-import --period 2026-01 --file ./authority-2026-01.csv
 bus vat filed-diff --period 2026-01 --threshold-cents 0
@@ -135,11 +142,11 @@ vat filed-diff --period 2026-01 --threshold-cents 0
 
 **Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-**Completeness:** 90% — Core VAT close workflow plus FI filing payload/explain/profile tooling are implemented and test-verified.
+**Completeness:** 90% — Core VAT close workflow plus FI filing payload/explain/profile tooling and review packets are implemented and test-verified.
 
 **Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 80% — close-step VAT (init→validate→report→export) from invoice or journal completable with source_refs and index update. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 80% — VAT report and export with invoice/voucher refs; closed-period/--force and rate validation verified.
 
-**Current:** Init/validate/report/export, journal-source mode, reconcile cash mode, FI filing payload/explain, period profiles, and filed import/diff are test-verified.
+**Current:** Init/validate/report/export/review, journal-source mode, reconcile cash mode, FI filing payload/explain, period profiles, and filed import/diff are test-verified.
 Detailed test and implementation notes are maintained in [Module SDD: bus-vat](../sdd/bus-vat).
 
 **Planned next:** None in PLAN.md; all documented requirements satisfied.
