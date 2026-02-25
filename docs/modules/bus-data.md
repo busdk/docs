@@ -43,6 +43,7 @@ For ERP migration workflows, bus-data provides a mechanical import-profile libra
 `bus data row update <table> --key <key>=<value> ... (--set <key>=<value> ... | --json <file>) [--chdir <dir>] [global flags]`  
 `bus data row delete <table> --key <key>=<value> ... [--chdir <dir>] [global flags]`  
 `bus data table read <table> [--row <index|start:end>] [--column <name>] ... [--filter <field>=<value>] ... [--key <key>=<value>] [--formula-source] [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus data table assert <table> [--filter <field>=<value>] ... [--min-rows <n>] [--max-rows <n>] [--eq-rows <n>] [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus data table list [--chdir <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus data table workbook <table_path> <address> [address ...] [workbook and global flags]`
 
@@ -100,6 +101,12 @@ If your tables use a primary key, use `--key field=value` for a single-column ke
 
 ```text
 bus data table read customers --key id=1
+```
+
+Use `table assert` to apply deterministic row-count gates without external shell pipelines. The command validates the table first, applies repeatable `--filter field=value` selectors, and then checks `--min-rows`, `--max-rows`, and/or `--eq-rows`. It emits machine-readable `tsv` or `json` output including `observed_rows` and `status`, and exits `1` when thresholds fail.
+
+```text
+bus data table assert customers --filter status=active --min-rows 10
 ```
 
 ### Table workbook

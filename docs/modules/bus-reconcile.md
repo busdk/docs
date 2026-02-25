@@ -39,7 +39,7 @@ Use `post` to create deterministic journal postings from invoice-payment matches
 ### Options
 
 `match` accepts `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`.
-`allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`.
+`allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`. Invoice allocations are positive; journal allocations may be signed (non-zero) so net-settlement payouts can include fee adjustments while preserving exact bank-amount reconciliation.
 
 `propose` supports incoming classification, suspense fallback/reclassification, and settlement evidence modes.
 `apply` supports settlement posting mode plus posting account flags.

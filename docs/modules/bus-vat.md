@@ -13,13 +13,14 @@ Command names follow [CLI command naming](../cli/command-naming).
 It writes VAT summaries and exports as repository data for review and filing workflows.
 
 The module owns VAT period boundary definition and period allocation logic.
-Workspace settings from [bus config](./bus-config) (`vat_reporting_period`, `vat_timing`, and optional registration dates) are inputs to that logic.
+Workspace settings from [bus config](./bus-config) (`vat_reporting_period`, `vat_timing`, `vat_default_source`, `vat_default_basis`, and optional registration dates) are inputs to that logic.
 
 When invoice data is incomplete, use journal-driven mode:
 `bus vat validate|report|export --source journal`.
 
 For payment-evidence cash-basis filing, use reconcile-evidence mode:
 `bus vat report|export --source reconcile --basis cash`.
+You can make this the workspace default by setting `vat_default_source=reconcile` and `vat_default_basis=cash` in [bus config](./bus-config), so commands use that mode when `--source` and `--basis` are omitted.
 
 ### Synopsis
 
@@ -77,9 +78,11 @@ Partial payments are split proportionally across VAT and net rows and allocated 
 
 Reconcile cash mode emits deterministic coverage diagnostics as a `COVERAGE` output row:
 matched sales share, matched purchase share, and unmatched cash rows.
-Coverage gating is configurable:
-use `--strict-coverage` to fail when coverage is below thresholds, and use `--min-sales-coverage <0..1>` with `--min-purchase-coverage <0..1>` to set required minimum shares.
-Without strict mode, partial coverage continues with an explicit warning on stderr.
+Coverage gating is strict by default in this mode:
+partial coverage fails with non-zero exit unless `--force-partial-coverage` is explicitly set.
+`--strict-coverage` remains accepted as an explicit compatibility flag.
+Use `--min-sales-coverage <0..1>` with `--min-purchase-coverage <0..1>` to set required minimum shares for the strict gate.
+Use `--max-unmatched-cash-rows <n>` to set the strict gate maximum unmatched invoice rows (default `0`).
 
 In `--source journal --basis cash`, payment-date allocation uses payment evidence columns first, optional bank transaction lookup second, and posting date fallback last.
 Evidence-first context applies: invoice evidence is primary, `entities.csv` is fallback enrichment.
@@ -106,7 +109,8 @@ bus vat init
 bus vat report --period 2026-01
 bus vat report --from 2026-01-01 --to 2026-01-31 --source journal
 bus vat report --period 2026-01 --source reconcile --basis cash
-bus vat export --period-profile monthly-2026-q1 --strict-coverage --min-sales-coverage 0.95 --min-purchase-coverage 0.90
+bus vat export --period-profile monthly-2026-q1 --min-sales-coverage 0.95 --min-purchase-coverage 0.90 --max-unmatched-cash-rows 5
+bus vat report --period 2026-01 --source reconcile --basis cash --force-partial-coverage
 bus vat fi-file --period 2026-01 --payload-format json
 bus vat explain --period 2026-01 --format tsv
 bus vat --format pdf --output vat-review-2026-01.pdf review --period 2026-01
@@ -128,8 +132,8 @@ Inside a `.bus` file, write this module target without the `bus` prefix.
 # same as: bus vat report --period 2026-01 --source journal
 vat report --period 2026-01 --source journal
 
-# same as: bus vat export --period 2026-01 --source reconcile --basis cash --strict-coverage
-vat export --period 2026-01 --source reconcile --basis cash --strict-coverage
+# same as: bus vat export --period 2026-01 --source reconcile --basis cash --min-sales-coverage 0.95 --min-purchase-coverage 0.90 --max-unmatched-cash-rows 5
+vat export --period 2026-01 --source reconcile --basis cash --min-sales-coverage 0.95 --min-purchase-coverage 0.90 --max-unmatched-cash-rows 5
 
 # same as: bus vat filed-diff --period 2026-01 --threshold-cents 0
 vat filed-diff --period 2026-01 --threshold-cents 0

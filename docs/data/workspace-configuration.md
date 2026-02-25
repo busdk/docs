@@ -21,12 +21,17 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
   "resources": [],
   "busdk": {
     "accounting_entity": {
+      "company_name": "Example Oy",
+      "business_id": "1234567-1",
+      "legal_form": "oy",
       "base_currency": "EUR",
       "fiscal_year_start": "2026-01-01",
       "fiscal_year_end": "2026-12-31",
       "vat_registered": true,
       "vat_reporting_period": "quarterly",
       "vat_timing": "performance",
+      "vat_default_source": "invoice",
+      "vat_default_basis": "accrual",
       "vat_registration_start": null,
       "vat_registration_end": null,
       "reporting_profile": {
@@ -55,6 +60,8 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 `base_currency` is the workspace’s base currency for reporting and review. It should be an ISO 4217 code such as `EUR` or `SEK`.
 
+`company_name` is the legal/company name used for workspace-level reporting and filing metadata. `business_id` is the legal identifier of that entity, such as Finnish Y-tunnus (`NNNNNNN-N`). `legal_form` is the legal form profile for the entity, such as `tmi`/`toiminimi`, `oy`, `ky`, `ay`, `ry`, or `osk`.
+
 `fiscal_year_start` and `fiscal_year_end` define the fiscal year boundaries for the workspace. They are dates in `YYYY-MM-DD` form and must form a coherent year boundary for period generation, validation, and year-end workflows.
 
 `vat_registered` indicates whether the workspace’s accounting entity is VAT registered. It is the primary switch that determines whether VAT reporting expectations apply.
@@ -62,6 +69,8 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 `vat_reporting_period` defines the **current** (or default) VAT reporting cadence. Allowed values: `monthly`, `quarterly`, `yearly`. Under Finnish rules, monthly is the default; quarterly is allowed when turnover is below the applicable threshold (100 000 EUR); yearly is allowed when turnover is below the lower threshold (30 000 EUR). Primary producers and visual artists who do not run other VAT-taxable business typically use a yearly period. See [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos). The actual sequence of period boundaries (including changes within a year, transition periods, or non-standard first/last periods) is defined by the [bus-vat](../modules/bus-vat) module, not in this descriptor.
 
 `vat_timing` selects which date determines VAT period allocation. Allowed values: `performance` (suoriteperuste — allocation by delivery or performance date), `invoice` (laskutusperuste — allocation by the period in which the customer is charged), `cash` (maksuperuste — allocation by payment date for sales and purchases). Cash basis applies only to domestic supplies; under Finnish rules it is available only when annual turnover does not exceed the eligibility threshold (500 000 EUR), and VAT must be reported no later than 12 months after delivery or performance even if unpaid. When switching from cash to performance or invoice basis, previously unpaid sales are reported in the next open VAT period. See [Vero: Pienet yritykset voivat tilittää arvonlisäveron maksuperusteisesti](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/vahainen-liiketoiminta-on-arvonlisaverotonta/pienyrityksen-maksuperusteinen-alv).
+
+`vat_default_source` and `vat_default_basis` define default execution mode for VAT commands when `--source` and `--basis` are omitted. Allowed source values are `invoice`, `journal`, and `reconcile`. Allowed basis values are `accrual` and `cash`. The `cash` basis default requires source `journal` or `reconcile`.
 
 `vat_registration_start` (optional) is the date from which the entity is VAT registered, in `YYYY-MM-DD` form. `vat_registration_end` (optional) is the date on which VAT registration ends. The [bus-vat](../modules/bus-vat) module uses these as inputs when it builds the sequence of VAT periods (including partial first or last periods and any non-standard period lengths). Omit or set to null when not applicable. See [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos).
 
@@ -102,4 +111,3 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 - [Finlex: Kirjanpitolaki 1336/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1336)
 - [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
 - [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
-
