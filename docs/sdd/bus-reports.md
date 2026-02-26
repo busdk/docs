@@ -172,11 +172,11 @@ Report outputs may contain sensitive financial data and should be protected by r
 
 ### Observability and Logging
 
-Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers.
+Command results are written to standard output, and diagnostics are written to standard error with deterministic references to dataset paths and identifiers. When `--output` is used, file replacement is atomic at command level so existing output files are updated only after successful report generation.
 
 ### Error Handling and Resilience
 
-Invalid usage exits with a non-zero status and a concise usage error. For statutory `fi-*` layouts, integrity, mapping, or reconciliation failures exit non-zero without modifying datasets and without emitting filing-facing output.
+Invalid usage exits with a non-zero status and a concise usage error. For statutory `fi-*` layouts, integrity, mapping, or reconciliation failures exit non-zero without modifying datasets and without emitting filing-facing output. If a run fails after `--output` is provided, the pre-existing output file remains unchanged.
 
 ### Testing Strategy
 

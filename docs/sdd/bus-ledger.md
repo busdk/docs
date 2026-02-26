@@ -91,12 +91,23 @@ typed posting structures. The projection level computes deterministic view rows
 for each ledger type. The delivery level exposes projection results through
 token-gated API routes and the embedded UI.
 
+An optional assistant extension layer runs independently from projection logic.
+When enabled, `bus-ledger` starts a workspace-scoped Codex app-server client
+and exposes AI control routes under `v1/ai/*`. The assistant is a user
+interface helper only and never becomes a source of accounting truth. Assistant
+input supports both turn start and turn steering so users can submit new
+messages while a turn is still running. The assistant control plane also
+supports thread list/create/select operations so multiple issue-specific
+threads can coexist in one workspace session.
+
 Current routes:
 
 - `/{token}/` frontend shell
 - `/{token}/v1/transactions` day book list and list-mode selection endpoint
 - `/{token}/v1/transactions/{index}` transaction detail projection
 - `/{token}/v1/evidence` token-gated evidence file route
+- `/{token}/v1/ai/*` optional assistant-control routes (status, login, turns,
+  approvals, event stream polling)
 
 Projection routes are intentionally read-only. No posting mutation endpoints are
 hosted in `bus-ledger`.

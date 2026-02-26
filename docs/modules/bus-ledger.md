@@ -27,6 +27,13 @@ contain evidence source paths, the line-details panel can also display the
 evidence document inline and provide an open-in-new-tab action. Transactions
 with evidence are marked with a document icon in the transactions list. The
 list surface also supports explicit Day book and General ledger modes.
+When AI is enabled, the app also exposes a foldable AI Assistant side panel
+that uses a local Codex app-server process in the same workspace where
+`bus-ledger` started, so assistant actions can run repository-local `bus`
+commands with explicit approval prompts. The panel supports sending additional
+messages while a turn is active; those inputs are forwarded as turn steering.
+The panel also supports multiple threads so users can open a new issue-focused
+thread and switch between existing threads.
 The server also exposes accountant-focused read-only projection endpoints under
 `v1/projections/*` for trial balance, period comparison, dimensional, VAT,
 cash, subledger, audit-trail, and closing-diagnostics views.
@@ -41,7 +48,7 @@ surface over workspace data.
 auto-selected port. `version` prints tool name and version.
 
 Serve supports `--listen`, `--port`, `--token`, `--token-bytes`,
-`--journal-file`, `--webview`, and `--print-url`. Journal source is resolved
+`--journal-file`, `--ai`, `--no-ai`, `--webview`, and `--print-url`. Journal source is resolved
 via `bus-journal` layout APIs unless overridden by `--journal-file`.
 
 ### Examples

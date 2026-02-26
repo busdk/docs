@@ -85,6 +85,12 @@ FR-AGT-014 Per-runtime instruction adapter. For each supported runtime (Codex, C
 
 FR-AGT-015 Fallback when AGENTS.md missing or over limit. When AGENTS.md is missing, too large for the runtime's context or command limits, or conflicts with runtime-specific limits, the implementation MUST apply a deterministic fallback: the agent run MUST still proceed with the caller-provided prompt and any instruction content that fits (e.g. truncated or omitted AGENTS.md with a clear boundary), and MUST NOT fail the run solely because AGENTS.md is absent or over limit unless the caller explicitly requires AGENTS.md. The implementation MUST document the fallback behavior (proceed without, truncate with marker, or warn and proceed) and apply it consistently. Acceptance criteria: behavior when AGENTS.md is missing is documented and testable; behavior when size exceeds a documented limit is deterministic; no silent failure; tests cover missing and over-size cases.
 
+FR-AGT-016 App-server client abstraction. The library MUST provide a reusable
+app-server client abstraction with engine selection, process lifecycle, JSON-RPC
+request/notification transport, initialize/initialized handshake, async event
+subscription, and approval callback integration so other modules can embed
+interactive assistant panels without implementing transport details.
+
 ### System Architecture
 
 Bus Agent is a library-first module with an optional thin CLI wrapper.
@@ -94,6 +100,9 @@ High-level components:
 * **Template renderer.** Deterministic renderer for {% raw %}`{{VARIABLE}}`{% endraw %} placeholders with strict pre-invocation validation (FR-AGT-006).
 * **Backend interface.** A small interface implemented by each runtime backend (Cursor/Codex/Gemini/Claude) to provide executable discovery, command construction, and any backend-specific environment defaults.
 * **Runner.** The core executor that applies selection resolution, builds the command, sets workdir and environment, enforces timeout, and routes output to capture/stream handlers.
+* **App-server client.** A reusable JSON-RPC-over-stdio client for local
+  assistant app-server engines (Codex initially) with approval hooks and event
+  streaming for GUI/API hosts.
 * **Formatters (optional).** Pure functions to normalize agent output (e.g. NDJSON-to-text) without depending on external processes.
 * **CLI (optional).** A minimal binary `bus-agent` invoked via dispatcher as `bus agent …` when included, intended for diagnostics and development rather than business workflows.
 

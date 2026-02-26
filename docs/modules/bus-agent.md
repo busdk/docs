@@ -36,6 +36,11 @@ Modules share one deterministic contract for templating, timeout handling, and o
 This CLI exposes that contract for diagnostics and development:
 detect runtimes, render templates, run an agent with explicit timeout/workdir, and format raw output.
 
+The module also provides a reusable Go app-server integration package for local
+assistant sessions. The package is engine-oriented so additional app-server
+engines can be added later while callers keep the same lifecycle, event, and
+approval interfaces.
+
 The tool does not execute Git, does not read or write workspace datasets, and does not define workflow semantics. Workflow behavior belongs to modules such as [bus dev](./bus-dev).
 
 Paths are resolved relative to the current directory unless you set `-C` / `--chdir`. Command results go to stdout; diagnostics and progress go to stderr.
