@@ -75,6 +75,36 @@ with stable columns suitable for PDF and spreadsheet generation.
 FR-LED-015 Period lock awareness. Projections must include lock-state aware
 diagnostics and reject write-like operations in locked periods.
 
+FR-LED-016 Assistant thread continuity. When AI mode is enabled, thread
+metadata and user-visible assistant messages must persist in
+`.bus/bus-ledger/` so sessions can be resumed without replaying hidden system
+bootstrap prompts into the user conversation view.
+
+FR-LED-017 Assistant approvals and steering. Assistant actions that require
+approval must be represented as explicit actionable items with deterministic
+request identifiers. The control plane must support turn steering while the
+turn is active and must reject malformed steer payloads with actionable
+diagnostics.
+
+FR-LED-018 Assistant attachment intake. The UI must support panel-wide
+drag-and-drop attachment intake, stage dropped files for user confirmation
+before send, and import accepted files into deterministic workspace-local
+storage under `.bus/bus-ledger/`. When drag source metadata does not expose
+filesystem paths, intake must still succeed through browser file-object upload.
+
+FR-LED-019 Observability noise control. Server logging must support repeated
+line collapsing for high-frequency duplicate log events while preserving
+message order and readability via summary markers (`... and N more`).
+
+FR-LED-020 Browser-to-server diagnostics. Browser runtime diagnostics from the
+embedded UI must be forwardable to server logs through a token-gated API route
+so embedded-webview issues can be investigated from server-side logs.
+
+FR-LED-021 Deterministic AI Markdown rendering. AI message rendering must use a
+deterministic, explicitly scoped inline Markdown policy with HTML escaping by
+default, and support explicit feature toggles for emphasis/code/links/autolink
+behavior.
+
 ## System Architecture
 
 `bus-ledger` is a read-only projection engine layered on top of canonical
@@ -107,7 +137,9 @@ Current routes:
 - `/{token}/v1/transactions/{index}` transaction detail projection
 - `/{token}/v1/evidence` token-gated evidence file route
 - `/{token}/v1/ai/*` optional assistant-control routes (status, login, turns,
-  approvals, event stream polling)
+  approvals, event stream polling, thread lifecycle including rename, drop import)
+- `/{token}/v1/client-log` browser-to-server diagnostics ingress used by the
+  embedded UI logger
 
 Projection routes are intentionally read-only. No posting mutation endpoints are
 hosted in `bus-ledger`.
@@ -121,10 +153,25 @@ numeric-safe summarization primitives that are reused by projections.
 `internal/server` contains projection handlers and filter routing. It maps
 request mode and filter parameters to projection functions and returns stable
 JSON shapes. It also serves safe evidence files constrained to workspace root.
+The same layer owns assistant control handlers and client-log ingestion, and it
+centralizes logging policy including duplicate-line collapse with summary
+output for noisy repeated events.
 
 `internal/ui/wasm` renders dense tabular projections and mode switches without
 owning business rules. UI behavior must consume projection fields as-is and
-must not introduce alternate accounting logic.
+must not introduce alternate accounting logic. In AI mode it also manages
+thread list/open state, model selection state, approval actions, attachment
+staging/removal, panel-wide drop visuals, and resilient asynchronous rendering
+with panic-safe wrappers. AI text rendering uses deterministic inline Markdown
+transforms with safe HTML escaping and query-driven feature toggles.
+
+Assistant persistence and storage model:
+
+- Thread and conversation persistence is stored under `.bus/bus-ledger/` in the
+  workspace scope.
+- Imported dropped files are stored under deterministic subpaths of
+  `.bus/bus-ledger/` and referenced by metadata included in turn-start context.
+- User-visible thread replay excludes hidden bootstrap/system prompt material.
 
 Planned projection interfaces are stable module boundaries:
 
@@ -247,7 +294,9 @@ audit metadata through their owning modules when enabled.
 The current implementation includes production day book and general-ledger list
 mode projections and transaction/line drill-down. The remaining projection
 families in this SDD are implementation targets and remain tracked as ongoing
-module scope expansion.
+module scope expansion. The AI assistant control plane is implemented as an
+optional adjunct to projection browsing and does not alter projection
+determinism or accounting-source authority boundaries.
 
 ## Glossary and Terminology
 
@@ -278,7 +327,7 @@ canonical datasets.
 Title: bus-ledger module SDD  
 Project: BusDK  
 Document identifier: sdd/bus-ledger  
-Version: 2  
+Version: 3  
 Status: Draft  
-Last updated: 2026-02-26  
+Last updated: 2026-02-27  
 Owner: BusDK maintainers

@@ -32,8 +32,37 @@ that uses a local Codex app-server process in the same workspace where
 `bus-ledger` started, so assistant actions can run repository-local `bus`
 commands with explicit approval prompts. The panel supports sending additional
 messages while a turn is active; those inputs are forwarded as turn steering.
-The panel also supports multiple threads so users can open a new issue-focused
-thread and switch between existing threads.
+The panel also supports multiple threads, archival, restoring persisted thread
+history from `.bus/bus-ledger/`, thread rename, and selecting the model from an available
+model list without requiring a manual submit action.
+
+The AI message surface is conversation-oriented. User and assistant messages
+are rendered as separate items, inline markdown code spans are formatted, and
+workspace file references can be rendered as clickable links through the
+token-gated server route instead of exposing absolute filesystem paths in the
+UI. The composer uses Enter-to-send and Shift+Enter for newline, supports drag
+and drop over the whole assistant panel, and keeps dropped files as explicit
+pending attachments that users can review and remove before sending.
+Inline Markdown rendering is deterministic and safe by default: HTML is escaped
+and the enabled syntax set is limited to inline code, emphasis, markdown links,
+and URL/path autolinks. Rendering features can be toggled with URL query flags
+(`ai_md_code`, `ai_md_links`, `ai_md_autolink`, `ai_md_bold`, `ai_md_italic`)
+using `0`/`1` values.
+When embedded webview drag data does not expose OS file paths, the client uses
+browser file-object upload fallback so drop import still works. Imported files
+are deduplicated by content hash in `.bus/bus-ledger/drops/` so repeated drops
+of the same file reuse the existing stored copy instead of creating duplicate
+timestamped files.
+
+Approval requests are shown inline in the message flow with clearer action
+labels and command/path presentation optimized for review. Assistant-status and
+engine/auth/model metadata are shown in compact form below the composer so the
+message area remains focused on conversation content.
+
+For operations and troubleshooting, browser-side diagnostics from the WASM UI
+are forwarded to server logs via `v1/client-log`, and repeated identical log
+lines are collapsed with summary output (`... and N more`) to reduce noise
+during high-frequency UI events such as drag-over.
 The server also exposes accountant-focused read-only projection endpoints under
 `v1/projections/*` for trial balance, period comparison, dimensional, VAT,
 cash, subledger, audit-trail, and closing-diagnostics views.
@@ -75,6 +104,9 @@ prev/next transaction detail navigation.
 
 **Current:** day-book and general-ledger list modes, transaction detail panel
 with line summary list, previous/next navigation, unit tests, and e2e coverage.
+Current scope also includes the AI assistant side panel with persisted threads,
+model selection, drag-and-drop attachments, inline approvals, markdown-style
+inline formatting, and server-visible client diagnostics.
 
 **Planned next:** optional filtering and ledger-specific projections can be
 added later without changing the base browse flow.
