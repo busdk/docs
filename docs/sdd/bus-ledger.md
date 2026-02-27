@@ -100,10 +100,9 @@ FR-LED-020 Browser-to-server diagnostics. Browser runtime diagnostics from the
 embedded UI must be forwardable to server logs through a token-gated API route
 so embedded-webview issues can be investigated from server-side logs.
 
-FR-LED-021 Deterministic AI Markdown rendering. AI message rendering must use a
-deterministic, explicitly scoped inline Markdown policy with HTML escaping by
-default, and support explicit feature toggles for emphasis/code/links/autolink
-behavior.
+FR-LED-021 Shared UI component usage. Generic assistant UI controls and generic
+assistant text rendering must be consumed from `bus-ui` so `bus-ledger` keeps
+only ledger-specific composition and behavior wiring.
 
 ## System Architecture
 
@@ -159,11 +158,11 @@ output for noisy repeated events.
 
 `internal/ui/wasm` renders dense tabular projections and mode switches without
 owning business rules. UI behavior must consume projection fields as-is and
-must not introduce alternate accounting logic. In AI mode it also manages
-thread list/open state, model selection state, approval actions, attachment
-staging/removal, panel-wide drop visuals, and resilient asynchronous rendering
-with panic-safe wrappers. AI text rendering uses deterministic inline Markdown
-transforms with safe HTML escaping and query-driven feature toggles.
+must not introduce alternate accounting logic. In AI mode it manages
+thread/list state, module-specific action routing, attachment intake flow, and
+resilient asynchronous rendering with panic-safe wrappers. Generic UI
+components and generic assistant text rendering are consumed from `bus-ui`
+(`pkg/uikit`).
 
 Assistant persistence and storage model:
 

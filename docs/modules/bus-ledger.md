@@ -17,6 +17,8 @@ With no subcommand, `serve` runs.
 `bus-ledger` provides a focused full-stack browsing flow for journal/daybook
 transactions. It starts a token-gated local server, serves an embedded WASM
 frontend client, and exposes server API endpoints used by the client.
+The frontend composes reusable UI primitives from `bus-ui` so shared controls
+can be reused consistently across BusDK modules without tight coupling.
 
 The frontend shows a deterministic transactions list view, supports opening a
 transaction detail panel, and includes Previous/Next navigation so users can
