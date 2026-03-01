@@ -13,7 +13,7 @@ description: bus update checks whether newer module versions are available from 
 
 ### Overview
 
-`bus-update` is the shared BusDK module for release-version checks. Other `bus-*` modules use its Go library before command execution so they can block when a newer released version exists.
+`bus-update` is the shared BusDK module for release-version checks. Other `bus-*` modules use its Go library before command execution to print warning diagnostics when a newer released version exists.
 
 The default release index is `https://docs.busdk.com/releases/latest.txt`. Each row is parsed as `{MODULE_NAME} {MODULE_VERSION} {DATE} {HASH}`.
 
@@ -33,15 +33,17 @@ Modules with local uncommitted changes are skipped and reported.
 
 A successful check returns exit `0`. If a newer version is listed, the command returns exit `1` and prints a deterministic diagnostic to stderr.
 
+Embedded startup checks are warning-only and do not block tool execution.
+
 ### Cache and failure behavior
 
 Default behavior is:
 
 - timeout `2s`
-- cache refresh interval `6h`
+- cache refresh interval `24h`
 - continuous failure grace `24h`
 
-Transient failures inside the grace period are tolerated. Once failures continue beyond the grace period, checks fail with exit `1`.
+Transient failures inside the grace period are tolerated. Once failures continue beyond the grace period, startup checks print an error diagnostic to stderr and still allow command execution.
 
 ### Environment variables
 

@@ -98,11 +98,22 @@ message order and readability via summary markers (`... and N more`).
 
 FR-LED-020 Browser-to-server diagnostics. Browser runtime diagnostics from the
 embedded UI must be forwardable to server logs through a token-gated API route
-so embedded-webview issues can be investigated from server-side logs.
+so embedded-webview issues can be investigated from server-side logs. This
+includes explicit UI logger events and global browser error surfaces
+(`window.error` and `unhandledrejection`).
+AI account-state refresh and account/login event processing must also emit
+explicit auth-detection rationale logs (including unresolved payload
+diagnostics) so authentication-detection mismatches can be explained from
+server logs.
 
 FR-LED-021 Shared UI component usage. Generic assistant UI controls and generic
 assistant text rendering must be consumed from `bus-ui` so `bus-ledger` keeps
 only ledger-specific composition and behavior wiring.
+
+FR-LED-022 Shared AI runtime state usage. Generic assistant runtime state
+(thread/message/attachment/approval/event-tracking state) must be consumed from
+`bus-ui` state objects so `bus-ledger` keeps only ledger-specific API payload
+state and rendering composition.
 
 ## System Architecture
 
@@ -155,6 +166,8 @@ JSON shapes. It also serves safe evidence files constrained to workspace root.
 The same layer owns assistant control handlers and client-log ingestion, and it
 centralizes logging policy including duplicate-line collapse with summary
 output for noisy repeated events.
+CLI startup browser-open behavior is consumed from shared `bus-ui` helpers so
+cross-platform opener command mapping is not duplicated in module runtime code.
 
 `internal/ui/wasm` renders dense tabular projections and mode switches without
 owning business rules. UI behavior must consume projection fields as-is and
@@ -162,7 +175,120 @@ must not introduce alternate accounting logic. In AI mode it manages
 thread/list state, module-specific action routing, attachment intake flow, and
 resilient asynchronous rendering with panic-safe wrappers. Generic UI
 components and generic assistant text rendering are consumed from `bus-ui`
-(`pkg/uikit`).
+(`pkg/uikit`). Generic assistant runtime state is also consumed from
+`bus-ui` (`AIConversationState`) so module-local state is limited to
+ledger-specific projection payload state and wiring. AI refresh orchestration
+is consumed through interface-based shared host wiring (`AIRefreshHost`) so
+`bus-ledger` only provides module callbacks and rendering integration. Shared
+WASM event wiring, DOM error-host rendering/binding, selector action binding,
+drop-upload response decoding, and field/currency formatting helpers are also
+consumed from `bus-ui` so `bus-ledger/internal/ui/wasm` remains focused on
+ledger projection composition and module-specific API interactions. Shared
+turn-start payload/state transition helpers are also consumed from `bus-ui` so
+AI send behavior is not duplicated in module code. Shared drop-state reducers
+and shared state-backed refresh-host adapter are consumed from `bus-ui` so
+module code keeps only ledger-specific wiring/policy around imports and polling.
+Approval and attachment-remove AI action handlers are consumed from `bus-ui`
+shared helpers so DOM-target parsing and approval API dispatch stay consistent
+across modules.
+New/select/archive thread lifecycle actions are also consumed through shared
+`bus-ui` helpers.
+Send/model input normalization, drop import state transitions, href resolver
+composition, and runtime service wiring are consumed through shared `bus-ui`
+helpers (`ResolveAISendInput`, `ExecuteAIModelSet`,
+`ExecuteAIPathDropImport`, `ExecuteAIFileDropImport`,
+`BuildAIMessageHrefResolver`, `BuildEvidenceURLResolver`,
+`IsEmbeddableEvidencePath`, `FindSelectedLine`, `ExecuteAISendAction`,
+`NewAIRuntimeProfile`, `AIRuntime`, `NewAIDropController`,
+`NewAIActionController`).
+Generic app-level WASM runtime wiring (logger/error reporter/callback retention
+and panic-safe async helpers) is consumed through shared `WASMAppScaffold`
+from `bus-ui`.
+Rendering
+composition uses shared minimal function-component runtime primitives from
+`bus-ui` (`RenderComponent`, `RenderCtx.Child`, `UseMemo`) to split large view
+functions into deterministic composable units without introducing a virtual DOM.
+The entry-load error fallback view is mounted through `bus-ui` compiled
+template runtime via reusable mounted text-view helpers (`MountedTextView`) so
+repeated error rerenders can update bound text slots without reconstructing the
+full view shell. AI polling updates use shared event wiring callbacks and
+controller-driven rerender flow through the same deterministic view composition
+path as explicit route/action renders.
+WASM runtime integration resolves browser globals through shared `bus-ui`
+global accessor helpers instead of direct `js.Global()` calls, so tests can
+swap global providers deterministically.
+`bus-ledger` keeps browser-global reads at bootstrap/composition boundaries and
+injects `document`/`location` dependencies into reusable units (controllers,
+action handlers, view render helpers) through constructors or function
+arguments, so unit logic is testable without implicit global lookups.
+Module runtime service dependencies (gateway client, AI API client, client
+logger, DOM error reporter, and drop import services) are centralized behind a
+runtime struct (`uiRuntime`) and consumed through explicit methods so action
+and drop units avoid ad-hoc package-level service globals.
+Ledger list/detail projection fetches are routed through shared `bus-ui`
+query scaffolding (`ProjectionQueryClient`) with module-local endpoint policy,
+so WASM projection loading does not depend on direct scattered `http.Get`
+calls. Shared list/detail DTO payload contracts are also consumed from
+`bus-ui` so frontend and query layers reuse one typed projection wire model.
+Route-selection parsing and AI panel/message render-prop adaptation are also
+consumed through shared split-controller helpers in `bus-ui`, keeping
+`bus-ledger` controllers focused on projection-specific data orchestration.
+Ledger detail-load warnings are kept in ledger-local controller/view state and
+rendered in the detail panel, while AI/runtime/action failures stay in the AI
+panel error channel, so unrelated warning/error sources do not overwrite each
+other.
+WASM bootstrap now initializes a single app context owner (`appUI`) that
+contains runtime services, AI/layout state objects, and controller instances,
+and wires event callbacks directly to those injected instances for deterministic
+lifecycle ownership from one place.
+Bootstrap composition is split into focused wiring phases (`wireAI`,
+`wireDrop`, `wireResize`) so listener lifecycle concerns are isolated from
+startup orchestration logic.
+Callback-handle retention and delegated AI action-click handler storage are
+owned by shared `bus-ui` callback-registry state (`AICallbackRegistry`), while
+runtime services (`uiRuntime`) are limited to
+gateway/API/logging/error/drop service dependencies.
+Listener/timer teardown ownership is explicit through shared disposer lifecycle
+helpers: startup wiring registers disposers in `WASMAppScaffold` and app-level
+cleanup releases all tracked listeners/timers/callbacks deterministically.
+Browser lifecycle hooks (`beforeunload` and `pagehide`) now trigger the same
+app cleanup path through shared `bus-ui` lifecycle wiring
+(`WireWindowCloseLifecycle`), so production teardown follows the same
+deterministic disposer flow as reusable host/test teardown.
+Runtime and query services now receive API endpoint builders through injection
+so transport/service units do not hardcode package-global route construction.
+AI action logic is grouped behind a dedicated shared controller
+(`AIActionController`) with method-based dispatch, so action wiring and
+side-effect logic remain readable and dependency-injected instead of spread
+across unrelated free functions.
+Action dispatch routing table initialization is done once at controller
+construction and reused for each event dispatch.
+Action/drop/render call sites now consume logging and DOM error reporting via
+app/controller-owned methods bound to the app context, replacing package-level
+service-locator wrappers in WASM UI units.
+Shared AI refresh host, drop handling, action dispatch, and mount click
+delegation are now fully app-owned/injected so these UI units no longer depend
+on package-level mutable runtime singletons.
+Ledger view rendering uses controller phase separation (route parse, projection
+load, render-prop assembly) and passes prebuilt AI render-message policy into
+AI panel props so view helpers stay presentation-only.
+Projection loading now reports selected-detail load failures explicitly to panel
+state while preserving list rendering, so partial data degradation is visible
+and test-guarded instead of silently ignored.
+AI thread rename prompt and AI message link-resolution policy are injected into
+controller flows, reducing browser-global dependencies inside action/render
+units and improving test seams.
+List/detail/line projection rendering now uses shared projection helpers from
+`bus-ui`: split shell composition (`RenderSplitLayoutRoot`), projection list
+panel view-model mapping (`BuildProjectionListPanelVM`), projection detail
+presentation (`ProjectionDetailPresenter`), and projection query client setup
+with route policies (`NewProjectionQueryClientForRoutes`). Evidence URLs are
+resolved through an injected route-policy resolver shared by line panel and AI
+message link resolution.
+Theme behavior is also aligned through shared `bus-ui` CSS tokens served at
+`assets/uikit.css`, including automatic light/dark detection via
+`prefers-color-scheme`, while module CSS maps those shared tokens into
+ledger-specific visual rules.
 
 Assistant persistence and storage model:
 

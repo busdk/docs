@@ -28,7 +28,10 @@ supports opening a full line-details panel on the right. When entry lines
 contain evidence source paths, the line-details panel can also display the
 evidence document inline and provide an open-in-new-tab action. Transactions
 with evidence are marked with a document icon in the transactions list. The
-list surface also supports explicit Day book and General ledger modes.
+list surface also supports explicit Day book and General ledger modes. List and
+detail tables use explicit toggle controls for open/close transitions, so row
+index cells are plain values instead of navigation links and closing follows the
+same toggle interaction pattern as opening.
 When AI is enabled, the app also exposes a foldable AI Assistant side panel
 that uses a local Codex app-server process in the same workspace where
 `bus-ledger` started, so assistant actions can run repository-local `bus`
@@ -60,11 +63,30 @@ Approval requests are shown inline in the message flow with clearer action
 labels and command/path presentation optimized for review. Assistant-status and
 engine/auth/model metadata are shown in compact form below the composer so the
 message area remains focused on conversation content.
+Detail-load warnings are shown in the ledger detail panel and are separated
+from assistant runtime errors, so AI/action error state does not overwrite
+ledger data warnings.
 
 For operations and troubleshooting, browser-side diagnostics from the WASM UI
-are forwarded to server logs via `v1/client-log`, and repeated identical log
-lines are collapsed with summary output (`... and N more`) to reduce noise
-during high-frequency UI events such as drag-over.
+are forwarded to server logs via `v1/client-log`. This includes explicit UI
+logger messages and global browser failures (`window` `error` events and
+`unhandledrejection`) so uncaught frontend initialization/auth issues are
+visible from server stderr. Repeated identical log lines are collapsed with
+summary output (`... and N more`) to reduce noise during high-frequency UI
+events such as drag-over.
+AI account-state refresh and account/login event handling also log explicit
+auth-detection reasons (including unresolved payload diagnostics), so "not
+logged in" status changes can be diagnosed from server logs without browser
+debugging.
+Server log verbosity follows global flags consistently: default output includes
+warnings and errors, `-v` enables info logs, `-vv` enables debug logs, and
+`-q` suppresses all non-error logs.
+Frontend wiring lifecycle is explicit: AI/drop/resize listeners and poll timers
+are registered with tracked disposers and can be released deterministically via
+app cleanup in reusable host/test scenarios.
+The same cleanup path is also wired to browser lifecycle events
+(`beforeunload`, `pagehide`) so production teardown releases listeners/timers
+deterministically.
 The server also exposes accountant-focused read-only projection endpoints under
 `v1/projections/*` for trial balance, period comparison, dimensional, VAT,
 cash, subledger, audit-trail, and closing-diagnostics views.

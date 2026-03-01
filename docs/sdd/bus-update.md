@@ -1,6 +1,6 @@
 ---
 title: "bus-update — module version checking (SDD)"
-description: "Software Design Document for bus-update: shared release-index version checks, cache policy, timeout limits, and failure grace behavior."
+description: "Software Design Document for bus-update: shared release-index version checks, cache policy, timeout limits, and warning-only startup behavior."
 ---
 
 ## bus-update — module version checking
@@ -21,11 +21,13 @@ FR-UPD-002a Explicit check command. The module MUST also expose `bus update chec
 
 FR-UPD-003 Release index format. The default release index source is `https://docs.busdk.com/releases/latest.txt`. Rows are parsed as `{MODULE_NAME} {MODULE_VERSION} {DATE} {HASH}`.
 
-FR-UPD-004 Version gate. When a newer version exists for a checked module, the check MUST fail with exit code `1` and deterministic stderr output.
+FR-UPD-004 Startup warning mode. When a newer version exists for a module startup check, the check MUST print a deterministic warning to stderr and MUST NOT block command execution.
 
-FR-UPD-005 Cache and refresh. The module MUST cache check state locally and avoid network/index reads on every execution.
+FR-UPD-004a Explicit check mode. Explicit `bus update check` checks MUST return exit code `1` when a newer version exists.
 
-FR-UPD-006 Failure grace. Check failures caused by index fetch/read failures MUST tolerate transient outages and only fail after continuous failures exceed a configured grace duration.
+FR-UPD-005 Cache and refresh. The module MUST cache check state locally and avoid network/index reads on every execution. Default refresh interval is 24 hours.
+
+FR-UPD-006 Failure grace. Check failures caused by index fetch/read failures MUST tolerate transient outages. Startup checks print an error only after continuous failures exceed a configured grace duration (default 24 hours).
 
 FR-UPD-007 Help/version bypass. Embedded startup checks in other modules MUST bypass enforcement for `--help` and `--version` requests.
 
@@ -51,7 +53,7 @@ Primary package API:
 - `Check(module, current string, stderr io.Writer) int`
 - `CheckWithOptions(module, current string, stderr io.Writer, opts Options) int`
 
-`Enforce` is for startup integration. It derives module name from `argv[0]`, derives the current version from build metadata or environment override, and applies help/version bypass.
+`Enforce` is for startup integration. It derives module name from `argv[0]`, derives the current version from build metadata or environment override, applies help/version bypass, and emits warning-only diagnostics without blocking command execution.
 
 `Check` and `CheckWithOptions` are explicit checks used by the module CLI and tests.
 
