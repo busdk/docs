@@ -35,7 +35,7 @@ BusDK supports explicit [workspace-scoped operation patterns](../architecture/wo
 
 ### What is the practical difference between “workspace data” and generated outputs?
 
-Workspace data is the authoritative operational source. Generated outputs are derived artifacts produced from that source through deterministic command workflows. If output generation logic changes, replay should regenerate outputs from the same source data.
+Workspace data is the authoritative operational source. Generated outputs are derived artifacts produced from that source through deterministic command workflows. If output generation logic changes, [`bus replay`](../modules/bus-replay) should regenerate outputs from the same source data.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

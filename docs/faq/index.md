@@ -23,7 +23,7 @@ In short, `bus` is the main executable entrypoint, and BusDK is the full system 
 
 `bus` is part of BusDK. BusDK provides [architecture](../architecture/index), contracts, modules, and docs. The `bus` command gives users one stable way to invoke those capabilities.
 
-When a workflow needs specialization, `bus` routes to the corresponding module surface. This keeps the top-level command simple while still supporting deep domain functionality.
+When a workflow needs specialization, `bus` routes to the corresponding [module surface](../modules/index). This keeps the top-level command simple while still supporting deep domain functionality.
 
 ### Is BusDK one monolith or many modules?
 
@@ -61,13 +61,13 @@ They are useful for standard operating procedures, periodic runs, and machine-ve
 
 ### How do I decide whether to use `bus` or a module command directly?
 
-Start with `bus`. Use module subcommands when the workflow needs specific domain controls. In practice this is usually `bus <module> ...`, which keeps commands discoverable and consistent.
+Start with [`bus`](../modules/bus). Use module subcommands when the workflow needs specific domain controls. In practice this is usually `bus <module> ...`, which keeps commands discoverable and consistent through the [module CLI reference](../modules/index).
 
 Direct module binaries exist in module repositories, but normal user workflows should prefer the `bus` command surface unless there is a module-specific reason not to.
 
 ### Is BusDK open source?
 
-The superproject, `bus`, `docs`, and `busdk.com` are public. Many `bus-*` modules are private/commercial repositories.
+The superproject, [`bus`](../modules/bus), `docs`, and `busdk.com` are public. Many `bus-*` modules are private/commercial repositories.
 
 For users, the command surface remains consistent. For maintainers, this separation keeps public orchestration and documentation clean while allowing private module implementation boundaries.
 

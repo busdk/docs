@@ -31,11 +31,11 @@ Choose the module that closes the highest-risk manual gap in your current proces
 
 ### How do we know an adoption step is complete?
 
-Treat completion as evidence-based. A step is complete when command outputs are reproducible from declared inputs, review checkpoints are documented, and the workflow can be replayed without hidden manual decisions.
+Treat completion as evidence-based. A step is complete when command outputs are reproducible from declared inputs, review checkpoints are documented, and the workflow can be replayed with [`bus replay`](../modules/bus-replay) and verified with [`bus validate`](../modules/bus-validate) without hidden manual decisions.
 
 ### How do we avoid over-customizing too early?
 
-Use defaults first and postpone custom extensions until baseline flows are stable. BusDK supports extensibility, but early over-customization increases migration complexity and makes root-cause analysis harder.
+Use defaults first and postpone custom extensions until baseline flows are stable. BusDK supports [extensibility](../extensibility/index), but early over-customization increases migration complexity and makes root-cause analysis harder.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

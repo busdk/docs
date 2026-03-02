@@ -11,7 +11,7 @@ For commercial purchase discussions, contact sales at [sales@hg.fi](mailto:sales
 
 ### Is BusDK free?
 
-BusDK has both open and commercial parts. The public foundations (`bus`, `docs`, and `busdk.com`) are open source, while many `bus-*` modules are commercially licensed source packages.
+BusDK has both open and commercial parts. The public foundations ([`bus`](../modules/bus), docs, and busdk.com) are open source, while many `bus-*` modules are commercially licensed source packages documented in [BusDK source package pricing](../implementation/module-pricing).
 
 ### Are there subscription plans?
 
@@ -19,7 +19,7 @@ Yes. The public `busdk.com` pricing section presents subscription tiers for Base
 
 ### Are source-code packages priced separately?
 
-Yes. Source package licensing is documented separately from subscription tiers. Source packages use Functional Source License terms, with an alternative contract path for commercial licensing.
+Yes. Source package licensing is documented separately from subscription tiers. Source packages use [Functional Source License](https://fsl.software/) terms, with an alternative contract path for commercial licensing described in [BusDK source package pricing](../implementation/module-pricing).
 
 ### Where can I see detailed module-level prices?
 

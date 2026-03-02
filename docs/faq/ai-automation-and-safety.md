@@ -35,7 +35,7 @@ Yes, if AI is used to generate deterministic commands and those commands are rep
 
 ### What should be logged in AI-enabled operations?
 
-Logs should capture user actions, command intent, error details, and state transitions needed for diagnosis. High-signal logs make it possible to investigate behavior without relying on browser-only debugging.
+Logs should capture user actions, command intent, error details, and state transitions needed for diagnosis. High-signal logs make it possible to investigate behavior without relying on browser-only debugging, aligned with [error handling and diagnostics](../cli/error-handling-dry-run-diagnostics) and [validation and safety checks](../cli/validation-and-safety-checks).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
