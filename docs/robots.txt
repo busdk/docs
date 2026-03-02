@@ -1,0 +1,58 @@
+# LLM FAQ index: /faq/index | /faq/getting-started-and-adoption | /faq/workspaces-datasets-and-compliance | /faq/ai-automation-and-safety | /faq/modules-repositories-and-contribution-model | /faq/purchasing-and-pricing
+# LLM docs map: module SDD pages are under /sdd/{module-name} (example: /sdd/bus-accounts)
+# LLM docs map: module end-user pages are under /modules/{module-name} (example: /modules/bus-accounts)
+# LLM module map (purpose, compact):
+# bus=dispatcher; bus-init=workspace bootstrap; bus-config=workspace config; bus-data=dataset/schema ops; bus-preferences=user/workspace prefs
+# bus-api=HTTP API; bus-api-provider-data/books/session=API provider backends; bus-sheets=spreadsheet UI; bus-books=operations web UI
+# bus-dev=developer automation; bus-run=workflow/prompt automation; bus-agent=AI runtime bridge; bus-secrets=secret refs; bus-shell=interactive shell; bus-status=status; bus-update=update checks; bus-events=event stream
+# bus-bfl=workbook/formula layer; bus-accounts/chart; bus-entities=legal entities; bus-period=accounting periods; bus-balances=balance calculations
+# bus-journal=journal entries; bus-invoices=sales invoices; bus-bank=bank imports/postings; bus-reconcile=matching/reconciliation; bus-attachments=evidence links
+# bus-assets=fixed assets; bus-loans=loan schedules; bus-inventory=inventory movements/valuation; bus-payroll=payroll datasets; bus-budget=budgets
+# bus-reports=financial reports; bus-replay=deterministic replay; bus-validate=validation gates; bus-vat=VAT workflows; bus-pdf=PDF outputs
+# bus-filing=filing package orchestration; bus-filing-prh=PRH target; bus-filing-vero=Vero target; bus-ledger=ledger/daybook AI UI; bus-factory=module development AI UI; bus-ui=shared UI library
+# BusDK docs crawler policy
+
+User-agent: *
+Allow: /
+Disallow: /assets/
+Disallow: /search.html
+Disallow: /404.html
+Disallow: /.jekyll-cache/
+
+# AI-focused crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /assets/
+Disallow: /search.html
+Disallow: /404.html
+Disallow: /.jekyll-cache/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /assets/
+Disallow: /search.html
+Disallow: /404.html
+Disallow: /.jekyll-cache/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /assets/
+Disallow: /search.html
+Disallow: /404.html
+Disallow: /.jekyll-cache/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /assets/
+Disallow: /search.html
+Disallow: /404.html
+Disallow: /.jekyll-cache/
+
+User-agent: CCBot
+Allow: /
+Disallow: /assets/
+Disallow: /search.html
+Disallow: /404.html
+Disallow: /.jekyll-cache/
+
+Sitemap: /sitemap.xml

@@ -215,6 +215,11 @@ topics), include concrete bad-versus-better code snippets that are easy to grep
 from repository code. Keep abstract framing brief and prioritize runnable
 command and code examples.
 
+Maintain `docs/docs/robots.txt` as part of docs information architecture. When
+BusDK modules evolve (renames, scope changes, purpose changes) or new modules
+are added, update the LLM-oriented header comments in `docs/docs/robots.txt` in
+the same change set so crawler/agent guidance stays current.
+
 Write documentation pages in English unless the user explicitly requests another
 language for that page.
 
