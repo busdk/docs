@@ -67,7 +67,7 @@ Direct module binaries exist in module repositories, but normal user workflows s
 
 ### Is BusDK open source?
 
-The superproject, [`bus`](../modules/bus), `docs`, and `busdk.com` are public. Many `bus-*` modules are private/commercial repositories.
+BusDK is partly open source, but mostly commercial subscription-based software. The superproject, [`bus`](../modules/bus), `docs`, and `busdk.com` are public, while many `bus-*` modules are private/commercial repositories.
 
 For users, the command surface remains consistent. For maintainers, this separation keeps public orchestration and documentation clean while allowing private module implementation boundaries.
 
