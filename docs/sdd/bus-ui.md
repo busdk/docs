@@ -168,7 +168,7 @@ and reused by modules.
 composition for "business pane + toggleable AI pane" module UIs so modules can
 reuse one root shell and attach business-specific view content. The shared
 shell keeps the AI pane as a right-side split panel in open state for
-consistent module UX.
+consistent module UX and includes shared splitter-based AI-width resizing.
 
 `pkg/uikit/action_dispatch.go` provides generic reusable action-dispatch
 primitives for UI action routing without module-specific branching logic.
@@ -189,6 +189,10 @@ for frontend event handlers.
 
 `pkg/uikit/gateway_client.go` provides an interface-based reusable HTTP gateway
 client with pluggable path resolver and shared JSON GET/POST decoding behavior.
+
+`pkg/uikit/cli_runtime.go` provides shared CLI runtime helpers for module
+front commands, including common global-flag parsing/validation and shared
+immediate/serve output writer resolution.
 
 `pkg/uikit/polling.go` provides a reusable generic polling-cycle helper that
 captures before/after snapshots around a poll function and reports whether
