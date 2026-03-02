@@ -61,6 +61,8 @@ Under `/{token}/`:
 - `POST v1/actions/run` runs non-prompt actions via `bus dev <action>` or
   `bus run <action>`
 - `GET v1/ai/status` returns AI panel enable status
+- `GET v1/ai/poll` returns AI status, incremental events, and `pending_approvals`
+- `POST v1/ai/approval/respond` resolves a pending approval request with a decision
 - `POST v1/client-log` forwards browser UI logs to server logs
 
 Prompt action behavior:
@@ -68,8 +70,31 @@ Prompt action behavior:
 - `.txt` actions are routed to AI input (prefill + open AI panel)
 - Prompt actions are not executed via `bus dev` / `bus run`
 
+Approval behavior is request/response mediated. When the AI app-server requests
+approval, `bus-factory` emits an `approval/requested` event containing
+`request_id`, `method`, and `params`, and includes the pending request in
+`v1/ai/poll` under `pending_approvals`. The UI responds through
+`POST v1/ai/approval/respond` using `request_id` plus one decision:
+`accept`, `accept_for_session`, `decline`, or `cancel`.
+
+If the pending approval is not resolved, `RequestApproval` cancels on context
+cancellation or after a fixed 10-minute timeout.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module command without the `bus` prefix.
+
+```bus
+factory serve --print-url
+```
+
 ### Exit behavior
 
 - `0` success
 - `2` invalid usage
 - `1` runtime failure
+
+### Sources
+
+- [Module SDD: bus-factory](../sdd/bus-factory)
+- [Request approval implementation](../../../bus-factory/internal/serve/ai.go)

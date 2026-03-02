@@ -33,6 +33,14 @@ FR-FAC-010 Prompt-action AI routing. `.txt` prompt actions MUST be routed to int
 
 FR-FAC-011 Browser-open parity. Serve startup MUST support local browser/webview auto-open by default and an explicit `--print-url` mode for script-first workflows.
 
+FR-FAC-012 Approval mediation. The AI service MUST expose pending approval
+requests in polling responses and MUST accept explicit approval decisions
+(`accept`, `accept_for_session`, `decline`, `cancel`) through an API endpoint.
+
+FR-FAC-013 Approval timeout and cancellation. Pending approvals MUST be cleared
+deterministically when resolved, when request context is canceled, or when a
+10-minute timeout elapses.
+
 NFR-FAC-001 No network dependency for listing. Public unit indexing is local filesystem + parser only.
 
 NFR-FAC-002 Scriptable CLI behavior. Missing/invalid CLI usage returns exit code 2 with concise stderr diagnostics.
@@ -72,6 +80,17 @@ Primary HTTP APIs:
 - `GET /{token}/v1/actions`
 - `GET /{token}/v1/actions?module=<name>`
 - `POST /{token}/v1/actions/run`
+- `GET /{token}/v1/ai/poll`
+- `POST /{token}/v1/ai/approval/respond`
+
+Approval lifecycle interface:
+
+- App-server callback: `RequestApproval(ctx, req)` stores request metadata and
+  emits `approval/requested`.
+- Poll payload includes `pending_approvals` keyed by `request_id`.
+- `POST /v1/ai/approval/respond` resolves `request_id` with one decision value
+  and emits `approval/responded`.
+- Unresolved requests return cancel on `ctx.Done()` or fixed 10-minute timeout.
 
 ### Data Design
 
@@ -83,6 +102,16 @@ Public unit records are emitted as JSON with:
 - `package`
 - `file` (workspace-relative)
 - `line`
+
+AI poll payload also includes a `pending_approvals` object keyed by string
+request ID. Each value carries the original approval `method` and raw `params`
+for deterministic UI review and response.
+
+### Sources
+
+- [bus-factory module page](../modules/bus-factory)
+- [Approval flow implementation](../../../bus-factory/internal/serve/ai.go)
+- [Route wiring for approval endpoint](../../../bus-factory/internal/serve/server.go)
 
 ### Document control
 
