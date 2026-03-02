@@ -57,6 +57,21 @@
     - label: CLI tooling and workflow
       url: /cli/
 
+- title: FAQ
+  links:
+    - label: What are bus and BusDK?
+      url: /faq/
+    - label: Getting started and adoption
+      url: /faq/getting-started-and-adoption
+    - label: Workspaces, datasets, and compliance boundaries
+      url: /faq/workspaces-datasets-and-compliance
+    - label: AI assistants, automation, and safety
+      url: /faq/ai-automation-and-safety
+    - label: Modules, repositories, and contribution model
+      url: /faq/modules-repositories-and-contribution-model
+    - label: Purchasing and pricing
+      url: /faq/purchasing-and-pricing
+
 - title: Modules
   links:
     - label: Modules overview

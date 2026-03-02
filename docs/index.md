@@ -10,6 +10,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 ### Overview
 
 - [Overview](overview/index)
+- [FAQ: what are `bus` and BusDK?](faq/index)
 - [Purpose and scope](overview/purpose-and-scope)
 - [Visual identity and branding on outputs](overview/visual-identity)
 - [Design goals and requirements](design-goals/index)
