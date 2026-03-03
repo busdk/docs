@@ -197,6 +197,10 @@ detail into module/system SDD pages under `sdd/docs/modules/`. Keep user pages
 task-oriented, and when extra depth is needed, create or link focused topic
 pages instead of overloading module reference pages.
 
+Public docs navigation (`docs/docs/_data/nav.yml`) must not include a
+dedicated "Software Design Documents" section that duplicates end-user module
+links. Keep public navigation focused on end-user workflows and CLI usage.
+
 When a topic serves multiple audiences, it may exist in both sites with
 audience-specific refinement: keep the `./docs` version end-user focused and
 the `./sdd` version implementation/developer focused. Preserve information by

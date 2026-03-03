@@ -7,3 +7,5 @@
 - [x] Remove implementation-readiness tracking from public CLI design docs: move the `Development state` contract in `docs/docs/cli/command-structure.md` (completeness/planned-next/blockers/e2e status) into `sdd/docs/cli/` and keep public CLI docs behavior-focused for end users.
 - [x] Remove private-SDD dependency from public docs body content: replace `Module SDD` / `bus-*-SDD` references across `docs/docs/**/*.md` with end-user docs links or neutral wording so public docs remain self-contained after SDD privatization.
 - [x] Remove public references to private SDD index from overview/FAQ/module index pages (`docs/docs/overview/index.md`, `docs/docs/faq/index.md`, `docs/docs/modules/index.md`) and keep only end-user navigation paths.
+- [x] Remove redundant public SDD navigation duplication: delete the `Software Design Documents` section from `docs/docs/_data/nav.yml` so the public sidebar keeps only end-user CLI/module navigation.
+- [x] Re-verify public audience-boundary policy after nav cleanup: ensure `docs/docs/` has no direct private-SDD links and retains only neutral mentions of private implementation specs.
