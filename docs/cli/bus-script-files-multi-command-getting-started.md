@@ -141,4 +141,4 @@ After these starter flows, continue with:
 - [bus-agent module reference](../modules/bus-agent)
 - [bus-run module reference](../modules/bus-run)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
-- [Module SDD: bus](../sdd/bus)
+- [Module reference: bus](../modules/bus)

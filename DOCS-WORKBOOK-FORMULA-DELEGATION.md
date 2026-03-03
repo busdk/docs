@@ -25,7 +25,7 @@ The canonical page is current and includes:
 
 Edit the canonical page when:
 
-- The [bus-bfl SDD](https://docs.busdk.com/sdd/bus-bfl) changes formula metadata, dialect, or integration contract.
+- The [bus-bfl SDD](sdd/docs/modules/bus-bfl.md) changes formula metadata, dialect, or integration contract.
 - bus-data adds or changes `--formula` / `--formula-source` or FR-DAT-025 behavior.
 - You want to add sections (e.g. error handling, dry-run) — keep them consistent with the SDD and [Table Schema contract](https://docs.busdk.com/data/table-schema-contract).
 

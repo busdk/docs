@@ -11,7 +11,7 @@ A BusDK workspace stores repository data that includes [canonical datasets](../m
 
 ### Who owns each dataset file?
 
-Each dataset has an owning module that defines write behavior and business rules for that dataset. Other modules may read the data, but cross-module access should follow [module contracts](../sdd/modules#data-path-contract-for-read-only-cross-module-access) instead of hardcoded assumptions.
+Each dataset has an owning module that defines write behavior and business rules for that dataset. Other modules may read the data, but cross-module access should follow [module contracts](../modules/index#data-path-contract-for-read-only-cross-module-access) instead of hardcoded assumptions.
 
 ### Why are schemas so central in BusDK?
 

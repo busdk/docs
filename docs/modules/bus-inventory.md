@@ -38,7 +38,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Inventory item and movement datasets and their beside-the-table schemas in the inventory area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `inventory/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Inventory item and movement datasets and their beside-the-table schemas in the inventory area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `inventory/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -76,30 +76,6 @@ inventory move --item-id SKU-100 --date 2026-02-15 --qty 20 --direction in --uni
 inventory valuation --as-of 2026-02-28 --item-id SKU-100 --format json
 ```
 
-
-### Development state
-
-**Value promise:** Manage inventory items and movements so valuation and COGS can feed [bus-reports](./bus-reports) and the workspace has a single source for stock and movements.
-
-**Use cases:** [Inventory valuation and COGS postings](../workflow/inventory-valuation-and-cogs).
-
-**Completeness:** Init, add, move, valuation, validate, and status are implemented; workspace-root layout and path API are in place. Behavior is validated by unit and e2e tests.
-
-**Use case readiness:** Inventory valuation and COGS postings: core workflow implemented and test-covered; remaining work focuses on incremental SDD alignment and broader integration confidence.
-
-**Current:** Core command behavior, validation diagnostics, deterministic outputs, and global-flag handling are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-inventory](../sdd/bus-inventory).
-
-**Planned next:** Next priorities: further SDD alignment, additional tests, or integration with bus-reports. Root layout, init, add, move, and valuation are implemented and no longer planned.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** Inventory data feeds COGS and valuation in [bus-reports](./bus-reports).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-loans">bus-loans</a></span>
@@ -114,5 +90,5 @@ See [Development status](../implementation/development-status).
 - [Owns master data: Inventory movements](../master-data/inventory-movements/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-inventory](../sdd/bus-inventory)
+- [Module reference: bus-inventory](../modules/bus-inventory)
 - [Data contract: Table schema contract](../data/table-schema-contract)

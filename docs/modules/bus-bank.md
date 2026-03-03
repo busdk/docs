@@ -102,29 +102,6 @@ bank import --file ./imports/bank/january-2026.csv
 bank backlog --month 2026-1 --detail
 ```
 
-
-### Development state
-
-**Value promise:** Initialize bank transaction datasets and import normalized statement data (file or profile-driven ERP) so [bus-reconcile](./bus-reconcile) and the [accounting workflow](../workflow/accounting-workflow-overview) can match bank activity to invoices and journal entries.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Import ERP history into canonical datasets](../workflow/import-erp-history-into-canonical-datasets), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** 70% — init, file and profile import, and list verified by e2e; user can complete bank ingest step including ERP history via profile.
-
-**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 70% — init, file and profile import, list verified; user can complete bank step before reconcile. [Import ERP history](../workflow/import-erp-history-into-canonical-datasets): 70% — profile import with `--year`, dry-run, and byte-identical artifacts verified by e2e. [Finnish company reorganisation — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — import and list verified; basis for reconciliation evidence. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — import and list verified for pay-day statement flow.
-
-**Current:** `tests/e2e.sh` verifies help, version, invalid usage (quiet+verbose, color, format), init (four files at workspace root, idempotent warning, partial-state fail, `--dry-run`), import `--file` (schema validation, invalid currency fails, `--dry-run`), import `--profile --source` (plan/result artifacts, byte-identical re-run, `--dry-run`, `--year` filter, profile-without-source usage error), list (deterministic TSV, `--month`, `--counterparty`, `-o`, `-q`, `-f tsv`), backlog (`--detail`, TSV/JSON, `--fail-on-backlog`, `--max-unposted`), statement extract/parse/transactions/verify with checkpoint provenance (`--attachment-id`), parsed JSON, flattened parsed transaction rows, attachment-based verification, and date/number parsing hints (`--date-format`, `--decimal-sep`, `--group-sep`, `--unicode-minus`), config counterparty add, config extractors add, and global flags (`-C`, `--`, `-vv`, `--no-color`). `internal/app/run_test.go` and `internal/app/import_test.go` verify init/list/import, statement extract/parse/transactions/verify, statement `--attachment-id` validation/output, and import dry-run. `internal/bank/datasets_test.go` verifies init create/idempotent/partial and list filters (month, from/to, counterparty, invoice-ref). `internal/bank/profile_import_test.go` and `internal/bank/profile_test.go` verify profile import deterministic artifacts, year filter, dry-run no writes, and required source columns. `internal/bank/statement_checkpoints_test.go` verifies statement extract/append/verify, locale parsing hints, and checkpoint provenance fields, and `internal/bank/statement_parse_test.go` plus `internal/bank/statement_verify_parsed_test.go` verify parsed statement outputs, flattened transaction output, attachment resolution, and mismatch diagnostics. `internal/bank/schema_test.go`, `internal/bank/output_test.go`, and `internal/cli/flags_test.go` cover schema, output formatting, and flag parsing. `path/path_test.go` verifies workspace-relative path accessors for bank datasets.
-
-**Planned next:** None in PLAN.md; optional: help/synopsis alignment for profile and `--year` flags.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-reconcile](./bus-reconcile) uses bank datasets for match and allocate.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-journal">bus-journal</a></span>
@@ -139,7 +116,7 @@ See [Development status](../implementation/development-status).
 - [Owns master data: Bank transactions](../master-data/bank-transactions/index)
 - [Master data: Parties (customers and suppliers)](../master-data/parties/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
-- [Module SDD: bus-bank](../sdd/bus-bank)
+- [Module reference: bus-bank](../modules/bus-bank)
 - [Workflow context: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
 - [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)

@@ -36,7 +36,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Loan register and event datasets and their beside-the-table schemas in the loans area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `loans/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Loan register and event datasets and their beside-the-table schemas in the loans area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `loans/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -62,7 +62,7 @@ bus loans amortize --period 2026-02 --loan-id LOAN-2026-01 --post-date 2026-02-2
 
 `bus loans` does not currently classify arbitrary bank rows into principal vs interest automatically.
 Financing-style bank payments still need manual split or custom integration.
-For planned extension notes, see [Suggested extensions](../sdd/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows).
+For planned extension notes, see [Suggested extensions](../modules/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows).
 
 
 ### Using from `.bus` files
@@ -80,30 +80,6 @@ loans event --loan-id LOAN-2026-02 --date 2026-03-31 --type interest --amount 78
 loans amortize --period 2026-03 --loan-id LOAN-2026-02
 ```
 
-
-### Development state
-
-**Value promise:** Maintain loan register and events so amortization and event postings feed the [bus-journal](./bus-journal) and loan accounts appear in [bus-reports](./bus-reports).
-
-**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
-
-**Completeness:** 70% (Core workflow implemented and verified) — init, add, event, amortize, list, update, validate, balances, schedule, and postings are implemented and verified by unit and e2e tests.
-
-**Use case readiness:** Finnish company reorganisation: 70% — core loan lifecycle (register, events, amortization, validation, balances, schedules, postings) is implemented and test-covered.
-
-**Current:** Init/add/event/amortize and related lifecycle commands are test-verified, including global-flag behavior.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-loans](../sdd/bus-loans).
-
-**Planned next:** Follow-up priorities are incremental SDD alignment and additional output-format/integration coverage; implementing event and amortize is no longer planned work.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-accounts](./bus-accounts), [bus-entities](./bus-entities) (reference validation when datasets exist).
-
-**Used by:** Loan postings feed [bus-journal](./bus-journal); loan accounts in [bus-reports](./bus-reports).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-assets">bus-assets</a></span>
@@ -118,5 +94,5 @@ See [Development status](../implementation/development-status).
 - [Master data: Parties (customers and suppliers)](../master-data/parties/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-loans](../sdd/bus-loans)
+- [Module reference: bus-loans](../modules/bus-loans)
 - [Data contract: Table schema contract](../data/table-schema-contract)

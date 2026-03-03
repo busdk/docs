@@ -67,7 +67,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 **Repairing legacy workspaces.** If `open`, `list`, or `validate` fail because a period has a blank retained-earnings account (e.g. after upgrading from an older bus-period), run `bus period set --period <period> --retained-earnings-account <code>` for that period while it is still in state future or open. Do not edit `periods.csv` by hand; the `set` command appends a corrected record so the dataset stays append-only and valid.
 
-**Year rollover.** In the new workspace: `bus accounts init` and populate the chart of accounts; `bus period init`; `bus period add --period <YYYY-MM>` (and optionally more future periods); `bus period open --period <YYYY-MM>` for the first period; `bus journal init`; then `bus period opening --from <path-to-prior-workspace> --as-of <prior-year-end> --post-date <new-year-start> --period <YYYY-MM> [--equity-account <code>]`. Full validation rules and optional flags are in the [bus-period module SDD](../sdd/bus-period).
+**Year rollover.** In the new workspace: `bus accounts init` and populate the chart of accounts; `bus period init`; `bus period add --period <YYYY-MM>` (and optionally more future periods); `bus period open --period <YYYY-MM>` for the first period; `bus journal init`; then `bus period opening --from <path-to-prior-workspace> --as-of <prior-year-end> --post-date <new-year-start> --period <YYYY-MM> [--equity-account <code>]`. Full validation rules and optional flags are in the [bus-period module reference](../modules/bus-period).
 
 **Year-end result transfer.** Transferring profit or loss to equity at year end is currently done by posting a balanced entry with [bus journal](./bus-journal) (see [Year-end close](../workflow/year-end-close)). Automatic result-to-equity transfer is planned in this module.
 
@@ -143,29 +143,6 @@ period close --period 2026-01 --post-date 2026-01-31
 period reopen --period 2026-01 --reason "Correction window" --approved-by reviewer@example.com
 ```
 
-
-### Development state
-
-**Value promise:** Add periods in future state and manage period control (open, close, lock) and year-rollover opening so the accounting workflow can close and lock periods, carry forward opening balances from a prior workspace, and downstream modules can rely on closed state.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** 90% — Period lifecycle and year-rollover opening verified by e2e and unit tests; user can complete add→open→close→lock and opening from prior workspace.
-
-**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 90% — add/open/close/lock and year-rollover opening verified; user can complete period lifecycle. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 90% — close, lock, opening with append-only and locked state verified. [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack): 90% — close, lock, opening for snapshots verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 90% — period open/close/lock and opening for payroll month verified.
-
-**Current:** E2e `tests/e2e.sh` verifies init (root, idempotent), add (future, default 3200, duplicate/account/equity/dry-run), add+open same-second (distinct `recorded_at`, validate/list pass), open (blank retained→set repair, reject closed/locked, idempotent), close (dry-run, append close_entries/opening_balances, journal-closed-periods.csv, refuse unbalanced/already closed), lock (closed→locked), reopen (closed→reopened with required metadata and optional max-open-days), set (repair future/open, refuse closed/locked/not found/invalid account), opening (prior→current, required flags, already-exists, dry-run, `--replace`, `--allow-as-of-mismatch`), validate (duplicate key, unbalanced, merge conflict), list/default and list `--history`, and global flags (-C, -o, -q, -v, --color, --format, --). Unit tests in `internal/app/run_test.go`, `internal/period/period_test.go`, `internal/period/periodid_test.go`, `internal/period/add_test.go`, `internal/period/set_test.go`, `internal/period/state_test.go`, `internal/period/opening_test.go`, `internal/period/closed_periods_file_test.go`, `internal/period/recorded_at_test.go`, `internal/validate/validate_test.go`, `internal/cli/flags_test.go`, and `path_test.go` cover run, list, init, add, open, close, reopen, set, opening, path accessors, chdir, output, quiet, and invalid usage.
-
-**Planned next:** Optional automatic result-to-equity transfer at year end (advances [Accounting workflow](../workflow/accounting-workflow-overview) and [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)); SDD and CLI reference; PLAN.md currently empty.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-journal](./bus-journal), [bus-reports](./bus-reports), [bus-vat](./bus-vat), and [bus-filing](./bus-filing) rely on period state.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-entities">bus-entities</a></span>
@@ -179,7 +156,7 @@ See [Development status](../implementation/development-status).
 - [Owns master data: Accounting periods](../master-data/accounting-periods/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
-- [Module SDD: bus-period](../sdd/bus-period)
+- [Module reference: bus-period](../modules/bus-period)
 - [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
 - [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

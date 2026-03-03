@@ -96,5 +96,5 @@ factory serve --print-url
 
 ### Sources
 
-- [Module SDD: bus-factory](../sdd/bus-factory)
+- [Module reference: bus-factory](../modules/bus-factory)
 - [Request approval implementation](../../../bus-factory/internal/serve/ai.go)

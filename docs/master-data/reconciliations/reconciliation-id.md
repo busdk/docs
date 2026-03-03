@@ -22,5 +22,5 @@ Example values: `rec-2026-02-10-0001`, `rec-2026-02-10-0002`.
 ### Sources
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
-- [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
+- [Module reference: bus-reconcile](../../modules/bus-reconcile)
 

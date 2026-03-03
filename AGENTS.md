@@ -2,6 +2,15 @@
 
 Merged guidance from `.cursor/rules/*.mdc`.
 
+## Audience Boundary
+
+This repository subtree (`./docs`) is for end-user documentation about how to
+use BusDK software. Do not use this site for commercial landing-page messaging
+(belongs in `./busdk.com/docs`) or for implementation/developer SDD contracts
+(belongs in `./sdd/docs`).
+Do not link directly to private SDD pages from this public docs site; you may
+mention that private implementation design specifications exist.
+
 ## Global documentation writing rules
 
 You are writing BusDK documentation. Prefer readable, self-contained paragraphs
@@ -184,9 +193,14 @@ For non-SDD pages, do not default to bullet lists. Use paragraph text unless a
 list or table is the only meaningful way to present tightly structured data.
 
 For non-SDD pages, move deep implementation background and exhaustive behavior
-detail into module/system SDD pages under `docs/docs/sdd/`. Keep user pages
+detail into module/system SDD pages under `sdd/docs/modules/`. Keep user pages
 task-oriented, and when extra depth is needed, create or link focused topic
 pages instead of overloading module reference pages.
+
+When a topic serves multiple audiences, it may exist in both sites with
+audience-specific refinement: keep the `./docs` version end-user focused and
+the `./sdd` version implementation/developer focused. Preserve information by
+refining and relocating details rather than deleting them.
 
 For module docs that cover developer automation (`bus dev`, `bus run`, and
 related `.bus` usage), include practical chained examples with concrete sample

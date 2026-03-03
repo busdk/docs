@@ -6,7 +6,7 @@ Status of [docs.busdk.com](https://docs.busdk.com) bus-validate content relative
 
 ## Current state
 
-The **module CLI reference** ([modules/bus-validate](https://docs.busdk.com/modules/bus-validate)) and **module SDD** ([sdd/bus-validate](https://docs.busdk.com/sdd/bus-validate)) match the current implementation:
+The **module CLI reference** ([modules/bus-validate](https://docs.busdk.com/modules/bus-validate)) and **module SDD** ([sdd/bus-validate](sdd/docs/modules/bus-validate.md)) match the current implementation:
 
 - Stdout empty on success; `--format text` / `tsv`; `--output` no-op for `bus validate`.
 - Parity and journal-gap described as first-class subcommands with thresholds and CI exit behavior.
@@ -21,7 +21,7 @@ The **module CLI reference** ([modules/bus-validate](https://docs.busdk.com/modu
 
 **Target:** [bus-validate](https://docs.busdk.com/modules/bus-validate).
 
-**Status:** Not implemented. No per-bucket gap thresholds in code. **Documented** in [SDD Suggested capabilities](https://docs.busdk.com/sdd/bus-validate#suggested-capabilities-out-of-current-scope) (class-aware gap reporting and per-bucket thresholds).
+**Status:** Not implemented. No per-bucket gap thresholds in code. **Documented** in [SDD Suggested capabilities](sdd/docs/modules/bus-validate.md#suggested-capabilities-out-of-current-scope) (class-aware gap reporting and per-bucket thresholds).
 
 **Problem:** Teams may want to enforce that "operational" gap is below a threshold while allowing higher "financing" or "transfer" backlog; today this is custom logic.
 

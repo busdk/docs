@@ -44,7 +44,7 @@ Use `post` to create deterministic journal postings from invoice-payment matches
 `propose` supports incoming classification, suspense fallback/reclassification, and settlement evidence modes.
 `apply` supports settlement posting mode plus posting account flags.
 
-For full option matrix and detailed semantics, see [Module SDD: bus-reconcile](../sdd/bus-reconcile).
+For full option matrix and detailed semantics, see [Module reference: bus-reconcile](../modules/bus-reconcile).
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reconcile --help`.
 
@@ -72,7 +72,7 @@ Exit semantics: success (0) when proposals are generated or apply completes; non
 
 ### Match by extracted reference keys
 
-When [bus-bank](./bus-bank) is configured with counterparty and reference extractors, bank list output includes normalized reference fields such as `erp_id` and `invoice_number_hint`. Propose and match can use these extracted keys to join to invoice or purchase-invoice identifiers. Extracted-key semantics: `erp_id` aligns with ERP/internal identifiers; `invoice_number_hint` aligns with human or system invoice numbers. When both an amount match and an extracted-key match are available, precedence is implementation-defined (e.g. amount match first, then extracted key as tie-breaker or secondary path). Match-by-key behavior improves proposal quality and reduces manual pairing while retaining amount and currency checks. See the [module SDD](../sdd/bus-reconcile) for the full input contract.
+When [bus-bank](./bus-bank) is configured with counterparty and reference extractors, bank list output includes normalized reference fields such as `erp_id` and `invoice_number_hint`. Propose and match can use these extracted keys to join to invoice or purchase-invoice identifiers. Extracted-key semantics: `erp_id` aligns with ERP/internal identifiers; `invoice_number_hint` aligns with human or system invoice numbers. When both an amount match and an extracted-key match are available, precedence is implementation-defined (e.g. amount match first, then extracted key as tie-breaker or secondary path). Match-by-key behavior improves proposal quality and reduces manual pairing while retaining amount and currency checks. See the [module reference](../modules/bus-reconcile) for the full input contract.
 
 ### Files
 
@@ -109,30 +109,6 @@ reconcile apply --in ./tmp/reconcile-approved.tsv --dry-run
 reconcile post --kind invoice_payment --bank-account 1910 --sales-account 3000 --sales-vat-account 2931 --if-missing
 ```
 
-
-### Development state
-
-**Value promise:** Link bank transactions to invoices or journal entries so the accounting workflow can reconcile bank activity and keep an explicit reconciliation history.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** Largely complete — match, allocate, list, propose, apply, and post are implemented; optional coverage extensions remain.
-
-**Use case readiness:** Accounting workflow: propose and apply provide the two-phase flow; optional CI exit codes for backlog or partial apply are not yet documented. Finnish company reorganisation: reconciliation evidence path and propose/apply are available. Finnish payroll handling: payroll bank reconciliation works with match/allocate and propose/apply.
-
-**Current:** Match/allocate/list, propose/apply, and post are test-verified, including idempotency and global-flag behavior.
-For detailed test matrix and implementation notes, see [Module SDD: bus-reconcile](../sdd/bus-reconcile).
-
-**Planned next:** None in PLAN.md; propose/apply with `--fail-if-empty` and global `-o` are documented.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-journal](./bus-journal).
-
-**Used by:** End users for reconciliation; no other module invokes it.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-bank">bus-bank</a></span>
@@ -146,7 +122,7 @@ See [Development status](../implementation/development-status).
 - [Master data: Bank transactions](../master-data/bank-transactions/index)
 - [Master data: Sales invoices](../master-data/sales-invoices/index)
 - [Master data: Purchase invoices](../master-data/purchase-invoices/index)
-- [Module SDD: bus-reconcile](../sdd/bus-reconcile)
+- [Module reference: bus-reconcile](../modules/bus-reconcile)
 - [Workflow: Import bank transactions and apply payment](../workflow/import-bank-transactions-and-apply-payment)
 - [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)

@@ -78,7 +78,7 @@ For the standard flow, use command-driven `bus reconcile propose` and `bus recon
 
 ### Files
 
-All invoice master data lives in the workspace root (the effective working directory, e.g. after `-C`/`--chdir`). The module does not create or use an `invoices/` subdirectory. The eight owned files are: `sales-invoices.csv`, `sales-invoices.schema.json`, `sales-invoice-lines.csv`, `sales-invoice-lines.schema.json`, `purchase-invoices.csv`, `purchase-invoices.schema.json`, `purchase-invoice-lines.csv`, `purchase-invoice-lines.schema.json`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+All invoice master data lives in the workspace root (the effective working directory, e.g. after `-C`/`--chdir`). The module does not create or use an `invoices/` subdirectory. The eight owned files are: `sales-invoices.csv`, `sales-invoices.schema.json`, `sales-invoice-lines.csv`, `sales-invoice-lines.schema.json`, `purchase-invoices.csv`, `purchase-invoices.schema.json`, `purchase-invoice-lines.csv`, `purchase-invoice-lines.schema.json`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -115,29 +115,6 @@ invoices INV-2026-004 add --desc "Support retainer" --quantity 1 --unit-price 15
 invoices import --profile imports/profiles/erp-invoices.yaml --source exports/erp/invoices.tsv --source-lines exports/erp/invoice-lines.tsv --year 2025
 ```
 
-
-### Development state
-
-**Value promise:** Maintain sales and purchase invoices as schema-validated workspace data so VAT, reconciliation, and PDF export can use a single source of invoice records in the accounting and sale-invoicing journeys.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
-
-**Completeness:** 80% — record-invoices and postings journey step completable; init, add, validate, list, postings verified by e2e and unit tests; pdf not verified in e2e.
-
-**Use case readiness:** Accounting workflow: 80% — record-invoices and postings step completable; pdf not verified. Sale invoicing: 80% — create, validate, list, postings verified; pdf step blocked by [bus-pdf](./bus-pdf). Finnish company reorganisation: 80% — invoice evidence-pack baseline verified; pdf not in journey.
-
-**Current:** Init/add/validate/list/import/postings are verified by e2e and unit tests. PDF command behavior is verified at module level; end-to-end PDF output still depends on [bus-pdf](./bus-pdf) availability. For detailed test matrix and implementation notes, see [Module SDD: bus-invoices](../sdd/bus-invoices).
-
-**Planned next:** Keep add/init help alignment (--due-date optional, workspace root wording per PLAN.md). Maintain deterministic open-item read semantics required by `bus reconcile propose/apply`. Optional: attachment_id validation (FR-005) for Finnish compliance.
-
-**Blockers:** [bus-pdf](./bus-pdf) required for `bus invoices pdf`. None for init/add/validate/list/postings.
-
-**Depends on:** [bus-pdf](./bus-pdf) (for `bus invoices pdf`).
-
-**Used by:** [bus-reconcile](./bus-reconcile), [bus-vat](./bus-vat).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-attachments">bus-attachments</a></span>
@@ -159,7 +136,7 @@ See [Development status](../implementation/development-status).
 - [Master data: VAT treatment](../master-data/vat-treatment/index)
 - [Owns master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-invoices](../sdd/bus-invoices)
+- [Module reference: bus-invoices](../modules/bus-invoices)
 - [Layout: Invoices area](../layout/invoices-area)
 - [Workflow: Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing)
 - [Workflow: Create a sales invoice](../workflow/create-sales-invoice)

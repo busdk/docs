@@ -90,17 +90,17 @@ Evidence-first context applies: invoice evidence is primary, `entities.csv` is f
 Cash-basis treatment handling:
 `reverse_charge`, `intra_eu_supply`, `export`, and `exempt` require `vat_cents=0` on evidence rows in this mode; otherwise the command fails with a deterministic diagnostic. `domestic_standard`, `domestic_reduced`, `import`, and unknown/custom treatment codes are processed from explicit line VAT/net evidence.
 
-Detailed resolution and fallback rules are maintained in [Module SDD: bus-vat](../sdd/bus-vat).
+Detailed resolution and fallback rules are maintained in [Module reference: bus-vat](../modules/bus-vat).
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
 
 ### Journal source: vat-account-mapping.csv
 
-For journal-driven VAT (`--source journal`), direction and optional rate can be supplied by a mapping file `vat-account-mapping.csv` at the workspace root. Required columns: `account_id` (chart-of-accounts identifier) and `direction` (`sale` or `purchase`). Optional rate columns: `vat_rate_bp` or `rate_bp` (basis points), and legacy-compatible `vat_rate`/`vat_percent`. One row per account that needs explicit direction (e.g. asset/liability VAT accounts such as 293x that are not income/expense in `accounts.csv`). Direction resolution order is: row `direction` → `vat-account-mapping.csv` by `account_id` → `accounts.csv` account type (income ⇒ sale, expense ⇒ purchase). In journal-first or migrated workspaces where the journal has no row-level `direction` and posts to non–P&L VAT accounts, add rows to `vat-account-mapping.csv` for those account_ids so report and export can resolve direction. Migration guidance: ensure every journal account that appears in VAT-relevant postings either has `direction` on the row, a mapping row, or an income/expense type in `accounts.csv`; otherwise the command fails with a diagnostic. Optionally, a default mapping for common Finnish non–P&L VAT accounts can be shipped or documented in the [module SDD implementation status](../sdd/bus-vat#implementation-status-journal-driven-mode).
+For journal-driven VAT (`--source journal`), direction and optional rate can be supplied by a mapping file `vat-account-mapping.csv` at the workspace root. Required columns: `account_id` (chart-of-accounts identifier) and `direction` (`sale` or `purchase`). Optional rate columns: `vat_rate_bp` or `rate_bp` (basis points), and legacy-compatible `vat_rate`/`vat_percent`. One row per account that needs explicit direction (e.g. asset/liability VAT accounts such as 293x that are not income/expense in `accounts.csv`). Direction resolution order is: row `direction` → `vat-account-mapping.csv` by `account_id` → `accounts.csv` account type (income ⇒ sale, expense ⇒ purchase). In journal-first or migrated workspaces where the journal has no row-level `direction` and posts to non–P&L VAT accounts, add rows to `vat-account-mapping.csv` for those account_ids so report and export can resolve direction. Migration guidance: ensure every journal account that appears in VAT-relevant postings either has `direction` on the row, a mapping row, or an income/expense type in `accounts.csv`; otherwise the command fails with a diagnostic. Optionally, a default mapping for common Finnish non–P&L VAT accounts can be shipped or documented in the [module reference implementation status](../modules/bus-vat#implementation-status-journal-driven-mode).
 
 ### Files
 
-The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries, exports, and filed evidence as repository data. VAT master/index data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv`, `vat-filed.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report/return/filed data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`, `vat-filed-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries, exports, and filed evidence as repository data. VAT master/index data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv`, `vat-filed.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report/return/filed data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`, `vat-filed-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -139,30 +139,6 @@ vat export --period 2026-01 --source reconcile --basis cash --min-sales-coverage
 vat filed-diff --period 2026-01 --threshold-cents 0
 ```
 
-
-### Development state
-
-**Value promise:** Compute VAT reports and export period returns from workspace invoice or journal data so users can complete the close-period VAT step and archive returns for filing with traceable source refs.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
-
-**Completeness:** 90% — Core VAT close workflow plus FI filing payload/explain/profile tooling and review packets are implemented and test-verified.
-
-**Use case readiness:** [Accounting workflow](../workflow/accounting-workflow-overview): 80% — close-step VAT (init→validate→report→export) from invoice or journal completable with source_refs and index update. [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit): 80% — VAT report and export with invoice/voucher refs; closed-period/--force and rate validation verified.
-
-**Current:** Init/validate/report/export/review, journal-source mode, reconcile cash mode, FI filing payload/explain, period profiles, and filed import/diff are test-verified.
-Detailed test and implementation notes are maintained in [Module SDD: bus-vat](../sdd/bus-vat).
-
-**Planned next:** None in PLAN.md; all documented requirements satisfied.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-period](./bus-period), [bus-journal](./bus-journal), [bus-invoices](./bus-invoices) (data sources for report/export).
-
-**Used by:** End users for reporting and export; no other module invokes it.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-validate">bus-validate</a></span>
@@ -179,7 +155,7 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Sales invoices](../master-data/sales-invoices/index)
 - [Master data: Purchase invoices](../master-data/purchase-invoices/index)
-- [Module SDD: bus-vat](../sdd/bus-vat)
+- [Module reference: bus-vat](../modules/bus-vat)
 - [Layout: VAT area](../layout/vat-area)
 - [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

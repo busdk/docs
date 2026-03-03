@@ -78,7 +78,7 @@ The mapping is deterministic per selected layout and consumed by [bus-reports](.
 
 ### Files
 
-`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For statutory statement mapping, the module also owns `report-account-mapping.csv` and `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For statutory statement mapping, the module also owns `report-account-mapping.csv` and `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -114,30 +114,6 @@ accounts report --format pdf --output ./out/tililuettelo.pdf
 accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
 ```
 
-
-### Development state
-
-**Value promise:** Manage the chart of accounts as schema-validated workspace data so downstream modules and reports can rely on stable account identifiers and types.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** 75% — chart lifecycle, tililuettelo report, and sole-proprietor flows verified by e2e and unit tests; user can complete define-master-data and produce owner withdrawal/investment lines for journal.
-
-**Use case readiness:** Accounting workflow: 75% — chart lifecycle, tililuettelo report, and sole-proprietor verified; define-master-data step completable. Sale invoicing: 75% — chart for income/VAT accounts verified with filing-grade tililuettelo available. Finnish payroll handling: 75% — chart for wage expense, withholding, net payable verified with tililuettelo output.
-
-**Current:** Init/add/set/list/report/validate and sole-proprietor flows are test-verified, including global-flag behavior.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-accounts](../sdd/bus-accounts).
-
-**Planned next:** Define and own report-account-mapping schema contract (FR-ACC-006) for [bus-reports](./bus-reports) fi-* layouts (PLAN.md); advances compliance and reporting. Document where bus journal add regression test is maintained or add when [bus-journal](./bus-journal) is available; advances accounting workflow.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-journal](./bus-journal) consumes account codes for postings; [bus-reports](./bus-reports) consumes account mapping for fi-* statutory layouts; [bus-loans](./bus-loans) validates account IDs when reference datasets exist; accounting workflow uses accounts as master data.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-bfl">bus-bfl</a></span>
@@ -150,6 +126,6 @@ See [Development status](../implementation/development-status).
 
 - [Owns master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-reports](../sdd/bus-reports)
-- [Module SDD: bus-accounts](../sdd/bus-accounts)
+- [Module reference: bus-reports](../modules/bus-reports)
+- [Module reference: bus-accounts](../modules/bus-accounts)
 - [Accounts layout: Accounts area](../layout/accounts-area)

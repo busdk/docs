@@ -24,5 +24,5 @@ This action writes canonical records in [Reconciliations](./index) using approve
 ### Sources
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
-- [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
+- [Module reference: bus-reconcile](../../modules/bus-reconcile)
 - [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)

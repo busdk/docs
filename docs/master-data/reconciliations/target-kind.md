@@ -22,4 +22,4 @@ Allowed values:
 ### Sources
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
-- [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
+- [Module reference: bus-reconcile](../../modules/bus-reconcile)

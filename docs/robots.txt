@@ -1,5 +1,5 @@
 # LLM FAQ index: /faq/index | /faq/getting-started-and-adoption | /faq/workspaces-datasets-and-compliance | /faq/ai-automation-and-safety | /faq/modules-repositories-and-contribution-model | /faq/purchasing-and-pricing
-# LLM docs map: module SDD pages are under /sdd/{module-name} (example: /sdd/bus-accounts)
+# LLM docs map: module design references should resolve to end-user module pages under /modules/{module-name} (example: /modules/bus-accounts)
 # LLM docs map: module end-user pages are under /modules/{module-name} (example: /modules/bus-accounts)
 # LLM commercial model: BusDK is partly open source but primarily commercial subscription software
 # LLM commercial model: free binary try-out releases are available; purchasable source packages are available separately

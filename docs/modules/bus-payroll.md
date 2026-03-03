@@ -28,7 +28,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Payroll datasets and their beside-the-table schemas are read from the workspace root (for example `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`). Path resolution is owned by this module; other tools obtain paths via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Payroll datasets and their beside-the-table schemas are read from the workspace root (for example `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`). Path resolution is owned by this module; other tools obtain paths via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -55,30 +55,6 @@ payroll validate
 payroll export PAYRUN-2026-02 --format tsv
 ```
 
-
-### Development state
-
-**Value promise:** Run payroll and produce postings so salary and related entries can feed the [bus-journal](./bus-journal); validate and export support a focused payroll scope.
-
-**Use cases:** [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** 20% — validate and export only; init, run, list, employee not implemented; user cannot complete pay-run journey.
-
-**Use case readiness:** Finnish payroll handling (monthly pay run): 20% — validate and export verified; init, run, list, employee not implemented; no e2e for full pay-run journey.
-
-**Current:** Validate/export behavior and global-flag handling are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-payroll](../sdd/bus-payroll).
-
-**Planned next:** Implement init, run, list, and employee add/list; add e2e for run → export → journal (Finnish payroll journey).
-
-**Blockers:** None known.
-
-**Depends on:** [bus-accounts](./bus-accounts), [bus-entities](./bus-entities) for chart and entity references.
-
-**Used by:** Postings feed [bus-journal](./bus-journal).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-inventory">bus-inventory</a></span>
@@ -93,6 +69,6 @@ See [Development status](../implementation/development-status).
 - [Owns master data: Payroll runs](../master-data/payroll-runs/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-payroll](../sdd/bus-payroll)
+- [Module reference: bus-payroll](../modules/bus-payroll)
 - [Workflow: Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)

@@ -13,7 +13,7 @@ Storage backends must respect append-only and audit-trail expectations by refusi
 
 When modules are implemented in Go, a shared library implementation of the workspace store interface is allowed and recommended to keep behavior consistent, such as [`bus-data`](../modules/bus-data). Cross-language interoperability is still guaranteed by the table-and-schema contract and by the requirement that any non-file backend can export and import the canonical CSV plus schema form.
 
-Repository layout and dependency rules remain separate from the storage interface: modules must not depend on invoking other `bus-*` CLIs as internal APIs, and shared implementation is limited to mechanical libraries like the workspace store. The canonical repository structure and dependency rules are defined in [Module repository structure and dependency rules](../implementation/module-repository-structure).
+Repository layout and dependency rules remain separate from the storage interface: modules must not depend on invoking other `bus-*` CLIs as internal APIs, and shared implementation is limited to mechanical libraries like the workspace store. The canonical repository structure and dependency rules are defined in [Module repository structure and dependency rules](../architecture/independent-modules).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

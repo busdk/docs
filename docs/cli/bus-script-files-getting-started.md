@@ -105,4 +105,4 @@ If you want a practical file that combines several module commands in one run, u
 - [bus module reference](../modules/bus)
 - [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started)
 - [`.bus` script files — writing and execution guide](./bus-script-files)
-- [Module SDD: bus](../sdd/bus)
+- [Module reference: bus](../modules/bus)

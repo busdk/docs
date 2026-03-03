@@ -19,7 +19,7 @@ The module is filesystem-only. Export reads the [workspace](../layout/minimal-wo
 
 Bus replay does not infer missing historical intent — it exports what exists in the workspace and does not guess missing invoices, evidence, or mappings. The module does not perform network, filing submission, or Git operations. To export another revision, run `git checkout <ref>` in the repository and then run export. The intended users are operators and automation performing workspace migration, parity verification, or reproducible setup.
 
-For ERP history migrations, the intended first-class workflow is profile-driven import commands with auditable import artifacts. That workflow is specified in the SDD but not yet implemented as a replay-first command pattern in current module releases.
+For ERP history migrations, the intended first-class workflow is profile-driven import commands with auditable import artifacts. That workflow is specified in the design specification but not yet implemented as a replay-first command pattern in current module releases.
 
 ### Commands
 
@@ -51,11 +51,11 @@ The canonical replay representation is JSONL: one JSON object per line, with sta
 
 ### Export coverage and limitations
 
-Export with `--scope accounting` produces config, accounts, periods, journal postings, and attachment references. It does not emit operations that recreate row-level invoice or bank facts (sales-invoices, purchase-invoices, bank-transactions). A single artifact for full replay — including those row-level facts — is the target; until that is implemented, full replay may require additional scripts for invoice and bank data alongside the exported replay log. See [Implementation status](../sdd/bus-replay#implementation-status) in the module SDD.
+Export with `--scope accounting` produces config, accounts, periods, journal postings, and attachment references. It does not emit operations that recreate row-level invoice or bank facts (sales-invoices, purchase-invoices, bank-transactions). A single artifact for full replay — including those row-level facts — is the target; until that is implemented, full replay may require additional scripts for invoice and bank data alongside the exported replay log. See [Implementation status](../modules/bus-replay#implementation-status) in the module reference.
 
 ### Export and apply behavior
 
-Export never writes to workspace datasets. The export order (see [module SDD](../sdd/bus-replay#export-plan-default-accounting-snapshot)) is: workspace configuration, module baseline inits, master data (accounts, periods, attachment registrations), journal postings, then optional derived actions when enabled. Export produces this full accounting snapshot (inits, accounts add, period add/state, journal add) and is verified by golden and roundtrip tests. Each operation carries an idempotency guard (e.g. file absent, row absent) so that apply can skip it when the guard is already satisfied. Apply reads the log, evaluates each guard, and either skips (with a deterministic “skipped” record) or runs the command. Running the same log twice into the same workspace yields only “skipped” on the second run.
+Export never writes to workspace datasets. The export order (see [module reference](../modules/bus-replay#export-plan-default-accounting-snapshot)) is: workspace configuration, module baseline inits, master data (accounts, periods, attachment registrations), journal postings, then optional derived actions when enabled. Export produces this full accounting snapshot (inits, accounts add, period add/state, journal add) and is verified by golden and roundtrip tests. Each operation carries an idempotency guard (e.g. file absent, row absent) so that apply can skip it when the guard is already satisfied. Apply reads the log, evaluates each guard, and either skips (with a deterministic “skipped” record) or runs the command. Running the same log twice into the same workspace yields only “skipped” on the second run.
 
 ### Files
 
@@ -89,29 +89,6 @@ replay export --format jsonl --out ./tmp/replay.jsonl
 replay apply --in ./tmp/replay.jsonl --dry-run
 ```
 
-
-### Development state
-
-**Value promise:** Export a workspace to a deterministic, append-only replay log and apply it into a clean workspace so migrations and parity work can be reviewed in Git and re-run reproducibly.
-
-**Use cases:** [Orphan modules](../implementation/development-status#orphan-modules) — operator/automation (workspace migration, parity verification, reproducible setup); no documented end-user workflow page.
-
-**Completeness:** 70% — export→apply→render and idempotency are test-verified; user can complete workspace migration and re-run a log. First-class profile-driven ERP import replay is not implemented.
-
-**Use case readiness:** Workspace migration / parity verification: 70% — export, apply (dry-run and, when `bus` on PATH, real apply), render, and second-run idempotency verified by golden, roundtrip, and e2e; ERP history migration still uses generated scripts.
-
-**Current:** Deterministic export (empty and populated golden, `--append`, `--mode history`, `--scope all`, `--require-valid`, no workspace mutation) is verified by `internal/replay/golden_test.go`, `internal/replay/export_test.go`, and `tests/e2e.sh`. Apply guard evaluation, dry-run, TSV/JSON report, `--chdir`, stdin, and (when `bus` on PATH) real apply and idempotency are verified by `internal/replay/apply_test.go`, `internal/replay/executor_inprocess_test.go`, and `tests/e2e.sh`. Render to POSIX sh is verified by `internal/replay/render_test.go` and e2e. CLI and global flags are verified by `cmd/bus-replay/main_test.go` and `internal/cli/flags_test.go`. Profile-driven ERP import replay is not implemented.
-
-**Planned next:** First-class replay support for profile-driven ERP import operations (`bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024`, `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`) with deterministic guards and auditable import-artifact references (SDD FR-RPL-008); advances workspace migration when [Import ERP history](../workflow/import-erp-history-into-canonical-datasets) is the workflow.
-
-**Blockers:** None known.
-
-**Depends on:** [bus config](./bus-config), [bus data](./bus-data), [bus accounts](./bus-accounts), [bus period](./bus-period), [bus journal](./bus-journal), [bus attachments](./bus-attachments); optionally [bus vat](./bus-vat) and report-producing modules when included.
-
-**Used by:** Operators and automation; no other BusDK module invokes replay.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-reports">bus-reports</a></span>
@@ -122,8 +99,8 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-replay](../sdd/bus-replay)
+- [Module reference: bus-replay](../modules/bus-replay)
 - [Workspace layout](../layout/minimal-workspace-baseline)
 - [Standard global flags](../cli/global-flags)
-- [Development status](../implementation/development-status)
+- [Development status](../modules/features)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)

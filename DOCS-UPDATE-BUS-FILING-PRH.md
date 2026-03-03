@@ -6,7 +6,7 @@ This file tells maintainers of the BusDK design documentation (docs.busdk.com) h
 
 The docs at docs.busdk.com have been updated to match the implementation:
 
-- **Module SDD ([docs.busdk.com/sdd/bus-filing-prh](https://docs.busdk.com/sdd/bus-filing-prh)):** Open Questions is "None at this time"; OQ-PRH-001 appears under "Resolved open questions" with the resolution text. Component Design (IF-PRH-001) states that the parameter set is defined by the tool's `--help` for a pinned version and is stable, with a link to the module CLI reference. Document control shows version/last updated 2026-02-18.
+- **Module SDD ([sdd/docs/modules/bus-filing-prh.md](sdd/docs/modules/bus-filing-prh.md)):** Open Questions is "None at this time"; OQ-PRH-001 appears under "Resolved open questions" with the resolution text. Component Design (IF-PRH-001) states that the parameter set is defined by the tool's `--help` for a pinned version and is stable, with a link to the module CLI reference. Document control shows version/last updated 2026-02-18.
 - **Module CLI reference ([docs.busdk.com/modules/bus-filing-prh](https://docs.busdk.com/modules/bus-filing-prh)):** Development state shows Completeness and Use case readiness as "High"; Current notes OQ-PRH-001 closed and FR-PRH-002 and full PRH SBR iXBRL implemented and covered by e2e; Planned next describes extended bundle metadata, README/doc links, and bus-filing contract follow-ups, with FR-PRH-002 and SBR iXBRL stated as implemented.
 
 No further changes are required for the current implementation.

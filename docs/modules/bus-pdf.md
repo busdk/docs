@@ -24,7 +24,7 @@ Template selection is inside the render model via the `template` field (template
 There is no separate CLI template flag.
 Built-in templates are **fi-invoice-a4** and **plain-a4**.
 
-For Finnish regulated TASE/tuloslaskelma PDFs, use [bus-reports](./bus-reports) with `--format pdf` (see [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)).
+For Finnish regulated TASE/tuloslaskelma PDFs, use [bus-reports](./bus-reports) with `--format pdf` (see [Regulated report PDFs (TASE and tuloslaskelma)](../modules/bus-reports)).
 
 ### Render model
 
@@ -33,7 +33,7 @@ The value can be a template identifier or repository-relative template path.
 The module uses this value to select the template for rendering.
 
 For invoice PDFs, payload must conform to invoice render-model schema (header, lines, totals/VAT as applicable).
-Full schema details are in [Module SDD: bus-pdf](../sdd/bus-pdf).
+Full schema details are in [Module reference: bus-pdf](../modules/bus-pdf).
 
 ### Options
 
@@ -73,30 +73,6 @@ pdf --data ./render/invoice-2001.json --out ./out/invoice-2001.pdf --overwrite
 pdf --data ./render/invoice-2002.json --out ./out/invoice-2002.pdf
 ```
 
-
-### Development state
-
-**Value promise:** Render deterministic PDFs from JSON (e.g. invoice data) so [bus-invoices](./bus-invoices) can produce `bus invoices pdf` and other modules can emit documents from workspace data.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (step [Generate invoice PDF and register attachment](../workflow/generate-invoice-pdf-and-register-attachment)), [Sale invoicing](../workflow/sale-invoicing).
-
-**Completeness:** 70% — Render step test-verified; user can produce PDF from file or stdin; `bus invoices pdf` not yet in [bus-invoices](./bus-invoices).
-
-**Use case readiness:** Generate invoice PDF and register attachment: 70% — render verified; `bus invoices pdf` not in [bus-invoices](./bus-invoices). Sale invoicing (sending invoices to customers): 70% — PDF step verified; `bus invoices pdf` not in [bus-invoices](./bus-invoices).
-
-**Current:** Rendering from file/stdin, template resolution, overwrite behavior, determinism, and global-flag handling are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-pdf](../sdd/bus-pdf).
-
-**Planned next:** None in PLAN.md; all documented requirements satisfied by current implementation.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-invoices](./bus-invoices) (for `bus invoices pdf`).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-vat">bus-vat</a></span>
@@ -110,6 +86,6 @@ See [Development status](../implementation/development-status).
 - [Master data: Documents (evidence)](../master-data/documents/index)
 - [Master data: Sales invoices](../master-data/sales-invoices/index)
 - [Master data: Purchase invoices](../master-data/purchase-invoices/index)
-- [Module SDD: bus-pdf](../sdd/bus-pdf)
+- [Module reference: bus-pdf](../modules/bus-pdf)
 - [Layout: Invoice PDF storage](../layout/invoice-pdf-storage)
-- [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
+- [Regulated report PDFs (TASE and tuloslaskelma)](../modules/bus-reports)

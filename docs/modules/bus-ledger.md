@@ -119,24 +119,6 @@ ledger serve --print-url
 ledger -C ./workspace serve --print-url
 ```
 
-### Development state
-
-**Value promise:** focused daybook browsing UI with transaction list and
-prev/next transaction detail navigation.
-
-**Completeness:** 100% for the initial scope.
-
-**Current:** day-book and general-ledger list modes, transaction detail panel
-with line summary list, previous/next navigation, unit tests, and e2e coverage.
-Current scope also includes the AI assistant side panel with persisted threads,
-model selection, drag-and-drop attachments, inline approvals, markdown-style
-inline formatting, and server-visible client diagnostics.
-
-**Planned next:** optional filtering and ledger-specific projections can be
-added later without changing the base browse flow.
-
-**Blockers:** None known.
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-books">bus-books</a></span>
@@ -147,5 +129,5 @@ added later without changing the base browse flow.
 
 ### Sources
 
-- [bus-ledger SDD](../sdd/bus-ledger)
+- [bus-ledger reference](../modules/bus-ledger)
 - [Standard global flags](../cli/global-flags)

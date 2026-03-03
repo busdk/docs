@@ -36,7 +36,7 @@ The posting output from `bus payroll export` is intended to be consumed by the j
 
 Today the [bus-payroll](../modules/bus-payroll) module implements `validate` and `export`. Integration tests in the module repository prove that validation succeeds for complete payroll datasets and that export produces deterministic CSV posting lines for a given run; global flags (including `-C`, `-o`, `-q`, `-v`, `--color`, `--format`) are covered by unit and integration tests. The end-to-end journey from empty workspace through employee register and monthly run to journal append is not yet first-class in this module, because commands such as `init`, `run`, `list`, and employee maintenance are still planned. In practice you can maintain payroll CSV and schema files (by hand or by another tool), run `bus payroll validate` to check consistency, and run `bus payroll export <run-id>` to obtain posting CSV for manual or scripted journal append.
 
-Planned extensions include first-class `init`, `run`, `list`, and `employee` command surfaces, deeper employer-cost handling, and integration with authority filing (for example tax and pension reporting). Those are out of scope for this workflow page; the [Development status](../implementation/development-status#finnish-payroll-handling-monthly-pay-run) table summarizes current readiness per module for this journey.
+Planned extensions include first-class `init`, `run`, `list`, and `employee` command surfaces, deeper employer-cost handling, and integration with authority filing (for example tax and pension reporting). Those are out of scope for this workflow page; the [Development status](../modules/features) table summarizes current readiness per module for this journey.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -52,4 +52,4 @@ Planned extensions include first-class `init`, `run`, `list`, and `employee` com
 - [Employees master data](../master-data/employees/index)
 - [Payroll runs master data](../master-data/payroll-runs/index)
 - [Accounting workflow overview](./accounting-workflow-overview)
-- [Development status](../implementation/development-status)
+- [Development status](../modules/features)

@@ -54,7 +54,7 @@ If an asset is fully depreciated before disposal month, no extra depreciation ro
 
 ### Files
 
-Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -100,30 +100,6 @@ assets depreciate --period 2026-04 --asset-id PHONE-002 --post-date 2026-04-30
 assets dispose --asset-id PHONE-002 --date 2027-01-15 --proceeds-account 1910 --gain-account 3760 --loss-account 7760 --proceeds 150
 ```
 
-
-### Development state
-
-**Value promise:** Maintain fixed-asset register and depreciation so schedule and post produce journal postings, and asset data supports the significant-assets list for the evidence pack.
-
-**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
-
-**Completeness:** 90% — Full asset lifecycle and postings verified by tests; user can complete register, depreciation, and disposal and produce postings for the evidence pack.
-
-**Use case readiness:** Finnish company reorganisation (yrityssaneeraus): 90% — full lifecycle and postings verified; FR-AST-003, FR-AST-004 and dispose required-args verified by unit and e2e.
-
-**Current:** Init/add/validate/schedule/post/depreciate/dispose and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-assets](../sdd/bus-assets).
-
-**Planned next:** None in PLAN.md.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** Postings feed [journal](./bus-journal); asset accounts in [reports](./bus-reports).
-
-See [Development status](../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-reconcile">bus-reconcile</a></span>
@@ -138,5 +114,5 @@ See [Development status](../implementation/development-status#finnish-company-re
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Documents (evidence)](../master-data/documents/index)
-- [Module SDD: bus-assets](../sdd/bus-assets)
+- [Module reference: bus-assets](../modules/bus-assets)
 - [Audit trail expectations: Append-only and soft deletion](../data/append-only-and-soft-deletion)

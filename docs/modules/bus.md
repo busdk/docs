@@ -155,7 +155,7 @@ Atomicity is configurable and the default transaction provider is `none`. Prefer
 
 Dispatch during busfile runs is automatic: an in-process runner is used when available, otherwise shell lookup (`bus-<module>` on `PATH`) is used when enabled. Shell lookup can be disabled with `bus.busfile.dispatch.shell_lookup_enabled=false` in preferences or workspace config.
 
-For deeper transaction/dispatch internals, see [Module SDD: bus (dispatcher)](../sdd/bus).
+For deeper transaction/dispatch internals, see [Module reference: bus (dispatcher)](../modules/bus).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -167,7 +167,7 @@ For deeper transaction/dispatch internals, see [Module SDD: bus (dispatcher)](..
 
 ### Sources
 
-- [Module SDD: bus (dispatcher)](../sdd/bus)
+- [Module reference: bus (dispatcher)](../modules/bus)
 - [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started)
 - [`.bus` script files (writing and execution guide)](../cli/bus-script-files)
 - [CLI command structure](../cli/command-structure)

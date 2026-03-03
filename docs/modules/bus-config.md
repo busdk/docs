@@ -103,7 +103,7 @@ bus config set reporting-standard fi-pma
 
 ### Files
 
-The module reads and writes `datapackage.json` at the workspace root. The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `set` subcommand updates only that subtree in place. Path resolution for the workspace configuration file is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module reads and writes `datapackage.json` at the workspace root. The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `set` subcommand updates only that subtree in place. Path resolution for the workspace configuration file is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Exit status and errors
 
@@ -123,30 +123,6 @@ config set --base-currency EUR --vat-registered true --vat-reporting-period mont
 config set reporting-standard fi-pma
 ```
 
-
-### Development state
-
-**Value promise:** Create and update workspace configuration (`datapackage.json`) and accounting-entity settings so every BusDK workspace has a single, schema-valid source for currency, fiscal year, and VAT settings.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview).
-
-**Completeness:** 90% — init and set (batch and per-property) verified by e2e and unit tests; idempotent init and deterministic entity updates; only set no-flags no-op (no write, no message) not yet verified.
-
-**Use case readiness:** Accounting workflow: 90% — workspace-config step verified; user can create/update entity before domain inits; set no-flags no-op not verified.
-
-**Current:** Init and set (batch and per-property), plus global-flag behavior, are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-config](../sdd/bus-config).
-
-**Planned next:** Set with no property flags: exit 0 without writing and without printing "Updated datapackage.json." (PLAN.md); advances scriptability for the accounting workflow.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-data](./bus-data) (Go library) for creating the empty `datapackage.json` when the file is missing.
-
-**Used by:** [bus-init](./bus-init) runs `bus config init` first.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-init">bus-init</a></span>
@@ -160,8 +136,8 @@ See [Development status](../implementation/development-status).
 - [Workspace configuration (datapackage.json extension)](../data/workspace-configuration)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [bus-reports CLI reference](../modules/bus-reports)
-- [bus-reports SDD](../sdd/bus-reports)
-- [Module SDD: bus-config](../sdd/bus-config)
+- [bus-reports reference](../modules/bus-reports)
+- [Module reference: bus-config](../modules/bus-config)
 - [Workflow: Initialize repo](../workflow/initialize-repo)
 - [Vero: Pienet yritykset voivat tilittää arvonlisäveron maksuperusteisesti](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/vahainen-liiketoiminta-on-arvonlisaverotonta/pienyrityksen-maksuperusteinen-alv)
 - [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos)

@@ -27,7 +27,7 @@ Put the change in the smallest owning boundary that can safely host it. Module-s
 
 ### Do module changes require docs updates?
 
-Yes. User-visible behavior changes should update [module docs](../modules/index) and [SDD references](../sdd/modules) in the same change set so documentation remains a reliable operational reference.
+Yes. User-visible behavior changes should update [module docs](../modules/index) and [design references](../modules/index) in the same change set so documentation remains a reliable operational reference.
 
 ### Can teams maintain private extensions without forking everything?
 
@@ -35,7 +35,7 @@ Yes. BusDK’s modular structure allows private capability layers to evolve with
 
 ### Where can I discover module capability coverage quickly?
 
-Use the [module feature table](../modules/features) for cross-module capability scanning, then open the relevant module page for command details and the [module SDD](../sdd/modules) page for design-level contracts.
+Use the [module feature table](../modules/features) for cross-module capability scanning, then open the relevant module page for command details and the [module reference](../modules/index) page for design-level contracts.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

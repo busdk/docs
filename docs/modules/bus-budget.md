@@ -36,7 +36,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Budget datasets such as `budgets.csv` and their beside-the-table schemas in the budgeting area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `budgets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+Budget datasets such as `budgets.csv` and their beside-the-table schemas in the budgeting area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `budgets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -68,30 +68,6 @@ budget set --account 6200 --year 2026 --period 02 --amount 900
 budget report --period 2026Q1 --format tsv
 ```
 
-
-### Development state
-
-**Value promise:** Maintain budget dataset so [bus-reports](./bus-reports) can produce budget-vs-actual and planning workflows have a single source for budget figures.
-
-**Use cases:** [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack). Workflow: [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual).
-
-**Completeness:** 70% (Broadly usable) — init, add, set, and report are test-verified and deterministic; users can maintain budget rows and produce variance output for reporting workflows.
-
-**Use case readiness:** Finnish company reorganisation: 70% — init/add/set/report are verified; users can maintain budgets and produce budget-vs-actual output for evidence workflows.
-
-**Current:** Init/add/set/report and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-budget](../sdd/bus-budget).
-
-**Planned next:** Improve variance summaries and validation detail for large datasets, and expand schema constraint support (README roadmap). Advances Finnish reorganisation evidence-pack and [Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual) workflow.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-reports](./bus-reports) optionally reads the budget dataset for budget-vs-actual.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-payroll">bus-payroll</a></span>
@@ -105,5 +81,5 @@ See [Development status](../implementation/development-status).
 - [Owns master data: Budgets](../master-data/budgets/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-budget](../sdd/bus-budget)
+- [Module reference: bus-budget](../modules/bus-budget)
 - [Workflow: Budgeting and budget vs actual](../workflow/budgeting-and-budget-vs-actual)

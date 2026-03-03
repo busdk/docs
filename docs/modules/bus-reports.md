@@ -44,7 +44,7 @@ The module covers statement output, comparatives, consistency checks, and PDF me
 
 The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`.
 
-These ids are presets of the general layout mechanism documented in [Module SDD: bus-reports](../sdd/bus-reports).
+These ids are presets of the general layout mechanism documented in [Module reference: bus-reports](../modules/bus-reports).
 `--layout <file>` remains available for custom layouts.
 The selected layout governs text, CSV, JSON, KPA/PMA, and PDF outputs.
 
@@ -68,7 +68,7 @@ For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in lay
 
 For balance-sheet and profit-and-loss, `--comparatives <on|off>` overrides the workspace profile default for comparative columns. When omitted, behavior comes from workspace configuration.
 
-For detailed statutory mapping and parity behavior, see [Module SDD: bus-reports](../sdd/bus-reports).
+For detailed statutory mapping and parity behavior, see [Module reference: bus-reports](../modules/bus-reports).
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
 
@@ -138,30 +138,6 @@ reports parity --format csv
 reports day-book --period 2026-01 --format pdf
 ```
 
-
-### Development state
-
-**Value promise:** Produce trial balance, general-ledger, account-ledger, and statement-style reports from journal and period data so the accounting workflow can generate financial output after close.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
-
-**Completeness:** 90% — Close-step report commands and formats (text/csv/markdown/json/kpa/pma/pdf) are verified by e2e and unit tests; user can complete the report step in all three use cases. `bus reports journal-coverage`, `bus reports parity`, and `bus reports journal-gap` are implemented as deterministic migration-review artifacts, and profile-driven defaults (FR-REP-005), report-account-mapping (FR-REP-007), and comparatives (FR-REP-008) are covered by tests.
-
-**Use case readiness:** Accounting workflow: 90% — Trial-balance, general-ledger, day-book, profit-and-loss, balance-sheet, account-ledger with text/csv/json/markdown/kpa/pma/pdf, built-in statutory layouts (kpa, pma, kpa-full), TASE/tuloslaskelma PDF, and layout-file selection verified by e2e and unit tests; report step completable. Finnish bookkeeping and tax-audit compliance: 90% — Reports, traceability (basis in JSON), statutory layouts and PDF output verified by e2e; user can produce statement outputs for compliance. Finnish company reorganisation: 90% — Trial balance and ledgers as audit evidence; statutory layouts and PDF verified by e2e; evidence-pack report step completable.
-
-**Current:** Trial balance, ledger, statutory statement outputs, layout selection, and migration-quality reports are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-reports](../sdd/bus-reports).
-
-**Planned next:** None in PLAN.md.
-
-**Blockers:** None known.
-
-**Depends on:** [journal](./bus-journal), [period](./bus-period); optionally [budget](./bus-budget).
-
-**Used by:** End users for reporting; no other module invokes it.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-budget">bus-budget</a></span>
@@ -174,12 +150,12 @@ See [Development status](../implementation/development-status).
 
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-reports](../sdd/bus-reports)
+- [Module reference: bus-reports](../modules/bus-reports)
 - [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
-- [Module SDD: bus-validate](../sdd/bus-validate)
-- [Module SDD: bus-reconcile](../sdd/bus-reconcile)
+- [Module reference: bus-validate](../modules/bus-validate)
+- [Module reference: bus-reconcile](../modules/bus-reconcile)
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
-- [Regulated report PDFs (TASE and tuloslaskelma)](../implementation/regulated-report-pdfs)
+- [Regulated report PDFs (TASE and tuloslaskelma)](../modules/bus-reports)
 - [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration)
 - [PRH: Tilinpäätösilmoituksen asiakirjat kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/ilmoituksen_liitteet.html)
 - [PRH: Digitaalinen iXBRL-rajapinta ohjelmistoyrityksille](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/digitaalinen-tilinpaatosraportointi/rajapinta.html)

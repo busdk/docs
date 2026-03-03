@@ -102,7 +102,7 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 - [bus-config CLI reference](../modules/bus-config)
 - [bus-reports CLI reference](../modules/bus-reports)
-- [bus-reports SDD](../sdd/bus-reports)
+- [bus-reports reference](../modules/bus-reports)
 - [Accounting entity](../master-data/accounting-entity/index)
 - [Initialize a new repository](../workflow/initialize-repo)
 - [Minimal workspace baseline (after initialization)](../layout/minimal-workspace-baseline)

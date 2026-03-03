@@ -35,7 +35,7 @@ Requests outside token prefix return `404`.
 `--route-config` configures HTTP method/path dispatch to request/reply events and provider capability declarations.
 `--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...` when matching providers are allowlisted.
 For built-in adapters, module resource ownership is explicit and library-based for all built-ins. Data-owning modules resolve paths through their Go path APIs (including reports through `bus-reports/path`); modules without owned datasets return empty module resource lists.
-For complete API contract and security model, see [Module SDD: bus-api](../sdd/bus-api).
+For complete API contract and security model, see [Module reference: bus-api](../modules/bus-api).
 
 ### Commands
 
@@ -64,7 +64,7 @@ Mutation operations are atomic and leave workspace unchanged on failure.
 Error responses use stable JSON shape.
 
 When module adapters are enabled, module endpoints are mounted under `/{token}/v1/modules/{module}/...`.
-For full endpoint matrix and error contracts, see [Module SDD: bus-api](../sdd/bus-api).
+For full endpoint matrix and error contracts, see [Module reference: bus-api](../modules/bus-api).
 
 ### OpenAPI document
 
@@ -110,30 +110,6 @@ api serve --read-only --port 8080
 api openapi --output ./out/openapi.json
 ```
 
-
-### Development state
-
-**Value promise:** Expose a local REST JSON API over the BusDK workspace so tools and the spreadsheet UI can read and write datasets over HTTP without invoking module CLIs.
-
-**Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
-
-**Completeness:** 80% — Core API journey, explicit provider allowlisting, route-config dispatch, and event envelope/capability validation are test-covered; provider-domain extraction is tracked in provider module plans.
-
-**Use case readiness:** Workbook and validated tabular editing: 80% — API-driven discovery, CRUD, validation, schema read/mutation, event stream, read-only, and route-config dispatch are available; full provider-domain extraction is in progress.
-
-**Current:** Serve/openapi/version flows, CRUD/validation/schema operations, module adapter mounts, and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-api](../sdd/bus-api).
-
-**Planned next:** Continue extraction in provider modules: `bus-api-provider-data`, `bus-api-provider-books`, and `bus-api-provider-session`.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-data](./bus-data), [bus-bfl](./bus-bfl) (formula).
-
-**Used by:** [bus-sheets](./bus-sheets) and [bus-books](./bus-books) embed this API in-process for the spreadsheet UI and the bookkeeping UI respectively.
-
-See [Development status](../implementation/development-status#spreadsheet-workbooks).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-data">bus-data</a></span>
@@ -144,7 +120,7 @@ See [Development status](../implementation/development-status#spreadsheet-workbo
 
 ### Sources
 
-- [Module SDD: bus-api](../sdd/bus-api)
+- [Module reference: bus-api](../modules/bus-api)
 - [bus-data CLI reference](./bus-data)
 - [Standard global flags](../cli/global-flags)
 - [OpenAPI Specification (OAS) 3.1](https://spec.openapis.org/oas/v3.1.0.html)

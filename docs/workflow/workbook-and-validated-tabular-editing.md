@@ -5,9 +5,9 @@ description: Local web-based workbook over workspace datasets with schema-valida
 
 ## Workbook and validated tabular editing
 
-As a BusDK workspace user you get a lightweight, local, web-based workbook that shows workspace datasets as spreadsheet-like tables and lets you create and edit rows with strict schema validation, so you can maintain reliable typed tabular data without accidentally breaking formats. Formula-projected fields and, when enabled, an agent that can run Bus CLI tools support reproducible, auditable calculations and transformations. The workbook is the generic entry point; [bus-books](../sdd/bus-books) provides dedicated, task-specific accounting screens (journal, periods, VAT, bank, invoices, attachments) that write to the same validated workspace data.
+As a BusDK workspace user you get a lightweight, local, web-based workbook that shows workspace datasets as spreadsheet-like tables and lets you create and edit rows with strict schema validation, so you can maintain reliable typed tabular data without accidentally breaking formats. Formula-projected fields and, when enabled, an agent that can run Bus CLI tools support reproducible, auditable calculations and transformations. The workbook is the generic entry point; [bus-books](../modules/bus-books) provides dedicated, task-specific accounting screens (journal, periods, VAT, bank, invoices, attachments) that write to the same validated workspace data.
 
-The [bus-sheets](../modules/bus-sheets) module is the canonical implementation. It embeds [bus-api](../modules/bus-api) in-process and relies on [bus-data](../modules/bus-data) and [bus-bfl](../modules/bus-bfl) for schema, row operations, and formula semantics. Module readiness is summarised in [Development status — BusDK modules](../implementation/development-status#workbook-and-validated-tabular-editing) under **Workbook and validated tabular editing**.
+The [bus-sheets](../modules/bus-sheets) module is the canonical implementation. It embeds [bus-api](../modules/bus-api) in-process and relies on [bus-data](../modules/bus-data) and [bus-bfl](../modules/bus-bfl) for schema, row operations, and formula semantics. Module readiness is summarised in [Development status — BusDK modules](../modules/features) under **Workbook and validated tabular editing**.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -23,4 +23,4 @@ The [bus-sheets](../modules/bus-sheets) module is the canonical implementation. 
 - [bus-api](../modules/bus-api)
 - [bus-data](../modules/bus-data)
 - [bus-bfl](../modules/bus-bfl)
-- [Development status — BusDK modules](../implementation/development-status#workbook-and-validated-tabular-editing)
+- [Development status — BusDK modules](../modules/features)

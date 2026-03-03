@@ -62,30 +62,6 @@ filing vero --format json
 filing tax-audit-pack --output ./out/tax-audit-pack.tsv
 ```
 
-
-### Development state
-
-**Value promise:** Orchestrate filing by delegating to target executables (e.g. [bus-filing-prh](./bus-filing-prh), [bus-filing-vero](./bus-filing-vero)) so users can run `bus filing <target>` and produce PRH/Vero bundles from closed-period data.
-
-**Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
-
-**Completeness:** 60% (Stable) — delegation to all three targets (prh, vero, tax-audit-pack), list, global flags, args pass-through, workdir/env, and exit code propagation are verified by e2e and unit tests; bundle assembly (FR-FIL-001) is not yet implemented or documented as delegated (PLAN).
-
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 60% — user can run `bus filing prh` / `vero` / `tax-audit-pack` with correct delegation; bundle delivery depends on targets and stable contract.
-
-**Current:** Delegation to `prh`, `vero`, and `tax-audit-pack`, plus global-flag and exit propagation behavior, are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-filing](../sdd/bus-filing).
-
-**Planned next:** Clarify or implement FR-FIL-001 (bundle assembly from validated closed-period data or document delegation to targets); define parameter set for tax-audit-pack (OQ-FIL-001). Both advance Finnish bookkeeping and tax-audit compliance when bundle contract is stable.
-
-**Blockers:** Stable bundle contract needed for filing targets to consume.
-
-**Depends on:** [bus-period](./bus-period), [bus-journal](./bus-journal) (closed-period, validated data).
-
-**Used by:** Invokes [bus-filing-prh](./bus-filing-prh) and [bus-filing-vero](./bus-filing-vero) as targets when users run `bus filing <target>`.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-pdf">bus-pdf</a></span>
@@ -100,7 +76,7 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: VAT treatment](../master-data/vat-treatment/index)
-- [Module SDD: bus-filing](../sdd/bus-filing)
+- [Module reference: bus-filing](../modules/bus-filing)
 - [Compliance: Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 - [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
 - [Finnish balance sheet and income statement regulation](../compliance/fi-balance-sheet-and-income-statement-regulation)

@@ -17,7 +17,7 @@ In the current CLI surface, `bus accounts add` records the core account identity
 
 Finnish statutory statement mapping is modeled as a companion dataset, `report-account-mapping.csv`, with schema `report-account-mapping.schema.json`. Each mapping row binds one account to one statement line for one layout identifier (for example `fi-kpa-tase` or `fi-kpa-tuloslaskelma-kululaji`) and includes sign-handling metadata. This keeps account master data and statutory layout mapping deterministic and auditable as repository data.
 
-Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the chart (and schema) via the [bus accounts](../../modules/bus-accounts) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../sdd/modules#data-path-contract-for-read-only-cross-module-access).
+Secondary read-only use cases are provided by these modules when they consume this object for validation, matching, posting, or reporting. Consuming modules obtain the path to the chart (and schema) via the [bus accounts](../../modules/bus-accounts) module's API, not by hardcoding file names; see [Data path contract for read-only cross-module access](../../modules/index#data-path-contract-for-read-only-cross-module-access).
 
 [bus invoices](../../modules/bus-invoices) references accounts for invoice-row classification. [bus journal](../../modules/bus-journal) posts to accounts and reports balances. [bus bank](../../modules/bus-bank) maps bank accounts and statement items to ledger accounts, and [bus reports](../../modules/bus-reports) reads account structure and statement mappings for statutory outputs.
 
@@ -57,4 +57,4 @@ Statutory statement mapping rows reference account ids from this chart and layou
 - [Accounting workflow overview](../../workflow/accounting-workflow-overview)
 - [Configure chart of accounts](../../workflow/configure-chart-of-accounts)
 - [Account types in double-entry bookkeeping](../../data/account-types)
-- [bus-reports module SDD](../../sdd/bus-reports)
+- [bus-reports module reference](../../modules/bus-reports)

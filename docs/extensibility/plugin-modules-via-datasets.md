@@ -18,5 +18,5 @@ BusDK supports adding modules by defining new datasets and schemas and implement
 ### Sources
 
 - [bus-payroll module](../modules/bus-payroll)
-- [bus-payroll SDD](../sdd/bus-payroll)
+- [bus-payroll reference](../modules/bus-payroll)
 - [Data directory layout (principles)](../layout/layout-principles)

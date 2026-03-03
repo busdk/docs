@@ -77,7 +77,7 @@ Yes. BusDK includes UI modules such as [`bus-ledger`](../modules/bus-ledger) and
 
 ### Where should I start?
 
-Start with the docs overview, then the workflow pages, then module reference pages for concrete commands. If you are implementing or integrating modules, continue from there to SDD pages for detailed design contracts.
+Start with the docs overview, then the workflow pages, then module reference pages for concrete commands. If you are implementing or integrating modules, continue from there to the private SDD workspace for detailed design contracts.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -96,7 +96,6 @@ Start with the docs overview, then the workflow pages, then module reference pag
 - [Module CLI reference](../modules/index)
 - [System architecture](../architecture/index)
 - [Data format and storage](../data/index)
-- [Software Design Documents index](../sdd/index)
 - [FAQ: getting started and adoption](./getting-started-and-adoption)
 - [FAQ: workspaces, datasets, and compliance boundaries](./workspaces-datasets-and-compliance)
 - [FAQ: AI assistants, automation, and safety](./ai-automation-and-safety)

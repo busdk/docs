@@ -124,30 +124,6 @@ journal add --date 2026-01-31 --desc "Bank fee" --debit 6570=12.50 --credit 1910
 journal balance --as-of 2026-01-31
 ```
 
-
-### Development state
-
-**Value promise:** Append balanced ledger postings to the workspace journal so reports, VAT, and filing can consume a single, authoritative transaction stream.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** 70% — Record-postings and balance steps are journey-complete; init (index, dimension metadata, period files on first add), add by code/name, balance, dry-run, and NFR-JRN-001 closed-period reject are test-verified.
-
-**Use case readiness:**  
-[Accounting workflow](../workflow/accounting-workflow-overview): 70% — record-postings and balance steps are usable, and init/add/balance/dry-run/NFR-JRN-001 are verified. [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack): 70% — append path, balances, NFR-JRN-001, and audit columns in period CSV are verified. [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run): 70% — posting path is ready for payroll export, including init/add/balance and closed-period rejection checks.
-
-**Current:** `tests/e2e.sh` verifies help, version, global flags (color, format, chdir, output, quiet, `--`, `-vv`), init (journal index, dimension metadata, period files on first add), idempotent and partial-init, dry-run init/add, add by code and name, balance (TSV, `--as-of`, `-o`, `-q`), NFR-JRN-001 (closed period via journal-closed-periods.csv and periods.csv), NFR-JRN-004 (self-referencing FK in accounts), and missing-required-flags exit 2. Unit tests in `internal/app/run_test.go`, `internal/app/init_test.go`, `internal/app/integration_test.go`, `internal/journal/period_test.go`, `internal/journal/validate_test.go`, `internal/journal/add_test.go`, `internal/cli/flags_test.go` cover flags, init, balance/add, period integrity, validation, and post args.
-
-**Planned next:** Continued replay workflow hardening and profile-driven ingest improvements; add-from-stdin and bulk add are implemented.
-
-**Blockers:** [bus-period](./bus-period) writing closed-period file so period integrity is enforceable in full workflow.
-
-**Depends on:** [bus-accounts](./bus-accounts) (chart of accounts for `add`/`balance`); [bus-period](./bus-period) (period state for closed/lock reject). Paths and data via those modules' APIs; see [Module SDD](../sdd/bus-journal).
-
-**Used by:** [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-reconcile](./bus-reconcile), [bus-filing](./bus-filing) (read journal data).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-invoices">bus-invoices</a></span>
@@ -161,7 +137,7 @@ See [Development status](../implementation/development-status).
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Documents (evidence)](../master-data/documents/index)
-- [Module SDD: bus-journal](../sdd/bus-journal)
+- [Module reference: bus-journal](../modules/bus-journal)
 - [Layout: Journal area](../layout/journal-area)
 - [Design: Double-entry ledger](../design-goals/double-entry-ledger)
 - [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

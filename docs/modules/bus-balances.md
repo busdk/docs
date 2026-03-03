@@ -66,7 +66,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Snapshot dataset and effective record
 
-The module owns **`balances.csv`** and **`balances.schema.json`** at the workspace root. Each row has an as-of date, account code, amount (signed), optional source and notes, and `recorded_at`. The dataset is **append-only**; you correct a balance by appending a new row. For a given as-of date and account, the **effective** balance is the row with the latest `recorded_at`. `list` and `apply` use only effective rows. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module owns **`balances.csv`** and **`balances.schema.json`** at the workspace root. Each row has an as-of date, account code, amount (signed), optional source and notes, and `recorded_at`. The dataset is **append-only**; you correct a balance by appending a new row. For a given as-of date and account, the **effective** balance is the row with the latest `recorded_at`. `list` and `apply` use only effective rows. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Input CSV format (for import)
 
@@ -141,29 +141,6 @@ balances add --as-of 2025-12-31 --account 3200 --amount -5000
 balances apply --as-of 2025-12-31 --post-date 2026-01-01 --period 2026-01
 ```
 
-
-### Development state
-
-**Value promise:** Own an append-only balance snapshot dataset; build snapshots with add or import; materialize a snapshot into one balanced journal transaction for opening or cutover so users can adopt BusDK without a prior workspace.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview) (opening/cutover step).
-
-**Completeness:** 60% — Opening/cutover journey verified by e2e and unit tests; user can complete init→apply flow; balanced transaction and replace verified.
-
-**Use case readiness:** Accounting workflow (opening/cutover): 60% — User can complete init, add, import (incl. `--allow-unknown-accounts` report and no rows), validate, list, and apply (incl. replace); e2e and unit tests verify effective-record, replace-marker, balanced transaction.
-
-**Current:** Init (idempotent; one-file-only or header mismatch exit 1), add (amount or debit/credit; unknown account refused), import (valid CSV appends; unknown no rows; `--allow-unknown-accounts` reports and no rows), validate, list (effective, tsv/csv, `--output`, `--quiet`, `--`), template, and apply (first run; second without replace refuses, with replace succeeds; marker; balanced) verified by `tests/e2e.sh`. Effective-record selection by `snapshot/record_test.go`; replace-by-marker by `internal/workspace/journal_test.go`; apply balanced and deterministic order by `internal/cli/run_test.go` (TestRun_ApplyTransaction_balanced_deterministicOrder_balancingLine); import unknown-account and `--allow-unknown-accounts` by e2e and `internal/cli/run_test.go`; period-open precondition by `internal/workspace/period_test.go`. Global flags by `internal/cli/flags_test.go` and e2e; schema by `snapshot/schema_test.go`; path accessors by `path/path_test.go`.
-
-**Planned next:** None in PLAN; optional: [bus-period](./bus-period) library for path/state; e2e run bus journal validate after apply when bus on PATH (e2e runs it conditionally). Advances Accounting workflow opening/cutover.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-accounts](./bus-accounts) (chart of accounts), [bus-period](./bus-period) (period state), [bus-journal](./bus-journal) (append and validate for apply).
-
-**Used by:** Downstream modules that consume the journal (e.g. [bus-reports](./bus-reports), [bus-vat](./bus-vat), [bus-filing](./bus-filing)) use the journal entries produced by `apply` like any other posting.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-period">bus-period</a></span>
@@ -174,7 +151,7 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-balances](../sdd/bus-balances)
+- [Module reference: bus-balances](../modules/bus-balances)
 - [bus-journal](./bus-journal) (ledger and postings)
 - [bus-period](./bus-period) (period open/close and opening from prior workspace)
 - [bus-accounts](./bus-accounts) (chart of accounts)

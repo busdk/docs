@@ -22,5 +22,5 @@ Run `bus period add --period <YYYY-MM>` (or `YYYY` / `YYYYQn`). Optional `--star
 ### Sources
 
 - [bus-period CLI reference](../../modules/bus-period)
-- [Module SDD: bus-period](../../sdd/bus-period)
+- [Module reference: bus-period](../../modules/bus-period)
 - [Workflow: Year-end close (closing entries)](../../workflow/year-end-close)

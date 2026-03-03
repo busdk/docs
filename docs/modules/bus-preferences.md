@@ -149,30 +149,6 @@ preferences set-json bus-dev.ui '{"theme":"light","density":"comfortable"}'
 preferences list bus-agent
 ```
 
-
-### Development state
-
-**Value promise:** Store and retrieve user-level preferences (e.g. default agent runtime, output format) so [bus-agent](./bus-agent) and other CLI callers get consistent defaults across invocations without workspace-specific config.
-
-**Use cases:** [Developer module workflow](../implementation/development-status#developer-module-workflow).
-
-**Completeness:** 70% (Broadly usable) — get, set, set-json, unset, and list verified by e2e; key-path and format behavior test-backed.
-
-**Use case readiness:** Developer module workflow: 70% — get, set, set-json, unset, list verified; key-path validation for list would complete.
-
-**Current:** get/set/set-json/unset/list and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-preferences](../sdd/bus-preferences).
-
-**Planned next:** Key-path validation for list; canonical JSON for get/list; unit tests for path resolution (BUS_PREFERENCES_PATH, XDG, Windows).
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-agent](./bus-agent) and the CLI read preferences for agent and output settings.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-config">bus-config</a></span>
@@ -183,6 +159,6 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-preferences](../sdd/bus-preferences)
+- [Module reference: bus-preferences](../modules/bus-preferences)
 - [Workspace configuration](../data/workspace-configuration)
 - [Standard global flags](../cli/global-flags)

@@ -27,5 +27,5 @@ This principle extends CLI-first design: workflows remain explicit command invoc
 
 - [Design goals index](./index)
 - [Module docs: `bus`](../modules/bus)
-- [SDD: `bus`](../sdd/bus)
+- [`bus` module reference](../modules/bus)
 - [`.bus` script files (writing and execution guide)](../cli/bus-script-files)

@@ -24,5 +24,5 @@ This action reads from [Bank transactions](../bank-transactions/index), [Sales i
 ### Sources
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
-- [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
+- [Module reference: bus-reconcile](../../modules/bus-reconcile)
 - [Deterministic reconciliation proposals and batch apply](../../workflow/deterministic-reconciliation-proposals-and-batch-apply)

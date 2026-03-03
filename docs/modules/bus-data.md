@@ -22,7 +22,7 @@ Workbook-style read is available via `bus data table workbook`.
 It supports cell/range addresses (for example `A1`, `A1:B2`), optional header or anchor lookup, locale options, and formula controls.
 Output is deterministic and machine-friendly (`tsv`/`json`).
 
-For workbook formula details and parity notes, see [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation) and [Module SDD: bus-data](../sdd/bus-data#implementation-status-workbook-read).
+For workbook formula details and parity notes, see [Formula metadata and evaluation for workbook extraction](./bus-bfl-workbook-formula-delegation) and [Module reference: bus-data](../modules/bus-data#implementation-status-workbook-read).
 
 For ERP migration workflows, bus-data provides a mechanical import-profile library contract used by domain modules such as [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank).
 
@@ -328,7 +328,7 @@ The import-profile contract is a library surface, not an end-user accounting com
 Domain modules provide target semantics and profiles; bus-data provides deterministic profile validation and mapping primitives.
 
 End-user imports are run via domain modules such as `bus invoices import` and `bus bank import`.
-Detailed contract and roadmap details are maintained in [Module SDD: bus-data](../sdd/bus-data).
+Detailed contract and roadmap details are maintained in [Module reference: bus-data](../modules/bus-data).
 
 ### Output formats and files
 
@@ -380,7 +380,7 @@ Help and version output are printed to standard output. Diagnostics and validati
 
 ### Files
 
-The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files (same directory, `.csv` replaced by `.schema.json`). A workspace `datapackage.json` is stored at the workspace root and references resources by name and workspace-relative CSV path. Path ownership lies with domain modules: when a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it obtains the path from the owning module’s Go library. Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods” (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files (same directory, `.csv` replaced by `.schema.json`). A workspace `datapackage.json` is stored at the workspace root and references resources by name and workspace-relative CSV path. Path ownership lies with domain modules: when a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it obtains the path from the owning module’s Go library. Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods” (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -413,30 +413,6 @@ data table workbook reports/sales.csv A1:C8 --header --format json
 data row update customers --key id=C-100 --set status=archived
 ```
 
-
-### Development state
-
-**Value promise:** Inspect and maintain workspace datasets, schemas, and data packages with schema-governed row and schema operations so tables stay valid and reviewable without running domain CLIs.
-
-**Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
-
-**Completeness:** 80% — Package/resource/schema/table/workbook/row and formula surface verified by e2e and unit tests; table workbook documented in SDD and CLI reference (KD-DAT-005).
-
-**Use case readiness:** Workbook and validated tabular editing: 80% — User can complete package/resource lifecycle, schema evolution, table and workbook-style read (cell/range, --header, --anchor-col/--anchor-row, --decimal-sep, --formula), and row mutate.
-
-**Current:** Package/resource/schema/table/workbook and row operations are verified by e2e and unit tests, including formula and foreign-key behavior.
-For detailed test matrix and implementation notes, see [Module SDD: bus-data](../sdd/bus-data).
-
-**Planned next:** Add and document the import-profile library contract (descriptor validation and deterministic mapping primitives) for [bus-invoices](./bus-invoices) and [bus-bank](./bus-bank). Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing) and ERP migration workflows.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-api](./bus-api) and [bus-sheets](./bus-sheets) for workspace endpoints and the embedded UI backend.
-
-See [Development status](../implementation/development-status#spreadsheet-workbooks).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-init">bus-init</a></span>
@@ -448,6 +424,6 @@ See [Development status](../implementation/development-status#spreadsheet-workbo
 ### Sources
 
 - [Master data: Master data (business objects)](../master-data/index)
-- [Module SDD: bus-data](../sdd/bus-data)
+- [Module reference: bus-data](../modules/bus-data)
 - [Storage contract: Storage backends and workspace store interface](../data/storage-backends)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)

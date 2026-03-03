@@ -22,7 +22,7 @@ Disposal requires a proceeds account and separate gain and loss accounts so that
 ### Sources
 
 - [bus-assets CLI reference](../../modules/bus-assets)
-- [bus-assets module SDD](../../sdd/bus-assets)
+- [bus-assets module reference](../../modules/bus-assets)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
 - [Double-entry ledger](../../design-goals/double-entry-ledger)
 - [Journal area](../../layout/journal-area)

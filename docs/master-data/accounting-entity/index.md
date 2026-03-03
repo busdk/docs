@@ -46,4 +46,4 @@ Multi-company workflows are expressed as multi-workspace operations; see [Worksp
 - [Year-end close (closing entries)](../../workflow/year-end-close)
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
 - [bus-reports module CLI reference](../../modules/bus-reports)
-- [bus-reports SDD](../../sdd/bus-reports)
+- [bus-reports reference](../../modules/bus-reports)

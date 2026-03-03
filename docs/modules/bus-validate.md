@@ -48,7 +48,7 @@ When a row exceeds threshold, the command exits non-zero.
 When provided, gap checks are evaluated per bucket and fail when any configured threshold is exceeded.
 Without this file, only aggregate thresholds apply.
 
-For extended capability notes, see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope).
+For extended capability notes, see [Suggested capabilities](../modules/bus-validate#suggested-capabilities-out-of-current-scope).
 
 Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain available as an alternative.
 
@@ -90,30 +90,6 @@ validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.0
 validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
 ```
 
-
-### Development state
-
-**Value promise:** Validate workspace datasets and invariants so the accounting workflow can run a single check before period close and filing and get deterministic diagnostics.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
-
-**Completeness:** high — Run and schema/invariant checks are test-verified; user can complete pre-close validation and get pass/fail and diagnostics. Stdout is empty on success; `--format text` (default) and `--format tsv` control diagnostics to stderr; `--output` is a no-op for `bus validate` (no result set). First-class `parity` and `journal-gap` subcommands are implemented with thresholds and CI exit behavior.
-
-**Use case readiness:** Accounting workflow: high — run, schema/invariant checks, empty stdout, format, and output no-op are in place; parity and journal-gap available. Finnish bookkeeping and tax-audit compliance: high — workspace validation and migration checks available; audit and closed-period would strengthen. Finnish company reorganisation: high — same as above.
-
-**Current:** Workspace validation, parity, and journal-gap flows are test-verified, including threshold and dry-run behavior.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-validate](../sdd/bus-validate).
-
-**Planned next:** Table Schema min/max and audit/closed-period checks for [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Finnish company reorganisation](../compliance/fi-company-reorganisation-evidence-pack). Class-aware gap reporting with per-bucket thresholds (see [Suggested capabilities](../sdd/bus-validate#suggested-capabilities-out-of-current-scope) in the module SDD) as a possible extension.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** Run before [bus-period](./bus-period) close and [bus-filing](./bus-filing); workflows assume validation is available.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-reports">bus-reports</a></span>
@@ -130,7 +106,7 @@ See [Development status](../implementation/development-status).
 - [Master data: VAT treatment](../master-data/vat-treatment/index)
 - [Master data: Parties (customers and suppliers)](../master-data/parties/index)
 - [Master data: Bank transactions](../master-data/bank-transactions/index)
-- [Module SDD: bus-validate](../sdd/bus-validate)
+- [Module reference: bus-validate](../modules/bus-validate)
 - [Architecture: Shared validation layer](../architecture/shared-validation-layer)
 - [CLI: Validation and safety checks](../cli/validation-and-safety-checks)
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)

@@ -70,22 +70,6 @@ Exit code `0` means success. Exit code `1` means runtime failure, such as when `
 
 When a one-shot command fails, `bus shell` returns that command exit code.
 
-### Development state
-
-**Value promise.** Start an interactive BusDK prompt or run one command through the dispatcher with consistent global-flag behavior.
-
-**Use cases.** [Orphan modules](../implementation/development-status#orphan-modules) — not mapped to a documented use case.
-
-**Completeness.** 30% — Interactive loop, one-shot mode, and global flag handling are implemented and covered by unit and e2e tests.
-
-**Use case readiness.** Orphan (not mapped): 30% — Core prompt flow and one-shot command execution are available.
-
-**Depends on.** [`bus`](./bus).
-
-**Used by.** End users and scripts that want a shell-style `bus` prompt.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-secrets">bus-secrets</a></span>
@@ -96,6 +80,6 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-shell](../sdd/bus-shell)
+- [Module reference: bus-shell](../modules/bus-shell)
 - [Module CLI reference: bus](./bus)
 - [`.bus` script files (writing and execution guide)](../cli/bus-script-files)

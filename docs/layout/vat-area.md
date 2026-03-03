@@ -20,5 +20,5 @@ For Finnish compliance, VAT summaries MUST retain links to the postings and vouc
 ### Sources
 
 - [bus-vat module](../modules/bus-vat)
-- [Master data: VAT rates](../master-data/vat-rates/index)
+- [Master data: VAT treatment](../master-data/vat-treatment/index)
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

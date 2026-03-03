@@ -34,7 +34,7 @@ Default bind is `127.0.0.1`, so UI is local-only unless you change `--listen`.
 
 Optional agent chat is enabled only with `--enable-agent`.
 When enabled, you can run agent-assisted workspace commands from the UI.
-For full design/security details, see [Module SDD: bus-sheets](../sdd/bus-sheets).
+For full design/security details, see [Module reference: bus-sheets](../modules/bus-sheets).
 
 ### Commands
 
@@ -107,30 +107,6 @@ sheets serve --read-only --port 8091
 sheets serve --enable-agent --port 8092
 ```
 
-
-### Development state
-
-**Value promise:** Local spreadsheet-like web UI over BusDK workspaces so users can view and edit CSV resources and run validation in the browser without running module CLIs for grid operations.
-
-**Use cases:** [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
-
-**Completeness:** 20% (Basic structure) — serve and capability URL verified by e2e; token gating by unit tests; no workbook journey step is test-verified or completable.
-
-**Use case readiness:** Workbook and validated tabular editing: 20% — serve and capability URL verified by e2e; token gating (404 outside token, 200 under token) in unit tests; grid, schema panel, validation UI not test-backed; no workbook journey step completable.
-
-**Current:** Serve flow, capability URL behavior, token gating, and global-flag handling are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-sheets](../sdd/bus-sheets).
-
-**Planned next:** Embed [bus-api](./bus-api) in-process and mount under `/{token}/v1/`; embed UI assets; workbook tabs; grid row CRUD and schema panel; validation UI. Advances [Workbook and validated tabular editing](../workflow/workbook-and-validated-tabular-editing).
-
-**Blockers:** [bus-api](./bus-api) embed and UI assets required before grid over workspace is real.
-
-**Depends on:** [bus-api](./bus-api) (and transitively [bus-data](./bus-data)).
-
-**Used by:** End users as the spreadsheet UI; no other bus module invokes it.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-api">bus-api</a></span>
@@ -141,8 +117,8 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-sheets](../sdd/bus-sheets)
+- [Module reference: bus-sheets](../modules/bus-sheets)
 - [bus-api CLI reference](./bus-api)
 - [bus-data CLI reference](./bus-data)
-- [bus-agent SDD](../sdd/bus-agent)
+- [bus-agent reference](../modules/bus-agent)
 - [Standard global flags](../cli/global-flags)

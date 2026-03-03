@@ -48,9 +48,9 @@ With `--enable-agent`, the UI exposes a chat panel you can hide/show at runtime.
 
 Agent integration is disabled by default and can be enabled only at startup.
 
-See [Serve flags](#serve-flags), [Agent chat](#agent-chat-when-enabled), and [bus-books SDD](../sdd/bus-books) for full behavior and security model.
+See [Serve flags](#serve-flags), [Agent chat](#agent-chat-when-enabled), and [bus-books reference](../modules/bus-books) for full behavior and security model.
 
-Finland-focused UI requirements are documented as split topic pages in [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements), with dedicated pages for IA/navigation, table-first UX, compliance and audit UX, and accessibility/performance.
+Finland-focused UI requirements are documented as split topic pages in [Finnish WebView bookkeeping UI requirements](../modules/bus-books), with dedicated pages for IA/navigation, table-first UX, compliance and audit UX, and accessibility/performance.
 
 ### Commands
 
@@ -76,12 +76,12 @@ Periods view handles open/close/lock transitions and explains refusals. VAT view
 
 Views that depend on a module backend are hidden or shown as unavailable when that backend is not enabled. The capability response `GET /v1/modules` includes `readOnly` and `enableAgent`, which the UI uses to show mode status and capability-aware workflow guidance. When you change data through the UI, relevant lists may refresh automatically for changes that go through the embedded API; changes made outside the API (e.g. by the agent or external edits) may require a manual refresh.
 
-Control semantics in the UI follow the SDD graphics policy:
+Control semantics in the UI follow the design graphics policy:
 controls permanently unavailable in current session are removed (not shown disabled), controls that may become available after user input stay visible but disabled, and read-only values remain visible by default.
 
 ### Agent chat (when enabled)
 
-When you start the server with `--enable-agent`, the UI exposes an optional chat panel. You can hide or show this panel at runtime without restarting the server. In the chat you can ask the AI agent to perform operations; the agent runs with the workspace as its working directory and can run Bus CLI tools. The UI presents the agent as a privileged tool that can run commands in the workspace and encourages a “propose then apply” flow (agent suggests changes; you confirm). Agent runtimes are configured or detected per [bus-agent](../sdd/bus-agent); bus-books only exposes the chat UI and delegates execution to the bus-agent library. When agent integration is disabled (default), the chat is not shown and no agent endpoints are available.
+When you start the server with `--enable-agent`, the UI exposes an optional chat panel. You can hide or show this panel at runtime without restarting the server. In the chat you can ask the AI agent to perform operations; the agent runs with the workspace as its working directory and can run Bus CLI tools. The UI presents the agent as a privileged tool that can run commands in the workspace and encourages a “propose then apply” flow (agent suggests changes; you confirm). Agent runtimes are configured or detected per [bus-agent](../modules/bus-agent); bus-books only exposes the chat UI and delegates execution to the bus-agent library. When agent integration is disabled (default), the chat is not shown and no agent endpoints are available.
 
 ### Security and binding
 
@@ -144,29 +144,6 @@ books serve --print-url --open-view /bank/btx-2026-00017 --view-only
 
 In both cases, the user gets a focused single-view window, enters or edits data, and closes when ready.
 
-
-### Development state
-
-**Value promise:** Local bookkeeping web UI over BusDK workspaces so end users can perform accounting tasks (journal, periods, VAT, bank, invoices, attachments, validation) in a browser without using the CLI.
-
-**Use cases:** [Accounting workflow overview](../workflow/accounting-workflow-overview).
-
-**Completeness:** 100% — The bus-books Definition of Done is met: a fully functioning UI for Bus modules through embedded bus-api with deterministic CLI/API behavior, capability routing, read-only gating, and headless browser E2E coverage.
-
-**Use case readiness:** Accounting workflow (bookkeeping UI): 100% — Users can complete the documented bookkeeping workflow in the UI with deterministic diagnostics and module-backed operations across all required screens.
-
-**Current:** Serve with default GUI webview launch and optional `--print-url`, default subcommand, token gating, workspace checks, read-only mode, embedded API, schema endpoints, SSE mutation events, module backend routing, and screen flows are test-covered by `tests/e2e.sh` and `internal/*/*_test.go`. Inbox supports filters (`reviewState`, `evidenceOk`) and item actions; Journal supports list/detail/new with deterministic period-state errors; Periods supports open/close/lock transitions; VAT supports period list/report run plus source links to underlying transactions when provided by the backend; Bank supports import/list/detail; Reconcile supports suggestions and confirm with deterministic refusals; Attachments supports add/list/link; Validate supports grouped deterministic diagnostics. List views (Inbox, Journal, Bank) now support deterministic `limit`/`offset` slicing, and the UI exposes row-limit selectors to keep large lists responsive. The main view now uses full-width section backgrounds with constrained inner content, aligned to the documentation layout contract.
-
-**Planned next:** Ongoing maintenance and incremental UX polish; no open functional gaps against the current bus-books SDD/CLI requirements.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-api](./bus-api) (embedded); domain modules ([journal](./bus-journal), [period](./bus-period), [vat](./bus-vat), [bank](./bus-bank), [invoices](./bus-invoices), [attachments](./bus-attachments), [reconcile](./bus-reconcile), [validate](./bus-validate)) via their module backend handlers.
-
-**Used by:** End users as the bookkeeping UI; no other bus module invokes it.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-sheets">bus-sheets</a></span>
@@ -177,12 +154,12 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-books](../sdd/bus-books)
+- [Module reference: bus-books](../modules/bus-books)
 - [bus-api CLI reference](./bus-api)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
 - [bus-sheets CLI reference](./bus-sheets)
-- [bus-agent SDD](../sdd/bus-agent)
+- [bus-agent reference](../modules/bus-agent)
 - [Standard global flags](../cli/global-flags)
-- [Finnish WebView bookkeeping UI requirements](../implementation/fi-webview-accounting-ui-requirements)
-- [Finnish WebView compliance and audit UX](../implementation/fi-webview-compliance-and-audit-ux)
+- [Finnish WebView bookkeeping UI requirements](../modules/bus-books)
+- [Finnish WebView compliance and audit UX](../modules/bus-books)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

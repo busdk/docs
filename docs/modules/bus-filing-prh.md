@@ -55,30 +55,6 @@ filing-prh --format json
 filing-prh --output ./out/prh-export.tsv
 ```
 
-
-### Development state
-
-**Value promise:** Produce PRH (Finnish Business Register) export bundles from closed-period data when invoked as the `prh` target of [bus-filing](./bus-filing).
-
-**Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
-
-**Completeness:** High — Validate and bundle are verified by e2e and unit tests. Bundles include PRH-required content (journal, reports, voucher references, attachments metadata) per FR-PRH-002 and full PRH SBR taxonomy in iXBRL (balance sheet, income statement, cash flow statement, notes placeholder). Parameter set is stable (OQ-PRH-001 closed). Remaining work: extended bundle metadata and any future filing-target spec updates; see module README and roadmap.
-
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: High — validate, bundle, PRH-required content (FR-PRH-002), and PRH SBR taxonomy in iXBRL are implemented and covered by e2e; module is ready for PRH filing within the current bundle contract. Depends on bus-filing bundle contract stability.
-
-**Current:** Validate and bundle flows, deterministic packaging, and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-filing-prh](../sdd/bus-filing-prh).
-
-**Planned next:** Extended bundle metadata when filing-target specs are available; README and doc links alignment; any follow-ups from bus-filing bundle contract. FR-PRH-002 and full PRH SBR iXBRL are implemented.
-
-**Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
-
-**Depends on:** [bus-filing](./bus-filing) (invoked as target); [bus-period](./bus-period) closed.
-
-**Used by:** [bus-filing](./bus-filing) invokes this module when the target is prh.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing">bus-filing</a></span>
@@ -93,6 +69,6 @@ See [Development status](../implementation/development-status).
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
 - [Master data: Documents (evidence)](../master-data/documents/index)
-- [Module SDD: bus-filing-prh](../sdd/bus-filing-prh)
+- [Module reference: bus-filing-prh](../modules/bus-filing-prh)
 - [Compliance: Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

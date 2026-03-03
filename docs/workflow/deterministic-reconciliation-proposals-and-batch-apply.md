@@ -23,7 +23,7 @@ These artifacts feed migration-quality controls in [Source import parity and jou
 
 ### Scope and ownership
 
-[bus-reconcile](../modules/bus-reconcile) owns proposal generation and apply behavior. [bus-bank](../modules/bus-bank) provides deterministic bank transaction identity and normalized read fields used as proposal input. When [counterparty normalization](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) is implemented in bus-bank, proposal inputs will include a normalized counterparty field so rules can key off canonical names; the config format and field semantics will be documented in the bus-bank SDD and module reference. When [reference extractors](../sdd/bus-bank#suggested-capabilities-out-of-current-scope) from bank message/reference are implemented, bank list and export will expose normalized fields (e.g. `erp_id`, `invoice_number_hint`) so bus-reconcile and other modules can use them without parsing raw text; extractor config and new dataset fields will be documented in the bus-bank SDD and module reference. [bus-reconcile](../modules/bus-reconcile) would then use those fields in propose and match (optional [match by extracted reference keys](../modules/bus-reconcile#match-by-extracted-reference-keys) path) when joining to invoice or purchase-invoice ids; expected field names and match semantics would be documented in the bus-reconcile SDD and module reference. [bus-invoices](../modules/bus-invoices) provides deterministic open-item invoice identity and status or amount semantics used as proposal input.
+[bus-reconcile](../modules/bus-reconcile) owns proposal generation and apply behavior. [bus-bank](../modules/bus-bank) provides deterministic bank transaction identity and normalized read fields used as proposal input. When [counterparty normalization](../modules/bus-bank#suggested-capabilities-out-of-current-scope) is implemented in bus-bank, proposal inputs will include a normalized counterparty field so rules can key off canonical names; the config format and field semantics will be documented in the bus-bank reference and module reference. When [reference extractors](../modules/bus-bank#suggested-capabilities-out-of-current-scope) from bank message/reference are implemented, bank list and export will expose normalized fields (e.g. `erp_id`, `invoice_number_hint`) so bus-reconcile and other modules can use them without parsing raw text; extractor config and new dataset fields will be documented in the bus-bank reference and module reference. [bus-reconcile](../modules/bus-reconcile) would then use those fields in propose and match (optional [match by extracted reference keys](../modules/bus-reconcile#match-by-extracted-reference-keys) path) when joining to invoice or purchase-invoice ids; expected field names and match semantics would be documented in the bus-reconcile reference and module reference. [bus-invoices](../modules/bus-invoices) provides deterministic open-item invoice identity and status or amount semantics used as proposal input.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -38,8 +38,8 @@ These artifacts feed migration-quality controls in [Source import parity and jou
 - [bus-reconcile module CLI reference](../modules/bus-reconcile)
 - [bus-bank module CLI reference](../modules/bus-bank)
 - [bus-invoices module CLI reference](../modules/bus-invoices)
-- [bus-reconcile SDD](../sdd/bus-reconcile)
-- [bus-bank SDD](../sdd/bus-bank)
-- [bus-invoices SDD](../sdd/bus-invoices)
+- [bus-reconcile reference](../modules/bus-reconcile)
+- [bus-bank reference](../modules/bus-bank)
+- [bus-invoices reference](../modules/bus-invoices)
 - [Import bank transactions and apply payment](./import-bank-transactions-and-apply-payment)
 - [Source import parity and journal gap checks](./source-import-parity-and-journal-gap-checks)

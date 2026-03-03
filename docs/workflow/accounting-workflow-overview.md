@@ -5,7 +5,7 @@ description: End-to-end bookkeeping flow for BusDK workspaces, from initializati
 
 ## Accounting workflow overview
 
-This page describes the end-to-end bookkeeping flow for BusDK. It assumes a dedicated repository workspace for the accounting year, with workspace datasets (tables plus schemas) and evidence files stored as repository data. Version control is an implementation choice; the core invariant is that workspace datasets and their revision history stay reviewable and exportable. End users can run the local bookkeeping UI ([bus books](../sdd/bus-books)) to work through this flow in a browser.
+This page describes the end-to-end bookkeeping flow for BusDK. It assumes a dedicated repository workspace for the accounting year, with workspace datasets (tables plus schemas) and evidence files stored as repository data. Version control is an implementation choice; the core invariant is that workspace datasets and their revision history stay reviewable and exportable. End users can run the local bookkeeping UI ([bus books](../modules/bus-books)) to work through this flow in a browser.
 
 1. Create the bookkeeping repository and scaffold baseline datasets:
 

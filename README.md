@@ -12,8 +12,8 @@ The canonical BusDK design spec and Software Design Documents (SDDs) are publish
 
 - [BusDK design spec](https://docs.busdk.com/) — entrypoint for the multi-page design (overview, CLI, data, layout, workflow, compliance, implementation).
 - [BusDK module feature table](https://docs.busdk.com/modules/features) — cross-module capability table aggregated from module `FEATURES.md` files.
-- [BusDK Software Design Document (SDD)](https://docs.busdk.com/sdd) — single-page consolidated view of goals, requirements, architecture, and key decisions.
-- [Module SDDs](https://docs.busdk.com/sdd/modules) — per-module SDDs (e.g. [bus-init](https://docs.busdk.com/sdd/bus-init), [bus-data](https://docs.busdk.com/sdd/bus-data), [bus-dev](https://docs.busdk.com/sdd/bus-dev), [bus-validate](https://docs.busdk.com/sdd/bus-validate)).
+- [BusDK Software Design Document (SDD)](sdd/docs/sdd.md) — single-page consolidated view of goals, requirements, architecture, and key decisions.
+- [Module SDDs](sdd/docs/modules/modules.md) — per-module SDDs (e.g. [bus-init](sdd/docs/modules/bus-init.md), [bus-data](sdd/docs/modules/bus-data.md), [bus-dev](sdd/docs/modules/bus-dev.md), [bus-validate](sdd/docs/modules/bus-validate.md)).
 
 ## Styling and branding
 

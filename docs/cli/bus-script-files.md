@@ -141,5 +141,5 @@ Exit codes:
 - [`.bus` files — getting started step by step](./bus-script-files-getting-started)
 - [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started)
 - [bus module reference](../modules/bus)
-- [Module SDD: bus](../sdd/bus)
+- [Module reference: bus](../modules/bus)
 - [BusDK module CLI reference](../modules/index)

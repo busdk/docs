@@ -149,30 +149,6 @@ bfl validate --expr "price * qty" --schema ./schema.json
 bfl eval --expr "price * qty" --context ./context.json --format json
 ```
 
-
-### Development state
-
-**Value promise:** Parse, format, validate, and evaluate BFL expressions so [bus-data](./bus-data) and the workbook can use formula-enabled fields with deterministic, testable semantics.
-
-**Use cases:** [Workbook and validated tabular editing](../implementation/development-status#workbook-and-validated-tabular-editing).
-
-**Completeness:** 60% — parse, format, validate, eval, and funcset list plus global flags verified by e2e; conformance, limits, and library behavior verified by unit tests; formula engine ready for [bus-data](./bus-data) integration.
-
-**Use case readiness:** Workbook and validated tabular editing: 60% — CLI and library contract verified; formula engine ready for [bus-data](./bus-data) projection.
-
-**Current:** Parse/format/validate/eval/funcset flows and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-bfl](../sdd/bus-bfl).
-
-**Planned next:** None in PLAN; optional benchmark metadata and CI artifact follow-ups per SDD.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-data](./bus-data) for formula validation and projection.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-shell">bus-shell</a></span>
@@ -184,5 +160,5 @@ See [Development status](../implementation/development-status).
 ### Sources
 
 - [Master data: Master data (business objects)](../master-data/index)
-- [Module SDD: bus-bfl](../sdd/bus-bfl)
+- [Module reference: bus-bfl](../modules/bus-bfl)
 - [Data model: Table Schema contract](../data/table-schema-contract)

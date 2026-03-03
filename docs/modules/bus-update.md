@@ -83,7 +83,7 @@ update check --module bus-run --current 0.0.35
 
 ### Sources
 
-- [bus-update SDD](../sdd/bus-update)
-- [Module SDD index](../sdd/modules)
+- [bus-update reference](../modules/bus-update)
+- [Module reference index](../modules/index)
 - [Standard global flags](../cli/global-flags)
 - [Error handling, dry-run, and diagnostics](../cli/error-handling-dry-run-diagnostics)

@@ -40,7 +40,7 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 ### Files
 
-`entities.csv` and its beside-the-dataset schema `entities.schema.json` live in the [accounts area](../layout/accounts-area) at the workspace root, alongside other canonical datasets such as `accounts.csv`. The module does not create or use a dedicated `entities/` subdirectory; layout follows the [minimal workspace baseline](../layout/minimal-workspace-baseline) and matches other BusDK modules. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`entities.csv` and its beside-the-dataset schema `entities.schema.json` live in the [accounts area](../layout/accounts-area) at the workspace root, alongside other canonical datasets such as `accounts.csv`. The module does not create or use a dedicated `entities/` subdirectory; layout follows the [minimal workspace baseline](../layout/minimal-workspace-baseline) and matches other BusDK modules. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -67,30 +67,6 @@ entities add --id FI-7654321-0 --name "Northwind Oy"
 entities list --format tsv
 ```
 
-
-### Development state
-
-**Value promise:** Maintain counterparty (entity) master data as schema-validated workspace tables so invoices, bank, and loans can reference stable entity identifiers.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing), [Finnish payroll handling (monthly pay run)](../workflow/finnish-payroll-monthly-pay-run).
-
-**Completeness:** 50% — Init, add, and list are verified by e2e and unit tests; user can complete the counterparty master-data step for accounting, sale invoicing, and payroll.
-
-**Use case readiness:** Accounting workflow: 50% — init, add, list verified; user can define counterparties. Sale invoicing: 50% — init, add, list verified; user can define customers. Finnish payroll handling: 50% — init, add, list and `--id`/`--name` verified by e2e; user can define party references for employees.
-
-**Current:** Init/add/list and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-entities](../sdd/bus-entities).
-
-**Planned next:** Expose Go library path accessors for entities dataset and schema (NFR-ENT-002, IF-ENT-002) so other modules obtain paths from this module; no use-case-specific next.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-invoices](./bus-invoices) and [bus-loans](./bus-loans) reference entity data; [bus-bank](./bus-bank) and [bus-reconcile](./bus-reconcile) use counterparty identifiers.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-accounts">bus-accounts</a></span>
@@ -105,5 +81,5 @@ See [Development status](../implementation/development-status).
 - [Minimal workspace baseline](../layout/minimal-workspace-baseline)
 - [Owns master data: Parties (customers and suppliers)](../master-data/parties/index)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module SDD: bus-entities](../sdd/bus-entities)
+- [Module reference: bus-entities](../modules/bus-entities)
 - [Data organization: Data package organization](../data/data-package-organization)

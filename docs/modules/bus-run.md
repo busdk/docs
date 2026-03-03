@@ -31,7 +31,7 @@ Agent execution is provided by the [bus-agent](./bus-agent) Go library so runtim
 
 You define prompts (`.bus/run/<name>.txt`), pipelines (`.bus/run/<name>.yml` or preference `bus-run.pipeline.<name>`), and scripts (`.bus/run/<name>.sh`, `.bat`, or `.ps1`), then run them by name with `bus run <name>` or by chaining tokens.
 
-For normative behavior and edge cases, see the [module SDD](../sdd/bus-run).
+For normative behavior and edge cases, see the [module reference](../modules/bus-run).
 
 For a practical `.bus` file that combines `run` with `dev` and `agent` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
@@ -227,29 +227,6 @@ run summarize-plan lint-unix
 run --agent codex --timeout 20m daily-check
 ```
 
-
-### Development state
-
-**Value promise.** Run user-defined prompt actions, script actions, and pipelines by name with a single entrypoint; list and help show every available token without running; no built-in developer workflows and no dependency on [bus-dev](./bus-dev).
-
-**Use cases.** [Orphan modules](../implementation/development-status#orphan-modules) — not mapped to a documented use case.
-
-**Completeness.** 60% — User can define/list/set/unset and run script tokens and pipelines with stop-on-first-failure; context, list, pipeline preview, and management commands verified by tests; prompt run verified with stub agent only (runtime/model on stderr).
-
-**Use case readiness.** Orphan (not mapped): 60% — Define/list/set/unset and run script token and pipeline; stop-on-first-failure, path escape, ambiguity, disabled script, expansion limits verified; prompt run stub-only.
-
-**Current.** Help and version in `internal/run/run_test.go` and `tests/e2e.sh`. Global flags in `internal/cli/flags_test.go`, `internal/run/run_test.go`, and `tests/e2e.sh` (`-C`, `-o`, `-q`, `-v`, `--`, `--color`, `-f`, quiet+verbose invalid, unknown format, invalid color, `--output`, quiet wins). Context and catalog in `internal/catalog/catalog_test.go`, `internal/run/run_test.go`, and `tests/e2e.sh`; list exit 1 when workdir inaccessible in `internal/run/run_test.go` and e2e. Name grammar in `internal/name/name_test.go`. Template render and unresolved placeholder in `internal/template/render_test.go`. Token resolution, expansion, cycle, ambiguity, and expansion limits in `internal/expand/expand_test.go`; path/symlink escape in `internal/pathsafe/pathsafe_test.go` and e2e; lock lifecycle in `internal/lock/lock_test.go`. Pipeline/action/script list, set repo/prefs, unset, action set empty stdin → exit 2, run script token, set agent/model in `tests/e2e.sh`. Stop-on-first-failure in `internal/run/run_test.go` (TestRun_stopOnFirstFailure) and e2e; disabled script and ambiguous token in `run_test.go` and e2e. Pipeline preview and normalized repeated steps in `run_test.go` and e2e. Prompt step runtime/model on stderr (stub agent) in `internal/run/run_test.go` (TestRun_promptStepPrintsRuntimeModelToStderr) and e2e.
-
-**Planned next.** Align agent and script output with SDD (agent/script output to stdout for piping; diagnostics on stderr) per FR-RUN-007a (PLAN.md). Document script execution method for .sh, .bat, and .ps1 in README or user-facing docs per FR-RUN-018 (PLAN.md).
-
-**Blockers.** None known.
-
-**Depends on.** [bus-agent](./bus-agent) (all agent runs), [bus-preferences](./bus-preferences) (read/write `bus-run.*` only).
-
-**Used by.** None (end-user module).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-agent">bus-agent</a></span>
@@ -261,10 +238,10 @@ See [Development status](../implementation/development-status).
 ### Sources
 
 - [BusDK — installation and overview](https://busdk.com/)
-- [Module SDD: bus-run](../sdd/bus-run)
+- [Module reference: bus-run](../modules/bus-run)
 - [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)
-- [Module SDD: bus-agent](../sdd/bus-agent)
-- [Module SDD: bus-preferences](../sdd/bus-preferences)
+- [Module reference: bus-agent](../modules/bus-agent)
+- [Module reference: bus-preferences](../modules/bus-preferences)
 - [bus-preferences CLI reference](./bus-preferences)
 - [bus-agent CLI reference](./bus-agent)
 - [CLI: Error handling, dry-run, and diagnostics](../cli/error-handling-dry-run-diagnostics)

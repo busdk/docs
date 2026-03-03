@@ -25,7 +25,7 @@ In the [accounting workflow](./accounting-workflow-overview), invoices are one o
 
 ### Module readiness for this journey
 
-Readiness for the modules involved in creating and sending sales invoices is summarised in [Development status — Sale invoicing (sending invoices to customers)](../implementation/development-status#sale-invoicing-sending-invoices-to-customers).
+Readiness for the modules involved in creating and sending sales invoices is summarised in [Development status — Sale invoicing (sending invoices to customers)](../modules/features).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -42,4 +42,4 @@ Readiness for the modules involved in creating and sending sales invoices is sum
 - [bus-invoices](../modules/bus-invoices)
 - [bus-pdf](../modules/bus-pdf)
 - [bus-entities](../modules/bus-entities)
-- [Development status: Sale invoicing](../implementation/development-status#sale-invoicing-sending-invoices-to-customers)
+- [Development status: Sale invoicing](../modules/features)

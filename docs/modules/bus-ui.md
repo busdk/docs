@@ -73,21 +73,6 @@ bus-ui help
 ui css
 ```
 
-### Development state
-
-**Value promise:** one reusable UI component surface for BusDK frontends.
-
-**Completeness:** 100% for current generic component scope.
-
-**Current:** deterministic core controls, AI panel components, shared inline
-AI markdown rendering, approval formatting helpers, shared virtual DOM patching
-runtime, and shared CSS assets.
-
-**Planned next:** expand component coverage only when reused by at least one
-additional frontend module.
-
-**Blockers:** None known.
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-timeline">bus-timeline</a></span>
@@ -98,4 +83,4 @@ additional frontend module.
 
 ### Sources
 
-- [bus-ui SDD](../sdd/bus-ui)
+- [bus-ui reference](../modules/bus-ui)

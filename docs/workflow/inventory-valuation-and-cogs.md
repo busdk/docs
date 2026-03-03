@@ -7,7 +7,7 @@ description: Define inventory items, record append-only stock movements with vou
 
 This use case covers defining an inventory register, recording stock movements (purchases, sales or consumption, adjustments) as append-only rows with voucher references, and computing deterministic valuation outputs (for example FIFO or weighted-average) for an as-of date or period end. Those outputs are suitable for reporting and for later journal postings for cost of goods sold (COGS).
 
-The canonical implementation is the [bus-inventory](../modules/bus-inventory) module. Module readiness for this journey is summarised in [Development status — BusDK modules](../implementation/development-status#inventory-valuation-and-cogs-postings) under **Inventory valuation and COGS postings**.
+The canonical implementation is the [bus-inventory](../modules/bus-inventory) module. Module readiness for this journey is summarised in [Development status — BusDK modules](../modules/features) under **Inventory valuation and COGS postings**.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -20,4 +20,4 @@ The canonical implementation is the [bus-inventory](../modules/bus-inventory) mo
 ### Sources
 
 - [bus-inventory](../modules/bus-inventory)
-- [Development status — BusDK modules](../implementation/development-status#inventory-valuation-and-cogs-postings)
+- [Development status — BusDK modules](../modules/features)

@@ -1,19 +1,15 @@
 ---
-title: "BusDK Design Spec: Implementation and development status"
-description: "Module repository structure, dependency rules, and implementation state of each BusDK module."
+title: "BusDK project and delivery references"
+description: "Public project references for end-users: workflow tooling context, pricing, and cost summary."
 ---
 
-## BusDK Design Spec: Implementation and development status
+## BusDK project and delivery references
 
-This section covers how modules are structured and their current implementation state:
+This section contains public project references that help end-users understand delivery context.
 
-[Module repository structure and dependency rules](./module-repository-structure), [Developer module workflow](./developer-module-workflow), and [Development status](./development-status) define delivery structure and current state.
+[Developer module workflow](./developer-module-workflow) describes how BusDK maintainers operate development tooling in module repositories.
 
-[Regulated report PDFs (TASE and tuloslaskelma)](./regulated-report-pdfs) and [Finnish WebView bookkeeping UI requirements](./fi-webview-accounting-ui-requirements) define implementation targets for regulated reporting and UI behavior.
-
-[Go optimization guide](./go-optimization-guide) defines the default reproducibility-focused Go build and test profile used in module Makefiles.
-
-[Bus project cost summary](./cost-summary) and [BusDK source package pricing](./module-pricing) provide project-cost and source-access context.
+[Bus project cost summary](./cost-summary), [BusDK source package pricing](./module-pricing), and [FSL modules](./fsl-modules) provide project-cost and source-access context.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -26,5 +22,4 @@ This section covers how modules are structured and their current implementation 
 ### Sources
 
 - [Implementation index](./index)
-- [Development status](./development-status)
 - [Module CLI reference index](../modules/index)

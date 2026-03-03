@@ -24,5 +24,5 @@ Example values: `SI-2026-000123`, `PI-2026-000017`, `JRN-2026-014`.
 ### Sources
 
 - [Reconcile bank transactions](../../modules/bus-reconcile)
-- [Module SDD: bus-reconcile](../../sdd/bus-reconcile)
+- [Module reference: bus-reconcile](../../modules/bus-reconcile)
 

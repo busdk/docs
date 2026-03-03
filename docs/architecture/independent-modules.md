@@ -7,7 +7,7 @@ description: BusDK modules are independent tools; integration is through shared 
 
 Modules are independent tools or services. Each functional area is a module: ledger, invoice, bank import, VAT, budget, and related features. Modules encapsulate their domain logic and do not call each other’s functions directly. Integration occurs through shared datasets and schemas so that modules can be implemented in different languages without API coupling. For example, a Python component can generate PDFs while a Go component enforces ledger integrity, and both interoperate through the same workspace datasets tracked as repository data — often as CSV in a Git repository by default.
 
-CLI-to-CLI dependency is not an integration mechanism. Modules must not invoke other `bus-*` CLIs as internal dependencies, and the `bus` dispatcher provides a unified UX without turning module CLIs into internal APIs. The canonical repository layout and dependency rules are defined in [Module repository structure and dependency rules](../implementation/module-repository-structure).
+CLI-to-CLI dependency is not an integration mechanism. Modules must not invoke other `bus-*` CLIs as internal dependencies, and the `bus` dispatcher provides a unified UX without turning module CLIs into internal APIs. The canonical repository layout and dependency rules are defined in [Module repository structure and dependency rules](../architecture/independent-modules).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

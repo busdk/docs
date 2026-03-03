@@ -43,7 +43,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-`attachments.csv` and `attachment-links.csv` with beside-the-table schemas at the repository root. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` (for example `attachments/2026/01/20260115-INV-1001.pdf`), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. This is the only layout that places files in a subdirectory; the datasets and schemas stay at the workspace root. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../sdd/modules#data-path-contract-for-read-only-cross-module-access)).
+`attachments.csv` and `attachment-links.csv` with beside-the-table schemas at the repository root. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` (for example `attachments/2026/01/20260115-INV-1001.pdf`), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. This is the only layout that places files in a subdirectory; the datasets and schemas stay at the workspace root. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 
@@ -76,30 +76,6 @@ attachments link --source-hash 9f0d2c... --voucher VCH-2026-003 --if-missing
 attachments list --by-invoice INV-1001 --graph
 ```
 
-
-### Development state
-
-**Value promise:** Register evidence files and maintain attachment metadata so other modules can reference stable attachment identifiers and the accounting workflow treats evidence as first-class.
-
-**Use cases:** [Accounting workflow](../workflow/accounting-workflow-overview), [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack).
-
-**Completeness:** 85% — Register-attachments and attachment-link graph workflows are completable; init/add/link/list filters, reverse-link graph, strict audit flags, dry-run, and path accessors are verified by e2e and unit tests.
-
-**Use case readiness:** Accounting workflow: 85% — Register evidence, link to bank/voucher/invoice resources, filter by linkage, and enforce audit gates. Finnish company reorganisation: 85% — Link source documents and verify linkage coverage with deterministic audit flags.
-
-**Current:** Init/add/link/list flows, filters, audit flags, dry-run behavior, and global-flag handling are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-attachments](../sdd/bus-attachments).
-
-**Planned next:** None in PLAN.md.
-
-**Blockers:** None known.
-
-**Depends on:** None.
-
-**Used by:** [bus-bank](./bus-bank), [bus-invoices](./bus-invoices), [bus-filing](./bus-filing) reference attachment metadata.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-period">bus-period</a></span>
@@ -112,6 +88,6 @@ See [Development status](../implementation/development-status).
 
 - [Owns master data: Documents (evidence)](../master-data/documents/index)
 - [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
-- [Module SDD: bus-attachments](../sdd/bus-attachments)
+- [Module reference: bus-attachments](../modules/bus-attachments)
 - [Attachment storage: Invoice PDF storage](../layout/invoice-pdf-storage)
 - [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

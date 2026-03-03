@@ -24,6 +24,6 @@ For migration-quality controls, validation includes deterministic parity and gap
 ### Sources
 
 - [bus-validate module CLI reference](../modules/bus-validate)
-- [bus-validate SDD](../sdd/bus-validate)
+- [bus-validate reference](../modules/bus-validate)
 - [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
 - [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit)

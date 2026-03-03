@@ -44,7 +44,7 @@ Defaults:
 default bundle path is `filing/vero/bundle`, and default format is `tsv`.
 
 Unknown subcommands/flags and empty `--bundle` are usage errors (`2`).
-For full flag matrix and edge-case semantics, see [Module SDD: bus-filing-vero](../sdd/bus-filing-vero).
+For full flag matrix and edge-case semantics, see [Module reference: bus-filing-vero](../modules/bus-filing-vero).
 
 ### Files
 
@@ -76,30 +76,6 @@ filing-vero export --bundle filing/vero/2026-02
 filing-vero verify --bundle filing/vero/2026-02 --format tsv
 ```
 
-
-### Development state
-
-**Value promise:** Produce Vero (Finnish Tax Administration) export bundles from closed-period data when invoked as the `vero` target of [bus-filing](./bus-filing).
-
-**Use cases:** [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
-
-**Completeness:** 50% — export and verify from fixture verified by e2e and unit tests; full Vero-filing journey step blocked by [bus-filing](./bus-filing) bundle contract.
-
-**Use case readiness:** Finnish bookkeeping and tax-audit compliance: 50% — produce and verify Vero bundle from fixture; FR-VERO-002, NFR-VERO-001, NFR-VERO-002 verified by e2e and unit tests; full journey blocked by [bus-filing](./bus-filing) bundle contract.
-
-**Current:** Export/verify flows, deterministic bundle behavior, schema/path conventions, and global-flag handling are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-filing-vero](../sdd/bus-filing-vero).
-
-**Planned next:** Continue bundle-contract alignment with [bus-filing](./bus-filing) for the full end-to-end filing journey.
-
-**Blockers:** [bus-filing](./bus-filing) bundle contract must be stable for target consumption.
-
-**Depends on:** [bus-filing](./bus-filing) (invoked as target); [bus-period](./bus-period) closed; [bus-vat](./bus-vat) and reports module for input layout (canonical VAT and report paths).
-
-**Used by:** [bus-filing](./bus-filing) invokes this module when the target is vero.
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-filing-prh">bus-filing-prh</a></span>
@@ -116,6 +92,6 @@ See [Development status](../implementation/development-status).
 - [Master data: VAT treatment](../master-data/vat-treatment/index)
 - [Master data: Sales invoices](../master-data/sales-invoices/index)
 - [Master data: Purchase invoices](../master-data/purchase-invoices/index)
-- [Module SDD: bus-filing-vero](../sdd/bus-filing-vero)
+- [Module reference: bus-filing-vero](../modules/bus-filing-vero)
 - [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

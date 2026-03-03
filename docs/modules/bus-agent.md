@@ -83,7 +83,7 @@ Normal command results go to stdout (or `--output`), diagnostics to stderr.
 The runner treats root `AGENTS.md` as canonical project instruction source.
 It uses runtime-specific mechanisms to load those instructions with additive, non-destructive behavior.
 If `AGENTS.md` is missing or too large, execution still proceeds with best-effort prompt content.
-Per-runtime implementation details are documented in [Module SDD: bus-agent](../sdd/bus-agent).
+Per-runtime implementation details are documented in [Module reference: bus-agent](../modules/bus-agent).
 
 ### Agent runtimes and installation
 
@@ -122,7 +122,7 @@ Inspect current value with `bus preferences get <key>`.
 
 When multiple agent runtimes are available (CLI found in PATH) and no persistent or session preference is set, the automatic default is chosen from that set in a deterministic order. By default the order is alphabetical by runtime ID (e.g. claude, codex, cursor, gemini); the first available runtime in that order is used.
 
-You can change which agent is used first by configuring the order: supply an ordered list of runtime IDs so that the first available runtime in that list becomes the automatic default. You can also disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). Configuration is via environment variables or, when supported, [bus-preferences](./bus-preferences); the exact variable names and format are documented in the [module SDD](../sdd/bus-agent) (FR-AGT-005a). For example, you might set an order so that `gemini` is tried first, then `cursor`, and disable `codex` and `claude` for the session.
+You can change which agent is used first by configuring the order: supply an ordered list of runtime IDs so that the first available runtime in that list becomes the automatic default. You can also disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). Configuration is via environment variables or, when supported, [bus-preferences](./bus-preferences); the exact variable names and format are documented in the [module reference](../modules/bus-agent) (FR-AGT-005a). For example, you might set an order so that `gemini` is tried first, then `cursor`, and disable `codex` and `claude` for the session.
 
 ### Examples
 
@@ -140,7 +140,7 @@ bus agent run --agent codex --timeout 15m \
 
 ### Files
 
-`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation. When the runner enables AGENTS.md for a runtime that requires repo-local config (e.g. Gemini or Claude), it may create or merge files only under the additive, Bus-owned rules described in [Project instructions (AGENTS.md)](#project-instructions-agentsmd) and in the [module SDD](../sdd/bus-agent); it never edits user configuration outside the project working directory.
+`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation. When the runner enables AGENTS.md for a runtime that requires repo-local config (e.g. Gemini or Claude), it may create or merge files only under the additive, Bus-owned rules described in [Project instructions (AGENTS.md)](#project-instructions-agentsmd) and in the [module reference](../modules/bus-agent); it never edits user configuration outside the project working directory.
 
 ### Exit status and errors
 
@@ -165,30 +165,6 @@ agent render --text "Module={{MODULE}} Ticket={{TICKET}}" --var MODULE=bus-books
 agent set runtime codex
 ```
 
-
-### Development state
-
-**Value promise:** Detect enabled agent runtimes and run AI-assisted tasks (render prompts, execute agent CLI) so developers and [bus-dev](./bus-dev) can use a configured default runtime without hard-coding it.
-
-**Use cases:** [Developer module workflow with Cursor CLI](../implementation/development-status#developer-module-workflow-with-cursor-cli), [Spreadsheet workbooks](../implementation/development-status#spreadsheet-workbooks).
-
-**Completeness:** 40% — Core CLI (detect, render, set, run, format) and resolution order verified by e2e and unit tests; AGENTS.md and per-runtime adapters not test-backed.
-
-**Use case readiness:** Developer module workflow with Cursor CLI: 40% — detect, render, set, run with Cursor stub, and resolution order (prefs, BUS_AGENT, --agent) verified by e2e; user can select runtime and run a prompt. Spreadsheet workbooks: 40% — optional agent chat in [bus-sheets](./bus-sheets) not verified by tests.
-
-**Current:** detect/set/render/run/format and global-flag behavior are test-verified.
-Detailed test matrix and implementation notes are maintained in [Module SDD: bus-agent](../sdd/bus-agent).
-
-**Planned next:** Agent order and enable/disable (FR-AGT-005a); AGENTS.md discovery and per-runtime adapters; fallback when AGENTS.md missing or over-size (PLAN.md). Advances developer workflow use case.
-
-**Blockers:** None known.
-
-**Depends on:** [bus-preferences](./bus-preferences) (runtime and run-config defaults).
-
-**Used by:** [bus-sheets](./bus-sheets) (optional agent chat); [bus-dev](./bus-dev) (work, commit, etc.).
-
-See [Development status](../implementation/development-status).
-
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-dev">bus-dev</a></span>
@@ -199,7 +175,7 @@ See [Development status](../implementation/development-status).
 
 ### Sources
 
-- [Module SDD: bus-agent](../sdd/bus-agent)
+- [Module reference: bus-agent](../modules/bus-agent)
 - [Codex CLI reference and argument patterns](../references/codex-cli)
 - [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)
 - [bus-preferences CLI reference](./bus-preferences)

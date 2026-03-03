@@ -11,18 +11,17 @@ This use case emphasises correctness and traceability of bookkeeping, explicit s
 
 ### Module readiness for this journey
 
-Which BusDK modules contribute to the evidence pack and what is verified today (by tests) is summarised in the [Development status — BusDK modules](../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack) page under the section **Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack**. That section lists bus-period, bus-reports, bus-validate, bus-attachments, bus-journal, bus-invoices, bus-bank, bus-reconcile, bus-loans, bus-budget, and bus-assets with their readiness percentages, value for the evidence pack, planned next steps, and blockers.
+Which BusDK modules contribute to the evidence pack and what is verified today (by tests) is summarised in the [Development status — BusDK modules](../modules/features) page under the section **Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack**. That section lists bus-period, bus-reports, bus-validate, bus-attachments, bus-journal, bus-invoices, bus-bank, bus-reconcile, bus-loans, bus-budget, and bus-assets with their readiness percentages, value for the evidence pack, planned next steps, and blockers.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./fi-closing-adjustments-and-evidence-controls">Finnish closing adjustments and evidence controls</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../implementation/development-status">Development status — BusDK modules</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../modules/features  <span class="busdk-prev-next-item busdk-next"><a href="../workflow/accounting-workflow-overview">Accounting workflow overview</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
 ### Sources
 
-- [Development status — BusDK modules](../implementation/development-status#finnish-company-reorganisation-yrityssaneeraus--audit-and-evidence-pack)
+- [Development status — BusDK modules](../modules/features)
 - [Accounting workflow overview](../workflow/accounting-workflow-overview)
 - [Finnish closing adjustments and evidence controls](./fi-closing-adjustments-and-evidence-controls)
