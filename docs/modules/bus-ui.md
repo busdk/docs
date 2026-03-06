@@ -34,6 +34,9 @@ For ledger-style frontends, it also provides shared projection DTO contracts
 and a reusable JSON-over-HTTP projection query client scaffold.
 For AI-enabled frontends, it also provides a reusable AI action controller for
 DOM action routing and shared panel action lifecycles.
+It also provides a shared Codex model catalog (`DefaultAICodexModelOptions`)
+and recursive payload model extraction (`ExtractAIModelCandidates`) so host
+modules can show complete model dropdown options, including `gpt-5.4`.
 The module also includes reusable WASM event wiring and DOM error-host helpers
 so module frontends do not reimplement common browser wiring patterns.
 Those wiring helpers now return disposer callbacks for explicit lifecycle
@@ -45,7 +48,7 @@ composition (`TextTable`), and shared locale-aware field value formatting
 (`LocaleFieldFormatter`) so module-level view code can stay focused on domain
 composition.
 For CLI modules that open local UI servers, it also provides shared
-cross-platform browser opener helpers (`OpenURLInBrowser`,
+cross-platform app-style web shell opener helpers (`OpenURLInBrowser`,
 `BrowserOpenCommandForOS`) so modules do not duplicate OS command mapping.
 It also provides a reusable virtual DOM runtime (`VNode`,
 `RenderVNodeComponent`, `VDOMMount`) so state updates can re-run component

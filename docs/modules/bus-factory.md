@@ -19,6 +19,7 @@ Initial features:
 
 - read-only list of exported Go units
 - toggleable AI assistant panel using the same shared `bus-ui` AI panel renderer (`RenderAIPanel`) used by `bus-ledger`
+- AI model dropdown seeded with shared Codex defaults (including `gpt-5.4`) and expanded from complete backend model candidates
 - shared `bus-ui` root shell layout and shared `bus-ui` light/dark theme tokens with automatic OS theme detection
 - shared `bus-ui` panel/button/AI classes so AI visuals (icons, typography, panel layout) match `bus-ledger`
 - superproject module-first view: if root contains `bus` / `bus-*` modules,
@@ -27,7 +28,7 @@ Initial features:
 
 ### Commands
 
-`serve` starts a local HTTP server. By default it opens the capability URL in local browser/webview and prints the URL to stderr. Use `--print-url` to disable auto-open and print URL to stdout.
+`serve` starts a local HTTP server. By default it opens the capability URL in an app-style local web shell window and prints the URL to stderr. Use `--print-url` to disable auto-open and print URL to stdout.
 
 Global flags:
 
@@ -47,7 +48,7 @@ Defaults:
 - `--port 0` (ephemeral)
 - `--token` auto-generated when omitted
 - `--enable-ai=true`
-- `--webview=true`
+- `--webview=true` (opens app-style web shell window)
 - `--print-url=false`
 
 ### APIs

@@ -40,6 +40,9 @@ messages while a turn is active; those inputs are forwarded as turn steering.
 The panel also supports multiple threads, archival, restoring persisted thread
 history from `.bus/bus-ledger/`, thread rename, and selecting the model from an available
 model list without requiring a manual submit action.
+The model dropdown is seeded with shared Codex defaults (including `gpt-5.4`)
+and is expanded by all model candidates observed from backend payloads, so the
+list reflects complete available options instead of only the first discovered model.
 
 The AI message surface is conversation-oriented. User and assistant messages
 are rendered as separate items, inline markdown code spans are formatted, and
@@ -101,7 +104,9 @@ surface over workspace data.
 auto-selected port. `version` prints tool name and version.
 
 Serve supports `--listen`, `--port`, `--token`, `--token-bytes`,
-`--journal-file`, `--ai`, `--no-ai`, `--webview`, and `--print-url`. Journal source is resolved
+`--journal-file`, `--ai`, `--no-ai`, `--webview`, and `--print-url`. By default
+`--webview` opens an app-style local web shell window and `--print-url` disables auto-open.
+Journal source is resolved
 via `bus-journal` layout APIs unless overridden by `--journal-file`.
 
 ### Examples
