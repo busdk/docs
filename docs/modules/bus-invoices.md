@@ -12,6 +12,7 @@ description: bus invoices stores sales and purchase invoices as schema-validated
 `bus invoices list [--type <sales|purchase>] [--status <status>] [--month <YYYY-M>] [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--due-from <YYYY-MM-DD>] [--due-to <YYYY-MM-DD>] [--counterparty <entity-id>] [--invoice-id <id>] [-C <dir>] [global flags]`  
 `bus invoices import --profile <path> --source <path> [--source-lines <path>] [--year <YYYY>] [-C <dir>] [global flags]`  
 `bus invoices validate [-C <dir>] [global flags]`  
+`bus invoices classify [--min-confidence <0..1>] [--apply] [--fail-on-missing-evidence] [-C <dir>] [global flags]`  
 `bus invoices pdf <invoice-id> --out <path> [-C <dir>] [global flags]`  
 `bus invoices <invoice-id> add [--desc <text>] [--quantity <number>] [--unit-price <number>] [--income-account <account-name>] [--vat-rate <percent>] [-C <dir>] [global flags]`  
 `bus invoices <invoice-id> validate [-C <dir>] [global flags]`  
@@ -37,7 +38,7 @@ Teams can still use generated scripts for migration-specific one-off logic.
 
 `add` creates invoice headers, and `<invoice-id> add` appends line items for an existing invoice. `validate` checks full invoice datasets, while `<invoice-id> validate` checks one invoice’s lines and totals.
 
-`list` returns invoice rows with optional filters (combined with logical `AND`). When `--type` is set, list validation and output apply only to the matching invoice kind; non-target datasets do not block the filtered listing. With `--legacy-replay`, list tolerates legacy rows where `due_date` is earlier than `issue_date` and emits deterministic warnings instead of hard failure. `import` maps ERP export data into canonical invoice datasets using a versioned profile and supports `--dry-run`. `pdf` delegates rendering to [bus-pdf](./bus-pdf). `postings` emits invoice posting rows for [bus-journal](./bus-journal).
+`list` returns invoice rows with optional filters (combined with logical `AND`). When `--type` is set, list validation and output apply only to the matching invoice kind; non-target datasets do not block the filtered listing. With `--legacy-replay`, list tolerates legacy rows where `due_date` is earlier than `issue_date` and emits deterministic warnings instead of hard failure. `import` maps ERP export data into canonical invoice datasets using a versioned profile and supports `--dry-run`. `classify` proposes recurring purchase-line `income_account` and `vat_rate` from prior provider history, emits deterministic TSV with confidence and provenance fields, stays review-only unless `--apply` is passed, and can fail with exit `1` when evidence is missing if `--fail-on-missing-evidence` is set. `pdf` delegates rendering to [bus-pdf](./bus-pdf). `postings` emits invoice posting rows for [bus-journal](./bus-journal).
 
 `--legacy-replay` enables legacy-safe replay for mutating commands. In strict mode (default), add/import reject rows where `due_date` is earlier than `issue_date`; with `--legacy-replay`, those rows are preserved and emitted with deterministic warnings.
 
@@ -50,6 +51,7 @@ Teams can still use generated scripts for migration-specific one-off logic.
 `bus invoices list` supports filters for type/status/id/counterparty and date ranges (`--month`, `--from`, `--to`, `--due-from`, `--due-to`). `--month` is mutually exclusive with `--from`/`--to`, and date filters are inclusive.
 
 `bus invoices import` requires `--profile <path>` and `--source <path>`, and optionally accepts `--source-lines <path>` and `--year <YYYY>`.
+`bus invoices classify` supports `--min-confidence <0..1>`, `--apply`, and `--fail-on-missing-evidence`.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus invoices --help`.
 
@@ -92,6 +94,7 @@ bus invoices validate
 bus invoices pdf 1001 --out tmp/INV-1001.pdf
 bus invoices list --status unpaid --due-to 2026-02-29
 bus invoices import --profile imports/profiles/erp-invoices.yaml --source exports/erp/invoices.tsv --source-lines exports/erp/invoice-lines.tsv --year 2025
+bus invoices classify --min-confidence 0.80 --fail-on-missing-evidence
 bus invoices -C ./workspace postings --format tsv --output ./out/invoice-postings.tsv
 ```
 
