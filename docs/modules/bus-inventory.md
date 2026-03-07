@@ -31,8 +31,12 @@ Movements are append-only; corrections are new records.
 For `add`, required flags are `--item-id`, `--name`, `--unit`, `--valuation-method`, `--inventory-account`, and `--cogs-account`. Optional flags are `--desc` and `--sku`.
 
 For `move`, required flags are `--item-id`, `--date`, `--qty`, and `--direction <in|out|adjust>`. Optional flags are `--unit-cost`, `--desc`, and `--voucher`.
+When `--direction` is `in` or `adjust`, omitting `--unit-cost` is invalid usage
+and returns exit status 2.
 
 For `valuation`, `--as-of <YYYY-MM-DD>` is required and `--item-id` is optional.
+`--format` is accepted only for `status` and `valuation`. If `--item-id` is
+supplied for a non-existent item, valuation succeeds with an empty result.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus inventory --help`.
 
