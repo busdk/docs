@@ -82,7 +82,8 @@ Coverage gating is strict by default in this mode:
 partial coverage fails with non-zero exit unless `--force-partial-coverage` is explicitly set.
 `--strict-coverage` remains accepted as an explicit compatibility flag.
 Use `--min-sales-coverage <0..1>` with `--min-purchase-coverage <0..1>` to set required minimum shares for the strict gate.
-Use `--max-unmatched-cash-rows <n>` to set the strict gate maximum unmatched invoice rows (default `0`).
+Use `--max-unmatched-cash-rows <n>` to set the strict gate maximum unmatched cash rows (default `0`).
+Rows that only prove prior-year invoice references via extracted bank keys are not counted as unmatched current-workspace cash rows, and settlement-applied journal vouchers sourced from reconcile evidence count as resolved cash coverage.
 
 In `--source journal --basis cash`, payment-date allocation uses payment evidence columns first, optional bank transaction lookup second, and posting date fallback last.
 Evidence-first context applies: invoice evidence is primary, `entities.csv` is fallback enrichment.

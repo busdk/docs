@@ -29,6 +29,7 @@ Use `post` to create deterministic journal postings from invoice-payment matches
 ### Commands
 
 `match` records one-to-one links between bank transactions and invoice or journal transactions, with exact amount matching. `allocate` records split allocations across multiple invoices or journal entries, and allocations must sum to the bank amount. `list` prints reconciliation records.
+When bank extracted keys (`erp_id`, `invoice_number_hint`) prove a prior-year invoice identity that is not present in the current workspace invoice datasets, `match` and `allocate` can still use that historical invoice reference without requiring a duplicate import.
 
 `init` bootstraps `matches.csv` and `matches.schema.json` at workspace root with deterministic defaults. Output is machine-readable TSV (`path`, `status`) and supports idempotent reruns (`unchanged`) or forced rewrite (`--force` returns `updated`).
 
@@ -41,8 +42,8 @@ Use `post` to create deterministic journal postings from invoice-payment matches
 `match` accepts `--bank-id <id>` and exactly one of `--invoice-id <id>` or `--journal-id <id>`.
 `allocate` accepts `--bank-id <id>` and repeatable `--invoice <id>=<amount>` and `--journal <id>=<amount>`. Invoice allocations are positive; journal allocations may be signed (non-zero) so net-settlement payouts can include fee adjustments while preserving exact bank-amount reconciliation.
 
-`propose` supports incoming classification, suspense fallback/reclassification, and settlement evidence modes.
-`apply` supports settlement posting mode plus posting account flags.
+`propose` supports incoming classification, suspense fallback/reclassification, settlement evidence modes, and explicit historical invoice-reference proposals via `--target-kind historical_invoice_payment`.
+`apply` supports settlement posting mode, historical invoice-reference rows, and posting account flags.
 
 For full option matrix and detailed semantics, see [Module reference: bus-reconcile](../modules/bus-reconcile).
 
@@ -64,7 +65,10 @@ Reviewers can approve edited proposal rows and apply them idempotently.
 
 Settlement evidence mode is available through propose/apply.
 `propose --settlement-csv <file>` and `propose --settlement-in <path>` normalize settlement inputs to deterministic proposal rows.
-`apply --settlement` writes deterministic balanced journal postings with idempotent re-apply.
+`apply --settlement` writes deterministic balanced journal postings with idempotent re-apply. Those settlement-applied journal vouchers are designed to be consumable by `bus vat --source reconcile --basis cash` coverage.
+
+Historical invoice-reference mode is also available through propose/apply.
+Use `propose --target-kind historical_invoice_payment --match-by-reference` when exact bank-side invoice evidence proves a prior-year invoice identity that is absent from current invoice datasets and reviewers want an explicit proposal artifact before apply. That evidence may come from `erp_id`, `invoice_number_hint`, or an exact bank `reference`. When no current invoice row exists and reviewers already know the prior-year invoice id, `apply` can also persist that reviewed label directly in a `historical_invoice_payment` row as long as the bank transaction still carries that exact invoice evidence.
 
 Output from propose (or apply result sets) must be redirected using the **global** `--output` flag before the subcommand: for example `bus reconcile -o proposals.tsv propose` or `bus reconcile -o applied.tsv apply --in approved.tsv`. Placing `-o` after the subcommand is invalid. Script-based candidate workflows (e.g. `exports/2024/025-reconcile-sales-candidates-2024.sh`) remain an alternative.
 
@@ -72,7 +76,7 @@ Exit semantics: success (0) when proposals are generated or apply completes; non
 
 ### Match by extracted reference keys
 
-When [bus-bank](./bus-bank) is configured with counterparty and reference extractors, bank list output includes normalized reference fields such as `erp_id` and `invoice_number_hint`. Propose and match can use these extracted keys to join to invoice or purchase-invoice identifiers. Extracted-key semantics: `erp_id` aligns with ERP/internal identifiers; `invoice_number_hint` aligns with human or system invoice numbers. When both an amount match and an extracted-key match are available, precedence is implementation-defined (e.g. amount match first, then extracted key as tie-breaker or secondary path). Match-by-key behavior improves proposal quality and reduces manual pairing while retaining amount and currency checks. See the [module reference](../modules/bus-reconcile) for the full input contract.
+When [bus-bank](./bus-bank) is configured with counterparty and reference extractors, bank list output includes normalized reference fields such as `erp_id` and `invoice_number_hint`. Propose, match, and allocate can use these extracted keys to join to invoice or purchase-invoice identifiers. Exact-reference semantics: `erp_id` aligns with ERP/internal identifiers, `invoice_number_hint` aligns with human or system invoice numbers, and the plain bank `reference` remains available as an exact fallback for prior-year receivable receipts when the current workspace no longer contains the invoice row. Amount and currency checks always remain strict. When the current workspace does not contain the prior-year invoice row but exact bank invoice evidence proves identity, reviewers can request `--target-kind historical_invoice_payment` to produce an explicit proposal artifact instead of silently falling back. If the exact key itself is not the desired audit label, apply can preserve a reviewer-supplied prior-year invoice id in the historical row as long as no current-workspace invoice reference matches the bank evidence. See the [module reference](../modules/bus-reconcile) for the full input contract.
 
 ### Files
 
