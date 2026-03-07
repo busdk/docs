@@ -42,7 +42,13 @@ Migration-quality outputs are available through `parity`, `journal-gap`, and `jo
 For Finnish filing-facing output, `bus reports` provides deterministic TASE and tuloslaskelma results with explicit layout ids and account mapping.
 The module covers statement output, comparatives, consistency checks, and PDF metadata for dating/signing workflows.
 
-The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`.
+In TASE output, BusDK follows the Finnish two-sided presentation under `TASE`. Asset lines are presented under `VASTAAVA` in uppercase. Liability and equity lines are presented under `VASTATTAVAA`, with the closing total shown as `Vastattavaa yhteensä`. For end-of-year presentation, asset balances belong on the debit side, liability balances belong on the credit side, and equity is usually credit-sided but can also be debit-sided when accumulated losses or comparable equity deficits require that presentation. The printed TASE is only valid when `VASTAAVA` and `VASTATTAVAA` are equal.
+
+In tuloslaskelma output, BusDK follows the statutory grouping order instead of printing a flat account list. The expected structure is `Liikevaihto`, `Liiketoiminnan muut tuotot`, `Materiaalit ja palvelut`, `Henkilöstökulut`, `Poistot ja arvonalentumiset`, `Liiketoiminnan muut kulut`, `LIIKEVOITTO (-tappio)`, `Rahoitustuotot- ja kulut`, `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA`, `TULOVEROT`, and `TILIKAUDEN VOITTO (-TAPPIO)`. Within `Materiaalit ja palvelut`, the layout includes at least `Materiaalit`, `Ulkopuoliset palvelut`, and the subtotal `Materiaalit ja palvelut yhteensä`. Within `Henkilöstökulut`, the layout includes at least `Palkat ja palkkiot`, `Henkilösivukulut`, and the subtotal `Henkilöstökulut yhteensä`. Within `Rahoitustuotot- ja kulut`, the layout includes at least `Rahoitustuotot`, `Rahoituskulut`, and the subtotal `Rahoitustuotot- ja kulut yhteensä`.
+
+For printed tuloslaskelma lines, income is shown as positive and expenses as negative statement amounts. This presentation rule is separate from ledger debet/kredit normal-side handling. `LIIKEVOITTO (-tappio)`, `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA`, and `TILIKAUDEN VOITTO (-TAPPIO)` are calculated statement totals, not manually entered report rows.
+
+The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`. For internal drill-down, `fi-kpa-tuloslaskelma-full-accounts`, `fi-kpa-tuloslaskelma-kululaji-accounts`, `fi-pma-tuloslaskelma-full-accounts`, and `fi-pma-tuloslaskelma-kululaji-accounts` expand grouped rows with per-account `Tilinumero`, `Tilin nimi`, and `Saldo`.
 
 These ids are presets of the general layout mechanism documented in [Module reference: bus-reports](../modules/bus-reports).
 `--layout <file>` remains available for custom layouts.
@@ -52,6 +58,12 @@ The selected layout governs text, CSV, JSON, KPA/PMA, and PDF outputs.
 
 Finnish full-layout parity is implemented with built-in full layout ids (for example `kpa-full`, `pma-full`, `fi-kpa-tase-full`, `fi-pma-tase-full`, `fi-kpa-tuloslaskelma-full`, and `fi-pma-tuloslaskelma-full`).
 `fi-*` layouts use deterministic account mapping.
+
+The `*-accounts` tuloslaskelma variants are internal review layouts. They keep the same grouped statutory row order but add account-level rows under each mapped subgroup in deterministic account-code order. Group totals and result rows stay visible, so the report can be read both as a statement and as a tilikohtainen breakdown. When a workspace defines explicit mapping for the base layout such as `pma-full` or `fi-kpa-tuloslaskelma-full`, the matching `*-accounts` variant inherits that same effective mapping by default so the drill-down report does not reclassify accounts differently from the parent statement.
+
+In human-facing grouped output, the hierarchy is also made visible in formatting. Main groups and subtotal/result rows are emphasized, subgroup rows are indented, and `*-accounts` layouts indent account rows one level deeper than their host subgroup. This applies to text, markdown, CSV, and PDF rendering so the calculation structure stays readable across review outputs.
+
+For PDF output, the statutory table uses the full printable page width and wraps long labels onto continuation lines when needed. This keeps long Finnish row labels such as `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA` readable instead of clipping them to a narrow label column.
 
 For `fi-*` layouts, mapping comes from `report-account-mapping.csv` by account code and `layout_id`.
 Unmapped or ambiguous accounts are errors unless explicitly mapped to a permitted statutory other-bucket line.
@@ -71,6 +83,10 @@ For balance-sheet and profit-and-loss, `--comparatives <on|off>` overrides the w
 For detailed statutory mapping and parity behavior, see [Module reference: bus-reports](../modules/bus-reports).
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
+
+When `--locale` is omitted, `bus reports` derives presentation formatting from the process locale environment in order `LC_ALL`, `LC_NUMERIC`, then `LANG`. Human-facing outputs such as `text`, `markdown`, `kpa`, `pma`, and `pdf` therefore pick up Finnish decimal commas automatically from settings such as `LC_ALL=fi_FI.UTF-8`, while machine-facing `csv`, `json`, and `tsv` stay dot-decimal for deterministic parsing.
+
+For regulated PDFs, missing entity metadata and signature metadata are shown as blank fill-in fields in the document itself rather than as placeholder commentary text. The command also prints explicit stderr guidance that tells the user how to configure company name, Y-tunnus, signer names, and signature date with `bus config set ...` commands.
 
 ### Journal coverage and parity reports
 

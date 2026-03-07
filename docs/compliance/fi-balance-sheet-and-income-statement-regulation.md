@@ -23,6 +23,12 @@ Small-entity balance sheet and income statement layouts are prepared under PMA a
 
 For medium and large entities, statement layouts follow KPA. In practice, this means the layout difference by size class is not cosmetic; it is part of the legal information level.
 
+For practical Finnish TASE presentation, all balance-sheet lines remain under the single statement `TASE`, but the statement itself is divided into `VASTAAVA` and `VASTATTAVAA`. `VASTAAVA` contains the asset side and is presented as the debit-side balance set at the balance-sheet date. `VASTATTAVAA` contains liabilities and equity. Liability lines are credit-sided presentation lines. Equity is usually also credit-sided, but equity may show debit-sided balances when the entity has accumulated losses or another equity deficit. The statement only balances when `VASTAAVA` equals `VASTATTAVAA`.
+
+For practical Finnish tuloslaskelma presentation, the legal layout is not just a list of accounts. The line order and subtotal order matter. In expense-by-nature presentation, the core running structure is `Liikevaihto`, `Liiketoiminnan muut tuotot`, `Materiaalit ja palvelut`, `Henkilöstökulut`, `Poistot ja arvonalentumiset`, `Liiketoiminnan muut kulut`, `LIIKEVOITTO (-tappio)`, `Rahoitustuotot- ja kulut`, `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA`, `TULOVEROT`, and `TILIKAUDEN VOITTO (-TAPPIO)`. `Materiaalit ja palvelut` must roll up at least `Materiaalit`, `Ulkopuoliset palvelut`, and `Materiaalit ja palvelut yhteensä`. `Henkilöstökulut` must roll up at least `Palkat ja palkkiot`, `Henkilösivukulut`, and `Henkilöstökulut yhteensä`. `Rahoitustuotot- ja kulut` must roll up at least `Rahoitustuotot`, `Rahoituskulut`, and `Rahoitustuotot- ja kulut yhteensä`.
+
+Statement signs must also be read correctly. In the printed tuloslaskelma, income lines are positive and expense lines are negative, even though the underlying ledger normal side may follow the opposite debit-credit intuition. The subtotal rows such as `LIIKEVOITTO (-tappio)` and `TILIKAUDEN VOITTO (-TAPPIO)` are arithmetic statement results derived from the lines above them.
+
 ## Measurement, accruals, and presentation principles
 
 KPL general principles govern substance even when a line item is formally presented. Materiality allows deviation for immaterial matters, but the basis for deviation must be disclosed in notes. If mechanical application of a rule would materially undermine a true and fair view, the deviation must be justified in notes.

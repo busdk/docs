@@ -7,6 +7,8 @@ description: Implementation-target details for regulated report PDFs are maintai
 
 Implementation-target details moved to the private SDD workspace.
 
+For end-user guidance, use the `bus-reports` pages that describe the public statement contract: TASE is presented under `VASTAAVA` and `VASTATTAVAA`, and tuloslaskelma follows the statutory grouped line and subtotal structure rather than a flat account list.
+
 For end-user guidance, use:
 
 - [bus-reports module](../modules/bus-reports)
