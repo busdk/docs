@@ -7,7 +7,8 @@ description: bus reports computes financial reports from journal and reference d
 
 ### Synopsis
 
-`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports account-balances --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports general-ledger --period <period> [--account <account-id>] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports day-book --period <period> [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
@@ -33,7 +34,7 @@ Migration-quality outputs are available through `parity`, `journal-gap`, and `jo
 
 ### Commands
 
-`trial-balance` prints trial balance as of a date and supports `text` (default) or `csv`. `general-ledger` prints ledger detail for a period and can be filtered by account. `day-book` prints postings in date order (päiväkirja) for the period. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
+`trial-balance` prints trial balance as of a date and supports `text`, `csv`, `markdown`, `json`, and `pdf`. `account-balances` prints net balances by account for a date and supports the same formats. `general-ledger` prints ledger detail for a period and can be filtered by account. `day-book` prints postings in date order (päiväkirja) for the period. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
 
 `parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish legal-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity. `materials-register` emits a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) based on `datapackage.json` resources and their schemas, including linkage fields and retention classes for audit evidence packs. `balance-sheet-specification` emits an internal-only balance-sheet breakdown (tase-erittely) by statement line and account with evidence references for audit packs; it is not a public filing document.
 
@@ -74,7 +75,7 @@ When prior-period data exists, comparative columns are expected.
 
 ### Options
 
-`trial-balance` and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. Trial-balance accepts `-f text` (default) or `-f csv` only (not `tsv`). Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger` and `day-book` also support `--format pdf` for filing-grade ledger exports.
+`trial-balance`, `account-balances`, and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger` and `day-book` also support `--format pdf` for filing-grade ledger exports.
 
 For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
 
@@ -112,6 +113,14 @@ bus reports balance-sheet \
   --layout-id fi-kpa-tase \
   --format pdf \
   -o ./out/tase-2026.pdf
+bus reports trial-balance \
+  --as-of 2026-12-31 \
+  --format pdf \
+  -o ./out/trial-balance-2026.pdf
+bus reports account-balances \
+  --as-of 2026-12-31 \
+  --format pdf \
+  -o ./out/account-balances-2026.pdf
 bus reports day-book \
   --period 2026-01 \
   --format pdf \
