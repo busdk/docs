@@ -10,7 +10,7 @@ description: bus validate checks all workspace datasets against their schemas an
 `bus validate [--format <text|tsv>] [-C <dir>] [global flags]`  
 `bus validate parity --source <file> [--max-abs-delta <n>] [--max-count-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`  
 `bus validate journal-gap --source <file> [--max-abs-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`  
-`bus validate evidence-coverage [-C <dir>] [-o <file>] [global flags]`
+`bus validate evidence-coverage [--vendor <normalized-key>] [--source <bank|invoice|journal|qred_statement|settlement>] [--group-by <vendor|month|document-type|source>] [-C <dir>] [-o <file>] [global flags]`
 
 ### Description
 
@@ -26,7 +26,7 @@ The module also provides first-class parity and journal-gap checks through `bus 
 
 ### Commands
 
-Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide validation. Subcommands `parity` and `journal-gap` provide first-class migration checks; see [Parity and gap checks (first-class)](#parity-and-gap-checks-first-class) below. Subcommand `evidence-coverage` provides evidence link coverage totals and missing IDs; see [Evidence coverage](#evidence-coverage) below.
+Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide validation. Subcommands `parity` and `journal-gap` provide first-class migration checks; see [Parity and gap checks (first-class)](#parity-and-gap-checks-first-class) below. Subcommand `evidence-coverage` provides evidence link coverage totals plus search-oriented missing-evidence output; see [Evidence coverage](#evidence-coverage) below.
 
 ### Options
 
@@ -54,7 +54,9 @@ Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain ava
 
 ### Evidence coverage
 
-`bus validate evidence-coverage` audits attachments coverage for journal vouchers, bank transactions, and invoices using `attachment-links.csv`. The command emits a deterministic TSV result set with columns `row_kind`, `scope`, `source_id`, `voucher_id`, `bank_txn_id`, `invoice_id`, `total`, `linked`, `missing`. Summary rows provide totals per scope; missing rows list uncovered IDs. It exits `0` when all scopes are fully covered and `1` when any missing evidence exists.
+`bus validate evidence-coverage` audits attachments coverage for journal vouchers, bank transactions, and invoices using `attachment-links.csv`. The command emits a deterministic TSV result set with columns `row_kind`, `scope`, `source_id`, `voucher_id`, `bank_txn_id`, `invoice_id`, `total`, `linked`, `missing`, `group_by`, `group_key`, `date`, `amount`, `currency`, `counterparty_name`, `description`, `reference`, `expected_document_type`, `search_hint`, `vendor_key`, and `source_channel`. Summary rows provide totals per scope, optional `group` rows summarize the requested grouping, and `missing` rows provide search-ready evidence leads with exact dates, amounts, normalized vendor keys, and normalized source-channel hints. It exits `0` when all scopes are fully covered and `1` when any missing evidence exists.
+
+Use `--vendor <normalized-key>` to narrow missing rows to one recurring vendor, `--source <...>` to focus on one evidence source channel, and `--group-by <...>` to add deterministic group rows for vendor, month, document type, or source. Direct bank-card purchases and statement-derived purchases are normalized into the same search-oriented output surface.
 
 ### Files
 
@@ -68,6 +70,8 @@ bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta
 bus validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
 bus validate parity --source ./imports/legacy/parity-2026-01.csv --dry-run
 bus validate evidence-coverage
+bus validate evidence-coverage --vendor vendor-oy --source bank --group-by vendor
+bus validate evidence-coverage --source qred_statement --group-by source
 ```
 
 ### Exit status
