@@ -24,11 +24,16 @@ The frontend shows a deterministic transactions list view, supports opening a
 transaction detail panel, and includes Previous/Next navigation so users can
 move transaction-by-transaction without returning to the list. Each transaction
 detail also includes one-row-per-entry line summaries (type/amount/from/to) and
-supports opening a full line-details panel on the right. When entry lines
-contain evidence source paths, the line-details panel can also display the
-evidence document inline and provide an open-in-new-tab action. Transactions
-with evidence are marked with a document icon in the transactions list. The
-list surface also supports explicit Day book and General ledger modes. List and
+supports opening a full line-details panel on the right. When evidence is
+available either from journal path fields or from attachment metadata linked to
+the transaction voucher, both the transaction detail and the line-details panel
+now use the same shared evidence surface: one common document is shown inline
+below the line table with PDF preview plus explicit open and download controls,
+and non-previewable files still keep those controls with visible document
+metadata. If multiple documents are linked, the transaction detail lists them
+directly. Transactions with
+evidence are marked with a document icon in the transactions list. The list
+surface also supports explicit Day book and General ledger modes. List and
 detail tables use explicit toggle controls for open/close transitions, so row
 index cells are plain values instead of navigation links and closing follows the
 same toggle interaction pattern as opening.
@@ -43,6 +48,25 @@ model list without requiring a manual submit action.
 The model dropdown is seeded with shared Codex defaults (including `gpt-5.4`)
 and is expanded by all model candidates observed from backend payloads, so the
 list reflects complete available options instead of only the first discovered model.
+The thread list also keeps a stable "AI working" marker on the busy thread, and
+reopening another saved thread no longer shows the generic responding
+placeholder unless that reopened thread is the one still running.
+The shared close guard also blocks browser close while assistant work is still
+active, such as a pending approval, so the session is not torn down
+accidentally in the middle of an unfinished AI task.
+The shared composer also preserves trailing spaces while the AI input is still
+focused, even if the panel re-renders, and only normalizes the draft once you
+blur or send it.
+The same shared `bus-ui` AI surface also renders command-session activity in
+place. When the assistant is waiting on approval or has just completed a
+verification command, the panel shows the command, output, status, and review
+actions through the shared terminal session panel instead of a ledger-local
+terminal UI.
+The same shared surface now also shows per-thread workspace isolation state.
+When another AI thread already owns the workspace lock, the blocked thread
+shows the shared conflict card with the owner thread identifier and
+deterministic branch/worktree naming instead of silently failing or rendering
+ledger-local lock text.
 
 The AI message surface is conversation-oriented. User and assistant messages
 are rendered as separate items, inline markdown code spans are formatted, and

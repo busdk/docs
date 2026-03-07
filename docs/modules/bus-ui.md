@@ -37,6 +37,61 @@ DOM action routing and shared panel action lifecycles.
 It also provides a shared Codex model catalog (`DefaultAICodexModelOptions`)
 and recursive payload model extraction (`ExtractAIModelCandidates`) so host
 modules can show complete model dropdown options, including `gpt-5.4`.
+It also provides a shared AI event-method catalog
+(`IsKnownAIEventMethod`) so host modules can recognize stable warning, plan,
+approval, and terminal-interaction event families without keeping separate
+module-local allowlists in sync.
+It also provides a shared AI timeline adapter
+(`NormalizeAITimelineEvent`, `BuildAITimeline`) so host modules can convert raw
+backend event streams into stable message, command, diff, warning, plan, and
+approval timeline rows without reimplementing event parsing locally.
+It also provides a shared approval-response helper
+(`ExecuteAIApprovalRespond`) that sends one approval decision and then refreshes
+AI poll state through the same shared reconciliation path used by background
+polling, so host modules do not need separate local approval-state cleanup.
+It also provides shared review-before-apply presentation primitives
+(`AIReviewStatusStrip`, `AIDiffSummaryCard`, `AIVerificationResultBlock`) so
+host modules can render a consistent status strip, changed-file summary, and
+verification block for coding workflows without inventing local review cards.
+It also provides shared per-thread AI activity-state helpers
+(`IsAIThreadWorking`, `SetAIThreadWorking`, `BuildAIWorkingThreadState`) so
+host modules can keep a stable "AI working" marker in thread lists and avoid
+showing the responding placeholder on reopened threads that are no longer the
+active worker.
+It also provides shared window-close guard wiring
+(`BuildAIWindowCloseGuardState`, `WireWindowCloseGuardLifecycle`) so modules can
+block browser close while AI work is still active or local draft work is still
+unfinished, while also exposing one shared explicit close-attempt path for
+native wrappers and tests. The shared AI panel browser client also publishes
+the same close-guard bindings (`busUIWindowCloseGuardState`,
+`busUIAttemptWindowClose`) for plain HTML/JavaScript hosts such as
+`bus-factory`, so downstream modules do not need a separate module-local
+beforeunload implementation.
+It also provides one shared committed-draft normalization rule
+(`NormalizeAICommittedDraft`) and matching composer event wiring so AI text
+areas keep raw trailing spaces while focused and only trim on intentional blur
+or send.
+It also provides shared per-thread workspace/git isolation status helpers
+(`AIThreadIsolationStatus`, `BuildAIIsolationBranchName`,
+`BuildAIIsolationWorktreePath`, `AIThreadIsolationCard`) so host modules can
+surface active isolated scope ownership and deterministic lock conflicts
+through one reusable AI panel block instead of inventing separate thread-lock
+cards.
+It also provides shared in-app terminal primitives
+(`TerminalSessionPanel`, `TerminalOutputView`, `TerminalInputBox`,
+`TerminalApprovalPromptCard`) so modules can embed a consistent command session
+surface with streamed output, input controls, error state, exit metadata, and
+approval affordances without inventing separate terminal cards.
+It also provides a shared terminal-session snapshot adapter
+(`AITerminalSession`, `BuildAITerminalSession`) so host modules can derive one
+deterministic command-session view from raw AI events plus pending approvals
+and feed that same structure into polling responses and panel rendering.
+For ledger-style detail views, it also provides a shared projection detail
+presenter that can render the same evidence surface in both transaction detail
+and line detail, including PDF preview plus deterministic open/download
+controls, while falling back to visible document metadata and actions when
+inline preview is unavailable and to a document list when multiple evidence
+files are linked.
 The module also includes reusable WASM event wiring and DOM error-host helpers
 so module frontends do not reimplement common browser wiring patterns.
 Those wiring helpers now return disposer callbacks for explicit lifecycle

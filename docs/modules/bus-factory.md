@@ -26,6 +26,15 @@ Initial features:
   modules are listed first and unit listing is loaded per selected module
 - default action integration from `.bus/dev` and `.bus/run`
 
+`bus-factory` now enforces module ownership locks for concurrent AI threads.
+When one thread is actively running work for a module, conflicting app-server
+approval requests from another thread targeting that same module are declined
+until the owner turn completes (or lock lease expires).
+The AI panel also exposes the same shared `bus-ui` isolation card used by
+other modules, so each thread can show whether it currently owns the selected
+module scope or is blocked by another thread, along with deterministic
+branch/worktree naming derived from that thread and module.
+
 ### Commands
 
 `serve` starts a local HTTP server. By default it opens the capability URL in an app-style local web shell window and prints the URL to stderr. Use `--print-url` to disable auto-open and print URL to stdout.
@@ -77,6 +86,34 @@ approval, `bus-factory` emits an `approval/requested` event containing
 `v1/ai/poll` under `pending_approvals`. The UI responds through
 `POST v1/ai/approval/respond` using `request_id` plus one decision:
 `accept`, `accept_for_session`, `decline`, or `cancel`.
+
+`GET v1/ai/poll` also returns `acp_status` for review-first coding flows. That
+status keeps the current diff blocked while only a narrow Go check has passed,
+then switches to ready-to-apply only after the verification pipeline has
+escalated to a broad `go test ./...` pass. The same payload includes ordered
+tool calls, verification results, and a deterministic diff summary so the UI
+does not need to infer readiness from raw terminal text.
+
+Shared AI event handling also recognizes Codex warning, plan-update,
+exec-approval, and terminal-interaction event families so the server and UI can
+process current backend lifecycle traffic without falling back to unknown-event
+warnings.
+The shared AI panel also keeps per-thread "AI working" markers stable in the
+thread list and avoids showing the generic responding placeholder when you
+reopen a different thread while another thread is still waiting on work or
+approval.
+The shared composer also preserves trailing spaces in the AI text area while
+the field is still focused, so background panel refreshes do not collapse draft
+text mid-edit; the draft is only normalized when you blur or send it.
+The same shared browser AI client now exposes the shared close-guard bindings
+used by `bus-ui`, so `bus-factory` blocks browser close while assistant work
+is active or a local AI draft is still unfinished instead of maintaining a
+separate module-local unload handler.
+The shared AI panel also renders the current command session through the same
+`bus-ui` terminal surface used by other modules. When approval or verification
+work is in progress, the panel can show the current command, streamed output,
+session state, and approval prompt from one deterministic `terminal_session`
+snapshot in `v1/ai/poll` instead of requiring module-local terminal widgets.
 
 If the pending approval is not resolved, `RequestApproval` cancels on context
 cancellation or after a fixed 10-minute timeout.
