@@ -21,9 +21,9 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
   "resources": [],
   "busdk": {
     "accounting_entity": {
-      "company_name": "Example Oy",
+      "business_name": "Example Oy",
       "business_id": "1234567-1",
-      "legal_form": "oy",
+      "business_form": "oy",
       "base_currency": "EUR",
       "fiscal_year_start": "2026-01-01",
       "fiscal_year_end": "2026-12-31",
@@ -60,7 +60,7 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 `base_currency` is the workspace’s base currency for reporting and review. It should be an ISO 4217 code such as `EUR` or `SEK`.
 
-`company_name` is the legal/company name used for workspace-level reporting and filing metadata. `business_id` is the legal identifier of that entity, such as Finnish Y-tunnus (`NNNNNNN-N`). `legal_form` is the legal form profile for the entity, such as `tmi`/`toiminimi`, `oy`, `ky`, `ay`, `ry`, or `osk`.
+`business_name` is the legal/business name used for workspace-level reporting and filing metadata. `business_id` is the legal identifier of that entity, such as Finnish Y-tunnus (`NNNNNNN-N`). `business_form` is the business form profile for the entity, such as `tmi`/`toiminimi`, `oy`, `ky`, `ay`, `ry`, `osk`, or `sr`.
 
 `fiscal_year_start` and `fiscal_year_end` define the fiscal year boundaries for the workspace. They are dates in `YYYY-MM-DD` form and must form a coherent year boundary for period generation, validation, and year-end workflows.
 
