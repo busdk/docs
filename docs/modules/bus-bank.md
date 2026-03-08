@@ -30,7 +30,7 @@ Ingest supports both single-statement files (`--file`) and profile-driven ERP im
 
 `init` creates baseline bank datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
 
-`import` ingests either a statement file (`--file <path>`) or profile-driven ERP input (`--profile <path> --source <path>`, optional `--year`) into normalized datasets. Built-in `erp-tsv` mode adds malformed-tab-tolerant import with deterministic parse diagnostics (`recovered_rows`, `ambiguous_rows`, `dropped_rows`) and optional `--fail-on-ambiguity`.
+`import` ingests either a statement file (`--file <path>`) or profile-driven ERP input (`--profile <path> --source <path>`, optional `--year`) into normalized datasets. Built-in `erp-tsv` mode adds malformed-tab-tolerant import with deterministic parse diagnostics (`recovered_rows`, `ambiguous_rows`, `dropped_rows`) and optional `--fail-on-ambiguity`. Generated `import_id` and `bank_txn_id` values follow shared workspace `bus-config` `id_generation` policy when configured; without workspace policy, statement import keeps its legacy runtime fallback and profile import keeps its deterministic content-hash fallback.
 
 `config` manages counterparty normalization and reference extractors. `config counterparty add` stores canonical names and aliases, and `config extractors add` stores extraction patterns for message/reference fields. With config present, `list` output includes normalized counterparty and extracted hint columns.
 

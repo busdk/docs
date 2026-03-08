@@ -34,7 +34,7 @@ Other modules post into the journal; this CLI adds entries and reports balances.
 
 `init` creates the journal index and baseline datasets and schemas, including `journals.csv`, `journals.schema.json`, `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. If all required files exist, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
 
-`add` appends a balanced transaction with one or more debit and credit lines. Optional `--source-id <key>` records source identity, and `--if-missing` makes add idempotent when a posting with the same source identity already exists. For replay-scale streams, `add --bulk-in <file|->` reads JSON array or NDJSON and applies the same validation and idempotency semantics per transaction.
+`add` appends a balanced transaction with one or more debit and credit lines. Optional `--source-id <key>` records source identity, and `--if-missing` makes add idempotent when a posting with the same source identity already exists. For replay-scale streams, `add --bulk-in <file|->` reads JSON array or NDJSON and applies the same validation and idempotency semantics per transaction. When workspace `datapackage.json` contains `busdk.accounting_entity.id_generation`, generated `transaction_id`, `voucher_id`, and `entry_id` values follow that shared BusDK policy; otherwise bus-journal uses its legacy timestamp-based fallback identifiers.
 
 `template post` posts a single template-driven entry. A predicate in the template file selects a rule, then gross amount is split into base plus VAT with deterministic rounding. `template apply` runs the same logic in batch from bank CSV (or equivalent) input.
 

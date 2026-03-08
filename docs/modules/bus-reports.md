@@ -17,6 +17,7 @@ description: bus reports computes financial reports from journal and reference d
 `bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports voucher-list --period <period> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports bank-transactions --period <period> [--account <account-id>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports evidence-pack (--period <period> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--format <text|csv|tsv|json|markdown>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports parity [options] [-C <dir>] [global flags]`  
 `bus reports journal-gap [options] [-C <dir>] [global flags]`  
 `bus reports compliance-checklist --period <YYYY|YYYY-MM|YYYYQn> [--format <tsv|csv|json|text>] [-C <dir>] [global flags]`  
@@ -39,7 +40,7 @@ Migration-quality outputs are available through `parity`, `journal-gap`, and `jo
 
 `trial-balance` prints trial balance as of a date and supports `text`, `csv`, `markdown`, `json`, and `pdf`. `account-balances` prints net balances by account for a date and supports the same formats. `general-ledger` prints ledger detail for a period and can be filtered by account. In review formats, it uses the column order `Account`, `Tositenumero`, `Date`, `Debit/Credit`, `Amount`, `Description`, `Tx`, `Line`, `Voucher`, `Entry`, and in the ungrouped ledger it adds a bold `Yhteensä` closing row after each account. `day-book` prints postings in date order (päiväkirja) for the period and uses the review column order `Päiväkirja`, `Tositenumero`, `Account`, `Debit/Credit`, `Summa`, `Selite`, `Tx`, `Line`, `Voucher`, `Entry`. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
 
-`parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish business-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity. `materials-register` emits a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) based on `datapackage.json` resources and their schemas, including linkage fields and retention classes for audit evidence packs. `balance-sheet-specification` emits an internal-only balance-sheet breakdown (tase-erittely) by statement line and account with evidence references for audit packs; it is not a public filing document. `balance-sheet-reconciliation` emits an internal `tarkistusdokumentti` that compares ledger closing balances with TASE-side balances and explicit difference checks. `voucher-list` emits a printable `tositeluettelo`, and `bank-transactions` emits a grouped bank-account review report with per-account `YHTEENSÄ` rows and a final `EROTUS` row.
+`parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish business-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity. `materials-register` emits a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) based on `datapackage.json` resources and their schemas, including linkage fields and retention classes for audit evidence packs. `balance-sheet-specification` emits an internal-only balance-sheet breakdown (tase-erittely) by statement line and account with evidence references for audit packs; it is not a public filing document. `balance-sheet-reconciliation` emits an internal `tarkistusdokumentti` that compares ledger closing balances with TASE-side balances and explicit difference checks. `voucher-list` emits a printable `tositeluettelo`, and `bank-transactions` emits a grouped bank-account review report with per-account `YHTEENSÄ` rows and a final `EROTUS` row. `evidence-pack` bundles the close/review package into one target directory with deterministic default filenames and a machine-readable manifest.
 
 ### Finnish statutory financial statements
 
@@ -80,7 +81,7 @@ When prior-period data exists, comparative columns are expected.
 
 ### Options
 
-`trial-balance`, `account-balances`, `balance-sheet`, and `balance-sheet-reconciliation` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, `profit-and-loss`, `voucher-list`, and `bank-transactions` require `--period <period>`. `general-ledger` and `bank-transactions` accept optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger`, `day-book`, `balance-sheet-reconciliation`, `voucher-list`, and `bank-transactions` also support `--format pdf` for printable review exports.
+`trial-balance`, `account-balances`, `balance-sheet`, and `balance-sheet-reconciliation` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, `profit-and-loss`, `voucher-list`, and `bank-transactions` require `--period <period>`. `evidence-pack` requires `--output-dir` and either `--period` or `--as-of`; with `--as-of` only, the package derives a year-to-date period from `YYYY-01-01` to the selected close date and uses the year as the package label. `general-ledger` and `bank-transactions` accept optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger`, `day-book`, `balance-sheet-reconciliation`, `voucher-list`, and `bank-transactions` also support `--format pdf` for printable review exports. `evidence-pack` writes artifact files to the target directory and writes a manifest to stdout or global `--output`.
 
 For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
 
@@ -158,6 +159,10 @@ bus reports balance-sheet-reconciliation \
   --as-of 2026-12-31 \
   --format pdf \
   -o ./out/tarkistusdokumentti-2026.pdf
+bus reports evidence-pack \
+  --period 2026 \
+  --output-dir ./out/reports \
+  --format tsv
 bus reports \
   --format pdf \
   -o ./out/tase-erittely-2026.pdf \

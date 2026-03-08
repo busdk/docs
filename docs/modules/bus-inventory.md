@@ -24,7 +24,7 @@ Movements are append-only; corrections are new records.
 
 `init` creates the baseline inventory datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
 
-`add` inserts an item into item master data. `move` appends stock movement records (`in`, `out`, or `adjust`). `valuation` computes valuation output as of the selected date.
+`add` inserts an item into item master data. `move` appends stock movement records (`in`, `out`, or `adjust`). By default movement primary keys keep the legacy random-hex behavior, but a workspace can override them through `busdk.accounting_entity.id_generation.types.inventory_movement_id` in `datapackage.json`. `valuation` computes valuation output as of the selected date.
 
 ### Options
 

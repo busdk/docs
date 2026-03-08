@@ -34,6 +34,14 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
       "vat_default_basis": "accrual",
       "vat_registration_start": null,
       "vat_registration_end": null,
+      "id_generation": {
+        "types": {
+          "voucher_id": {
+            "strategy": "sequence",
+            "template": "V-{yyyy}-{inc}"
+          }
+        }
+      },
       "reporting_profile": {
         "fi_statutory": {
           "reporting_standard": "fi-kpa",
@@ -73,6 +81,8 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 `vat_default_source` and `vat_default_basis` define default execution mode for VAT commands when `--source` and `--basis` are omitted. Allowed source values are `invoice`, `journal`, and `reconcile`. Allowed basis values are `accrual` and `cash`. The `cash` basis default requires source `journal` or `reconcile`.
 
 `vat_registration_start` (optional) is the date from which the entity is VAT registered, in `YYYY-MM-DD` form. `vat_registration_end` (optional) is the date on which VAT registration ends. The [bus-vat](../modules/bus-vat) module uses these as inputs when it builds the sequence of VAT periods (including partial first or last periods and any non-standard period lengths). Omit or set to null when not applicable. See [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos).
+
+`id_generation` is optional shared BusDK configuration for primary-key and visible numbering rules. It is intended for cross-module ID policy such as voucher numbering, invoice numbering, and immutable technical ID defaults. The structure is owned by [bus-config](../modules/bus-config) and consumed by modules that generate durable IDs. Inline JSON and `@file` values can be written with `bus config set --id-generation ...` or `bus config set id-generation ...`.
 
 `reporting_profile.fi_statutory` defines deterministic presentation settings for Finnish statutory financial statements in [bus-reports](../modules/bus-reports). These are presentation controls, not posting business logic, and they must remain committed and auditable in workspace data.
 

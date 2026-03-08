@@ -24,7 +24,7 @@ Corrections are append-only and traceable.
 
 `init` creates the baseline loan datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
 
-`add` records a loan contract in the register. `event` appends a disbursement, repayment, interest, fee, or adjustment event and can produce postings. `amortize` generates amortization and posting output for a period.
+`add` records a loan contract in the register. `event` appends a disbursement, repayment, interest, fee, or adjustment event and can produce postings. When `--voucher` is omitted, event primary keys keep the legacy `EV-...` format unless the workspace overrides them through `busdk.accounting_entity.id_generation.types.loan_event_id` in `datapackage.json`. `amortize` generates amortization and posting output for a period.
 
 ### Options
 

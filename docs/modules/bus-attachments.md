@@ -24,7 +24,7 @@ Other modules then link to attachments without embedding file paths directly in 
 
 `init` creates baseline attachment metadata and link datasets and schemas. If they already exist in full, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
 
-`add` registers a file and writes attachment metadata. `link` adds deterministic links from attachments to domain resources such as bank rows, vouchers, invoices, or custom kind/id targets. Repeated identical links are idempotent.
+`add` registers a file and writes attachment metadata. `link` adds deterministic links from attachments to domain resources such as bank rows, vouchers, invoices, or custom kind/id targets. Repeated identical links are idempotent. When workspace `datapackage.json` contains `busdk.accounting_entity.id_generation`, generated `attachment_id` and `link_id` values follow that shared BusDK policy; otherwise `bus attachments` falls back to canonical UUIDs.
 
 For replay flows, `link` can select attachments without UUID lookup by using `--path`, `--desc-exact`, or `--source-hash`. Resolution is deterministic and fails if there are zero or multiple matches.
 
@@ -44,6 +44,8 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 ### Files
 
 `attachments.csv` and `attachment-links.csv` with beside-the-table schemas at the repository root. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` (for example `attachments/2026/01/20260115-INV-1001.pdf`), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. This is the only layout that places files in a subdirectory; the datasets and schemas stay at the workspace root. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+
+The schema treats `attachment_id` and `link_id` as stable string primary keys rather than UUID-only values so the shared workspace ID policy can use UUID, sequence, or template strategies without per-module schema forks.
 
 ### Examples
 
