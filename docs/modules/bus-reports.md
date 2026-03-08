@@ -14,6 +14,9 @@ description: bus reports computes financial reports from journal and reference d
 `bus reports profit-and-loss --period <period> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|kpa|pma|pdf>] [--layout-id <id>] [--layout <file>] [--comparatives <on|off>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [--layout-id <id>] [--layout <file>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports voucher-list --period <period> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports bank-transactions --period <period> [--account <account-id>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports parity [options] [-C <dir>] [global flags]`  
 `bus reports journal-gap [options] [-C <dir>] [global flags]`  
 `bus reports compliance-checklist --period <YYYY|YYYY-MM|YYYYQn> [--format <tsv|csv|json|text>] [-C <dir>] [global flags]`  
@@ -34,9 +37,9 @@ Migration-quality outputs are available through `parity`, `journal-gap`, and `jo
 
 ### Commands
 
-`trial-balance` prints trial balance as of a date and supports `text`, `csv`, `markdown`, `json`, and `pdf`. `account-balances` prints net balances by account for a date and supports the same formats. `general-ledger` prints ledger detail for a period and can be filtered by account. `day-book` prints postings in date order (päiväkirja) for the period. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
+`trial-balance` prints trial balance as of a date and supports `text`, `csv`, `markdown`, `json`, and `pdf`. `account-balances` prints net balances by account for a date and supports the same formats. `general-ledger` prints ledger detail for a period and can be filtered by account. In review formats, it uses the column order `Account`, `Tositenumero`, `Date`, `Debit/Credit`, `Amount`, `Description`, `Tx`, `Line`, `Voucher`, `Entry`, and in the ungrouped ledger it adds a bold `Yhteensä` closing row after each account. `day-book` prints postings in date order (päiväkirja) for the period and uses the review column order `Päiväkirja`, `Tositenumero`, `Account`, `Debit/Credit`, `Summa`, `Selite`, `Tx`, `Line`, `Voucher`, `Entry`. `profit-and-loss` prints period P&L, and `balance-sheet` prints balance sheet as of a date.
 
-`parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish legal-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity. `materials-register` emits a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) based on `datapackage.json` resources and their schemas, including linkage fields and retention classes for audit evidence packs. `balance-sheet-specification` emits an internal-only balance-sheet breakdown (tase-erittely) by statement line and account with evidence references for audit packs; it is not a public filing document.
+`parity` and `journal-gap` emit deterministic migration-review artifacts for use with [bus-validate](./bus-validate) threshold and CI behavior. `compliance-checklist` emits a Finnish legal-form-aware checklist for the selected period with `required`, `conditionally_required`, and `not_applicable` states. `journal-coverage` emits deterministic monthly comparison between imported operational totals and non-opening journal activity. `materials-register` emits a deterministic index of accounting records and materials (luettelo kirjanpidoista ja aineistoista) based on `datapackage.json` resources and their schemas, including linkage fields and retention classes for audit evidence packs. `balance-sheet-specification` emits an internal-only balance-sheet breakdown (tase-erittely) by statement line and account with evidence references for audit packs; it is not a public filing document. `balance-sheet-reconciliation` emits an internal `tarkistusdokumentti` that compares ledger closing balances with TASE-side balances and explicit difference checks. `voucher-list` emits a printable `tositeluettelo`, and `bank-transactions` emits a grouped bank-account review report with per-account `YHTEENSÄ` rows and a final `EROTUS` row.
 
 ### Finnish statutory financial statements
 
@@ -49,7 +52,7 @@ In tuloslaskelma output, BusDK follows the statutory grouping order instead of p
 
 For printed tuloslaskelma lines, income is shown as positive and expenses as negative statement amounts. This presentation rule is separate from ledger debet/kredit normal-side handling. `LIIKEVOITTO (-tappio)`, `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA`, and `TILIKAUDEN VOITTO (-TAPPIO)` are calculated statement totals, not manually entered report rows.
 
-The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`. For internal drill-down, `fi-kpa-tuloslaskelma-full-accounts`, `fi-kpa-tuloslaskelma-kululaji-accounts`, `fi-pma-tuloslaskelma-full-accounts`, and `fi-pma-tuloslaskelma-kululaji-accounts` expand grouped rows with per-account `Tilinumero`, `Tilin nimi`, and `Saldo`.
+The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`. For internal drill-down, `fi-kpa-tase-full-accounts`, `fi-pma-tase-full-accounts`, `fi-kpa-tuloslaskelma-full-accounts`, `fi-kpa-tuloslaskelma-kululaji-accounts`, `fi-pma-tuloslaskelma-full-accounts`, and `fi-pma-tuloslaskelma-kululaji-accounts` expand grouped rows with per-account `Tilinumero`, `Tilin nimi`, and `Saldo`.
 
 These ids are presets of the general layout mechanism documented in [Module reference: bus-reports](../modules/bus-reports).
 `--layout <file>` remains available for custom layouts.
@@ -60,11 +63,13 @@ The selected layout governs text, CSV, JSON, KPA/PMA, and PDF outputs.
 Finnish full-layout parity is implemented with built-in full layout ids (for example `kpa-full`, `pma-full`, `fi-kpa-tase-full`, `fi-pma-tase-full`, `fi-kpa-tuloslaskelma-full`, and `fi-pma-tuloslaskelma-full`).
 `fi-*` layouts use deterministic account mapping.
 
-The `*-accounts` tuloslaskelma variants are internal review layouts. They keep the same grouped statutory row order but add account-level rows under each mapped subgroup in deterministic account-code order. Group totals and result rows stay visible, so the report can be read both as a statement and as a tilikohtainen breakdown. When a workspace defines explicit mapping for the base layout such as `pma-full` or `fi-kpa-tuloslaskelma-full`, the matching `*-accounts` variant inherits that same effective mapping by default so the drill-down report does not reclassify accounts differently from the parent statement.
+The `*-accounts` internal layouts are review layouts. For tuloslaskelma they keep the same grouped statutory row order and add account-level rows under each mapped subgroup in deterministic account-code order. For TASE they keep the same statutory detail lines and add account rows beneath each mapped balance-sheet line. Group totals and result rows stay visible, so the report can be read both as a statement and as a tilikohtainen breakdown. When a workspace defines explicit mapping for the base layout such as `pma-full` or `fi-kpa-tuloslaskelma-full`, the matching `*-accounts` variant inherits that same effective mapping by default so the drill-down report does not reclassify accounts differently from the parent statement.
 
-In human-facing grouped output, the hierarchy is also made visible in formatting. Main groups and subtotal/result rows are emphasized, subgroup rows are indented, and `*-accounts` layouts indent account rows one level deeper than their host subgroup. This applies to text, markdown, CSV, and PDF rendering so the calculation structure stays readable across review outputs.
+In human-facing grouped output, the hierarchy is also made visible in formatting. Main groups and subtotal/result rows are emphasized, subgroup rows are indented, and `*-accounts` layouts indent account rows one level deeper than their host subgroup. This applies to text, markdown, CSV, and PDF rendering so the calculation structure stays readable across review outputs. In full tuloslaskelma layouts this means `Rahoitustuotot` and `Rahoituskulut` are indented subgroup rows rather than bold section totals.
 
-For PDF output, the statutory table uses the full printable page width and wraps long labels onto continuation lines when needed. This keeps long Finnish row labels such as `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA` readable instead of clipping them to a narrow label column.
+For PDF output, the statutory table uses the full printable page width and wraps long labels onto continuation lines when needed. This keeps long Finnish row labels such as `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA` readable instead of clipping them to a narrow label column. The same PDF header also includes deterministic `Generated` and `Executor` provenance fields for internal review copies.
+
+Workspace-specific label wording can be overridden with `report-layout-label-overrides.csv` at the workspace root or under `accounts/`. The file is keyed by `layout_id` and `layout_line_id`, and `*-accounts` layouts inherit the base-layout wording unless a more specific override row exists.
 
 For `fi-*` layouts, mapping comes from `report-account-mapping.csv` by account code and `layout_id`.
 Unmapped or ambiguous accounts are errors unless explicitly mapped to a permitted statutory other-bucket line.
@@ -75,7 +80,7 @@ When prior-period data exists, comparative columns are expected.
 
 ### Options
 
-`trial-balance`, `account-balances`, and `balance-sheet` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, and `profit-and-loss` require `--period <period>`. `general-ledger` accepts optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger` and `day-book` also support `--format pdf` for filing-grade ledger exports.
+`trial-balance`, `account-balances`, `balance-sheet`, and `balance-sheet-reconciliation` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, `profit-and-loss`, `voucher-list`, and `bank-transactions` require `--period <period>`. `general-ledger` and `bank-transactions` accept optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger`, `day-book`, `balance-sheet-reconciliation`, `voucher-list`, and `bank-transactions` also support `--format pdf` for printable review exports.
 
 For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
 
@@ -87,7 +92,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 When `--locale` is omitted, `bus reports` derives presentation formatting from the process locale environment in order `LC_ALL`, `LC_NUMERIC`, then `LANG`. Human-facing outputs such as `text`, `markdown`, `kpa`, `pma`, and `pdf` therefore pick up Finnish decimal commas automatically from settings such as `LC_ALL=fi_FI.UTF-8`, while machine-facing `csv`, `json`, and `tsv` stay dot-decimal for deterministic parsing.
 
-For regulated PDFs, missing entity metadata and signature metadata are shown as blank fill-in fields in the document itself rather than as placeholder commentary text. The command also prints explicit stderr guidance that tells the user how to configure company name, Y-tunnus, signer names, and signature date with `bus config set ...` commands.
+For regulated PDFs, missing entity metadata and signature metadata are shown as blank fill-in fields in the document itself rather than as placeholder commentary text. The command also prints explicit stderr guidance that tells the user how to configure company name, Y-tunnus, signer names, and signature date with `bus config set ...` commands. Review PDFs for `general-ledger` and `day-book` use the same accountant-facing column order as text output and wrap long cell content instead of clipping it.
 
 ### Journal coverage and parity reports
 
@@ -133,6 +138,18 @@ bus reports journal-coverage \
 bus reports materials-register \
   --format pdf \
   -o ./out/materials-register.pdf
+bus reports voucher-list \
+  --period 2026-01 \
+  --format pdf \
+  -o ./out/tositeluettelo-2026-01.pdf
+bus reports bank-transactions \
+  --period 2026-01 \
+  --format pdf \
+  -o ./out/pankkitapahtumat-2026-01.pdf
+bus reports balance-sheet-reconciliation \
+  --as-of 2026-12-31 \
+  --format pdf \
+  -o ./out/tarkistusdokumentti-2026.pdf
 bus reports \
   --format pdf \
   -o ./out/tase-erittely-2026.pdf \
