@@ -72,8 +72,7 @@ For PDF output, the statutory table uses the full printable page width and wraps
 
 Workspace-specific label wording can be overridden with `report-layout-label-overrides.csv` at the workspace root or under `accounts/`. The file is keyed by `layout_id` and `layout_line_id`, and `*-accounts` layouts inherit the base-layout wording unless a more specific override row exists.
 
-For `fi-*` layouts, mapping comes from `report-account-mapping.csv` by account code and `layout_id`.
-Unmapped or ambiguous accounts are errors unless explicitly mapped to a permitted statutory other-bucket line.
+For `fi-*` layouts, mapping comes from `report-account-mapping.csv`. The selector keys `layout_id`, `statement_target`, and `account_code` can be exact values or `*`-glob patterns, and `account_code` also accepts inclusive numeric ranges such as `9400-9499`. Exact rows win over pattern rows, more specific patterns win over broader ones, and same-priority ambiguity is a hard error. `*-accounts` layouts inherit the effective mapping of their base layout unless the workspace provides a more specific `*-accounts` row. Unmapped or ambiguous accounts are errors unless explicitly mapped to a permitted statutory other-bucket line.
 
 Comparatives are enabled by default from workspace reporting profile settings and can be overridden with `--comparatives`.
 When prior-period data exists, comparative columns are expected.

@@ -102,6 +102,13 @@ AI-preserving mount behavior (`MountAIPreservedView`), shared standard table
 composition (`TextTable`), and shared locale-aware field value formatting
 (`LocaleFieldFormatter`) so module-level view code can stay focused on domain
 composition.
+For multi-view WASM frontends, it also provides a reusable collapsible
+left-rail shell (`SidebarShell`) and matching sidebar navigation component
+(`SidebarNav`) so modules can group view-specific panels behind one consistent
+BusDK navigation pattern instead of inventing separate local sidebars. The
+shared sidebar shell is attached to the window edge, supports icon-only
+collapse with tooltip copy, and lets modules expose an app icon that opens the
+rail on small screens.
 For CLI modules that open local UI servers, it also provides shared
 cross-platform app-style web shell opener helpers (`OpenURLInBrowser`,
 `BrowserOpenCommandForOS`) so modules do not duplicate OS command mapping.
