@@ -54,7 +54,7 @@ For bulk streams, use `--bulk-in <file|->`. Accepted formats are JSON array and 
 
 At least one debit and one credit are required per transaction, and total debits must equal total credits.
 
-`balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags).
+`balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For timing diagnostics, `--perf` emits stderr lines such as `INFO perf bus-journal balance 0.123` and selected nested stages such as `INFO perf bus-period dataset-path 0.001`.
 
 ### Files
 

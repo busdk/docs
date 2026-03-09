@@ -71,7 +71,7 @@ Two forms are supported. Batch form is `bus config set [--base-currency ...] [--
 
 ### Global flags
 
-These commands use [Standard global flags](../cli/global-flags). In practice, the most used here are `-C/--chdir` for workspace selection, `-o/--output` for machine output capture, and `-q`/`-v` for output control. `--quiet` and `--verbose` are mutually exclusive (usage error `2`). Results go to stdout (or `--output`), diagnostics to stderr.
+These commands use [Standard global flags](../cli/global-flags). In practice, the most used here are `-C/--chdir` for workspace selection, `-o/--output` for machine output capture, `-q`/`-v` for output control, and `--perf` for explicit timing output. `--quiet` and `--verbose` are mutually exclusive (usage error `2`). `--perf` writes stderr timing lines in form `INFO perf bus-config <op> <duration_s>`. Results go to stdout (or `--output`), diagnostics to stderr.
 
 ### Init: behavior and defaults
 

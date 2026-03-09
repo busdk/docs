@@ -43,6 +43,14 @@ Busfile line rules:
 
 Blank lines are ignored. Lines whose first non-whitespace character is `#` are comments. Lines ending with `.bus` are treated as nested includes. Other lines are parsed as a single command line with shell-like quoting.
 
+A line that contains only dispatcher global flags acts as a sticky directive for
+subsequent commands in the same `.bus` session. This uses the same global-flag
+parser as normal dispatch, so later single-value flags replace earlier ones.
+For example, `--chdir data` followed later by `--chdir reports` means later
+commands receive only `--chdir reports`. Sticky state can be reset with
+`--no-perf`, `--no-quiet`, `--no-verbose`, `--no-chdir`, `--no-output`, and
+`--no-format`. Color uses `--color ...` and `--no-color`.
+
 Variable expansion, command substitution, pipes and redirection, and `;` separators are not interpreted.
 
 ### Busfile options
@@ -172,3 +180,5 @@ For deeper transaction/dispatch internals, see [Module reference: bus (dispatche
 - [`.bus` script files (writing and execution guide)](../cli/bus-script-files)
 - [CLI command structure](../cli/command-structure)
 - [Standard global flags](../cli/global-flags)
+
+The dispatcher also accepts `--perf` before the subcommand. It does not forward that flag as argv; instead it enables timing for the dispatched command, prints a stderr timing line in form `INFO perf bus-<module> <op> <duration_s>`, and sets `BUS_PERF=1` for instrumented modules so they can emit nested timings too. The same timing format is used for each busfile command when sticky `--perf` is active.

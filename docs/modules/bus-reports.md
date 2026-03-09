@@ -96,7 +96,7 @@ so operators can see the present default wording while editing the target
 loader, so the generated CSV can be saved directly as the initial
 `report-account-mapping.csv`.
 
-Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`.
+Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`. `--perf` emits one stderr timing line for the top-level report command plus selected nested stages such as reporting-profile loading, using the format `INFO perf <module> <op> <duration_s>`.
 
 When `--locale` is omitted, `bus reports` derives presentation formatting from the process locale environment in order `LC_ALL`, `LC_NUMERIC`, then `LANG`. Human-facing outputs such as `text`, `markdown`, `kpa`, `pma`, and `pdf` therefore pick up Finnish decimal commas automatically from settings such as `LC_ALL=fi_FI.UTF-8`, while machine-facing `csv`, `json`, and `tsv` stay dot-decimal for deterministic parsing.
 
