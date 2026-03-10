@@ -19,7 +19,7 @@ Data is schema-validated and append-only for auditability.
 
 ### Commands
 
-`validate` checks payroll datasets and schemas in the workspace root. `export` validates first, then emits deterministic posting CSV for the selected final payrun.
+`validate` checks payroll datasets and schemas in the workspace root. `export` validates first, then emits deterministic posting CSV for the selected final payrun. The module reads the owned payroll datasets through the shared storage layer, so the same commands work when those tables are backed by ordinary CSV or `PCSV-1`.
 
 ### Options
 
@@ -28,7 +28,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Payroll datasets and their beside-the-table schemas are read from the workspace root (for example `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`). Path resolution is owned by this module; other tools obtain paths via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+Payroll datasets and their beside-the-table schemas are read from the workspace root (for example `employees.csv`, `payruns.csv`, `payments.csv`, and `posting_accounts.csv`). Path resolution is owned by this module; other tools obtain paths via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)). The read path is storage-aware, so payroll workspaces may keep those owned tables as ordinary CSV or `PCSV-1` resources.
 
 ### Examples
 

@@ -18,6 +18,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 
 `bus validate` checks workspace datasets against schemas and cross-table invariants (for example balanced debits/credits, valid references, and period integrity).
 It does not modify data.
+The validator reads datasets through the shared storage-aware data layer, so a fresh workspace with empty `PCSV-1` tables created by `bus journal init`, `bus period init`, or `bus invoices init` validates the same way as a plain CSV workspace.
 
 Use it before period close and filing.
 Diagnostics go to stderr; stdout is empty on success.

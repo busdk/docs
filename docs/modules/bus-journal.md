@@ -33,6 +33,7 @@ Other modules post into the journal; this CLI adds entries and reports balances.
 ### Commands
 
 `init` creates the journal index and baseline datasets and schemas, including `journals.csv`, `journals.schema.json`, `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. If all required files exist, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
+When workspace storage metadata resolves journal-owned root tables to `PCSV-1`, `init` emits compatible `_pad`-aware schemas for the dimension metadata tables as well, so an immediately initialized workspace remains valid before any dimension rows are added.
 
 `add` appends a balanced transaction with one or more debit and credit lines. Optional `--source-id <key>` records source identity, and `--if-missing` makes add idempotent when a posting with the same source identity already exists. For replay-scale streams, `add --bulk-in <file|->` reads JSON array or NDJSON and applies the same validation and idempotency semantics per transaction. When workspace `datapackage.json` contains `busdk.accounting_entity.id_generation`, generated `transaction_id`, `voucher_id`, and `entry_id` values follow that shared BusDK policy; otherwise bus-journal uses its legacy timestamp-based fallback identifiers.
 
@@ -64,7 +65,7 @@ The journal index is `journals.csv` at repository root. Dimension metadata is st
 
 The module does not use a journal subdirectory. Path resolution is owned by this module. Journal-owned table bootstrap, index reads and writes, and period-row mutation go through the shared BusDK storage-aware table layer, so current CSV workspaces keep the same file layout while workspace-level storage selection such as `PCSV-1` can reuse the same command surface.
 
-When workspace metadata resolves `journals.csv` or `journal-*.csv` to `PCSV-1`, `bus journal add` and `bus journal balance` use the shared storage-aware read and write paths automatically. The current embedded journal schemas still target plain CSV, so a real `PCSV-1` workspace must provide compatible journal schemas and metadata, including an explicit padding field such as `_pad`, for the journal-owned resources. Plain CSV workspaces do not need any extra configuration.
+When workspace metadata resolves `journals.csv` or `journal-*.csv` to `PCSV-1`, `bus journal add` and `bus journal balance` use the shared storage-aware read and write paths automatically. `bus journal init` also writes `PCSV-1`-compatible dimension root schemas when the workspace requires them. The current embedded period-journal schemas still target plain CSV, so a real `PCSV-1` workspace must provide compatible period-journal schemas and metadata, including an explicit padding field such as `_pad`, for those journal-owned resources. Plain CSV workspaces do not need any extra configuration.
 
 When validating accounts or period boundaries, journal uses [bus accounts](./bus-accounts) and [bus period](./bus-period) datasets through module-owned paths/APIs.
 
