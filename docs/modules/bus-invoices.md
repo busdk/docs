@@ -82,6 +82,8 @@ For the standard flow, use command-driven `bus reconcile propose` and `bus recon
 
 All invoice master data lives in the workspace root (the effective working directory, e.g. after `-C`/`--chdir`). The module does not create or use an `invoices/` subdirectory. The eight owned files are: `sales-invoices.csv`, `sales-invoices.schema.json`, `sales-invoice-lines.csv`, `sales-invoice-lines.schema.json`, `purchase-invoices.csv`, `purchase-invoices.schema.json`, `purchase-invoice-lines.csv`, `purchase-invoice-lines.schema.json`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
+If workspace metadata in `datapackage.json` selects `_pcsv.version = PCSV-1`, these owned invoice tables use the shared `PCSV-1` storage backend through `bus-data`. `bus invoices init` writes `_pad`-bearing schemas in that mode, while `add`, `<invoice-id> add`, `validate`, and `list` keep the same logical invoice behavior. Plain CSV workspaces continue to use ordinary CSV files and do not need any migration.
+
 ### Examples
 
 ```bash

@@ -75,6 +75,29 @@ Month runner script example:
 
 Busfiles are UTF-8 text. Blank lines are ignored, and lines whose first non-whitespace character is `#` are treated as comments. A trailing `\` continues the command on the next physical line. Lines ending with `.bus` are nested includes, while other lines are parsed as one command line.
 
+A line that contains only dispatcher global flags acts as a sticky directive for
+following commands in the same `.bus` session. This is useful when several
+commands should share the same dispatcher-level behavior such as perf timing,
+verbosity, quiet mode, or a forwarded `--chdir`.
+
+```bus
+--perf
+--chdir data
+accounts alpha
+--chdir reports
+--no-perf
+ledger beta
+```
+
+Later single-value directives replace earlier ones, so `--chdir reports`
+overrides `--chdir data` for later commands. Sticky state can be reset with
+`--no-perf`, `--no-quiet`, `--no-verbose`, `--no-chdir`, `--no-output`, and
+`--no-format`. Color already uses `--color ...` and `--no-color`.
+
+Sticky directives also propagate into included busfiles. If `all.bus` sets
+`--perf` and then includes `another.bus`, commands inside `another.bus` run
+with perf enabled until a later reset such as `--no-perf`.
+
 ## Quoting rules
 
 `.bus` tokenization uses shell-like quoting:

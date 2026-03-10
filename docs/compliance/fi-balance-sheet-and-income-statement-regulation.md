@@ -15,6 +15,8 @@ At EU level, IFRS application and the accounting-directive framework set the upp
 
 The key scope split is entity size (micro/small/medium/large) and whether the entity is a public-interest entity (PIE). These categories determine reporting breadth and whether additional statements, such as a cash flow statement, are mandatory.
 
+For software configuration, it is useful to keep the legal statement taxonomy separate from account meaning and workspace entity context. [Finnish reporting taxonomy and account classification](./fi-reporting-taxonomy-and-account-classification) explains that background model and why KPA/PMA layout choice should not be treated as the same thing as per-account bookkeeping semantics.
+
 ## Mandatory content and layout
 
 The minimum financial statement package includes the balance sheet, income statement, and notes. A cash flow statement is required for large entities and PIEs. Comparative figures are generally required for the prior period, and they are adjusted when presentation structure changes where practical.
@@ -74,3 +76,4 @@ These four points are also the most frequent quality issues from the perspective
 - [KILA: Yleisohje tuloslaskelman ja taseen esittämisestä](https://kirjanpitolautakunta.fi/documents/8208007/10349155/TP_YLEIS2006.pdf/68053376-f0fc-c32b-fbe4-f11359672996/TP_YLEIS2006.pdf)
 - [PRH: Tilinpäätöksen ilmoittaminen kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset.html)
 - [Vero: Kirjanpito, tilikausi ja verokausi](https://www.vero.fi/yritykset-ja-yhteisot/yritystoiminta/uusi-yritys/kirjanpito-tilikausi-verokausi/)
+- [Finnish reporting taxonomy and account classification](./fi-reporting-taxonomy-and-account-classification)

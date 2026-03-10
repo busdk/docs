@@ -13,6 +13,8 @@ Only periods in state **open** accept new journal postings. Closed and locked pe
 
 The `opening` subcommand generates the opening entry for a new fiscal year in the current workspace from a prior workspace’s closing balances, producing one balanced journal transaction.
 
+When workspace storage metadata selects `PCSV-1`, period-owned tables use the shared storage-aware table layer: `periods.csv`, `periods/<period_id>/close_entries.csv`, and `periods/<period_id>/opening_balances.csv` can be stored as fixed-block `PCSV-1` resources. Explicit plain CSV remains supported, and existing CSV workspaces keep the same command behavior.
+
 Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`. Command names follow [CLI command naming](../cli/command-naming).
 
 ### Synopsis
@@ -69,7 +71,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 **Year rollover.** In the new workspace: `bus accounts init` and populate the chart of accounts; `bus period init`; `bus period add --period <YYYY-MM>` (and optionally more future periods); `bus period open --period <YYYY-MM>` for the first period; `bus journal init`; then `bus period opening --from <path-to-prior-workspace> --as-of <prior-year-end> --post-date <new-year-start> --period <YYYY-MM> [--equity-account <code>]`. Full validation rules and optional flags are in the [bus-period module reference](../modules/bus-period).
 
-**Year-end result transfer.** Transferring profit or loss to equity at year end is currently done by posting a balanced entry with [bus journal](./bus-journal) (see [Year-end close](../workflow/year-end-close)). Automatic result-to-equity transfer is planned in this module.
+**Year-end result transfer.** `close` transfers the period result to the period's retained-earnings account automatically and appends the balanced closing journal entry as part of the close workflow.
 
 **Usage examples.**
 
@@ -105,6 +107,8 @@ Period operations are append-only. `list` and `validate` use effective records.
 If two rows share the same primary key (for example from hand edits), `validate` fails until repaired through normal commands.
 
 Every period record written by the CLI has a non-empty retained-earnings account. For older workspaces with blank values, use `bus period set` to repair.
+
+If workspace/resource storage resolves to `PCSV-1`, the period control table and period-owned close/opening artifacts are written as fixed-block resources with schema-declared padding. `journal-closed-periods.csv` remains ordinary CSV because it is a shared compatibility file for journal locking.
 
 ### Examples
 

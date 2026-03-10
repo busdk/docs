@@ -9,6 +9,13 @@ BusDK defines the workspace store (storage backend) interface as the boundary be
 
 The default backend is a local filesystem repository that stores datasets as UTF-8 CSV tables with beside-the-table Table Schemas. This is a preferred default, not the goal itself, and it remains the default because it keeps the workspace datasets and change history transparent. Alternative backends are allowed if they preserve determinism, auditability, schema semantics, and canonical export and import to the CSV plus Table Schema contract. If a backend stores data in a non-file system, it must still produce the same tabular representation and schema metadata so that reviews, audits, and cross-language tooling remain possible without hidden dependencies.
 
+`PCSV-1` is now wired into the shared store contract end to end. `datapackage.json` may carry a workspace-level
+`_pcsv` object, and an individual resource may carry its own `_pcsv` override. `bus-data` resolves that metadata
+deterministically, creates fixed-block tables for `PCSV-1` resources, reads them back through the same logical table
+interface as ordinary CSV, validates block-size and padding-field invariants, and preserves `_pcsv` metadata during
+descriptor discovery and patching. For row mutation, `PCSV-1` now supports append, in-place block replacement, and
+hard-delete compaction/truncate paths. Plain CSV workspaces continue to behave unchanged.
+
 Storage backends must respect append-only and audit-trail expectations by refusing destructive changes or representing corrections explicitly, but the policy decisions belong to domain modules. The backend provides deterministic record ordering and explicit schema enforcement so the modules can apply their business rules in a consistent, reviewable way. This keeps generic CRUD tooling optional and prevents it from becoming a required internal API.
 
 When modules are implemented in Go, a shared library implementation of the workspace store interface is allowed and recommended to keep behavior consistent, such as [`bus-data`](../modules/bus-data). Cross-language interoperability is still guaranteed by the table-and-schema contract and by the requirement that any non-file backend can export and import the canonical CSV plus schema form.

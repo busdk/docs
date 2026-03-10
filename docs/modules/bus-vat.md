@@ -39,6 +39,8 @@ You can make this the workspace default by setting `vat_default_source=reconcile
 
 `init` creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero.
 
+The owned root VAT tables are storage-aware. Plain CSV workspaces keep ordinary CSV behavior. Workspaces that opt into `PCSV-1` through `datapackage.json` store `vat-rates.csv`, `vat-reports.csv`, and `vat-returns.csv` with the shared fixed-block `PCSV-1` backend while `bus vat` command behavior stays the same. Canonical schema filenames for these tables are `vat-rates.schema.json`, `vat-reports.schema.json`, and `vat-returns.schema.json`. Older `vat-rates.csv.schema.json`-style workspaces are still read compatibly and upgraded on the first schema-aware mutation.
+
 `report` computes and emits the VAT summary for a given period. `export` writes VAT export output for a period (e.g. for filing). Both require `--period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules; VAT commands do not use a positional period argument.
 
 `filed-import` imports externally filed VAT evidence for a period with provenance (`source_path`, `source_sha256`) and writes canonical period data at workspace root (`vat-filed-<period>.csv`) plus an index row in `vat-filed.csv`. Existing period evidence is refused unless `--force`.

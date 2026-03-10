@@ -83,6 +83,12 @@ bus --check --trace first-run.bus
 
 Lines starting with `#` are comments and blank lines are ignored. A trailing `\` continues the command on the next physical line. Lines ending with `.bus` include another busfile, and quoted values should be used when arguments contain spaces.
 
+If you later want one dispatcher setting to stay active for several commands,
+you can place that global flag on its own line. For example, a line containing
+only `--perf` enables perf timing for following commands until a later
+`--no-perf` line resets it. The same sticky setting also carries into included
+`.bus` files that are expanded after that line.
+
 ## Common first errors
 
 Common first failures are unknown module/command typos, unbalanced `journal add` postings where debit and credit totals differ, and unterminated quotes in command lines.

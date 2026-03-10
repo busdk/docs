@@ -68,6 +68,8 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 The module owns **`balances.csv`** and **`balances.schema.json`** at the workspace root. Each row has an as-of date, account code, amount (signed), optional source and notes, and `recorded_at`. The dataset is **append-only**; you correct a balance by appending a new row. For a given as-of date and account, the **effective** balance is the row with the latest `recorded_at`. `list` and `apply` use only effective rows. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
+If the workspace `datapackage.json` selects `PCSV-1`, `bus balances init` writes a PCSV-compatible schema with `_pad`, and the module reads and writes the snapshot through the shared storage-aware `bus-data` layer. Plain CSV workspaces keep the normal CSV form and do not need any migration until you explicitly opt into `PCSV-1`.
+
 ### Input CSV format (for import)
 
 The CSV must have a header. For `--format signed` (default): columns `account_code` and `amount` (signed number). For `--format dc`: columns `account_code`, `debit`, and `credit` (net = debit − credit). Numbers use a single decimal separator (`.`); thousands separators are not supported. Whitespace is trimmed. Every `account_code` must exist in the chart or the import fails (or, with `--allow-unknown-accounts`, reports missing codes and appends nothing).
@@ -102,7 +104,7 @@ bus balances apply \
 
 ### Files
 
-`balances.csv` and `balances.schema.json` live at workspace root.
+`balances.csv` and `balances.schema.json` live at workspace root. In a `PCSV-1` workspace the same logical dataset is stored in fixed-size blocks, but the CLI behavior stays the same.
 
 The module writes journal data only through [bus-journal](./bus-journal) APIs when running `apply`; it does not create separate journal files.
 

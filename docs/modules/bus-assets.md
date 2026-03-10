@@ -25,6 +25,8 @@ Asset records are schema-validated repository data so schedules and postings rem
 
 `add` records a new asset acquisition. `depreciate` generates depreciation postings for a period. `dispose` records an asset disposal and emits disposal postings.
 
+When workspace `datapackage.json` selects `PCSV-1` storage through `_pcsv` metadata, `bus assets init`, `add`, and `dispose` use shared storage-aware table operations for the asset register. Plain CSV workspaces still behave as before. The default asset schema includes `_pad` and `busdk.update_policy: "in_place"` so fixed-block mutation is valid when `PCSV-1` is selected.
+
 ### Options
 
 For `add`, required fields are `--asset-id`, `--name`, `--acquired`, `--cost`, `--asset-account`, `--depreciation-account`, `--expense-account`, `--method`, and `--life-months`. Optional fields are `--in-service`, `--salvage`, `--desc`, and `--voucher`.
@@ -54,7 +56,7 @@ If an asset is fully depreciated before disposal month, no extra depreciation ro
 
 ### Files
 
-Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)). The register schema includes the explicit padding field required for `PCSV-1` storage.
 
 ### Examples
 

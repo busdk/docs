@@ -9,7 +9,7 @@ Each BusDK workspace directory represents exactly one accounting entity. All dat
 
 Entity-wide settings are stored as BusDK metadata in the workspace’s Frictionless Data Package descriptor (`datapackage.json`) at the workspace root. To create an empty descriptor, use [bus data init](../modules/bus-data). To create or update the descriptor and accounting entity settings in one step, use the [bus config](../modules/bus-config) CLI. Modules read these settings when they validate, post, reconcile, report, or produce filings, and they must not require row-level datasets to repeat them.
 
-The settings live under the top-level `busdk.accounting_entity` object in `datapackage.json`. This uses Frictionless descriptor extensibility — additional properties remain compatible with standard tooling, and tooling that does not understand BusDK can safely ignore the `busdk` object.
+The accounting settings live under the top-level `busdk.accounting_entity` object in `datapackage.json`. Optional workspace storage defaults for modules that support fixed-block padded CSV live under top-level `_pcsv`. This uses Frictionless descriptor extensibility — additional properties remain compatible with standard tooling, and tooling that does not understand BusDK can safely ignore the `busdk` object.
 
 ### Location
 
@@ -17,6 +17,12 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 ```json
 {
+  "_pcsv": {
+    "version": "PCSV-1",
+    "paddingField": "_pad",
+    "recordBytes": 256,
+    "paddingChar": " "
+  },
   "profile": "tabular-data-package",
   "resources": [],
   "busdk": {
@@ -84,7 +90,11 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 
 `id_generation` is optional shared BusDK configuration for primary-key and visible numbering rules. It is intended for cross-module ID policy such as voucher numbering, invoice numbering, and immutable technical ID defaults. The structure is owned by [bus-config](../modules/bus-config) and consumed by modules that generate durable IDs. Inline JSON and `@file` values can be written with `bus config set --id-generation ...` or `bus config set id-generation ...`.
 
+`_pcsv` is optional workspace-level storage policy metadata for modules that support `PCSV-1`. `version` selects the storage format (`PCSV-1`); `paddingField` names the fixed-width padding column, `recordBytes` defines the on-disk row size, and `paddingChar` defines the padding byte. Omit `_pcsv` or run `bus config set storage-format csv` to keep ordinary CSV as the workspace default.
+
 `reporting_profile.fi_statutory` defines deterministic presentation settings for Finnish statutory financial statements in [bus-reports](../modules/bus-reports). These are presentation controls, not posting business logic, and they must remain committed and auditable in workspace data.
+
+This reporting profile is the workspace entity-context layer, not the place for per-account classification or company-specific statement-line exceptions. The background model is described in [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification): statutory taxonomy, account meaning, entity context, and overrides should stay separate even when they all affect the final statement output.
 
 `reporting_profile.fi_statutory.reporting_standard` selects the statutory framework family (`fi-kpa` or `fi-pma`) used as the default for built-in statement layouts.
 
@@ -121,3 +131,4 @@ The settings live under the top-level `busdk.accounting_entity` object in `datap
 - [Finlex: Kirjanpitolaki 1336/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1336)
 - [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
 - [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
+- [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)

@@ -23,6 +23,8 @@ Other modules consume the accounting entity settings as read-only workspace conf
 
 Accounting entity settings are workspace-level configuration stored in `datapackage.json` at the workspace root as BusDK metadata. The settings include base currency ([base_currency](./base-currency)), fiscal year boundaries ([fiscal_year_start](./fiscal-year-start) and [fiscal_year_end](./fiscal-year-end)), VAT registration ([vat_registered](./vat-registered)), VAT reporting cadence ([vat_reporting_period](./vat-reporting-period)), VAT timing ([vat_timing](./vat-timing)), optional VAT registration dates ([vat_registration_start](./vat-registration-start)), and Finnish statutory reporting-profile keys under `reporting_profile.fi_statutory` (reporting standard, income statement scheme, comparatives default, presentation unit, and signature metadata). The canonical reference for all keys and semantics is [Workspace configuration (`datapackage.json` extension)](../../data/workspace-configuration); the [bus config](../../modules/bus-config) CLI is the single place to create and update these settings.
 
+For Finnish statements, these reporting-profile values are the entity-context layer. They define which statutory framework and presentation defaults apply to the whole workspace, while account classification and company-specific exceptions live elsewhere. [Finnish reporting taxonomy and account classification](../../compliance/fi-reporting-taxonomy-and-account-classification) explains that separation in more detail.
+
 ### Relations
 
 An accounting entity is the shared scope for all master data and bookkeeping records in a workspace. Scope is derived from the workspace root directory, not from a per-row key, and entity-wide settings are resolved from `datapackage.json` rather than being referenced on row-level in operational datasets.
@@ -47,3 +49,4 @@ Multi-company workflows are expressed as multi-workspace operations; see [Worksp
 - [VAT reporting and payment](../../workflow/vat-reporting-and-payment)
 - [bus-reports module CLI reference](../../modules/bus-reports)
 - [bus-reports reference](../../modules/bus-reports)
+- [Finnish reporting taxonomy and account classification](../../compliance/fi-reporting-taxonomy-and-account-classification)

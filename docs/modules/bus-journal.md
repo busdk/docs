@@ -62,7 +62,9 @@ Every file owned by `bus journal` includes `journal` or `journals` in its filena
 
 The journal index is `journals.csv` at repository root. Dimension metadata is stored in `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. Period journal files are also at workspace root with date prefixes (for example `journal-2026.csv`) and beside schemas (for example `journal-2026.schema.json`).
 
-The module does not use a journal subdirectory. Path resolution is owned by this module.
+The module does not use a journal subdirectory. Path resolution is owned by this module. Journal-owned table bootstrap, index reads and writes, and period-row mutation go through the shared BusDK storage-aware table layer, so current CSV workspaces keep the same file layout while workspace-level storage selection such as `PCSV-1` can reuse the same command surface.
+
+When workspace metadata resolves `journals.csv` or `journal-*.csv` to `PCSV-1`, `bus journal add` and `bus journal balance` use the shared storage-aware read and write paths automatically. The current embedded journal schemas still target plain CSV, so a real `PCSV-1` workspace must provide compatible journal schemas and metadata, including an explicit padding field such as `_pad`, for the journal-owned resources. Plain CSV workspaces do not need any extra configuration.
 
 When validating accounts or period boundaries, journal uses [bus accounts](./bus-accounts) and [bus period](./bus-period) datasets through module-owned paths/APIs.
 

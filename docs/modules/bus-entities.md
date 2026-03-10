@@ -42,6 +42,12 @@ If your `entities.csv` schema includes additional identity or bookkeeping column
 
 `entities.csv` and its beside-the-dataset schema `entities.schema.json` live in the [accounts area](../layout/accounts-area) at the workspace root, alongside other canonical datasets such as `accounts.csv`. The module does not create or use a dedicated `entities/` subdirectory; layout follows the [minimal workspace baseline](../layout/minimal-workspace-baseline) and matches other BusDK modules. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
+If workspace `datapackage.json` selects `_pcsv` storage, `entities.csv` is
+stored as a `PCSV-1` padded table through the shared `bus-data` layer. `init`
+then writes a compatible schema with `_pad` and `busdk.update_policy:
+"in_place"`, while `add` and `list` continue to work against normal logical
+rows. Without `_pcsv`, the module keeps the plain CSV layout.
+
 ### Examples
 
 ```bash

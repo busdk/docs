@@ -64,6 +64,8 @@ Deterministic reconciliation proposal generation in [bus-reconcile](./bus-reconc
 
 The module does not use a `bank/` subdirectory. Path resolution is owned by this module.
 
+When workspace `datapackage.json` selects `PCSV-1`, `bus-bank` stores `bank-imports.csv`, `bank-transactions.csv`, `counterparty-aliases.csv`, `reference-extractors.csv`, and `statement-extract-profiles.csv` through shared storage-aware tables instead of raw CSV-only writes. In that mode the beside-the-table schemas include `_pad`, while ordinary CSV workspaces keep the same files and command behavior as before.
+
 Statement extract profiles live in `statement-extract-profiles.csv` at workspace root. Each row includes the profile name, optional `header_row`, optional parsing hints (`date_format`, `decimal_char`, `group_char`, `unicode_minus`), and the `field` to `selector` mappings used for statement extraction.
 
 For raw CSV/TSV/TXT files without schema, extraction auto-detects common summary headers and can be configured with `--header-row` and `--map`. For PDF evidence, extraction attempts native text extraction (using `pdftotext` when available), then falls back to sibling text exports or statement sidecars.

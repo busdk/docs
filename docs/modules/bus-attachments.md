@@ -26,6 +26,8 @@ Other modules then link to attachments without embedding file paths directly in 
 
 `add` registers a file and writes attachment metadata. `link` adds deterministic links from attachments to domain resources such as bank rows, vouchers, invoices, or custom kind/id targets. Repeated identical links are idempotent. When workspace `datapackage.json` contains `busdk.accounting_entity.id_generation`, generated `attachment_id` and `link_id` values follow that shared BusDK policy; otherwise `bus attachments` falls back to canonical UUIDs.
 
+When workspace `datapackage.json` selects `PCSV-1` storage through `_pcsv` metadata, `bus attachments init`, `add`, and `link` use shared storage-aware table operations for `attachments.csv` and `attachment-links.csv`. Plain CSV workspaces remain unchanged. For `PCSV-1`, the resource schema must include the configured padding field; the module defaults use `_pad`.
+
 For replay flows, `link` can select attachments without UUID lookup by using `--path`, `--desc-exact`, or `--source-hash`. Resolution is deterministic and fails if there are zero or multiple matches.
 
 `list` prints registered attachments in deterministic order and supports filters, reverse-link graph output, and strict audit flags.
@@ -45,7 +47,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 `attachments.csv` and `attachment-links.csv` with beside-the-table schemas at the repository root. Evidence files are stored under `./attachments/yyyy/mm/yyyymmdd-filename...` (for example `attachments/2026/01/20260115-INV-1001.pdf`), where `yyyy` is the four-digit year, `mm` is the two-digit month, and the filename is prefixed with an eight-digit date. This is the only layout that places files in a subdirectory; the datasets and schemas stay at the workspace root. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
-The schema treats `attachment_id` and `link_id` as stable string primary keys rather than UUID-only values so the shared workspace ID policy can use UUID, sequence, or template strategies without per-module schema forks.
+The schema treats `attachment_id` and `link_id` as stable string primary keys rather than UUID-only values so the shared workspace ID policy can use UUID, sequence, or template strategies without per-module schema forks. The same schema also carries the explicit padding field needed by `PCSV-1` fixed-block storage.
 
 ### Examples
 

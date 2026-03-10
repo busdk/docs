@@ -49,7 +49,9 @@ parser as normal dispatch, so later single-value flags replace earlier ones.
 For example, `--chdir data` followed later by `--chdir reports` means later
 commands receive only `--chdir reports`. Sticky state can be reset with
 `--no-perf`, `--no-quiet`, `--no-verbose`, `--no-chdir`, `--no-output`, and
-`--no-format`. Color uses `--color ...` and `--no-color`.
+`--no-format`. Color uses `--color ...` and `--no-color`. Sticky directives
+also propagate into included `.bus` files that are expanded after the
+directive.
 
 Variable expansion, command substitution, pipes and redirection, and `;` separators are not interpreted.
 

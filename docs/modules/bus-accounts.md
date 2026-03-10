@@ -24,6 +24,8 @@ It enforces uniqueness and valid account types so downstream modules can rely on
 
 For Finnish statutory statements in [bus-reports](./bus-reports), this module also owns the account-to-statement mapping dataset contract.
 
+In Finnish reporting background terms, that mapping contract is only one layer. The bookkeeping meaning of an account, the statutory statement taxonomy, workspace entity context, and local overrides should stay conceptually separate even when today's workspace stores some of them in adjacent datasets. [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification) explains that model.
+
 ### Commands
 
 `init` creates baseline accounts datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
@@ -31,6 +33,13 @@ For Finnish statutory statements in [bus-reports](./bus-reports), this module al
 `list` prints the current chart in deterministic order. `report` renders a filing-grade tililuettelo in `text`, `tsv`, `csv`, `markdown`, or `pdf` format with deterministic ordering, stable multi-page pagination, optional workspace metadata from `datapackage.json`, journal-derived `Saldo`, and explicit `Yhteensä` subtotal rows after each logical group (`asset`, `liability` + `equity`, `income` + `expense`). The subtotal row keeps `Tilinumero` and `Saldo` empty, prints `Yhteensä` in `Tilin nimi`, and prints the group total in `Yhteenveto`. For simple read/report commands (`init`, `validate`, `list`, `report`), global flags are accepted both before and after the subcommand, so `bus accounts report --format pdf --output ./out/tililuettelo.pdf` works the same as `bus accounts --format pdf --output ./out/tililuettelo.pdf report`. `add` creates a new account and fails if `--code` already exists. `set` updates an existing account by `--code` and changes only attributes you provide, such as `--name` or `--type`. `validate` checks both data rows and `accounts.schema.json`, including malformed schema-level definitions.
 
 `sole-proprietor` emits balanced double-entry lines for owner withdrawal (`withdrawal`) and owner investment (`investment`). It requires `--equity-code`, `--cash-code`, and `--amount`, does not modify `accounts.csv`, and outputs TSV lines that can be used with `bus journal add`.
+
+When the workspace data package or the `accounts` resource declares `_pcsv`
+metadata, `accounts.csv` is stored as a `PCSV-1` resource instead of plain CSV.
+In that mode `bus accounts init` writes a schema with `_pad` and storage policy
+metadata, `add` appends through the shared storage-aware `bus-data` layer, and
+`set` updates rows in place. If `_pcsv` metadata is absent, the module keeps
+using plain CSV.
 
 ### Options
 
@@ -72,13 +81,23 @@ The CLI surface covers the core lifecycle needed for scripts and UIs to create, 
 
 If your `accounts.csv` schema includes additional reporting and control columns (for example `ledger_category_id` and `is_active`), those fields are currently maintained by editing `accounts.csv` directly and then validating with `bus accounts validate` (and, for whole-workspace checks, `bus validate`). This keeps the authoritative dataset explicit while avoiding documentation that implies unsupported flags exist.
 
-For Finnish statutory reports, account-to-line mapping is maintained in `report-account-mapping.csv` with beside-the-table schema `report-account-mapping.schema.json`.
-Minimum fields are `layout_id`, `account_code`, `statement_target`, `layout_line_id`, and `normal_side` (optional `rollup_rule`).
-The mapping is deterministic per selected layout and consumed by [bus-reports](./bus-reports).
+For Finnish statutory reports, account meaning and explicit layout overrides are
+kept in separate datasets. `report-account-classification.csv` stores canonical
+account semantics per `account_code` and `statement_target`, while
+`report-account-mapping.csv` stores explicit layout-specific overrides such as
+`layout_id`, `layout_line_id`, `normal_side`, and optional `rollup_rule`.
+Both datasets use beside-the-table schemas, are owned by this module, and are
+consumed by [bus-reports](./bus-reports). `bus accounts init` bootstraps both
+through the same storage-aware `bus-data` path, so they can also be selected as
+`PCSV-1` resources from workspace metadata.
 
 ### Files
 
-`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For statutory statement mapping, the module also owns `report-account-mapping.csv` and `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For Finnish reporting, the module also owns `report-account-classification.csv` with `report-account-classification.schema.json`, plus `report-account-mapping.csv` with `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+
+The default init schema for `accounts.csv` includes `notes`. In `PCSV-1`
+workspaces it also includes `_pad`, and row updates require
+`busdk.update_policy: "in_place"` in the schema metadata.
 
 ### Examples
 
@@ -129,3 +148,4 @@ accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount
 - [Module reference: bus-reports](../modules/bus-reports)
 - [Module reference: bus-accounts](../modules/bus-accounts)
 - [Accounts layout: Accounts area](../layout/accounts-area)
+- [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)

@@ -19,6 +19,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 `bus inventory` maintains item master data and stock movement ledgers as schema-validated repository data.
 It produces valuation output for accounting and reporting.
 Movements are append-only; corrections are new records.
+The owned `items.csv` and `movements.csv` datasets can resolve either as ordinary CSV or as `PCSV-1` fixed-block CSV through workspace storage metadata.
 
 ### Commands
 
@@ -43,6 +44,8 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 ### Files
 
 Inventory item and movement datasets and their beside-the-table schemas in the inventory area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `inventory/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+
+When `datapackage.json` selects `PCSV-1` for one or both inventory-owned tables, `init`, `add`, `move`, `status`, `valuation`, and `validate` all use the shared storage-aware table layer from `bus-data`. The baseline schemas written by `init` become `PCSV-1` compatible by adding a visible `_pad` field and the needed storage metadata. Plain CSV workspaces keep their current behavior.
 
 ### Examples
 

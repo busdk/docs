@@ -180,8 +180,8 @@ Use `package show` to inspect the descriptor.
 Use `package patch` for JSON merge patches.
 Use `package validate` to validate the full package, including foreign keys.
 
-Use `resource list` for deterministic resource order.
-Use `resource validate` to validate one resource without modifying files.
+Use `resource list` for deterministic resource order and resolved storage metadata.
+Use `resource validate` to validate one resource without modifying files and to report the resolved storage format.
 
 ```text
 bus data init
@@ -192,6 +192,16 @@ bus data package validate
 bus data resource list
 bus data resource validate customers
 ```
+
+When a workspace starts using `PCSV-1` metadata, `bus data` resolves storage format in a deterministic order: module
+default, then workspace-level `_pcsv` metadata in `datapackage.json`, then resource-level `_pcsv` metadata. The list
+and validation commands expose the result as `format` and `padding_field`, while plain CSV resources continue to report
+`csv` with an empty padding field. `schema init` writes a fixed-block `PCSV-1` table when the selected resource format
+requires it, `table read` decodes it back to ordinary CSV or JSON output, and row mutations preserve the block shape by
+rewriting through the same storage-aware path. For `PCSV-1` resources, row add appends one fixed block, row update
+replaces one block in place, and hard row delete compacts the following blocks before truncating the file.
+`package discover` preserves existing `_pcsv` and other unknown resource metadata instead of flattening the descriptor
+back to plain CSV-only entries.
 
 Add resources explicitly with a name and CSV path and provide `--schema` to supply the Table Schema to write beside the table. This creates the CSV and beside-the-table schema artifacts. Remove a resource with `--delete-files` to delete its CSV and schema; the command refuses removal when any foreign key references the resource.
 
@@ -332,7 +342,7 @@ Detailed contract and roadmap details are maintained in [Module reference: bus-d
 
 ### Output formats and files
 
-`bus data` can emit JSON where a command supports structured output. Table and resource listings default to TSV, while table reads default to CSV. Package and resource validation report one row per resource and use TSV by default, or JSON when `--format json` is set. JSON outputs preserve the CSV string values and keep ordering deterministic.
+`bus data` can emit JSON where a command supports structured output. Table and resource listings default to TSV, while table reads default to CSV. Package and resource validation report one row per resource and use TSV by default, or JSON when `--format json` is set. Resource and validation outputs now include resolved storage metadata (`format`, `padding_field`). JSON outputs preserve the CSV string values and keep ordering deterministic.
 
 ```text
 bus data --format json table list
