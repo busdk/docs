@@ -55,7 +55,7 @@ In tuloslaskelma output, BusDK follows the statutory grouping order instead of p
 
 For printed tuloslaskelma lines, income is shown as positive and expenses as negative statement amounts. This presentation rule is separate from ledger debet/kredit normal-side handling. `LIIKEVOITTO (-tappio)`, `TULOS ENNEN TILINPÄÄTÖSSIIRTOJA JA VEROJA`, and `TILIKAUDEN VOITTO (-TAPPIO)` are calculated statement totals, not manually entered report rows.
 
-The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`. For internal drill-down, `fi-kpa-tase-full-accounts`, `fi-pma-tase-full-accounts`, `fi-kpa-tuloslaskelma-full-accounts`, `fi-kpa-tuloslaskelma-kululaji-accounts`, `fi-pma-tuloslaskelma-full-accounts`, and `fi-pma-tuloslaskelma-kululaji-accounts` expand grouped rows with per-account `Tilinumero`, `Tilin nimi`, and `Saldo`.
+The command surface supports statutory layout selection with `--layout-id`. Common built-in identifiers include `fi-kpa-tuloslaskelma-kululaji`, `fi-kpa-tuloslaskelma-toiminto`, `fi-kpa-tase`, `fi-kpa-tase-lyhennetty`, `fi-pma-tuloslaskelma-kululaji`, `fi-pma-tuloslaskelma-toiminto`, `fi-pma-tase`, `fi-pma-tase-lyhennetty`, plus full-layout options such as `kpa-full` and `pma-full`. For internal drill-down, `fi-kpa-tase-full-accounts`, `fi-pma-tase-full-accounts`, `fi-kpa-tuloslaskelma-full-accounts`, `fi-kpa-tuloslaskelma-kululaji-accounts`, `fi-pma-tuloslaskelma-full-accounts`, and `fi-pma-tuloslaskelma-kululaji-accounts` expand grouped rows with per-account `Tilinumero`, `Tilin nimi`, and `Saldo`. When `--explain-mapping` reports a valid `layout_default` line for `fi-kpa-tase` or `fi-pma-tase`, the real grouped balance-sheet render accepts that same built-in placement without requiring duplicate explicit `report-account-mapping.csv` rows.
 
 These ids are presets of the general layout mechanism documented in [Module reference: bus-reports](../modules/bus-reports).
 `--layout <file>` remains available for custom layouts.
@@ -82,7 +82,7 @@ When prior-period data exists, comparative columns are expected.
 
 ### Options
 
-`trial-balance`, `account-balances`, `balance-sheet`, and `balance-sheet-reconciliation` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, `profit-and-loss`, `voucher-list`, and `bank-transactions` require `--period <period>`. `evidence-pack` requires `--output-dir` and either `--period` or `--as-of`; with `--as-of` only, the package derives a year-to-date period from `YYYY-01-01` to the selected close date and uses the year as the package label. `general-ledger` and `bank-transactions` accept optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger`, `day-book`, `balance-sheet-reconciliation`, `voucher-list`, and `bank-transactions` also support `--format pdf` for printable review exports. `evidence-pack` writes artifact files to the target directory and writes a manifest to stdout or global `--output`.
+`trial-balance`, `account-balances`, `balance-sheet`, and `balance-sheet-reconciliation` require `--as-of <YYYY-MM-DD>`. `general-ledger`, `day-book`, `profit-and-loss`, `voucher-list`, and `bank-transactions` require `--period <period>`. `evidence-pack` requires `--output-dir` and either `--period` or `--as-of`; with `--as-of` only, the package derives a year-to-date period from `YYYY-01-01` to the selected close date and uses the year as the package label. `general-ledger` and `bank-transactions` accept optional `--account <account-id>`. Trial-balance and account-balances accept `text`, `csv`, `markdown`, `json`, and `pdf`. Other report commands accept `--format` as documented; for balance-sheet and profit-and-loss, `json`, `kpa`, `pma`, and `pdf` are also supported. `general-ledger`, `day-book`, `balance-sheet-reconciliation`, `voucher-list`, and `bank-transactions` also support `--format pdf` for printable review exports. `evidence-pack` writes artifact files to the target directory and writes a manifest to stdout or global `--output`. In Finnish statutory runs, opening carry-forward entries posted on the first day of the selected period are excluded from the period-result reconciliation used by `evidence-pack`, so a normal year workspace with opening balances still exports successfully.
 
 For balance-sheet and profit-and-loss, `--layout-id <id>` selects a built-in layout and `--layout <file>` selects a custom layout file. These options are mutually exclusive; if both are given, the command exits with usage error (exit code 2).
 
@@ -103,6 +103,12 @@ command preserves the workspace storage contract for
 `report-account-mapping.csv`. Plain CSV stays plain CSV, and a `PCSV-1`
 workspace keeps `_pad` and fixed-size record storage instead of silently
 rewriting the file into incompatible plain CSV form.
+
+The report loader uses the same storage-aware contract for the workspace-owned
+`accounts`, `journals`, segmented `journal-*`, and optional `budgets`
+datasets. A Bus-generated `PCSV-1` journal workspace therefore loads directly
+for `trial-balance` and downstream statements instead of failing on a false
+`_pad` header mismatch.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus reports --help`. `--perf` emits one stderr timing line for the top-level report command plus selected nested stages such as reporting-profile loading, using the format `INFO perf <module> <op> <duration_s>`.
 

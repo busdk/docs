@@ -32,6 +32,7 @@ Use `post` to create deterministic journal postings from invoice-payment matches
 When bank extracted keys (`erp_id`, `invoice_number_hint`) prove a prior-year invoice identity that is not present in the current workspace invoice datasets, `match` and `allocate` can still use that historical invoice reference without requiring a duplicate import.
 
 `init` bootstraps `matches.csv` and `matches.schema.json` at workspace root with deterministic defaults. New workspaces get `matches.csv` in shared `PCSV-1` storage by default, while older plain-CSV workspaces continue to work unchanged. Output is machine-readable TSV (`path`, `status`) and supports idempotent reruns (`unchanged`) or forced rewrite (`--force` returns `updated`).
+Schema-backed reads are storage-aware too, so `allocate` accepts `PCSV-1` `bank-transactions.csv` from Bus-generated workspaces without misreading `_pad` as a missing business field.
 
 `propose` generates deterministic proposal rows from unreconciled bank and invoice/journal data and includes confidence and reason fields. `apply` consumes approved proposals and writes matches or allocations deterministically, with `--dry-run` and idempotent re-apply behavior. Incoming-mode proposals can include `target_kind=unmatched` no-op rows for deterministic backlog classification.
 
