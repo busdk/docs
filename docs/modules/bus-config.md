@@ -1,122 +1,161 @@
 ---
 title: bus-config — create and update workspace configuration
-description: bus config owns workspace-level configuration stored in datapackage.json at the workspace root.
+description: bus config stores company, VAT, reporting, ID generation, and storage defaults in datapackage.json for the whole workspace.
 ---
 
 ## `bus-config` — create and update workspace configuration
 
-### Synopsis
+`bus config` writes the workspace-wide settings that other BusDK modules read automatically. In practice this means company identity, fiscal year, VAT defaults, reporting defaults, voucher numbering policy, and optional storage defaults in `datapackage.json`.
 
-`bus config init [--business-name <name>] [--business-id <NNNNNNN-N|null>] [--base-currency <code>] [--business-form <toiminimi|tmi|oy|ay|ky|ry|osk|sr>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly|yearly>] [--vat-timing <performance|invoice|cash>] [--vat-default-source <invoice|journal|reconcile>] [--vat-default-basis <accrual|cash>] [--vat-registration-start <YYYY-MM-DD>] [--vat-registration-end <YYYY-MM-DD>] [--reporting-standard <fi-kpa|fi-pma>] [--report-language <fi>] [--income-statement-scheme <by_nature|by_function>] [--comparatives <true|false>] [--presentation-currency <EUR>] [--presentation-unit <EUR|TEUR>] [--prepared-under-pma <true|false>] [--signature-date <YYYY-MM-DD>] [--signature-signer <name[:role]> ...] [--id-generation <json|@file>] [--storage-format <csv|PCSV-1>] [--storage-padding-field <field>] [--storage-record-bytes <bytes>] [--storage-padding-char <byte>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
-`bus config set [--business-name <name>] [--business-id <NNNNNNN-N|null>] [--base-currency <code>] [--business-form <toiminimi|tmi|oy|ay|ky|ry|osk|sr>] [--fiscal-year-start <YYYY-MM-DD>] [--fiscal-year-end <YYYY-MM-DD>] [--vat-registered <true|false>] [--vat-reporting-period <monthly|quarterly|yearly>] [--vat-timing <performance|invoice|cash>] [--vat-default-source <invoice|journal|reconcile>] [--vat-default-basis <accrual|cash>] [--vat-registration-start <YYYY-MM-DD>] [--vat-registration-end <YYYY-MM-DD>] [--reporting-standard <fi-kpa|fi-pma>] [--report-language <fi>] [--income-statement-scheme <by_nature|by_function>] [--comparatives <true|false>] [--presentation-currency <EUR>] [--presentation-unit <EUR|TEUR>] [--prepared-under-pma <true|false>] [--signature-date <YYYY-MM-DD>] [--signature-signer <name[:role]> ...] [--id-generation <json|@file>] [--storage-format <csv|PCSV-1>] [--storage-padding-field <field>] [--storage-record-bytes <bytes>] [--storage-padding-char <byte>] [-C <dir>] [-o <file>] [-v] [-q] [--color <auto|always|never>] [-h] [-V]`  
-`bus config set business-name <name>`  
-`bus config set business-id <NNNNNNN-N|null>`  
-`bus config set base-currency <code>`  
-`bus config set fiscal-year-start <YYYY-MM-DD>`  
-`bus config set fiscal-year-end <YYYY-MM-DD>`  
-`bus config set vat-registered <true|false>`  
-`bus config set vat-reporting-period <monthly|quarterly|yearly>`  
-`bus config set vat-timing <performance|invoice|cash>`  
-`bus config set vat-default-source <invoice|journal|reconcile>`  
-`bus config set vat-default-basis <accrual|cash>`  
-`bus config set vat-registration-start <YYYY-MM-DD>`  
-`bus config set vat-registration-end <YYYY-MM-DD>`  
-`bus config set reporting-standard <fi-kpa|fi-pma>`  
-`bus config set report-language <fi>`  
-`bus config set income-statement-scheme <by_nature|by_function>`  
-`bus config set comparatives <true|false>`  
-`bus config set presentation-currency <EUR>`  
-`bus config set presentation-unit <EUR|TEUR>`  
-`bus config set prepared-under-pma <true|false>`  
-`bus config set signature-date <YYYY-MM-DD>`  
-`bus config set id-generation <json|@file>`
-`bus config set storage-format <csv|PCSV-1>`
-`bus config set storage-padding-field <field>`
-`bus config set storage-record-bytes <bytes>`
-`bus config set storage-padding-char <byte>`
+Use this module near the start of a new workspace, and later whenever company-level settings change.
 
-All paths and the workspace directory are resolved relative to the current directory unless you set `-C` / `--chdir`.
+### Common tasks
 
-### Description
-
-Command names follow [CLI command naming](../cli/command-naming). `bus config` owns workspace-level configuration stored in `datapackage.json` at the workspace root.
-
-The workspace file holds [accounting entity](../master-data/accounting-entity/index) settings (business name, Y-tunnus business ID, business-form profile, base currency, fiscal year boundaries, VAT registration, VAT cadence/timing, VAT command defaults, optional VAT registration dates, Finnish statutory reporting profile keys, the layered Finnish reporting entity-context block `reporting_context.fi`, and shared `id_generation` policy). It can also hold top-level `_pcsv` storage defaults for modules that opt into `PCSV-1` via `bus-data`. Other modules read these values instead of duplicating settings in row-level datasets.
-
-The Finnish statutory reporting profile lives under `busdk.accounting_entity.reporting_profile.fi_statutory` in the workspace descriptor.
-
-For Finnish reporting, the layered entity-context block lives under `busdk.accounting_entity.reporting_context.fi`. It stores taxonomy and filing-context defaults such as taxonomy id, taxonomy version, size class, reporting scope, and special flags like housing-company, real-estate-based, and nonprofit handling. The older `reporting_profile.fi_statutory` subtree still carries presentation defaults such as language, comparatives, and presentation unit. Per-account meaning belongs in `report-account-classification.csv`, and company-specific line overrides belong in explicit override datasets such as `report-account-mapping.csv`. [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification) explains that background split.
-
-All VAT-related configuration keys and Finnish statutory reporting-profile keys are defined here. [bus vat](./bus-vat), [bus reports](./bus-reports), and filing modules consume these settings.
-
-The **current** reporting period and registration dates are inputs. The actual sequence of VAT period boundaries (including transitions and partial periods) is owned by [bus vat](./bus-vat).
-
-`bus config init` creates or ensures `datapackage.json` with a valid `busdk.accounting_entity` object.
-
-When the file is missing, it uses the bus-data library to create the empty descriptor first, then adds the accounting entity subtree.
-
-You can pass the same optional accounting-entity flags as for `set` (for example `--base-currency`, `--vat-registered`) so the initial descriptor starts with correct values. Omitted flags use property defaults.
-
-When the file already has that object, init prints a warning and does nothing (flags are ignored).
-
-[bus init](./bus-init) always runs `bus config init` first. You can also run `bus config init` on its own when you only need the workspace descriptor.
-
-`bus config set` updates accounting entity settings in an existing workspace `datapackage.json`. You can pass one or more optional flags (e.g. `bus config set --base-currency=EUR --vat-registered=true`) to change multiple properties in one call, or use the per-property form `bus config set <key> <value>` (e.g. `bus config set base-currency SEK`). Only the properties you specify are changed; others remain unchanged. The workspace must already contain `datapackage.json` with a `busdk.accounting_entity` object. Running `bus config set` with no property flags or values exits 0 without modifying the file.
-
-To set a default agent runtime for [bus agent](./bus-agent) or [bus dev](./bus-dev), use those modules’ own commands (e.g. `bus agent set runtime <runtime>` or `bus preferences set bus-agent.runtime <runtime>`); agent preferences live in each module’s namespace in [bus-preferences](./bus-preferences).
-
-### Commands
-
-`init` — Create or ensure `datapackage.json` at the effective workspace root with a `busdk.accounting_entity` object. Accepts the same optional flags as `set` (batch form): `--business-name`, `--business-id`, `--base-currency`, `--business-form`, `--fiscal-year-start`, `--fiscal-year-end`, `--vat-registered`, `--vat-reporting-period`, `--vat-timing`, `--vat-default-source`, `--vat-default-basis`, `--vat-registration-start`, `--vat-registration-end`, `--reporting-standard`, `--report-language`, `--income-statement-scheme`, `--comparatives`, `--presentation-currency`, `--presentation-unit`, `--prepared-under-pma`, `--reporting-taxonomy`, `--reporting-taxonomy-version`, `--reporting-size-class`, `--reporting-scope`, `--housing-company`, `--real-estate-based`, `--nonprofit`, `--signature-date`, repeatable `--signature-signer`, `--id-generation`, and the workspace storage flags `--storage-format`, `--storage-padding-field`, `--storage-record-bytes`, `--storage-padding-char`. When the file is missing or does not contain that object, it is created or updated; any provided flag sets that property (others use defaults). When the file already contains `busdk.accounting_entity`, the command prints a warning to stderr and exits 0 without modifying the file; flags are ignored. No extra positional arguments are accepted.
-
-`set` — Update accounting entity settings in the workspace `datapackage.json`.
-
-Two forms are supported. Batch form is `bus config set [--base-currency ...] [--signature-signer ...]`, where only provided flags are applied and no flags means no change. Per-property form is `bus config set <key> <value>`, where `<key>` must be one of the documented accounting-entity keys.
-
-`set` requires an existing workspace with `datapackage.json` and `busdk.accounting_entity`. Unknown `<key>` is invalid usage (exit 2).
-
-### Global flags
-
-These commands use [Standard global flags](../cli/global-flags). In practice, the most used here are `-C/--chdir` for workspace selection, `-o/--output` for machine output capture, `-q`/`-v` for output control, and `--perf` for explicit timing output. `--quiet` and `--verbose` are mutually exclusive (usage error `2`). `--perf` writes stderr timing lines in form `INFO perf bus-config <op> <duration_s>`. Results go to stdout (or `--output`), diagnostics to stderr.
-
-### Init: behavior and defaults
-
-`bus config init` creates `datapackage.json` when it is missing, or adds the `busdk.accounting_entity` subtree when the file exists but does not yet have it. The initial shape follows [workspace configuration](../data/workspace-configuration). Defaults include `profile` `tabular-data-package`, `base_currency` `EUR`, `vat_reporting_period` `quarterly`, `vat_timing` `performance`, `vat_default_source` `invoice`, `vat_default_basis` `accrual`, and fiscal year and VAT registration as documented in the [workspace configuration](../data/workspace-configuration). The Finnish statutory reporting profile defaults are `reporting_standard=fi-kpa`, `language=fi`, `income_statement_scheme=by_nature`, `comparatives=true`, `presentation_currency=EUR`, `presentation_unit=EUR`, `prepared_under_pma=false`, and an empty signature date with optional signer list. You can set correct values from the start by passing the same optional flags as for `set`; omit a flag to use the default for that property. You can adjust values afterward with `bus config set`.
-
-### Set: options and behavior
-
-`bus config set` updates only the fields you pass. You can use the batch form with optional flags or the per-property form `bus config set <key> <value>`.
-
-In batch form, omit a flag to leave that property unchanged. Supported properties cover base currency, fiscal-year boundaries, VAT registration/cadence/timing, optional VAT registration date bounds, Finnish statutory reporting profile defaults, and optional statement signature metadata. All values use strict validation (for example ISO currency code and `YYYY-MM-DD` dates), and invalid values return usage error `2`.
-
-In per-property form, `bus config set <key> <value>`, `<key>` must be one of the documented accounting-entity keys. Unknown keys return usage error `2`. Signer metadata is managed through repeatable `--signature-signer` in batch form.
-
-Example: for yearly VAT reporting and cash-based timing, run `bus config set vat-reporting-period yearly` and `bus config set vat-timing cash`, or in one call `bus config set --vat-reporting-period=yearly --vat-timing=cash`. To default VAT commands to reconcile cash mode, run `bus config set --vat-default-source=reconcile --vat-default-basis=cash`. For Finnish statutory reporting defaults, run `bus config set --reporting-standard=fi-kpa --income-statement-scheme=by_nature --comparatives=true --signature-date=2026-03-31 --signature-signer "Board Chair:board"`. For shared ID policy, run `bus config set --id-generation '{"types":{"voucher_id":{"strategy":"sequence","template":"V-{yyyy}-{inc}"}}}'` or `bus config set id-generation @./id_generation.json`. For workspace storage defaults, run `bus config set --storage-format=PCSV-1 --storage-padding-field=_pad --storage-record-bytes=256 --storage-padding-char=" "`; return to ordinary CSV with `bus config set storage-format csv`.
-
-Set requires an existing workspace. If `datapackage.json` is missing in the effective workspace directory, the command fails with “datapackage.json not found”. If the file exists but does not contain a `busdk.accounting_entity` object (e.g. a minimal package with no BusDK extension), it fails with “missing busdk.accounting_entity”. In both cases the message is on stderr and the exit code is non-zero.
-
-### Examples
+Create the workspace configuration with the most common Finnish accounting defaults in one command:
 
 ```bash
 bus config init \
+  --business-name "Example Oy" \
+  --business-id 1234567-8 \
+  --business-form oy \
   --base-currency EUR \
   --fiscal-year-start 2026-01-01 \
   --fiscal-year-end 2026-12-31 \
   --vat-registered true \
   --vat-reporting-period monthly \
   --vat-timing performance
-bus config set reporting-standard fi-pma
 ```
+
+Update only the fields that changed. `bus config set` never rewrites unrelated settings:
+
+```bash
+bus config set \
+  --business-name "Example Group Oy" \
+  --vat-reporting-period quarterly \
+  --reporting-standard fi-pma
+```
+
+Set a clear yearly voucher numbering policy for the whole workspace:
+
+```bash
+bus config set --id-generation '{
+  "types": {
+    "voucher_id": {
+      "strategy": "sequence",
+      "template": "V-{yyyy}-{inc}"
+    }
+  }
+}'
+```
+
+Switch BusDK-owned datasets to `PCSV-1` while keeping the command surface the same:
+
+```bash
+bus config set \
+  --storage-format PCSV-1 \
+  --storage-padding-field _pad \
+  --storage-record-bytes 256 \
+  --storage-padding-char " "
+```
+
+Return to ordinary CSV later if you want:
+
+```bash
+bus config set storage-format csv
+```
+
+### Synopsis
+
+`bus config init [common options] [-C <dir>] [global flags]`  
+`bus config set [common options] [-C <dir>] [global flags]`  
+`bus config set <key> <value>`
+
+### What this module owns
+
+`bus config` owns the workspace descriptor file `datapackage.json` at the workspace root. The most important subtree for BusDK users is `busdk.accounting_entity`.
+
+Other modules read this file instead of asking you to repeat the same settings elsewhere. For example, [bus-vat](./bus-vat) reads VAT defaults from here, [bus-reports](./bus-reports) reads reporting defaults from here, and [bus-journal](./bus-journal) can read shared ID-generation policy from here.
+
+### Commands
+
+`init` creates `datapackage.json` when it does not exist yet, or adds the `busdk.accounting_entity` block when the file exists but does not contain it. If the block already exists, `init` prints a warning and leaves the file unchanged.
+
+`set` updates an existing workspace configuration. You can use the batch form with several flags in one call, or the per-property form `bus config set <key> <value>` when you want to change exactly one field.
+
+### Settings most users care about
+
+These are the settings most people configure first:
+
+| What you are setting | Typical flags |
+| --- | --- |
+| Company identity | `--business-name`, `--business-id`, `--business-form` |
+| Fiscal year | `--fiscal-year-start`, `--fiscal-year-end` |
+| VAT defaults | `--vat-registered`, `--vat-reporting-period`, `--vat-timing`, `--vat-default-source`, `--vat-default-basis` |
+| Report defaults | `--reporting-standard`, `--report-language`, `--income-statement-scheme`, `--comparatives`, `--presentation-unit` |
+| Report signing | `--signature-date`, repeatable `--signature-signer` |
+| Shared IDs | `--id-generation` |
+| Storage defaults | `--storage-format`, `--storage-padding-field`, `--storage-record-bytes`, `--storage-padding-char` |
+
+If you are working with Finnish statutory reports, the configuration can also carry taxonomy and filing-context defaults such as taxonomy family, taxonomy version, size class, and reporting scope. That keeps report generation consistent across the workspace.
+
+### Typical update patterns
+
+Use the per-property form when the change is small and obvious:
+
+```bash
+bus config set business-name "Example Oy"
+bus config set vat-reporting-period yearly
+bus config set signature-date 2026-03-31
+```
+
+Use the batch form when you want one auditable change that updates several related defaults together:
+
+```bash
+bus config set \
+  --reporting-standard fi-kpa \
+  --report-language fi \
+  --income-statement-scheme by_nature \
+  --comparatives true \
+  --presentation-unit EUR \
+  --signature-date 2026-03-31 \
+  --signature-signer "Hallitus:board"
+```
+
+If you keep the ID policy in a separate JSON file, load it directly:
+
+```bash
+bus config set id-generation @./id_generation.json
+```
+
+`bus config init` now writes the shared default `id_generation` policy
+explicitly into new workspaces. That default keeps visible accountant-facing
+series such as `voucher_id`, `invoice_number`, and `loan_event_id` separate
+from technical immutable IDs such as `transaction_id`, `entry_id`,
+`attachment_id`, `bank_import_id`, and `bank_txn_id`. If you override only one
+kind, Bus keeps the rest of the shared defaults in place instead of replacing
+the entire policy tree.
+
+### Notes that save time
+
+`bus init` already runs `bus config init` for you. Use `bus config init` directly when you want to create or repair the configuration without running the rest of the workspace bootstrap.
+
+`bus config set` changes only the values you pass. Running it with no property flags is a no-op.
+
+Use `-C` when you want to edit another workspace without changing your shell directory:
+
+```bash
+bus config -C ./customer-a set --vat-reporting-period quarterly
+```
+
+These commands use [Standard global flags](../cli/global-flags). The most useful ones here are `-C` for workspace selection, `-q` and `-v` for output control, and `--output` if you are capturing diagnostics in automation. For the complete flag list, run `bus config --help`.
 
 ### Files
 
-The module reads and writes `datapackage.json` at the workspace root. The `init` subcommand creates the workspace file or ensures the `busdk.accounting_entity` subtree exists. The `set` subcommand updates only that subtree in place. Path resolution for the workspace configuration file is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+This module reads and writes `datapackage.json` at the workspace root. It does not write journal rows, account rows, or report mappings directly.
 
-### Exit status and errors
+### Exit status
 
-Exit 0 on success. Non-zero in these cases:
-invalid usage returns exit `2` (for example invalid flag value, unknown key, or conflicting flags), and `set` precondition failures return non-zero when `datapackage.json` or `busdk.accounting_entity` is missing.
-
+`0` on success. Invalid usage returns exit `2`. `set` returns non-zero if the workspace does not have `datapackage.json` or if `busdk.accounting_entity` is missing.
 
 ### Using from `.bus` files
 
@@ -142,16 +181,8 @@ config set reporting-standard fi-pma
 
 - [Workspace configuration (datapackage.json extension)](../data/workspace-configuration)
 - [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [bus-reports CLI reference](../modules/bus-reports)
-- [bus-reports reference](../modules/bus-reports)
 - [Module reference: bus-config](../modules/bus-config)
+- [Module reference: bus-journal](../modules/bus-journal)
+- [Module reference: bus-reports](../modules/bus-reports)
 - [Workflow: Initialize repo](../workflow/initialize-repo)
-- [Vero: Pienet yritykset voivat tilittää arvonlisäveron maksuperusteisesti](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/vahainen-liiketoiminta-on-arvonlisaverotonta/pienyrityksen-maksuperusteinen-alv)
-- [Vero: Arvonlisäveron verokausi ja sen muutokset](https://vero.fi/yritykset-ja-yhteisot/verot-ja-maksut/arvonlisaverotus/ilmoitus-ja-maksuohjeet/verokauden-muutos)
-- [PRH: Tilinpäätösilmoituksen asiakirjat kaupparekisteriin](https://www.prh.fi/fi/yrityksetjayhteisot/tilinpaatokset/ilmoituksen_liitteet.html)
-- [Finlex: Kirjanpitolaki 1336/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1336)
-- [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
-- [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
-- [Finnish balance sheet and income statement regulation](../compliance/fi-balance-sheet-and-income-statement-regulation)
-- [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
 - [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)

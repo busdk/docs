@@ -1,9 +1,51 @@
 ---
-title: bus-validate — validate workspace datasets and invariants
-description: bus validate checks all workspace datasets against their schemas and enforces cross-table invariants (e.g.
+title: bus-validate — validate workspace data and control checks
+description: bus validate checks datasets, schemas, and accounting invariants across the workspace, and adds dedicated parity, journal-gap, and evidence-coverage checks for migration and close workflows.
 ---
 
-## `bus-validate` — validate workspace datasets and invariants
+## `bus-validate` — validate workspace data and control checks
+
+`bus validate` is the workspace-wide safety check. Use it before close, before filing work, after imports, and after larger automated changes when you want one command to tell you whether the data is still coherent.
+
+The base command validates schemas and cross-table invariants. The subcommands add dedicated controls for import parity, journal gaps, and missing evidence links.
+
+### Common tasks
+
+Run a full workspace validation:
+
+```bash
+bus validate
+```
+
+Get machine-readable diagnostics:
+
+```bash
+bus validate --format tsv
+```
+
+Check import parity against a source summary:
+
+```bash
+bus validate parity \
+  --source ./imports/source-summary.tsv \
+  --max-abs-delta 0.01
+```
+
+Check journal gaps with bucket-specific thresholds:
+
+```bash
+bus validate journal-gap \
+  --source ./imports/journal-gap.tsv \
+  --max-abs-delta 0.01 \
+  --bucket-thresholds ./config/gap-thresholds.yaml
+```
+
+Audit evidence coverage before close:
+
+```bash
+bus validate evidence-coverage
+bus validate evidence-coverage --vendor vendor-oy --source bank --group-by vendor
+```
 
 ### Synopsis
 
@@ -12,73 +54,66 @@ description: bus validate checks all workspace datasets against their schemas an
 `bus validate journal-gap --source <file> [--max-abs-delta <n>] [--dry-run] [--bucket-thresholds <file>] [-C <dir>] [-o <file>] [global flags]`  
 `bus validate evidence-coverage [--vendor <normalized-key>] [--source <bank|invoice|journal|qred_statement|settlement>] [--group-by <vendor|month|document-type|source>] [-C <dir>] [-o <file>] [global flags]`
 
-### Description
+### Which command should you use?
 
-Command names follow [CLI command naming](../cli/command-naming).
+Use plain `bus validate` when you want overall workspace correctness.
 
-`bus validate` checks workspace datasets against schemas and cross-table invariants (for example balanced debits/credits, valid references, and period integrity).
-It does not modify data.
-The validator reads datasets through the shared storage-aware data layer, so a fresh workspace with empty `PCSV-1` tables created by `bus journal init`, `bus period init`, or `bus invoices init` validates the same way as a plain CSV workspace.
+Use `parity` when you have a source-summary artifact and want to know whether imported counts and sums still match the workspace.
 
-Use it before period close and filing.
-Diagnostics go to stderr; stdout is empty on success.
+Use `journal-gap` when the main question is “what source activity has not reached the journal yet?”.
 
-The module also provides first-class parity and journal-gap checks through `bus validate parity` and `bus validate journal-gap`, plus evidence coverage auditing through `bus validate evidence-coverage`.
+Use `evidence-coverage` when the main question is “what rows still do not have supporting attachments or evidence links?”.
 
-### Commands
+### What the validator checks
 
-Run `bus validate` from the workspace (or use `-C <dir>`) for workspace-wide validation. Subcommands `parity` and `journal-gap` provide first-class migration checks; see [Parity and gap checks (first-class)](#parity-and-gap-checks-first-class) below. Subcommand `evidence-coverage` provides evidence link coverage totals plus search-oriented missing-evidence output; see [Evidence coverage](#evidence-coverage) below.
+The base validator reads workspace datasets and schemas through the shared storage-aware data layer. It checks schema constraints, references, and accounting invariants such as balanced journal transactions.
 
-### Options
+The base command does not modify data. On success, stdout stays empty.
 
-`--format text` (default) or `--format tsv` controls diagnostics format. TSV columns are `dataset`, `record_id`, `field`, `rule`, `message`. Global flags are defined in [Standard global flags](../cli/global-flags). For `bus validate`, stdout is empty on success and `--output` has no effect (no result set). For help, run `bus validate --help`.
+### Migration and reconciliation controls
 
-### Parity and gap checks (first-class)
+`parity` and `journal-gap` are especially useful after ERP history imports and replay work.
 
-`bus validate parity --source <file>` runs deterministic source-import parity checks.
-`bus validate journal-gap --source <file>` runs deterministic journal gap checks.
+`parity` is better when you care about dataset- and period-level totals matching an external source.
 
-Both commands consume a deterministic source-summary artifact with stable columns.
-That source artifact can be produced by [bus-reports](./bus-reports) or by scripts.
+`journal-gap` is better when you want to separate operational gaps from financing or transfer gaps, especially if you use bucket-specific thresholds.
 
-Threshold flags (for example `--max-abs-delta` and `--max-count-delta`) control pass/fail behavior.
-When a row exceeds threshold, the command exits non-zero.
-`--dry-run` prints planned scope and thresholds to stderr without result output.
+### Evidence controls
 
-**Per-bucket thresholds (optional).** `--bucket-thresholds <file>` defines bucket-specific thresholds (for example operational, financing, internal transfer).
-When provided, gap checks are evaluated per bucket and fail when any configured threshold is exceeded.
-Without this file, only aggregate thresholds apply.
+`evidence-coverage` looks at links between business data and attachments. It can narrow the output to one vendor or one source channel, and it can group the output by vendor, month, document type, or source.
 
-For extended capability notes, see [Suggested capabilities](../modules/bus-validate#suggested-capabilities-out-of-current-scope).
+This is the control surface to use before year-end close or audit-style evidence review.
 
-Script-based diagnostics (e.g. `exports/2024/022-erp-parity-2024.sh`) remain available as an alternative.
+### Typical workflow
 
-### Evidence coverage
-
-`bus validate evidence-coverage` audits attachments coverage for journal vouchers, bank transactions, and invoices using `attachment-links.csv`. The command emits a deterministic TSV result set with columns `row_kind`, `scope`, `source_id`, `voucher_id`, `bank_txn_id`, `invoice_id`, `total`, `linked`, `missing`, `group_by`, `group_key`, `date`, `amount`, `currency`, `counterparty_name`, `description`, `reference`, `expected_document_type`, `search_hint`, `vendor_key`, and `source_channel`. Summary rows provide totals per scope, optional `group` rows summarize the requested grouping, and `missing` rows provide search-ready evidence leads with exact dates, amounts, normalized vendor keys, and normalized source-channel hints. It exits `0` when all scopes are fully covered and `1` when any missing evidence exists.
-
-Use `--vendor <normalized-key>` to narrow missing rows to one recurring vendor, `--source <...>` to focus on one evidence source channel, and `--group-by <...>` to add deterministic group rows for vendor, month, document type, or source. Direct bank-card purchases and statement-derived purchases are normalized into the same search-oriented output surface.
-
-### Files
-
-Reads all workspace datasets and schemas. Does not write.
-
-### Examples
+A common pre-close check sequence is:
 
 ```bash
-bus validate --format tsv
-bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
-bus validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
-bus validate parity --source ./imports/legacy/parity-2026-01.csv --dry-run
+bus validate
 bus validate evidence-coverage
-bus validate evidence-coverage --vendor vendor-oy --source bank --group-by vendor
-bus validate evidence-coverage --source qred_statement --group-by source
+bus status close-readiness --year 2026 --compliance fi
 ```
+
+For migration work, the sequence is often:
+
+```bash
+bus validate parity --source ./imports/source-summary.tsv --max-abs-delta 0.01
+bus validate journal-gap --source ./imports/source-summary.tsv --max-abs-delta 0.01
+```
+
+### Output and flags
+
+The base `validate` command writes diagnostics to stderr and keeps stdout empty. `--format tsv` is the machine-friendly way to capture those diagnostics.
+
+The subcommands `parity`, `journal-gap`, and `evidence-coverage` do produce result sets, so `-o` is useful there.
+
+`--dry-run` is mainly for `parity` and `journal-gap`. It shows planned thresholds and scope without writing the result set.
+
+These commands use [Standard global flags](../cli/global-flags). For the full flag and threshold details, run `bus validate --help`.
 
 ### Exit status
 
-`0` when the workspace is valid. Non-zero on invalid usage or when schema or invariant violations are found. `bus validate evidence-coverage` exits `0` only when all scopes are fully covered; missing evidence exits `1`.
-
+`0` when the requested validation or control check passes. Non-zero on invalid usage, schema or invariant violations, exceeded thresholds, or missing evidence.
 
 ### Using from `.bus` files
 
@@ -88,11 +123,11 @@ Inside a `.bus` file, write this module target without the `bus` prefix.
 # same as: bus validate --format tsv
 validate --format tsv
 
-# same as: bus validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
-validate parity --source ./imports/legacy/parity-2026-01.csv --max-abs-delta 0.01
+# same as: bus validate parity --source ./imports/source-summary.tsv --max-abs-delta 0.01
+validate parity --source ./imports/source-summary.tsv --max-abs-delta 0.01
 
-# same as: bus validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
-validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-delta 0.01 --bucket-thresholds ./config/gap-thresholds.csv
+# same as: bus validate evidence-coverage --source bank --group-by vendor
+validate evidence-coverage --source bank --group-by vendor
 ```
 
 <!-- busdk-docs-nav start -->
@@ -105,12 +140,6 @@ validate journal-gap --source ./imports/legacy/journal-gap-2026q1.csv --max-abs-
 
 ### Sources
 
-- [Master data: Master data (business objects)](../master-data/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
-- [Master data: VAT treatment](../master-data/vat-treatment/index)
-- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
-- [Master data: Bank transactions](../master-data/bank-transactions/index)
 - [Module reference: bus-validate](../modules/bus-validate)
 - [Architecture: Shared validation layer](../architecture/shared-validation-layer)
 - [CLI: Validation and safety checks](../cli/validation-and-safety-checks)

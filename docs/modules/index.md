@@ -1,11 +1,21 @@
 ---
 title: BusDK module CLI reference
-description: End-user reference for all BusDK module CLIs — bus init, bus config, bus data, bus accounts, and the full command surface.
+description: End-user guide to BusDK module CLIs, with a practical reading order for starting a workspace, importing data, posting entries, and producing reports.
 ---
 
 ## BusDK module CLI reference
 
-This section is the end user reference for the BusDK module CLIs. Each page is structured like a man page so you can quickly find the command surface, data files, and how to discover flags and subcommands. Command names follow [CLI command naming](../cli/command-naming). In synopsis lines, **[global flags]** denotes the [standard global flags](../cli/global-flags) accepted by most modules; run `bus <module> --help` for the full list for each module. Internal implementation design specifications are maintained in the private SDD workspace for contributors.
+This section explains what each BusDK module is for, when you usually use it, and which command to try first. Command names follow [CLI command naming](../cli/command-naming). Most pages show a short synopsis and a few practical examples first; for the full flag list, run `bus <module> --help`.
+
+## If you are starting a new workspace
+
+Most users read these module pages in roughly this order:
+
+1. [bus](./bus), [bus-init](./bus-init), and [bus-config](./bus-config) to create a workspace and set company-wide defaults.
+2. [bus-accounts](./bus-accounts) and [bus-period](./bus-period) to define your chart of accounts and accounting periods.
+3. [bus-attachments](./bus-attachments), [bus-bank](./bus-bank), and [bus-invoices](./bus-invoices) to bring in evidence and source data.
+4. [bus-reconcile](./bus-reconcile) and [bus-journal](./bus-journal) to connect source rows to accounting entries and maintain the ledger.
+5. [bus-reports](./bus-reports), [bus-status](./bus-status), and [bus-validate](./bus-validate) to review readiness, produce reports, and catch problems before close or filing.
 
 If you need architectural background on why modules are independent and how they integrate, see [Independent modules](../architecture/independent-modules) and [Modularity](../design-goals/modularity).
 
@@ -15,7 +25,7 @@ For cross-module capability scanning, use the [BusDK module feature table](./fea
 
 Each module that owns workspace data defines where its data files live. Today these are conventional names at the workspace root (for example `accounts.csv`, `periods.csv`, `datapackage.json`). Only the owning module may write to those files or apply business logic to them; other tools that need read-only access should use the owning module’s documented command and file contract. The design allows future configuration of paths (for example in a data package) so that end users can customize where data is stored without breaking how other tools discover it.
 
-Core entrypoints are [`bus`](./bus), [`bus init`](./bus-init), [`bus config`](./bus-config), and [`bus data`](./bus-data). Use these to dispatch commands, initialize workspaces, maintain `datapackage.json`, and inspect low-level datasets and schemas.
+Core entrypoints are [`bus`](./bus), [`bus init`](./bus-init), [`bus config`](./bus-config), and [`bus data`](./bus-data). Use these when you need to dispatch commands, initialize a workspace, maintain `datapackage.json`, or inspect low-level datasets and schemas.
 
 Local interfaces are [`bus api`](./bus-api), [`bus sheets`](./bus-sheets), and [`bus books`](./bus-books). They expose workspace data through HTTP or browser-facing UIs.
 

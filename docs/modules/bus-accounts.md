@@ -1,119 +1,138 @@
 ---
 title: bus accounts — manage the chart of accounts
-description: "CLI reference for bus accounts: init, list, add, set, validate, and sole-proprietor; chart of accounts as schema-validated repository data and stable identifiers for downstream modules."
+description: bus accounts creates and maintains the chart of accounts, validates account definitions, renders a chart-of-accounts report, and owns the account-side reporting classification files.
 ---
 
-## Overview
+## `bus accounts` — manage the chart of accounts
+
+`bus accounts` owns the chart of accounts for the workspace. Use it when you need to create the account table, add or rename accounts, validate the chart, or print a filing-grade `tililuettelo`.
+
+This is also the module that owns the account-side reporting datasets used by statutory reporting workflows.
+
+### Common tasks
+
+Create the baseline accounts datasets:
+
+```bash
+bus accounts init
+```
+
+Add two common accounts and then validate the chart:
+
+```bash
+bus accounts add --code 1910 --name "Pankkitili" --type asset
+bus accounts add --code 3000 --name "Myyntituotot" --type income
+bus accounts validate
+```
+
+Rename an account without changing anything else:
+
+```bash
+bus accounts set --code 1910 --name "Pankkitili EUR"
+```
+
+List the chart in a script-friendly format:
+
+```bash
+bus accounts list --format tsv --output accounts.tsv
+```
+
+Create a printable chart-of-accounts PDF:
+
+```bash
+bus accounts report --format pdf --output tililuettelo.pdf
+```
+
+Generate suggested lines for sole-proprietor owner withdrawal or investment:
+
+```bash
+bus accounts sole-proprietor withdrawal \
+  --equity-code 3000 \
+  --cash-code 1910 \
+  --amount 500.00
+```
 
 ### Synopsis
 
 `bus accounts init [-C <dir>] [global flags]`  
+`bus accounts validate [-C <dir>] [global flags]`  
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts report [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
 `bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
-`bus accounts validate [-C <dir>] [global flags]`  
 `bus accounts sole-proprietor withdrawal|investment --equity-code <code> --cash-code <code> --amount <amount> [global flags]`
 
-### Description
+### Which command should you use?
 
-Command names follow [CLI command naming](../cli/command-naming).
+`init` is the first command for a new workspace.
 
-`bus accounts` maintains the chart of accounts as schema-validated repository data.
-It enforces uniqueness and valid account types so downstream modules can rely on stable identifiers.
+`add` creates a new account. `set` updates an existing one.
 
-For Finnish statutory statements in [bus-reports](./bus-reports), this module also owns the account-to-statement mapping dataset contract.
+`validate` is the safety check before you rely on the chart in [bus-journal](./bus-journal), [bus-reports](./bus-reports), or [bus-vat](./bus-vat).
 
-In Finnish reporting background terms, that mapping contract is only one layer. The bookkeeping meaning of an account, the statutory statement taxonomy, workspace entity context, and local overrides should stay conceptually separate even when today's workspace stores some of them in adjacent datasets. [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification) explains that model.
+`list` is the quick machine-friendly view. `report` is the accountant-facing and filing-facing view.
 
-### Commands
+`sole-proprietor` is a helper command for owner withdrawals and owner investments. It does not post anything by itself, but it gives you balanced lines that you can feed into [bus-journal](./bus-journal).
 
-`init` creates baseline accounts datasets and schemas. If they already exist in full, `init` warns and exits 0 without changing anything. If they exist only partially, `init` fails and does not modify files.
+### Choosing the account type
 
-`list` prints the current chart in deterministic order. `report` renders a filing-grade tililuettelo in `text`, `tsv`, `csv`, `markdown`, or `pdf` format with deterministic ordering, stable multi-page pagination, optional workspace metadata from `datapackage.json`, journal-derived `Saldo`, and explicit `Yhteensä` subtotal rows after each logical group (`asset`, `liability` + `equity`, `income` + `expense`). The subtotal row keeps `Tilinumero` and `Saldo` empty, prints `Yhteensä` in `Tilin nimi`, and prints the group total in `Yhteenveto`. For simple read/report commands (`init`, `validate`, `list`, `report`), global flags are accepted both before and after the subcommand, so `bus accounts report --format pdf --output ./out/tililuettelo.pdf` works the same as `bus accounts --format pdf --output ./out/tililuettelo.pdf report`. `add` creates a new account and fails if `--code` already exists. `set` updates an existing account by `--code` and changes only attributes you provide, such as `--name` or `--type`. `validate` checks both data rows and `accounts.schema.json`, including malformed schema-level definitions.
+For BusDK, every account must have one of these types:
 
-`sole-proprietor` emits balanced double-entry lines for owner withdrawal (`withdrawal`) and owner investment (`investment`). It requires `--equity-code`, `--cash-code`, and `--amount`, does not modify `accounts.csv`, and outputs TSV lines that can be used with `bus journal add`.
+| Type | Typical use |
+| --- | --- |
+| `asset` | cash, bank, receivables, fixed assets |
+| `liability` | payables, loans, VAT payable |
+| `equity` | share capital, retained earnings, owner’s capital |
+| `income` | sales and other revenue |
+| `expense` | purchases, services, wages, fees, depreciation |
 
-When the workspace data package or the `accounts` resource declares `_pcsv`
-metadata, `accounts.csv` is stored as a `PCSV-1` resource instead of plain CSV.
-In that mode `bus accounts init` writes a schema with `_pad` and storage policy
-metadata, `add` appends through the shared storage-aware `bus-data` layer, and
-`set` updates rows in place. If `_pcsv` metadata is absent, the module keeps
-using plain CSV.
+If you are following a Finnish numbered chart, the common practical pattern is still useful: `1xxx` often means assets, `2xxx` liabilities, `3xxx` equity, `4xxx` income, and `5xxx` to `7xxx` expenses. BusDK does not force a national numbering scheme, but consistent typing matters because downstream modules use it.
 
-### Options
+### Reports and statutory mapping
 
-`add` requires `--code <account-id>`, `--name <account-name>`, and `--type <asset|liability|equity|income|expense>`.
+`report` generates a `tililuettelo` view and can include journal-derived balances.
 
-`set` requires `--code <account-id>` and supports `--name <account-name>` and `--type <asset|liability|equity|income|expense>`.
+For Finnish statutory reports, this module also owns the account classification and mapping datasets used together with [bus-reports](./bus-reports). In practice:
 
-`sole-proprietor withdrawal|investment` requires `--equity-code <code>`, `--cash-code <code>`, and `--amount <positive number>`.
+`report-account-classification.csv` is the place for canonical account meaning.
 
-Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus accounts --help` or `bus accounts --help sole-proprietor`.
+`report-account-mapping.csv` is the place for layout-specific overrides.
 
-### Choosing account type: Finnish numbering convention (practical guide)
+If you are just starting with statutory reporting, you usually do not edit these files first. Start with a clean chart, produce a report in [bus-reports](./bus-reports), and refine mappings only when you see a real placement problem.
 
-The following is a **practical convention** used by many Finnish bookkeeping setups to choose the BusDK `--type` value when running `bus accounts add`. It is not a legal requirement and BusDK does not enforce any national numbering scheme. Organizations may customize numbering; when in doubt, follow the chart used in the previous year or your accountant’s guidance.
+### Typical workflow
 
-Many Finnish charts use the first digit (or leading digits) to group accounts by balance-sheet vs income-statement categories. You can use that pattern as a default heuristic to map account codes to BusDK types.
-
-**1xxx — assets (`asset`).** Codes starting with 1 are typically asset accounts. Common subgroups: 10xx intangible assets; 11xx tangible assets and depreciation accumulations; 13xx receivables; 14xx cash, bank, and payment-provider accounts.
-
-**2xxx — liabilities (`liability`).** Codes starting with 2 are typically liability accounts. Common subgroups: 20xx trade payables; 21xx VAT payable/receivable settlement accounts; 22xx–26xx other short- or long-term liabilities; 29xx private drawings or investment accounts for sole proprietors, depending on the firm’s practice.
-
-**3xxx — equity (`equity`).** Codes starting with 3 are typically equity. In sole-proprietorship bookkeeping, owner’s equity and prior-year results are often in 3xxx; practices vary, so align with your accountant’s chart.
-
-For sole proprietors, use `bus accounts sole-proprietor withdrawal` or `bus accounts sole-proprietor investment` to produce balanced TSV lines (code, side, amount) that you can feed into `bus journal add`; the command does not read or write the chart of accounts.
-
-**4xxx — income.** Codes starting with 4 are typically income. VAT-rate-specific sales accounts (e.g. 4010, 4040, 4050) are common; exact numbering varies by chart.
-
-**5xxx–7xxx — expenses (`expense`).** Codes starting with 5, 6, or 7 are typically expenses. Common subgroups include purchases, services, rent, marketing, travel, office, telecom, banking fees, insurance, accounting/legal, and depreciation.
-
-**8xxx–9xxx — financial and result/summary accounts.** These ranges are often used for financial income/expense and for result or summary accounts. As a conservative default: 80xx–81xx are often financial income or expense — map them to `income` or `expense` according to their meaning. Many 9xxx “result” and “summary” accounts are used for reporting or closing rather than day-to-day posting; if you include them, still assign a BusDK type (`income` or `expense`) consistent with their meaning. BusDK does not enforce a specific national numbering scheme.
-
-**Rules of thumb.** Prefer consistency over perfection and use the same mapping logic across your chart.
-If in doubt, follow the previous-year chart or your accountant’s guidance.
-When migrating from code/name-only ledgers, assign `type` explicitly.
-
-### Write path and field coverage
-
-The CLI surface covers the core lifecycle needed for scripts and UIs to create, update, and validate accounts. `bus accounts add` creates a new account and fails if that account code already exists; `bus accounts set` updates an existing account by code. Both commands refuse to write rows that would violate schema or invariants.
-
-If your `accounts.csv` schema includes additional reporting and control columns (for example `ledger_category_id` and `is_active`), those fields are currently maintained by editing `accounts.csv` directly and then validating with `bus accounts validate` (and, for whole-workspace checks, `bus validate`). This keeps the authoritative dataset explicit while avoiding documentation that implies unsupported flags exist.
-
-For Finnish statutory reports, account meaning and explicit layout overrides are
-kept in separate datasets. `report-account-classification.csv` stores canonical
-account semantics per `account_code` and `statement_target`, while
-`report-account-mapping.csv` stores explicit layout-specific overrides such as
-`layout_id`, `layout_line_id`, `normal_side`, and optional `rollup_rule`.
-Both datasets use beside-the-table schemas, are owned by this module, and are
-consumed by [bus-reports](./bus-reports). `bus accounts init` bootstraps both
-through the same storage-aware `bus-data` path, so they can also be selected as
-`PCSV-1` resources from workspace metadata.
-
-### Files
-
-`accounts.csv` and its beside-the-table schema `accounts.schema.json` in the accounts area are the core chart datasets. For Finnish reporting, the module also owns `report-account-classification.csv` with `report-account-classification.schema.json`, plus `report-account-mapping.csv` with `report-account-mapping.schema.json`. Schemas must be valid Frictionless Table Schema documents so that bus-data and other BusDK modules (for example bus-journal and bus-reports) can parse and use them without errors. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `accounts/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
-
-The default init schema for `accounts.csv` includes `notes`. In `PCSV-1`
-workspaces it also includes `_pad`, and row updates require
-`busdk.update_policy: "in_place"` in the schema metadata.
-
-### Examples
+For a new workspace, the flow is usually this:
 
 ```bash
 bus accounts init
+bus accounts add --code 1910 --name "Pankkitili" --type asset
 bus accounts add --code 3000 --name "Sales income" --type income
-bus accounts set --code 3000 --name "Domestic sales income"
-bus accounts list --format tsv --output ./out/accounts.tsv
-bus accounts report --format pdf --output ./out/tililuettelo.pdf
-bus accounts sole-proprietor withdrawal --equity-code 2010 --cash-code 1910 --amount 2500
+bus accounts add --code 4000 --name "Purchases" --type expense
+bus accounts validate
+bus period init
+bus journal init
 ```
+
+### Files
+
+The core files are `accounts.csv` and `accounts.schema.json` at the workspace root. This module also owns the account-side reporting classification and mapping files used by statutory reporting workflows.
+
+### Output and flags
+
+These commands use [Standard global flags](../cli/global-flags). In practice:
+
+`list` is usually used with `tsv`.
+
+`report` is where `text`, `csv`, `markdown`, and `pdf` matter most.
+
+`add` and `set` support `--dry-run` when you want to validate a change without writing it.
+
+For the full command and flag details, run `bus accounts --help`.
 
 ### Exit status
 
-`0` on success. Non-zero on errors, including invalid usage, row-level schema violations, or an invalid or malformed schema document.
-
+`0` on success. Non-zero on invalid usage, schema violations, duplicate account codes, or invalid account references.
 
 ### Using from `.bus` files
 
@@ -126,11 +145,8 @@ accounts add --code 4100 --name "Service revenue" --type income
 # same as: bus accounts set --code 4100 --name "Service revenue FI"
 accounts set --code 4100 --name "Service revenue FI"
 
-# same as: bus accounts report --format pdf --output ./out/tililuettelo.pdf
-accounts report --format pdf --output ./out/tililuettelo.pdf
-
-# same as: bus accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
-accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount 1000
+# same as: bus accounts report --format pdf --output tililuettelo.pdf
+accounts report --format pdf --output tililuettelo.pdf
 ```
 
 <!-- busdk-docs-nav start -->
@@ -144,8 +160,8 @@ accounts sole-proprietor investment --equity-code 2010 --cash-code 1910 --amount
 ### Sources
 
 - [Owns master data: Chart of accounts](../master-data/chart-of-accounts/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Module reference: bus-reports](../modules/bus-reports)
 - [Module reference: bus-accounts](../modules/bus-accounts)
+- [Module reference: bus-journal](../modules/bus-journal)
+- [Module reference: bus-reports](../modules/bus-reports)
 - [Accounts layout: Accounts area](../layout/accounts-area)
 - [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)

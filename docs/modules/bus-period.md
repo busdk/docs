@@ -1,150 +1,164 @@
 ---
-title: bus-period — add, open, close, reopen, lock, and opening from prior workspace
-description: bus period adds periods in future state, manages period state transitions (open, close, reopen, lock), and generates opening balances from a prior workspace as schema-validated repository data.
+title: bus-period — manage accounting periods and year rollover
+description: bus period creates accounting periods, opens and closes them, locks and reopens them with audit metadata, and can generate opening entries from a prior workspace.
 ---
 
-## Overview
+## `bus period` — manage accounting periods and year rollover
 
-`bus period` manages the period control dataset.
+`bus period` controls when the books are open for posting and when they are closed or locked. Use it to create periods, move them through their lifecycle, and generate opening balances for a new year from a prior workspace.
 
-Periods are created in state **future** with `add`, then transitioned **open** → **closed** → **locked** with `open`, `close`, and `lock`. Closed periods can be reopened with `reopen`, which records audit metadata before a period is re-closed with `close`.
+If a period is not open, normal journal posting should not continue there. This module is what keeps that timeline explicit and reviewable.
 
-Only periods in state **open** accept new journal postings. Closed and locked periods reject writes.
+### Common tasks
 
-The `opening` subcommand generates the opening entry for a new fiscal year in the current workspace from a prior workspace’s closing balances, producing one balanced journal transaction.
+Create the period control dataset:
 
-When workspace storage metadata selects `PCSV-1`, period-owned tables use the shared storage-aware table layer: `periods.csv`, `periods/<period_id>/close_entries.csv`, and `periods/<period_id>/opening_balances.csv` can be stored as fixed-block `PCSV-1` resources. Explicit plain CSV remains supported, and existing CSV workspaces keep the same command behavior. `bus period validate` validates logical period and journal fields only; the storage padding column `_pad` is treated as internal `PCSV-1` metadata, not a business column users must manage.
+```bash
+bus period init
+```
 
-Period identifiers are `YYYY`, `YYYY-MM`, or `YYYYQn`. Command names follow [CLI command naming](../cli/command-naming).
+Create and open the first month of a new year:
+
+```bash
+bus period add --period 2026-01 --retained-earnings-account 3200
+bus period open --period 2026-01
+```
+
+List current periods and validate the control data:
+
+```bash
+bus period list
+bus period validate
+```
+
+Close and then lock a finished period:
+
+```bash
+bus period close --period 2026-01 --post-date 2026-01-31
+bus period lock --period 2026-01
+```
+
+Reopen a closed period for a controlled correction window:
+
+```bash
+bus period reopen \
+  --period 2026-01 \
+  --reason "Correction to January accrual" \
+  --approved-by reviewer@example.com
+```
+
+Generate opening balances for the new year from a prior workspace:
+
+```bash
+bus period opening \
+  --from ../books-2025 \
+  --as-of 2025-12-31 \
+  --post-date 2026-01-01 \
+  --period 2026-01 \
+  --equity-account 3200
+```
 
 ### Synopsis
 
 `bus period init [-C <dir>] [global flags]`  
-`bus period add --period <period> [--start-date <YYYY-MM-DD>] [--end-date <YYYY-MM-DD>] [--retained-earnings-account <code>] [-C <dir>] [global flags]`  
-`bus period open --period <period> [-C <dir>] [global flags]`  
-`bus period close --period <period> [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
-`bus period lock --period <period> [-C <dir>] [global flags]`  
-`bus period reopen --period <period> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`  
-`bus period set --period <period> --retained-earnings-account <code> [-C <dir>] [global flags]`  
+`bus period add --period <YYYY|YYYY-MM|YYYYQn> [--start-date <YYYY-MM-DD>] [--end-date <YYYY-MM-DD>] [--retained-earnings-account <code>] [-C <dir>] [global flags]`  
+`bus period open --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
+`bus period close --period <YYYY|YYYY-MM|YYYYQn> [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
+`bus period lock --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
+`bus period reopen --period <YYYY|YYYY-MM|YYYYQn> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`  
+`bus period set --period <YYYY|YYYY-MM|YYYYQn> --retained-earnings-account <code> [-C <dir>] [global flags]`  
 `bus period list [--history] [-C <dir>] [global flags]`  
 `bus period validate [-C <dir>] [global flags]`  
-`bus period opening --from <path> --as-of <YYYY-MM-DD> --post-date <YYYY-MM-DD> --period <YYYY-MM> [optional flags] [-C <dir>] [global flags]`
+`bus period opening --from <path> --as-of <YYYY-MM-DD> --post-date <YYYY-MM-DD> --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`
 
-### Commands
+### Period lifecycle
 
-`init` creates the period control dataset and schema when absent. If both files already exist and are consistent, `init` warns and exits 0. If only one exists or data is inconsistent, `init` fails without modifying files.
+The normal lifecycle is:
 
-`add` creates a single period row in state **future**. The period must not exist yet. Each new period must have a retained-earnings account: pass `--retained-earnings-account <code>` or rely on default `3200`. The account must exist in chart of accounts and, when determinable, be equity. Optional `--start-date` and `--end-date` override dates derived from the period id.
+`future` → `open` → `closed` → `locked`
 
-`open` moves a period from **future** to **open**. The period must exist and must have a retained-earnings account. If a legacy workspace has blank retained earnings, run `bus period set` first. `open` is idempotent if already open and fails for closed or locked periods.
+If a correction is needed, `reopen` creates a controlled exception path from a closed period. After the corrections, you close it again.
 
-`close` creates closing entries and transitions **open** to **closed**, or re-closes a period that was reopened. `lock` transitions **closed** to **locked** without creating postings. `reopen` transitions **closed** to **reopened** with required audit metadata and an optional maximum reopen window from the prior `closed_at`. `set` appends a retained-earnings account repair record for an existing period and is allowed only in **future** or **open**.
+`list` shows the effective current state. `list --history` is the command to use when you want to see the full append-only timeline of changes.
 
-`list` shows effective current state per period and supports `--history` where available. `validate` checks dataset integrity and rejects invalid effective records and duplicate primary keys. `opening` generates one balanced opening transaction from a prior workspace’s closing balances and requires `--from`, `--as-of`, `--post-date`, and `--period`.
+### Which command should you use?
 
-### Options
+Use `add` when the period does not exist yet.
 
-`add` requires `--period <period>` and accepts optional `--start-date <YYYY-MM-DD>`, `--end-date <YYYY-MM-DD>`, and `--retained-earnings-account <code>`.
+Use `open` when posting work should begin.
 
-When `--retained-earnings-account` is omitted, the default is `3200`. The account must exist in the chart (and, when determinable, be an equity account) or `add` fails.
+Use `close` when the period’s result should be closed and closing artifacts written.
 
-When start or end date is omitted, dates are derived from the period ID (for example 2024-01 → 2024-01-01/2024-01-31, 2024Q1 → 2024-01-01/2024-03-31).
+Use `lock` when the period should no longer be reopened casually.
 
-`open`, `close`, `lock`, `reopen`, and `set` require `--period <period>`. `set` also requires `--retained-earnings-account <code>` and applies only to periods in state future or open. `reopen` also requires `--reason <text>` and `--approved-by <id>`, with optional `--voucher-id <id>` (repeatable) and `--max-open-days <n>` for policy enforcement.
+Use `set` to repair or define the retained-earnings account for a period.
 
-`close` accepts optional `--post-date <YYYY-MM-DD>`. When omitted, closing date defaults to the period end date.
+Use `opening` when you are rolling a workspace into a new fiscal year and want one deterministic opening entry from the prior year’s closing balances.
 
-`opening` requires `--from <path>`, `--as-of <YYYY-MM-DD>`, `--post-date <YYYY-MM-DD>`, and `--period <YYYY-MM>`.
+### Important details
 
-Optional flags:
-`--equity-account <code>` (balancing account, default `3200`), `--include-zero`, `--description <text>`, `--replace`, and `--allow-as-of-mismatch`.
+Supported period identifiers are `YYYY`, `YYYY-MM`, and `YYYYQn`.
 
-`--from` points to prior workspace root. Paths are resolved relative to process working directory (before `-C`).
+Each period needs a retained-earnings account. If you omit it on `add`, the default is `3200`.
 
-The command fails when target period is not open, opening already exists without `--replace`, prior account codes are missing in current chart, or prior fiscal-year-end differs from `--as-of` without `--allow-as-of-mismatch`.
+`close` automatically creates the closing mechanics for the period, including the result transfer to retained earnings.
 
-Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus period --help`.
+`opening` expects the target period to already exist and be open.
 
-**Opening your first period.** After `bus period init`, run `bus period add --period <YYYY-MM>` (or `YYYY` / `YYYYQn`) to create the period in state future. You can add multiple periods in advance (e.g. 2024-01 through 2024-12). Then run `bus period open --period <YYYY-MM>` to make that period active for posting. The period must exist before opening; if you see "period … not found", add the period first with `bus period add`. After a successful `add` and `open`, `bus period validate` and `bus period list` succeed — even when you run add and open back-to-back in the same second.
+`reopen` can also record one or more `--voucher-id` values when you want the reopen window tied to specific correction vouchers.
 
-**Repairing legacy workspaces.** If `open`, `list`, or `validate` fail because a period has a blank retained-earnings account (e.g. after upgrading from an older bus-period), run `bus period set --period <period> --retained-earnings-account <code>` for that period while it is still in state future or open. Do not edit `periods.csv` by hand; the `set` command appends a corrected record so the dataset stays append-only and valid.
+### Typical workflow
 
-**Year rollover.** In the new workspace: `bus accounts init` and populate the chart of accounts; `bus period init`; `bus period add --period <YYYY-MM>` (and optionally more future periods); `bus period open --period <YYYY-MM>` for the first period; `bus journal init`; then `bus period opening --from <path-to-prior-workspace> --as-of <prior-year-end> --post-date <new-year-start> --period <YYYY-MM> [--equity-account <code>]`. Full validation rules and optional flags are in the [bus-period module reference](../modules/bus-period).
-
-**Year-end result transfer.** `close` transfers the period result to the period's retained-earnings account automatically and appends the balanced closing journal entry as part of the close workflow.
-
-**Usage examples.**
+A common year-start flow is:
 
 ```bash
-bus period add --period 2026-02
-bus period open --period 2026-02
-bus period close --period 2026-02
-bus period reopen --period 2026-02 --reason "Correction" --approved-by reviewer@example.com
-```
-
-```bash
-bus period close --period 2026Q1 --post-date 2026-03-31
-bus period lock --period 2026Q1
-```
-
-```bash
+bus period init
+bus period add --period 2026-01 --retained-earnings-account 3200
+bus period open --period 2026-01
+bus journal init
 bus period opening \
-  --from ../sendanor-books-2023 \
-  --as-of 2023-12-31 \
-  --post-date 2024-01-01 \
-  --period 2024-01 \
-  --equity-account 3200
+  --from ../books-2025 \
+  --as-of 2025-12-31 \
+  --post-date 2026-01-01 \
+  --period 2026-01
+```
+
+For a normal monthly close:
+
+```bash
+bus period validate
+bus reports trial-balance --as-of 2026-01-31
+bus period close --period 2026-01 --post-date 2026-01-31
+bus period lock --period 2026-01
 ```
 
 ### Files
 
-`periods.csv` and `periods.schema.json` live at workspace root.
+This module owns `periods.csv` and `periods.schema.json` at the workspace root. When you close a period, it also writes review artifacts under `periods/<period-id>/`, including `close_entries.csv` and `opening_balances.csv`.
 
-The schema defines a composite primary key (`period_id`, `recorded_at`) so each history row is unique. Current state is the latest row per period by `recorded_at` (effective record).
+### Output and flags
 
-Period operations are append-only. `list` and `validate` use effective records.
+These commands use [Standard global flags](../cli/global-flags). `list` is the main read/report command. `--dry-run` is especially useful for `add`, `open`, `close`, `reopen`, `set`, and `opening` when you want to preview period-control changes.
 
-If two rows share the same primary key (for example from hand edits), `validate` fails until repaired through normal commands.
-
-Every period record written by the CLI has a non-empty retained-earnings account. For older workspaces with blank values, use `bus period set` to repair.
-
-If workspace/resource storage resolves to `PCSV-1`, the period control table and period-owned close/opening artifacts are written as fixed-block resources with schema-declared padding. `journal-closed-periods.csv` remains ordinary CSV because it is a shared compatibility file for journal locking. Journal schemas generated by `bus-journal` may include `_pad`; `bus period validate` accepts that storage field and does not require users to treat it as part of the logical journal contract. The same storage-aware behavior applies when the workspace journal itself was initialized by `bus-journal init`: `open`, `close`, `lock`, and `validate` work directly against PCSV-backed `journals.csv` and `journal-YYYY*.csv` resources without raw header-mismatch handling by the user.
-
-### Examples
-
-```bash
-bus period init
-bus period add \
-  --period 2026-01 \
-  --start-date 2026-01-01 \
-  --end-date 2026-01-31 \
-  --retained-earnings-account 2370
-```
+For the full flag details, run `bus period --help`.
 
 ### Exit status
 
-`0` on success.
-
-Non-zero on invalid usage or command violations, including:
-`add` when the period exists or retained-earnings account is missing/invalid; `open` when period is missing, in wrong state, or missing retained earnings; `close` when period is missing or not open; `lock` when period is missing or not closed; `reopen` when period is missing, not closed, locked, or missing audit metadata; `set` when period is missing, closed/locked, or account is invalid; `validate` when effective records are invalid or composite keys duplicate; and `opening` when target period is not open, opening already exists without `--replace`, accounts are missing in current chart, or as-of mismatches without override.
-
+`0` on success. Non-zero on invalid usage, invalid state transitions, missing periods, invalid retained-earnings accounts, or opening-generation failures.
 
 ### Using from `.bus` files
 
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus period --help
-period --help
-
-# same as: bus period -V
-period -V
-
-# lifecycle
+# same as: bus period add --period 2026-01 --retained-earnings-account 3200
 period add --period 2026-01 --retained-earnings-account 3200
+
+# same as: bus period open --period 2026-01
 period open --period 2026-01
+
+# same as: bus period close --period 2026-01 --post-date 2026-01-31
 period close --period 2026-01 --post-date 2026-01-31
-period reopen --period 2026-01 --reason "Correction window" --approved-by reviewer@example.com
 ```
 
 <!-- busdk-docs-nav start -->
@@ -158,9 +172,8 @@ period reopen --period 2026-01 --reason "Correction window" --approved-by review
 ### Sources
 
 - [Owns master data: Accounting periods](../master-data/accounting-periods/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
 - [Module reference: bus-period](../modules/bus-period)
+- [Module reference: bus-journal](../modules/bus-journal)
 - [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
 - [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

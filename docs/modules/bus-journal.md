@@ -1,130 +1,166 @@
 ---
 title: bus-journal — post and query ledger journal entries
-description: bus journal maintains the authoritative ledger as append-only journal entries.
+description: bus journal is the authoritative ledger module for BusDK. Use it to add balanced entries, inspect account activity, import legacy journals, and automate classified or template-based postings.
 ---
 
 ## `bus-journal` — post and query ledger journal entries
+
+`bus journal` maintains the authoritative double-entry ledger for a workspace. If a row should become accounting, this is the module that writes it.
+
+Use it for manual entries, replay-safe automated postings, account activity review, legacy journal import, and bank-driven posting automation. Closed or locked periods are rejected automatically.
+
+### Common tasks
+
+Create the journal datasets:
+
+```bash
+bus journal init
+```
+
+Post one simple manual entry:
+
+```bash
+bus journal add \
+  --date 2026-01-31 \
+  --desc "January rent" \
+  --debit 6300=1200.00 \
+  --credit 1910=1200.00
+```
+
+Post replay-safe automation rows with a stable source key:
+
+```bash
+bus journal add \
+  --date 2026-01-31 \
+  --desc "Payroll January" \
+  --debit 5000=4200.00 \
+  --credit 1910=4200.00 \
+  --source-system payroll \
+  --source-id 2026-01 \
+  --if-missing
+```
+
+Check balances and inspect one account’s movement:
+
+```bash
+bus journal balance --as-of 2026-03-31
+bus journal --format tsv account-activity --account 1910 --period 2026 --opening exclude
+```
+
+Import a legacy ledger CSV through a deterministic import profile:
+
+```bash
+bus journal import \
+  --profile fi-ledger-legacy \
+  --file ./legacy/daybook.csv \
+  --source-id-from "Source Ref"
+```
+
+Generate bank-driven posting proposals and then apply them:
+
+```bash
+bus journal -o ./out/journal-proposals.tsv classify bank --profile ./rules.yml
+bus journal classify apply --proposal ./out/journal-proposals.tsv
+```
+
+Post recurring VAT-split entries from a template:
+
+```bash
+bus journal template post \
+  --template-file ./templates.yml \
+  --template office_24 \
+  --date 2026-01-15 \
+  --gross 124.00 \
+  --desc "Office supplies"
+```
 
 ### Synopsis
 
 `bus journal init [-C <dir>] [global flags]`  
 `bus journal add --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
 `bus journal add --bulk-in <file|-> [-C <dir>] [global flags]`  
-`bus journal classify bank --profile <rules.yml> [--bank-csv <path>] [--loan-profiles <path>] [--suspense-account <acct> --bank-account <acct> --suspense-reason <text>] [-C <dir>] [global flags]`  
-`bus journal classify apply --proposal <path> [-C <dir>] [global flags]`  
-`bus journal classify suspense-propose --suspense-account <acct> [selectors] [-C <dir>] [global flags]`  
-`bus journal classify suspense-apply --proposal <path> [-C <dir>] [global flags]`  
-`bus journal template post --template-file <path> --template <id> --date <YYYY-MM-DD> --gross <amount> [options] [-C <dir>] [global flags]`  
-`bus journal template apply --template-file <path> [options] [-C <dir>] [global flags]`  
-`bus journal balance --as-of <YYYY-MM-DD> [-C <dir>] [-o <file>] [-f <format>] [global flags]`
+`bus journal balance [--as-of <YYYY-MM-DD>] [-C <dir>] [global flags]`  
+`bus journal account-activity --account <code[,code]> [--period <id>] [--from-date <YYYY-MM-DD>] [--to-date <YYYY-MM-DD>] [--opening <all|exclude|only>] [--top <n>] [-C <dir>] [global flags]`  
+`bus journal import --profile <name> --file <path> [--source-id-from <column>] [--mapping-profile <name>] [--header-row <n>] [--map <field=header|column>] ... [-C <dir>] [global flags]`  
+`bus journal classify <subcommand> ...`  
+`bus journal template <post|apply> ...`
 
-### Description
+### What most users do with this module
 
-Command names follow [CLI command naming](../cli/command-naming). `bus journal` maintains the authoritative ledger as append-only journal entries.
+`init` prepares the journal datasets and schemas.
 
-It enforces balanced debits/credits and respects period close/lock boundaries.
+`add` is the normal command for manual postings and for simple automation. It requires a balanced debit and credit set.
 
-Account names in `--debit` and `--credit` must exist in the workspace [chart of accounts](../master-data/chart-of-accounts/index) (maintained by [bus accounts](./bus-accounts)).
+`balance` is the fastest way to answer “what is the balance as of this date?”.
 
-Postings to closed or locked periods are rejected (period state comes from [bus period](./bus-period)).
+`account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher and source identifiers.
 
-Other modules post into the journal; this CLI adds entries and reports balances.
+`import` is for legacy journal or day-book migration work where you want deterministic mapping rather than hand-posting old history.
 
-### Commands
+`classify` is the bank-to-journal workflow. It can generate proposals from bank rows, apply approved proposals, learn candidate rules from earlier postings, and handle suspense or loan-split flows.
 
-`init` creates the journal index and baseline datasets and schemas, including `journals.csv`, `journals.schema.json`, `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. If all required files exist, `init` warns and exits 0 without changes. If they exist only partially, `init` fails and does not modify files.
-Fresh journal workspaces default the journal-owned root tables to `PCSV-1`, so `init` emits compatible `_pad`-aware schemas for the dimension metadata tables even without explicit `_pcsv` metadata. Existing plain CSV workspaces still read unchanged.
+`template` is the recurring-entry helper. It is useful when one kind of supplier charge repeats with the same VAT logic over and over again.
 
-`add` appends a balanced transaction with one or more debit and credit lines. Optional `--source-id <key>` records source identity, and `--if-missing` makes add idempotent when a posting with the same source identity already exists. For replay-scale streams, `add --bulk-in <file|->` reads JSON array or NDJSON and applies the same validation and idempotency semantics per transaction. When workspace `datapackage.json` contains `busdk.accounting_entity.id_generation`, generated `transaction_id`, `voucher_id`, and `entry_id` values follow that shared BusDK policy; otherwise bus-journal uses its legacy timestamp-based fallback identifiers.
+### Important behavior
 
-`template post` posts a single template-driven entry. A predicate in the template file selects a rule, then gross amount is split into base plus VAT with deterministic rounding. `template apply` runs the same logic in batch from bank CSV (or equivalent) input.
+Entries must be balanced. If debit and credit totals differ, the command fails.
 
-`balance` prints account balances as of a given date.
+Accounts can be given as codes or as account names that already exist in the chart of accounts.
 
-`classify` supports deterministic bank-driven proposal and apply flows. `classify bank` emits proposal rows from bank CSV via rules and loan profiles, and can fall back to configured suspense posting for unmatched rows. `classify apply` posts applicable proposal rows with idempotent voucher ids (`bank:<bank_txn_id>`). `classify suspense-propose` scans posted suspense rows and emits deterministic reclassification proposals, and `classify suspense-apply` posts approved reclassifications with ids such as `reclass:bank:<bank_txn_id>:<target_account>`.
+Visible voucher numbers follow the shared workspace ID policy when configured in [bus-config](./bus-config). Without a workspace override, the default visible voucher format is a yearly sequence such as `V-2026-000001`, while technical transaction IDs remain machine-friendly.
 
-### Options
+`--source-id` plus optional `--source-system` makes replay-safe posting possible. This is the simplest way to avoid duplicate automated postings.
 
-`add` accepts `--date <YYYY-MM-DD>`, `--desc <text>`, and repeatable `--debit <account>=<amount>` / `--credit <account>=<amount>`.
+The workspace storage format is handled automatically. Users normally do not need different journal commands for CSV and `PCSV-1`.
 
-Optional `--source-id <key>` records source identity. `--if-missing` makes add idempotent (no-op when a posting with the same source identity already exists).
+### A simple monthly flow
 
-For bulk streams, use `--bulk-in <file|->`. Accepted formats are JSON array and NDJSON (one JSON object per line). Stderr prints deterministic summary: `bulk add completed: applied=<n> skipped=<n> total=<n>`.
+One common flow looks like this:
 
-`--bulk-in` is mutually exclusive with single-add flags.
+```bash
+bus journal add --date 2026-01-31 --desc "Insurance" --debit 6400=350.00 --credit 1910=350.00
+bus journal balance --as-of 2026-01-31
+bus reports trial-balance --as-of 2026-01-31
+```
 
-At least one debit and one credit are required per transaction, and total debits must equal total credits.
+If the journal lines come from bank automation instead of manual entry, the flow often becomes:
 
-`balance` accepts `--as-of <YYYY-MM-DD>`. Global flags are defined in [Standard global flags](../cli/global-flags). For timing diagnostics, `--perf` emits stderr lines such as `INFO perf bus-journal balance 0.123` and selected nested stages such as `INFO perf bus-period dataset-path 0.001`.
+```bash
+bus bank import --file ./statements/2026-01.csv
+bus journal -o ./out/proposals.tsv classify bank --profile ./rules.yml
+bus journal classify apply --proposal ./out/proposals.tsv
+bus reports day-book --period 2026-01 --format pdf -o ./out/day-book-2026-01.pdf
+```
+
+### Output and flags
+
+These commands use [Standard global flags](../cli/global-flags). The most important detail is that `--format` is mainly for `balance` and `account-activity`. Commands that write data, such as `add`, `import`, `classify apply`, and `template post`, are about mutation rather than report formatting.
+
+Use `--dry-run` before `import`, `classify apply`, `template post`, or `template apply` when you want to preview the effect without writing.
+
+For the full option list, run `bus journal --help`.
 
 ### Files
 
-Every file owned by `bus journal` includes `journal` or `journals` in its filename.
-
-The journal index is `journals.csv` at repository root. Dimension metadata is stored in `dimension-definitions.csv`, `dimension-definitions.schema.json`, `dimension-values.csv`, and `dimension-values.schema.json`. Period journal files are also at workspace root with date prefixes (for example `journal-2026.csv`) and beside schemas (for example `journal-2026.schema.json`).
-
-The module does not use a journal subdirectory. Path resolution is owned by this module. Journal-owned table bootstrap, index reads and writes, and period-row mutation go through the shared BusDK storage-aware table layer, so current CSV workspaces keep the same file layout while workspace-level storage selection such as `PCSV-1` can reuse the same command surface.
-
-`bus journal add` and `bus journal balance` use the shared storage-aware read and write paths automatically for journal-owned `PCSV-1` tables. `bus journal init` now defaults the mutable root tables to `PCSV-1` and writes compatible dimension root schemas without requiring explicit workspace metadata. The current embedded period-journal schemas still target plain CSV, so a real `PCSV-1` workspace must provide compatible period-journal schemas and metadata, including an explicit padding field such as `_pad`, for those period-journal resources. Existing plain CSV workspaces do not need any extra configuration.
-
-When validating accounts or period boundaries, journal uses [bus accounts](./bus-accounts) and [bus period](./bus-period) datasets through module-owned paths/APIs.
-
-### Examples
-
-```bash
-bus journal init
-bus journal add \
-  --date 2026-01-31 \
-  --desc "January rent" \
-  --debit 6300=1200 \
-  --credit 1910=1200
-```
+This module owns `journals.csv`, period journal files such as `journal-2026.csv`, and journal dimension tables at the workspace root.
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage, unbalanced postings, or schema or period violations.
-
-### Idempotent posting and source keys
-
-`bus journal add` accepts optional `--source-id <key>` to record source identity for the posting. With `--if-missing`, add is a no-op when a posting with that source identity already exists, so re-runs and CI can be safe without custom script guards. Uniqueness is enforced on the source identity; conflicts produce clear diagnostics.
-
-### Posting templates (VAT split for bank-driven entries)
-
-Posting templates with automatic VAT split are first-class.
-
-A template file defines one or more templates. Each template has an identifier, a predicate, and posting rule fields (expense account, VAT rate/account, bank account).
-
-The first matching predicate in file order is used.
-
-For `template post`, required flags are `--template-file`, `--template`, `--date`, and `--gross`.
-
-For `template apply`, input is bank CSV (or equivalent) whose columns must satisfy predicate fields.
-
-The module splits gross into base + VAT with deterministic rounding and posts balanced lines with trace fields.
-
-### Loan-payment classifier (principal/interest split)
-
-Loan-payment classification is available via `classify bank --loan-profiles <file>` and `classify loan-propose` / `classify loan-apply`. Profile-driven matching and split policy determine principal, interest, and optional fee amounts for deterministic proposal rows before posting.
-
-### Planned enhancements
-
-Further enhancements are tracked in repository feature-request tracking. Core classify/learn/template/suspense flows are available as first-class commands.
-
+`0` on success. Non-zero on invalid usage, unbalanced postings, schema violations, missing accounts, or attempts to post into closed or locked periods.
 
 ### Using from `.bus` files
 
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus journal --help
-journal --help
-
-# same as: bus journal -V
-journal -V
-
-# simple posting + balance check
+# same as: bus journal add --date 2026-01-31 --desc "Bank fee" --debit 6570=12.50 --credit 1910=12.50
 journal add --date 2026-01-31 --desc "Bank fee" --debit 6570=12.50 --credit 1910=12.50
-journal balance --as-of 2026-01-31
+
+# same as: bus journal --format tsv account-activity --account 1910 --period 2026
+journal --format tsv account-activity --account 1910 --period 2026
+
+# same as: bus journal template apply --template-file ./templates.yml --bank-csv ./bank.csv
+journal template apply --template-file ./templates.yml --bank-csv ./bank.csv
 ```
 
 <!-- busdk-docs-nav start -->
@@ -138,9 +174,8 @@ journal balance --as-of 2026-01-31
 ### Sources
 
 - [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Master data: Documents (evidence)](../master-data/documents/index)
 - [Module reference: bus-journal](../modules/bus-journal)
-- [Layout: Journal area](../layout/journal-area)
+- [Module reference: bus-config](../modules/bus-config)
+- [Module reference: bus-reports](../modules/bus-reports)
+- [Workflow: Accounting workflow overview](../workflow/accounting-workflow-overview)
 - [Design: Double-entry ledger](../design-goals/double-entry-ledger)
-- [Finnish closing adjustments and evidence controls](../compliance/fi-closing-adjustments-and-evidence-controls)

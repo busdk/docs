@@ -1,9 +1,74 @@
 ---
 title: bus-invoices
-description: bus invoices stores sales and purchase invoices as schema-validated repository data, validates totals and VAT amounts, and can emit posting outputs for the…
+description: bus invoices creates and validates sales and purchase invoices, imports ERP invoice history, renders invoice PDFs, and emits posting data for downstream accounting workflows.
 ---
 
-## `bus-invoices` — create and manage sales and purchase invoices
+## `bus invoices` — create and manage sales and purchase invoices
+
+`bus invoices` stores invoice headers and invoice lines as workspace data. Use it when you create sales invoices, record purchase invoices, import invoice history, validate invoice totals, or prepare invoice-driven posting data for downstream accounting.
+
+It is the invoice owner in BusDK. Evidence files belong in [bus-attachments](./bus-attachments), PDF rendering goes through [bus-pdf](./bus-pdf), and posting flows continue into [bus-journal](./bus-journal) or [bus-reconcile](./bus-reconcile).
+
+### Common tasks
+
+Create the baseline invoice datasets:
+
+```bash
+bus invoices init
+```
+
+Create one sales invoice and add a line to it:
+
+```bash
+bus invoices add \
+  --type sales \
+  --invoice-id INV-2026-001 \
+  --invoice-date 2026-02-16 \
+  --due-date 2026-03-16 \
+  --customer "Acme Corp"
+
+bus invoices INV-2026-001 add \
+  --desc "Consulting" \
+  --quantity 10 \
+  --unit-price 100 \
+  --income-account "Consulting Income" \
+  --vat-rate 25.5
+```
+
+Validate all invoices and list unpaid ones:
+
+```bash
+bus invoices validate
+bus invoices list --status unpaid --due-to 2026-03-31
+```
+
+Validate one invoice only:
+
+```bash
+bus invoices INV-2026-001 validate
+```
+
+Render one invoice as PDF:
+
+```bash
+bus invoices pdf INV-2026-001 --out INV-2026-001.pdf
+```
+
+Import ERP invoice history with a reusable profile:
+
+```bash
+bus invoices import \
+  --profile ./profiles/erp-invoices.yaml \
+  --source ./exports/invoices.tsv \
+  --source-lines ./exports/invoice-lines.tsv \
+  --year 2025
+```
+
+Emit invoice-driven posting rows for downstream accounting:
+
+```bash
+bus invoices postings
+```
 
 ### Synopsis
 
@@ -14,110 +79,107 @@ description: bus invoices stores sales and purchase invoices as schema-validated
 `bus invoices validate [-C <dir>] [global flags]`  
 `bus invoices classify [--min-confidence <0..1>] [--apply] [--fail-on-missing-evidence] [-C <dir>] [global flags]`  
 `bus invoices pdf <invoice-id> --out <path> [-C <dir>] [global flags]`  
-`bus invoices <invoice-id> add [--desc <text>] [--quantity <number>] [--unit-price <number>] [--income-account <account-name>] [--vat-rate <percent>] [-C <dir>] [global flags]`  
+`bus invoices <invoice-id> add [line options] [-C <dir>] [global flags]`  
 `bus invoices <invoice-id> validate [-C <dir>] [global flags]`  
 `bus invoices postings [-C <dir>] [global flags]`
 
-### Description
+### Which command should you use?
 
-Command names follow [CLI command naming](../cli/command-naming).
+Use `init` once per workspace.
 
-`bus invoices` stores sales and purchase invoices as schema-validated repository data.
-It validates totals and VAT amounts and can emit posting rows for the journal.
+Use `add` for invoice headers and `<invoice-id> add` for invoice lines.
 
-Invoice headers and lines reference entities, accounts, and attachments.
-PDF rendering is delegated to [bus-pdf](./bus-pdf).
-Evidence file storage is handled by [bus-attachments](./bus-attachments).
+Use `validate` before you trust totals or downstream posting output.
 
-Profile-driven ERP import is available through `bus invoices import`.
-Teams can still use generated scripts for migration-specific one-off logic.
+Use `list` for operational filtering such as unpaid invoices, one month, or one counterparty.
 
-### Commands
+Use `pdf` when you want the rendered document.
 
-`init` creates baseline invoice datasets and schemas at workspace root when absent. If all eight files already exist and are consistent, `init` warns on stderr and exits `0` without changes. If state is partial or inconsistent, `init` fails and does not modify files.
+Use `import` when a profile-driven ERP history import is easier than manual creation.
 
-`add` creates invoice headers, and `<invoice-id> add` appends line items for an existing invoice. `validate` checks full invoice datasets, while `<invoice-id> validate` checks one invoice’s lines and totals.
+Use `postings` when you want the workspace-level `invoice-postings.csv` dataset for downstream journal work.
 
-`list` returns invoice rows with optional filters (combined with logical `AND`). When `--type` is set, list validation and output apply only to the matching invoice kind; non-target datasets do not block the filtered listing. With `--legacy-replay`, list tolerates legacy rows where `due_date` is earlier than `issue_date` and emits deterministic warnings instead of hard failure. `import` maps ERP export data into canonical invoice datasets using a versioned profile and supports `--dry-run`. `classify` proposes recurring purchase-line `income_account` and `vat_rate` from prior provider history, emits deterministic TSV with confidence and provenance fields, stays review-only unless `--apply` is passed, and can fail with exit `1` when evidence is missing if `--fail-on-missing-evidence` is set. `pdf` delegates rendering to [bus-pdf](./bus-pdf). `postings` emits invoice posting rows for [bus-journal](./bus-journal).
+Use `classify` mainly for recurring purchase-line categorization workflows.
 
-`--legacy-replay` enables legacy-safe replay for mutating commands. In strict mode (default), add/import reject rows where `due_date` is earlier than `issue_date`; with `--legacy-replay`, those rows are preserved and emitted with deterministic warnings.
+### Typical workflow
 
-### Options
-
-`bus invoices add` requires `--type`, `--invoice-id`, `--invoice-date`, and `--customer`, and supports optional `--due-date`.
-`bus invoices <invoice-id> add` accepts line-level fields such as `--desc`, `--quantity`, `--unit-price`, `--income-account`, and `--vat-rate`.
-`bus invoices pdf` takes positional `<invoice-id>` plus `--out <path>`.
-
-`bus invoices list` supports filters for type/status/id/counterparty and date ranges (`--month`, `--from`, `--to`, `--due-from`, `--due-to`). `--month` is mutually exclusive with `--from`/`--to`, and date filters are inclusive.
-
-`bus invoices import` requires `--profile <path>` and `--source <path>`, and optionally accepts `--source-lines <path>` and `--year <YYYY>`.
-`bus invoices classify` supports `--min-confidence <0..1>`, `--apply`, and `--fail-on-missing-evidence`.
-
-Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus invoices --help`.
-
-### ERP history import
-
-Profile-driven import maps ERP export rows into canonical invoice datasets with deterministic artifacts.
-Profiles can include year filtering, status normalization, VAT line synthesis, and party lookup.
-
-For replay performance diagnostics, set `BUSDK_PERF=1` when running `import`. The command emits deterministic per-table stderr diagnostics:
+A simple sales-invoice flow often looks like this:
 
 ```bash
-BUSDK_PERF=1 bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024
-# bus-invoices: perf table=sales-invoices.csv rows=... elapsed_ms=... rows_per_sec=...
+bus invoices add \
+  --type sales \
+  --invoice-id INV-2026-001 \
+  --invoice-date 2026-02-16 \
+  --due-date 2026-03-16 \
+  --customer "Acme Corp"
+
+bus invoices INV-2026-001 add \
+  --desc "Consulting" \
+  --quantity 10 \
+  --unit-price 100 \
+  --income-account "Consulting Income" \
+  --vat-rate 25.5
+
+bus invoices validate
+bus invoices pdf INV-2026-001 --out INV-2026-001.pdf
 ```
 
-Generated append scripts are still useful for one-off migration logic.
-They are no longer required for the standard ERP history import flow.
+For migration work, the more common flow is:
 
-### Reconciliation proposal flow integration
+```bash
+bus invoices import \
+  --profile ./profiles/erp-invoices.yaml \
+  --source ./exports/invoices.tsv \
+  --source-lines ./exports/invoice-lines.tsv \
+  --year 2025
 
-Deterministic reconciliation in [bus-reconcile](./bus-reconcile) depends on stable invoice identity and open-item fields from this module.
-The workflow uses invoice ID, status, amount, currency, due date, and reference fields as proposal inputs.
+bus invoices validate
+bus invoices list --type sales --month 2025-12
+```
 
-Candidate planning can still be scripted for migration-specific cases.
-For the standard flow, use command-driven `bus reconcile propose` and `bus reconcile apply`.
+### Important behavior
+
+Invoice totals and VAT totals are validated against the line data when those totals are present in the datasets.
+
+`list` combines filters with logical `AND`.
+
+`--month` is the short path for calendar-month filtering. Use `--from` and `--to` when you need an explicit date range instead. `--month` cannot be combined with `--from` or `--to`.
+
+`--if-missing` and `--upsert` are replay-oriented helpers. They cannot be combined. For line-level `<invoice-id> add`, they also require an explicit `--line-no`.
+
+`--legacy-replay` exists for old non-normalized source data. Keep it as a migration/replay tool rather than your default normal workflow.
+
+`pdf` uses its own `--out` flag instead of the global `--output` flag.
+
+`postings` writes `invoice-postings.csv` and `invoice-postings.schema.json` into the workspace. It does not stream the posting rows to stdout.
 
 ### Files
 
-All invoice master data lives in the workspace root (the effective working directory, e.g. after `-C`/`--chdir`). The module does not create or use an `invoices/` subdirectory. The eight owned files are: `sales-invoices.csv`, `sales-invoices.schema.json`, `sales-invoice-lines.csv`, `sales-invoice-lines.schema.json`, `purchase-invoices.csv`, `purchase-invoices.schema.json`, `purchase-invoice-lines.csv`, `purchase-invoice-lines.schema.json`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+This module owns the sales and purchase invoice header and line datasets at the workspace root. It can also emit `invoice-postings.csv` and its schema for downstream posting flows.
 
-If workspace metadata in `datapackage.json` selects `_pcsv.version = PCSV-1`, these owned invoice tables use the shared `PCSV-1` storage backend through `bus-data`. `bus invoices init` writes `_pad`-bearing schemas in that mode, while `add`, `<invoice-id> add`, `validate`, and `list` keep the same logical invoice behavior. Plain CSV workspaces continue to use ordinary CSV files and do not need any migration.
+### Output and flags
 
-### Examples
+These commands use [Standard global flags](../cli/global-flags). In practice, `list` is the main command that benefits from output capture, filters, and TSV output. `init`, `add`, `import`, `classify --apply`, and `postings` are the main mutation-producing commands where `--dry-run` is useful.
 
-```bash
-bus invoices add --type sales --invoice-id 1001 --invoice-date 2026-01-15 --due-date 2026-02-14 --customer "Acme Corp"
-bus invoices 1001 add --desc "Consulting, 10h @ EUR 100/h" --quantity 10 --unit-price 100 --income-account "Consulting Income" --vat-rate 25.5
-bus invoices validate
-```
-
-```bash
-bus invoices pdf 1001 --out tmp/INV-1001.pdf
-bus invoices list --status unpaid --due-to 2026-02-29
-bus invoices import --profile imports/profiles/erp-invoices.yaml --source exports/erp/invoices.tsv --source-lines exports/erp/invoice-lines.tsv --year 2025
-bus invoices classify --min-confidence 0.80 --fail-on-missing-evidence
-bus invoices -C ./workspace postings --format tsv --output ./out/invoice-postings.tsv
-```
+For the full option and filter matrix, run `bus invoices --help`.
 
 ### Exit status
 
-`0` on success. Non-zero on errors, including invalid usage, schema violations, or reference errors.
-
+`0` on success. Non-zero on invalid usage, schema violations, invalid invoice references, total mismatches, or failed imports.
 
 ### Using from `.bus` files
 
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus invoices list --status unpaid --due-to 2026-02-29
-invoices list --status unpaid --due-to 2026-02-29
+# same as: bus invoices list --status unpaid --due-to 2026-03-31
+invoices list --status unpaid --due-to 2026-03-31
 
 # same as: bus invoices INV-2026-004 add --desc "Support retainer" --quantity 1 --unit-price 1500 --income-account "Services" --vat-rate 25.5
 invoices INV-2026-004 add --desc "Support retainer" --quantity 1 --unit-price 1500 --income-account "Services" --vat-rate 25.5
 
-# same as: bus invoices import --profile imports/profiles/erp-invoices.yaml --source exports/erp/invoices.tsv --source-lines exports/erp/invoice-lines.tsv --year 2025
-invoices import --profile imports/profiles/erp-invoices.yaml --source exports/erp/invoices.tsv --source-lines exports/erp/invoice-lines.tsv --year 2025
+# same as: bus invoices import --profile ./profiles/erp-invoices.yaml --source ./exports/invoices.tsv --source-lines ./exports/invoice-lines.tsv --year 2025
+invoices import --profile ./profiles/erp-invoices.yaml --source ./exports/invoices.tsv --source-lines ./exports/invoice-lines.tsv --year 2025
 ```
 
 <!-- busdk-docs-nav start -->
@@ -130,21 +192,10 @@ invoices import --profile imports/profiles/erp-invoices.yaml --source exports/er
 
 ### Sources
 
-- [Layout: Minimal example layout (directory structure)](../layout/minimal-example-layout)
 - [Owns master data: Sales invoices](../master-data/sales-invoices/index)
-- [Owns master data: Sales invoice rows](../master-data/sales-invoice-rows/index)
 - [Owns master data: Purchase invoices](../master-data/purchase-invoices/index)
-- [Owns master data: Purchase posting specifications](../master-data/purchase-posting-specifications/index)
-- [Master data: Documents (evidence)](../master-data/documents/index)
-- [Master data: Parties (customers and suppliers)](../master-data/parties/index)
-- [Master data: Chart of accounts](../master-data/chart-of-accounts/index)
-- [Master data: VAT treatment](../master-data/vat-treatment/index)
-- [Owns master data: Bookkeeping status and review workflow](../master-data/workflow-metadata/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
 - [Module reference: bus-invoices](../modules/bus-invoices)
-- [Layout: Invoices area](../layout/invoices-area)
-- [Workflow: Sale invoicing (sending invoices to customers)](../workflow/sale-invoicing)
+- [Module reference: bus-attachments](../modules/bus-attachments)
+- [Module reference: bus-journal](../modules/bus-journal)
 - [Workflow: Create a sales invoice](../workflow/create-sales-invoice)
 - [Workflow: Import ERP history into invoices and bank datasets](../workflow/import-erp-history-into-canonical-datasets)
-- [Workflow: Deterministic reconciliation proposals and batch apply](../workflow/deterministic-reconciliation-proposals-and-batch-apply)
-- [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

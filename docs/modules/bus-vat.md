@@ -1,26 +1,67 @@
 ---
-title: bus-vat — VAT computation, reports, and export
-description: bus vat computes VAT totals per reporting period, validates VAT code and rate mappings, reconciles invoice VAT with ledger postings, and supports journal-driven and reconcile-evidence cash-basis VAT modes.
+title: bus-vat — compute, review, and export VAT periods
+description: bus vat computes VAT totals for reporting periods, validates VAT data, supports invoice, journal, and reconcile-based modes, and produces filing and review outputs.
 ---
 
-## `bus-vat` — VAT computation, reports, and export
+## `bus vat` — compute, review, and export VAT periods
 
-### Overview
+`bus vat` is the VAT engine for a BusDK workspace. Use it to validate VAT-related data, compute period totals, review how those totals were formed, export VAT period artifacts, and compare filed totals against replayed totals.
 
-Command names follow [CLI command naming](../cli/command-naming).
+The command can work from invoices, from journal rows, or from reconcile-based payment evidence depending on your workflow and accounting basis.
 
-`bus vat` computes VAT totals per reporting period, validates VAT code and rate mappings, and reconciles invoice VAT with ledger postings.
-It writes VAT summaries and exports as repository data for review and filing workflows.
+### Common tasks
 
-The module owns VAT period boundary definition and period allocation logic.
-Workspace settings from [bus config](./bus-config) (`vat_reporting_period`, `vat_timing`, `vat_default_source`, `vat_default_basis`, and optional registration dates) are inputs to that logic.
+Create the baseline VAT datasets:
 
-When invoice data is incomplete, use journal-driven mode:
-`bus vat validate|report|export --source journal`.
+```bash
+bus vat init
+```
 
-For payment-evidence cash-basis filing, use reconcile-evidence mode:
-`bus vat report|export --source reconcile --basis cash`.
-You can make this the workspace default by setting `vat_default_source=reconcile` and `vat_default_basis=cash` in [bus config](./bus-config), so commands use that mode when `--source` and `--basis` are omitted.
+Validate VAT data and compute a normal monthly report from invoice data:
+
+```bash
+bus vat validate
+bus vat report --period 2026-01
+```
+
+Run a journal-driven report when invoice data is incomplete:
+
+```bash
+bus vat report --period 2026-01 --source journal
+```
+
+Run a cash-basis report from reconcile evidence:
+
+```bash
+bus vat report --period 2026-01 --source reconcile --basis cash
+```
+
+Export a VAT period artifact and review it as PDF:
+
+```bash
+bus vat export --period 2026Q1
+bus vat -f pdf --output vat-review-2026Q1.pdf review --period 2026Q1
+```
+
+Generate Finnish filing payload values and a row-level trace:
+
+```bash
+bus vat fi-file --period 2026-01 --payload-format json
+bus vat explain --period 2026-01 --format tsv
+```
+
+Import already-filed totals from outside BusDK and compare them against replayed totals:
+
+```bash
+bus vat filed-import --period 2026-01 --file ./authority-2026-01.csv
+bus vat filed-diff --period 2026-01 --threshold-cents 0
+```
+
+Create a starter CSV when you need to import already-filed totals later:
+
+```bash
+bus vat filed-template --period 2026-01 > vat-filed-template.csv
+```
 
 ### Synopsis
 
@@ -33,99 +74,95 @@ You can make this the workspace default by setting `vat_default_source=reconcile
 `bus vat review --period <period> [-C <dir>] [global flags]`  
 `bus vat period-profile <list|import> [-C <dir>] [global flags]`  
 `bus vat filed-import --period <period> --file <path> [-C <dir>] [global flags]`  
-`bus vat filed-diff --period <period> [-C <dir>] [global flags]`
+`bus vat filed-diff --period <period> [-C <dir>] [global flags]`  
+`bus vat filed-template --period <period> [-C <dir>] [global flags]`
 
-### Commands
+### Which mode should you use?
 
-`init` creates the baseline VAT datasets and schemas (e.g. `vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv` and their beside-the-table schemas) when they are absent. If all owned VAT datasets and schemas already exist and are consistent, `init` prints a warning to standard error and exits 0 without modifying anything. If the data exists only partially, `init` fails with a clear error to standard error, does not write any file, and exits non-zero.
+| If your VAT evidence mainly comes from... | Start with... |
+| --- | --- |
+| invoice headers and lines | default mode |
+| journal rows | `--source journal` |
+| reconcile-linked payment evidence on cash basis | `--source reconcile --basis cash` |
 
-The owned root VAT tables are storage-aware. Fresh VAT workspaces default `vat-rates.csv`, `vat-reports.csv`, and `vat-returns.csv` to the shared fixed-block `PCSV-1` backend while `bus vat` command behavior stays the same. Existing plain CSV workspaces are still read compatibly, and explicit `_pcsv` metadata can still tune the concrete fixed-block settings. Canonical schema filenames for these tables are `vat-rates.schema.json`, `vat-reports.schema.json`, and `vat-returns.schema.json`. Older `vat-rates.csv.schema.json`-style workspaces are still read compatibly and upgraded on the first schema-aware mutation. Split invoice datasets are also read storage-aware, so PCSV-backed `sales-invoices.csv`, `sales-invoice-lines.csv`, `purchase-invoices.csv`, and `purchase-invoice-lines.csv` work directly with `report`, `export`, and `review`.
+Workspace defaults from [bus-config](./bus-config) can decide the normal VAT period cadence and default source/basis when you omit those flags.
 
-`report` computes and emits the VAT summary for a given period. `export` writes VAT export output for a period (e.g. for filing). Both require `--period <period>`. Period selection follows the same `--period` flag pattern used by other period-scoped modules; VAT commands do not use a positional period argument.
+### Which command should you use?
 
-`filed-import` imports externally filed VAT evidence for a period with provenance (`source_path`, `source_sha256`) and writes canonical period data at workspace root (`vat-filed-<period>.csv`) plus an index row in `vat-filed.csv`. Existing period evidence is refused unless `--force`.
+`validate` checks VAT master data and mode-specific inputs.
 
-`filed-diff` compares filed VAT totals vs replay totals for the same period and emits deterministic machine-readable TSV with filed/replay/delta values for output/input/net VAT. It exits non-zero when any absolute delta exceeds `--threshold-cents` (default `0`).
+`report` computes totals for a period.
 
-`fi-file` emits one-command Finnish VAT filing payload values (machine-consumable `json|csv|tsv`) with deterministic formulas, provenance refs, and `calculation_version` metadata.
+`export` writes a period export artifact for filing workflows.
 
-`explain` emits deterministic row-level FI filing trace grouped by FI field keys (`tsv|json`) for audit verification.
+`review` creates a more human-facing support packet.
 
-`review` emits an authority-support review packet for the period. The packet contains summary totals, row-level FI explain trace, and reconcile coverage diagnostics when running in `--source reconcile --basis cash` mode. It supports `tsv` (default), `json`, `csv` (per-section), and `pdf` output formats for archival.
+`fi-file` gives you filing-field payload values for Finnish workflows.
 
-Archive review packets alongside filed VAT evidence for statutory retention (minimum 6 years unless local requirements mandate longer).
+`explain` is the audit trace when you need to know exactly how a filing value was formed.
 
-`period-profile` manages named filing period profiles in `vat-period-profiles.csv`:
-`list` outputs deterministic profile rows. `import --file <csv>` normalizes and imports profile definitions for `--period-profile` runs.
+`filed-import` and `filed-diff` are the commands to use when official filed totals already exist and you want deterministic replay comparison inside the workspace.
 
-### Options
+`filed-template` gives you a starter file when you want to collect authority-filed totals in the right shape before `filed-import`.
 
-`report`, `export`, `fi-file`, `explain`, `review`, `filed-import`, and `filed-diff` support period selection via one of:
-`--period <period>`, `--from <date> --to <date>`, or `--period-profile <id>` resolved from `vat-period-profiles.csv`.
+### Typical workflows
 
-`fi-file` supports `--payload-format json|csv|tsv` and outputs one-command filing-ready FI field values.
-`explain` supports `--format tsv|json`.
-`review` supports `--format tsv|json|csv|pdf` and `--section packet|summary|explain|coverage` (default packet). `--section coverage` requires `--source reconcile --basis cash`.
-`--strict-fi-eu-rc` enables strict FI reverse-charge classification marker validation (non-zero exit on unresolved rows).
+For a normal accrual-based monthly flow:
 
-`filed-import` requires `--file <path>`.
-`filed-diff` supports `--threshold-cents <int>` and exits `1` when any absolute delta exceeds threshold.
+```bash
+bus vat validate
+bus vat report --period 2026-01
+bus vat export --period 2026-01
+```
 
-In `--source journal` mode, direction and rate are resolved deterministically from row values, account mapping (`vat-account-mapping.csv`), and account type fallbacks.
-Opening-balance rows are excluded.
-If direction cannot be resolved, the command fails with a clear diagnostic.
+For a journal-first or migrated workspace:
 
-When using `--source reconcile --basis cash`, VAT rows come from `matches.csv`, `bank-transactions.csv`, and invoice evidence rows.
-Partial payments are split proportionally across VAT and net rows and allocated by bank payment date.
+```bash
+bus vat validate --source journal
+bus vat report --period 2026-01 --source journal
+bus vat export --period 2026-01 --source journal
+```
 
-Reconcile cash mode emits deterministic coverage diagnostics as a `COVERAGE` output row:
-matched sales share, matched purchase share, and unmatched cash rows.
-Coverage gating is strict by default in this mode:
-partial coverage fails with non-zero exit unless `--force-partial-coverage` is explicitly set.
-`--strict-coverage` remains accepted as an explicit compatibility flag.
-Use `--min-sales-coverage <0..1>` with `--min-purchase-coverage <0..1>` to set required minimum shares for the strict gate.
-Use `--max-unmatched-cash-rows <n>` to set the strict gate maximum unmatched cash rows (default `0`).
-Rows that only prove prior-year invoice references via extracted bank keys are not counted as unmatched current-workspace cash rows, and settlement-applied journal vouchers sourced from reconcile evidence count as resolved cash coverage.
+For a cash-basis workflow tied to payment evidence:
 
-In `--source journal --basis cash`, payment-date allocation uses payment evidence columns first, optional bank transaction lookup second, and posting date fallback last.
-Evidence-first context applies: invoice evidence is primary, `entities.csv` is fallback enrichment.
+```bash
+bus vat report --period 2026-01 --source reconcile --basis cash
+bus vat review --period 2026-01 --source reconcile --basis cash
+```
 
-Cash-basis treatment handling:
-`reverse_charge`, `intra_eu_supply`, `export`, and `exempt` require `vat_cents=0` on evidence rows in this mode; otherwise the command fails with a deterministic diagnostic. `domestic_standard`, `domestic_reduced`, `import`, and unknown/custom treatment codes are processed from explicit line VAT/net evidence.
+### Important behavior
 
-Detailed resolution and fallback rules are maintained in [Module reference: bus-vat](../modules/bus-vat).
+`report`, `export`, `filed-import`, `filed-diff`, and `filed-template` accept either `--period` or `--from` and `--to`. Do not combine those two styles in the same command.
 
-Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus vat --help`.
+`fi-file`, `explain`, and `review` also accept `--period-profile` for named reporting windows. That profile selection is an alternative to `--period` or `--from` and `--to`, not an extra filter on top.
 
-### Journal source: vat-account-mapping.csv
+In reconcile-plus-cash mode, coverage matters. If payment evidence is incomplete, the command can fail unless you explicitly allow partial coverage.
 
-For journal-driven VAT (`--source journal`), direction and optional rate can be supplied by a mapping file `vat-account-mapping.csv` at the workspace root. Required columns: `account_id` (chart-of-accounts identifier) and `direction` (`sale` or `purchase`). Optional rate columns: `vat_rate_bp` or `rate_bp` (basis points), and legacy-compatible `vat_rate`/`vat_percent`. One row per account that needs explicit direction (e.g. asset/liability VAT accounts such as 293x that are not income/expense in `accounts.csv`). Direction resolution order is: row `direction` → `vat-account-mapping.csv` by `account_id` → `accounts.csv` account type (income ⇒ sale, expense ⇒ purchase). In journal-first or migrated workspaces where the journal has no row-level `direction` and posts to non–P&L VAT accounts, add rows to `vat-account-mapping.csv` for those account_ids so report and export can resolve direction. Migration guidance: ensure every journal account that appears in VAT-relevant postings either has `direction` on the row, a mapping row, or an income/expense type in `accounts.csv`; otherwise the command fails with a diagnostic. Optionally, a default mapping for common Finnish non–P&L VAT accounts can be shipped or documented in the [module reference implementation status](../modules/bus-vat#implementation-status-journal-driven-mode).
+Journal-driven mode can use `vat-account-mapping.csv` for direction and rate fallback when the journal itself does not carry all VAT-specific fields.
+
+`filed-diff` is the cleanest control command when you want to prove that replayed totals match already-filed totals exactly.
+
+`review --format pdf` works only for the full packet. If you want a single section such as `summary` or `explain`, use `tsv`, `json`, or `csv` instead.
+
+`review --section coverage` is only available in reconcile-plus-cash mode, because that section is built from payment-evidence coverage metrics.
 
 ### Files
 
-The module reads invoice and journal datasets and optional VAT reference datasets (e.g. `vat-rates.csv`). It writes VAT summaries, exports, and filed evidence as repository data. VAT master/index data (`vat-rates.csv`, `vat-reports.csv`, `vat-returns.csv`, `vat-filed.csv` and their schemas) is stored at the workspace root only; the module does not create or use a `vat/` or other subdirectory for those datasets. When period-specific report/return/filed data is written to its own file, that file is also stored at the workspace root with a date prefix (e.g. `vat-reports-2026Q1.csv`, `vat-returns-2026Q1.csv`, `vat-filed-2026Q1.csv`), not under a subdirectory. The module may maintain a period-definition dataset (e.g. `vat-periods.csv`) or logic at the workspace root to produce the list of periods. Path resolution is owned by this module; other modules that need read-only access to VAT datasets obtain the path(s) from this module’s Go library, not by hardcoding file names (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+This module owns the VAT master, report, return, and filed-evidence datasets at the workspace root. It also writes period-specific return and filed-evidence files when those commands are used.
 
-### Examples
+### Output and flags
 
-```bash
-bus vat init
-bus vat report --period 2026-01
-bus vat report --from 2026-01-01 --to 2026-01-31 --source journal
-bus vat report --period 2026-01 --source reconcile --basis cash
-bus vat export --period-profile monthly-2026-q1 --min-sales-coverage 0.95 --min-purchase-coverage 0.90 --max-unmatched-cash-rows 5
-bus vat report --period 2026-01 --source reconcile --basis cash --force-partial-coverage
-bus vat fi-file --period 2026-01 --payload-format json
-bus vat explain --period 2026-01 --format tsv
-bus vat --format pdf --output vat-review-2026-01.pdf review --period 2026-01
-bus vat period-profile import --file ./vat-period-profiles.csv
-bus vat filed-import --period 2026-01 --file ./authority-2026-01.csv
-bus vat filed-diff --period 2026-01 --threshold-cents 0
-```
+These commands use [Standard global flags](../cli/global-flags). In practice:
+
+Use `report` for fast TSV output, `fi-file` for filing payloads, `explain` for trace output, and `review` when you want a more readable package, including PDF.
+
+Use `--dry-run` for `init`, `export`, and `filed-import` when you want to preview file creation without writing.
+
+For the full command and mode matrix, run `bus vat --help`.
 
 ### Exit status
 
-`0` on success. Non-zero on invalid usage or VAT mapping violations.
-
+`0` on success. Non-zero on invalid usage, VAT mapping violations, missing required evidence, or filed-diff threshold breaches.
 
 ### Using from `.bus` files
 
@@ -155,11 +192,7 @@ vat filed-diff --period 2026-01 --threshold-cents 0
 - [bus-config (VAT configuration reference)](./bus-config)
 - [Workspace configuration](../data/workspace-configuration)
 - [Master data: VAT treatment](../master-data/vat-treatment/index)
-- [Master data: Accounting entity](../master-data/accounting-entity/index)
-- [Master data: Sales invoices](../master-data/sales-invoices/index)
-- [Master data: Purchase invoices](../master-data/purchase-invoices/index)
 - [Module reference: bus-vat](../modules/bus-vat)
-- [Layout: VAT area](../layout/vat-area)
 - [Workflow: VAT reporting and payment](../workflow/vat-reporting-and-payment)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
 - [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

@@ -216,6 +216,11 @@ source material: current CLI behavior from module commands, module unit tests
 under `../bus-{NAME}/`, and module e2e tests under `../bus-{NAME}/tests/`,
 alongside each module's `README.md` and `PLAN.md`.
 
+When module behavior is ambiguous or docs appear stale, prefer current CLI help,
+module tests, and command implementation over `README.md`. Treat README text as
+supporting context, not as the primary source of truth for end-user command
+syntax or current runtime behavior.
+
 ## Gitignore Rule
 
 1. .bus MUST be tracked; never add .bus or .bus/ to .gitignore.
@@ -227,6 +232,19 @@ For end-user documentation pages (for example under `docs/modules`,
 sentences so the text is easy for humans and agents to follow. Keep strict,
 contract-style wording in SDD pages (`docs/sdd`) and requirement sections where
 precision is mandatory.
+
+For module pages under `docs/docs/modules/`, start with the user outcome first:
+say what the module is for, when to use it, and what command to try first
+before going into exhaustive command surface detail.
+
+For module pages under `docs/docs/modules/`, include several copyable examples
+with realistic dates, file names, IDs, and account codes. Prefer concrete
+end-to-end examples over placeholder-heavy flag catalogs when the goal is user
+onboarding.
+
+For public module docs, keep the page task-oriented. Use `bus <module> --help`
+as the escape hatch for exhaustive option lists instead of pasting every flag
+combination into the page.
 
 For practical engineering guides (for example performance and optimization
 topics), include concrete bad-versus-better code snippets that are easy to grep
