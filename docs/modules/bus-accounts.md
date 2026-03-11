@@ -37,6 +37,13 @@ List the chart in a script-friendly format:
 bus accounts list --format tsv --output accounts.tsv
 ```
 
+Show the first-class account-group tree:
+
+```bash
+bus accounts groups
+bus accounts groups --format tsv
+```
+
 Create a printable chart-of-accounts PDF:
 
 ```bash
@@ -57,6 +64,7 @@ bus accounts sole-proprietor withdrawal \
 `bus accounts init [-C <dir>] [global flags]`  
 `bus accounts validate [-C <dir>] [global flags]`  
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus accounts groups [-C <dir>] [-o <file>] [-f <text|tsv>] [global flags]`  
 `bus accounts report [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
 `bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
@@ -70,7 +78,9 @@ bus accounts sole-proprietor withdrawal \
 
 `validate` is the safety check before you rely on the chart in [bus-journal](./bus-journal), [bus-reports](./bus-reports), or [bus-vat](./bus-vat).
 
-`list` is the quick machine-friendly view. `report` is the accountant-facing and filing-facing view.
+`list` is the quick machine-friendly view. `groups` is the native tree view for
+first-class account groups. `report` is the accountant-facing and filing-facing
+view.
 
 `sole-proprietor` is a helper command for owner withdrawals and owner investments. It does not post anything by itself, but it gives you balanced lines that you can feed into [bus-journal](./bus-journal).
 
@@ -88,7 +98,20 @@ For BusDK, every account must have one of these types:
 
 If you are following a Finnish numbered chart, the common practical pattern is still useful: `1xxx` often means assets, `2xxx` liabilities, `3xxx` equity, `4xxx` income, and `5xxx` to `7xxx` expenses. BusDK does not force a national numbering scheme, but consistent typing matters because downstream modules use it.
 
-### Reports and statutory mapping
+### Reports, groups, and statutory mapping
+
+`bus accounts init` now also creates `account-groups.csv` and
+`account-groups.schema.json`. This dataset stores a stable `group_id`,
+presentation `code`, group `name`, and optional `parent_group_id`. Use it for
+the Finnish-style account tree instead of pretending that posting accounts are
+group rows.
+
+`bus accounts groups` prints that tree in a deterministic human-facing form.
+Validation rejects:
+- orphan parent references
+- cyclic group chains
+- sibling groups under one parent reusing the same presentation code
+- account rows whose optional `group_id` points to a missing group
 
 `report` generates a `tililuettelo` view and can include journal-derived balances.
 
@@ -116,7 +139,11 @@ bus journal init
 
 ### Files
 
-The core files are `accounts.csv` and `accounts.schema.json` at the workspace root. This module also owns the account-side reporting classification and mapping files used by statutory reporting workflows.
+The core files are `accounts.csv` and `accounts.schema.json` at the workspace root.
+This module also owns:
+- `account-groups.csv` and `account-groups.schema.json`
+- `report-account-classification.csv` and its schema
+- `report-account-mapping.csv` and its schema
 
 ### Output and flags
 
