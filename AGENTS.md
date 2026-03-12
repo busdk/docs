@@ -216,6 +216,11 @@ source material: current CLI behavior from module commands, module unit tests
 under `../bus-{NAME}/`, and module e2e tests under `../bus-{NAME}/tests/`,
 alongside each module's `README.md` and `PLAN.md`.
 
+For BusDK architecture or data-model refactors, keep `./docs/docs/` aligned in
+the same change set as implementation and SDD updates. Public end-user docs are
+not optional follow-up work; if behavior, supported datasets, or configuration
+surfaces change, update the corresponding end-user docs before the work is done.
+
 When module behavior is ambiguous or docs appear stale, prefer current CLI help,
 module tests, and command implementation over `README.md`. Treat README text as
 supporting context, not as the primary source of truth for end-user command

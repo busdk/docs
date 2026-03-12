@@ -1,51 +1,43 @@
 ---
-title: Finnish reporting taxonomy and account classification
-description: Background for separating statutory statement layout, account meaning, entity context, and company-specific overrides in Finnish bookkeeping.
+title: Finnish reporting hierarchy for TASE and tuloslaskelma
+description: Background for deriving Finnish statutory statements from one canonical account-group hierarchy, with explicit TASE sides and a separate current-year result row.
 ---
 
 ## Overview
 
-Finnish financial reporting works best when four concerns stay separate. The statutory statement layout defines how balance sheet and income statement lines must be presented. Account classification defines what each ledger account means in bookkeeping. Workspace entity context defines which framework and presentation rules apply to that entity. Company-specific overrides handle the exceptional cases that do not fit the defaults.
+Finnish statutory reporting needs one clear reporting hierarchy, not several overlapping mapping layers. The practical starting point is a chart of posting accounts in `accounts.csv` and one canonical reporting tree in `account-groups.csv`. Every posting account belongs to one reporting group through `accounts.csv:group_id`, and balance sheet and income statement outputs are derived from that same tree.
 
-This separation matters because the same business meaning should not need to be rebuilt separately for every report layout. A chart of accounts may stay stable while the entity moves between KPA and PMA presentation, switches from expense-by-nature to function-based income statement, or needs a special scheme for a housing company, association, or foundation. The legal output changes, but the bookkeeping meaning of cash, receivables, VAT, depreciation, or personnel expenses does not.
+This matters because the same business meaning must not be rebuilt separately for every printed layout. If one account belongs to one reporting group in bookkeeping, it should stay under that group in every statutory output. Short and full statement variants may hide or show groups differently, but they must not remap accounts to different logical statement lines.
 
-## The four layers
+## Canonical hierarchy
 
-### Statutory taxonomy
+The reporting tree must model the real Finnish statement structure. In practice that means the tree needs explicit roots or subtrees for the balance-sheet sides and the income statement. TASE is one statement under one heading, but it is always divided into `VASTAAVA` and `VASTATTAVAA`. The income statement is a separate subtree with its statutory line order and subtotal order.
 
-The statutory taxonomy is the external statement tree. In Finland that means KPA, PMA, and the special schemes those frameworks allow. It defines line order, headings, subtotals, and filing-facing wording. It should be versioned because regulation, PRH filing formats, and future iXBRL/XBRL requirements can change over time.
+The tree should also carry presentation profiles such as `bs_short`, `bs_full`, `pl_short`, and `pl_full`. These profiles control whether one group is visible in one output variant, but they do not change the parent-child hierarchy itself.
 
-### Account classification
+## TASE sides and result rows
 
-Account classification is the semantic meaning of an account. It answers questions such as whether an account is cash, trade receivables, VAT payable, personnel expense, depreciation, financial income, or an equity item. This layer should stay independent from the exact printed statement layout so that one account meaning can feed several reporting views without being redefined each time.
+The balance-sheet split into `VASTAAVA` and `VASTATTAVAA` must be explicit in the reporting model. This should not be guessed from a printed layout or from ad hoc account-number rules. The reporting tree needs a deterministic way to say whether a balance-sheet group belongs on the asset side or on the liabilities-and-equity side.
 
-### Entity context
+The current-year result row is also special. `Tilikauden tulos` is not a transaction row by itself; it is a calculated statement result that must appear both as the final row of the income statement and as a separate equity item in the balance sheet. That means software must treat it as a reporting result, not merely as another ordinary posting account.
 
-Entity context tells the reporting system which legal and practical rules apply to the workspace. Typical inputs are business form, size-sensitive framework choice, income statement scheme, language, presentation unit, and special characteristics such as housing-company, nonprofit, or other scheme-sensitive status. These settings belong to workspace configuration rather than to individual account rows.
+The same applies to `Edellisten tilikausien voitto (tappio)`: it is a separate equity presentation item and must not be silently merged with the current-year result.
 
-### Company-specific overrides
+## Why one hierarchy matters
 
-Overrides are the exceptional company-level rules. They are needed when one account must be presented differently from the default semantic classification, when a special statutory line is required, or when local wording differs from the built-in taxonomy. Keeping overrides separate makes them easier to review and audit because they stay small and explicit.
+One hierarchy is easier to review and safer to maintain. Auditors, accountants, and software users can inspect one group tree and see where each account belongs. The same tree can then feed TASE, tuloslaskelma, close packages, and internal reconciliation outputs without per-layout remapping files that make the same account mean different things in different places.
 
-## Deterministic resolution
+This is also a better fit for digital reporting and data export. A stable group id and stable parent-child structure give you a clean bridge from bookkeeping data to filing-facing outputs, even if wording, profile visibility, or exported schema details evolve later.
 
-A robust reporting system resolves statement placement in a fixed order. First it applies an explicit account override. If none exists, it applies the canonical account classification. If classification is still missing, it can use a numbering-family or range-based default where the chart supports that convention. If the account still cannot be placed confidently, the correct result is a validation error rather than a silent guess.
+## Workspace context still matters
 
-That model fits Finnish bookkeeping practice well. Many charts use stable numeric families, but numbering alone is not enough for every case. VAT settlement accounts, depreciation and tax adjustments, capital charges in housing companies, and nonprofit activity classes often need explicit semantics or entity-context conditions.
+Workspace configuration still decides which statutory family is active, for example KPA versus PMA and expense-by-nature versus function-based income statement. That context controls how the reporting tree is rendered and which report profiles are shown, but it should not redefine where accounts belong inside the canonical group hierarchy.
 
-## Typical Finnish special cases
+## Practical modeling rule
 
-KPA and PMA are not just cosmetic layout choices. They change the permitted statement structure and the level of aggregation. PMA also contains special schemes for real-estate and housing-company reporting and for associations and foundations. Those differences belong in the statutory taxonomy and entity-context layers, not in repeated manual remapping of every account.
+The safe practical rule is simple: keep only posting accounts in `accounts.csv`, keep only the canonical reporting hierarchy in `account-groups.csv`, and derive all statutory statements from that pair. Special output variants are profile-visibility choices on groups. Special calculated lines such as the current-year result must still be treated as reporting-level results, not as excuses to reintroduce parallel account-to-layout mapping layers.
 
-VAT and depreciation are good examples of why semantic classification matters. VAT accounts usually belong on the balance sheet, not in the income statement, even if they sit near income or expense accounts in the chart. Depreciation, plan depreciation, and tax-driven adjustments also need a more precise model than a simple account-number range when statements, tax returns, and notes must stay consistent.
-
-Notes and internal evidence are related but separate. The balance sheet and income statement are filing-facing statements. Notes, balance-sheet specifications, reconciliation reports, and evidence-pack artifacts belong to the same reporting family, but they should inherit the same account meaning instead of redefining it independently.
-
-## BusDK background
-
-In current BusDK workspaces, these layers are represented mainly through workspace reporting profile settings in `datapackage.json`, account master data in `accounts.csv`, and explicit report-line mappings in `report-account-mapping.csv`. The architectural direction is to keep those responsibilities clearer over time so that an operator can set entity context, review account classification, add only true exceptions, and then generate reports.
-
-This background is useful when you configure [bus config](../modules/bus-config), curate the [chart of accounts](../master-data/chart-of-accounts/index), or troubleshoot [bus reports](../modules/bus-reports). It explains why a report layout choice, an account’s bookkeeping meaning, and a company-specific exception should not be treated as the same piece of data.
+This background is useful when you configure [bus config](../modules/bus-config), curate the [chart of accounts](../master-data/chart-of-accounts/index), or troubleshoot [bus reports](../modules/bus-reports). It explains why one canonical account-group tree is safer than separate mapping and classification files.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -75,29 +75,6 @@ bus reports methods-description \
   -o ./out/methods-description-2026.pdf
 ```
 
-Generate a starter mapping file for statutory account placement work:
-
-```bash
-bus reports mapping-template \
-  --layout-id fi-kpa-tase \
-  --statement-target tase \
-  --format csv \
-  -o ./out/report-account-mapping.csv
-```
-
-Materialize the same starter mapping directly into the workspace dataset:
-
-```bash
-bus reports mapping seed \
-  --layout-id fi-kpa-tase \
-  --statement-target tase
-
-bus reports mapping init \
-  --layout-id fi-kpa-tase \
-  --statement-target tase \
-  --mode replace
-```
-
 Compare imported source totals with journal totals during migration or data validation:
 
 ```bash
@@ -125,7 +102,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--format <text|csv|tsv|json|markdown>] [-C <dir>] [global flags]`  
-`bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options] | mapping-template [options] | mapping <add|upsert> [options]`
+`bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
 
 ### Choose the right command
 
@@ -141,7 +118,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 | A bookkeeping methods description for audit/retention | `methods-description` |
 | Migration or import-vs-journal diagnostics | `journal-coverage`, `parity`, and `journal-gap` |
 | Filing or annual-close checklist outputs | `compliance-checklist`, `filing-package`, `annual-template`, `annual-validate` |
-| A starter file or starter dataset for account-to-statement mapping | `mapping-template` or `mapping init` / `mapping seed` |
+| A quick check that statutory groups and profiles look right | `profit-and-loss` and `balance-sheet` |
 
 ### Everyday review reports
 
@@ -176,15 +153,11 @@ produce a false `VASTATTAVAA` mismatch in the reconciliation summary.
 
 If a statutory PDF comes out with blank signature or company fields, set those defaults in [bus-config](./bus-config) and rerun the report.
 
-### Mapping and statement placement
+### Statement placement and report profiles
 
-If accounts are not landing on the lines you want, check `account-groups.csv` first. That group tree is now the primary statutory reporting hierarchy. Use `mapping-template` only when you need an explicit compatibility or layout-specific override row in `report-account-mapping.csv`.
+For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`.
 
-`mapping add` and `mapping upsert` are the direct-edit commands when you already know the exact layout line you want to assign.
-
-`mapping seed` appends missing starter rows from the current built-in default mapping without overwriting existing keys. `mapping init` writes the full deterministic starter mapping and defaults to replacing the existing file. Both commands also accept `--mode replace|append|upsert` for explicit merge control.
-
-The related semantic background lives in [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification).
+This also explains the special rows in Finnish statements. TASE is always one statement split into `VASTAAVA` and `VASTATTAVAA`, and the current-year result is a reporting result that must appear both as the final income-statement row and as a separate equity item in the balance sheet. The background model for those constraints lives in [Finnish reporting hierarchy for TASE and tuloslaskelma](../compliance/fi-reporting-taxonomy-and-account-classification).
 
 ### Close and audit package commands
 

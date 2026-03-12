@@ -1,13 +1,13 @@
 ---
 title: bus accounts — manage the chart of accounts
-description: bus accounts creates and maintains the chart of accounts, validates account definitions, renders a chart-of-accounts report, and owns the account-side reporting classification files.
+description: bus accounts creates and maintains the chart of accounts, validates account definitions, renders a chart-of-accounts report, and owns the canonical account-group hierarchy.
 ---
 
 ## `bus accounts` — manage the chart of accounts
 
 `bus accounts` owns the chart of accounts for the workspace. Use it when you need to create the account table, add or rename accounts, validate the chart, or print a filing-grade `tililuettelo`.
 
-This is also the module that owns the account-side reporting datasets used by statutory reporting workflows.
+This is also the module that owns the canonical account-group hierarchy used by statutory reporting workflows.
 
 ### Common tasks
 
@@ -111,7 +111,7 @@ For BusDK, every account must have one of these types:
 
 If you are following a Finnish numbered chart, the common practical pattern is still useful: `1xxx` often means assets, `2xxx` liabilities, `3xxx` equity, `4xxx` income, and `5xxx` to `7xxx` expenses. BusDK does not force a national numbering scheme, but consistent typing matters because downstream modules use it.
 
-### Reports, groups, and statutory mapping
+### Reports and groups
 
 `bus accounts init` now also creates `account-groups.csv` and
 `account-groups.schema.json`. This dataset stores a stable `group_id`,
@@ -132,15 +132,18 @@ Validation rejects:
 `groups assign` gives you a native way to set account-to-group membership in
 bulk without hand-editing CSV rows.
 
-For Finnish statutory reports, this module also owns the datasets used together with [bus-reports](./bus-reports). In practice:
+For Finnish statutory reports, this module owns the only canonical reporting structure:
 
-`account-groups.csv` is the primary reporting tree and semantic carrier.
+`account-groups.csv`
 
-`report-account-classification.csv` is the per-account override layer when one account needs meaning that differs from its group.
+Every posting account belongs to one reporting group through `accounts.csv:group_id`.
+Reports then derive their structure from that group tree. Short and full balance
+sheet or profit-and-loss variants are controlled by each group's
+`report_profiles`, not by separate account-to-layout override files.
 
-`report-account-mapping.csv` is the compatibility and layout-specific override layer.
-
-If you are just starting with statutory reporting, start by assigning accounts to groups and putting the reporting semantics on those groups. Use account-classification rows only for account-specific exceptions, and reach for `report-account-mapping.csv` only when you need an explicit layout-line override or migration-safe compatibility row.
+This means there is no separate per-account reporting-classification file and no
+layout-specific account-mapping file in the current model. The reporting tree is
+configured in one place: `account-groups.csv`.
 
 ### Typical workflow
 
@@ -161,8 +164,6 @@ bus journal init
 The core files are `accounts.csv` and `accounts.schema.json` at the workspace root.
 This module also owns:
 - `account-groups.csv` and `account-groups.schema.json`
-- `report-account-classification.csv` and its schema
-- `report-account-mapping.csv` and its schema
 
 ### Output and flags
 
