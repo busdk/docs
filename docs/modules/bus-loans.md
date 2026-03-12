@@ -38,7 +38,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 Loan register and event datasets and their beside-the-table schemas live at the workspace root. The module does not use subdirectories such as `loans/`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
-If the workspace `datapackage.json` enables `_pcsv.version = "PCSV-1"`, `bus loans init` bootstraps `loans.csv` and `events.csv` as storage-aware padded tables through shared `bus-data` operations. In that mode the schemas include `_pad`, `loans.csv` supports in-place updates, and `events.csv` remains append-only. Plain CSV workspaces keep the old file layout and behavior unchanged.
+Storage mode is resolved centrally by shared `bus-data` policy precedence. Without an explicit workspace/module/resource override, `bus loans` uses ordinary CSV. If shared storage policy selects `PCSV-1`, `bus loans init` bootstraps `loans.csv` and `events.csv` as storage-aware padded tables through shared `bus-data` operations. In that mode the materialized schemas include `_pad`, `loans.csv` supports in-place updates, and `events.csv` remains append-only. Plain CSV workspaces keep the same logical file layout and command behavior unchanged.
 
 ### Examples
 

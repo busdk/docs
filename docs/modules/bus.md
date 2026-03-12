@@ -183,4 +183,4 @@ For deeper transaction/dispatch internals, see [Module reference: bus (dispatche
 - [CLI command structure](../cli/command-structure)
 - [Standard global flags](../cli/global-flags)
 
-The dispatcher also accepts `--perf` before the subcommand. It does not forward that flag as argv; instead it enables timing for the dispatched command, prints a stderr timing line in form `INFO perf bus-<module> <op> <duration_s>`, and sets `BUS_PERF=1` for instrumented modules so they can emit nested timings too. The same timing format is used for each busfile command when sticky `--perf` is active.
+The dispatcher also accepts `--perf` before the subcommand. It does not forward that flag as argv; instead it enables timing for the dispatched command, prints a stderr timing line in form `INFO perf bus-<module> <op> <duration>`, and sets `BUS_PERF=1` for instrumented modules so they can emit nested timings too. The duration token uses Go's standard duration format such as `412µs`, `3.2ms`, or `1.25s`. The same timing format is used for each busfile command when sticky `--perf` is active.

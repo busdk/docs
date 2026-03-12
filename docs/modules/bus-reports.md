@@ -178,7 +178,7 @@ If a statutory PDF comes out with blank signature or company fields, set those d
 
 ### Mapping and statement placement
 
-If accounts are not landing on the lines you want, start with `mapping-template`. It generates a CSV that shows current accounts and default line labels so you can curate `report-account-mapping.csv`.
+If accounts are not landing on the lines you want, check `account-groups.csv` first. That group tree is now the primary statutory reporting hierarchy. Use `mapping-template` only when you need an explicit compatibility or layout-specific override row in `report-account-mapping.csv`.
 
 `mapping add` and `mapping upsert` are the direct-edit commands when you already know the exact layout line you want to assign.
 
@@ -196,7 +196,7 @@ The related semantic background lives in [Finnish reporting taxonomy and account
 
 `methods-description` is the companion artifact for the bookkeeping method itself. It describes entity context, reporting context, locking/correction model, evidence handling model, report surfaces, and dataset roles in one deterministic review document.
 
-`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package now includes both `materials-register` and `methods-description` as first-class PDFs, a `bank-control` / statement-continuity TSV, `annual-template` and `annual-validate` summaries, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs alongside the main statements, ledgers, and close manifests. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`.
+`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package now includes both `materials-register` and `methods-description` as first-class PDFs, a `bank-control` / statement-continuity TSV, `annual-template` and `annual-validate` summaries, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs alongside the main statements, ledgers, and close manifests. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary.
 
 `compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report.
 

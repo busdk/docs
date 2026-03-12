@@ -19,7 +19,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 `bus budget` maintains budget datasets keyed by account and period.
 It also produces budget-vs-actual variance outputs from journal data.
 Budgets are stored as schema-validated repository data.
-The owned `budgets.csv` dataset can resolve either as ordinary CSV or as `PCSV-1` fixed-block CSV through workspace storage metadata.
+The owned `budgets.csv` dataset can resolve either as ordinary CSV or as `PCSV-1` fixed-block CSV through shared `bus-data` storage policy. Ordinary CSV is the default when no explicit workspace, module, or resource storage policy exists.
 
 ### Commands
 
@@ -39,7 +39,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 Budget datasets such as `budgets.csv` and their beside-the-table schemas in the budgeting area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `budgets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
-When the workspace `datapackage.json` selects `PCSV-1` for the budget dataset, `init`, `add`, `set`, and `report` use shared storage-aware table operations from `bus-data`. Plain CSV workspaces keep their current behavior. The baseline schema written by `init` is compatible with `PCSV-1` and includes a visible padding field plus update-policy metadata.
+When the workspace `datapackage.json` selects `PCSV-1` for the budget dataset, `init`, `add`, `set`, and `report` use shared storage-aware table operations from `bus-data`. Plain CSV workspaces keep their current behavior, and `bus-budget` itself does not privately parse `_pcsv` metadata. The baseline schema written by `init` is compatible with `PCSV-1` and includes a visible padding field plus update-policy metadata.
 
 ### Examples
 

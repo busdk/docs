@@ -46,7 +46,9 @@ If workspace `datapackage.json` selects `_pcsv` storage, `entities.csv` is
 stored as a `PCSV-1` padded table through the shared `bus-data` layer. `init`
 then writes a compatible schema with `_pad` and `busdk.update_policy:
 "in_place"`, while `add` and `list` continue to work against normal logical
-rows. Without `_pcsv`, the module keeps the plain CSV layout.
+rows. Without `_pcsv`, the module keeps the plain CSV layout. Existing schema
+constraints and other logical metadata are preserved; storage adaptation only
+adds the padding field needed by `PCSV-1`.
 
 ### Examples
 

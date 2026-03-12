@@ -9,7 +9,7 @@ Each BusDK workspace directory represents exactly one accounting entity. All dat
 
 Entity-wide settings are stored as BusDK metadata in the workspace’s Frictionless Data Package descriptor (`datapackage.json`) at the workspace root. To create an empty descriptor, use [bus data init](../modules/bus-data). To create or update the descriptor and accounting entity settings in one step, use the [bus config](../modules/bus-config) CLI. Modules read these settings when they validate, post, reconcile, report, or produce filings, and they must not require row-level datasets to repeat them.
 
-The accounting settings live under the top-level `busdk.accounting_entity` object in `datapackage.json`. Optional workspace storage defaults for modules that support fixed-block padded CSV live under top-level `_pcsv`. This uses Frictionless descriptor extensibility — additional properties remain compatible with standard tooling, and tooling that does not understand BusDK can safely ignore the `busdk` object.
+The accounting settings live under the top-level `busdk.accounting_entity` object in `datapackage.json`. Optional workspace storage defaults for modules that support fixed-block padded CSV live under top-level `_pcsv`. Optional module-specific storage overrides live under `busdk.storage.modules.<module>`. This uses Frictionless descriptor extensibility — additional properties remain compatible with standard tooling, and tooling that does not understand BusDK can safely ignore the `busdk` object.
 
 ### Location
 
@@ -26,6 +26,13 @@ The accounting settings live under the top-level `busdk.accounting_entity` objec
   "profile": "tabular-data-package",
   "resources": [],
   "busdk": {
+    "storage": {
+      "modules": {
+        "bus-journal": {
+          "version": "csv"
+        }
+      }
+    },
     "accounting_entity": {
       "business_name": "Example Oy",
       "business_id": "1234567-1",
@@ -91,6 +98,8 @@ The accounting settings live under the top-level `busdk.accounting_entity` objec
 `id_generation` is optional shared BusDK configuration for primary-key and visible numbering rules. It is intended for cross-module ID policy such as voucher numbering, invoice numbering, and immutable technical ID defaults. The structure is owned by [bus-config](../modules/bus-config) and consumed by modules that generate durable IDs. Inline JSON and `@file` values can be written with `bus config set --id-generation ...` or `bus config set id-generation ...`.
 
 `_pcsv` is optional workspace-level storage policy metadata for modules that support `PCSV-1`. `version` selects the storage format (`PCSV-1`); `paddingField` names the fixed-width padding column, `recordBytes` defines the on-disk row size, and `paddingChar` defines the padding byte. Omit `_pcsv` or run `bus config set storage-format csv` to keep ordinary CSV as the workspace default.
+
+`busdk.storage.modules.<module>` is optional per-module storage policy metadata. It uses the same fields as `_pcsv`, but only for one module. `bus-data` resolves storage policy in this order: module defaults from code, workspace `_pcsv`, `busdk.storage.modules.<module>`, and finally resource-level `_pcsv`. That means CSV remains the default unless one of those layers explicitly selects `PCSV-1`.
 
 `reporting_profile.fi_statutory` defines deterministic presentation settings for Finnish statutory financial statements in [bus-reports](../modules/bus-reports). These are presentation controls, not posting business logic, and they must remain committed and auditable in workspace data.
 

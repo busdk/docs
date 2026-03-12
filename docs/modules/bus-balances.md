@@ -68,7 +68,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 The module owns **`balances.csv`** and **`balances.schema.json`** at the workspace root. Each row has an as-of date, account code, amount (signed), optional source and notes, and `recorded_at`. The dataset is **append-only**; you correct a balance by appending a new row. For a given as-of date and account, the **effective** balance is the row with the latest `recorded_at`. `list` and `apply` use only effective rows. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
-If the workspace `datapackage.json` selects `PCSV-1`, `bus balances init` writes a PCSV-compatible schema with `_pad`, and the module reads and writes the snapshot through the shared storage-aware `bus-data` layer. Plain CSV workspaces keep the normal CSV form and do not need any migration until you explicitly opt into `PCSV-1`.
+CSV is the default when no explicit storage policy exists. If shared `bus-data` policy resolution selects `PCSV-1` from workspace, module, or resource metadata in `datapackage.json`, `bus balances init` writes a PCSV-compatible schema with `_pad`, and the module reads and writes the snapshot through the shared storage-aware `bus-data` layer. Plain CSV workspaces keep the normal CSV form and do not need any migration until you explicitly opt into `PCSV-1`.
 
 ### Input CSV format (for import)
 

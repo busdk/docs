@@ -107,6 +107,8 @@ Each period needs a retained-earnings account. If you omit it on `add`, the defa
 
 `reopen` can also record one or more `--voucher-id` values when you want the reopen window tied to specific correction vouchers.
 
+Storage mode for period-owned datasets is resolved through shared `bus-data` policy handling. If no explicit workspace, module, or resource storage policy exists, `bus period` uses ordinary CSV by default. `PCSV-1` remains an opt-in storage choice and is not selected by private module-specific `_pcsv` parsing.
+
 ### Typical workflow
 
 A common year-start flow is:

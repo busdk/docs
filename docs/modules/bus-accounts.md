@@ -41,7 +41,19 @@ Show the first-class account-group tree:
 
 ```bash
 bus accounts groups
-bus accounts groups --format tsv
+bus accounts --format tsv groups
+```
+
+Show one subtree with opening and closing balances:
+
+```bash
+bus accounts groups --group-id assets --as-of 2024-12-31 --opening-as-of 2024-01-01
+```
+
+Assign accounts to groups in bulk:
+
+```bash
+bus accounts groups assign --rule '1*=assets' --rule '1501=inventory_materials'
 ```
 
 Create a printable chart-of-accounts PDF:
@@ -64,7 +76,8 @@ bus accounts sole-proprietor withdrawal \
 `bus accounts init [-C <dir>] [global flags]`  
 `bus accounts validate [-C <dir>] [global flags]`  
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
-`bus accounts groups [-C <dir>] [-o <file>] [-f <text|tsv>] [global flags]`  
+`bus accounts groups [--group-id <group-id>] [--as-of <date>] [--opening-as-of <date>] [-C <dir>] [-o <file>] [-f <text|tsv>] [global flags]`  
+`bus accounts groups assign --rule <selector=group-id>... [-C <dir>] [global flags]`  
 `bus accounts report [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
 `bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
@@ -107,6 +120,8 @@ the Finnish-style account tree instead of pretending that posting accounts are
 group rows.
 
 `bus accounts groups` prints that tree in a deterministic human-facing form.
+It can also render one selected subtree, include opening and closing balances,
+and print subgroup subtotals together with the full subtree total.
 Validation rejects:
 - orphan parent references
 - cyclic group chains
@@ -114,14 +129,18 @@ Validation rejects:
 - account rows whose optional `group_id` points to a missing group
 
 `report` generates a `tililuettelo` view and can include journal-derived balances.
+`groups assign` gives you a native way to set account-to-group membership in
+bulk without hand-editing CSV rows.
 
-For Finnish statutory reports, this module also owns the account classification and mapping datasets used together with [bus-reports](./bus-reports). In practice:
+For Finnish statutory reports, this module also owns the datasets used together with [bus-reports](./bus-reports). In practice:
 
-`report-account-classification.csv` is the place for canonical account meaning.
+`account-groups.csv` is the primary reporting tree and semantic carrier.
 
-`report-account-mapping.csv` is the place for layout-specific overrides.
+`report-account-classification.csv` is the per-account override layer when one account needs meaning that differs from its group.
 
-If you are just starting with statutory reporting, you usually do not edit these files first. Start with a clean chart, produce a report in [bus-reports](./bus-reports), and refine mappings only when you see a real placement problem.
+`report-account-mapping.csv` is the compatibility and layout-specific override layer.
+
+If you are just starting with statutory reporting, start by assigning accounts to groups and putting the reporting semantics on those groups. Use account-classification rows only for account-specific exceptions, and reach for `report-account-mapping.csv` only when you need an explicit layout-line override or migration-safe compatibility row.
 
 ### Typical workflow
 
@@ -152,6 +171,9 @@ These commands use [Standard global flags](../cli/global-flags). In practice:
 `list` is usually used with `tsv`.
 
 `report` is where `text`, `csv`, `markdown`, and `pdf` matter most.
+
+For `groups`, prefer the canonical global-flag order `bus accounts --format tsv groups`.
+That keeps command-specific flags like `--group-id` out of the trailing-global parser path.
 
 `add` and `set` support `--dry-run` when you want to validate a change without writing it.
 

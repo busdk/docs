@@ -7,6 +7,10 @@ description: bus config stores company, VAT, reporting, ID generation, and stora
 
 `bus config` writes the workspace-wide settings that other BusDK modules read automatically. In practice this means company identity, fiscal year, VAT defaults, reporting defaults, voucher numbering policy, and optional storage defaults in `datapackage.json`.
 
+The same file also carries shared storage policy for modules that use `bus-data`. Top-level `_pcsv` sets the workspace default. Optional `busdk.storage.modules.<module>` entries override that workspace default for one module. A resource-level `_pcsv` override inside the resource descriptor is still the most specific layer. When none of those layers is present, the default is ordinary CSV.
+
+For Finnish reporting, the same configuration surface also stores `reporting_context.fi`. That entity-context block now includes `evidence-pack` defaults, so [bus-reports](./bus-reports) can pick a default package profile and deterministic filename-template rules without repo-local cleanup scripts.
+
 Use this module near the start of a new workspace, and later whenever company-level settings change.
 
 ### Common tasks
@@ -64,6 +68,25 @@ Return to ordinary CSV later if you want:
 bus config set storage-format csv
 ```
 
+Override one module without changing the whole workspace:
+
+```bash
+bus config set \
+  --storage-format PCSV-1 \
+  --storage-padding-field _pad \
+  --storage-record-bytes 256 \
+  --module-storage-format bus-journal=csv
+```
+
+Set default `evidence-pack` profile and naming rules for the workspace:
+
+```bash
+bus config set \
+  --evidence-pack-profile accountant \
+  --evidence-pack-filename-template '*=pkg-{period}-{report}-{format}' \
+  --evidence-pack-filename-template 'balance-sheet:pdf=approved-tase-{as_of}.pdf'
+```
+
 ### Synopsis
 
 `bus config init [common options] [-C <dir>] [global flags]`  
@@ -94,7 +117,7 @@ These are the settings most people configure first:
 | Report defaults | `--reporting-standard`, `--report-language`, `--income-statement-scheme`, `--comparatives`, `--presentation-unit` |
 | Report signing | `--signature-date`, repeatable `--signature-signer` |
 | Shared IDs | `--id-generation` |
-| Storage defaults | `--storage-format`, `--storage-padding-field`, `--storage-record-bytes`, `--storage-padding-char` |
+| Storage defaults | `--storage-format`, `--storage-padding-field`, `--storage-record-bytes`, `--storage-padding-char`, `--module-storage-*` |
 
 If you are working with Finnish statutory reports, the configuration can also carry taxonomy and filing-context defaults such as taxonomy family, taxonomy version, size class, and reporting scope. That keeps report generation consistent across the workspace.
 
