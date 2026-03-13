@@ -50,6 +50,10 @@ bus reports balance-sheet \
   -o ./out/tase-2026.pdf
 ```
 
+By default, `profit-and-loss` and `balance-sheet` hide rows whose values are
+zero in both shown periods. Add `--show-zero-rows` when you want to inspect
+the full statutory structure, including zero-valued rows.
+
 Build a close package directory in one run:
 
 ```bash
