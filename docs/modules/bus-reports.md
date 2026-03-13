@@ -157,6 +157,8 @@ If a statutory PDF comes out with blank signature or company fields, set those d
 
 For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`.
 
+In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows.
+
 This also explains the special rows in Finnish statements. TASE is always one statement split into `VASTAAVA` and `VASTATTAVAA`, and the current-year result is a reporting result that must appear both as the final income-statement row and as a separate equity item in the balance sheet. The background model for those constraints lives in [Finnish reporting hierarchy for TASE and tuloslaskelma](../compliance/fi-reporting-taxonomy-and-account-classification).
 
 ### Close and audit package commands
@@ -170,6 +172,15 @@ This also explains the special rows in Finnish statements. TASE is always one st
 `methods-description` is the companion artifact for the bookkeeping method itself. It describes entity context, reporting context, locking/correction model, evidence handling model, report surfaces, and dataset roles in one deterministic review document.
 
 `evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package now includes both `materials-register` and `methods-description` as first-class PDFs, a `bank-control` / statement-continuity TSV, `annual-template` and `annual-validate` summaries, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs alongside the main statements, ledgers, and close manifests. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary.
+
+If you keep one workspace per fiscal year, comparative figures come from
+`busdk.accounting_entity.reporting_context.fi.comparative_workspace` in the
+current workspace `datapackage.json`. The path is resolved relative to the
+current workspace root. `balance-sheet`, `profit-and-loss`, and
+`evidence-pack` use that prior workspace automatically when comparatives are
+enabled, and `annual-validate` warns if comparatives are configured but the
+referenced prior workspace cannot be loaded or does not produce usable
+comparative figures.
 
 `compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report.
 
