@@ -83,6 +83,8 @@ The accounting settings live under the top-level `busdk.accounting_entity` objec
 
 `business_name` is the legal/business name used for workspace-level reporting and filing metadata. `business_id` is the legal identifier of that entity, such as Finnish Y-tunnus (`NNNNNNN-N`). `business_form` is the business form profile for the entity, such as `tmi`/`toiminimi`, `oy`, `ky`, `ay`, `ry`, `osk`, or `sr`.
 
+Current documented defaults are still business-oriented. The planned household/personal-finance extension adds a workspace-level entity-kind tag under `busdk.accounting_entity` so modules can distinguish `business` workspaces from `personal` workspaces and choose different default reports, evidence packages, and metadata assumptions. That tag is design work in progress, not part of the current released key set.
+
 `fiscal_year_start` and `fiscal_year_end` define the fiscal year boundaries for the workspace. They are dates in `YYYY-MM-DD` form and must form a coherent year boundary for period generation, validation, and year-end workflows.
 
 `vat_registered` indicates whether the workspace’s accounting entity is VAT registered. It is the primary switch that determines whether VAT reporting expectations apply.
@@ -150,3 +152,4 @@ configuration contract.
 - [Finlex: Kirjanpitoasetus 1339/1997](https://www.finlex.fi/fi/lainsaadanto/1997/1339)
 - [Finlex: Valtioneuvoston asetus 1753/2015 (PMA)](https://www.finlex.fi/fi/lainsaadanto/saadoskokoelma/2015/1753)
 - [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)
+- [Household accounting and personal-finance workspaces](../compliance/fi-household-accounting-and-personal-finance)

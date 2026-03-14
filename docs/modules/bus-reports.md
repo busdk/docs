@@ -157,6 +157,8 @@ produce a false `VASTATTAVAA` mismatch in the reconciliation summary.
 
 If a statutory PDF comes out with blank signature or company fields, set those defaults in [bus-config](./bus-config) and rerun the report.
 
+Current built-in defaults are still business- and statutory-report oriented. If you are using BusDK for household or personal finance, see [Household accounting and personal-finance workspaces](../compliance/fi-household-accounting-and-personal-finance) for the planned direction: the long-term model is a workspace-level personal-versus-business tag in [workspace configuration](../data/workspace-configuration) so Bus can switch report families, evidence packages, and metadata defaults without local wrapper scripts.
+
 ### Statement placement and report profiles
 
 For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`.
@@ -239,4 +241,5 @@ reports evidence-pack --period 2026 --output-dir ./out/reports --format tsv
 - [Workflow: Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks)
 - [Finnish balance sheet and income statement regulation](../compliance/fi-balance-sheet-and-income-statement-regulation)
 - [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)
+- [Household accounting and personal-finance workspaces](../compliance/fi-household-accounting-and-personal-finance)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)

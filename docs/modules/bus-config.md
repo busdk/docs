@@ -99,6 +99,8 @@ bus config set \
 
 Other modules read this file instead of asking you to repeat the same settings elsewhere. For example, [bus-vat](./bus-vat) reads VAT defaults from here, [bus-reports](./bus-reports) reads reporting defaults from here, and [bus-journal](./bus-journal) can read shared ID-generation policy from here.
 
+This is also the right place for workspace-wide identity defaults that are not row-level facts. The planned personal-finance extension uses the same configuration surface for a workspace-level entity-kind tag so Bus can distinguish business workspaces from personal workspaces and switch report and evidence-package defaults accordingly.
+
 ### Commands
 
 `init` creates `datapackage.json` when it does not exist yet, or adds the `busdk.accounting_entity` block when the file exists but does not contain it. If the block already exists, `init` prints a warning and leaves the file unchanged.
@@ -209,3 +211,4 @@ config set reporting-standard fi-pma
 - [Module reference: bus-reports](../modules/bus-reports)
 - [Workflow: Initialize repo](../workflow/initialize-repo)
 - [Finnish reporting taxonomy and account classification](../compliance/fi-reporting-taxonomy-and-account-classification)
+- [Household accounting and personal-finance workspaces](../compliance/fi-household-accounting-and-personal-finance)
