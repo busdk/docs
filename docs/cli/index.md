@@ -11,7 +11,7 @@ This section is split into **single-concept** documents:
 
 [Minimum required command surface (end-to-end workflow)](./minimum-command-surface), [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), [Non-interactive use and scripting](./interactive-and-scripting-parity), and [Reporting and query commands](./reporting-and-queries) define operation behavior.
 
-For `.bus` usage, follow [`.bus` files — getting started step by step](./bus-script-files-getting-started), [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started), and [`.bus` script files (writing and execution guide)](./bus-script-files). Validation policies are in [Validation and safety checks](./validation-and-safety-checks).
+For `.bus` usage, follow [`.bus` files — getting started step by step](./bus-script-files-getting-started), [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started), and [`.bus` script files (writing and execution guide)](./bus-script-files). Installation guidance for syntax highlighting in common editors is in [Editor support for `.bus` files](./bus-editor-support). Validation policies are in [Validation and safety checks](./validation-and-safety-checks).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

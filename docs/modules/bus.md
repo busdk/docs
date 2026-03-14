@@ -27,6 +27,10 @@ When running busfiles, `bus` always does a full syntax preflight across all prov
 
 For first use, start with [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started), then continue with the full [`.bus` script files (writing and execution guide)](../cli/bus-script-files).
 
+If you edit `.bus` files regularly, install the Bus language package for
+VS Code compatible editors as described in [Editor support for `.bus`
+files](../cli/bus-editor-support).
+
 This feature is available under FSL-1.1-MIT (Functional Source License 1.1, MIT Future License), and source code is already available.
 
 ### Normal dispatch
@@ -180,6 +184,7 @@ For deeper transaction/dispatch internals, see [Module reference: bus (dispatche
 - [Module reference: bus (dispatcher)](../modules/bus)
 - [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started)
 - [`.bus` script files (writing and execution guide)](../cli/bus-script-files)
+- [Editor support for `.bus` files](../cli/bus-editor-support)
 - [CLI command structure](../cli/command-structure)
 - [Standard global flags](../cli/global-flags)
 
