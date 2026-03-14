@@ -113,14 +113,14 @@ This reporting profile is the workspace entity-context layer, not the place for 
 
 `reporting_profile.fi_statutory.comparatives` controls whether comparative columns are included by default when prior-period data is available. Default is `true`. First fiscal year is the normal exception because no prior period exists.
 
-`reporting_context.fi.comparative_workspace` points to the prior-year
-workspace to use for comparative figures when bookkeeping is kept in one
-workspace per fiscal year. The value is a relative path from the current
-workspace root, for example `../2025-data`. [bus-reports](../modules/bus-reports)
-uses that workspace for `balance-sheet`, `profit-and-loss`, and
-`evidence-pack`, and `annual-validate` warns when comparatives are configured
-but the referenced workspace cannot be loaded or does not yield usable
-comparative statement figures.
+Comparative figures are derived only from the current workspace. In
+[bus-reports](../modules/bus-reports), `balance-sheet`, `profit-and-loss`,
+`evidence-pack`, and `annual-validate` first use prior-year journal rows that
+already exist in the workspace. For full-year annual statements, if those rows
+are absent, bus-reports falls back to the opening balances recorded on the
+first day of the year so the prior column still reflects the year-opening
+state. A separate prior-workspace path is not part of the current workspace
+configuration contract.
 
 `reporting_profile.fi_statutory.presentation_currency` and `reporting_profile.fi_statutory.presentation_unit` define statement display units. Current supported value is `EUR`; `TEUR` is reserved for later.
 
