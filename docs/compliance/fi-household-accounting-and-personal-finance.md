@@ -33,7 +33,9 @@ That is not only a UX preference. Personal finance data is personal data, and [G
 
 The current BusDK reporting surface is still business-oriented. `bus reports` can already render useful PDFs from a personal repository, but the terminology, grouping, evidence-package defaults, and metadata remain shaped primarily for business and statutory reporting.
 
-The planned direction is to tag the workspace itself as either business or personal. A workspace-level entity-kind value under `busdk.accounting_entity` should let BusDK switch the default report family, evidence-pack profile, metadata expectations, and wording without relying on local wrapper scripts. In practice that means a personal workspace should default to household reports and household evidence rules, while a business workspace should keep the statutory/reporting defaults it already uses today.
+BusDK now has a workspace-level entity-kind value under `busdk.accounting_entity`. Set it to `personal` when the repository is a household or natural-person workspace, and keep `business` for company/statutory-default workspaces. That shared metadata gives downstream modules one deterministic source for switching report families, evidence-pack profiles, metadata expectations, and wording without relying on local wrapper scripts.
+
+The remaining gap is consumer behavior. Today the metadata exists in workspace configuration, but the main reporting defaults are still business-oriented. In practice that means a personal workspace can now declare itself correctly, while [bus-reports](../modules/bus-reports) still needs dedicated household defaults and layouts so personal workspaces stop looking like company filing projects by default.
 
 That design boundary matters because the same repository engine can support both domains while still keeping the defaults honest. A personal workspace should not accidentally look like a company filing project, and a business workspace should not silently fall back to household-style reporting.
 

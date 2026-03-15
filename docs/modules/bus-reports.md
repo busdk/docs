@@ -157,7 +157,7 @@ produce a false `VASTATTAVAA` mismatch in the reconciliation summary.
 
 If a statutory PDF comes out with blank signature or company fields, set those defaults in [bus-config](./bus-config) and rerun the report.
 
-Current built-in defaults are still business- and statutory-report oriented. If you are using BusDK for household or personal finance, see [Household accounting and personal-finance workspaces](../compliance/fi-household-accounting-and-personal-finance) for the planned direction: the long-term model is a workspace-level personal-versus-business tag in [workspace configuration](../data/workspace-configuration) so Bus can switch report families, evidence packages, and metadata defaults without local wrapper scripts.
+Current built-in defaults are still business- and statutory-report oriented. If you are using BusDK for household or personal finance, set `busdk.accounting_entity.entity_kind` to `personal` in [workspace configuration](../data/workspace-configuration) so the workspace is classified correctly. The remaining work is in `bus-reports`: dedicated household report families, evidence-package defaults, and metadata behavior still need to consume that signal instead of staying company-first.
 
 ### Statement placement and report profiles
 

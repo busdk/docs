@@ -1,17 +1,17 @@
 ---
 title: bus-config — create and update workspace configuration
-description: bus config stores company, VAT, reporting, ID generation, and storage defaults in datapackage.json for the whole workspace.
+description: bus config stores workspace identity, VAT, reporting, ID generation, and storage defaults in datapackage.json for the whole workspace.
 ---
 
 ## `bus-config` — create and update workspace configuration
 
-`bus config` writes the workspace-wide settings that other BusDK modules read automatically. In practice this means company identity, fiscal year, VAT defaults, reporting defaults, voucher numbering policy, and optional storage defaults in `datapackage.json`.
+`bus config` writes the workspace-wide settings that other BusDK modules read automatically. In practice this means company or personal-workspace identity, fiscal year, VAT defaults, reporting defaults, voucher numbering policy, and optional storage defaults in `datapackage.json`.
 
 The same file also carries shared storage policy for modules that use `bus-data`. Top-level `_pcsv` sets the workspace default. Optional `busdk.storage.modules.<module>` entries override that workspace default for one module. A resource-level `_pcsv` override inside the resource descriptor is still the most specific layer. When none of those layers is present, the default is ordinary CSV.
 
 For Finnish reporting, the same configuration surface also stores `reporting_context.fi`. That entity-context block now includes `evidence-pack` defaults, so [bus-reports](./bus-reports) can pick a default package profile and deterministic filename-template rules without repo-local cleanup scripts.
 
-Use this module near the start of a new workspace, and later whenever company-level settings change.
+Use this module near the start of a new workspace, and later whenever workspace-level settings change.
 
 ### Common tasks
 
@@ -99,7 +99,7 @@ bus config set \
 
 Other modules read this file instead of asking you to repeat the same settings elsewhere. For example, [bus-vat](./bus-vat) reads VAT defaults from here, [bus-reports](./bus-reports) reads reporting defaults from here, and [bus-journal](./bus-journal) can read shared ID-generation policy from here.
 
-This is also the right place for workspace-wide identity defaults that are not row-level facts. The planned personal-finance extension uses the same configuration surface for a workspace-level entity-kind tag so Bus can distinguish business workspaces from personal workspaces and switch report and evidence-package defaults accordingly.
+This is also the right place for workspace-wide identity defaults that are not row-level facts. `busdk.accounting_entity.entity_kind` is now the canonical workspace-level tag for that purpose. Use `business` for company/statutory-default workspaces and `personal` for household or natural-person workspaces. Older workspaces that do not yet store the key still resolve as `business` by default.
 
 ### Commands
 
@@ -113,6 +113,7 @@ These are the settings most people configure first:
 
 | What you are setting | Typical flags |
 | --- | --- |
+| Workspace kind | `--entity-kind` |
 | Company identity | `--business-name`, `--business-id`, `--business-form` |
 | Fiscal year | `--fiscal-year-start`, `--fiscal-year-end` |
 | VAT defaults | `--vat-registered`, `--vat-reporting-period`, `--vat-timing`, `--vat-default-source`, `--vat-default-basis` |
@@ -129,6 +130,7 @@ Use the per-property form when the change is small and obvious:
 
 ```bash
 bus config set business-name "Example Oy"
+bus config set entity-kind personal
 bus config set vat-reporting-period yearly
 bus config set signature-date 2026-03-31
 ```
