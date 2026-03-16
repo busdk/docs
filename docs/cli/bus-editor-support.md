@@ -7,7 +7,8 @@ description: Install syntax highlighting for BusDK .bus files in VS Code compati
 
 BusDK ships a VS Code compatible language package for `.bus` files. The package
 adds file association and syntax highlighting for shebang lines, comments,
-include lines, command targets, flags, quoted strings, and common date-like
+include lines, sticky directive lines, command targets, flags, `key=value`
+assignments, quoted strings, trailing line continuations, and common date-like
 values that appear in Bus command files.
 
 This is the primary install path for VS Code, Cursor, VSCodium, Windsurf, and
@@ -40,8 +41,10 @@ that same file to users through release assets or another downloadable channel.
 
 The source lives under `bus/editors/vscode-bus-language/`. BusDK keeps one
 canonical grammar there and packages it into the installable `.vsix` artifact
-with an offline packager script, so shipping the extension does not depend on
-users writing local editor settings by hand.
+with an offline packager script. The same repository also verifies
+representative `.bus` grammar fixtures in both source form and packaged `.vsix`
+form, so shipping the extension does not depend on users writing local editor
+settings by hand or on maintainers checking regex changes manually.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
