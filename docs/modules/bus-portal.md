@@ -17,6 +17,12 @@ for the same workspace. Uploaded files are saved through `bus-attachments`
 run metadata is saved under `.bus/bus-portal/evidence-pack/`. On small screens
 the sidebar starts collapsed and opens from the portal app icon.
 
+After a successful evidence-pack run, the `Tilinpäätös` view shows explicit
+`Avaa` and `Lataa` controls for each generated document. `Avaa` opens the
+selected token-gated artifact in an inline preview inside the portal when the
+file type supports previewing, and `Lataa` requests the same artifact with
+attachment download headers.
+
 ### Sources
 
 - [bus-portal module page](/Users/jhh/git/busdk/busdk/docs/docs/modules/bus-portal.md)
