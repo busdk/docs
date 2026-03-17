@@ -33,5 +33,9 @@ subsequent inspections and in the current dossier rendering without rewriting
 older inspection records.
 
 Use `bus-inspection --print-url` to start the local server and print the signed
-browser URL. The seeded password is `demo123` for every account. For
-local verification, use `make build`, `make test`, and `make test-e2e`.
+browser URL. Fresh local workspaces bootstrap `admin`, `manager`, `asiakas`,
+`asiakas2`, and `konfiguroija` accounts with the initial password `demo123`,
+but the anonymous login view does not expose those credentials or account
+shortcuts. New workspaces start without sample customers or sites; the admin
+role sets up the live workspace structure. For local verification, use
+`make build`, `make test`, and `make test-e2e`.
