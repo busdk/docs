@@ -34,7 +34,7 @@ older inspection records.
 
 Use `bus-inspection --print-url` to start the local server and print the signed
 browser URL. Fresh local workspaces bootstrap `admin`, `manager`, `asiakas`,
-`asiakas2`, and `konfiguroija` accounts with the initial password `demo123`,
+`asiakas2`, and `konfiguroija` accounts with the initial password `salasana`,
 but the anonymous login view does not expose those credentials or account
 shortcuts. New workspaces start without sample customers or sites; the admin
 role sets up the live workspace structure. For local verification, use
