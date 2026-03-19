@@ -14,7 +14,9 @@ description: Shared deterministic HTML/CSS component helpers and reusable AI UI 
 
 `bus-ui` provides shared UI building blocks for BusDK frontend modules. It
 owns deterministic HTML escaping and attribute ordering helpers, reusable core
-controls, shared CSS tokens, and generic AI interface components.
+controls, shared CSS tokens, generic authentication surfaces, generic form
+surfaces, shared download/link actions, reusable summary and metric cards,
+generic timeline and gallery renderers, and generic AI interface components.
 
 The module also owns generic assistant text rendering and generic approval-card
 formatting so module frontends can keep only workspace-specific behavior and
@@ -96,7 +98,10 @@ The module also includes reusable WASM event wiring and DOM error-host helpers
 so module frontends do not reimplement common browser wiring patterns.
 Those wiring helpers now return disposer callbacks for explicit lifecycle
 ownership (`WireAIPanelEvents`, `RegisterAIDropZoneHandlers`,
-`WireSplitResize`).
+`WireSplitResize`). The shared error host also uses the same reusable alert and
+button styling contract as other `bus-ui` surfaces, with centered content and a
+standard right-side dismiss control, so downstream modules get a readable
+dismissible error banner without module-local CSS fixes.
 It also provides shared callback-registry state (`AICallbackRegistry`), shared
 AI-preserving mount behavior (`MountAIPreservedView`), shared standard table
 composition (`TextTable`), and shared locale-aware field value formatting
@@ -109,6 +114,16 @@ BusDK navigation pattern instead of inventing separate local sidebars. The
 shared sidebar shell is attached to the window edge, supports icon-only
 collapse with tooltip copy, and lets modules expose an app icon that opens the
 rail on small screens.
+For token-gated local portals, it also provides a reusable credential login
+card (`CredentialLoginCard`) so modules can share the same labeled username
+and password surface instead of assembling separate auth panels locally.
+It also provides reusable form-surface primitives (`Field`, `Select`, typed
+`Input` helpers) and button-styled link actions (`LinkButton`) so local portal
+modules can keep generic fields, selectors, and download actions out of
+module-local view code. It also provides reusable content primitives
+(`SurfaceCard`, `MetricCard`, `Timeline`, `ImageGallery`) so modules can share
+one visual language for summary cards, event history, and photo collections
+instead of duplicating markup and CSS hooks.
 For CLI modules that open local UI servers, it also provides shared
 cross-platform app-style web shell opener helpers (`OpenURLInBrowser`,
 `BrowserOpenCommandForOS`) so modules do not duplicate OS command mapping.
