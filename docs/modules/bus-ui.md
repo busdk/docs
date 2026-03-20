@@ -118,9 +118,12 @@ For token-gated local portals, it also provides a reusable credential login
 card (`CredentialLoginCard`) so modules can share the same labeled username
 and password surface instead of assembling separate auth panels locally.
 It also provides reusable form-surface primitives (`Field`, `Select`, typed
-`Input` helpers) and button-styled link actions (`LinkButton`) so local portal
-modules can keep generic fields, selectors, and download actions out of
-module-local view code. It also provides reusable content primitives
+`Input` helpers, and a semantic form wrapper (`Form`) so local portal modules
+can keep generic fields, selectors, Enter-submit behavior, and download
+actions out of module-local view code. Shared auth surfaces such as
+`CredentialLoginCard` now render through that same form primitive, so
+downstream login screens and admin/data-entry views can submit naturally with
+the Enter key instead of module-local key handling. It also provides reusable content primitives
 (`SurfaceCard`, `MetricCard`, `Timeline`, `ImageGallery`) so modules can share
 one visual language for summary cards, event history, and photo collections
 instead of duplicating markup and CSS hooks.

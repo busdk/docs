@@ -7,10 +7,11 @@ The app runs as a token-gated local web UI. It stores workspace data under
 `.bus/bus-inspection/` in the active workspace and uses the same
 `bus-portal`-style shell with shared `bus-ui` components. Login, form fields,
 selectors, metric summaries, observation cards, event timelines, photo
-galleries, and download actions all come from shared `bus-ui` surfaces so the
-module-specific code stays focused on inspection behavior. The module keeps its
-own visual atmosphere, but it inherits `bus-ui` theme tokens so system dark
-mode and shared contrast rules stay consistent.
+galleries, download actions, and semantic form wrappers all come from shared
+`bus-ui` surfaces so the module-specific code stays focused on inspection
+behavior. The module keeps its own visual atmosphere, but it inherits
+`bus-ui` theme tokens so system dark mode and shared contrast rules stay
+consistent.
 
 Admins can create customers, sites, contacts, users, report packages, and
 site-level access grants. Managers see only the sites they have been granted
@@ -21,13 +22,21 @@ the action list, comment on observations, and acknowledge completed work.
 The admin area is split into separate subviews for customers, sites,
 contacts, report packages, and users so setup flows stay readable. Draft admin
 form values stay visible when validation fails and when the user moves between
-those subviews.
+those subviews. The shared form surface also means Enter in a field submits the
+active login or data-entry form without requiring a separate module-local key
+handler.
 
 The inspection workflow is versioned. New inspections are pinned to the current
 published config version, while older inspections keep the version that was
 active when they were created. The form view shows previous-inspection values
 for comparison, and the action list tracks categories `0` through `6`, status
 history, due dates, resolution details, comments, and image attachments.
+Inside `Kohteet`, the selected site is now organized into focused local
+subviews for overview, inspections, rounds, observations, and exports so the
+operator does not need to scroll through every workflow at once. The dossier
+and static site summary stay in the overview subview, while inspection editing,
+round capture, observation handling, and export work each have their own
+clearer surface.
 
 Exports are snapshot-based. The app can generate PDF for the inspection report
 and the action list, and DOCX for the inspection report. Download links are
