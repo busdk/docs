@@ -20,8 +20,8 @@ The gateway state is intentionally local-first and deterministic. Users,
 password hashes, the workspace service catalog, and per-user visible-service
 settings live in the selected workspace rather than in a mandatory remote
 identity service. Admin users can edit the service catalog and user settings
-through the gateway UI, and each launchable tool is exposed through a stable
-gateway route under `/<token>/apps/<service-id>/`.
+through the gateway UI or from the CLI, and each launchable tool is exposed
+through a stable gateway route under `/<token>/apps/<service-id>/`.
 
 ## Usage
 
@@ -46,7 +46,7 @@ BOOTSTRAP_PASSWORD admin <password>
 Use that password with the login API or a future gateway UI. The gateway keeps
 the credential out of anonymous API payloads after startup.
 
-## Service configuration
+## Service and user configuration
 
 The gateway stores downstream launcher rows in `.bus/bus-gateway/state.json`.
 Each row defines:
@@ -60,6 +60,13 @@ Each row defines:
 
 User settings then define which configured services are visible and launchable
 for each account. This keeps the service catalog separate from per-user access.
+
+The CLI exposes the same model for automation. `bus-gateway -C ./workspace
+service set ...` adds or updates one service row, `bus-gateway -C ./workspace
+service list` prints the configured catalog, `bus-gateway -C ./workspace user
+add ...` creates a local user, `bus-gateway -C ./workspace user set ...`
+updates that user, and `bus-gateway -C ./workspace user services set ...`
+replaces the visible-service list for one account.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
