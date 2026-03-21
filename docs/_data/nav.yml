@@ -107,6 +107,8 @@
       url: /modules/bus-filing-prh
     - label: bus filing vero
       url: /modules/bus-filing-vero
+    - label: bus gateway
+      url: /modules/bus-gateway
 
 - title: Design
   links:
