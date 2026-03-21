@@ -8,20 +8,20 @@ description: Local BusDK authentication gateway for browser-facing modules.
 `bus-gateway` is the local entry layer for authenticated BusDK browser modules.
 It is intended to sit in front of modules such as `bus-ledger`,
 `bus-portal`, and `bus-inspection`, own workspace-local login and session
-state, and later start and proxy allowed downstream modules for the current
+state, and start plus proxy the configured downstream tools for the current
 user.
 
-The current first pass focuses on the local auth foundation instead of full
-module proxying. `bus-gateway serve` starts a token-gated local HTTP server,
-creates `.bus/bus-gateway/state.json` on first use, prints a one-time bootstrap
-admin password to stdout, and serves anonymous plus authenticated session
-responses over `/v1/app`, `/v1/session/login`, and `/v1/session/logout`.
+`bus-gateway serve` starts a token-gated local HTTP server, creates
+`.bus/bus-gateway/state.json` on first use, prints a one-time bootstrap admin
+password to stdout, and serves anonymous plus authenticated session responses
+over `/v1/app`, `/v1/session/login`, and `/v1/session/logout`.
 
 The gateway state is intentionally local-first and deterministic. Users,
-password hashes, and module grants live in the selected workspace rather than
-in a mandatory remote identity service. Later versions can build module-access
-management and proxy/startup orchestration on top of the same workspace-local
-contract.
+password hashes, the workspace service catalog, and per-user visible-service
+settings live in the selected workspace rather than in a mandatory remote
+identity service. Admin users can edit the service catalog and user settings
+through the gateway UI, and each launchable tool is exposed through a stable
+gateway route under `/<token>/apps/<service-id>/`.
 
 ## Usage
 
@@ -45,6 +45,21 @@ BOOTSTRAP_PASSWORD admin <password>
 
 Use that password with the login API or a future gateway UI. The gateway keeps
 the credential out of anonymous API payloads after startup.
+
+## Service configuration
+
+The gateway stores downstream launcher rows in `.bus/bus-gateway/state.json`.
+Each row defines:
+
+- a stable service id such as `bus-ledger`
+- a user-facing title
+- the downstream command to execute
+- how the workspace root is passed to that command
+- optional extra launcher arguments
+- whether the service is enabled
+
+User settings then define which configured services are visible and launchable
+for each account. This keeps the service catalog separate from per-user access.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
