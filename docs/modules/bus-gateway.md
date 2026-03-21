@@ -62,11 +62,11 @@ User settings then define which configured services are visible and launchable
 for each account. This keeps the service catalog separate from per-user access.
 
 The CLI exposes the same model for automation. `bus-gateway -C ./workspace
-service set ...` adds or updates one service row, `bus-gateway -C ./workspace
-service list` prints the configured catalog, `bus-gateway -C ./workspace user
-add ...` creates a local user, `bus-gateway -C ./workspace user set ...`
-updates that user, and `bus-gateway -C ./workspace user services set ...`
-replaces the visible-service list for one account.
+service add/get/set/remove ...` and `service list` provide full CRUD-style
+control over the workspace service catalog. `bus-gateway -C ./workspace user
+add/get/set/remove ...` and `user list` do the same for local gateway users,
+while `bus-gateway -C ./workspace user services set ...` replaces the
+visible-service list for one account.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
