@@ -3,15 +3,16 @@
 `bus-inspection` is a local BusDK portal for käytönjohtaja inspection
 work, rolling action lists, customer follow-up, and document delivery.
 
-The app runs as a token-gated local web UI. It stores workspace data under
-`.bus/bus-inspection/` in the active workspace and uses the same
-`bus-portal`-style shell with shared `bus-ui` components. Login, form fields,
-selectors, metric summaries, observation cards, event timelines, photo
-galleries, download actions, and semantic form wrappers all come from shared
-`bus-ui` surfaces so the module-specific code stays focused on inspection
-behavior. The module keeps its own visual atmosphere, but it inherits
-`bus-ui` theme tokens so system dark mode and shared contrast rules stay
-consistent.
+The app runs as a token-gated local web UI. It stores structured workspace
+state in the root-level managed table `inspection_state.csv` with schema
+`inspection_state.schema.json`, keeps file artifacts under
+`.bus/bus-inspection/`, and uses the same `bus-portal`-style shell with shared
+`bus-ui` components. Login, form fields, selectors, metric summaries,
+observation cards, event timelines, photo galleries, download actions, and
+semantic form wrappers all come from shared `bus-ui` surfaces so the
+module-specific code stays focused on inspection behavior. The module keeps its
+own visual atmosphere, but it inherits `bus-ui` theme tokens so system dark
+mode and shared contrast rules stay consistent.
 
 Admins can create customers, sites, contacts, users, report packages, and
 site-level access grants. Managers see only the sites they have been granted
