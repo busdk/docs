@@ -116,7 +116,10 @@ collapse with tooltip copy, and lets modules expose an app icon that opens the
 rail on small screens.
 For token-gated local portals, it also provides a reusable credential login
 card (`CredentialLoginCard`) so modules can share the same labeled username
-and password surface instead of assembling separate auth panels locally.
+and password surface instead of assembling separate auth panels locally. The
+shared auth card also accepts caller-provided form attributes, so modules can
+reuse the same login layout for native POST/action flows without forking the
+auth markup.
 It also provides reusable form-surface primitives (`Field`, `Select`, typed
 `Input` helpers, and a semantic form wrapper (`Form`) so local portal modules
 can keep generic fields, selectors, Enter-submit behavior, and download

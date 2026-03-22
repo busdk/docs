@@ -12,9 +12,12 @@ state, and start plus proxy the configured downstream tools for the current
 user.
 
 `bus-gateway serve` starts a token-gated local HTTP server, creates
-gateway-owned schemas under `.bus/bus-gateway/` on first use, prints a one-time
-bootstrap admin password to stdout, and serves anonymous plus authenticated
-session responses over `/v1/app`, `/v1/session/login`, and `/v1/session/logout`.
+gateway-owned managed tables and schema files at the workspace root on first
+use, prints a one-time bootstrap admin password to stdout, and serves
+anonymous plus authenticated session responses over `/v1/app`,
+`/v1/session/login`, and `/v1/session/logout`. The same token-gated root page
+also supports plain HTML form login/logout, so the shared login screen works
+without module-local JavaScript.
 
 The gateway state is intentionally local-first and deterministic. Users,
 password hashes, the workspace service catalog, and per-user visible-service
@@ -25,6 +28,10 @@ workspaces and on workspaces that opt into PostgreSQL storage. Admin users can
 edit the service catalog and user settings through the gateway UI or from the
 CLI, and each launchable tool is exposed through a stable gateway route under
 `/<token>/apps/<service-id>/`.
+
+The workspace can also customize the login-card title and optional helper
+copy. When those settings are blank, the page falls back to a generic `Sign
+in` heading and omits helper text entirely.
 
 ## Usage
 
@@ -46,13 +53,14 @@ On the first run in a workspace, the server prints:
 BOOTSTRAP_PASSWORD admin <password>
 ```
 
-Use that password with the login API or a future gateway UI. The gateway keeps
-the credential out of anonymous API payloads after startup.
+Use that password with either the login page or the login API. The gateway
+keeps the credential out of anonymous API payloads after startup.
 
 ## Service and user configuration
 
-The gateway stores downstream launcher rows and user assignments in the shared
-managed tables under `.bus/bus-gateway/`. The main logical rows define:
+The gateway stores downstream launcher rows, user assignments, and singleton
+workspace login-page settings in shared managed tables at the workspace root.
+The main logical rows define:
 
 - a stable service id such as `bus-ledger`
 - a user-facing title
@@ -70,7 +78,9 @@ service add/get/set/remove ...` and `service list` provide full CRUD-style
 control over the workspace service catalog. `bus-gateway -C ./workspace user
 add/get/set/remove ...` and `user list` do the same for local gateway users,
 while `bus-gateway -C ./workspace user services set ...` replaces the
-visible-service list for one account.
+visible-service list for one account. `bus-gateway -C ./workspace settings
+get` and `settings set ...` read or update the login title/helper copy for the
+workspace.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
