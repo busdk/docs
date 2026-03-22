@@ -29,6 +29,11 @@ edit the service catalog and user settings through the gateway UI or from the
 CLI, and each launchable tool is exposed through a stable gateway route under
 `/<token>/apps/<service-id>/`.
 
+When the gateway proxies a child module request, it also forwards a short-lived
+signed trusted-identity envelope for the current account. That lets child
+modules such as `bus-inspection` rely on gateway-owned authentication instead
+of running a second login flow.
+
 The workspace can also customize the login-card title and optional helper
 copy. When those settings are blank, the page falls back to a generic `Sign
 in` heading and omits helper text entirely.
