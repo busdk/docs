@@ -12,16 +12,19 @@ state, and start plus proxy the configured downstream tools for the current
 user.
 
 `bus-gateway serve` starts a token-gated local HTTP server, creates
-`.bus/bus-gateway/state.json` on first use, prints a one-time bootstrap admin
-password to stdout, and serves anonymous plus authenticated session responses
-over `/v1/app`, `/v1/session/login`, and `/v1/session/logout`.
+gateway-owned schemas under `.bus/bus-gateway/` on first use, prints a one-time
+bootstrap admin password to stdout, and serves anonymous plus authenticated
+session responses over `/v1/app`, `/v1/session/login`, and `/v1/session/logout`.
 
 The gateway state is intentionally local-first and deterministic. Users,
 password hashes, the workspace service catalog, and per-user visible-service
 settings live in the selected workspace rather than in a mandatory remote
-identity service. Admin users can edit the service catalog and user settings
-through the gateway UI or from the CLI, and each launchable tool is exposed
-through a stable gateway route under `/<token>/apps/<service-id>/`.
+identity service. The gateway stores that configuration through the shared
+`bus-data` layer, so the same logical tables work on filesystem-backed
+workspaces and on workspaces that opt into PostgreSQL storage. Admin users can
+edit the service catalog and user settings through the gateway UI or from the
+CLI, and each launchable tool is exposed through a stable gateway route under
+`/<token>/apps/<service-id>/`.
 
 ## Usage
 
@@ -48,8 +51,8 @@ the credential out of anonymous API payloads after startup.
 
 ## Service and user configuration
 
-The gateway stores downstream launcher rows in `.bus/bus-gateway/state.json`.
-Each row defines:
+The gateway stores downstream launcher rows and user assignments in the shared
+managed tables under `.bus/bus-gateway/`. The main logical rows define:
 
 - a stable service id such as `bus-ledger`
 - a user-facing title
@@ -59,7 +62,8 @@ Each row defines:
 - whether the service is enabled
 
 User settings then define which configured services are visible and launchable
-for each account. This keeps the service catalog separate from per-user access.
+for each account. This keeps the service catalog separate from per-user access
+while still using the same workspace storage backend as the rest of BusDK data.
 
 The CLI exposes the same model for automation. `bus-gateway -C ./workspace
 service add/get/set/remove ...` and `service list` provide full CRUD-style
