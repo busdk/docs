@@ -7,6 +7,10 @@ description: End-user guide to BusDK module CLIs, with a practical reading order
 
 This section explains what each BusDK module is for, when you usually use it, and which command to try first. Command names follow [CLI command naming](../cli/command-naming). Most pages show a short synopsis and a few practical examples first; for the full flag list, run `bus <module> --help`.
 
+The adjacent [aiz](./aiz) toolchain is documented here too. It is not
+dispatched through `bus`, but it follows the same deterministic CLI style for
+single-file `.aiz` compression and offline restore with `unaiz`.
+
 ## If you are starting a new workspace
 
 Most users read these module pages in roughly this order:
@@ -39,7 +43,7 @@ Reporting, quality, and filing modules are [`bus reports`](./bus-reports), [`bus
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../workflow/year-end-close">Year-end close (closing entries)</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./bus">bus</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./aiz">aiz</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

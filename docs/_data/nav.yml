@@ -45,6 +45,8 @@
       url: /modules/
     - label: Module capabilities
       url: /modules/features
+    - label: aiz
+      url: /modules/aiz
     - label: bus
       url: /modules/bus
     - label: bus init
