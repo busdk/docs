@@ -24,9 +24,13 @@ password hashes, the workspace service catalog, and per-user visible-service
 settings live in the selected workspace rather than in a mandatory remote
 identity service. The gateway stores that configuration through the shared
 `bus-data` layer, so the same logical tables work on filesystem-backed
-workspaces and on workspaces that opt into PostgreSQL storage. Admin users can
-edit the service catalog and user settings through the gateway UI or from the
-CLI, and each launchable tool is exposed through a stable gateway route under
+workspaces and on workspaces that opt into PostgreSQL storage. The
+authenticated UI uses the shared `bus-ui` sidebar shell: the default launcher
+view lists the current user's tools, while workspace settings, services, users,
+and access rows are split into separate views for cleaner administration. The
+services page itself stays a navigable catalog list, and each service has its
+own dedicated settings route under that section. Each launchable tool is
+exposed through a stable gateway route under
 `/<token>/apps/<service-id>/`.
 
 When the gateway proxies a child module request, it also forwards a short-lived

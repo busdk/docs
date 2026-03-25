@@ -113,7 +113,10 @@ left-rail shell (`SidebarShell`) and matching sidebar navigation component
 BusDK navigation pattern instead of inventing separate local sidebars. The
 shared sidebar shell is attached to the window edge, supports icon-only
 collapse with tooltip copy, and lets modules expose an app icon that opens the
-rail on small screens.
+rail on small screens. The shared sidebar nav also supports real links, so
+server-rendered local portals such as `bus-gateway` can move between separate
+views without custom sidebar markup, while keeping shared nav-item styling
+instead of browser-default underlined link rendering.
 For token-gated local portals, it also provides a reusable credential login
 card (`CredentialLoginCard`) so modules can share the same labeled username
 and password surface instead of assembling separate auth panels locally. The
@@ -126,7 +129,9 @@ can keep generic fields, selectors, Enter-submit behavior, and download
 actions out of module-local view code. Shared auth surfaces such as
 `CredentialLoginCard` now render through that same form primitive, so
 downstream login screens and admin/data-entry views can submit naturally with
-the Enter key instead of module-local key handling. It also provides reusable content primitives
+the Enter key instead of module-local key handling. Those shared input and
+textarea styles also keep an idle visible border so users can recognize form
+fields before they focus them. It also provides reusable content primitives
 (`SurfaceCard`, `MetricCard`, `Timeline`, `ImageGallery`) so modules can share
 one visual language for summary cards, event history, and photo collections
 instead of duplicating markup and CSS hooks.
