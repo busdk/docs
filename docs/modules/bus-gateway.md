@@ -42,6 +42,15 @@ The workspace can also customize the login-card title and optional helper
 copy. When those settings are blank, the page falls back to a generic `Sign
 in` heading and omits helper text entirely.
 
+The repository also ships a ready-to-run Docker Compose example for a
+PostgreSQL-backed gateway workspace at
+`examples/bus-gateway-postgresql/compose.yaml`. That stack starts PostgreSQL,
+builds the gateway runtime image, initializes an empty workspace descriptor on
+the first run, and exposes the gateway on
+`http://127.0.0.1:8080/gateway-postgres/`. The container log prints the
+one-time bootstrap admin password in the same
+`BOOTSTRAP_PASSWORD admin <password>` format as a local process run.
+
 ## Usage
 
 Start the gateway server and print the token-gated URL:
