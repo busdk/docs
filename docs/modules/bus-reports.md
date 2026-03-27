@@ -138,6 +138,11 @@ from the same voucher value, the separate `Voucher` column is left blank. When
 there is a genuinely distinct external document number and voucher id, both
 stay visible.
 
+`voucher-list` follows the same rule. The visible `document_number` comes from
+the business-facing voucher number first, while any technical or imported
+`source_id` stays available as a separate trace field instead of replacing the
+human review number.
+
 ### Finnish statutory reporting
 
 For Finnish statement output, the most important decision is the layout. The common built-in layout IDs are:
