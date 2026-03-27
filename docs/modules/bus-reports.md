@@ -207,7 +207,7 @@ Machine-oriented formats are usually `csv`, `json`, or `tsv`. Human-oriented rev
 
 When you use `-o`, missing parent directories are created automatically before the file is written. Failed runs do not replace an existing successful output file.
 
-These commands use [Standard global flags](../cli/global-flags). The most commonly used extras here are `-C`, `-o`, `--format`, and `--locale`. For the complete command matrix, run `bus reports --help`.
+These commands use [Standard global flags](../cli/global-flags). The most commonly used extras here are `-C`, `-o`, `--format`, and `--locale`. In human-facing outputs, `--locale fi` changes both decimal formatting and shared report labels such as headers and PDF titles. When `--locale` is omitted, BusDK first uses the workspace reporting profile language from `busdk.accounting_entity.reporting_profile.fi_statutory.language` when it is configured, and only then falls back to the shell locale. For the complete command matrix, run `bus reports --help`.
 
 ### Using from `.bus` files
 
