@@ -161,13 +161,15 @@ and unsigned `amount`.
 
 PDF day-book and general-ledger outputs also size columns from the actual
 rendered content instead of using one fixed layout. The resolved columns are
-stretched across the full printable page width, but short identifier columns
-stay compact so `Description` absorbs most of that extra width. Bus also hides
-the `Voucher` column entirely when it would be blank on every row. Wrapped PDF
-cells now share one logical row height so the table stays visually aligned
-across columns. In `general-ledger` PDF, a whole account table starts on a
-fresh page when the next section would otherwise begin at the bottom of the
-current page and continue immediately onto the following page.
+stretched across the full printable page width, but short identifier and other
+fixed-value columns stay compact so `Description` absorbs most of that extra
+width. Bus also hides the `Voucher` column entirely when it would be blank on
+every row. Wrapped PDF cells now share one logical row height so the table
+stays visually aligned across columns, and page breaks are computed from those
+final wrapped row heights so later pages do not inherit an overfull table
+slice. In `general-ledger` PDF, a whole account table starts on a fresh page
+when the next section would otherwise begin at the bottom of the current page
+and continue immediately onto the following page.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
