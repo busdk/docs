@@ -13,6 +13,8 @@ For Finnish reporting, the same configuration surface also stores `reporting_con
 
 Use this module near the start of a new workspace, and later whenever workspace-level settings change.
 
+The shared numbering policy now has its own first-class CLI surface. `bus config id-generation` lets you inspect and edit one ID kind or one conditional series at a time instead of forcing every small numbering change through shell-quoted nested JSON.
+
 ### Common tasks
 
 Create the workspace configuration with the most common Finnish accounting defaults in one command:
@@ -42,14 +44,25 @@ bus config set \
 Set a clear yearly voucher numbering policy for the whole workspace:
 
 ```bash
-bus config set --id-generation '{
-  "types": {
-    "voucher_id": {
-      "strategy": "sequence",
-      "template": "V-{yyyy}-{inc}"
-    }
-  }
-}'
+bus config id-generation set-type voucher_id \
+  --strategy sequence \
+  --template V-{yyyy}-{inc}
+```
+
+Add an opening-entry series with its own visible prefix:
+
+```bash
+bus config id-generation add-series voucher_id \
+  --name opening \
+  --match source_prefix=opening \
+  --template T-{inc} \
+  --range 1:999:3
+```
+
+Explain which effective policy Bus would use for that selector:
+
+```bash
+bus config id-generation explain voucher_id --attr source_prefix=opening
 ```
 
 Switch BusDK-owned datasets to `PCSV-1` while keeping the command surface the same:
@@ -91,7 +104,8 @@ bus config set \
 
 `bus config init [common options] [-C <dir>] [global flags]`  
 `bus config set [common options] [-C <dir>] [global flags]`  
-`bus config set <key> <value>`
+`bus config set <key> <value>`  
+`bus config id-generation <action> ...`
 
 ### What this module owns
 
@@ -106,6 +120,8 @@ This is also the right place for workspace-wide identity defaults that are not r
 `init` creates `datapackage.json` when it does not exist yet, or adds the `busdk.accounting_entity` block when the file exists but does not contain it. If the block already exists, `init` prints a warning and leaves the file unchanged.
 
 `set` updates an existing workspace configuration. You can use the batch form with several flags in one call, or the per-property form `bus config set <key> <value>` when you want to change exactly one field.
+
+`id-generation` manages the shared numbering policy without forcing you to rewrite nested JSON. Use `list` and `show` when you want to inspect the current policy, `set-type` and `add-series` when you want to change one visible series or technical ID kind, `remove-series` when you want to delete one named selector, `validate` when you want a quick deterministic check, and `explain` when you want to see which effective policy Bus would resolve for one selector set.
 
 ### Settings most users care about
 
@@ -160,7 +176,9 @@ series such as `voucher_id`, `invoice_number`, and `loan_event_id` separate
 from technical immutable IDs such as `transaction_id`, `entry_id`,
 `attachment_id`, `bank_import_id`, and `bank_txn_id`. If you override only one
 kind, Bus keeps the rest of the shared defaults in place instead of replacing
-the entire policy tree.
+the entire policy tree. The raw JSON setter still works when you already keep a
+reviewed policy file in version control, but day-to-day edits are usually
+clearer through `bus config id-generation ...`.
 
 ### Notes that save time
 
