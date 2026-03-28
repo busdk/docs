@@ -172,7 +172,7 @@ produce a false `VASTATTAVAA` mismatch in the reconciliation summary.
 
 If a statutory PDF comes out with blank signature or company fields, set those defaults in [bus-config](./bus-config) and rerun the report.
 
-Current built-in defaults are still business- and statutory-report oriented. If you are using BusDK for household or personal finance, set `busdk.accounting_entity.entity_kind` to `personal` in [workspace configuration](../data/workspace-configuration) so the workspace is classified correctly. The remaining work is in `bus-reports`: dedicated household report families, evidence-package defaults, and metadata behavior still need to consume that signal instead of staying company-first.
+Current built-in defaults are still business- and statutory-report oriented for the main statement and review report families. If you are using BusDK for household or personal finance, set `busdk.accounting_entity.entity_kind` to `personal` in [workspace configuration](../data/workspace-configuration) so the workspace is classified correctly. `annual-template` and `filing-package` now consume that signal and also switch away from company-style public filing output for non-company legal forms such as `tmi`, but the broader household-native report families, evidence-pack defaults, and metadata behavior are still pending in `bus-reports`.
 
 ### Statement placement and report profiles
 
@@ -202,7 +202,7 @@ balances recorded at the start of the year so the prior column still shows how
 the year began. `annual-validate` checks for one of those current-workspace
 comparative sources before it reports a pass.
 
-`compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report.
+`compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report. Company-form workspaces keep statutory public-filing package/template output, while non-company legal forms and `entity_kind=personal` workspaces switch to an internal annual review package centered on summaries, tax notes, and evidence indexes instead of PRH filing sections.
 
 ### Migration and quality checks
 
