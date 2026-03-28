@@ -146,15 +146,17 @@ from the same voucher value, the separate `Voucher` column is left blank. When
 there is a genuinely distinct external document number and voucher id, both
 stay visible.
 
-Text, markdown, and PDF review outputs now shorten `Tx` and `Entry` by
-default. That keeps long internal identifiers readable without changing the
-stored journal data. If you also want the same shortened display values in
-CSV, add `--short-ids` to `day-book` or `general-ledger`.
+Text, markdown, and PDF review outputs shorten `Tx` by default. The redundant
+human-facing `Entry` or `Vienti` column is omitted when `Tx` and `Rivi` are
+already visible, while machine-facing outputs such as CSV still retain the
+stable `entry_id` field. If you also want the same shortened display value for
+`Tx` in CSV, add `--short-ids` to `day-book` or `general-ledger`.
 
 PDF day-book and general-ledger outputs also size columns from the actual
 rendered content instead of using one fixed layout. That gives more room to
-long `Tx`, `Entry`, and description values, and Bus hides the `Voucher` column
-entirely when it would be blank on every row.
+long `Tx` and description values, and Bus hides the `Voucher` column entirely
+when it would be blank on every row. Wrapped PDF cells now share one logical
+row height so the table stays visually aligned across columns.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
@@ -198,8 +200,8 @@ For statutory reporting, start from `account-groups.csv`. That group tree is the
 When you need to inspect that resolution directly, use `statement-explain` or
 `statement-validate`. Those commands show the original account group, the
 effective canonical group used by the selected statement, the visible line
-chosen from the selected layout/profile, and the deterministic reason for the
-placement or failure.
+chosen from the selected layout/profile, an explicit `resolution_chain`, and
+the deterministic reason for the placement or failure.
 
 In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows.
 
@@ -225,7 +227,7 @@ balances recorded at the start of the year so the prior column still shows how
 the year began. `annual-validate` checks for one of those current-workspace
 comparative sources before it reports a pass.
 
-`compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report. Company-form workspaces keep statutory public-filing package/template output, while non-company legal forms and `entity_kind=personal` workspaces switch to an internal annual review package centered on summaries, tax notes, and evidence indexes instead of PRH filing sections.
+`compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report. Company-form workspaces keep statutory public-filing package/template output, while non-company legal forms and `entity_kind=personal` workspaces switch to an internal annual review package centered on summaries, tax notes, and evidence indexes instead of PRH filing sections. The checklist now uses that same non-corporate model, so it no longer claims that a sole proprietor must generate company-style balance-sheet and profit-and-loss filing artifacts when the selected package flow is internal review only.
 
 ### Migration and quality checks
 
