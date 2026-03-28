@@ -1,53 +1,63 @@
 ---
 title: bus-update
-description: bus update checks whether newer module versions are available from the BusDK release index and can block stale module execution.
+description: bus update checks released BusDK versions, updates workspace module repositories, and manages machine-local BusDK executable packages.
 ---
 
-## `bus-update` - module version checks
+## `bus-update` - release checks and managed packages
 
 ### Synopsis
 
-`bus update [global flags] [--workspace <dir>] [--dry-run] [--index-url <path-or-url>] [--cache-dir <dir>] [--timeout-seconds <n>]`
+`bus update [global flags] [--workspace <dir>] [--dry-run] [--force] [--index-url <path-or-url>] [--cache-dir <dir>] [--timeout-seconds <n>]`
+
+`bus update [global flags] status [--module <module-name>] [--current <version>] [--index-url <path-or-url>] [--cache-dir <dir>] [--timeout-seconds <n>] [--refresh-seconds <n>] [--failure-grace-seconds <n>]`
 
 `bus update [global flags] check --module <module-name> --current <version> [--index-url <path-or-url>] [--cache-dir <dir>] [--timeout-seconds <n>] [--refresh-seconds <n>] [--failure-grace-seconds <n>]`
 
+`bus update [global flags] package list [--install-root <dir>] [--os <goos>] [--arch <goarch>]`
+
+`bus update [global flags] package status [--module <module-name>] [--index-url <path-or-url>] [--install-root <dir>] [--ca-file <path>] [--os <goos>] [--arch <goarch>]`
+
+`bus update [global flags] package install --module <module-name> [--version <version>] [--index-url <path-or-url>] [--install-root <dir>] [--ca-file <path>] [--force] [--os <goos>] [--arch <goarch>]`
+
+`bus update [global flags] package upgrade [--module <module-name>] [--index-url <path-or-url>] [--install-root <dir>] [--ca-file <path>] [--force] [--os <goos>] [--arch <goarch>]`
+
+`bus update [global flags] package remove --module <module-name> [--install-root <dir>] [--os <goos>] [--arch <goarch>]`
+
+`bus update [global flags] package verify [--module <module-name>] [--install-root <dir>] [--os <goos>] [--arch <goarch>]`
+
 ### Overview
 
-`bus-update` is the shared BusDK module for release-version checks. Other `bus-*` modules use its Go library before command execution to print warning diagnostics when a newer released version exists.
+`bus-update` now has two clear roles. The original role remains release checking and selective Git-workspace updates for `bus-*` repositories. The new managed-package role installs and maintains machine-local `bus` and `bus-*` executables in one managed install root.
 
-The default release index is `https://docs.busdk.com/releases/latest.txt`. Each row is parsed as `{MODULE_NAME} {MODULE_VERSION} {DATE} {HASH}`.
+This split matters because the commands answer different operator questions. `bus update` without `package` works against Git repositories in a workspace. `bus update package ...` works against installed executables in a managed `bin` directory.
 
-The module is designed to avoid network calls on every execution. It uses a local cache with refresh and timeout limits, and it only fails closed on index fetch failures after a continuous failure grace window.
+### Release checks and workspace updates
 
-### Commands
+The default release index is `https://docs.busdk.com/releases/latest.txt`. Each row is parsed as `{MODULE_NAME} {MODULE_VERSION} {DATE} {HASH}`. Embedded startup checks stay warning-only and use a local cache, short timeout defaults, and a failure-grace window so transient release-index fetch problems do not block normal tool execution.
 
-`bus update` reviews `bus-*` module repositories in the selected workspace and updates only modules that are behind the release index hash. Modules already at the latest hash are left untouched.
+Running `bus update` in a workspace scans `bus-*` directories that contain `.git`, compares each repository head to the latest released hash, and updates only repositories that are behind the release index. `--dry-run` prints what would change without touching the repositories. Repositories with local uncommitted changes are skipped.
 
-Use `--dry-run` to print what would be updated without changing any repository.
+### Managed package behavior
 
-Modules with local uncommitted changes are skipped and reported.
+The default managed package manifest is `https://pkg.busdk.com/busdk/packages/v1/index.json`. Each package entry identifies at least module name, version, operating system, architecture, checksum, and signing key. If explicit artifact URLs are not listed, `bus-update` derives them from the stable layout `https://pkg.busdk.com/busdk/{os}/{arch}/{module}/{version}/{filename}` and the matching detached signature path `{filename}.sig`.
 
-`bus update status` reports whether the current `bus-update` version is outdated, and can also check a provided module/version pair by flags.
+`bus update package install` downloads one platform-specific executable, verifies its SHA-256 checksum and detached Ed25519 signature, and then installs it into the managed binary directory with atomic replacement semantics. `upgrade` refreshes installed packages to the latest available version. `list`, `status`, and `verify` inspect the local managed package state, while `remove` cleanly uninstalls one package.
 
-`bus update check` evaluates one module/version pair against the release index.
+`status` reports installed versus latest available version and marks entries as `up-to-date`, `outdated`, `not-installed`, `missing`, or `checksum-mismatch`. `verify` recalculates installed checksums and is the direct operator command for integrity review.
 
-A successful check returns exit `0`. If a newer version is listed, the command returns exit `1` and prints a deterministic diagnostic to stderr.
+### Install root and bootstrap flow
 
-Embedded startup checks are warning-only and do not block tool execution.
+Install-root precedence is `--install-root`, then `BUSDK_PACKAGE_ROOT`, then `BUSDK_BOOTSTRAP_ROOT`, then the platform default. On Windows the default root is `%LOCALAPPDATA%\BusDK`; on other systems it is `~/.local/share/busdk`. Managed executables live under `<install-root>/bin`.
 
-### Cache and failure behavior
+The intended Windows bootstrap flow is that the bootstrap installer places only `bus.exe` and `bus-update.exe` into that managed `bin` directory and adds it to `PATH`. After that, `bus update package install ...` places additional `bus-*.exe` binaries into the same location so the already-installed `bus` launcher can discover them through the managed path.
 
-Default behavior is:
+### Security and rollback
 
-- timeout `2s`
-- cache refresh interval `24h`
-- continuous failure grace `24h`
-
-Transient failures inside the grace period are tolerated. Once failures continue beyond the grace period, startup checks print an error diagnostic to stderr and still allow command execution.
+Managed package downloads are HTTPS-only unless the operator explicitly points the command at a local file path. Before `bus-update` replaces any executable, it verifies the payload checksum and detached signature. Replacement happens through a temporary file and backup rename in the destination directory, and the old executable is restored if state persistence fails after the new binary is moved into place.
 
 ### Environment variables
 
-`bus-update` and embedded checks in other modules support these variables:
+Release-check and workspace-update flow:
 
 - `BUSDK_DISABLE_UPDATE_CHECK=1`
 - `BUSDK_CURRENT_VERSION=<version>`
@@ -57,11 +67,20 @@ Transient failures inside the grace period are tolerated. Once failures continue
 - `BUSDK_UPDATE_CHECK_REFRESH_SECONDS=<n>`
 - `BUSDK_UPDATE_CHECK_FAILURE_GRACE_SECONDS=<n>`
 
+Managed package flow:
+
+- `BUSDK_PACKAGE_INDEX_URL=<path-or-url>`
+- `BUSDK_PACKAGE_ROOT=<dir>`
+- `BUSDK_BOOTSTRAP_ROOT=<dir>`
+- `BUSDK_PACKAGE_CA_FILE=<path>`
+
 ### Examples
 
 ```bash
-bus update check --module bus-run --current 0.0.35
-bus update check --module bus-api --current 0.1.2 --index-url /tmp/latest.txt --cache-dir /tmp/bus-update-cache
+bus update check --module bus-run --current 1.2.3
+bus update --workspace /srv/busdk --dry-run
+BUSDK_BOOTSTRAP_ROOT="$HOME/.local/share/busdk" bus update package install --module bus-ledger
+bus update package verify
 ```
 
 ### Using from `.bus` files
@@ -69,8 +88,8 @@ bus update check --module bus-api --current 0.1.2 --index-url /tmp/latest.txt --
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus update check --module bus-run --current 0.0.35
-update check --module bus-run --current 0.0.35
+# same as: bus update package install --module bus-ledger
+update package install --module bus-ledger
 ```
 
 <!-- busdk-docs-nav start -->

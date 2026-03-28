@@ -98,6 +98,13 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports ledger-log --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
 `bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports budget-vs-actual --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports cashflow --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports net-worth --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports account-movement --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports transfer-summary --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
@@ -114,6 +121,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 | --- | --- |
 | A fast period or year-end balance summary | `trial-balance` or `account-balances` |
 | Entry-by-entry accounting review | `day-book`, `general-ledger`, `ledger-log`, or `account-ledger` |
+| Household/person review over budgets, cash movement, and net worth | `budget-vs-actual`, `cashflow`, `net-worth`, `account-movement`, `transfer-summary` |
 | Official-looking year-end statements | `profit-and-loss` and `balance-sheet` |
 | Internal close evidence behind the balance sheet | `balance-sheet-specification` and `balance-sheet-reconciliation` |
 | A voucher list or bank review document | `voucher-list` and `bank-transactions` |
@@ -138,10 +146,10 @@ from the same voucher value, the separate `Voucher` column is left blank. When
 there is a genuinely distinct external document number and voucher id, both
 stay visible.
 
-If you want shorter review-only `Tx` and `Entry` values on screen or in PDFs,
-add `--short-ids` to `day-book` or `general-ledger`. This changes only the
-human-facing rendering for that report run. It does not rewrite the stored
-journal IDs.
+Text, markdown, and PDF review outputs now shorten `Tx` and `Entry` by
+default. That keeps long internal identifiers readable without changing the
+stored journal data. If you also want the same shortened display values in
+CSV, add `--short-ids` to `day-book` or `general-ledger`.
 
 PDF day-book and general-ledger outputs also size columns from the actual
 rendered content instead of using one fixed layout. That gives more room to
@@ -172,11 +180,26 @@ produce a false `VASTATTAVAA` mismatch in the reconciliation summary.
 
 If a statutory PDF comes out with blank signature or company fields, set those defaults in [bus-config](./bus-config) and rerun the report.
 
-Current built-in defaults are still business- and statutory-report oriented for the main statement and review report families. If you are using BusDK for household or personal finance, set `busdk.accounting_entity.entity_kind` to `personal` in [workspace configuration](../data/workspace-configuration) so the workspace is classified correctly. `annual-template` and `filing-package` now consume that signal and also switch away from company-style public filing output for non-company legal forms such as `tmi`, but the broader household-native report families, evidence-pack defaults, and metadata behavior are still pending in `bus-reports`.
+If you are using BusDK for household or personal finance, set
+`busdk.accounting_entity.entity_kind` to `personal` in
+[workspace configuration](../data/workspace-configuration). That profile now
+switches `bus-reports` to the household/person review family:
+`budget-vs-actual`, `cashflow`, `net-worth`, `account-movement`,
+`transfer-summary`, non-company `evidence-pack` defaults, and internal
+`annual-template` / `filing-package` / `annual-validate` outputs instead of
+company-style public-filing defaults. Company-style PDF metadata warnings for
+Y-tunnus and signature fields are also suppressed for those personal/non-
+company review outputs.
 
 ### Statement placement and report profiles
 
 For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`.
+
+When you need to inspect that resolution directly, use `statement-explain` or
+`statement-validate`. Those commands show the original account group, the
+effective canonical group used by the selected statement, the visible line
+chosen from the selected layout/profile, and the deterministic reason for the
+placement or failure.
 
 In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows.
 

@@ -31,11 +31,17 @@ If you edit `.bus` files regularly, install the Bus language package for
 VS Code compatible editors as described in [Editor support for `.bus`
 files](../cli/bus-editor-support).
 
+That same editor-support surface now also includes a Tree-sitter grammar and a
+lightweight stdio language server, so `.bus` files can be highlighted and
+semantically tokenized outside VS Code-compatible editors too.
+
 This feature is available under FSL-1.1-MIT (Functional Source License 1.1, MIT Future License), and source code is already available.
 
 ### Normal dispatch
 
 `bus <module> <args...>` dispatches to `bus-<module>`. For example, `bus journal add ...` runs `bus-journal add ...`. `bus run ...` is treated like any other module dispatch target.
+
+That same rule applies to BusDK installer and package-manager flows. `bus update ...` and `bus update package ...` both delegate to `bus-update`; the dispatcher does not embed package download, package database, or installer logic itself. In a bootstrap-installed setup, this keeps `bus` as the stable entrypoint while `bus-update` remains the owning module for release checks, managed executable packages, and bootstrap-root behavior.
 
 ### Busfile mode
 
@@ -90,6 +96,7 @@ Normal dispatch:
 bus init all
 bus accounts list
 bus journal add --date 2024-02-29 --desc "Example" --debit 1910=10 --credit 3000=10
+bus update package install --module bus-ledger
 ```
 
 Single busfile:

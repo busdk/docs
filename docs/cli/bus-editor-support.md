@@ -1,18 +1,28 @@
 ---
 title: Editor support for `.bus` files
-description: Install syntax highlighting for BusDK .bus files in VS Code compatible editors and build a .vsix package from source.
+description: Install BusDK .bus editor support for VS Code compatible editors, Tree-sitter-based editors, and stdio language-server clients.
 ---
 
 ## Overview
 
-BusDK ships a VS Code compatible language package for `.bus` files. The package
-adds file association and syntax highlighting for shebang lines, comments,
-include lines, sticky directive lines, command targets, flags, `key=value`
+BusDK ships three `.bus` editor-support layers.
+
+The first is the VS Code compatible language package. It adds file association,
+syntax highlighting, and semantic tokens for shebang lines, comments, include
+lines, sticky directive lines, command targets, flags, `key=value`
 assignments, quoted strings, trailing line continuations, and common date-like
 values that appear in Bus command files.
 
 This is the primary install path for VS Code, Cursor, VSCodium, Windsurf, and
 other editors that can consume VS Code extensions or `.vsix` packages.
+
+The second is a Tree-sitter grammar under `bus/editors/tree-sitter-bus/` for
+parser-backed highlighting in editors such as Neovim and Emacs.
+
+The third is a lightweight stdio language server at
+`bus/editors/vscode-bus-language/language-server.js`. Editors that can launch a
+custom language server can use it directly for `.bus` semantic tokens even when
+they do not consume VS Code extensions.
 
 ## Install a shipped package
 
@@ -37,14 +47,35 @@ make package-vscode-extension
 That command writes a `.vsix` artifact into `bus/bin/`. Maintainers can ship
 that same file to users through release assets or another downloadable channel.
 
+The supported release surfaces are intentionally simple. The `.vsix` artifact
+is the first-class downloadable package for VS Code, Cursor, and Windsurf, and
+the same extension metadata is also validated for the Open VSX-compatible
+identifier `busdk.language-bus` / `busdk/language-bus` so VSCodium-style
+distribution remains aligned with the shipped package metadata.
+
+From the `bus` repository root, maintainers can validate that release metadata
+still matches those supported distribution paths:
+
+```sh
+make check-vscode-extension-release
+```
+
 ## What the package contains
 
-The source lives under `bus/editors/vscode-bus-language/`. BusDK keeps one
-canonical grammar there and packages it into the installable `.vsix` artifact
-with an offline packager script. The same repository also verifies
-representative `.bus` grammar fixtures in both source form and packaged `.vsix`
-form, so shipping the extension does not depend on users writing local editor
-settings by hand or on maintainers checking regex changes manually.
+The VS Code-compatible source lives under `bus/editors/vscode-bus-language/`.
+BusDK keeps one canonical TextMate grammar there, packages it into the
+installable `.vsix` artifact with an offline packager script, and ships a local
+semantic-token provider plus the same stdio language-server script that other
+editors can run directly.
+
+The parser-backed Tree-sitter source lives under `bus/editors/tree-sitter-bus/`
+with `grammar.js` and `queries/highlights.scm`. That is the intended integration
+path for editors that use Tree-sitter natively.
+
+The repository verifies these artifacts with deterministic offline checks, so
+shipping the extension or the parser-backed assets does not depend on users
+writing local editor settings by hand or on maintainers checking grammar changes
+manually.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -1,6 +1,6 @@
 ---
 title: bus-journal — post and query ledger journal entries
-description: bus journal is the authoritative ledger module for BusDK. Use it to add balanced entries, inspect account activity, import legacy journals, and automate classified or template-based postings.
+description: bus journal is the authoritative ledger module for BusDK. Use it to add balanced entries, materialize opening balances, inspect account activity, import legacy journals, and automate classified or template-based postings.
 ---
 
 ## `bus-journal` — post and query ledger journal entries
@@ -38,6 +38,15 @@ bus journal add \
   --source-system payroll \
   --source-id 2026-01 \
   --if-missing
+```
+
+Materialize one explicit opening entry from a prior workspace:
+
+```bash
+bus journal opening \
+  --from ../fy2025 \
+  --as-of 2025-12-31 \
+  --date 2026-01-01
 ```
 
 Check balances and inspect one account’s movement:
@@ -78,6 +87,7 @@ bus journal template post \
 
 `bus journal init [-C <dir>] [global flags]`  
 `bus journal add --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
+`bus journal opening (--from <workspace> | --balances-file <csv>) --as-of <YYYY-MM-DD> --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [-C <dir>] [global flags]`  
 `bus journal add --bulk-in <file|-> [-C <dir>] [global flags]`  
 `bus journal balance [--as-of <YYYY-MM-DD>] [-C <dir>] [global flags]`  
 `bus journal account-activity --account <code[,code]> [--period <id>] [--from-date <YYYY-MM-DD>] [--to-date <YYYY-MM-DD>] [--opening <all|exclude|only>] [--top <n>] [-C <dir>] [global flags]`  
@@ -90,6 +100,8 @@ bus journal template post \
 `init` prepares the journal datasets and schemas.
 
 `add` is the normal command for manual postings and for simple automation. It requires a balanced debit and credit set.
+
+`opening` is the year-split helper. It turns prior end-of-period balance-sheet balances into ordinary stored journal rows in the new workspace instead of relying on hidden cross-workspace lookups.
 
 `balance` is the fastest way to answer “what is the balance as of this date?”.
 
@@ -110,6 +122,8 @@ Accounts can be given as codes or as account names that already exist in the cha
 Visible voucher numbers follow the shared workspace ID policy when configured in [bus-config](./bus-config). Without a workspace override, the default visible voucher format is a yearly sequence such as `V-2026-000001`, while technical transaction IDs remain machine-friendly.
 
 `--source-id` plus optional `--source-system` makes replay-safe posting possible. This is the simplest way to avoid duplicate automated postings.
+
+`opening` carries forward only `asset`, `liability`, and `equity` accounts. The carried balances must sum to zero, and rerunning the same opening source skips idempotently instead of duplicating the opening entry.
 
 The workspace storage format is handled automatically. Users normally do not need different journal commands for CSV and `PCSV-1`.
 
@@ -136,7 +150,7 @@ bus reports day-book --period 2026-01 --format pdf -o ./out/day-book-2026-01.pdf
 
 These commands use [Standard global flags](../cli/global-flags). The most important detail is that `--format` is mainly for `balance` and `account-activity`. Commands that write data, such as `add`, `import`, `classify apply`, and `template post`, are about mutation rather than report formatting.
 
-Use `--dry-run` before `import`, `classify apply`, `template post`, or `template apply` when you want to preview the effect without writing.
+Use `--dry-run` before `opening`, `import`, `classify apply`, `template post`, or `template apply` when you want to preview the effect without writing.
 
 For the full option list, run `bus journal --help`.
 

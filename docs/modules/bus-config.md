@@ -123,6 +123,10 @@ This is also the right place for workspace-wide identity defaults that are not r
 
 `id-generation` manages the shared numbering policy without forcing you to rewrite nested JSON. Use `list` and `show` when you want to inspect the current policy, `set-type` and `add-series` when you want to change one visible series or technical ID kind, `remove-series` when you want to delete one named selector, `validate` when you want a quick deterministic check, and `explain` when you want to see which effective policy Bus would resolve for one selector set.
 
+When a sequence template uses `{inc}`, zero-padding is explicit. Add a width in
+the configured range only when you want padded values such as `T-001`. If the
+range omits width, Bus keeps the visible number unpadded, for example `V-1`.
+
 ### Settings most users care about
 
 These are the settings most people configure first:
