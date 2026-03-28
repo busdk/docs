@@ -32,7 +32,8 @@ bus invoices INV-2026-001 add \
   --quantity 10 \
   --unit-price 100 \
   --income-account "Consulting Income" \
-  --vat-rate 25.5
+  --vat-rate 25.5 \
+  --vat-treatment domestic_standard
 ```
 
 Validate all invoices and list unpaid ones:
@@ -148,6 +149,8 @@ Invoice totals and VAT totals are validated against the line data when those tot
 `--if-missing` and `--upsert` are replay-oriented helpers. They cannot be combined. For line-level `<invoice-id> add`, they also require an explicit `--line-no`.
 
 `--legacy-replay` exists for old non-normalized source data. Keep it as a migration/replay tool rather than your default normal workflow.
+
+If the source system already knows the VAT treatment, store it on the invoice line with `--vat-treatment` or via the import profile. That canonical line-level field is what downstream VAT tooling should prefer before any journal fallback.
 
 `pdf` uses its own `--out` flag instead of the global `--output` flag.
 

@@ -37,6 +37,7 @@ bus journal add \
   --credit 1910=4200.00 \
   --source-system payroll \
   --source-id 2026-01 \
+  --source-link payroll_run=2026-01 \
   --if-missing
 ```
 
@@ -62,7 +63,11 @@ Import a legacy ledger CSV through a deterministic import profile:
 bus journal import \
   --profile fi-ledger-legacy \
   --file ./legacy/daybook.csv \
-  --source-id-from "Source Ref"
+  --source-id-from "Source Ref" \
+  --external-source-ref-from "Legacy Ref" \
+  --source-link-from "invoice_id=Invoice ID" \
+  --source-voucher-number-from "Invoice Number" \
+  --source-voucher-label-from "Invoice Label"
 ```
 
 Generate bank-driven posting proposals and then apply them:
@@ -86,12 +91,12 @@ bus journal template post \
 ### Synopsis
 
 `bus journal init [-C <dir>] [global flags]`  
-`bus journal add --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
+`bus journal add --date <YYYY-MM-DD> --desc <text> [--source-id <key>] [--external-source-ref <text>] [--source-link <kind=value>] [--vat-treatment <code>] [--source-voucher-context <text>] [--source-voucher-number <text>] [--source-voucher-label <text>] [--source-voucher-group <token>] [--if-missing] --debit <account>=<amount> ... --credit <account>=<amount> ... [-C <dir>] [global flags]`  
 `bus journal opening (--from <workspace> | --balances-file <csv>) --as-of <YYYY-MM-DD> --date <YYYY-MM-DD> [--desc <text>] [--source-id <key>] [-C <dir>] [global flags]`  
 `bus journal add --bulk-in <file|-> [-C <dir>] [global flags]`  
 `bus journal balance [--as-of <YYYY-MM-DD>] [-C <dir>] [global flags]`  
 `bus journal account-activity --account <code[,code]> [--period <id>] [--from-date <YYYY-MM-DD>] [--to-date <YYYY-MM-DD>] [--opening <all|exclude|only>] [--top <n>] [-C <dir>] [global flags]`  
-`bus journal import --profile <name> --file <path> [--source-id-from <column>] [--mapping-profile <name>] [--header-row <n>] [--map <field=header|column>] ... [-C <dir>] [global flags]`  
+`bus journal import --profile <name> --file <path> [--source-id-from <column>] [--external-source-ref-from <column>] [--source-link-from <kind=column>] [--source-voucher-context-from <column>] [--source-voucher-number-from <column>] [--source-voucher-label-from <column>] [--source-voucher-group-from <column>] [--mapping-profile <name>] [--header-row <n>] [--map <field=header|column>] ... [-C <dir>] [global flags]`  
 `bus journal classify <subcommand> ...`  
 `bus journal template <post|apply> ...`
 
@@ -99,15 +104,15 @@ bus journal template post \
 
 `init` prepares the journal datasets and schemas.
 
-`add` is the normal command for manual postings and for simple automation. It requires a balanced debit and credit set.
+`add` is the normal command for manual postings and for simple automation. It requires a balanced debit and credit set, and it also requires `--desc` even when the intended description is explicitly empty as `--desc ""`. `--source-id` stays the canonical Bus idempotency and source-link key, while `--external-source-ref` preserves one separate legacy or migration pointer when parity review still needs the original foreign-system reference. When one posting needs more than one machine-readable source relation, repeat `--source-link kind=value` instead of overloading canonical `source_id`. If the posting has no canonical source invoice line but it still needs an explicit tax-treatment marker, store that separately with `--vat-treatment` instead of hiding it inside the free-text description. If the upstream document has its own visible voucher notation, preserve it separately with `--source-voucher-context`, `--source-voucher-number`, `--source-voucher-label`, and `--source-voucher-group` instead of replacing canonical Bus IDs.
 
 `opening` is the year-split helper. It turns prior end-of-period balance-sheet balances into ordinary stored journal rows in the new workspace instead of relying on hidden cross-workspace lookups.
 
 `balance` is the fastest way to answer “what is the balance as of this date?”.
 
-`account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher and source identifiers.
+`account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher, source, and external parity-reference identifiers.
 
-`import` is for legacy journal or day-book migration work where you want deterministic mapping rather than hand-posting old history.
+`import` is for legacy journal or day-book migration work where you want deterministic mapping rather than hand-posting old history. `--external-source-ref-from` preserves one dedicated foreign-system reference, `--source-link-from kind=column` preserves extra structured legacy references such as invoice ids or bank-row pointers alongside canonical `source_id`, and the `--source-voucher-*-from` selectors preserve the imported source-facing voucher notation for later review output.
 
 `classify` is the bank-to-journal workflow. It can generate proposals from bank rows, apply approved proposals, learn candidate rules from earlier postings, and handle suspense or loan-split flows.
 
@@ -121,7 +126,7 @@ Accounts can be given as codes or as account names that already exist in the cha
 
 Visible voucher numbers follow the shared workspace ID policy when configured in [bus-config](./bus-config). Without a workspace override, the default visible voucher format is a yearly sequence such as `V-2026-000001`, while technical transaction IDs remain machine-friendly.
 
-`--source-id` plus optional `--source-system` makes replay-safe posting possible. This is the simplest way to avoid duplicate automated postings.
+`--source-id` plus optional `--source-system` makes replay-safe posting possible. This is the simplest way to avoid duplicate automated postings. `--external-source-ref` keeps one separate migration/parity reference without changing that canonical idempotency key, repeatable `--source-link` values preserve additional structured audit pointers without changing it either, and `--source-voucher-*` fields keep imported human-facing document numbering visible for review reports without replacing canonical `voucher_id`.
 
 `opening` carries forward only `asset`, `liability`, and `equity` accounts. The carried balances must sum to zero, and rerunning the same opening source skips idempotently instead of duplicating the opening entry.
 

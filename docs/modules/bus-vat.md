@@ -138,7 +138,7 @@ bus vat review --period 2026-01 --source reconcile --basis cash
 
 In reconcile-plus-cash mode, coverage matters. If payment evidence is incomplete, the command can fail unless you explicitly allow partial coverage.
 
-Journal-driven mode can use `vat-account-mapping.csv` for direction and rate fallback when the journal itself does not carry all VAT-specific fields.
+Journal-driven mode can use `vat-account-mapping.csv` for direction and rate fallback when the journal itself does not carry all VAT-specific fields. If the posting itself carries canonical `vat_treatment`, `bus vat` uses that journal fallback only when no structured invoice-line treatment exists.
 
 `filed-diff` is the cleanest control command when you want to prove that replayed totals match already-filed totals exactly.
 

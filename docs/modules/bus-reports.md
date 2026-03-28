@@ -93,8 +93,8 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-balances --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports general-ledger --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--short-ids] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--short-ids] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports general-ledger --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports ledger-log --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
 `bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
@@ -151,6 +151,19 @@ human-facing `Entry` or `Vienti` column is omitted when `Tx` and `Rivi` are
 already visible, while machine-facing outputs such as CSV still retain the
 stable `entry_id` field. If you also want the same shortened display value for
 `Tx` in CSV, add `--short-ids` to `day-book` or `general-ledger`.
+
+If a posting also carries imported source voucher notation from `bus-journal`,
+add `--show-source-voucher` to `day-book` or `general-ledger` when you want
+that human-facing review output to show the preserved source-facing voucher
+label or context/number beside the description. If parity review needs the
+same imported block structure as the source system, add `--group-by
+source-voucher` to subtotal by the stored source voucher group token. If a
+posting also carries one legacy or migration pointer, add
+`--show-external-source-ref` when you want the deterministic
+`external_source_ref` value shown as well. If one posting carries more than
+one preserved source relation, add `--show-source-links` too. CSV and JSON
+keep `source_voucher`, `external_source_ref`, and `source_links` even without
+those human-facing flags.
 
 In those human-facing `general-ledger` and `day-book` views, the amount column
 is signed: debit rows show a leading plus sign and credit rows a leading minus
