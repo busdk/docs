@@ -136,7 +136,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `trial-balance` and `account-balances` are the quickest health checks for a period-end or year-end review.
 
-`day-book` shows entries in posting order. `general-ledger` groups them by account. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
+`day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
 
 `account-ledger` is a narrower, date-range-focused tool for one account. It is useful when a single account needs explanation over a smaller time window.
 
@@ -152,11 +152,22 @@ already visible, while machine-facing outputs such as CSV still retain the
 stable `entry_id` field. If you also want the same shortened display value for
 `Tx` in CSV, add `--short-ids` to `day-book` or `general-ledger`.
 
+In those human-facing `general-ledger` and `day-book` views, the amount column
+is signed: debit rows show a leading plus sign and credit rows a leading minus
+sign. `Dr` and `Cr` are used instead of full debit and credit labels, and
+day-book compacts the visible account column to `<tilinumero> <tilin nimi>` to
+save width. CSV and JSON keep the stable machine-facing split between `side`
+and unsigned `amount`.
+
 PDF day-book and general-ledger outputs also size columns from the actual
-rendered content instead of using one fixed layout. That gives more room to
-long `Tx` and description values, and Bus hides the `Voucher` column entirely
-when it would be blank on every row. Wrapped PDF cells now share one logical
-row height so the table stays visually aligned across columns.
+rendered content instead of using one fixed layout. The resolved columns are
+stretched across the full printable page width, but short identifier columns
+stay compact so `Description` absorbs most of that extra width. Bus also hides
+the `Voucher` column entirely when it would be blank on every row. Wrapped PDF
+cells now share one logical row height so the table stays visually aligned
+across columns. In `general-ledger` PDF, a whole account table starts on a
+fresh page when the next section would otherwise begin at the bottom of the
+current page and continue immediately onto the following page.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
@@ -187,11 +198,16 @@ If you are using BusDK for household or personal finance, set
 [workspace configuration](../data/workspace-configuration). That profile now
 switches `bus-reports` to the household/person review family:
 `budget-vs-actual`, `cashflow`, `net-worth`, `account-movement`,
-`transfer-summary`, non-company `evidence-pack` defaults, and internal
+`transfer-summary`, personal `evidence-pack` defaults, and internal
 `annual-template` / `filing-package` / `annual-validate` outputs instead of
 company-style public-filing defaults. Company-style PDF metadata warnings for
-Y-tunnus and signature fields are also suppressed for those personal/non-
-company review outputs.
+Y-tunnus and signature fields are also suppressed for those personal review
+outputs. Because `evidence-pack` is PDF-only, that package currently includes
+only the personal/non-company review documents that already have PDF
+renderers. Sole-proprietor / `tmi` workspaces still keep the non-public annual
+review manifests and checks, but their `evidence-pack` now also includes the
+core `tase` and `tuloslaskelma` artifacts so the yearly package contains the
+expected financial statements.
 
 ### Statement placement and report profiles
 
@@ -217,7 +233,7 @@ This also explains the special rows in Finnish statements. TASE is always one st
 
 `methods-description` is the companion artifact for the bookkeeping method itself. It describes entity context, reporting context, locking/correction model, evidence handling model, report surfaces, and dataset roles in one deterministic review document.
 
-`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package now includes both `materials-register` and `methods-description` as first-class PDFs, a `bank-control` / statement-continuity TSV, `annual-template` and `annual-validate` summaries, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs alongside the main statements, ledgers, and close manifests. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary.
+`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package is now PDF-only: it includes `materials-register` and `methods-description` as first-class PDFs, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs alongside the main statements and ledgers, but it no longer writes CSV or TSV artifacts into the output directory. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary. For `entity_kind=personal` and other non-company profiles, the package stays on the internal review path, but because it is PDF-only it currently includes only the review documents that already have PDF renderers. Sole-proprietor / `tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in that same internal review package.
 
 Comparative figures come only from the current workspace. When comparatives are
 enabled, `balance-sheet`, `profit-and-loss`, and `evidence-pack` use prior-year
@@ -245,7 +261,7 @@ Machine-oriented formats are usually `csv`, `json`, or `tsv`. Human-oriented rev
 
 `profit-and-loss` and `balance-sheet` additionally support `kpa` and `pma` output. Review documents such as `day-book`, `general-ledger`, `voucher-list`, `bank-transactions`, `balance-sheet-reconciliation`, and `materials-register` support `pdf`.
 
-When you use `-o`, missing parent directories are created automatically before the file is written. Failed runs do not replace an existing successful output file.
+When you use `-o`, missing parent directories are created automatically before the file is written. Failed runs do not replace an existing successful output file. PDF metadata timestamps are rendered in local time and include the timezone abbreviation plus numeric UTC offset.
 
 These commands use [Standard global flags](../cli/global-flags). The most commonly used extras here are `-C`, `-o`, `--format`, and `--locale`. In human-facing outputs, `--locale fi` changes both decimal formatting and shared report labels such as headers and PDF titles. When `--locale` is omitted, BusDK first uses the workspace reporting profile language from `busdk.accounting_entity.reporting_profile.fi_statutory.language` when it is configured, and only then falls back to the shell locale. For the complete command matrix, run `bus reports --help`.
 
