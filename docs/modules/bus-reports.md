@@ -93,8 +93,8 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-balances --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports general-ledger --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports general-ledger --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--short-ids] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--short-ids] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports ledger-log --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
 `bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
@@ -137,6 +137,16 @@ the same visible voucher number twice. If `Tositenumero` is already derived
 from the same voucher value, the separate `Voucher` column is left blank. When
 there is a genuinely distinct external document number and voucher id, both
 stay visible.
+
+If you want shorter review-only `Tx` and `Entry` values on screen or in PDFs,
+add `--short-ids` to `day-book` or `general-ledger`. This changes only the
+human-facing rendering for that report run. It does not rewrite the stored
+journal IDs.
+
+PDF day-book and general-ledger outputs also size columns from the actual
+rendered content instead of using one fixed layout. That gives more room to
+long `Tx`, `Entry`, and description values, and Bus hides the `Voucher` column
+entirely when it would be blank on every row.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
