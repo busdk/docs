@@ -62,6 +62,12 @@ Create a printable chart-of-accounts PDF:
 bus accounts report --format pdf --output tililuettelo.pdf
 ```
 
+Show explicit opening and closing balances in the chart-of-accounts view:
+
+```bash
+bus accounts report --as-of 2024-12-31 --opening-as-of 2024-01-01 --format tsv
+```
+
 Generate suggested lines for sole-proprietor owner withdrawal or investment:
 
 ```bash
@@ -78,7 +84,7 @@ bus accounts sole-proprietor withdrawal \
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts groups [--group-id <group-id>] [--as-of <date>] [--opening-as-of <date>] [-C <dir>] [-o <file>] [-f <text|tsv>] [global flags]`  
 `bus accounts groups assign --rule <selector=group-id>... [-C <dir>] [global flags]`  
-`bus accounts report [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
+`bus accounts report [--as-of <date>] [--opening-as-of <date>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
 `bus accounts set --code <account-id> [--name <account-name>] [--type <asset|liability|equity|income|expense>] [-C <dir>] [global flags]`  
 `bus accounts sole-proprietor withdrawal|investment --equity-code <code> --cash-code <code> --amount <amount> [global flags]`
@@ -129,6 +135,11 @@ Validation rejects:
 - account rows whose optional `group_id` points to a missing group
 
 `report` generates a `tililuettelo` view and can include journal-derived balances.
+By default it shows one `Saldo` column for the selected workspace state. When
+you need the same opening-versus-closing comparison style used in statutory
+statements, add `--as-of` and `--opening-as-of`. That switches the output to
+explicit `Alkusaldo` and `Loppusaldo` columns. `--opening-as-of` requires
+`--as-of`.
 `groups assign` gives you a native way to set account-to-group membership in
 bulk without hand-editing CSV rows.
 

@@ -26,12 +26,12 @@ Export a printable day book and general ledger PDF for one period:
 bus reports day-book \
   --period 2026-01 \
   --format pdf \
-  -o ./out/day-book-2026-01.pdf
+  -o ./out/20260131-day-book.pdf
 
 bus reports general-ledger \
   --period 2026-01 \
   --format pdf \
-  -o ./out/general-ledger-2026-01.pdf
+  -o ./out/20260131-general-ledger.pdf
 ```
 
 Create Finnish statutory PDFs for year-end:
@@ -41,13 +41,13 @@ bus reports profit-and-loss \
   --period 2026 \
   --layout-id fi-kpa-tuloslaskelma-kululaji \
   --format pdf \
-  -o ./out/tuloslaskelma-2026.pdf
+  -o ./out/20261231-tuloslaskelma.pdf
 
 bus reports balance-sheet \
   --as-of 2026-12-31 \
   --layout-id fi-kpa-tase \
   --format pdf \
-  -o ./out/tase-2026.pdf
+  -o ./out/20261231-tase.pdf
 ```
 
 By default, `profit-and-loss` and `balance-sheet` hide rows whose values are
@@ -68,7 +68,7 @@ Produce the accounting materials register that many auditors and close checklist
 ```bash
 bus reports materials-register \
   --format pdf \
-  -o ./out/materials-register-2026.pdf
+  -o ./out/20261231-materials-register.pdf
 ```
 
 Generate the workspace methods description (`menetelmäkuvaus`) that explains how bookkeeping data, evidence links, locking, and reports are handled:
@@ -76,7 +76,7 @@ Generate the workspace methods description (`menetelmäkuvaus`) that explains ho
 ```bash
 bus reports methods-description \
   --format pdf \
-  -o ./out/methods-description-2026.pdf
+  -o ./out/20261231-methods-description.pdf
 ```
 
 Compare imported source totals with journal totals during migration or data validation:
@@ -248,7 +248,7 @@ This also explains the special rows in Finnish statements. TASE is always one st
 
 `methods-description` is the companion artifact for the bookkeeping method itself. It describes entity context, reporting context, locking/correction model, evidence handling model, report surfaces, and dataset roles in one deterministic review document.
 
-`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package is now PDF-only: it includes `materials-register` and `methods-description` as first-class PDFs, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs alongside the main statements and ledgers, but it no longer writes CSV or TSV artifacts into the output directory. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary. For `entity_kind=personal` and other non-company profiles, the package stays on the internal review path, but because it is PDF-only it currently includes only the review documents that already have PDF renderers. Sole-proprietor / `tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in that same internal review package.
+`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package is now PDF-only: it includes the main statements, ledgers, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs, but it no longer writes CSV or TSV artifacts into the output directory and it no longer includes `materials-register` or `methods-description` in the default package. Dated default filenames use a compact `YYYYMMDD-` prefix such as `20241231-tase.pdf` and `20241231-day-book.pdf`. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary. For `entity_kind=personal` and other non-company profiles, the package stays on the internal review path, but because it is PDF-only it currently includes only the review documents that already have PDF renderers. Sole-proprietor / `tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in that same internal review package.
 
 Comparative figures come only from the current workspace. When comparatives are
 enabled, `balance-sheet`, `profit-and-loss`, and `evidence-pack` use prior-year
