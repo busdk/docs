@@ -260,10 +260,9 @@ documents and keeps the visible transaction identifier short.
 you want a readable review artifact instead of raw bank-import rows. Its PDF
 output uses the same shared wrapped review-table path as the other accountant
 review documents, including per-account headings, page-safe repeated headers,
-and a distinct closing-totals section. The visible `Loppusaldo` column is also
-shown on the per-account `YHTEENSÄ` rows and on the main overall summary row,
-so the readable subtotal lines carry the real closing balance instead of a
-placeholder zero.
+and a distinct closing-totals section. The visible `Loppusaldo` column now
+shows the running balance after each bank row and also carries the ending
+saldo onto the per-account `YHTEENSÄ` rows and the main overall summary row.
 
 `materials-register` lists accounting datasets, schemas, storage paths, and linkage fields. In Finnish accounting practice this corresponds to the `luettelo kirjanpidoista ja aineistoista`.
 
