@@ -112,7 +112,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports bank-transactions --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--format <text|csv|tsv|json|markdown>] [-C <dir>] [global flags]`  
+`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [-C <dir>] [global flags]`  
 `bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
 
 ### Choose the right command
@@ -192,7 +192,9 @@ current page would otherwise wrap the visible `Account` column unnecessarily.
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
 `source_id` stays available as a separate trace field instead of replacing the
-human review number.
+human review number. In text, markdown, and PDF review outputs, the visible
+transaction identifier is shortened in the same human-facing way as the other
+review tables.
 
 ### Finnish statutory reporting
 
@@ -205,7 +207,10 @@ For Finnish statement output, the most important decision is the layout. The com
 
 If you want a built-in statutory layout, use `--layout-id`. If you maintain your own statement layout file, use `--layout`.
 
-`balance-sheet-specification` is internal evidence output, not a PRH filing document. Use it when you need a tase-erittely for review, audit, or close documentation.
+`balance-sheet-specification` is internal evidence output, not a PRH filing
+document. Use it when you need a tase-erittely for review, audit, or close
+documentation. Its PDF table now uses the same adaptive wrapped full-width
+layout as the other accountant-facing review documents.
 
 `balance-sheet-reconciliation` uses the same effective liability-side
 classification as the rendered TASE, so a balanced statutory TASE should not
@@ -247,15 +252,47 @@ This also explains the special rows in Finnish statements. TASE is always one st
 
 ### Close and audit package commands
 
-`voucher-list` creates a printable `tositeluettelo`.
+`voucher-list` creates a printable `tositeluettelo`. Its PDF output uses the
+same wrapped full-width review-table path as the accountant-facing ledger
+documents and keeps the visible transaction identifier short.
 
-`bank-transactions` creates a grouped bank review document. This is useful when you want a readable review artifact instead of raw bank-import rows.
+`bank-transactions` creates a grouped bank review document. This is useful when
+you want a readable review artifact instead of raw bank-import rows. Its PDF
+output uses the same shared wrapped review-table path as the other accountant
+review documents, including per-account headings, page-safe repeated headers,
+and a distinct closing-totals section. The visible `Loppusaldo` column is also
+shown on the per-account `YHTEENSÄ` rows and on the main overall summary row,
+so the readable subtotal lines carry the real closing balance instead of a
+placeholder zero.
 
 `materials-register` lists accounting datasets, schemas, storage paths, and linkage fields. In Finnish accounting practice this corresponds to the `luettelo kirjanpidoista ja aineistoista`.
 
 `methods-description` is the companion artifact for the bookkeeping method itself. It describes entity context, reporting context, locking/correction model, evidence handling model, report surfaces, and dataset roles in one deterministic review document.
 
-`evidence-pack` is the one-command close bundle. It writes a target directory full of standard artifacts and also writes a manifest of what it created. The package is now PDF-only: it includes the main statements, ledgers, internal `tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs, but it no longer writes CSV or TSV artifacts into the output directory and it no longer includes `materials-register` or `methods-description` in the default package. Dated default filenames use a compact `YYYYMMDD-` prefix such as `20241231-tase.pdf` and `20241231-day-book.pdf`. You can trim the package with `--profile accountant|machine` or explicit `--include` / `--exclude` selectors, and you can rename generated artifacts deterministically with repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`, `report`, `report:format`, or the default filename; templates support `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`. Workspace configuration can provide the same defaults through `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and `evidence_pack_filename_templates`, and command-line flags override those defaults deterministically. If one artifact fails, `evidence-pack` still attempts the remaining artifacts, writes the manifest of successful outputs, and only then exits non-zero with an aggregated stderr summary. For `entity_kind=personal` and other non-company profiles, the package stays on the internal review path, but because it is PDF-only it currently includes only the review documents that already have PDF renderers. Sole-proprietor / `tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in that same internal review package.
+`evidence-pack` is the one-command close bundle. It writes a target directory
+full of standard artifacts and also writes a manifest of what it created. The
+package is now PDF-only: it includes the main statements, ledgers, internal
+`tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs,
+but it no longer writes CSV or TSV artifacts into the output directory and it
+no longer includes `materials-register` or `methods-description` in the
+default package. Dated default filenames use a compact `YYYYMMDD-` prefix such
+as `20241231-tase.pdf` and `20241231-day-book.pdf`. You can trim the package
+with `--profile accountant|machine` or explicit `--include` / `--exclude`
+selectors, and you can rename generated artifacts deterministically with
+repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`,
+`report`, `report:format`, or the default filename; templates support
+`{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`.
+Workspace configuration can provide the same defaults through
+`busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and
+`evidence_pack_filename_templates`, and command-line flags override those
+defaults deterministically. If one artifact fails, `evidence-pack` still
+attempts the remaining artifacts, writes the manifest of successful outputs,
+and only then exits non-zero with an aggregated stderr summary. For
+`entity_kind=personal` and other non-company profiles, the package stays on
+the internal review path, but because it is PDF-only it currently includes
+only the review documents that already have PDF renderers. Sole-proprietor /
+`tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in
+that same internal review package.
 
 Comparative figures come only from the current workspace. When comparatives are
 enabled, `balance-sheet`, `profit-and-loss`, and `evidence-pack` use prior-year
@@ -281,7 +318,13 @@ If you need a pass/fail gate on these outputs, combine them with [bus-validate](
 
 Machine-oriented formats are usually `csv`, `json`, or `tsv`. Human-oriented review outputs are usually `text`, `markdown`, or `pdf`.
 
-`profit-and-loss` and `balance-sheet` additionally support `kpa` and `pma` output. Review documents such as `day-book`, `general-ledger`, `voucher-list`, `bank-transactions`, `balance-sheet-reconciliation`, and `materials-register` support `pdf`.
+`profit-and-loss` and `balance-sheet` additionally support `kpa` and `pma`
+output. Review documents such as `day-book`, `general-ledger`,
+`balance-sheet-specification`, `voucher-list`, `bank-transactions`,
+`balance-sheet-reconciliation`, and `materials-register` support `pdf`. The
+printable review PDFs use adaptive wrapped tables that stretch to the full
+printable page width, and printable report variants leave an explicit gap
+before `Allekirjoitukset`.
 
 When you use `-o`, missing parent directories are created automatically before the file is written. Failed runs do not replace an existing successful output file. PDF metadata timestamps are rendered in local time and include the timezone abbreviation plus numeric UTC offset.
 
