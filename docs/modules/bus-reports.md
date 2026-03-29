@@ -93,7 +93,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 ### Synopsis
 
-`bus reports trial-balance --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports trial-balance --as-of <YYYY-MM-DD> [--grouped] [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-balances --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports general-ledger --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
@@ -136,7 +136,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 ### Everyday review reports
 
-`trial-balance` and `account-balances` are the quickest health checks for a period-end or year-end review.
+`trial-balance` and `account-balances` are the quickest health checks for a period-end or year-end review. When you want the same canonical hierarchy you already use elsewhere in Finnish reporting, add `--grouped` to `trial-balance` and the human-facing text, Markdown, or PDF output will show account-group rows with their subtotal balances above the posting accounts below them.
 
 `day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
 
@@ -190,6 +190,8 @@ when the next section would otherwise begin at the bottom of the current page
 and continue immediately onto the following page. In `day-book` PDF, that same
 page-local width resolution also rebalances width away from `Selite` when the
 current page would otherwise wrap the visible `Account` column unnecessarily.
+Signed amount cells are kept on one rendered line instead of wrapping across
+multiple lines.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported

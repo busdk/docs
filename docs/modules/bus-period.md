@@ -34,8 +34,14 @@ bus period validate
 Close and then lock a finished period:
 
 ```bash
-bus period close --period 2026-01 --post-date 2026-01-31
+bus period close --period 2026-01
 bus period lock --period 2026-01
+```
+
+Freeze a reviewed period without automatic closing journals:
+
+```bash
+bus period lock --period 2026-02
 ```
 
 Reopen a closed period for a controlled correction window:
@@ -63,7 +69,7 @@ bus period opening \
 `bus period init [-C <dir>] [global flags]`  
 `bus period add --period <YYYY|YYYY-MM|YYYYQn> [--start-date <YYYY-MM-DD>] [--end-date <YYYY-MM-DD>] [--retained-earnings-account <code>] [-C <dir>] [global flags]`  
 `bus period open --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
-`bus period close --period <YYYY|YYYY-MM|YYYYQn> [--post-date <YYYY-MM-DD>] [-C <dir>] [global flags]`  
+`bus period close --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
 `bus period lock --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
 `bus period reopen --period <YYYY|YYYY-MM|YYYYQn> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`  
 `bus period set --period <YYYY|YYYY-MM|YYYYQn> --retained-earnings-account <code> [-C <dir>] [global flags]`  
@@ -77,6 +83,10 @@ The normal lifecycle is:
 
 `future` → `open` → `closed` → `locked`
 
+There is also an administrative freeze path:
+
+`open` → `locked` with `lock`
+
 If a correction is needed, `reopen` creates a controlled exception path from a closed period. After the corrections, you close it again.
 
 `list` shows the effective current state. `list --history` is the command to use when you want to see the full append-only timeline of changes.
@@ -87,9 +97,11 @@ Use `add` when the period does not exist yet.
 
 Use `open` when posting work should begin.
 
-Use `close` when the period’s result should be closed and closing artifacts written.
+Use `close` when the period bookkeeping is complete enough to mark a deterministic cut-off and write the carry-forward snapshot.
 
 Use `lock` when the period should no longer be reopened casually.
+
+Use `lock` when the period should become non-editable without writing automatic close vouchers.
 
 Use `set` to repair or define the retained-earnings account for a period.
 
@@ -101,7 +113,9 @@ Supported period identifiers are `YYYY`, `YYYY-MM`, and `YYYYQn`.
 
 Each period needs a retained-earnings account. If you omit it on `add`, the default is `3200`.
 
-`close` automatically creates the closing mechanics for the period, including the result transfer to retained earnings.
+`close` is a non-posting finalization step. It validates the period slice, appends a closed period-control row, updates `journal-closed-periods.csv`, and writes `periods/<period-id>/opening_balances.csv` for carry-forward use. If you need year-end or tax adjustments, post those explicitly before closing.
+
+`lock` is the administrative freeze command. It updates period control and `journal-closed-periods.csv`, but it does not change the journal and it does not create period-owned artifacts.
 
 `opening` expects the target period to already exist and be open.
 
@@ -130,13 +144,13 @@ For a normal monthly close:
 ```bash
 bus period validate
 bus reports trial-balance --as-of 2026-01-31
-bus period close --period 2026-01 --post-date 2026-01-31
+bus period close --period 2026-01
 bus period lock --period 2026-01
 ```
 
 ### Files
 
-This module owns `periods.csv` and `periods.schema.json` at the workspace root. When you close a period, it also writes review artifacts under `periods/<period-id>/`, including `close_entries.csv` and `opening_balances.csv`.
+This module owns `periods.csv` and `periods.schema.json` at the workspace root. When you close a period, it also writes the derived carry-forward artifact `periods/<period-id>/opening_balances.csv`. `close` does not append synthetic close vouchers or a separate `close_entries.csv`.
 
 ### Output and flags
 
@@ -159,8 +173,8 @@ period add --period 2026-01 --retained-earnings-account 3200
 # same as: bus period open --period 2026-01
 period open --period 2026-01
 
-# same as: bus period close --period 2026-01 --post-date 2026-01-31
-period close --period 2026-01 --post-date 2026-01-31
+# same as: bus period close --period 2026-01
+period close --period 2026-01
 ```
 
 <!-- busdk-docs-nav start -->
@@ -176,6 +190,6 @@ period close --period 2026-01 --post-date 2026-01-31
 - [Owns master data: Accounting periods](../master-data/accounting-periods/index)
 - [Module reference: bus-period](../modules/bus-period)
 - [Module reference: bus-journal](../modules/bus-journal)
-- [Workflow: Year-end close (closing entries)](../workflow/year-end-close)
+- [Workflow: Year-end close and lock](../workflow/year-end-close)
 - [Finnish closing deadlines and legal milestones](../compliance/fi-closing-deadlines-and-legal-milestones)
 - [Finnish closing checklist and reconciliations](../compliance/fi-closing-checklist-and-reconciliations)

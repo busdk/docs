@@ -1,11 +1,11 @@
 ---
 title: Close an accounting period
-description: Generate closing entries and mark the period closed for review.
+description: Mark the period closed after postings and adjustments are complete, without creating synthetic close vouchers.
 ---
 
 ## Close an accounting period
 
-Close transitions a period from state **open** to **closed** and generates the closing entries. The period must exist and be open. Run `bus period close --period <period>`; optional `--post-date` defaults to the last date of the period.
+Close transitions a period from state **open** to **closed** after the period bookkeeping is complete. The command validates that the selected period slice is balanced, appends the closed control row, updates `journal-closed-periods.csv`, and writes the carry-forward snapshot `periods/<period>/opening_balances.csv`. It does not append synthetic close vouchers to the journal.
 
 Owner: [bus period](../../modules/bus-period).
 
@@ -21,6 +21,5 @@ This action is required in bookkeeping so the register can be used as a determin
 
 ### Sources
 
-- [Workflow: Year-end close (closing entries)](../../workflow/year-end-close)
+- [Workflow: Year-end close and lock](../../workflow/year-end-close)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)
-

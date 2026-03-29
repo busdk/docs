@@ -1,15 +1,15 @@
 ---
-title: Year-end close (closing entries)
-description: "Year-end close is a stricter version of period close: Alice runs validation, ensures VAT is complete, generates closing entries deterministically, locks the…"
+title: Year-end close and lock
+description: "Year-end close validates and finalizes the year-end cut-off, generates the report set, and locks the reported basis once it has been used externally."
 ---
 
-## Year-end close (closing entries)
+## Year-end close and lock
 
-Year-end close is a stricter version of period close: Alice runs validation, ensures VAT is complete, generates closing entries deterministically, locks the final period, and then produces the year-end report set. The outcome is a repository revision that makes the derivation of opening balances for the next year straightforward to review.
+Year-end close is a stricter version of ordinary period close. Alice runs validation, ensures VAT and other year-end adjustments are complete, finalizes the cut-off, generates the report set, and then locks the reported basis once it has been used externally. The outcome is a repository revision that makes the derivation of opening balances for the next year straightforward to review without inventing synthetic close vouchers.
 
 In Finnish closing practice, this workflow should be aligned with statutory milestones: prepare the financial statement package within 4 months from year end, complete Oy general meeting approval within 6 months, and complete Trade Register filing in the applicable filing window (commonly 8 months for Oy/cooperative filing paths). Statement-facing outputs are prepared for Finnish/Swedish presentation in euros and move to formal dating/signing in the governance step.
 
-1. Alice validates that the workspace datasets are internally consistent before generating close outputs:
+1. Alice validates that the workspace datasets are internally consistent before finalizing the year-end cut-off:
 
 ```bash
 bus validate
@@ -22,21 +22,21 @@ bus vat report --period 2026-12
 bus vat export --period 2026-12
 ```
 
-3. Alice closes the final accounting period and generates the closing entry outputs:
+3. Alice posts any final year-end adjustments that are required for the financial statement, taxation, or management reporting basis:
 
 ```bash
-bus period close --period 2026-12 --post-date 2026-12-31
+bus journal add ...
 ```
 
-The close produces deterministic entries that bring the period to a clean boundary and records period-close metadata as repository data. Transfer of profit or loss to equity (retained earnings) is expressed as new append-only postings. Until [bus period](../modules/bus-period) supports automatic result-to-equity transfer, post that transfer with `bus journal add` using your chart’s equity account; see the [bus-period](../modules/bus-period) CLI reference.
-
-4. Alice locks the closed period to prevent later edits from drifting reported results:
+4. Alice closes the final accounting period as a non-posting cut-off:
 
 ```bash
-bus period lock --period 2026-12
+bus period close --period 2026-12
 ```
 
-5. Alice generates the year-end report set from the closed, locked journal:
+The close records period-close metadata as repository data, updates closed-period compatibility markers, and writes the derived carry-forward snapshot used by later opening/reporting logic. It does not add synthetic retained-earnings vouchers to the journal.
+
+5. Alice generates the year-end report set from the closed journal basis:
 
 ```bash
 bus reports trial-balance --as-of 2026-12-31
@@ -45,7 +45,13 @@ bus reports profit-and-loss --period 2026-12 --format pma
 bus reports balance-sheet --as-of 2026-12-31 --format pma
 ```
 
-6. Alice records the year-end close as a new revision using her version control tooling, so the closed year is easy to reference and export later.
+6. Alice locks the period after the year-end outputs have been issued, filed, or otherwise used externally:
+
+```bash
+bus period lock --period 2026-12
+```
+
+7. Alice records the year-end close as a new revision using her version control tooling, so the closed year is easy to reference and export later.
 
 If a particular jurisdiction, accountant, or workflow needs additional close outputs beyond what the pinned modules provide, the schema-defined repository data still allows Alice to derive those outputs with a script and store them as additional repository data, without rewriting earlier records.
 

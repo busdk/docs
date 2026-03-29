@@ -17,7 +17,7 @@ Secondary read-only use cases are provided by these modules when they consume th
 
 ### Actions
 
-[Add an accounting period](./add) creates periods in **future** state so they exist before opening. You can add multiple future periods (for example all months in a year) and open them in sequence. [Open an accounting period](./open) transitions **future** to **open**, [Close an accounting period](./close) transitions **open** to **closed** and generates closing entries, and [Lock an accounting period](./lock) transitions **closed** to **locked** to prevent further period changes.
+[Add an accounting period](./add) creates periods in **future** state so they exist before opening. You can add multiple future periods (for example all months in a year) and open them in sequence. [Open an accounting period](./open) transitions **future** to **open**, [Close an accounting period](./close) transitions **open** to **closed** as a non-posting cut-off that writes carry-forward artifacts, and [Lock an accounting period](./lock) transitions an open, reopened, or closed period to **locked** to prevent further changes after reporting.
 
 ### Properties
 
@@ -41,5 +41,5 @@ Budgets reference accounting periods via [`period`](../budgets/period) and `year
 
 ### Sources
 
-- [Workflow: Year-end close (closing entries)](../../workflow/year-end-close)
+- [Workflow: Year-end close and lock](../../workflow/year-end-close)
 - [Finnish bookkeeping and tax-audit compliance](../../compliance/fi-bookkeeping-and-tax-audit)

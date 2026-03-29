@@ -62,6 +62,14 @@ Assign accounts to groups in bulk:
 bus accounts groups assign --rule '1*=assets' --rule '1501=inventory_materials'
 ```
 
+Add, update, or remove one group row without editing CSV by hand:
+
+```bash
+bus accounts groups add --group-id inventory --code 150 --name "Vaihto-omaisuus" --parent-group-id assets --profile bs_full
+bus accounts groups set --group-id inventory --name "Aineet ja tarvikkeet" --profile bs_short
+bus accounts groups delete --group-id inventory_materials
+```
+
 Create a printable chart-of-accounts PDF:
 
 ```bash
@@ -144,12 +152,19 @@ Validation rejects:
 - sibling groups under one parent reusing the same presentation code
 - account rows whose optional `group_id` points to a missing group
 
+Use `groups add`, `groups set`, and `groups delete` for first-class hierarchy
+maintenance. Delete is safety-checked and refuses to remove a group that still
+has child groups or account members.
+
 `report` generates a `tililuettelo` view and can include journal-derived balances.
-By default it shows one `Saldo` column for the selected workspace state. When
-you need the same opening-versus-closing comparison style used in statutory
-statements, add `--as-of` and `--opening-as-of`. That switches the output to
-explicit `Alkusaldo` and `Loppusaldo` columns. `--opening-as-of` requires
-`--as-of`.
+By default it shows one `Saldo` column for the selected workspace state. The
+row order follows the canonical `account-groups.csv` hierarchy, so group rows
+with aggregated totals appear together with indented posting accounts from
+`accounts.csv:group_id`. When you need the same opening-versus-closing
+comparison style used in statutory statements, add `--as-of` and
+`--opening-as-of`. That switches the output to explicit `Alkusaldo` and
+`Loppusaldo` columns for both group and account rows. `--opening-as-of`
+requires `--as-of`.
 `groups assign` gives you a native way to set account-to-group membership in
 bulk without hand-editing CSV rows.
 
