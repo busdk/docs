@@ -171,9 +171,7 @@ bus config set \
   --signature-signer "Hallitus:board"
 ```
 
-Journal source shorthand is also first-class workspace config. `source_object_kinds` stores the prefix map that lets `bus journal add --source-object s6203 --source-entry 1` resolve to `sales_invoice:s6203:journal:1`. New workspaces default to `s -> sales_invoice` and `p -> purchase_invoice`, and you can replace the map either with repeatable batch flags or with `bus config set source-object-kinds '{"x":"expense_claim"}'`.
-
-`source_link_kinds` is the parallel map for short source-link tokens. It lets `bus journal add --source-id b24915` resolve to `bank_row:24915`, and it also lets `--source-link b24889` resolve to `bank_row=bank_row:24889`. New workspaces default to `b -> bank_row`, and you can replace the map with repeatable `--source-link-kind` flags or with `bus config set source-link-kinds '{"br":"bank_row"}'`.
+Journal source shorthand is also first-class workspace config. The canonical field is `source_kinds`, which stores one prefix map shared by short source-object ids, plain source ids, and short source-link tokens. New workspaces default to `s -> sales_invoice`, `p -> purchase_invoice`, and `b -> bank_row`, so `bus journal add --source-object s6203 --source-entry 1` resolves to `sales_invoice:s6203:journal:1`, `--source-id b24915` resolves to `bank_row:24915`, and `--source-link b24889` resolves to `bank_row=bank_row:24889`. Replace the canonical map with repeatable `--source-kind <prefix>=<kind>` flags or with `bus config set source-kinds '{"x":"expense_claim"}'`. The older `--source-object-kind`, `--source-link-kind`, `source-object-kinds`, and `source-link-kinds` surfaces remain accepted as compatibility aliases, but they all merge into the same canonical `source_kinds` field.
 
 If you keep the ID policy in a separate JSON file, load it directly:
 

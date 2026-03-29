@@ -108,7 +108,7 @@ Two small configuration tables can make bank automation much better over time.
 
 Counterparty aliases let you normalize many name variants to one canonical name, which makes rules and reports easier to read.
 
-Reference extractors pull structured hints such as `erp_id` or `invoice_number_hint` out of free-text message or reference fields. When you already know concrete source objects, `bus bank add` can also store repeatable `source_links` such as `sales_invoice:s6226`. Plain `--source-id` follows the same workspace `source_link_kinds` shorthand map as other bookkeeping tools, so the default `b -> bank_row` mapping makes `--source-id b24915` resolve to canonical `bank_row:24915`. These hints are especially useful for [bus-reconcile](./bus-reconcile), because they stay separate from final reconciliation matches.
+Reference extractors pull structured hints such as `erp_id` or `invoice_number_hint` out of free-text message or reference fields. When you already know concrete source objects, `bus bank add` can also store repeatable `source_links` such as `sales_invoice:s6226`. Plain `--source-id` follows the same workspace `source_kinds` shorthand map as other bookkeeping tools, so the default `b -> bank_row` mapping makes `--source-id b24915` resolve to canonical `bank_row:24915`. The same `source_kinds` map also drives short `--source-link` tokens in related bookkeeping flows. These hints are especially useful for [bus-reconcile](./bus-reconcile), because they stay separate from final reconciliation matches.
 
 ### Typical workflow
 

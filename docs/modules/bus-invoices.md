@@ -36,7 +36,7 @@ bus invoices INV-2026-001 add \
   --vat-treatment domestic_standard
 ```
 
-If the workspace `source_object_kinds` mapping says `s -> sales_invoice` and `p -> purchase_invoice`, the same header add can also use a shorthand invoice id:
+If the workspace `source_kinds` mapping says `s -> sales_invoice` and `p -> purchase_invoice`, the same header add can also use a shorthand invoice id:
 
 ```bash
 bus invoices add s6204 --invoice-date 2026-02-16 --counterparty "Acme Corp"
@@ -94,7 +94,7 @@ bus invoices postings
 
 Use `init` once per workspace.
 
-Use `add` for invoice headers and `<invoice-id> add` for invoice lines. Header add accepts either explicit `--type` plus `--invoice-id` or one shorthand invoice selector resolved through workspace `source_object_kinds`. Use `--counterparty` for the party name on both sales and purchase invoices; `--customer` still works as a compatibility alias.
+Use `add` for invoice headers and `<invoice-id> add` for invoice lines. Header add accepts either explicit `--type` plus `--invoice-id` or one shorthand invoice selector resolved through workspace `source_kinds`. Use `--counterparty` for the party name on both sales and purchase invoices; `--customer` still works as a compatibility alias.
 
 Use `validate` before you trust totals or downstream posting output.
 

@@ -54,7 +54,10 @@ By default, `profit-and-loss` and `balance-sheet` hide rows whose values are
 zero in both shown periods. In hierarchical balance-sheet layouts, parent and
 heading rows still stay visible when a child row below them carries a non-zero
 current or comparative amount. Add `--show-zero-rows` when you want to inspect
-the full statutory structure, including fully zero-valued rows.
+the full statutory structure, including fully zero-valued rows. PDF follows
+the same zero-row filtering instead of showing extra zero-only statutory rows.
+If the journal contains money values with more than two decimals, `bus-reports`
+fails during workspace load instead of rounding or silently normalizing them.
 
 Build a close package directory in one run:
 
@@ -235,12 +238,16 @@ outputs. Because `evidence-pack` is PDF-only, that package currently includes
 only the personal/non-company review documents that already have PDF
 renderers. Sole-proprietor / `tmi` workspaces still keep the non-public annual
 review manifests and checks, but their `evidence-pack` now also includes the
-core `tase` and `tuloslaskelma` artifacts so the yearly package contains the
-expected financial statements.
+core `tase` and `tuloslaskelma` artifacts plus the explicit compact/full/account-breakdown
+Finnish statutory statement variants so the yearly package contains the
+expected financial statements and deeper review PDFs without switching to a
+public-filing annual package.
 
 ### Statement placement and report profiles
 
 For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`. In the built-in Finnish `*-full` layouts, bus-reports expands any visible deeper descendants from that canonical tree under the matching statutory parent rows, so lower-level TASE and tuloslaskelma branches remain visible without introducing a second report-only hierarchy.
+
+In the Finnish `*-full-accounts` balance-sheet variants, that same shared tree also drives the account drill-down rows. If a visible TASE line, including an injected descendant group row, carries non-zero account contributions, the report appends deterministic per-account rows under that exact visible line instead of limiting breakdowns to a small built-in row subset. In printable PDFs those account rows use one wrapped visible detail label such as `<tilinumero> <tilin nimi>`, so long account names stay fully visible instead of being clipped by separate fixed code and name columns.
 
 When you need to inspect that resolution directly, use `statement-explain` or
 `statement-validate`. Those commands show the original account group, the
@@ -327,9 +334,15 @@ output. Review documents such as `day-book`, `general-ledger`,
 `balance-sheet-reconciliation`, and `materials-register` support `pdf`. The
 printable review PDFs use adaptive wrapped tables that stretch to the full
 printable page width, and printable report variants leave an explicit gap
-before `Allekirjoitukset`.
+before `Allekirjoitukset`. Full statutory `tase` and `tuloslaskelma` PDFs keep
+the same visible statement order across their plain and `*-accounts` variants,
+so structural heading rows remain visible in every variant. In the
+`*-accounts` PDFs, non-account statement rows use the full printable label
+width instead of wasting separate account-code and account-name cells, and
+missing comparative account cells stay blank instead of showing synthetic
+`0.00` values.
 
-When you use `-o`, missing parent directories are created automatically before the file is written. Failed runs do not replace an existing successful output file. PDF metadata timestamps are rendered in local time and include the timezone abbreviation plus numeric UTC offset.
+When you use `-o`, missing parent directories are created automatically before the file is written. Failed runs do not replace an existing successful output file. PDF metadata timestamps and visible `Luotu` lines are rendered in local time and include the timezone abbreviation plus numeric UTC offset, so one document never mixes UTC and local provenance timestamps.
 
 These commands use [Standard global flags](../cli/global-flags). The most commonly used extras here are `-C`, `-o`, `--format`, and `--locale`. In human-facing outputs, `--locale fi` changes both decimal formatting and shared report labels such as headers and PDF titles. When `--locale` is omitted, BusDK first uses the workspace reporting profile language from `busdk.accounting_entity.reporting_profile.fi_statutory.language` when it is configured, and only then falls back to the shell locale. For the complete command matrix, run `bus reports --help`.
 
