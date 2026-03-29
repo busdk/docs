@@ -51,8 +51,10 @@ bus reports balance-sheet \
 ```
 
 By default, `profit-and-loss` and `balance-sheet` hide rows whose values are
-zero in both shown periods. Add `--show-zero-rows` when you want to inspect
-the full statutory structure, including zero-valued rows.
+zero in both shown periods. In hierarchical balance-sheet layouts, parent and
+heading rows still stay visible when a child row below them carries a non-zero
+current or comparative amount. Add `--show-zero-rows` when you want to inspect
+the full statutory structure, including fully zero-valued rows.
 
 Build a close package directory in one run:
 
@@ -236,7 +238,7 @@ expected financial statements.
 
 ### Statement placement and report profiles
 
-For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`.
+For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`. In the built-in Finnish `*-full` layouts, bus-reports expands any visible deeper descendants from that canonical tree under the matching statutory parent rows, so lower-level TASE and tuloslaskelma branches remain visible without introducing a second report-only hierarchy.
 
 When you need to inspect that resolution directly, use `statement-explain` or
 `statement-validate`. Those commands show the original account group, the
