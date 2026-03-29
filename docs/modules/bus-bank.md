@@ -108,7 +108,7 @@ Two small configuration tables can make bank automation much better over time.
 
 Counterparty aliases let you normalize many name variants to one canonical name, which makes rules and reports easier to read.
 
-Reference extractors pull structured hints such as `erp_id` or `invoice_number_hint` out of free-text message or reference fields. These hints are especially useful for [bus-reconcile](./bus-reconcile).
+Reference extractors pull structured hints such as `erp_id` or `invoice_number_hint` out of free-text message or reference fields. When you already know concrete source objects, `bus bank add` can also store repeatable `source_links` such as `sales_invoice:s6226`. These hints are especially useful for [bus-reconcile](./bus-reconcile), because they stay separate from final reconciliation matches.
 
 ### Typical workflow
 
@@ -126,7 +126,7 @@ bus bank control --month 2026-01 --account acct-1
 
 ### Files
 
-`bus bank` owns `bank-imports.csv`, `bank-transactions.csv`, and the statement checkpoint dataset. It can also create optional configuration tables for counterparty aliases, reference extractors, and statement-extract profiles.
+`bus bank` owns `bank-imports.csv`, `bank-transactions.csv`, and the statement checkpoint dataset. It can also create optional configuration tables for counterparty aliases, reference extractors, and statement-extract profiles. `bank-transactions.csv` now includes `source_links` for zero, one, or many pre-reconciliation source-object hints in addition to the older single-value extractor fields.
 
 ### Output and flags
 

@@ -91,6 +91,8 @@ The batch proposal flow is broader than simple invoice matching.
 
 It can emit historical invoice-reference proposals when the current workspace does not contain the older invoice row but the bank row still proves the identity. It can also emit incoming classifications, suspense fallbacks, suspense reclassification proposals, and settlement payout proposals.
 
+If `bus-bank` has already preserved extracted hints or explicit `source_links` on the bank row, `propose` uses them to narrow invoice candidates before anything is written to `matches.csv`.
+
 If you need those flows, start with `bus reconcile --help` and then test them with a saved proposal file and `apply --dry-run`.
 
 ### Typical workflow after bank import

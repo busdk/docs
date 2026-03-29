@@ -171,6 +171,9 @@ sign. `Dr` and `Cr` are used instead of full debit and credit labels, and
 day-book compacts the visible account column to `<tilinumero> <tilin nimi>` to
 save width. CSV and JSON keep the stable machine-facing split between `side`
 and unsigned `amount`.
+When multiple postings share the same date, those review outputs keep the same
+append order as the journal instead of re-sorting same-day rows by internal
+transaction IDs or stringified line numbers.
 
 PDF day-book and general-ledger outputs also size columns from the actual
 rendered content instead of using one fixed layout. The resolved columns are
@@ -182,7 +185,9 @@ stays visually aligned across columns, and page breaks are computed from those
 final wrapped row heights so later pages do not inherit an overfull table
 slice. In `general-ledger` PDF, a whole account table starts on a fresh page
 when the next section would otherwise begin at the bottom of the current page
-and continue immediately onto the following page.
+and continue immediately onto the following page. In `day-book` PDF, that same
+page-local width resolution also rebalances width away from `Selite` when the
+current page would otherwise wrap the visible `Account` column unnecessarily.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
@@ -230,9 +235,11 @@ For statutory reporting, start from `account-groups.csv`. That group tree is the
 
 When you need to inspect that resolution directly, use `statement-explain` or
 `statement-validate`. Those commands show the original account group, the
-effective canonical group used by the selected statement, the visible line
-chosen from the selected layout/profile, an explicit `resolution_chain`, and
-the deterministic reason for the placement or failure.
+canonical group code path, the direct group `report_profiles`, the effective
+canonical group used by the selected statement, the effective group code path
+and profiles, the visible line chosen from the selected layout/profile, an
+explicit `resolution_chain`, and the deterministic reason for the placement or
+failure.
 
 In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows.
 

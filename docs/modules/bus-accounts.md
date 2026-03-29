@@ -44,6 +44,12 @@ bus accounts groups
 bus accounts --format tsv groups
 ```
 
+Explain one account's canonical group membership:
+
+```bash
+bus accounts groups explain --account 1910
+```
+
 Show one subtree with opening and closing balances:
 
 ```bash
@@ -83,6 +89,7 @@ bus accounts sole-proprietor withdrawal \
 `bus accounts validate [-C <dir>] [global flags]`  
 `bus accounts list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts groups [--group-id <group-id>] [--as-of <date>] [--opening-as-of <date>] [-C <dir>] [-o <file>] [-f <text|tsv>] [global flags]`  
+`bus accounts groups explain --account <code> [-C <dir>] [-o <file>] [-f <text|tsv>] [global flags]`  
 `bus accounts groups assign --rule <selector=group-id>... [-C <dir>] [global flags]`  
 `bus accounts report [--as-of <date>] [--opening-as-of <date>] [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
 `bus accounts add --code <account-id> --name <account-name> --type <asset|liability|equity|income|expense> [-C <dir>] [global flags]`  
@@ -128,6 +135,9 @@ group rows.
 `bus accounts groups` prints that tree in a deterministic human-facing form.
 It can also render one selected subtree, include opening and closing balances,
 and print subgroup subtotals together with the full subtree total.
+`bus accounts groups explain --account <code>` prints the canonical account to
+group path for one posting account, including the code ancestry, the human
+group path, and the direct `report_profiles` on the assigned group.
 Validation rejects:
 - orphan parent references
 - cyclic group chains
