@@ -23,6 +23,14 @@ Match one bank payment directly to one invoice:
 bus reconcile match --bank-id bank:2026-01-001 --invoice-id INV-2026-1001
 ```
 
+If the bank row keeps a stable source identity such as `bank_row:24887`, you can use that
+instead of the canonical `bank_txn_id`. With the default shorthand mapping `b -> bank_row`,
+this also works:
+
+```bash
+bus reconcile match --bank-id b24887 --invoice-id INV-2026-1001
+```
+
 Split one bank row between an invoice payment and a journal fee entry:
 
 ```bash
@@ -54,8 +62,8 @@ bus reconcile post \
 ### Synopsis
 
 `bus reconcile init [--if-missing] [--force] [-C <dir>] [global flags]`  
-`bus reconcile match --bank-id <id> (--invoice-id <id> | --journal-id <id>) [-C <dir>] [global flags]`  
-`bus reconcile allocate --bank-id <id> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ... [-C <dir>] [global flags]`  
+`bus reconcile match --bank-id <id|source-ref> (--invoice-id <id> | --journal-id <id>) [-C <dir>] [global flags]`  
+`bus reconcile allocate --bank-id <id|source-ref> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ... [-C <dir>] [global flags]`  
 `bus reconcile list [-C <dir>] [global flags]`  
 `bus reconcile propose [options] [-C <dir>] [global flags]`  
 `bus reconcile apply --in <path>|- [--dry-run] [--fail-if-partial] [options] [-C <dir>] [global flags]`  
@@ -80,6 +88,8 @@ Use `post --kind invoice_payment` when the reconciliation already exists and you
 ```bash
 bus reconcile -o ./out/proposals.tsv propose
 ```
+
+`--bank-id` accepts either the canonical `bank_txn_id` or a source reference that resolves to one bank row. This works consistently in `match`, `allocate`, and `propose`.
 
 `apply --dry-run` is the safest first pass for reviewed proposal files. If you want scripts to fail when some rows were skipped or rejected, add `--fail-if-partial`.
 

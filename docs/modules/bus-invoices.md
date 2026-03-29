@@ -25,7 +25,7 @@ bus invoices add \
   --invoice-id INV-2026-001 \
   --invoice-date 2026-02-16 \
   --due-date 2026-03-16 \
-  --customer "Acme Corp"
+  --counterparty "Acme Corp"
 
 bus invoices INV-2026-001 add \
   --desc "Consulting" \
@@ -34,6 +34,12 @@ bus invoices INV-2026-001 add \
   --income-account "Consulting Income" \
   --vat-rate 25.5 \
   --vat-treatment domestic_standard
+```
+
+If the workspace `source_object_kinds` mapping says `s -> sales_invoice` and `p -> purchase_invoice`, the same header add can also use a shorthand invoice id:
+
+```bash
+bus invoices add s6204 --invoice-date 2026-02-16 --counterparty "Acme Corp"
 ```
 
 Validate all invoices and list unpaid ones:
@@ -74,7 +80,7 @@ bus invoices postings
 ### Synopsis
 
 `bus invoices init [-C <dir>] [global flags]`  
-`bus invoices add --type <sales|purchase> --invoice-id <id> --invoice-date <YYYY-MM-DD> [--due-date <YYYY-MM-DD>] --customer <name> [-C <dir>] [global flags]`  
+`bus invoices add [<invoice-shorthand>] [--type <sales|purchase>] [--invoice-id <id>] --invoice-date <YYYY-MM-DD> [--due-date <YYYY-MM-DD>] --counterparty <name> [-C <dir>] [global flags]`  
 `bus invoices list [--type <sales|purchase>] [--status <status>] [--month <YYYY-M>] [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--due-from <YYYY-MM-DD>] [--due-to <YYYY-MM-DD>] [--counterparty <entity-id>] [--invoice-id <id>] [-C <dir>] [global flags]`  
 `bus invoices import --profile <path> --source <path> [--source-lines <path>] [--year <YYYY>] [-C <dir>] [global flags]`  
 `bus invoices validate [-C <dir>] [global flags]`  
@@ -88,7 +94,7 @@ bus invoices postings
 
 Use `init` once per workspace.
 
-Use `add` for invoice headers and `<invoice-id> add` for invoice lines.
+Use `add` for invoice headers and `<invoice-id> add` for invoice lines. Header add accepts either explicit `--type` plus `--invoice-id` or one shorthand invoice selector resolved through workspace `source_object_kinds`. Use `--counterparty` for the party name on both sales and purchase invoices; `--customer` still works as a compatibility alias.
 
 Use `validate` before you trust totals or downstream posting output.
 
@@ -112,7 +118,7 @@ bus invoices add \
   --invoice-id INV-2026-001 \
   --invoice-date 2026-02-16 \
   --due-date 2026-03-16 \
-  --customer "Acme Corp"
+  --counterparty "Acme Corp"
 
 bus invoices INV-2026-001 add \
   --desc "Consulting" \
