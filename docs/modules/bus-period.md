@@ -165,7 +165,7 @@ period close --period 2026-01 --post-date 2026-01-31
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-entities">bus-entities</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./bus-vendors">bus-vendors</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Module CLI reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./bus-attachments">bus-attachments</a> &rarr;</span>
 </p>

@@ -71,6 +71,10 @@
       url: /modules/bus-accounts
     - label: bus entities
       url: /modules/bus-entities
+    - label: bus customers
+      url: /modules/bus-customers
+    - label: bus vendors
+      url: /modules/bus-vendors
     - label: bus period
       url: /modules/bus-period
     - label: bus preferences
