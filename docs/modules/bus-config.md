@@ -139,7 +139,7 @@ These are the settings most people configure first:
 | VAT defaults | `--vat-registered`, `--vat-reporting-period`, `--vat-timing`, `--vat-default-source`, `--vat-default-basis` |
 | Report defaults | `--reporting-standard`, `--report-language`, `--income-statement-scheme`, `--comparatives`, `--presentation-unit` |
 | Report signing | `--signature-date`, repeatable `--signature-signer` |
-| Journal source shorthand | repeatable `--source-object-kind` |
+| Journal source shorthand | repeatable `--source-object-kind`, repeatable `--source-link-kind` |
 | Shared IDs | `--id-generation` |
 | Storage defaults | `--storage-format`, `--storage-padding-field`, `--storage-record-bytes`, `--storage-padding-char`, `--module-storage-*` |
 
@@ -153,6 +153,7 @@ Use the per-property form when the change is small and obvious:
 bus config set business-name "Example Oy"
 bus config set entity-kind personal
 bus config set --source-object-kind s=sales_invoice --source-object-kind p=purchase_invoice
+bus config set --source-link-kind b=bank_row
 bus config set vat-reporting-period yearly
 bus config set signature-date 2026-03-31
 ```
@@ -171,6 +172,8 @@ bus config set \
 ```
 
 Journal source shorthand is also first-class workspace config. `source_object_kinds` stores the prefix map that lets `bus journal add --source-object s6203 --source-entry 1` resolve to `sales_invoice:s6203:journal:1`. New workspaces default to `s -> sales_invoice` and `p -> purchase_invoice`, and you can replace the map either with repeatable batch flags or with `bus config set source-object-kinds '{"x":"expense_claim"}'`.
+
+`source_link_kinds` is the parallel map for short source-link tokens. It lets `bus journal add --source-id b24915` resolve to `bank_row:24915`, and it also lets `--source-link b24889` resolve to `bank_row=bank_row:24889`. New workspaces default to `b -> bank_row`, and you can replace the map with repeatable `--source-link-kind` flags or with `bus config set source-link-kinds '{"br":"bank_row"}'`.
 
 If you keep the ID policy in a separate JSON file, load it directly:
 
