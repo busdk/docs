@@ -114,7 +114,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports ledger-log --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
-`bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports budget-vs-actual --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
@@ -122,14 +122,14 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports net-worth --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-movement --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports transfer-summary --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports voucher-list --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports bank-transactions --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [-C <dir>] [global flags]`  
+`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [-C <dir>] [global flags]`  
 `bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
 
 ### Choose the right command
@@ -316,13 +316,18 @@ only the review documents that already have PDF renderers. Sole-proprietor /
 `tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in
 that same internal review package.
 
-Comparative figures come only from the current workspace. When comparatives are
-enabled, `balance-sheet`, `profit-and-loss`, and `evidence-pack` use prior-year
-journal rows that already exist in that workspace. For full-year annual
-statements, if those rows are absent, bus-reports falls back to the opening
-balances recorded at the start of the year so the prior column still shows how
-the year began. `annual-validate` checks for one of those current-workspace
-comparative sources before it reports a pass.
+Comparative figures use the current workspace only when prior-year data really
+exists there. That covers the uncommon multi-year workspace, but a normal Bus
+workspace usually covers one fiscal year. Because of that, full-year
+`profit-and-loss` no longer falls back to first-day opening balances:
+opening balances can support `balance-sheet` comparatives, but they do not
+contain prior-year tuloslaskelma detail. When the prior year is not already in
+the current workspace, pass it explicitly with `--comparative-workspace DIR`
+or `--comparative-account-balances FILE`. The snapshot file uses the
+deterministic `account-balances --format csv` shape `code,name,balance`.
+`evidence-pack` forwards the same explicit comparative source to each
+generated balance-sheet and profit-and-loss PDF, and `annual-validate` now
+checks for one of those real comparative sources before it reports a pass.
 
 `compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report. Company-form workspaces keep statutory public-filing package/template output, while non-company legal forms and `entity_kind=personal` workspaces switch to an internal annual review package centered on summaries, tax notes, and evidence indexes instead of PRH filing sections. The checklist now uses that same non-corporate model, so it no longer claims that a sole proprietor must generate company-style balance-sheet and profit-and-loss filing artifacts when the selected package flow is internal review only.
 
