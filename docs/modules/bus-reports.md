@@ -58,6 +58,12 @@ the full statutory structure, including fully zero-valued rows. PDF follows
 the same zero-row filtering instead of showing extra zero-only statutory rows.
 If the journal contains money values with more than two decimals, `bus-reports`
 fails during workspace load instead of rounding or silently normalizing them.
+Human-facing PDF tables also default to borderless or minimal-line styling
+instead of boxed per-cell borders, which keeps the PDFs searchable while
+making text selection, highlighting, and annotation work more naturally in
+viewers such as Apple Preview. The shared PDF renderer now embeds Unicode
+fonts with `/ToUnicode` mappings so copied or highlighted text stays readable
+across common viewers and PDF extraction tools.
 
 Build a close package directory in one run:
 
