@@ -62,8 +62,14 @@ Human-facing PDF tables also default to borderless or minimal-line styling
 instead of boxed per-cell borders, which keeps the PDFs searchable while
 making text selection, highlighting, and annotation work more naturally in
 viewers such as Apple Preview. The shared PDF renderer now embeds Unicode
-fonts with `/ToUnicode` mappings so copied or highlighted text stays readable
-across common viewers and PDF extraction tools.
+fonts with `/ToUnicode` mappings so copied, selected, and extracted text stays
+readable across common viewers and PDF extraction tools. Full and
+`*-accounts` statement rows are now emitted as unified visible row text
+instead of column-fragmented visible cell snippets, so Preview-style
+annotation and `pdftotext`-style extraction follow the natural reading order.
+The same shared text-based renderer now also covers visible PDF metadata,
+headers, wrapped review rows, reconciliation tables, and materials-register
+rows instead of older visible `CellFormat` or `MultiCell` text paths.
 
 Build a close package directory in one run:
 
