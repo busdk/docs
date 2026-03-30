@@ -212,7 +212,10 @@ PDF, that same
 page-local width resolution also rebalances width away from `Selite` when the
 current page would otherwise wrap the visible `Account` column unnecessarily.
 Signed amount cells are kept on one rendered line instead of wrapping across
-multiple lines.
+multiple lines. The page picker only evaluates as many candidate body rows as
+can physically fit on the current page, so large real-year day-book and
+evidence-pack PDF runs do not stall by rescanning the full remaining journal
+slice on every page.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
