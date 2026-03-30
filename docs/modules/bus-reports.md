@@ -205,7 +205,10 @@ stays visually aligned across columns, and page breaks are computed from those
 final wrapped row heights so later pages do not inherit an overfull table
 slice. In `general-ledger` PDF, account sections use whatever page space
 remains as long as the section heading, repeated header, and at least part of
-the current account table fit on that page. In `day-book` PDF, that same
+the current account table fit on that page. If the next row in the same
+account no longer fits after that heading/header overhead, Bus moves that row
+to a fresh page instead of forcing it into the remaining space. In `day-book`
+PDF, that same
 page-local width resolution also rebalances width away from `Selite` when the
 current page would otherwise wrap the visible `Account` column unnecessarily.
 Signed amount cells are kept on one rendered line instead of wrapping across
