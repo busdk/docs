@@ -203,9 +203,9 @@ width. Bus also hides the `Voucher` column entirely when it would be blank on
 every row. Wrapped PDF cells now share one logical row height so the table
 stays visually aligned across columns, and page breaks are computed from those
 final wrapped row heights so later pages do not inherit an overfull table
-slice. In `general-ledger` PDF, a whole account table starts on a fresh page
-when the next section would otherwise begin at the bottom of the current page
-and continue immediately onto the following page. In `day-book` PDF, that same
+slice. In `general-ledger` PDF, account sections use whatever page space
+remains as long as the section heading, repeated header, and at least part of
+the current account table fit on that page. In `day-book` PDF, that same
 page-local width resolution also rebalances width away from `Selite` when the
 current page would otherwise wrap the visible `Account` column unnecessarily.
 Signed amount cells are kept on one rendered line instead of wrapping across
