@@ -67,9 +67,12 @@ readable across common viewers and PDF extraction tools. Full and
 `*-accounts` statement rows are now emitted as unified visible row text
 instead of column-fragmented visible cell snippets, so Preview-style
 annotation and `pdftotext`-style extraction follow the natural reading order.
-The same shared text-based renderer now also covers visible PDF metadata,
-headers, wrapped review rows, reconciliation tables, and materials-register
-rows instead of older visible `CellFormat` or `MultiCell` text paths.
+Repeated later-page statement headers now use that same full-row text path, so
+`tase-full.pdf`, `tase-accounts.pdf`, and the matching tuloslaskelma variants
+do not fall back to cell-style visible text on continuation pages. The same
+shared text-based renderer now also covers visible PDF metadata, headers,
+wrapped review rows, reconciliation tables, and materials-register rows
+instead of older visible `CellFormat` or `MultiCell` text paths.
 
 Build a close package directory in one run:
 
