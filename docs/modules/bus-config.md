@@ -111,7 +111,7 @@ bus config set \
 
 `bus config` owns the workspace descriptor file `datapackage.json` at the workspace root. The most important subtree for BusDK users is `busdk.accounting_entity`.
 
-Other modules read this file instead of asking you to repeat the same settings elsewhere. For example, [bus-vat](./bus-vat) reads VAT defaults from here, [bus-reports](./bus-reports) reads reporting defaults from here, and [bus-journal](./bus-journal) can read shared ID-generation policy from here.
+Other modules read this file instead of asking you to repeat the same settings elsewhere. For example, [bus-vat](./bus-vat) reads VAT defaults from here, [bus-reports](./bus-reports) reads reporting defaults from here, and [bus-journal](./bus-journal) reads shared ID-generation policy and duplicate-source policy from here.
 
 This is also the right place for workspace-wide identity defaults that are not row-level facts. `busdk.accounting_entity.entity_kind` is now the canonical workspace-level tag for that purpose. Use `business` for company/statutory-default workspaces and `personal` for household or natural-person workspaces. Older workspaces that do not yet store the key still resolve as `business` by default.
 
@@ -140,6 +140,7 @@ These are the settings most people configure first:
 | Report defaults | `--reporting-standard`, `--report-language`, `--income-statement-scheme`, `--comparatives`, `--presentation-unit` |
 | Report signing | `--signature-date`, repeatable `--signature-signer` |
 | Journal source shorthand | repeatable `--source-object-kind`, repeatable `--source-link-kind` |
+| Duplicate-source handling | `--duplicate-source-policy` |
 | Shared IDs | `--id-generation` |
 | Storage defaults | `--storage-format`, `--storage-padding-field`, `--storage-record-bytes`, `--storage-padding-char`, `--module-storage-*` |
 
@@ -171,7 +172,9 @@ bus config set \
   --signature-signer "Hallitus:board"
 ```
 
-Journal source shorthand is also first-class workspace config. The canonical field is `source_kinds`, which stores one prefix map shared by short source-object ids, plain source ids, and short source-link tokens. New workspaces default to `s -> sales_invoice`, `p -> purchase_invoice`, and `b -> bank_row`, so `bus journal add --source-object s6203 --source-entry 1` resolves to `sales_invoice:s6203:journal:1`, `--source-id b24915` resolves to `bank_row:24915`, and `--source-link b24889` resolves to `bank_row=bank_row:24889`. Replace the canonical map with repeatable `--source-kind <prefix>=<kind>` flags or with `bus config set source-kinds '{"x":"expense_claim"}'`. The older `--source-object-kind`, `--source-link-kind`, `source-object-kinds`, and `source-link-kinds` surfaces remain accepted as compatibility aliases, but they all merge into the same canonical `source_kinds` field.
+Journal source shorthand is also first-class workspace config. The canonical field is `source_kinds`, which stores one prefix map shared by short source-object ids, plain source ids, and short source-link tokens. New workspaces default to `s -> sales_invoice`, `p -> purchase_invoice`, and `b -> bank_row`, so `bus journal add --source-object s6203 --source-entry 1` resolves to `sales_invoice:s6203:journal:1`, `--source-id b24915` resolves to `bank_row:24915`, and `--source-link b24889` resolves to `bank_row=bank_row:24889`. Replace the canonical map with repeatable `--source-kind <prefix>=<kind>` flags or with `bus config set source-kinds '{"x":"expense_claim"}'`. Equivalent hyphen and underscore kind spellings such as `sales-invoice` and `sales_invoice` are both accepted on input and normalized to one canonical stored form. The older `--source-object-kind`, `--source-link-kind`, `source-object-kinds`, and `source-link-kinds` surfaces remain accepted as compatibility aliases, but they all merge into the same canonical `source_kinds` field.
+
+Duplicate-source handling is also centralized here. The canonical key is `duplicate_source_policy`, and the supported values are `strict` and `if_missing`. New workspaces default to `strict`. A strict workspace makes duplicate canonical `source_id` keys fail by default. An `if_missing` workspace makes the same duplicates skip deterministically without repeating `--if-missing` on every journal-style command.
 
 If you keep the ID policy in a separate JSON file, load it directly:
 

@@ -67,12 +67,24 @@ readable across common viewers and PDF extraction tools. Full and
 `*-accounts` statement rows are now emitted as unified visible row text
 instead of column-fragmented visible cell snippets, so Preview-style
 annotation and `pdftotext`-style extraction follow the natural reading order.
+The accountant-facing wrapped review tables now also compose each visible row
+as one shared row line with explicit inter-column spacing, so later
+`general-ledger`, `day-book`, `voucher-list`, and `bank-transactions` pages
+do not regress back to cell-like annotation behavior.
 Repeated later-page statement headers now use that same full-row text path, so
 `tase-full.pdf`, `tase-accounts.pdf`, and the matching tuloslaskelma variants
 do not fall back to cell-style visible text on continuation pages. The same
 shared text-based renderer now also covers visible PDF metadata, headers,
 wrapped review rows, reconciliation tables, and materials-register rows
 instead of older visible `CellFormat` or `MultiCell` text paths.
+
+When you replay year-end close rows manually, use the Bus-native source-kind
+surface from `bus journal add`, for example
+`--source-id FY2025 --source-kind closing-result`. Reports
+then recognize those rows as explicit close entries without depending on one
+free-form source-id spelling, and `profit-and-loss` excludes them from normal
+period activity while `balance-sheet` can still use them as explicit close
+basis.
 
 Build a close package directory in one run:
 
@@ -118,21 +130,21 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports ledger-log --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
 `bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports budget-vs-actual --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports cashflow --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports net-worth --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-movement --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports transfer-summary --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports voucher-list --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports bank-transactions --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [-C <dir>] [global flags]`  
+`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [-C <dir>] [global flags]`  
 `bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
 
 ### Choose the right command
@@ -156,7 +168,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `trial-balance` and `account-balances` are the quickest health checks for a period-end or year-end review. When you want the same canonical hierarchy you already use elsewhere in Finnish reporting, add `--grouped` to `trial-balance` and the human-facing text, Markdown, or PDF output will show account-group rows with their subtotal balances above the posting accounts below them.
 
-`day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
+`day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. In PDF, `general-ledger` now starts with a table of contents that lists those account sections and their page numbers. `day-book` uses the same shared PDF path and starts with a month-based table of contents for the rendered period. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
 
 `account-ledger` is a narrower, date-range-focused tool for one account. It is useful when a single account needs explanation over a smaller time window.
 
@@ -243,7 +255,10 @@ If you want a built-in statutory layout, use `--layout-id`. If you maintain your
 `balance-sheet-specification` is internal evidence output, not a PRH filing
 document. Use it when you need a tase-erittely for review, audit, or close
 documentation. Its PDF table now uses the same adaptive wrapped full-width
-layout as the other accountant-facing review documents.
+layout as the other accountant-facing review documents. The printable PDF also
+follows the same metadata and signature-block convention as the other review
+reports, and the trailing `Allekirjoitukset` block moves to a fresh page if it
+would not fit safely at the bottom of the current page.
 
 `balance-sheet-reconciliation` uses the same effective liability-side
 classification as the rendered TASE, so a balanced statutory TASE should not
@@ -273,7 +288,21 @@ public-filing annual package.
 
 For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`. In the built-in Finnish `*-full` layouts, bus-reports expands any visible deeper descendants from that canonical tree under the matching statutory parent rows, so lower-level TASE and tuloslaskelma branches remain visible without introducing a second report-only hierarchy.
 
-In the Finnish `*-full-accounts` balance-sheet variants, that same shared tree also drives the account drill-down rows. If a visible TASE line, including an injected descendant group row, carries non-zero account contributions, the report appends deterministic per-account rows under that exact visible line instead of limiting breakdowns to a small built-in row subset. In printable PDFs those account rows use one wrapped visible detail label such as `<tilinumero> <tilin nimi>`, so long account names stay fully visible instead of being clipped by separate fixed code and name columns.
+In the Finnish `*-full-accounts` balance-sheet variants, that same shared tree also drives the account drill-down rows. If a visible TASE line, including an injected descendant group row, carries non-zero balance-sheet account contributions, the report appends deterministic per-account rows under that exact visible line instead of limiting breakdowns to a small built-in row subset. Synthetic current-year-result remapping still affects the `Tilikauden voitto/tappio` total, but ordinary revenue and expense accounts are not shown there as normal TASE account rows. In printable PDFs those account rows use one wrapped visible detail label such as `<tilinumero> <tilin nimi>`, so long account names stay fully visible instead of being clipped by separate fixed code and name columns.
+
+For `fi-kpa-*` balance-sheet layouts, BusDK does that remapping by default
+when the workspace has current-period profit-and-loss activity and no explicit
+close postings on the canonical `bs_current_year_result` branch. That is the
+normal electronic-accounting model: `Tilikauden voitto/tappio` is derived
+directly from the live ledger rather than requiring a separate closing voucher.
+When the workspace does contain explicit year-end result postings for replay,
+migration parity, or imported historical evidence, prefer the Bus-native
+journal source-id surface `--source-id FY2025 --source-kind closing-result`,
+which stores the stable canonical key `close-result:FY2025:1`. Equivalent
+separator aliases such as `closing_result` are accepted too, but they
+normalize to the same semantic close meaning. `--allow-implicit-current-year-result`
+is still accepted for compatibility, but it no longer changes the default
+derived-result behavior.
 
 The same canonical-tree rule applies to the Finnish `fi-*-tuloslaskelma-full` and `fi-*-tuloslaskelma-full-accounts` layouts. If the workspace group tree contains deeper visible descendants below a built-in statutory expense branch, those descendants stay visible as their own rows, they render with the same negative visible statement sign as the parent expense branch, and any direct account contributions stay under that exact visible descendant row in the `*-accounts` variants instead of collapsing back to a higher built-in parent row.
 
@@ -284,6 +313,14 @@ canonical group used by the selected statement, the effective group code path
 and profiles, the visible line chosen from the selected layout/profile, an
 explicit `resolution_chain`, and the deterministic reason for the placement or
 failure.
+
+For `fi-kpa-*` balance-sheet layouts, those commands also make the
+current-year-result rule explicit. When no close-source basis exists they
+return `synthetic_current_year_result` as the normal derived balance-sheet
+placement path. When explicit close-source basis exists they return
+`explicit_current_year_result_basis` instead, so operators can see that the
+workspace is relying on replay/parity close evidence rather than the normal
+derived result path.
 
 In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows.
 
@@ -344,6 +381,16 @@ deterministic `account-balances --format csv` shape `code,name,balance`.
 `evidence-pack` forwards the same explicit comparative source to each
 generated balance-sheet and profit-and-loss PDF, and `annual-validate` now
 checks for one of those real comparative sources before it reports a pass.
+
+The same forwarding model applies to `--allow-implicit-current-year-result`,
+but the flag is kept only for compatibility. `evidence-pack` already uses the
+default derived current-period result path for `fi-kpa-*` balance-sheet
+artifacts when no explicit close postings exist.
+When you intentionally opt into a derived `fi-kpa` current-year-result
+fallback, `evidence-pack` forwards that choice to the generated
+balance-sheet, balance-sheet specification, and balance-sheet reconciliation
+artifacts. Without that explicit opt-in, those artifacts fail when the
+workspace has no real close-source basis.
 
 `compliance-checklist`, `filing-package`, `annual-template`, and `annual-validate` are the commands to reach for when you are assembling or checking an annual-close package rather than just printing one report. Company-form workspaces keep statutory public-filing package/template output, while non-company legal forms and `entity_kind=personal` workspaces switch to an internal annual review package centered on summaries, tax notes, and evidence indexes instead of PRH filing sections. The checklist now uses that same non-corporate model, so it no longer claims that a sole proprietor must generate company-style balance-sheet and profit-and-loss filing artifacts when the selected package flow is internal review only.
 
