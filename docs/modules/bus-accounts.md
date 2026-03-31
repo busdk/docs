@@ -76,7 +76,13 @@ Create a printable chart-of-accounts PDF:
 bus accounts report --format pdf --output tililuettelo.pdf
 ```
 
-Show explicit opening and closing balances in the chart-of-accounts view:
+Show the automatic requested-date, prior-period, and opening-balance history view:
+
+```bash
+bus accounts report --as-of 2024-12-31 --format tsv
+```
+
+Override the final opening-balance column date explicitly when needed:
 
 ```bash
 bus accounts report --as-of 2024-12-31 --opening-as-of 2024-01-01 --format tsv
@@ -158,13 +164,17 @@ has child groups or account members.
 
 `report` generates a `tililuettelo` view and can include journal-derived balances.
 By default it shows one `Saldo` column for the selected workspace state. The
-row order follows the canonical `account-groups.csv` hierarchy, so group rows
-with aggregated totals appear together with indented posting accounts from
-`accounts.csv:group_id`. When you need the same opening-versus-closing
-comparison style used in statutory statements, add `--as-of` and
-`--opening-as-of`. That switches the output to explicit `Alkusaldo` and
-`Loppusaldo` columns for both group and account rows. `--opening-as-of`
-requires `--as-of`.
+row order follows the canonical `account-groups.csv` hierarchy automatically,
+so group rows with aggregated totals appear together with indented posting
+accounts from `accounts.csv:group_id` without any extra report flag. In PDF
+output the group rows are also styled as distinct hierarchy rows so it is easy
+to tell groups from leaf accounts at a glance. When you add `--as-of`, the
+report switches to explicit date-keyed balance history columns. The first
+leftmost balance column is the requested document date, intermediate columns
+come from prior period ends in newest-to-oldest order when the workspace has
+period control data, and the final rightmost column is the fiscal-year opening
+balance. `--opening-as-of` requires `--as-of` and lets you override that final
+opening-balance date explicitly.
 `groups assign` gives you a native way to set account-to-group membership in
 bulk without hand-editing CSV rows.
 

@@ -17,14 +17,13 @@ Create the attachment datasets:
 bus attachments init
 ```
 
-Register one PDF and link it to an invoice:
+Register one PDF and reserve its visible voucher number immediately:
 
 ```bash
-bus attachments add ./evidence/INV-1001.pdf --desc "Sales invoice INV-1001"
-bus attachments link ATT-000123 --invoice INV-1001
+bus attachments add ./evidence/receipt.pdf --voucher V-2026-000123 --desc "Card receipt"
 ```
 
-Link the same file to a bank row without looking up the attachment ID first:
+Link the same file later to a bank row without looking up the attachment ID first:
 
 ```bash
 bus attachments link \
@@ -48,14 +47,14 @@ bus attachments list --by-voucher V-2026-000123 --graph
 ### Synopsis
 
 `bus attachments init [-C <dir>] [global flags]`  
-`bus attachments add <file> [--desc <text>] [-C <dir>] [global flags]`  
+`bus attachments add <file> [<voucher_id>] [--desc <text>] [--voucher <id>] [-C <dir>] [global flags]`  
 `bus attachments link <attachment_id> [--if-missing] [--kind <kind> --id <resource_id> | --bank-row <id> | --voucher <id> | --invoice <id>] [-C <dir>] [global flags]`  
 `bus attachments link [--path <relpath>|--desc-exact <text>|--source-hash <sha256>] [--if-missing] [--kind <kind> --id <resource_id> | --bank-row <id> | --voucher <id> | --invoice <id>] [-C <dir>] [global flags]`  
 `bus attachments list [filters] [-C <dir>] [global flags]`
 
 ### The basic model
 
-`add` registers a file and copies it into the workspace attachment area. The file gets metadata such as attachment ID, filename, MIME type, hash, and repository-relative path.
+`add` registers a file and copies it into the workspace attachment area. The file gets metadata such as attachment ID, filename, MIME type, hash, and repository-relative path. If you already know the visible voucher number that should own that evidence, pass `--voucher <id>` and `add` writes the voucher link immediately instead of requiring a separate `link` command later.
 
 `link` connects that attachment to a business resource. The most common shortcuts are `--invoice`, `--voucher`, and `--bank-row`, but you can also use a custom `--kind` and `--id`.
 
@@ -72,10 +71,11 @@ If you do not know the ID, `link` can resolve the attachment deterministically b
 Many users use this module alongside invoices, bank import, and journal work:
 
 ```bash
-bus attachments add ./evidence/receipt-2026-01-15.pdf --desc "Card receipt"
-bus attachments link ATT-000200 --voucher V-2026-000045
+bus attachments add ./evidence/receipt-2026-01-15.pdf V-2026-000045 --desc "Card receipt"
 bus attachments list --by-voucher V-2026-000045 --graph
 ```
+
+If two positional arguments are given to `add`, one of them must resolve to the existing input file path and the other is treated as the voucher id. If both look like files or neither does, the command fails as ambiguous instead of guessing.
 
 For periodic cleanup before close:
 

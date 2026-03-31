@@ -215,7 +215,12 @@ Signed amount cells are kept on one rendered line instead of wrapping across
 multiple lines. The page picker only evaluates as many candidate body rows as
 can physically fit on the current page, so large real-year day-book and
 evidence-pack PDF runs do not stall by rescanning the full remaining journal
-slice on every page.
+slice on every page. The same human-facing PDF table family now also uses one
+shared visible row-text path instead of per-cell visible text fragments, so
+Apple Preview annotations and `pdftotext`/`pdftohtml` extraction behave the
+same way in `day-book`, `general-ledger`, `voucher-list`, `bank-transactions`,
+`account-balances`, `balance-sheet-specification`, `materials-register`, and
+the statutory statement PDFs.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
@@ -269,6 +274,8 @@ public-filing annual package.
 For statutory reporting, start from `account-groups.csv`. That group tree is the canonical reporting hierarchy. Every posting account belongs to one group through `accounts.csv:group_id`, and short or full statement variants should differ only by which groups are visible in the selected `report_profiles`. In the built-in Finnish `*-full` layouts, bus-reports expands any visible deeper descendants from that canonical tree under the matching statutory parent rows, so lower-level TASE and tuloslaskelma branches remain visible without introducing a second report-only hierarchy.
 
 In the Finnish `*-full-accounts` balance-sheet variants, that same shared tree also drives the account drill-down rows. If a visible TASE line, including an injected descendant group row, carries non-zero account contributions, the report appends deterministic per-account rows under that exact visible line instead of limiting breakdowns to a small built-in row subset. In printable PDFs those account rows use one wrapped visible detail label such as `<tilinumero> <tilin nimi>`, so long account names stay fully visible instead of being clipped by separate fixed code and name columns.
+
+The same canonical-tree rule applies to the Finnish `fi-*-tuloslaskelma-full` and `fi-*-tuloslaskelma-full-accounts` layouts. If the workspace group tree contains deeper visible descendants below a built-in statutory expense branch, those descendants stay visible as their own rows, they render with the same negative visible statement sign as the parent expense branch, and any direct account contributions stay under that exact visible descendant row in the `*-accounts` variants instead of collapsing back to a higher built-in parent row.
 
 When you need to inspect that resolution directly, use `statement-explain` or
 `statement-validate`. Those commands show the original account group, the
