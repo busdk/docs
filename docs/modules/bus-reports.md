@@ -64,13 +64,14 @@ making text selection, highlighting, and annotation work more naturally in
 viewers such as Apple Preview. The shared PDF renderer now embeds Unicode
 fonts with `/ToUnicode` mappings so copied, selected, and extracted text stays
 readable across common viewers and PDF extraction tools. Full and
-`*-accounts` statement rows are now emitted as unified visible row text
-instead of column-fragmented visible cell snippets, so Preview-style
-annotation and `pdftotext`-style extraction follow the natural reading order.
-The accountant-facing wrapped review tables now also compose each visible row
-as one shared row line with explicit inter-column spacing, so later
-`general-ledger`, `day-book`, `voucher-list`, and `bank-transactions` pages
-do not regress back to cell-like annotation behavior.
+`*-accounts` statement rows are now emitted through the shared statement text
+path so Preview-style annotation and `pdftotext`-style extraction follow the
+natural reading order. The accountant-facing review-table family
+(`general-ledger`, `day-book`, `voucher-list`, and `bank-transactions`) now
+uses one shared visible-only cell renderer with explicit gutters between
+columns and no overlapping hidden duplicate row layer, so the printed table
+layout stays intact without the unstable page-by-page selection behavior that
+Preview can show for overlapping text layers.
 Repeated later-page statement headers now use that same full-row text path, so
 `tase-full.pdf`, `tase-accounts.pdf`, and the matching tuloslaskelma variants
 do not fall back to cell-style visible text on continuation pages. The same
@@ -168,7 +169,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `trial-balance` and `account-balances` are the quickest health checks for a period-end or year-end review. When you want the same canonical hierarchy you already use elsewhere in Finnish reporting, add `--grouped` to `trial-balance` and the human-facing text, Markdown, or PDF output will show account-group rows with their subtotal balances above the posting accounts below them.
 
-`day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. In PDF, `general-ledger` now starts with a table of contents that lists those account sections and their page numbers. `day-book` uses the same shared PDF path and starts with a month-based table of contents for the rendered period. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
+`day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. In PDF, `general-ledger` now starts with a table of contents that lists those account sections and their page numbers, and those TOC rows are clickable internal PDF links to the matching account section. `day-book` uses the same shared PDF path and starts with a month-based table of contents for the rendered period, with the same clickable internal-link behavior. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
 
 `account-ledger` is a narrower, date-range-focused tool for one account. It is useful when a single account needs explanation over a smaller time window.
 
@@ -232,7 +233,11 @@ shared visible row-text path instead of per-cell visible text fragments, so
 Apple Preview annotations and `pdftotext`/`pdftohtml` extraction behave the
 same way in `day-book`, `general-ledger`, `voucher-list`, `bank-transactions`,
 `account-balances`, `balance-sheet-specification`, `materials-register`, and
-the statutory statement PDFs.
+the statutory statement PDFs. For the ledger/day-book review family
+specifically, the visible row layer stays on the real column grid rather than
+on one space-padded visible line, so adjacent rows and continuation pages
+stay visually aligned under the same headers even when values have mixed
+widths.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported

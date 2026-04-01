@@ -78,31 +78,48 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - `bus config` ([CLI](modules/bus-config))
 - `bus data` ([CLI](modules/bus-data))
 - `bus preferences` ([CLI](modules/bus-preferences))
+- `bus status` ([CLI](modules/bus-status))
 
 ### User interfaces
 
 - `bus sheets` ([CLI](modules/bus-sheets))
 - `bus books` ([CLI](modules/bus-books))
+- `bus ui` ([CLI](modules/bus-ui))
+- `bus portal` ([CLI](modules/bus-portal))
 
 ### Automation and integration
 
 - `bus api` ([CLI](modules/bus-api))
+- `bus api provider books` ([CLI](modules/bus-api-provider-books))
+- `bus api provider data` ([CLI](modules/bus-api-provider-data))
+- `bus api provider session` ([CLI](modules/bus-api-provider-session))
 - `bus run` ([CLI](modules/bus-run))
 - `bus agent` ([CLI](modules/bus-agent))
 - `bus secrets` ([CLI](modules/bus-secrets))
 - `bus dev` ([CLI](modules/bus-dev))
+- `bus update` ([CLI](modules/bus-update))
+- `bus shell` ([CLI](modules/bus-shell))
+- `bus gateway` ([CLI](modules/bus-gateway))
+- `bus factory` ([CLI](modules/bus-factory))
+- `bus events` ([CLI](modules/bus-events))
+- `bus faq` ([CLI](modules/bus-faq))
+- `bus inspection` ([CLI](modules/bus-inspection))
 
 ### Ledger foundation
 
 - `bus bfl` ([CLI](modules/bus-bfl))
+- `bus ledger` ([CLI](modules/bus-ledger))
 - `bus accounts` ([CLI](modules/bus-accounts))
 - `bus entities` ([CLI](modules/bus-entities))
+- `bus customers` ([CLI](modules/bus-customers))
+- `bus vendors` ([CLI](modules/bus-vendors))
 - `bus period` ([CLI](modules/bus-period))
 - `bus balances` ([CLI](modules/bus-balances))
 
 ### Journal flow
 
 - `bus journal` ([CLI](modules/bus-journal))
+- `bus memo` ([CLI](modules/bus-memo))
 - `bus invoices` ([CLI](modules/bus-invoices))
 - `bus bank` ([CLI](modules/bus-bank))
 - `bus reconcile` ([CLI](modules/bus-reconcile))
@@ -129,6 +146,8 @@ description: Documentation hub for humans and AI agents using the Business Devel
 
 - `bus filing prh` ([CLI](modules/bus-filing-prh))
 - `bus filing vero` ([CLI](modules/bus-filing-vero))
+
+The [module CLI reference](modules/index) covers every current top-level BusDK module in this superproject, including supporting tools that are not always part of the first bookkeeping workflow pass.
 
 ## Understand System Design {#understand-system-design}
 
