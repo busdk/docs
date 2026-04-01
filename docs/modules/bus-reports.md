@@ -69,9 +69,21 @@ path so Preview-style annotation and `pdftotext`-style extraction follow the
 natural reading order. The accountant-facing review-table family
 (`general-ledger`, `day-book`, `voucher-list`, and `bank-transactions`) now
 uses one shared visible-only cell renderer with explicit gutters between
-columns and no overlapping hidden duplicate row layer, so the printed table
-layout stays intact without the unstable page-by-page selection behavior that
-Preview can show for overlapping text layers.
+columns and no overlapping hidden duplicate row layer. The shared width
+resolver budgets those gutters against visible cell width, so short fields
+such as dates and compact identifiers do not wrap unnecessarily while a wider
+description column on the same page still has reclaimable slack. That keeps
+the visible layout readable without forcing text to start right at each cell
+edge, which in turn helps neighboring columns stay separately selectable in
+Preview-like viewers.
+The same shared geometry contract now also keeps a small real vertical gap
+between adjacent body rows, and the paginator uses that same row gap in its
+page-fit math so body rows do not collapse into one continuous selectable
+grid. The same shared table path now also keeps a small gap between the
+repeated header row and the first body row instead of letting them touch.
+That keeps
+the printed table layout intact without the unstable page-by-page selection
+behavior that Preview can show for overlapping text layers.
 Repeated later-page statement headers now use that same full-row text path, so
 `tase-full.pdf`, `tase-accounts.pdf`, and the matching tuloslaskelma variants
 do not fall back to cell-style visible text on continuation pages. The same
@@ -237,7 +249,12 @@ the statutory statement PDFs. For the ledger/day-book review family
 specifically, the visible row layer stays on the real column grid rather than
 on one space-padded visible line, so adjacent rows and continuation pages
 stay visually aligned under the same headers even when values have mixed
-widths.
+widths. Each non-final visible review cell also carries a literal trailing
+space when it contains text, so copied and extracted text keeps a clean
+separator between adjacent columns even if the PDF viewer heuristically treats
+the page as a table. The same shared style also keeps the light gray cell outlines/fills as
+part of the real document appearance and reserves a separate gap between month
+or account title boxes and the header row beneath them.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
