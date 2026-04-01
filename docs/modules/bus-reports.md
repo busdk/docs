@@ -254,7 +254,9 @@ space when it contains text, so copied and extracted text keeps a clean
 separator between adjacent columns even if the PDF viewer heuristically treats
 the page as a table. The same shared style also keeps the light gray cell outlines/fills as
 part of the real document appearance and reserves a separate gap between month
-or account title boxes and the header row beneath them.
+or account title boxes and the header row beneath them. In `day-book` and
+`general-ledger`, those title boxes also include a compact top-right link back
+to the opening table of contents.
 
 `voucher-list` follows the same rule. The visible `document_number` comes from
 the business-facing voucher number first, while any technical or imported
