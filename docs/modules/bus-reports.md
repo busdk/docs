@@ -181,7 +181,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `trial-balance` and `account-balances` are the quickest health checks for a period-end or year-end review. When you want the same canonical hierarchy you already use elsewhere in Finnish reporting, add `--grouped` to `trial-balance` and the human-facing text, Markdown, or PDF output will show account-group rows with their subtotal balances above the posting accounts below them.
 
-`day-book` shows entries in posting order. `general-ledger` groups them by account and, in human-facing text, Markdown, and PDF output, renders one table section per account with the account code and account name shown before that section's entry rows. In PDF, `general-ledger` now starts with a table of contents that lists those account sections and their page numbers, and those TOC rows are clickable internal PDF links to the matching account section. `day-book` uses the same shared PDF path and starts with a month-based table of contents for the rendered period, with the same clickable internal-link behavior. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
+`day-book` shows entries in posting order and, in human-facing text, Markdown, and PDF output, now adds one summary line after each date with that day's debit total, credit total, debit row count, credit row count, distinct transaction count, and cumulative end-of-day result. `general-ledger` groups entries by account and, in those same human-facing formats, renders one table section per account with the account code and account name shown before that section's entry rows. It now also adds one summary line after each date inside an account section, with that day's debit total, credit total, debit row count, credit row count, and the account's ending saldo after the day, plus one monthly summary line after the last rendered day of each month in that same account section with the month's debit total, credit total, debit row count, credit row count, and ending saldo after the month. Those same human-facing `general-ledger` views also include a `counter_account` / `vastatili` column so you can see the other account or accounts from the same transaction without leaving the current account section. In PDF, `general-ledger` now starts with a table of contents that lists those account sections and their page numbers, and those TOC rows are clickable internal PDF links to the matching account section. `day-book` uses the same shared PDF path and starts with a month-based table of contents for the rendered period, with the same clickable internal-link behavior. In `general-ledger` PDF, each visible counterpart-account label also links internally to the matching transaction row in that counterpart account section. If you prefer terminal-style browsing instead of table output, `ledger-log` is the review command to try next.
 
 `account-ledger` is a narrower, date-range-focused tool for one account. It is useful when a single account needs explanation over a smaller time window.
 
@@ -227,7 +227,10 @@ fixed-value columns stay compact so `Description` absorbs most of that extra
 width. Bus also hides the `Voucher` column entirely when it would be blank on
 every row. Wrapped PDF cells now share one logical row height so the table
 stays visually aligned across columns, and page breaks are computed from those
-final wrapped row heights so later pages do not inherit an overfull table
+final wrapped row heights so later pages do not inherit an overfull table.
+The same page-local width policy also keeps visible document-number columns
+compact in both `day-book` and `general-ledger`, and reserves enough date
+width that bold summary dates stay on one line.
 slice. In `general-ledger` PDF, account sections use whatever page space
 remains as long as the section heading, repeated header, and at least part of
 the current account table fit on that page. If the next row in the same
