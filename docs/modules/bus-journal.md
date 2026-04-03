@@ -62,11 +62,12 @@ bus journal opening \
   --date 2026-01-01
 ```
 
-Check balances and inspect one account’s movement:
+Check balances, assert journal totals, and inspect one account’s movement:
 
 ```bash
 bus journal balance --as-of 2026-03-31
 bus journal balance assert 1910 2026-03-31 1240.55
+bus journal assert debit 2026-01-01..2026-03-31 --source-id-prefix receipt-split:meri: '>=1000'
 bus journal --format tsv account-activity --account 1910 --period 2026 --opening exclude
 ```
 
@@ -120,6 +121,7 @@ bus journal template post \
 `bus journal balance assert opening <account> <YYYY-MM-DD> <amount> [-C <dir>] [global flags]`  
 `bus journal balance assert <account> opening <YYYY-MM-DD> <amount> [-C <dir>] [global flags]`  
 `bus journal balance assert <account> <YYYY-MM-DD> --opening <amount> [--closing <amount>] [-C <dir>] [global flags]`  
+`bus journal assert <balance|debit|credit|net> ... [-C <dir>] [global flags]`  
 `bus journal account-activity --account <code[,code]> [--period <id>] [--from-date <YYYY-MM-DD>] [--to-date <YYYY-MM-DD>] [--opening <all|exclude|only>] [--top <n>] [-C <dir>] [global flags]`  
 `bus journal match <selector...> [--unsettled] [--older-than <Nd|Nw>] [--as-of <YYYY-MM-DD>] [apply [--print|--dry-run] [--desc <text>] <target|split...>] [-C <dir>] [global flags]`  
 `bus journal import --profile <name> --file <path> [--source-id-from <column>] [--external-source-ref-from <column>] [--source-link-from <kind=column>] [--source-voucher-context-from <column>] [--source-voucher-number-from <column>] [--source-voucher-label-from <column>] [--source-voucher-group-from <column>] [--mapping-profile <name>] [--header-row <n>] [--map <field=header|column>] ... [-C <dir>] [global flags]`  
@@ -137,6 +139,8 @@ Command-local help is available too, for example `bus journal add --help`.
 `opening` is the year-split helper. It turns prior end-of-period balance-sheet balances into ordinary stored journal rows in the new workspace instead of relying on hidden cross-workspace lookups.
 
 `balance` is the fastest way to answer “what is the balance as of this date?”. The same command also supports replay-time balance assertions without shell glue. Use `bus journal balance assert 1910 2026-03-31 1240.55` or keep the date and amount explicit with flags. When replay needs day-start versus day-end checks, use the explicit opening/closing forms such as `bus journal balance assert opening 1910 2026-01-01 190.00` or `bus journal balance assert 1910 2026-03-31 --opening 190.00 --closing 93.85`. The legacy closing-only form prints one TSV row with `account_id`, `as_of`, `expected`, `observed`, and `status`. Explicit opening/closing forms print `account_id`, `as_of`, `point`, `expected`, `observed`, and `status`, one row per requested point in opening-then-closing order. The command returns `0` on an exact match and returns `1` when any requested saldo differs.
+
+`assert` is the first-class journal-total assertion surface. Use it when the thing you want to prove is not “one account balance as-of one date” but a filtered journal subset total. Supported measures are `balance`, `debit`, `credit`, and `net`. `balance` uses the simple form `bus journal assert balance 1910 2026-03-31 1240.55`. `debit`, `credit`, and `net` accept one positional date or date range plus explicit filters such as `--account`, `--source-id`, `--source-id-prefix`, `--desc`, and `--desc-prefix`, and they also accept comparison operators like `>=1000` and `<=0`. The output is one deterministic TSV row with `measure`, `scope`, `expected`, `observed`, and `status`.
 
 `account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher, source, and external parity-reference identifiers.
 
