@@ -5,9 +5,9 @@ description: bus files is the planned BusDK surface for parsing local evidence f
 
 ## `bus files` — parse and find local evidence files
 
-`bus files` is the planned BusDK module for local filesystem work on evidence files such as receipts, bank statements, and other imported accounting source documents. Its job is to inspect files and directories directly, print deterministic parsed output, and stay clearly separate from workspace attachment storage and journal creation.
+`bus files` is the BusDK module for local filesystem work on evidence files such as receipts, bank statements, and other imported accounting source documents. Its job is to inspect files and directories directly, print deterministic parsed output, and stay clearly separate from workspace attachment storage and journal creation.
 
-This module page documents the intended command family now that the `bus-files` repository exists in the superproject. The implementation is still planned work, so these commands should be read as the target user-facing surface rather than as a shipped compatibility promise today.
+The module now exists as a normal BusDK CLI module in the superproject and provides the standard binary, help, version, build, install, test, and e2e surfaces. The actual parse/find feature family is still planned work. Today the command names exist only as explicit placeholders and fail with deterministic `not implemented yet` diagnostics instead of pretending the parser surface is already shipped.
 
 ### Planned command shapes
 
@@ -20,11 +20,25 @@ bus files parse rows receipt.pdf
 bus files find ./evidence
 ```
 
-`parse` is the file-level command. It should read one or many local files and print deterministic parsed metadata or text extraction results without mutating the workspace.
+`parse` is the file-level command. It should eventually read one or many local files and print deterministic parsed metadata or text extraction results without mutating the workspace.
 
 `parse rows` is the narrower row or item-line extraction command. Use it when the file type supports structured row extraction and you want line-level output instead of only receipt- or statement-level metadata.
 
 `find` is the directory scan and duplicate-control command. It should walk one or many local directories, fingerprint files deterministically, report duplicates using explicit non-fuzzy signals such as hashes, and print a stable inventory-style result.
+
+### Current shipped behavior
+
+The currently shipped behavior is intentionally minimal:
+
+```bash
+bus files --help
+bus files --version
+bus files parse receipt.pdf
+bus files parse rows receipt.pdf
+bus files find ./evidence
+```
+
+Help and version work like other BusDK modules. The three planned command families currently fail explicitly with a deterministic `not implemented yet` diagnostic and non-zero exit status. This keeps the superproject and dispatcher surfaces consistent while the actual parser functionality is still under implementation.
 
 ### How this differs from nearby modules
 
@@ -40,7 +54,7 @@ For `find`, duplicate detection should remain deterministic. Exact file hashes, 
 
 ### Current status
 
-The `bus-files` module has been added to the BusDK superproject and its planned scope is tracked in the module plan. The command surface described here is the intended first implementation target, especially for generic native parsing of local evidence files and common bank-statement PDFs without sidecar-first workflows.
+The `bus-files` module has been added to the BusDK superproject as a normal buildable/installable CLI module, and its planned scope is tracked in the module plan. The command surface described here remains the intended first implementation target, especially for generic native parsing of local evidence files and common bank-statement PDFs without sidecar-first workflows.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
