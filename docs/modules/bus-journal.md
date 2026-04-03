@@ -8,6 +8,7 @@ description: bus journal is the authoritative ledger module for BusDK. Use it to
 `bus journal` maintains the authoritative double-entry ledger for a workspace. If a row should become accounting, this is the module that writes it.
 
 Use it for manual entries, replay-safe automated postings, account activity review, legacy journal import, and bank-driven posting automation. Closed or locked periods are rejected automatically.
+For exact operator syntax, use `bus journal --help` for the command family and `bus journal <subcommand> --help` for the structured local contract. This is especially useful for the shorthand-heavy `assert` and `match` surfaces.
 
 ### Common tasks
 

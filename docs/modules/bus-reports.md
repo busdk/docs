@@ -210,14 +210,18 @@ posting also carries one legacy or migration pointer, add
 `external_source_ref` value shown as well. If one posting carries more than
 one preserved source relation, add `--show-source-links` too. CSV and JSON
 keep `source_voucher`, `external_source_ref`, and `source_links` even without
-those human-facing flags.
+those human-facing flags only in grouped or machine-facing output paths.
+Ungrouped CSV now mirrors the same visible review columns as PDF instead:
+signed amounts, summary rows, counterpart-account display values, and the same
+optional source-facing review columns when you enable them.
 
 In those human-facing `general-ledger` and `day-book` views, the amount column
 is signed: debit rows show a leading plus sign and credit rows a leading minus
 sign. `Dr` and `Cr` are used instead of full debit and credit labels, and
 day-book compacts the visible account column to `<tilinumero> <tilin nimi>` to
-save width. CSV and JSON keep the stable machine-facing split between `side`
-and unsigned `amount`.
+save width. Ungrouped CSV follows that same signed review presentation, while
+grouped CSV and JSON keep the stable machine-facing split between `side` and
+unsigned `amount`.
 When multiple postings share the same date, those review outputs keep the same
 append order as the journal instead of re-sorting same-day rows by internal
 transaction IDs or stringified line numbers.
@@ -304,13 +308,13 @@ switches `bus-reports` to the household/person review family:
 `annual-template` / `filing-package` / `annual-validate` outputs instead of
 company-style public-filing defaults. Company-style PDF metadata warnings for
 Y-tunnus and signature fields are also suppressed for those personal review
-outputs. Because `evidence-pack` is PDF-only, that package currently includes
-only the personal/non-company review documents that already have PDF
-renderers. Sole-proprietor / `tmi` workspaces still keep the non-public annual
-review manifests and checks, but their `evidence-pack` now also includes the
-core `tase` and `tuloslaskelma` artifacts plus the explicit compact/full/account-breakdown
-Finnish statutory statement variants so the yearly package contains the
-expected financial statements and deeper review PDFs without switching to a
+outputs. Personal/non-company `evidence-pack` now writes CSV companions beside
+the same review documents that stay in scope. Sole-proprietor / `tmi`
+workspaces still keep the non-public annual review manifests and checks, but
+their `evidence-pack` now also includes the core `tase` and `tuloslaskelma`
+artifacts plus the explicit compact/full/account-breakdown Finnish statutory
+statement variants so the yearly package contains the expected financial
+statements and deeper review PDF+CSV pairs without switching to a
 public-filing annual package.
 
 ### Statement placement and report profiles
@@ -375,28 +379,32 @@ saldo onto the per-account `YHTEENSÄ` rows and the main overall summary row.
 
 `evidence-pack` is the one-command close bundle. It writes a target directory
 full of standard artifacts and also writes a manifest of what it created. The
-package is now PDF-only: it includes the main statements, ledgers, internal
-`tase-erittelyt`, and explicit compact/full/account-breakdown statutory PDFs,
-but it no longer writes CSV or TSV artifacts into the output directory and it
-no longer includes `materials-register` or `methods-description` in the
-default package. Dated default filenames use a compact `YYYYMMDD-` prefix such
-as `20241231-tase.pdf` and `20241231-day-book.pdf`. You can trim the package
+package includes the main statements, ledgers, internal `tase-erittelyt`, and
+explicit compact/full/account-breakdown statutory PDFs. For every report
+artifact that already has a deterministic CSV renderer, `evidence-pack` also
+writes a same-name `.csv` companion into the output directory so the package
+contains both printable review documents and machine-readable exports derived
+from the same statement/report rows. The default package still excludes
+`materials-register` and `methods-description`. Dated default filenames use a
+compact `YYYYMMDD-` prefix such as `20241231-tase.pdf`, `20241231-tase.csv`,
+`20241231-day-book.pdf`, and `20241231-day-book.csv`. You can trim the package
 with `--profile accountant|machine` or explicit `--include` / `--exclude`
 selectors, and you can rename generated artifacts deterministically with
 repeated `--filename-template SELECTOR=TEMPLATE` rules. Selectors match `*`,
 `report`, `report:format`, or the default filename; templates support
 `{report}`, `{format}`, `{period}`, `{as_of}`, `{from}`, and `{filename}`.
-Workspace configuration can provide the same defaults through
+When a filename template rewrites a PDF artifact, its CSV companion follows the
+same resolved basename with `.csv`. Workspace configuration can provide the same defaults through
 `busdk.accounting_entity.reporting_context.fi.evidence_pack_profile` and
 `evidence_pack_filename_templates`, and command-line flags override those
 defaults deterministically. If one artifact fails, `evidence-pack` still
 attempts the remaining artifacts, writes the manifest of successful outputs,
 and only then exits non-zero with an aggregated stderr summary. For
 `entity_kind=personal` and other non-company profiles, the package stays on
-the internal review path, but because it is PDF-only it currently includes
-only the review documents that already have PDF renderers. Sole-proprietor /
-`tmi` workspaces additionally keep the core `tase` and `tuloslaskelma` PDFs in
-that same internal review package.
+the internal review path and writes CSV companions beside the same review/PDF
+artifacts that remain in scope. Sole-proprietor / `tmi` workspaces
+additionally keep the core `tase` and `tuloslaskelma` PDF+CSV pairs in that
+same internal review package.
 
 Comparative figures use the current workspace only when prior-year data really
 exists there. That covers the uncommon multi-year workspace, but a normal Bus

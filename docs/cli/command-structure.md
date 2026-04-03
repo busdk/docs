@@ -5,7 +5,7 @@ description: BusDK is CLI-first.
 
 ## Command structure and discoverability
 
-BusDK is CLI-first. Commands are organized by module and generally follow a verb-noun structure. Subcommand names follow [CLI command naming](./command-naming). Most modules accept a common set of [standard global flags](./global-flags) (help, version, verbosity, working directory, output redirection, format, and color) before the subcommand. Examples include `bus accounts add` for chart-of-accounts changes; `bus journal add` for appending balanced journal entries; `bus invoices add` for adding invoice records; `bus invoices pdf` for rendering invoice PDFs from stored invoice data; `bus vat report` for VAT summaries; and `bus budget set` or `bus budget add` for budgeting operations. The top-level `bus` command or `bus help` is expected to list available modules and commands, while module-level help such as `bus journal --help` provides command usage details.
+BusDK is CLI-first. Commands are organized by module and generally follow a verb-noun structure. Subcommand names follow [CLI command naming](./command-naming). Most modules accept a common set of [standard global flags](./global-flags) (help, version, verbosity, working directory, output redirection, format, and color) before the subcommand. Examples include `bus accounts add` for chart-of-accounts changes; `bus journal add` for appending balanced journal entries; `bus invoices add` for adding invoice records; `bus invoices pdf` for rendering invoice PDFs from stored invoice data; `bus vat report` for VAT summaries; and `bus budget set` or `bus budget add` for budgeting operations. The top-level `bus` command or `bus help` is expected to list available modules and commands, while module-level help such as `bus journal --help` provides command usage details. Good command help is syntax-first and scannable: it should feel closer to common CLI tools such as `git -h`, `git add -h`, or `tar --help` than to a prose-heavy manual page collapsed into one paragraph.
 
 For internal implementation-readiness tracking and test-coverage status, maintainers use the private SDD workspace. This public page stays focused on end-user command behavior.
 
@@ -21,5 +21,6 @@ For internal implementation-readiness tracking and test-coverage status, maintai
 
 - [CLI command naming](./command-naming)
 - [Standard global flags](./global-flags)
+- Common CLI references in this environment: `git -h`, `git add -h`, and `tar --help`
 - [bus module CLI reference](../modules/bus)
 - [Development status](../modules/features)

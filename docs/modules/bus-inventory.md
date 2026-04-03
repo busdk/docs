@@ -20,6 +20,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 It produces valuation output for accounting and reporting.
 Movements are append-only; corrections are new records.
 The owned `items.csv` and `movements.csv` datasets can resolve either as ordinary CSV or as `PCSV-1` fixed-block CSV through workspace storage metadata.
+For exact command syntax, use `bus inventory --help` or `bus inventory <subcommand> --help`; the binary now exposes syntax-first command-local help for each shipped subcommand.
 
 ### Commands
 

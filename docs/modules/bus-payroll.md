@@ -16,6 +16,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 
 `bus payroll` validates payroll datasets and exports deterministic posting rows for a selected final payrun.
 Data is schema-validated and append-only for auditability.
+Use `bus payroll validate --help` and `bus payroll export --help` for the exact current syntax and examples.
 
 ### Commands
 

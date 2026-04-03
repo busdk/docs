@@ -22,6 +22,7 @@ Normal dispatch uses `bus <module> [args...]` and calls `bus-<module>` from PATH
 `bus` is the single CLI entrypoint for BusDK. It does not implement accounting logic itself; it routes commands to module CLIs (`bus-journal`, `bus-bank`, and so on), and it can execute deterministic `.bus` files.
 
 If you run `bus` with no arguments, it prints usage and a quick tip suggesting `bus shell` for interactive command entry.
+Run `bus --help` when you need the current syntax-first global help with grouped dispatcher usage and the current available-command list.
 
 When running busfiles, `bus` always does a full syntax preflight across all provided files before executing any command. If preflight fails, nothing is executed.
 

@@ -16,6 +16,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 `bus pdf` renders deterministic PDFs from structured JSON input.
 It does not read BusDK datasets directly.
 It accepts a render model via `--data <file>` or `--data @-` (stdin).
+Use `bus pdf --help`, `bus pdf render --help`, and `bus pdf list-templates --help` when you need the exact command shapes from the binary itself.
 
 Callers such as [bus-invoices](./bus-invoices) load workspace data and pass a single JSON payload to this module.
 Output PDFs can then be registered as attachments.

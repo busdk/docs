@@ -18,6 +18,7 @@ Command names follow [CLI command naming](../cli/command-naming).
 `bus filing` orchestrates deterministic filing bundle creation from validated, closed-period data.
 It delegates target-specific formats to `bus filing prh` and `bus filing vero`.
 Use after validation and period close.
+Run `bus filing --help` for the dispatcher shapes and `bus filing <target> --help` for the current target hand-off syntax.
 
 ### Commands
 

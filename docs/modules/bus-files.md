@@ -8,6 +8,7 @@ description: bus files is the planned BusDK surface for parsing local evidence f
 `bus files` is the BusDK module for local filesystem work on evidence files such as receipts, bank statements, and other imported accounting source documents. Its job is to inspect files and directories directly, print deterministic parsed output, and stay clearly separate from workspace attachment storage and journal creation.
 
 The module now exists as a normal BusDK CLI module in the superproject and provides the standard binary, help, version, build, install, test, and e2e surfaces. The actual parse/find feature family is still planned work. Today the command names exist only as explicit placeholders and fail with deterministic `not implemented yet` diagnostics instead of pretending the parser surface is already shipped.
+Use `bus files --help`, `bus files parse --help`, `bus files parse rows --help`, and `bus files find --help` to see the reserved command shapes directly from the binary.
 
 ### Planned command shapes
 
