@@ -121,6 +121,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - `bus journal` ([CLI](modules/bus-journal))
 - `bus memo` ([CLI](modules/bus-memo))
 - `bus invoices` ([CLI](modules/bus-invoices))
+- `bus files` ([CLI](modules/bus-files))
 - `bus bank` ([CLI](modules/bus-bank))
 - `bus reconcile` ([CLI](modules/bus-reconcile))
 - `bus attachments` ([CLI](modules/bus-attachments))

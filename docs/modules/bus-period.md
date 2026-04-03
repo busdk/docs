@@ -64,18 +64,29 @@ bus period opening \
   --equity-account 3200
 ```
 
+Create a cross-year custom period:
+
+```bash
+bus period add \
+  --period FY2024-2025 \
+  --start-date 2024-07-01 \
+  --end-date 2025-06-30 \
+  --retained-earnings-account 3200
+bus period open --period FY2024-2025
+```
+
 ### Synopsis
 
 `bus period init [-C <dir>] [global flags]`  
-`bus period add --period <YYYY|YYYY-MM|YYYYQn> [--start-date <YYYY-MM-DD>] [--end-date <YYYY-MM-DD>] [--retained-earnings-account <code>] [-C <dir>] [global flags]`  
-`bus period open --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
-`bus period close --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
-`bus period lock --period <YYYY|YYYY-MM|YYYYQn> [-C <dir>] [global flags]`  
-`bus period reopen --period <YYYY|YYYY-MM|YYYYQn> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`  
-`bus period set --period <YYYY|YYYY-MM|YYYYQn> --retained-earnings-account <code> [-C <dir>] [global flags]`  
+`bus period add --period <period> [--start-date <YYYY-MM-DD>] [--end-date <YYYY-MM-DD>] [--retained-earnings-account <code>] [-C <dir>] [global flags]`  
+`bus period open --period <period> [-C <dir>] [global flags]`  
+`bus period close --period <period> [-C <dir>] [global flags]`  
+`bus period lock --period <period> [-C <dir>] [global flags]`  
+`bus period reopen --period <period> --reason <text> --approved-by <id> [--voucher-id <id>]... [--max-open-days <n>] [-C <dir>] [global flags]`  
+`bus period set --period <period> --retained-earnings-account <code> [-C <dir>] [global flags]`  
 `bus period list [--history] [-C <dir>] [global flags]`  
 `bus period validate [-C <dir>] [global flags]`  
-`bus period opening --from <path> --as-of <YYYY-MM-DD> --post-date <YYYY-MM-DD> --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`
+`bus period opening --from <path> --as-of <YYYY-MM-DD> --post-date <YYYY-MM-DD> --period <period> [options] [-C <dir>] [global flags]`
 
 ### Period lifecycle
 
@@ -109,7 +120,9 @@ Use `opening` when you are rolling a workspace into a new fiscal year and want o
 
 ### Important details
 
-Supported period identifiers are `YYYY`, `YYYY-MM`, and `YYYYQn`.
+Period identifiers may be arbitrary non-empty strings. The shorthand forms `YYYY`, `YYYY-MM`, and `YYYYQn` remain special because `add` can derive start and end dates from them automatically.
+
+When you use a custom or cross-year identifier such as `FY2024-2025`, pass both `--start-date` and `--end-date` on `add`.
 
 Each period needs a retained-earnings account. If you omit it on `add`, the default is `3200`.
 

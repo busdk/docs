@@ -24,6 +24,14 @@ bus bank import --file ./statements/2026-01.csv
 bus bank list --month 2026-01
 ```
 
+Add one statement-backed row manually when the source evidence has no reliable human-readable counterparty name:
+
+```bash
+bus bank add --bank-id bt-2 --import-id imp-1 --booked-date 2026-01-03 \
+  --amount -5.00 --currency EUR --reference RF-123 \
+  --message "No counterparty in source"
+```
+
 Import a year of ERP-exported bank history with a deterministic profile:
 
 ```bash
@@ -78,6 +86,8 @@ bus bank config extractors add \
 `bus bank statement verify [--statement <parsed.json|attachment-id>] [--year <YYYY>] [--account <id>] [--fail-if-diff-over <amount>] [-C <dir>] [global flags]`  
 `bus bank config <subcommand> ...`
 
+Command-local help is available too, for example `bus bank add --help`.
+
 ### Import modes
 
 Use `import --file` when you already have a bank statement or a normalized source file for one import run.
@@ -93,6 +103,8 @@ bus bank import --profile erp-tsv --source ./exports/bank.tsv --year 2024 --fail
 ### The commands most people use after import
 
 `list` is the day-to-day inspection command. It prints deterministic rows in a stable order, and it is usually the first thing to run after import.
+
+`add` is the manual replay surface for one bank row at a time. It is useful when you are recreating statement-backed history and the source evidence is too small or too irregular for a bulk import flow.
 
 `backlog` tells you which rows are still unreconciled. This is the best command when you want to answer “what is still left to process?”.
 
@@ -127,6 +139,8 @@ bus bank control --month 2026-01 --account acct-1
 ### Files
 
 `bus bank` owns `bank-imports.csv`, `bank-transactions.csv`, and the statement checkpoint dataset. It can also create optional configuration tables for counterparty aliases, reference extractors, and statement-extract profiles. `bank-transactions.csv` now includes `source_links` for zero, one, or many pre-reconciliation source-object hints in addition to the older single-value extractor fields.
+
+When a statement-backed replay row has no reliable human-readable counterparty, `bus bank add` may store blank counterparty fields instead of forcing a fabricated placeholder name. The audit trail stays faithful to the source evidence, while `reference`, `message`, IBAN fields, and explicit `source_links` still remain available for later reconciliation.
 
 ### Output and flags
 

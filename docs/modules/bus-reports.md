@@ -138,27 +138,29 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--grouped] [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-balances --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports general-ledger --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports day-book --period <YYYY|YYYY-MM|YYYYQn> [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports ledger-log --period <YYYY|YYYY-MM|YYYYQn> [options] [-C <dir>] [global flags]`  
+`bus reports general-ledger --period <PERIOD_ID> [--account <code>] [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports day-book --period <PERIOD_ID> [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports ledger-log --period <PERIOD_ID> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
-`bus reports profit-and-loss --period <YYYY|YYYY-MM|YYYYQn> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <YYYY|YYYY-MM|YYYYQn>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports budget-vs-actual --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports cashflow --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports profit-and-loss --period <PERIOD_ID> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <PERIOD_ID>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <PERIOD_ID>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports budget-vs-actual --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports cashflow --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports net-worth --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports account-movement --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports transfer-summary --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports account-movement --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports transfer-summary --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports voucher-list --period <YYYY|YYYY-MM|YYYYQn> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports bank-transactions --period <YYYY|YYYY-MM|YYYYQn> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports voucher-list --period <PERIOD_ID> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports bank-transactions --period <PERIOD_ID> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports evidence-pack (--period <YYYY|YYYY-MM|YYYYQn> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [-C <dir>] [global flags]`  
+`bus reports evidence-pack (--period <PERIOD_ID> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [-C <dir>] [global flags]`  
 `bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
+
+`PERIOD_ID` accepts the usual Bus shorthand identifiers such as `2024`, `2024-01`, and `2024Q1`, and it also accepts any custom `period_id` defined in the workspace `periods.csv`, such as `FY2024-2025`.
 
 ### Choose the right command
 

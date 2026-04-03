@@ -79,6 +79,8 @@
       url: /modules/bus-period
     - label: bus preferences
       url: /modules/bus-preferences
+    - label: bus files
+      url: /modules/bus-files
     - label: bus attachments
       url: /modules/bus-attachments
     - label: bus invoices
