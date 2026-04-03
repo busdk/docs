@@ -128,7 +128,7 @@ bus journal template post \
 `bus journal classify <subcommand> ...`  
 `bus journal template <post|apply> ...`
 
-Command-local help is available too, for example `bus journal add --help`.
+Command-local help is available for the practical operator entrypoints too, for example `bus journal add --help`, `bus journal assert --help`, and `bus journal match --help`.
 
 ### What most users do with this module
 
@@ -145,6 +145,8 @@ Command-local help is available too, for example `bus journal add --help`.
 `account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher, source, and external parity-reference identifiers.
 
 `match` is the quick Unix-style selector/apply tool for existing journal rows. Use it first as a grep-like surface that lists matching entries from one or many exact or wildcard account selectors, and then add `apply` when you want Bus to create one deterministic reclassification posting per matched row. Selector-side filters also support `--unsettled`, `--older-than <Nd|Nw>`, and `--as-of <YYYY-MM-DD>`. `--unsettled` is intended for clearing-account work: a row stays selected only when the same account still lacks a later opposite-sign row with the same absolute amount by the chosen as-of date. That makes queries such as “show everything on 1999 that is still unresolved and older than a week” deterministic and replay-friendly. `apply --print` prints the exact `bus journal add` commands it would create; `apply --dry-run` validates the same path without writing anything. `--desc` may be a template and interpolate values from the matched row with placeholders such as `%(desc)`, `%(account_id)`, `%(transaction_id)`, `%(voucher_id)`, `%(posting_date)`, `%(amount)`, `%(debit)`, `%(credit)`, `%(source_id)`, and `%(external_source_ref)`.
+
+`assert` is the human-readable control surface for replay-side audit checks. `assert balance` remains the strict account plus cut-off-date check, while `assert debit`, `assert credit`, and `assert net` accept one day token such as `2026-01-31` or one inclusive range such as `2026-01-01..2026-03-31`, together with explicit subset filters like `--account`, `--source-id`, `--source-id-prefix`, `--desc`, and `--desc-prefix`. Expected values can be exact amounts or explicit comparisons such as `>=1000` and `<=0.00`. The easiest way to learn the exact accepted shorthand in place is `bus journal assert --help`.
 
 `import` is for legacy journal or day-book migration work where you want deterministic mapping rather than hand-posting old history. `--external-source-ref-from` preserves one dedicated foreign-system reference, `--source-link-from kind=column` preserves extra structured legacy references such as invoice ids or bank-row pointers alongside canonical `source_id`, and the `--source-voucher-*-from` selectors preserve the imported source-facing voucher notation for later review output.
 
@@ -193,7 +195,7 @@ These commands use [Standard global flags](../cli/global-flags). The most import
 
 Use `--dry-run` before `opening`, `match apply`, `import`, `classify apply`, `template post`, or `template apply` when you want to preview the effect without writing.
 
-For the full option list, run `bus journal --help`.
+For the full option list, run `bus journal --help`. For exact `assert` and `match` shorthand, use `bus journal assert --help` and `bus journal match --help`.
 
 ### Files
 

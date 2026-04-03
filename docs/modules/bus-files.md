@@ -32,13 +32,16 @@ The currently shipped behavior is intentionally minimal:
 
 ```bash
 bus files --help
+bus files parse --help
+bus files parse rows --help
+bus files find --help
 bus files --version
 bus files parse receipt.pdf
 bus files parse rows receipt.pdf
 bus files find ./evidence
 ```
 
-Help and version work like other BusDK modules. The three planned command families currently fail explicitly with a deterministic `not implemented yet` diagnostic and non-zero exit status. This keeps the superproject and dispatcher surfaces consistent while the actual parser functionality is still under implementation.
+Help and version work like other BusDK modules. Command-local help is available for `parse`, `parse rows`, and `find`, so the reserved syntax can be discovered in place even before the parser implementation lands. The three planned command families currently fail explicitly with a deterministic `not implemented yet` diagnostic and non-zero exit status when run without `--help`. This keeps the superproject and dispatcher surfaces consistent while the actual parser functionality is still under implementation.
 
 ### How this differs from nearby modules
 
