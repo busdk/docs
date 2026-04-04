@@ -74,7 +74,10 @@ These flags are interpreted only in busfile mode:
 `--check` runs preflight (and optional validation) only and does not apply changes. `--transaction <provider>` accepts `none` (default), `fs`, `git`, `snapshot`, or `copy`. `--scope <scope>` accepts `file` (default) or `batch`. `--trace` prints `file:line` traces before execution.
 
 `--check` should rely on module-native non-mutating validation where available.
-Dispatcher also rejects clearly invalid common patterns during preflight.
+Dispatcher also rejects clearly invalid common patterns during preflight. For
+`journal add`, that preflight accepts the same posting token shapes as the
+module help, including `ACCOUNT=AMOUNT=ROW_DESCRIPTION` with quoted UTF-8 row
+text in `.bus` files.
 
 ### Execution model
 
