@@ -1,14 +1,14 @@
 ---
 title: bus-journal — post and query ledger journal entries
-description: bus journal is the authoritative ledger module for BusDK. Use it to add balanced entries, materialize opening balances, inspect account activity, match and apply deterministic reclassifications, import legacy journals, and automate classified or template-based postings.
+description: bus journal is the authoritative ledger module for BusDK. Use it to add balanced entries, list and inspect journal rows, materialize opening balances, import legacy journals, and automate classified or template-based postings.
 ---
 
 ## `bus-journal` — post and query ledger journal entries
 
 `bus journal` maintains the authoritative double-entry ledger for a workspace. If a row should become accounting, this is the module that writes it.
 
-Use it for manual entries, replay-safe automated postings, account activity review, legacy journal import, and bank-driven posting automation. Closed or locked periods are rejected automatically.
-For exact operator syntax, use `bus journal --help` for the command family and `bus journal <subcommand> --help` for the structured local contract. This is especially useful for the shorthand-heavy `assert` and `match` surfaces.
+Use it for manual entries, neutral journal-row listing, replay-safe automated postings, account activity review, legacy journal import, and bank-driven posting automation. Closed or locked periods are rejected automatically.
+For exact operator syntax, use `bus journal --help` for the command family and `bus journal <subcommand> --help` for the structured local contract. This is especially useful for the shorthand-heavy `assert`, `list`, and `match` surfaces.
 
 ### Common tasks
 
@@ -70,7 +70,15 @@ bus journal balance --as-of 2026-03-31
 bus journal balance assert 1910 2026-03-31 1240.55
 bus journal assert debit 2026-01-01..2026-03-31 --source-id-prefix receipt-split:meri: '>=1000'
 bus journal assert match count 1999 --unsettled --older-than 7d --as-of 2026-01-31 0
-bus journal --format tsv account-activity --account 1910 --period 2026 --opening exclude
+bus journal --format tsv account-activity 1910 --period 2026 --opening exclude
+```
+
+List actual journal rows in neutral review formats:
+
+```bash
+bus journal list
+bus journal list --format csv 1700
+bus journal list --fields posting_date,entry_id,account_id,account_name,debit,credit,description 1700
 ```
 
 Match journal rows and preview one deterministic reclassification:
@@ -125,13 +133,14 @@ bus journal template post \
 `bus journal balance assert <account> <YYYY-MM-DD> --opening <amount> [--closing <amount>] [-C <dir>] [global flags]`  
 `bus journal assert <balance|debit|credit|net> ... [-C <dir>] [global flags]`  
 `bus journal assert match count <match-selector...> <expected-count> [-C <dir>] [global flags]`  
-`bus journal account-activity --account <code[,code]> [--period <id>] [--from-date <YYYY-MM-DD>] [--to-date <YYYY-MM-DD>] [--opening <all|exclude|only>] [--top <n>] [-C <dir>] [global flags]`  
+`bus journal account-activity <code[,code]|code...> [--period <id>] [--from-date <YYYY-MM-DD>] [--to-date <YYYY-MM-DD>] [--opening <all|exclude|only>] [--top <n>] [-C <dir>] [global flags]`  
+`bus journal list [<selector...>] [--unsettled] [--older-than <Nd|Nw>] [--as-of <YYYY-MM-DD>] [--fields <name[,name...]>] [-C <dir>] [global flags]`  
 `bus journal match <selector...> [--unsettled] [--older-than <Nd|Nw>] [--as-of <YYYY-MM-DD>] [apply [--print|--dry-run] [--desc <text>] <target|split...>] [-C <dir>] [global flags]`  
 `bus journal import --profile <name> --file <path> [--source-id-from <column>] [--external-source-ref-from <column>] [--source-link-from <kind=column>] [--source-voucher-context-from <column>] [--source-voucher-number-from <column>] [--source-voucher-label-from <column>] [--source-voucher-group-from <column>] [--mapping-profile <name>] [--header-row <n>] [--map <field=header|column>] ... [-C <dir>] [global flags]`  
 `bus journal classify <subcommand> ...`  
 `bus journal template <post|apply> ...`
 
-Command-local help is available for the practical operator entrypoints too, for example `bus journal add --help`, `bus journal assert --help`, and `bus journal match --help`.
+Command-local help is available for the practical operator entrypoints too, for example `bus journal add --help`, `bus journal assert --help`, `bus journal list --help`, and `bus journal match --help`.
 
 ### What most users do with this module
 
@@ -145,9 +154,11 @@ Command-local help is available for the practical operator entrypoints too, for 
 
 `assert` is the first-class journal-total assertion surface. Use it when the thing you want to prove is not “one account balance as-of one date” but a filtered journal subset total. Supported measures are `balance`, `debit`, `credit`, `net`, and `match count`. `balance` uses the simple form `bus journal assert balance 1910 2026-03-31 1240.55`. `debit`, `credit`, and `net` accept one positional date or date range plus explicit filters such as `--account`, `--source-id`, `--source-id-prefix`, `--desc`, and `--desc-prefix`, and they also accept comparison operators like `>=1000` and `<=0`. `match count` reuses the plain `match` selector surface directly and compares the resulting row count, which makes control checks such as `bus journal assert match count 1999 --unsettled --older-than 7d --as-of 2026-01-31 0` first-class without shell pipelines. The output is one deterministic TSV row with `measure`, `scope`, `expected`, `observed`, and `status`.
 
-`account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher, source, and external parity-reference identifiers.
+`account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher, source, and external parity-reference identifiers. Exact account codes can be given either with `--account` or positionally, so `bus journal account-activity 1700` and `bus journal account-activity --account 1700` mean the same thing.
 
-`match` is the quick Unix-style selector/apply tool for existing journal rows. Use it first as a grep-like surface that lists matching entries from one or many exact or wildcard account selectors, and then add `apply` when you want Bus to create one deterministic reclassification posting per matched row. Selector-side filters also support `--unsettled`, `--older-than <Nd|Nw>`, and `--as-of <YYYY-MM-DD>`. `--unsettled` is intended for clearing-account work: a row stays selected only when the same account still lacks a later opposite-sign row with the same absolute amount by the chosen as-of date. That makes queries such as “show everything on 1999 that is still unresolved and older than a week” deterministic and replay-friendly. `apply --print` prints the exact `bus journal add` commands it would create; `apply --dry-run` validates the same path without writing anything. `--desc` may be a template and interpolate values from the matched row with placeholders such as `%(desc)`, `%(account_id)`, `%(transaction_id)`, `%(voucher_id)`, `%(posting_date)`, `%(amount)`, `%(debit)`, `%(credit)`, `%(source_id)`, and `%(external_source_ref)`.
+`list` is the neutral journal-row listing surface. Use it when you want actual journal rows without `match apply` semantics and without the account-review framing of `account-activity`. It accepts the same exact account selectors, `x`-wildcards, regex matchers, `--unsettled`, `--older-than`, `--as-of`, `--fields`, and `-f/--format tsv|csv|json` choices as plain `match`, but it also works with no selector at all so the whole journal can be listed deterministically. Selectors and matchers choose transactions, and the output then expands every selected transaction into all of its stored journal rows, one operation per line and in stored row order. By default you see `period`, `posting_date`, `entry_id`, `transaction_id`, `entry_sequence`, `voucher_id`, `account_id`, `account_name`, `counterpart_accounts`, `counterpart_account_names`, signed `amount`, `debit`, `credit`, `currency`, `source_system`, `source_id`, `dimensions`, `description`, `source_links`, `external_source_ref`, `vat_treatment`, `source_voucher.context`, `source_voucher.number`, `source_voucher.label`, and `source_voucher.group`. Signed `amount` uses debit-positive / credit-negative semantics. Field selection also supports the short alias `-F`, and the format flag may appear after the subcommand, so `bus journal list 1700 -f csv -F posting_date,account_id,account_name,counterpart_accounts,counterpart_account_names,description` is valid.
+
+`match` is the quick Unix-style selector/apply tool for existing journal rows. Use it first as a grep-like surface that lists matching entries from one or many exact or wildcard account selectors, and then add `apply` when you want Bus to create one deterministic reclassification posting per matched row. Selector-side filters also support `--unsettled`, `--older-than <Nd|Nw>`, and `--as-of <YYYY-MM-DD>`. `--unsettled` is intended for clearing-account work: a row stays selected only when the same account still lacks a later opposite-sign row with the same absolute amount by the chosen as-of date. That makes queries such as “show everything on 1999 that is still unresolved and older than a week” deterministic and replay-friendly. Without `apply`, use global `-f/--format tsv` (default), `csv`, or `json` to choose the output shape. Plain match rows include the matched account id and name, counterpart account ids and names, and full `transaction_debits` / `transaction_credits` summaries, so the review output shows both the account relationships and the actual debit and credit amounts for every line in the same transaction. Use `--fields field1,field2,...` or `-F ...` when you want to limit plain match output to a stable subset of those review columns; without it, Bus prints the full row shape. The same format flag also works after the subcommand, so `bus journal match 1700 -f csv -F posting_date,account_id,account_name,transaction_debits,transaction_credits,description` is valid. `apply --print` prints the exact `bus journal add` commands it would create and does not use `--format`; `apply --dry-run` validates the same path without writing anything and can emit TSV, CSV, or JSON status rows with signed `amount`, where debit is positive and credit is negative. `--desc` may be a template and interpolate values from the matched row with placeholders such as `%(desc)`, `%(account_id)`, `%(transaction_id)`, `%(voucher_id)`, `%(posting_date)`, `%(amount)`, `%(debit)`, `%(credit)`, `%(source_id)`, and `%(external_source_ref)`.
 
 `assert` is the human-readable control surface for replay-side audit checks. `assert balance` remains the strict account plus cut-off-date check, while `assert debit`, `assert credit`, and `assert net` accept one day token such as `2026-01-31` or one inclusive range such as `2026-01-01..2026-03-31`, together with explicit subset filters like `--account`, `--source-id`, `--source-id-prefix`, `--desc`, and `--desc-prefix`. `assert match count` is the selector-side sibling: it accepts the same exact accounts, `x`-wildcards, regex matchers, `--unsettled`, `--older-than`, and `--as-of` controls as `bus journal match`, but returns an assertion result against the matched-row count instead of the row list. Expected values can be exact amounts or explicit comparisons such as `>=1000` and `<=0.00`; `match count` expects integer counts such as `0` or `>=1`. The easiest way to learn the exact accepted shorthand in place is `bus journal assert --help`.
 
@@ -194,11 +205,11 @@ bus reports day-book --period 2026-01 --format pdf -o ./out/day-book-2026-01.pdf
 
 ### Output and flags
 
-These commands use [Standard global flags](../cli/global-flags). The most important detail is that `--format` is mainly for `balance`, `account-activity`, and plain `match`. Commands that write data, such as `add`, `match apply`, `import`, `classify apply`, and `template post`, are about mutation rather than report formatting.
+These commands use [Standard global flags](../cli/global-flags). The most important detail is that `--format` is mainly for `balance`, `account-activity`, `list`, and plain `match`. `list` and plain `match` support `tsv` (default), `csv`, and `json`, and `--fields` lets you choose which review columns are shown. `list` now includes a signed `amount` column by default, and `match apply --dry-run` uses the same format choices for its status rows, including signed `amount`. `match apply --print` always prints `bus journal add` commands instead. Commands that write data, such as `add`, `match apply`, `import`, `classify apply`, and `template post`, are about mutation rather than report formatting.
 
 Use `--dry-run` before `opening`, `match apply`, `import`, `classify apply`, `template post`, or `template apply` when you want to preview the effect without writing.
 
-For the full option list, run `bus journal --help`. For exact `assert` and `match` shorthand, use `bus journal assert --help` and `bus journal match --help`.
+For the full option list, run `bus journal --help`. For exact `assert`, `list`, and `match` shorthand, use `bus journal assert --help`, `bus journal list --help`, and `bus journal match --help`.
 
 ### Files
 
@@ -217,7 +228,7 @@ Inside a `.bus` file, write this module target without the `bus` prefix.
 journal add --date 2026-01-31 --desc "Bank fee" --debit 6570=12.50 --credit 1910=12.50
 
 # same as: bus journal --format tsv account-activity --account 1910 --period 2026
-journal --format tsv account-activity --account 1910 --period 2026
+journal --format tsv account-activity 1910 --period 2026
 
 # same as: bus journal template apply --template-file ./templates.yml --bank-csv ./bank.csv
 journal template apply --template-file ./templates.yml --bank-csv ./bank.csv
