@@ -418,8 +418,9 @@ the current workspace, pass it explicitly with `--comparative-workspace DIR`
 or `--comparative-account-balances FILE`. The snapshot file uses the
 deterministic `account-balances --format csv` shape `code,name,balance`.
 `evidence-pack` forwards the same explicit comparative source to each
-generated balance-sheet and profit-and-loss PDF, and `annual-validate` now
-checks for one of those real comparative sources before it reports a pass.
+generated balance-sheet and profit-and-loss artifact, including the generated
+CSV companions, and `annual-validate` now checks for one of those real
+comparative sources before it reports a pass.
 
 The same forwarding model applies to `--allow-implicit-current-year-result`,
 but the flag is kept only for compatibility. `evidence-pack` already uses the
