@@ -404,7 +404,9 @@ and only then exits non-zero with an aggregated stderr summary. For
 the internal review path and writes CSV companions beside the same review/PDF
 artifacts that remain in scope. Sole-proprietor / `tmi` workspaces
 additionally keep the core `tase` and `tuloslaskelma` PDF+CSV pairs in that
-same internal review package.
+same internal review package. When comparative data is present, the generated
+statement PDFs are expected to show the same prior-period column as the CSV
+companions, because both are derived from the same resolved statement rows.
 
 Comparative figures use the current workspace only when prior-year data really
 exists there. That covers the uncommon multi-year workspace, but a normal Bus

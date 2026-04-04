@@ -25,6 +25,7 @@ If you run `bus` with no arguments, it prints usage and a quick tip suggesting `
 Run `bus --help` when you need the current syntax-first global help with grouped dispatcher usage and the current available-command list.
 
 When running busfiles, `bus` always does a full syntax preflight across all provided files before executing any command. If preflight fails, nothing is executed.
+Dispatcher-level `-C/--chdir` applies to busfile mode too, so relative busfile paths are resolved after switching into the selected workspace and the executed module commands inherit that same effective working directory.
 
 For first use, start with [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started), then continue with the full [`.bus` script files (writing and execution guide)](../cli/bus-script-files).
 

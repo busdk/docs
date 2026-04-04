@@ -7,7 +7,7 @@ description: bus journal is the authoritative ledger module for BusDK. Use it to
 
 `bus journal` maintains the authoritative double-entry ledger for a workspace. If a row should become accounting, this is the module that writes it.
 
-Use it for manual entries, neutral journal-row listing, replay-safe automated postings, account activity review, legacy journal import, and bank-driven posting automation. Closed or locked periods are rejected automatically.
+Use it for manual entries, corrective updates to earlier transactions, neutral journal-row listing, replay-safe automated postings, account activity review, legacy journal import, and bank-driven posting automation. Stored journal rows carry voucher-level text, optional row-level text, and audit metadata for creation and latest update. Closed or locked periods are rejected automatically.
 For exact operator syntax, use `bus journal --help` for the command family and `bus journal <subcommand> --help` for the structured local contract. This is especially useful for the shorthand-heavy `assert`, `list`, and `match` surfaces.
 
 ### Common tasks
@@ -26,6 +26,32 @@ bus journal add \
   --desc "January rent" \
   --debit 6300=1200.00 \
   --credit 1910=1200.00
+```
+
+Replay imported history while preserving original audit metadata and row descriptions:
+
+```bash
+bus journal add \
+  --date 2026-01-31 \
+  --desc "Imported receipt" \
+  --created-at 2025-12-31T09:00:00Z \
+  --updated-at 2026-01-02T14:15:16Z \
+  --created-by legacy-import \
+  --updated-by legacy-import \
+  --debit 6300=24.00=Office supplies \
+  --credit 1910=24.00=Card payment
+```
+
+Correct one earlier transaction in place while keeping `created_*` history and restamping `updated_*`:
+
+```bash
+bus journal update \
+  --transaction-id tx-123 \
+  --date 2026-02-01 \
+  --desc "Corrected receipt booking" \
+  --updated-by meri \
+  --debit 6310=24.00=Software \
+  --credit 1910=24.00=Card payment
 ```
 
 Store one posting in stable account order instead of raw CLI order:
@@ -78,7 +104,7 @@ List actual journal rows in neutral review formats:
 ```bash
 bus journal list
 bus journal list --format csv 1700
-bus journal list --fields posting_date,entry_id,account_id,account_name,debit,credit,description 1700
+bus journal list --fields posting_date,entry_id,account_id,account_name,counterpart_accounts,counterpart_account_names,amount,debit,credit,description,row_description,updated_by 1700
 ```
 
 Match journal rows and preview one deterministic reclassification:
@@ -156,9 +182,9 @@ Command-local help is available for the practical operator entrypoints too, for 
 
 `account-activity` is the best review tool when one account needs explanation. It shows movement rows together with voucher, source, and external parity-reference identifiers. Exact account codes can be given either with `--account` or positionally, so `bus journal account-activity 1700` and `bus journal account-activity --account 1700` mean the same thing.
 
-`list` is the neutral journal-row listing surface. Use it when you want actual journal rows without `match apply` semantics and without the account-review framing of `account-activity`. It accepts the same exact account selectors, `x`-wildcards, regex matchers, `--unsettled`, `--older-than`, `--as-of`, `--fields`, and `-f/--format tsv|csv|json` choices as plain `match`, but it also works with no selector at all so the whole journal can be listed deterministically. Selectors and matchers choose transactions, and the output then expands every selected transaction into all of its stored journal rows, one operation per line and in stored row order. By default you see `period`, `posting_date`, `entry_id`, `transaction_id`, `entry_sequence`, `voucher_id`, `account_id`, `account_name`, `counterpart_accounts`, `counterpart_account_names`, signed `amount`, `debit`, `credit`, `currency`, `source_system`, `source_id`, `dimensions`, `description`, `source_links`, `external_source_ref`, `vat_treatment`, `source_voucher.context`, `source_voucher.number`, `source_voucher.label`, and `source_voucher.group`. Signed `amount` uses debit-positive / credit-negative semantics. Field selection also supports the short alias `-F`, and the format flag may appear after the subcommand, so `bus journal list 1700 -f csv -F posting_date,account_id,account_name,counterpart_accounts,counterpart_account_names,description` is valid.
+`list` is the neutral journal-row listing surface. Use it when you want actual journal rows without `match apply` semantics and without the account-review framing of `account-activity`. It accepts the same exact account selectors, `x`-wildcards, regex matchers, `--unsettled`, `--older-than`, `--as-of`, `--fields`, and `-f/--format tsv|csv|json` choices as plain `match`, but it also works with no selector at all so the whole journal can be listed deterministically. Selectors and matchers choose transactions, and the output then expands every selected transaction into all of its stored journal rows, one operation per line and in stored row order. By default you now see a narrower operator-facing subset: `posting_date`, `transaction_id`, `entry_id`, `entry_sequence`, `voucher_id`, `account_id`, `account_name`, `counterpart_accounts`, `counterpart_account_names`, signed `amount`, `debit`, `credit`, `description`, `row_description`, and `source_id`. Use `-F all` / `--fields all` to restore the full raw row shape including `period`, `currency`, `source_system`, `dimensions`, audit columns, links, VAT treatment, and flattened `source_voucher.*` fields. Signed `amount` uses debit-positive / credit-negative semantics. Field selection also supports the short alias `-F`, and the format flag may appear after the subcommand, so `bus journal list 1700 -f csv -F posting_date,account_id,account_name,counterpart_accounts,counterpart_account_names,description` is valid.
 
-`match` is the quick Unix-style selector/apply tool for existing journal rows. Use it first as a grep-like surface that lists matching entries from one or many exact or wildcard account selectors, and then add `apply` when you want Bus to create one deterministic reclassification posting per matched row. Selector-side filters also support `--unsettled`, `--older-than <Nd|Nw>`, and `--as-of <YYYY-MM-DD>`. `--unsettled` is intended for clearing-account work: a row stays selected only when the same account still lacks a later opposite-sign row with the same absolute amount by the chosen as-of date. That makes queries such as “show everything on 1999 that is still unresolved and older than a week” deterministic and replay-friendly. Without `apply`, use global `-f/--format tsv` (default), `csv`, or `json` to choose the output shape. Plain match rows include the matched account id and name, counterpart account ids and names, and full `transaction_debits` / `transaction_credits` summaries, so the review output shows both the account relationships and the actual debit and credit amounts for every line in the same transaction. Use `--fields field1,field2,...` or `-F ...` when you want to limit plain match output to a stable subset of those review columns; without it, Bus prints the full row shape. The same format flag also works after the subcommand, so `bus journal match 1700 -f csv -F posting_date,account_id,account_name,transaction_debits,transaction_credits,description` is valid. `apply --print` prints the exact `bus journal add` commands it would create and does not use `--format`; `apply --dry-run` validates the same path without writing anything and can emit TSV, CSV, or JSON status rows with signed `amount`, where debit is positive and credit is negative. `--desc` may be a template and interpolate values from the matched row with placeholders such as `%(desc)`, `%(account_id)`, `%(transaction_id)`, `%(voucher_id)`, `%(posting_date)`, `%(amount)`, `%(debit)`, `%(credit)`, `%(source_id)`, and `%(external_source_ref)`.
+`match` is the quick Unix-style selector/apply tool for existing journal rows. Use it first as a grep-like surface that lists matching entries from one or many exact or wildcard account selectors, and then add `apply` when you want Bus to create one deterministic reclassification posting per matched row. Selector-side filters also support `--unsettled`, `--older-than <Nd|Nw>`, and `--as-of <YYYY-MM-DD>`. `--unsettled` is intended for clearing-account work: a row stays selected only when the same account still lacks a later opposite-sign row with the same absolute amount by the chosen as-of date. That makes queries such as “show everything on 1999 that is still unresolved and older than a week” deterministic and replay-friendly. Without `apply`, use global `-f/--format tsv` (default), `csv`, or `json` to choose the output shape. Plain match rows now default to a narrower review subset: `posting_date`, `transaction_id`, `entry_id`, `voucher_id`, `account_id`, `account_name`, `counterpart_accounts`, `counterpart_account_names`, signed `amount`, `debit`, `credit`, and `description`. Use `--fields field1,field2,...` or `-F ...` for a custom subset, or `-F all` / `--fields all` to restore the full review row shape including `period`, `entry_sequence`, `transaction_debits`, `transaction_credits`, `source_id`, and `external_source_ref`. The same format flag also works after the subcommand, so `bus journal match 1700 -f csv -F posting_date,account_id,account_name,transaction_debits,transaction_credits,description` is valid. `apply --print` prints the exact `bus journal add` commands it would create and does not use `--format`; `apply --dry-run` validates the same path without writing anything and can emit TSV, CSV, or JSON status rows with signed `amount`, where debit is positive and credit is negative. `--desc` may be a template and interpolate values from the matched row with placeholders such as `%(desc)`, `%(account_id)`, `%(transaction_id)`, `%(voucher_id)`, `%(posting_date)`, `%(amount)`, `%(debit)`, `%(credit)`, `%(source_id)`, and `%(external_source_ref)`.
 
 `assert` is the human-readable control surface for replay-side audit checks. `assert balance` remains the strict account plus cut-off-date check, while `assert debit`, `assert credit`, and `assert net` accept one day token such as `2026-01-31` or one inclusive range such as `2026-01-01..2026-03-31`, together with explicit subset filters like `--account`, `--source-id`, `--source-id-prefix`, `--desc`, and `--desc-prefix`. `assert match count` is the selector-side sibling: it accepts the same exact accounts, `x`-wildcards, regex matchers, `--unsettled`, `--older-than`, and `--as-of` controls as `bus journal match`, but returns an assertion result against the matched-row count instead of the row list. Expected values can be exact amounts or explicit comparisons such as `>=1000` and `<=0.00`; `match count` expects integer counts such as `0` or `>=1`. The easiest way to learn the exact accepted shorthand in place is `bus journal assert --help`.
 
