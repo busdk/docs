@@ -354,7 +354,9 @@ canonical group code path, the direct group `report_profiles`, the effective
 canonical group used by the selected statement, the effective group code path
 and profiles, the visible line chosen from the selected layout/profile, an
 explicit `resolution_chain`, and the deterministic reason for the placement or
-failure.
+failure. For profit-and-loss they use the same activity scope as the rendered
+statement, so opening rows and explicit `closing-result` basis rows stay out of
+the explain/validate account list too.
 
 For `fi-kpa-*` balance-sheet layouts, those commands also make the
 current-year-result rule explicit. When no close-source basis exists they
