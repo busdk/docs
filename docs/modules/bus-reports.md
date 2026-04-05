@@ -99,6 +99,15 @@ free-form source-id spelling, and `profit-and-loss` excludes them from normal
 period activity while `balance-sheet` can still use them as explicit close
 basis.
 
+The same source-kind surface also matters for year-start correction memoranda.
+If you record a carried-balance repair or prior-year correction on the first
+day of the year, tag it with `--source-kind opening-adjustment` or
+`--source-kind prior-year-correction`. `bus-reports` keeps that memorandum
+visible in the journal and balance sheet, but FR-REP-010 income-result
+reconciliation excludes it from current-period operating-result movement. An
+unclassified year-start memo does not get that exclusion and can still fail
+statutory reconciliation on purpose.
+
 Build a close package directory in one run:
 
 ```bash
