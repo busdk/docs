@@ -26,3 +26,7 @@ defaults:
 sass:
   quiet_deps: true
   sourcemap: development
+
+exclude:
+  - AGENTS.md
+  - "**/AGENTS.md"

@@ -11,6 +11,13 @@ use BusDK software. Do not use this site for commercial landing-page messaging
 Do not link directly to private SDD pages from this public docs site; you may
 mention that private implementation design specifications exist.
 
+## Publication Boundary
+
+`./docs/docs/` is the published Jekyll source tree. Do not place `AGENTS.md`
+files anywhere under `./docs/docs/`. Keep durable agent instructions in
+non-published paths such as `./docs/AGENTS.md`. Treat the Jekyll `_config.yml`
+exclude list as defense in depth, not as the primary reason this stays safe.
+
 ## Global documentation writing rules
 
 You are writing BusDK documentation. Prefer readable, self-contained paragraphs
