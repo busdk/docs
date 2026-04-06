@@ -21,6 +21,7 @@ bus files assert count 2 a.pdf b.pdf missing.pdf
 bus files assert count '>=1' receipts/*.pdf
 bus files assert row reports/20241231-tuloslaskelma.csv --filter section=Liikevaihto
 bus files assert cell reports/20241231-tuloslaskelma.csv --row-filter section=Liikevaihto --column amount --equals 36794.17
+bus files assert expr reports/20241231-tase-accounts.csv --select-many cash 'account_code=1910|1911|1930' --eval 'sum(cash.amount)' --equals 129.27
 ```
 
 The shipped forms are:
@@ -30,10 +31,26 @@ The shipped forms are:
 - `bus files assert count <EXPECTED> <path...>`
 - `bus files assert row <file> --filter column=value ...`
 - `bus files assert cell <file> --row-filter column=value ... --column NAME --equals VALUE`
+- `bus files assert expr <file> --select-one/--select-many/--select ... --eval EXPR --equals VALUE`
 
 The command prints deterministic TSV output with `assertion`, `target`, `expected`, `observed`, and `status`. It exits `0` when the assertion passes, `1` on mismatch, and `2` on malformed usage. `count` compares how many provided paths currently exist, so shell-expanded globs remain useful without text-processing pipelines.
 
 `row` and `cell` work on plain `.csv` and `.tsv` files without adjacent schema files. They use the first row as headers and select logical rows by exact `column=value` filters. `row` asserts how many matching rows exist, defaulting to `>=1`. `cell` requires exactly one matching logical row and then checks one exact value in one named column, which is the common report-control case for columns such as `amount` and `prior`.
+
+`expr` adds a small aggregate/arithmetic layer on top of the same plain-file model. It auto-detects `csv` or `tsv` from file extension or the first non-empty data line unless `--format` overrides it. Use:
+
+- `--select-one NAME FILTER` for exactly one required row
+- `--select-many NAME FILTER` for one or more required rows
+- `--select NAME FILTER` for an optional row-set that may also be empty
+
+The filter still uses header keys from the first row. `account_code=1910|1911|1930` means one column with several accepted alternatives. `*` or `all` selects every row.
+
+Expression references follow the binding names. For one-row bindings, `a.amount` is one scalar value. For row-set bindings, `cash.amount` is the projected array of `amount` values from every matched row. The supported aggregate functions are `sum(...)`, `avg(...)`, `min(...)`, `max(...)`, and `count(...)`. Top-level arithmetic currently supports `+` and `-` between scalar results such as:
+
+```bash
+bus files assert expr report.csv --select-one a 'account_code=1940' --eval 'a.debit + a.credit' --equals 0
+bus files assert expr report.csv --select-many cash 'account_code=1910|1911|1930' --eval 'sum(cash.amount)' --equals 129.27
+```
 
 ### Planned command shapes
 
@@ -67,6 +84,7 @@ bus files assert exists receipt.pdf
 bus files assert count '>=1' receipts/*.pdf
 bus files assert row reports/20241231-tuloslaskelma.csv --filter section=Liikevaihto
 bus files assert cell reports/20241231-tuloslaskelma.csv --row-filter section=Liikevaihto --column prior --equals 69655.71
+bus files assert expr reports/20241231-tase-accounts.csv --select-many cash 'account_code=1910|1911|1930' --eval 'sum(cash.amount)' --equals 129.27
 bus files parse receipt.pdf
 bus files parse rows receipt.pdf
 bus files find ./evidence
