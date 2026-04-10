@@ -1,14 +1,13 @@
 ---
 title: bus-files — parse and find local evidence files
-description: bus files is the planned BusDK surface for parsing local evidence files, extracting rows when a file type supports it, and scanning directories with deterministic duplicate detection.
+description: bus files parses local evidence files, extracts supported row-level content, scans directories with deterministic duplicate detection, and asserts plain CSV/TSV artifacts without shell pipelines.
 ---
 
 ## `bus files` — parse and find local evidence files
 
 `bus files` is the BusDK module for local filesystem work on evidence files such as receipts, bank statements, and other imported accounting source documents. Its job is to inspect files and directories directly, print deterministic parsed output, offer Bus-native filesystem and plain CSV/TSV artifact assertions, and stay clearly separate from workspace attachment storage and journal creation.
 
-The module now exists as a normal BusDK CLI module in the superproject and provides the standard binary, help, version, build, install, test, and e2e surfaces. The larger parse/find feature family is still planned work, but the module already ships a small `assert` surface for common local file checks. The planned parse/find command names still exist as explicit placeholders and fail with deterministic `not implemented yet` diagnostics instead of pretending the parser surface is already shipped.
-Use `bus files --help`, `bus files parse --help`, `bus files parse rows --help`, `bus files find --help`, and `bus files assert --help` to see the command shapes directly from the binary.
+The module now ships a practical parse/find surface. `bus files parse` emits file-level summaries with inferred format, file kind, size, `sha256`, and lightweight structure details such as line count or table headers. `bus files parse rows` extracts logical rows from supported file formats. `bus files find` walks directories recursively and annotates deterministic duplicate groups by identical file content. Use `bus files --help`, `bus files parse --help`, `bus files parse rows --help`, `bus files find --help`, and `bus files assert --help` to inspect the exact CLI shapes directly from the binary.
 
 ### Shipped assertion surface
 
@@ -52,9 +51,9 @@ bus files assert expr report.csv --select-one a 'account_code=1940' --eval 'a.de
 bus files assert expr report.csv --select-many cash 'account_code=1910|1911|1930' --eval 'sum(cash.amount)' --equals 129.27
 ```
 
-### Planned command shapes
+### Parse and find command shapes
 
-The intended first-class commands are:
+The shipped first-class commands are:
 
 ```bash
 bus files parse receipt.pdf
@@ -63,11 +62,11 @@ bus files parse rows receipt.pdf
 bus files find ./evidence
 ```
 
-`parse` is the file-level command. It should eventually read one or many local files and print deterministic parsed metadata or text extraction results without mutating the workspace.
+`parse` is the file-level command. It reads one or many local files and prints deterministic parsed metadata without mutating the workspace. With one file it defaults to a human-readable text block. With several files it defaults to TSV. Explicit machine output is available through `--format json`, and explicit TSV is available through `--format tsv`.
 
-`parse rows` is the narrower row or item-line extraction command. Use it when the file type supports structured row extraction and you want line-level output instead of only receipt- or statement-level metadata.
+`parse rows` is the narrower row or item-line extraction command. Use it when the file type supports structured row extraction and you want line-level output instead of only receipt- or statement-level metadata. CSV/TSV files emit one row per data row using stable `header=value` pairs. Plain UTF-8 text and JSON files emit one row per non-empty line. Binary and PDF files still remain valid `parse` targets, but `parse rows` returns an explicit unsupported-format error for them.
 
-`find` is the directory scan and duplicate-control command. It should walk one or many local directories, fingerprint files deterministically, report duplicates using explicit non-fuzzy signals such as hashes, and print a stable inventory-style result.
+`find` is the directory scan and duplicate-control command. It walks one or many local directories, fingerprints files deterministically, reports duplicates using explicit non-fuzzy signals such as hashes, and prints a stable inventory-style result. `--duplicates-only` keeps only files that belong to a duplicate group.
 
 ### Current shipped behavior
 
@@ -86,11 +85,20 @@ bus files assert row reports/20241231-tuloslaskelma.csv --filter section=Liikeva
 bus files assert cell reports/20241231-tuloslaskelma.csv --row-filter section=Liikevaihto --column prior --equals 69655.71
 bus files assert expr reports/20241231-tase-accounts.csv --select-many cash 'account_code=1910|1911|1930' --eval 'sum(cash.amount)' --equals 129.27
 bus files parse receipt.pdf
-bus files parse rows receipt.pdf
+bus files parse report.csv notes.txt
+bus files parse rows report.csv
 bus files find ./evidence
+bus files find --duplicates-only ./evidence
 ```
 
-Help and version work like other BusDK modules. Command-local help is available for `parse`, `parse rows`, `find`, and `assert`, so the reserved syntax can be discovered in place directly from the binary. `assert` already works and returns a real pass/fail result surface. The three planned parser/discovery command families still fail explicitly with a deterministic `not implemented yet` diagnostic and non-zero exit status when run without `--help`. This keeps the superproject and dispatcher surfaces consistent while the larger parser functionality is still under implementation.
+Help and version work like other BusDK modules. Command-local help is available for `parse`, `parse rows`, `find`, and `assert`. `parse`, `parse rows`, and `find` now run for real instead of being placeholders. The current practical support level is:
+
+- file-level parse summaries for local files including `csv`, `tsv`, `text`, `json`, `pdf`, and generic binary detection
+- row extraction for `csv`, `tsv`, `text`, and `json`
+- directory scan plus deterministic duplicate grouping by `sha256`
+- first-class assert support for existence, count, row, cell, and aggregate expression checks
+
+Native bank-statement PDF row extraction is still narrower than the long-term goal. Today PDFs are valid `parse` inputs but not yet row-extraction inputs.
 
 ### How this differs from nearby modules
 
@@ -106,7 +114,7 @@ For `find`, duplicate detection should remain deterministic. Exact file hashes, 
 
 ### Current status
 
-The `bus-files` module has been added to the BusDK superproject as a normal buildable/installable CLI module, and its planned scope is tracked in the module plan. The command surface described here remains the intended first implementation target, especially for generic native parsing of local evidence files and common bank-statement PDFs without sidecar-first workflows.
+The `bus-files` module is a normal buildable/installable BusDK CLI module and now ships the parse/find/assert surface described above. The remaining gap relative to the long-term goal is deeper native row extraction for evidence formats such as text-extractable bank-statement PDFs.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
