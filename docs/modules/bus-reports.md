@@ -56,6 +56,9 @@ heading rows still stay visible when a child row below them carries a non-zero
 current or comparative amount. Add `--show-zero-rows` when you want to inspect
 the full statutory structure, including fully zero-valued rows. PDF follows
 the same zero-row filtering instead of showing extra zero-only statutory rows.
+When a visible numeric statement row is shown, missing current or comparative
+amounts render as explicit `0.00` values instead of blank cells. Only
+structural heading rows keep blank numeric cells.
 If the journal contains money values with more than two decimals, `bus-reports`
 fails during workspace load instead of rounding or silently normalizing them.
 Human-facing PDF tables also default to borderless or minimal-line styling
