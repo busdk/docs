@@ -367,7 +367,7 @@ placement path. When explicit close-source basis exists they return
 workspace is relying on replay/parity close evidence rather than the normal
 derived result path.
 
-In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows.
+In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows. The same subtotal contract now applies consistently to visible subgroups in both TASE and tuloslaskelma output: if a subgroup has rendered child groups or account rows beneath it, the subgroup label stays on its own row and the subtotal moves to its own later `... yhteensä` row after those descendants. If no descendant rows are rendered, the subtotal may still be shown inline on the subgroup row.
 
 This also explains the special rows in Finnish statements. TASE is always one statement split into `VASTAAVA` and `VASTATTAVAA`, and the current-year result is a reporting result that must appear both as the final income-statement row and as a separate equity item in the balance sheet. The background model for those constraints lives in [Finnish reporting hierarchy for TASE and tuloslaskelma](../compliance/fi-reporting-taxonomy-and-account-classification).
 
