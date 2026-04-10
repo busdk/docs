@@ -112,6 +112,28 @@ exclude it from current-period operating-result movement. An unclassified
 year-start memo does not get that exclusion and can still fail statutory
 reconciliation on purpose.
 
+If you need accountant-facing AI summaries under each visible statement
+account, use the explicit AI layouts instead of changing the normal
+`*-accounts` variants. The built-in ids are
+`fi-kpa-tase-full-ai-accounts`, `fi-pma-tase-full-ai-accounts`,
+`fi-kpa-tuloslaskelma-full-ai-accounts`, and
+`fi-pma-tuloslaskelma-full-ai-accounts`. They keep the same statement and
+account rows as the corresponding `*-full-accounts` layouts, but add one
+extra AI-generated third level beneath each visible account row. Those AI
+rows are recomputed on every run. If AI is unavailable, the explicit AI
+layout fails with a clear error instead of silently falling back to the
+non-AI layout.
+While those AI runs are in progress, `bus-reports` writes concise stderr
+progress/result lines such as `INFO ai bus-reports profit-and-loss done 2/40
+5% 4000 Office Supplies codex Stationery=20.00; Software=10.00` so you can
+see that the AI branch is actively running and what it returned. AI account
+analysis now runs up to 4 accounts in parallel by default, but the visible
+rows are still rendered back in deterministic account order. In
+`evidence-pack`, those lines should appear while the AI artifact is still
+running, not only after it has finished. The same `evidence-pack` run should
+reuse one AI result set for the matching PDF and CSV companions, so both
+formats show the same AI rows.
+
 Build a close package directory in one run:
 
 ```bash
@@ -370,7 +392,7 @@ placement path. When explicit close-source basis exists they return
 workspace is relying on replay/parity close evidence rather than the normal
 derived result path.
 
-In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows. The same subtotal contract now applies consistently to visible subgroups in both TASE and tuloslaskelma output: if a subgroup has rendered child groups or account rows beneath it, the subgroup label stays on its own row and the subtotal moves to its own later `... yhteensä` row after those descendants. If no descendant rows are rendered, the subtotal may still be shown inline on the subgroup row.
+In the internal `*-accounts` drill-down variants, structural heading rows stay visually structural: headings such as `VASTAAVAA`, `VASTATTAVAA`, `Materiaalit ja palvelut`, and `Henkilöstökulut` render with blank amount cells, while the numeric totals stay on the corresponding subtotal and result rows. In text, csv, markdown, and json account-drill-down outputs, `section` is reserved only for statement and visible group labels. Account rows therefore leave `section` blank, keep the account code only in `Tilinumero` / `account_code`, and keep the account name only in `Tilin nimi` / `account_name` instead of repeating either value in the first visible label cell. Printable PDFs keep the combined `<tilinumero> <tilin nimi>` account label because the PDF table does not split those into separate visible columns. The same subtotal contract now applies consistently to visible subgroups in both TASE and tuloslaskelma output: if a subgroup has rendered child groups or account rows beneath it, the subgroup label stays on its own row and the subtotal moves to its own later `... yhteensä` row after those descendants. If no descendant rows are rendered, the subtotal may still be shown inline on the subgroup row. The AI `*-ai-accounts` variants extend that same tabular contract with a dedicated `ai_description` column after `account_name`; AI child rows and their trailing per-account `total` row leave `section` blank and use that dedicated AI-description cell instead of repeating the account name in `section`. When comparative figures are enabled and available, those AI child rows also fill the visible `prior` column from the same comparative source instead of leaving prior amounts only on the per-account subtotal row.
 
 This also explains the special rows in Finnish statements. TASE is always one statement split into `VASTAAVA` and `VASTATTAVAA`, and the current-year result is a reporting result that must appear both as the final income-statement row and as a separate equity item in the balance sheet. The background model for those constraints lives in [Finnish reporting hierarchy for TASE and tuloslaskelma](../compliance/fi-reporting-taxonomy-and-account-classification).
 
@@ -422,6 +444,11 @@ additionally keep the core `tase` and `tuloslaskelma` PDF+CSV pairs in that
 same internal review package. When comparative data is present, the generated
 statement PDFs are expected to show the same prior-period column as the CSV
 companions, because both are derived from the same resolved statement rows.
+When AI is available, `evidence-pack` also adds opportunistic AI companions
+for the full Finnish `*-accounts` statements, such as
+`20241231-tase-ai-accounts.pdf/.csv` and
+`20241231-tuloslaskelma-ai-accounts.pdf/.csv`. If AI is unavailable, the
+ordinary package still succeeds and simply omits those extra artifacts.
 
 Comparative figures use the current workspace only when prior-year data really
 exists there. That covers the uncommon multi-year workspace, but a normal Bus
