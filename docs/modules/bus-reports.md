@@ -69,7 +69,9 @@ fonts with `/ToUnicode` mappings so copied, selected, and extracted text stays
 readable across common viewers and PDF extraction tools. Full and
 `*-accounts` statement rows are now emitted through the shared statement text
 path so Preview-style annotation and `pdftotext`-style extraction follow the
-natural reading order. The accountant-facing review-table family
+natural reading order. Statement CSV outputs also use the resolved statement
+end dates as the current/prior amount-column headers instead of generic
+`amount` / `prior` labels. The accountant-facing review-table family
 (`general-ledger`, `day-book`, `voucher-list`, and `bank-transactions`) now
 uses one shared visible-only cell renderer with explicit gutters between
 columns and no overlapping hidden duplicate row layer. The shared width
