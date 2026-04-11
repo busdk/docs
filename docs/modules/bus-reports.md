@@ -192,7 +192,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports bank-transactions --period <PERIOD_ID> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports evidence-pack (--period <PERIOD_ID> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [-C <dir>] [global flags]`  
+`bus reports evidence-pack (--period <PERIOD_ID> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--with-ai-accounts] [-C <dir>] [global flags]`  
 `bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
 
 `PERIOD_ID` accepts the usual Bus shorthand identifiers such as `2024`, `2024-01`, and `2024Q1`, and it also accepts any custom `period_id` defined in the workspace `periods.csv`, such as `FY2024-2025`.
@@ -444,11 +444,13 @@ additionally keep the core `tase` and `tuloslaskelma` PDF+CSV pairs in that
 same internal review package. When comparative data is present, the generated
 statement PDFs are expected to show the same prior-period column as the CSV
 companions, because both are derived from the same resolved statement rows.
-When AI is available, `evidence-pack` also adds opportunistic AI companions
-for the full Finnish `*-accounts` statements, such as
+AI companions for the full Finnish `*-accounts` statements are now explicit
+opt-in only. Use `--with-ai-accounts` if you want files such as
 `20241231-tase-ai-accounts.pdf/.csv` and
-`20241231-tuloslaskelma-ai-accounts.pdf/.csv`. If AI is unavailable, the
-ordinary package still succeeds and simply omits those extra artifacts.
+`20241231-tuloslaskelma-ai-accounts.pdf/.csv` in the package. Without that
+flag, the default `evidence-pack` stays on the non-AI artifact set even if AI
+is available. With that flag, `evidence-pack` requires an AI runtime and
+fails clearly if none is available.
 
 Comparative figures use the current workspace only when prior-year data really
 exists there. That covers the uncommon multi-year workspace, but a normal Bus
