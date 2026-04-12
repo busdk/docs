@@ -112,7 +112,9 @@ visible in the journal and balance sheet, but both the visible
 `profit-and-loss` activity scope and FR-REP-010 income-result reconciliation
 exclude it from current-period operating-result movement. An unclassified
 year-start memo does not get that exclusion and can still fail statutory
-reconciliation on purpose.
+reconciliation on purpose. The same exclusion also applies to the derived
+balance-sheet line `Tilikauden voitto/tappio`, so year-start correction
+memoranda do not silently distort the visible current-period result in TASE.
 
 If you need accountant-facing AI summaries under each visible statement
 account, use the explicit AI layouts instead of changing the normal
