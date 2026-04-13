@@ -61,6 +61,11 @@ amounts render as explicit `0.00` values instead of blank cells. Only
 structural heading rows keep blank numeric cells.
 If the journal contains money values with more than two decimals, `bus-reports`
 fails during workspace load instead of rounding or silently normalizing them.
+When you need to inspect how statement amounts were formed, `balance-sheet`
+and `profit-and-loss` use ordinary verbose logging instead of a separate trace
+flag. `-v` emits DEBUG formula lines for every computed statement amount.
+`-vv` additionally emits TRACE lines for the underlying journal rows with raw
+debit/credit values, source semantics, and include/exclude/remap decisions.
 Human-facing PDF tables also default to borderless or minimal-line styling
 instead of boxed per-cell borders, which keeps the PDFs searchable while
 making text selection, highlighting, and annotation work more naturally in
@@ -115,6 +120,10 @@ year-start memo does not get that exclusion and can still fail statutory
 reconciliation on purpose. The same exclusion also applies to the derived
 balance-sheet line `Tilikauden voitto/tappio`, so year-start correction
 memoranda do not silently distort the visible current-period result in TASE.
+When those same rows are remapped into `Edellisen tilikauden voitto/tappio`,
+the paired `fi-kpa-tase-full-accounts` / `fi-pma-tase-full-accounts`
+breakdown now also shows the contributing account rows explicitly under that
+subtotal instead of leaving the difference visible only in the printed total.
 
 If you need accountant-facing AI summaries under each visible statement
 account, use the explicit AI layouts instead of changing the normal
