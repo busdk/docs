@@ -259,6 +259,442 @@ Behavior and safety guardrails:
 - Preserve current first-match-wins semantics when duplicate lookup keys exist in the lookup table.
 - Keep lookup defaults unchanged when the source-row key is missing or not found.
 
+## Re-reading Shared Account Metadata For Every Journal Bucket Scan
+
+Anti-pattern:
+
+- Re-resolving the same account foreign-key metadata and reloading the same `accounts.csv` bucket map for every journal resource during class-aware journal-gap scans. In [internal/parity/workspace_stats.go](/Users/jhh/git/busdk/busdk/bus-validate/internal/parity/workspace_stats.go), `JournalNonOpeningStatsByBucket` currently calls `accountFKResourceFromSchema` and `LoadAccountsBucketMap` inside `journalStatsByBucketForResource`, so workspaces with multiple journal datasets that share one accounts dataset repeatedly reread the same schema and accounts file.
+
+Benchmark evidence:
+
+- `BenchmarkJournalNonOpeningStatsByBucketReloadsAccountMetadata8x20000`: `148870470 ns/op`, `177291236 B/op`, `1383591 allocs/op`
+- `BenchmarkJournalNonOpeningStatsByBucketPreloadedAccountMetadata8x20000`: `72205419 ns/op`, `52902422 B/op`, `580427 allocs/op`
+- Shape: on an 8-journal / 20,000-row-per-journal workspace sharing one 50,000-row accounts file, preloading shared account metadata cuts runtime by about 51%, allocation volume by about 70%, and allocation count by about 58%.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/parity -run '^$' -bench 'BenchmarkJournalNonOpeningStatsByBucket(ReloadsAccountMetadata8x20000|PreloadedAccountMetadata8x20000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current class-aware totals by `(scope, bucket, period)`, including `default` bucket fallback for unmapped accounts.
+- Keep existing account FK resolution behavior unchanged when a journal schema has no `account` foreign key or the referenced resource is missing.
+- Scope any cached FK and bucket-map state to a single workspace scan so edits to schemas or `accounts.csv` are picked up on the next command run.
+
+## Materializing All Bank Evidence Rows Before Building Coverage Indexes
+
+Anti-pattern:
+
+- Loading the full `bank-transactions.csv` row matrix before extracting the small fixed field set used by evidence coverage. In [internal/evidence/coverage.go](/Users/jhh/git/busdk/busdk/bus-validate/internal/evidence/coverage.go), `loadBankRecords` currently calls `readCSV`/`readCSVFrom`, materializes every row slice, then copies a subset of columns into `bankRecord` structs and a sorted ID set.
+
+Benchmark evidence:
+
+- `BenchmarkLoadBankRecordsReadCSVRows50000`: `24064355 ns/op`, `40953441 B/op`, `100592 allocs/op`
+- `BenchmarkLoadBankRecordsStreaming50000`: `23766500 ns/op`, `34635402 B/op`, `100568 allocs/op`
+- Shape: on a 50,000-row bank transactions file, the streaming benchmark is slightly faster and reduces allocation volume by about 15%, which indicates the retained full-row matrix is measurable overhead even before downstream sorting.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/evidence -run '^$' -bench 'BenchmarkLoadBankRecords(ReadCSVRows50000|Streaming50000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current accepted header aliases for transaction ID, date, counterparty, and message fields.
+- Keep current missing-file and missing-column behavior unchanged so evidence-coverage command semantics stay stable.
+- Preserve deterministic sorted transaction IDs and the current “latest row wins” detail-map behavior for duplicate IDs.
+
+## Materializing Full Period History For Latest-State Resolution
+
+Anti-pattern:
+
+- Loading all of `periods.csv` into memory inside `latestPeriodState` in [internal/status/status.go](/Users/jhh/git/busdk/busdk/bus-status/internal/status/status.go) even though the algorithm only needs one effective row per period plus the final max sort key. The current `csv.ReadAll` path retains the whole revision history before resolving the latest state for the requested year.
+
+Benchmark evidence:
+
+- `BenchmarkLatestPeriodStateReadAllHistory12000`: `2234076 ns/op`, `3158999 B/op`, `24106 allocs/op`
+- `BenchmarkLatestPeriodStateStreamingHistory12000`: `2082095 ns/op`, `1845010 B/op`, `24083 allocs/op`
+- Shape: on a 12,000-row synthetic periods history, the streaming helper is only modestly faster in wall time, but it cuts transient allocation volume by about 42% while preserving the same effective-row-per-period behavior.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/status -run '^$' -bench 'BenchmarkLatestPeriodState(ReadAllHistory12000|StreamingHistory12000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current support for both `period` and `period_id`, plus optional `recorded_at`, `start_date`, and `end_date` columns.
+- Keep the existing "last row wins when either side lacks `recorded_at`" behavior and the current `recorded_at` string comparison semantics.
+- Preserve year filtering through `periodMatchesYear` and the same final ordering from `periodSortKey` so the selected period/state pair remains byte-stable.
+
+## Materializing Full Attachment-Link CSVs Before Building Link Sets
+
+Anti-pattern:
+
+- Reading the entire `attachment-links.csv` into memory through `loadCSVRows` inside `loadEvidenceLinks` in [internal/status/evidence_coverage.go](/Users/jhh/git/busdk/busdk/bus-status/internal/status/evidence_coverage.go) before normalizing `kind` values and populating the `bankRows`, `vouchers`, `invoices`, and `sourceIDs` sets. The link index ultimately only needs the current row’s normalized fields while scanning.
+
+Benchmark evidence:
+
+- `BenchmarkLoadEvidenceLinksReadAll40000`: `9013975 ns/op`, `14193498 B/op`, `80372 allocs/op`
+- `BenchmarkLoadEvidenceLinksStreaming40000`: `8434960 ns/op`, `9259518 B/op`, `80346 allocs/op`
+- Shape: on a 40,000-row attachment-link corpus, the streaming helper is about 6% faster and reduces transient allocation volume by about 35%, which isolates `csv.ReadAll` retention as the main avoidable cost in link-index construction.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/status -run '^$' -bench 'BenchmarkLoadEvidenceLinks(ReadAll40000|Streaming40000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current missing-file behavior and the current error for missing `kind` or `resource_id` columns.
+- Keep `normalizeKind` semantics unchanged, including `source`/`source_id` alias handling and current trimming behavior through `valueAt`.
+- Preserve set membership semantics exactly: duplicate rows must remain harmless, and only non-empty `resource_id` values should populate the output maps.
+
+## Rescanning Memorandum Posting Tokens During `add` Flag Parsing
+
+Anti-pattern:
+
+- Reparsing the same `ACCOUNT=AMOUNT=ROW_DESCRIPTION` token multiple times while walking `bus-memo add` flags. In [internal/memo/add.go](/Users/jhh/git/busdk/busdk/bus-memo/internal/memo/add.go), `collectPostingValue` currently uses `strings.Count` to decide whether to keep consuming continuation tokens, and `parsePostingLine` then runs `strings.SplitN` plus several `strings.TrimSpace` calls over the same posting token again.
+
+Benchmark evidence:
+
+- `BenchmarkParsePostingLineSplitN100000`: `8335307 ns/op`, `8000001 B/op`, `200000 allocs/op`
+- `BenchmarkParsePostingLineIndexed100000`: `6289443 ns/op`, `3200002 B/op`, `100000 allocs/op`
+- `BenchmarkParseAddArgsCurrentSplitRowDescriptions200x200`: `104863 ns/op`, `197040 B/op`, `2436 allocs/op`
+- `BenchmarkParseAddArgsIndexedSplitRowDescriptions200x200`: `98122 ns/op`, `177840 B/op`, `2036 allocs/op`
+- Shape: for isolated posting-token parsing, a single-pass separator scan is about 25% faster and cuts allocation volume by about 60%; on a full 400-line `parseAddArgs` workload with split row descriptions, the same direction trims about 6% runtime and about 10% allocations.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/memo -run '^$' -bench 'Benchmark(ParsePostingLine(SplitN100000|Indexed100000)|ParseAddArgs(CurrentSplitRowDescriptions200x200|IndexedSplitRowDescriptions200x200))$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current `add` diagnostics exactly, especially `ACCOUNT=AMOUNT[=ROW_DESCRIPTION]` usage failures and the stray-token quoting hint emitted after `--debit`/`--credit`.
+- Keep current trimming behavior for account, amount, and row-description fields, including multi-token continuation handling for unquoted row descriptions.
+- Do not fold this work into the decimal parser change; any posting-token scan cleanup must leave current decimal validation semantics unchanged unless that separate benchmark-backed decimal item is implemented intentionally.
+
+## Recomputing Match Transaction Summaries For Every Matched Row
+
+Anti-pattern:
+
+- Rebuilding transaction-derived match metadata once per selected row in [internal/journal/match.go](/Users/jhh/git/busdk/busdk/bus-journal/internal/journal/match.go). `findMatchedJournalRows` currently calls `buildMatchCounterparts` and `buildMatchTransactionSides` for every matched row even when many rows share the same `period::transaction_id`, so the same counterpart sets and debit/credit summary strings are sorted and formatted repeatedly.
+
+Benchmark evidence:
+
+- `BenchmarkFindMatchedJournalRowsCurrentTxDerived500x6`: `9894249 ns/op`, `10337854 B/op`, `125051 allocs/op`
+- `BenchmarkFindMatchedJournalRowsCachedTxDerived500x6`: `5223141 ns/op`, `6337650 B/op`, `41058 allocs/op`
+- Shape: on a 500-transaction / 6-line-per-transaction fixture, the cached-per-transaction benchmark helper is about 1.9x faster and cuts allocation count by about 67%, which isolates repeated transaction-summary rebuilding as a real hot path in `match`.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/journal -run '^$' -bench 'BenchmarkFindMatchedJournalRows(CurrentTxDerived500x6|CachedTxDerived500x6)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the current row order, date/transaction/entry sorting, and all selector filtering semantics including text filters, unsettled matching, and `--older-than`.
+- Keep `counterpart_accounts`, `counterpart_account_names`, `transaction_debits`, and `transaction_credits` byte-stable for every row.
+- Scope any cache to one in-memory `findMatchedJournalRows` pass keyed by the current validated dataset; do not add cross-command or cross-workspace caches.
+
+## Recomputing Account-Activity Counterparts And Shapes For Every Selected Row
+
+Anti-pattern:
+
+- Re-running transaction counterpart and shape derivation once per selected row in [internal/journal/account_activity.go](/Users/jhh/git/busdk/busdk/bus-journal/internal/journal/account_activity.go). `buildAccountActivityReport` groups rows by transaction, then still calls `computeCounterpartsAndShape` for every matching row instead of deriving one stable per-transaction summary and reusing it.
+
+Benchmark evidence:
+
+- `BenchmarkBuildAccountActivityReportCurrentTxDerived500x6`: `4780582 ns/op`, `3854066 B/op`, `26043 allocs/op`
+- `BenchmarkBuildAccountActivityReportCachedTxDerived500x6`: `3872569 ns/op`, `3754664 B/op`, `23560 allocs/op`
+- Shape: on the same 500-transaction / 6-line fixture, the cached-per-transaction benchmark helper is about 24% faster and trims allocations, which shows that repeated `computeCounterpartsAndShape` work is measurable in the reporting path even before output encoding.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/journal -run '^$' -bench 'BenchmarkBuildAccountActivityReport(CurrentTxDerived500x6|CachedTxDerived500x6)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current account/date/period/opening filters and the existing deterministic row sort order.
+- Keep `counterpart_accounts`, `transaction_shape`, summary totals, and top-counterpart / top-shape bucket ordering byte-stable.
+- Cache only per transaction inside one report build; do not retain long-lived mutable state across workspaces or commands.
+
+## Materializing And Parsing Every Invoice Summary Before Applying A Selective List Filter
+
+Anti-pattern:
+
+- Building full `InvoiceSummary` values for every sales and purchase header row before applying a highly selective `ListFilter`. In [internal/validate/list.go](/Users/jhh/git/busdk/busdk/bus-invoices/internal/validate/list.go), `BuildSummariesWithFilter` currently calls `buildSummariesFor` for both header tables, parses `total_net` and `total_vat` for every row, and only then narrows the result set with `applyListFilter`.
+
+Benchmark evidence:
+
+- `BenchmarkBuildSummariesWithFilterMaterializesAllRowsBeforeInvoiceIDFilter20000`: `6645619 ns/op`, `9234210 B/op`, `40007 allocs/op`
+- `BenchmarkBuildSummariesWithFilterPrefiltersRowsBeforeInvoiceIDFilter20000`: `164231 ns/op`, `411 B/op`, `5 allocs/op`
+- Shape: on a 20,000-header workload with `--type sales --invoice-id <single match>`, the current build-then-filter path is about 40x slower and allocates about 9.2 MB more than a filter-first helper, which isolates eager summary materialization as the dominant cost.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/validate -run '^$' -bench 'BenchmarkBuildSummariesWithFilter(MaterializesAllRowsBeforeInvoiceIDFilter20000|PrefiltersRowsBeforeInvoiceIDFilter20000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current `ListFilter` semantics exactly, including inclusive `--from` / `--to` and `--due-from` / `--due-to` behavior, `--month` matching, and logical-AND combination across filters.
+- Keep `total_amount` formatting byte-stable, including current integer-vs-float rendering rules from `formatTotalAmount`.
+- Preserve the existing deterministic output order after filtering, even if filtering is pushed earlier in the pipeline.
+
+## Rebuilding The Same Kind-Order Map Inside Every List Sort Comparison
+
+Anti-pattern:
+
+- Allocating the `map[string]int{"sales": 0, "purchase": 1}` ordering helper inside every `sort.Slice` comparison in [internal/validate/list.go](/Users/jhh/git/busdk/busdk/bus-invoices/internal/validate/list.go). The comparator is called O(n log n) times, so recreating the same kind-order map on every comparison adds avoidable work to large list outputs.
+
+Benchmark evidence:
+
+- `BenchmarkSortInvoiceSummariesMapLiteralKindOrder20000`: `11167498 ns/op`, `2883800 B/op`, `4 allocs/op`
+- `BenchmarkSortInvoiceSummariesStaticKindOrder20000`: `5393958 ns/op`, `2883800 B/op`, `4 allocs/op`
+- Shape: on a 20,000-summary deterministic sort, the current comparator is about 2.1x slower than the same ordering logic with a static kind-order helper, which isolates the repeated map construction as measurable comparator overhead.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/validate -run '^$' -bench 'BenchmarkSortInvoiceSummaries(MapLiteralKindOrder20000|StaticKindOrder20000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the exact current row ordering: `kind`, then `issue_date`, then `number`, then `invoice_id`.
+- Keep sales before purchase and preserve the existing fallback behavior for any unexpected kind values.
+- Limit any change to comparator internals; do not alter `BuildSummariesWithFilter` output shape or `FormatSummariesTSV` column order.
+
+## Formatting Report Valuations With `fmt.Sprintf` Per Row
+
+Anti-pattern:
+
+- Using `fmt.Sprintf("%.2f", valuation)` inside the hot report-rendering loops in `bus-inventory`. In [internal/inventory/inventory.go](/Users/jhh/git/busdk/busdk/bus-inventory/internal/inventory/inventory.go), both `StatusReport` and `ValuationReport` format every valuation cell through `fmt.Sprintf`, which adds one allocation-heavy formatting call per emitted row even though the output shape is always fixed-point with two decimals.
+
+Benchmark evidence:
+
+- `BenchmarkRenderInventoryRowsFmtSprintf5000`: `987594 ns/op`, `988831 B/op`, `10026 allocs/op`
+- `BenchmarkRenderInventoryRowsFormatFloat5000`: `774561 ns/op`, `908020 B/op`, `25 allocs/op`
+- Shape: for a 5,000-row inventory report, replacing per-row `fmt.Sprintf` with direct fixed-point float formatting is about 28% faster and removes about 10,000 allocations per operation while preserving the same tab-separated row shape.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/inventory -run '^$' -bench 'BenchmarkRenderInventoryRows(FmtSprintf5000|FormatFloat5000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the exact valuation rendering contract: always two decimal places, with the same rounding behavior as `%.2f`.
+- Keep the existing `formatDecimal` quantity formatting unchanged so `on_hand` stays byte-stable.
+- Limit the optimization to report rendering; do not alter item ordering, tab/newline layout, quiet/output-file behavior, or valuation computation semantics.
+
+## Reopening And Reparsing CSV/TSV Files During Summary-Only Parse
+
+Anti-pattern:
+
+- Re-reading the same delimited file during summary-only `bus files parse` in `bus-files`. In [cmd/bus-files/main.go](/Users/jhh/git/busdk/busdk/bus-files/cmd/bus-files/main.go), `parseOneFile` already loads file bytes for sha256 and format detection, but then calls `loadDelimitedFile` for CSV/TSV inputs, which reopens and reparses the same file just to derive headers and row counts.
+
+Benchmark evidence:
+
+- `BenchmarkParseSummaryCSVCurrentReopensFile10000`: `3307042 ns/op`, `6897395 B/op`, `40052 allocs/op`
+- `BenchmarkParseSummaryCSVSingleRead10000`: `3133130 ns/op`, `6896862 B/op`, `40048 allocs/op`
+- Shape: on a 10,000-row CSV summary workload, the single-read helper is about 5% faster with the same output shape, which isolates duplicate file open/read/CSV parse work in the summary-only table path.
+
+Runnable benchmark command:
+
+```sh
+go test ./cmd/bus-files -run '^$' -bench 'BenchmarkParseSummaryCSV(CurrentReopensFile10000|SingleRead10000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current `parse` output bytes exactly, including sorted header order, row counts, line counts, inferred `format`, and sha256 values.
+- Keep the optimization scoped to one `parseOneFile` call or one command invocation; do not add a long-lived cross-file cache.
+- Preserve existing error behavior for unreadable files, malformed CSV/TSV inputs, BOM-trimmed headers, and non-table formats.
+
+## Calling `DirEntry.Info()` For Every `find` Walked File
+
+Anti-pattern:
+
+- Fetching full `os.FileInfo` metadata for every non-directory entry during `bus files find`. In [cmd/bus-files/main.go](/Users/jhh/git/busdk/busdk/bus-files/cmd/bus-files/main.go), `findFiles` calls `d.Info()` inside `filepath.WalkDir` before checking whether an entry is a regular file, even though the hot path only needs to know whether `d.Type().IsRegular()` is true.
+
+Benchmark evidence:
+
+- `BenchmarkFindFilesCurrentStatsEveryEntry2000`: `23927816 ns/op`, `2102378 B/op`, `15955 allocs/op`
+- `BenchmarkFindFilesTypeOnly2000`: `20185010 ns/op`, `1068732 B/op`, `9955 allocs/op`
+- Shape: on a 2,000-file recursive walk benchmark, the type-only helper is about 16% faster and cuts allocation volume by about 49%, which points to the extra per-entry metadata lookup as a measurable cost in `find`.
+
+Runnable benchmark command:
+
+```sh
+go test ./cmd/bus-files -run '^$' -bench 'BenchmarkFindFiles(CurrentStatsEveryEntry2000|TypeOnly2000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current recursive traversal coverage, returned file paths, final sorted path order, and directory/not-directory error text.
+- Keep symlink and non-regular-file handling aligned with current behavior; the optimization should not start including entries that `Mode().IsRegular()` currently excludes.
+- Preserve `WalkDir` error propagation so unreadable directories or metadata failures still fail deterministically.
+
+## Deep-Copying Loaded CSV Rows Before Validation
+
+Anti-pattern:
+
+- Copying every non-header record returned by `LoadManagedTableRecords` inside `loadSchemaAndCSV` in `bus-entities`. In [internal/entities/validator.go](/Users/jhh/git/busdk/busdk/bus-entities/internal/entities/validator.go), the current path appends `append([]string(nil), record...)` for each row before validation/mutation even though validation treats those row slices as read-only.
+
+Benchmark evidence:
+
+- `BenchmarkLoadSchemaAndCSVDeepCopiesRows10000`: `525135 ns/op`, `1845763 B/op`, `10001 allocs/op`
+- `BenchmarkLoadSchemaAndCSVReusesLoadedRows10000`: `0.2863 ns/op`, `0 B/op`, `0 allocs/op`
+- Shape: for a 10,000-row entity table already loaded into memory, deep-copying rows adds about 1.8 MB and 10,001 allocations per operation before validation work even starts, while simple row-slice reuse is effectively free.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/entities -run '^$' -bench 'BenchmarkLoadSchemaAndCSV(DeepCopiesRows10000|ReusesLoadedRows10000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the current header slice isolation and schema/header validation behavior.
+- Only reuse row slices on read-only paths; any write path that mutates a row in place, such as the fallback rewrite branch in `UpdateEntity`, must still copy the targeted row before editing it.
+- Do not retain aliased row slices beyond the lifetime of the loaded table contents if later refactors introduce mutable shared buffers.
+
+## Rescanning All Validated Row Maps For Single-Row Primary-Key Checks
+
+Anti-pattern:
+
+- Reappending a candidate row and rerunning `validatePrimaryKey` across the entire validated registry in `bus-entities` mutation paths. In [internal/entities/mutate.go](/Users/jhh/git/busdk/busdk/bus-entities/internal/entities/mutate.go), `AddEntity` validates existing rows, appends `newRowMap`, and then rescans every row map via `validatePrimaryKey` even though the validation pass has already proved existing keys unique.
+
+Benchmark evidence:
+
+- `BenchmarkAddEntityPrimaryKeyRescansValidatedRows10000`: `751924 ns/op`, `955199 B/op`, `80 allocs/op`
+- `BenchmarkAddEntityPrimaryKeyChecksIncrementally10000`: `20.85 ns/op`, `0 B/op`, `0 allocs/op`
+- Shape: for a 10,000-row registry, rescanning all validated row maps to reject one appended duplicate/non-duplicate key is about 36,000x slower and allocates about 955 KB compared with checking the candidate key against a carried-forward seen-key index.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/entities -run '^$' -bench 'BenchmarkAddEntityPrimaryKey(RescansValidatedRows10000|ChecksIncrementally10000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current duplicate-primary-key error text and row-numbering behavior for the candidate mutation.
+- Scope any seen-key index to one loaded validation/mutation pass; do not introduce cross-workspace or process-global caches.
+- Keep `primaryKey` semantics compatible with multi-field keys if `entities.schema.json` evolves beyond the current single-field `entity_id` primary key.
+
+## Re-reading And Reparsing Customer Schema JSON On Every Add
+
+Anti-pattern:
+
+- Re-opening `customers.schema.json` and decoding its `fields` array on every `bus-customers add` call even though `loadSchemaAndCSV` has already loaded and parsed the same schema earlier in the same request. In [internal/customers/mutate.go](/Users/jhh/git/busdk/busdk/bus-customers/internal/customers/mutate.go), `AddCustomer` currently calls `os.ReadFile` and `filterValuesForSchema(...)` after validation just to drop undeclared keys from `newRowMap`.
+
+Benchmark evidence:
+
+- `BenchmarkFilterValuesForSchemaParseJSONEachCall1000`: `2869 ns/op`, `824 B/op`, `17 allocs/op`
+- `BenchmarkFilterValuesForSchemaPrecomputedAllowed1000`: `121.5 ns/op`, `0 B/op`, `0 allocs/op`
+- `BenchmarkAddCustomerReadSchemaAndParseEachCall1000`: `93622 ns/op`, `1792 B/op`, `22 allocs/op`
+- `BenchmarkAddCustomerReuseParsedSchemaFields1000`: `123.0 ns/op`, `0 B/op`, `0 allocs/op`
+- Shape: the isolated schema-filter step is about 24x faster when the allowed field set is reused instead of reparsing JSON every call, and the add-path benchmark that includes schema file I/O is about 760x faster once the already-loaded schema metadata is reused.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/customers -run '^$' -bench 'Benchmark(FilterValuesForSchema(ParseJSONEachCall1000|PrecomputedAllowed1000)|AddCustomer(ReadSchemaAndParseEachCall1000|ReuseParsedSchemaFields1000))$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current schema-driven filtering so undeclared keys are still dropped before calling `data.AddRow`.
+- Keep the current invalid-schema failure behavior when `customers.schema.json` is malformed.
+- Scope any cached or reused allowlist to one `AddCustomer` call or one parsed schema instance; do not add a process-wide cache that can outlive schema edits in the workspace.
+
+## Deep-copying Managed CSV Records Before Validation
+
+Anti-pattern:
+
+- Cloning the managed-table header and every loaded CSV row before validation even though callers only read the slices during one validation pass. In [internal/customers/validator.go](/Users/jhh/git/busdk/busdk/bus-customers/internal/customers/validator.go), `loadSchemaAndCSV` currently copies `records[0]` and then performs `append([]string(nil), record...)` for every data row before `validateDataset` reads the values.
+
+Benchmark evidence:
+
+- `BenchmarkLoadSchemaAndCSVPrepareRecordsDeepCopy10000x4`: `340352 ns/op`, `886083 B/op`, `10004 allocs/op`
+- `BenchmarkLoadSchemaAndCSVPrepareRecordsSharedSlices10000x4`: `37.25 ns/op`, `0 B/op`, `0 allocs/op`
+- Shape: on a 10,000-row / 4-column dataset, the current deep-copy preparation path is about 9,100x slower and introduces about 886 KB plus 10,004 allocations before validation has started doing any schema or entity checks.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/customers -run '^$' -bench 'BenchmarkLoadSchemaAndCSVPrepareRecords(DeepCopy10000x4|SharedSlices10000x4)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current header validation, row ordering, and value-reading behavior exactly.
+- Only remove the copies if downstream code continues to treat the loaded record slices as read-only for the duration of one validation/add/list operation.
+- Keep any optimization scoped to one loaded table instance; do not introduce shared mutable row buffers that could leak data across calls.
+
+## Rebuilding Report Cell Slices And `strings.Join` Output For Every Tililuettelo Row
+
+Anti-pattern:
+
+- Materializing transient `[]string` headers and row cells and then joining them for every rendered row in [internal/accounts/report.go](/Users/jhh/git/busdk/busdk/bus-accounts/internal/accounts/report.go). `FormatReport` currently calls `reportHeader`, `reportCells`, and `strings.Join` inside the hot TSV/text/markdown loops, so large chart-of-accounts reports repeatedly allocate short-lived slices and joined strings instead of streaming fields directly to the buffer.
+
+Benchmark evidence:
+
+- `BenchmarkFormatReportTSVCellsAndJoin5000x6`: `9215056 ns/op`, `6918273 B/op`, `327944 allocs/op`
+- `BenchmarkFormatReportTSVDirectWrite5000x6`: `8184674 ns/op`, `5655679 B/op`, `302657 allocs/op`
+- Shape: on a 5,000-row report with 6 balance columns, the direct-write helper is about 12% faster and cuts allocation volume by about 18%, which isolates per-row slice/join work as measurable formatter overhead.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/accounts -run '^$' -bench 'BenchmarkFormatReportTSV(CellsAndJoin5000x6|DirectWrite5000x6)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the exact visible column order, separators, newline placement, and subtotal/group rendering across `text`, `tsv`, and `markdown`.
+- Keep current classic-vs-dynamic balance column selection unchanged, including zero/default rendering and the existing `Yhteensä` subtotal label behavior.
+- If the formatter is rewritten to stream directly, keep format-specific escaping rules intact, especially markdown cell escaping.
+
+## Rebuilding `[]string` Field Lists For Every `groups explain` Output Row
+
+Anti-pattern:
+
+- Allocating a fresh `[]string` via `explainRowValues` and joining it for every explain output row in [internal/groups/explain.go](/Users/jhh/git/busdk/busdk/bus-accounts/internal/groups/explain.go). `FormatExplainText` and `FormatExplainTSV` currently materialize per-row field slices even though the output column set is fixed and can be written directly into the buffer.
+
+Benchmark evidence:
+
+- `BenchmarkFormatExplainTSVJoinRows5000`: `742879 ns/op`, `2978275 B/op`, `5043 allocs/op`
+- `BenchmarkFormatExplainTSVDirectWrite5000`: `458363 ns/op`, `2620685 B/op`, `31 allocs/op`
+- Shape: for 5,000 explain rows, the direct-write helper is about 1.6x faster and removes almost all per-row allocations, which shows the row-slice/join path is the dominant formatter cost in this command surface.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/groups -run '^$' -bench 'BenchmarkFormatExplainTSV(JoinRows5000|DirectWrite5000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the exact column order, delimiters, and newline behavior for both text and TSV explain outputs.
+- Keep field contents byte-stable, including `report_profiles`, `status`, and `reason`, so existing scripts and fixtures remain valid.
+- If the formatter is changed to stream fields directly, avoid reordering or omitting empty columns; empty values must still produce the same separators in the same positions.
+
 ## Materializing The Full Journal Before Summing Debit/Credit Totals
 
 Anti-pattern:
@@ -1880,3 +2316,346 @@ Behavior and safety guardrails:
 - Preserve schema-driven filtering exactly: only declared fields may reach `data.AddRow`, and omitted optional fields must behave as they do now.
 - Keep current invalid-schema failures deterministic; if parsing is moved earlier, surface the same error when schema JSON is malformed.
 - Scope any cached allowed-field set to the schema already loaded for the current add operation; do not introduce process-wide schema caches that can outlive workspace edits.
+
+## Rebuilding `map[string]string` Views During Attachment Add/Link Lookups
+
+Anti-pattern:
+
+- Scanning attachment and link tables through `rowValues(...)` inside single-command lookup helpers in `bus-attachments`. In [internal/attachments/add.go](/Users/jhh/git/busdk/busdk/bus-attachments/internal/attachments/add.go) and [internal/attachments/link.go](/Users/jhh/git/busdk/busdk/bus-attachments/internal/attachments/link.go), helpers such as `addVoucherInUse`, `resolveAttachmentSelector`, `attachmentExists`, and `linkExists` currently rebuild a `map[string]string` for each scanned row even though they only read a small fixed column set.
+
+Benchmark evidence:
+
+- `BenchmarkResolveAttachmentSelectorDescExactRowValuesMaps50000`: `7298232 ns/op`, `16 B/op`, `1 allocs/op`
+- `BenchmarkResolveAttachmentSelectorDescExactIndexed50000`: `842857 ns/op`, `16 B/op`, `1 allocs/op`
+- `BenchmarkLinkExistsRowValuesMaps50000x3`: `17549502 ns/op`, `0 B/op`, `0 allocs/op`
+- `BenchmarkLinkExistsIndexed50000x3`: `1405946 ns/op`, `0 B/op`, `0 allocs/op`
+- `BenchmarkAddVoucherInUseRowValuesMaps50000x3`: `22510294 ns/op`, `0 B/op`, `0 allocs/op`
+- `BenchmarkAddVoucherInUseIndexed50000x3`: `1803421 ns/op`, `0 B/op`, `0 allocs/op`
+- Shape: on 50,000-attachment / 150,000-link synthetic fixtures, direct indexed field reads make selector resolution about 8.7x faster, duplicate-link detection about 12.5x faster, and voucher-reservation checks about 12.5x faster, which isolates per-row row-map hydration as a command-time hotspot outside the existing list/validate backlog.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/attachments -run '^$' -bench 'Benchmark(ResolveAttachmentSelectorDescExact(RowValuesMaps50000|Indexed50000)|LinkExists(RowValuesMaps50000x3|Indexed50000x3)|AddVoucherInUse(RowValuesMaps50000x3|Indexed50000x3))$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current selector semantics for `attachment_id`, `--path`, `--desc-exact`, and `--source-hash`, including ambiguity detection and deterministic sorted error output.
+- Keep duplicate-link and voucher-reservation behavior byte-stable, especially the existing normalization of link kinds and current trimmed `resource_id` comparisons.
+- Scope any typed row accessor or lookup structure to the loaded table or one command execution; do not introduce mutable global caches that can retain stale workspace metadata after file edits.
+
+## Revalidating The Managed Balances Table For Every Imported Row
+
+Anti-pattern:
+
+- Appending imported balance rows with `busdata.AddRow(...)` inside the per-record loop in [internal/cli/import_cmd.go](/Users/jhh/git/busdk/busdk/bus-balances/internal/cli/import_cmd.go). `AddRow` resolves schema/storage, reloads existing table records, validates the full table, and checks primary-key uniqueness on every call, so a 1,000-row import repeatedly rereads and revalidates the same `balances.csv` contents instead of doing that work once per import command.
+
+Benchmark evidence:
+
+- `BenchmarkImportAppendRowsAddRowLoop1000Into5000`: `2826563333 ns/op`, `3188315624 B/op`, `38647153 allocs/op`
+- `BenchmarkImportAppendRowsManagedBatch1000Into5000`: `11000438 ns/op`, `3310639 B/op`, `60012 allocs/op`
+- Shape: appending 1,000 imported rows into a 5,000-row balances table is about 257x slower and allocates about 3.2 GB when the module calls `AddRow` per row, versus opening the managed table once, validating once, and appending the full batch through the storage-aware managed-table append path.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/cli -run '^$' -bench 'BenchmarkImportAppendRows(AddRowLoop1000Into5000|ManagedBatch1000Into5000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current import failure atomicity: if any parsed row or account check fails, append nothing.
+- Keep existing schema validation, append-only semantics, and CSV/PCSV storage handling unchanged; the optimization should only reduce repeated table-open/read/validate work inside one successful import invocation.
+- Preserve current row ordering and field encoding so appended `recorded_at`, `as_of`, `account_code`, `amount`, `source`, and `notes` bytes remain compatible with downstream list/apply/validate behavior.
+
+## Renormalizing Every Exact Counterparty Alias On Every Transaction
+
+Anti-pattern:
+
+- Re-running `fallbackNormalize(rule.Pattern)` for every exact alias rule inside `NormalizeCounterparty` in `bus-bank`. In [internal/bank/counterparty.go](/Users/jhh/git/busdk/busdk/bus-bank/internal/bank/counterparty.go), exact-match alias rules are rescanned and renormalized for every input name, so import/list/profile flows pay the full alias normalization cost once per rule per transaction even when the alias table is unchanged.
+
+Benchmark evidence:
+
+- `BenchmarkNormalizeCounterpartyExactRulesCurrent1000x1000`: `91623118 ns/op`, `24072117 B/op`, `2006000 allocs/op`
+- `BenchmarkNormalizeCounterpartyExactRulesPreindexed1000x1000`: `197449 ns/op`, `48000 B/op`, `4000 allocs/op`
+- Shape: for 1,000 exact alias rules and 1,000 transaction-name lookups, the current path is about 460x slower and allocates about 500x more memory than a benchmark-only first-match-wins exact index.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/bank -run 'TestBenchmarkNormalizeCounterpartyExactAliasParity$' -bench 'BenchmarkNormalizeCounterpartyExactRules(Current1000x1000|Preindexed1000x1000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current first-match-wins behavior when multiple exact aliases normalize to the same fallback key.
+- Keep regex alias rules ordered and evaluated exactly as they are today after the exact-match fast path.
+- Do not change fallback normalization output for unmatched names; only remove redundant per-lookup work.
+
+## Building Row Maps For Every Statement Validation And Decode Pass
+
+Anti-pattern:
+
+- Hydrating a fresh `map[string]string` with `mapRow(...)` for every row before validation and transaction decoding in `bus-bank`. In [internal/bank/validate.go](/Users/jhh/git/busdk/busdk/bus-bank/internal/bank/validate.go), statement-loading and schema-backed import paths materialize a row map, then reread the same values for `validateRow`, `validatePrimaryKey`, and `transactionFromRow`, even when the schema/header is already indexed.
+
+Benchmark evidence:
+
+- `BenchmarkValidateAndDecodeStatementRowsMapRow1000`: `1111404 ns/op`, `783250 B/op`, `8009 allocs/op`
+- `BenchmarkValidateAndDecodeStatementRowsIndexed1000`: `815206 ns/op`, `166883 B/op`, `5009 allocs/op`
+- Shape: on a 1,000-row no-pattern statement workload, the current row-map path is about 36% slower and allocates about 4.7x more memory than a benchmark-only indexed-row validation/decode pass, which isolates row-map hydration and map lookup churn from the separately tracked regexp-compilation issue.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/bank -run 'TestBenchmarkValidateAndDecodeStatementRowsParity$' -bench 'BenchmarkValidateAndDecodeStatementRows(MapRow1000|Indexed1000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current validation error strings, row numbering, primary-key duplicate detection, and required-field handling.
+- Keep decoded `Transaction` fields byte-for-byte compatible with current normalization for amount, dates, whitespace cleanup, and optional empty fields.
+- Scope any typed row accessor or indexed helper to one parsed header/schema; do not introduce cross-workspace caches that can outlive table or schema edits.
+
+## Hydrating `map[string]string` For Every Import-Profile Row Transform
+
+Anti-pattern:
+
+- Executing non-lookup import-profile steps over per-row `map[string]string` state in `pkg/data/profile_exec.go`. `ExecuteProfile` currently hydrates a full map for every source row, then allocates replacement maps during `column_map` and rebuilds sorted output rows even when the active step set only needs a fixed, prevalidated subset of columns.
+
+Benchmark evidence:
+
+- `BenchmarkExecuteProfileRowMaps10000x12`: `5968731 ns/op`, `10115058 B/op`, `66676 allocs/op`
+- `BenchmarkExecuteProfileIndexed10000x12`: `414951 ns/op`, `1153090 B/op`, `13340 allocs/op`
+- Shape: on a 10,000-row / 12-column import-profile workload with `row_filter`, `column_map`, `enum_map`, and `transform`, the indexed benchmark helper is about 14x faster, cuts allocation volume by about 89%, and cuts allocation count by about 80%.
+
+Runnable benchmark command:
+
+```sh
+go test ./pkg/data -run '^$' -bench 'BenchmarkExecuteProfile(RowMaps10000x12|Indexed10000x12)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve step order exactly, including row filtering before subsequent transforms.
+- Keep current `column_map` defaults, `enum_map` fallback behavior, concat separator handling, and deterministic source-row order unchanged.
+- Preserve lexicographic output header ordering and missing-cell-as-empty-string behavior in the final `MappedRows`.
+- Keep lookup-step semantics separate from this optimization unless the lookup-specific backlog item is addressed in the same change.
+
+## Encoding Composite Primary-Key Tuples During CSV Validation
+
+Anti-pattern:
+
+- Building transient composite-key slices and encoded tuple strings for every row during `validatePrimaryKeyUniqueness` in `pkg/data/csv.go`. The current path allocates `primaryKeyValues(row, indexes)` and `encodePrimaryKey(values)` for each composite-key row even when a common two-column key could be tracked directly with arity-specific maps.
+
+Benchmark evidence:
+
+- `BenchmarkValidatePrimaryKeyUniquenessCompositeEncode10000x2`: `921287 ns/op`, `996890 B/op`, `30034 allocs/op`
+- `BenchmarkValidatePrimaryKeyUniquenessCompositeNestedMaps10000x2`: `682429 ns/op`, `1132068 B/op`, `1133 allocs/op`
+- Shape: on a 10,000-row table with a repeated-first-column / unique-second-column composite key, the arity-specific nested-map helper is about 26% faster and reduces allocation count by about 96%, which isolates tuple encoding as a measurable hot path.
+
+Runnable benchmark command:
+
+```sh
+go test ./pkg/data -run '^$' -bench 'BenchmarkValidatePrimaryKeyUniquenessComposite(Encode10000x2|NestedMaps10000x2)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current duplicate-key diagnostics, especially the visible key text and row numbers reported in validation errors.
+- Keep primary-key field order semantics unchanged; the optimized path must still treat `(a,b)` differently from `(b,a)`.
+- Restrict any arity-specific fast path to the validated key widths it fully covers, and keep the existing generic path for wider composite keys or other edge cases.
+
+## Rewriting Money Strings Multiple Times Per Parse
+
+Anti-pattern:
+
+- Rebuilding normalized money strings in multiple passes inside `parseMoneyToCents` in `bus-debts`. In [internal/debts/debts.go](/Users/jhh/git/busdk/busdk/bus-debts/internal/debts/debts.go), each parse currently trims, copies runes into a `strings.Builder`, conditionally runs `ReplaceAll` twice, then `Split`s the whole string before digit validation and integer parsing. That cost is paid repeatedly by receipt/topic normalization, validation, and text rendering helpers.
+
+Benchmark evidence:
+
+- `BenchmarkParseMoneyToCentsStringRewrites1000`: `131804 ns/op`, `51200 B/op`, `3000 allocs/op`
+- `BenchmarkParseMoneyToCentsSinglePass1000`: `33273 ns/op`, `0 B/op`, `0 allocs/op`
+- Shape: on a 1,000-input mixed Finnish/ISO money workload (`14137.80`, `14 137,80`, `1 234 567,89`, `-84,00`, `0,05`), the current rewrite-heavy parser is about 4x slower and allocates on every parse, while a benchmark-only single-pass parser with matching representative outputs stays allocation-free.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/debts -run 'TestBenchmarkParseMoneyToCentsSinglePass_matchesProductionCases$' -bench 'BenchmarkParseMoneyToCents(StringRewrites1000|SinglePass1000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current accepted operator inputs, especially `YYYY`-scale amounts in both `14137.80` and `14 137,80` forms, optional leading `-`, and `,` to `.` decimal normalization.
+- Preserve current rejection behavior for invalid characters, repeated decimal separators, and fractions longer than two digits.
+- Keep the optimization local to `parseMoneyToCents` and its direct optional wrappers; do not change user-facing canonical formatting, validation call sites, or cross-table arithmetic semantics while removing the intermediate string rewrites.
+
+## Allocating Composite-Key Join Buffers For Single-Field Loan Keys
+
+Anti-pattern:
+
+- Using the generic `buildKey` slice-and-`strings.Join` path for the current one-column primary and foreign keys in `bus-loans`. In [internal/loans/validate.go](/Users/jhh/git/busdk/busdk/bus-loans/internal/loans/validate.go), `validatePrimaryKey` and `validateForeignKeys` currently build joined composite key strings even for the single-field `event_id` and `loan_id` cases used by `loans.csv` and `events.csv`.
+
+Benchmark evidence:
+
+- `BenchmarkValidatePrimaryKeyGenericSingleField10000`: `608728 ns/op`, `873274 B/op`, `79 allocs/op`
+- `BenchmarkValidatePrimaryKeySpecializedSingleField10000`: `297231 ns/op`, `436865 B/op`, `33 allocs/op`
+- `BenchmarkValidateForeignKeysGenericSingleField10000`: `792748 ns/op`, `873276 B/op`, `79 allocs/op`
+- `BenchmarkValidateForeignKeysSpecializedSingleField10000`: `458543 ns/op`, `436864 B/op`, `33 allocs/op`
+- Shape: on 10,000-row loan/event key validation workloads, a single-field fast path is about 1.7x to 2.0x faster and cuts allocation volume roughly in half by avoiding per-row slice setup and joined-key string materialization.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/loans -run '^$' -bench 'Benchmark(Validate(PrimaryKey(Generic|Specialized)SingleField10000|ForeignKeys(Generic|Specialized)SingleField10000))$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current trimmed-key semantics and current behavior for empty key fields: empty keys must still be skipped rather than treated as duplicates or violations.
+- Preserve existing duplicate-primary-key and foreign-key violation error text.
+- Keep the existing generic multi-field key path for any future composite-key schemas; only special-case the current single-field hot path.
+
+## Formatting One Posting Line String Per Row
+
+Anti-pattern:
+
+- Building one `fmt.Sprintf` string per output row in `bus-loans` writers. In [internal/loans/postings.go](/Users/jhh/git/busdk/busdk/bus-loans/internal/loans/postings.go), `WritePostings` currently formats every TSV line into a temporary string before writing it, and the same pattern also exists in the list/balance/schedule/amortize writers.
+
+Benchmark evidence:
+
+- `BenchmarkWritePostingsFmtSprintf5000`: `3065996 ns/op`, `6413017 B/op`, `70178 allocs/op`
+- `BenchmarkWritePostingsBuffered5000`: `1973982 ns/op`, `5353869 B/op`, `17563 allocs/op`
+- Shape: on a 5,000-event posting output workload, a buffered writer path is about 1.6x faster and cuts allocation count by about 75%, which points to per-row formatted-string construction as a meaningful output hot spot.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/loans -run '^$' -bench 'BenchmarkWritePostings(FmtSprintf5000|Buffered5000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve exact TSV bytes: field order, tab separators, trailing newlines, and current decimal/date formatting must remain unchanged.
+- Keep existing deterministic ordering rules unchanged; this is only a write-path optimization.
+- If buffering is introduced, scope it to one write call so large command outputs do not retain shared mutable state across invocations.
+
+## Repeated Opening `--replace` Journal Scans
+
+Anti-pattern:
+
+- Rescanning the current journal multiple times while preparing `bus period opening --replace` in [internal/period/opening.go](/Users/jhh/git/busdk/busdk/bus-period/internal/period/opening.go). The current path walks `currentData.Journal.Rows` once to reserve all existing ids, then walks it again to filter old opening rows for the target period before appending the new deterministic opening rows.
+
+Benchmark evidence:
+
+- `BenchmarkPrepareOpeningJournalReplaceMultiScan10000x200`: `656629 ns/op`, `590785 B/op`, `634 allocs/op`
+- `BenchmarkPrepareOpeningJournalReplaceSinglePass10000x200`: `455325 ns/op`, `590784 B/op`, `634 allocs/op`
+- Shape: on a 10,000-row current journal with a 200-row replacement opening entry, the one-pass helper is about 31% faster with the same allocation profile, which isolates redundant row scans as the measurable cost.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/period -run 'TestBenchmarkOpeningReplaceHelpersAgree' -bench 'BenchmarkPrepareOpeningJournalReplace(MultiScan10000x200|SinglePass10000x200)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current `--replace` matching exactly: only rows with the deterministic opening id prefix and the target-period description suffix may be removed.
+- Preserve deterministic id collision behavior for the new opening rows, including the current rule that ids removed by `--replace` remain reserved during the same run and therefore still force underscore suffixing when they collide.
+- Keep journal row ordering stable for surviving rows and appended replacement rows so downstream journal bytes and replace semantics remain deterministic.
+
+## Scanning Invoice Line Tables Even When Header Totals Already Supply Evidence
+
+Anti-pattern:
+
+- In `bus-reconcile`, [internal/reconcile/post.go](/Users/jhh/git/busdk/busdk/bus-reconcile/internal/reconcile/post.go) `loadInvoiceEvidence()` always loads and aggregates invoice-line tables before it checks whether each invoice header already contains `total_net` and `total_vat`. On workspaces where header totals are complete, the line scan is wasted work because the computed sums are overwritten by header totals for every invoice.
+
+Benchmark evidence:
+
+- `BenchmarkLoadInvoiceEvidenceHeaderTotalsStillScanLines2500x10Current`: `15947905 ns/op`, `19290647 B/op`, `115606 allocs/op`
+- `BenchmarkLoadInvoiceEvidenceHeaderTotalsSkipLineScan2500x10`: `2491279 ns/op`, `3439053 B/op`, `15286 allocs/op`
+- Shape: on a 2,500-invoice workspace with 10 line rows per invoice and complete header totals, the current eager line-scan path is about 6.4x slower and allocates about 5.6x more bytes than a header-total-only pass.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/reconcile -run '^$' -bench 'BenchmarkLoadInvoiceEvidenceHeaderTotals(StillScanLines2500x10Current|SkipLineScan2500x10)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve the current fallback behavior for invoices that do not provide both header totals: those invoices still need line-derived totals.
+- Keep purchase-invoice polarity normalization unchanged so negative export totals still become positive matching/posting magnitudes.
+- Preserve missing-line-file handling and current error text for invalid `total_net`, `total_vat`, `quantity`, `unit_price`, and `vat_rate` values.
+
+## Hydrating Header-Keyed Row Maps Before Every Validation Pass
+
+Anti-pattern:
+
+- In `bus-reconcile`, [internal/validate/csv.go](/Users/jhh/git/busdk/busdk/bus-reconcile/internal/validate/csv.go) converts every CSV record into a fresh `map[string]string` before validation. Schema-backed loaders in [internal/reconcile/data.go](/Users/jhh/git/busdk/busdk/bus-reconcile/internal/reconcile/data.go) also build the same row-map shape before calling `ValidateLogicalRows`. That means validation pays repeated map allocation and string-key lookup overhead even though each pass already knows the stable column indexes.
+
+Benchmark evidence:
+
+- `BenchmarkValidateLogicalRowsBuildRowMapsThenValidate1000`: `608131 ns/op`, `473573 B/op`, `3073 allocs/op`
+- `BenchmarkValidateLogicalRowsIndexedValidation1000`: `446728 ns/op`, `82974 B/op`, `2057 allocs/op`
+- Shape: on a 1,000-row schema-validation workload, the row-map path is about 36% slower and allocates about 5.7x more bytes than an equivalent indexed validation pass.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/validate -run '^$' -bench 'BenchmarkValidateLogicalRows(BuildRowMapsThenValidate1000|IndexedValidation1000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve existing validation diagnostics and row numbering for missing fields, required values, enum mismatches, pattern mismatches, type failures, and duplicate primary keys.
+- Keep pattern compilation scoped to one schema or one validation pass; do not introduce long-lived global caches that can retain stale workspace state.
+- If validation moves to indexed row access internally, only convert to map-backed rows where callers truly require returned row maps, so loader behavior and output semantics stay unchanged.
+
+## Building Export CSV Output With Repeated String Concatenation
+
+Anti-pattern:
+
+- Appending every rendered export row with repeated `out += ...` concatenation in [internal/vat/export.go](/Users/jhh/git/busdk/busdk/bus-vat/internal/vat/export.go). `FormatReportCSV` currently seeds a header string and then concatenates `formatReportLineCSV(line)` for every row, which turns large export payloads into a quadratic copy hotspot even though the output is deterministic and append-only.
+
+Benchmark evidence:
+
+- `BenchmarkFormatReportCSVConcat10000`: `620114730 ns/op`, `3298720304 B/op`, `92644 allocs/op`
+- `BenchmarkFormatReportCSVBuilder10000`: `3166898 ns/op`, `5117805 B/op`, `76701 allocs/op`
+- Shape: for a 10,000-line export payload, the builder-backed benchmark helper is about 196x faster and cuts allocation volume from about 3.3 GB to about 5.1 MB, which isolates repeated string concatenation as the dominant cost in large CSV export formatting.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/vat -run '^$' -bench 'BenchmarkFormatReportCSV(Concat10000|Builder10000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve exact CSV bytes, including the current header row, column order, escaping rules, trailing newline behavior, and row ordering.
+- Keep `formatReportLineCSV` semantics unchanged for `TOTAL`, `RATE`, and `COVERAGE` rows, especially the current empty-column placement and `source_refs` escaping.
+- Keep the optimization local to one `FormatReportCSV` call; do not introduce shared buffers or mutable package-level state that could affect concurrency or deterministic output.
+
+## Revalidating The Entity Registry Twice During Vendor Adds
+
+Anti-pattern:
+
+- In `bus-vendors`, [internal/vendors/mutate.go](/Users/jhh/git/busdk/busdk/bus-vendors/internal/vendors/mutate.go) currently calls `registry.Lookup(...)` before appending a vendor, then `validateLinkedEntities(...)` reopens and revalidates `entities.csv` again for the same add attempt. Because `bus-entities/registry.Lookup` is implemented as `List(...)` plus a scan, one successful add validates the entity registry twice.
+
+Benchmark evidence:
+
+- `BenchmarkAddVendorEntityValidationLookupPlusList1000x5000`: `10410164 ns/op`, `17697164 B/op`, `80408 allocs/op`
+- `BenchmarkAddVendorEntityValidationListOnce1000x5000`: `5247704 ns/op`, `9333693 B/op`, `40214 allocs/op`
+- Shape: on a representative add preflight with 1,000 existing vendors and 5,000 entities, reusing one `registry.List(...)` result is about 2.0x faster and cuts allocation volume and allocation count by about half versus the current lookup-plus-list flow.
+
+Runnable benchmark command:
+
+```sh
+go test ./internal/vendors -run '^$' -bench 'BenchmarkAddVendorEntityValidation(LookupPlusList1000x5000|ListOnce1000x5000)$' -benchmem
+```
+
+Behavior and safety guardrails:
+
+- Preserve current `entity_id` existence checks and display-name defaulting when `--display-name` is omitted.
+- Preserve validation of existing vendor rows against the current entity registry; an optimization must not skip the current `row N entity_id ... not found in entity registry` failure mode for already-present invalid rows.
+- Keep any reused entity listing scoped to one add operation or validation pass so workspace edits to `entities.csv` are still observed on the next command run.
