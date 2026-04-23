@@ -43,11 +43,32 @@ The local endpoint may be the server root, `/v1`, or the full
 `/v1/chat/completions` URL. If the endpoint requires an API token, pass
 `--local-api-key`; the value is sent as a bearer token.
 
+When the selected `bus-agent` runtime resolves to a Codex app-server host,
+`bus chat` also exposes the richer shared agent workflow instead of waiting for
+only a final assistant message. The standalone host publishes streamed event
+state through the same `v1/ai/*` routes used by the larger BusDK UI hosts.
+
 ## State
 
 `bus chat` stores thread metadata and message history under
 `.bus/bus-chat/ai-state.json` in the selected workspace root. Dropped files are
 copied under `.bus/bus-chat/drops/` and referenced from the next chat turn.
+The panel uses the shared `bus-ui` drag-and-drop attachment flow, so dropped
+files appear as removable composer attachments before they are sent. When a
+turn starts, the same shared panel responding indicator is shown while the
+backend is still producing the assistant response.
+
+When a Codex-backed session requests command approval, the standalone panel
+shows the approval card and the derived terminal timeline from `v1/ai/poll` and
+`v1/ai/render`. Approval decisions are sent through `v1/ai/approval/respond`.
+If another thread already owns the workspace lock, the panel reports the
+conflict instead of hiding it behind a generic failure. Workspace lock metadata
+is stored under `.bus/bus-chat/workspace-lock.json`.
+
+ChatGPT-style login is only needed when the selected `bus-agent` runtime
+requires it. In that case `v1/ai/login/start` opens the backend login URL and
+the panel refreshes auth status from the runtime. Local OpenAI-compatible
+backends remain login-free and report as authenticated immediately.
 
 ## Flags
 

@@ -73,6 +73,12 @@ It also provides one shared committed-draft normalization rule
 (`NormalizeAICommittedDraft`) and matching composer event wiring so AI text
 areas keep raw trailing spaces while focused and only trim on intentional blur
 or send.
+For server-rendered HTML hosts, the shared plain-JS AI panel client also owns
+the generic send/drop lifecycle. It refreshes the panel immediately after a
+turn starts so users see the shared responding indicator, tracks per-thread
+draft attachments, imports dropped files or file paths through `v1/ai/drop`,
+supports shared attachment removal actions, includes attachment references in
+turn context, and keeps the close guard active while unsent attachments remain.
 It also provides shared per-thread workspace/git isolation status helpers
 (`AIThreadIsolationStatus`, `BuildAIIsolationBranchName`,
 `BuildAIIsolationWorktreePath`, `AIThreadIsolationCard`) so host modules can
