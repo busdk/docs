@@ -68,7 +68,10 @@ native wrappers and tests. The shared AI panel browser client also publishes
 the same close-guard bindings (`busUIWindowCloseGuardState`,
 `busUIAttemptWindowClose`) for plain HTML/JavaScript hosts such as
 `bus-factory`, so downstream modules do not need a separate module-local
-beforeunload implementation.
+beforeunload implementation. When a shared assistant shell opens, the browser
+client immediately reconciles poll state, so an approval that was already
+pending before the panel opened still blocks close without waiting for a later
+poll interval.
 It also provides one shared committed-draft normalization rule
 (`NormalizeAICommittedDraft`) and matching composer event wiring so AI text
 areas keep raw trailing spaces while focused and only trim on intentional blur

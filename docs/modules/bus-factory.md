@@ -108,7 +108,10 @@ text mid-edit; the draft is only normalized when you blur or send it.
 The same shared browser AI client now exposes the shared close-guard bindings
 used by `bus-ui`, so `bus-factory` blocks browser close while assistant work
 is active or a local AI draft is still unfinished instead of maintaining a
-separate module-local unload handler.
+separate module-local unload handler. Opening the shared AI shell also triggers
+an immediate poll reconciliation, so approvals that were already pending before
+the panel opened are reflected in close-guard state without waiting for the
+next polling interval.
 The shared AI panel also renders the current command session through the same
 `bus-ui` terminal surface used by other modules. When approval or verification
 work is in progress, the panel can show the current command, streamed output,
