@@ -9,13 +9,13 @@ description: "bus dev is a developer-only companion that centralizes workflow lo
 
 `bus dev [-h] [-V] [--check] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|codex:local|gemini|claude>] <operation> [operation ...]`
 
-Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`retry`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
+Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`retry`**, **`quality`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
 
 Each operation token can be a base operation name, a **pipeline name** (built-in, repository-local, or preference), or a **user-defined action name** (repository-local prompt or script).
 
 Only one invocation that operates on a given directory (init, commit, stage, plan, work, spec, e2e, triage, retry) runs at a time for that directory. A second invocation for the same directory waits until the first exits.
 
-The **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`** subcommands are management operations. They do not participate in workflow chaining.
+The **`quality`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`** subcommands are management operations. They do not participate in workflow chaining.
 
 Repository-writing management commands (**pipeline set repo**, **pipeline unset repo**, **action set**, **action unset**, **action generate**, **script set**, **script unset**, **script generate**) take the same per-directory lock as workflow operations.
 
@@ -37,6 +37,9 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.  
 `bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential.  
 `bus dev retry --on-fail|-f <TOKEN>[,<TOKEN>...] [--attempts N] <workflow-token>...` — run the workflow token sequence, and if it fails, run the fallback token list and retry the workflow up to `N` additional times with exponential backoff (`1s`, `2s`, `4s`, ...). Workflow and fallback token lists are each resolved and normalized before execution. Omit `--attempts` to default to one additional retry. `--attempts 0` is valid, runs the workflow once, and skips fallback execution. Built-in-only fallback tokens can be forced with `@` (for example `@commit`).
+`bus dev quality lint [--profile cli|library|http-service] [PATH...]` — run reusable BusDK custom Go AST checks over production Go files. The `cli` and `library` profiles cover the shared baseline, while `http-service` also enforces HTTP boundary hardening such as bounded strict JSON decoding, explicit server timeouts, and shared `http.Client` ownership.  
+`bus dev quality golangci-config` — print the shared BusDK `golangci-lint` baseline to stdout so a module can check in the same lint profile without copying it by hand.  
+`bus dev quality makefile-fragment` — print the standard module Makefile integration for `lint`, `security`, `test-race`, optional fuzzing, optional benchmarks, and Docker validation; modules can adapt the fragment while keeping `bus-dev quality lint` as the custom-rule entry point.  
 `bus dev set agent <cursor|codex|codex:local|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.  
 `bus dev set model <value>` — set the bus-dev persistent default model (`bus-dev.model`).  
 `bus dev set model-reasoning-effort <minimal|low|medium|high|xhigh>` — set default model reasoning effort (`bus-dev.model_reasoning_effort`).  
@@ -74,7 +77,7 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 
 Command names follow [CLI command naming](../cli/command-naming). `bus dev` is a developer-only companion that centralizes workflow logic that module repositories would otherwise duplicate in `scripts/`.
 
-It provides one entry point for module scaffolding, commit workflows, planning, AGENTS.md maintenance, e2e scaffolding, and development-state documentation triage.
+It provides one entry point for module scaffolding, commit workflows, planning, AGENTS.md maintenance, e2e scaffolding, reusable Go quality gates, and development-state documentation triage.
 
 Agent runtime execution (Cursor CLI, Codex, Gemini CLI, Claude CLI) is provided by the [bus-agent](../modules/bus-agent) library so runtime detection and diagnostics stay consistent across modules. The `codex:local` runtime token is also supported and runs Codex in local mode (`--oss`).
 
