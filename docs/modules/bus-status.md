@@ -42,6 +42,11 @@ bus status close-readiness --year 2026 --compliance fi --format json \
 
 `close-readiness` is the higher-level year-end view. It combines artifact presence, evidence coverage, period close state, VAT filing parity, and deterministic blocker rows into one report.
 
+`vm` and `containers` are AI Platform aggregate status views. They use the
+domain-owned Go clients from [bus-vm](./bus-vm) and
+[bus-containers](./bus-containers), so `bus-status` provides the status UX
+without owning those HTTP API contracts.
+
 ### What the output tells you
 
 `readiness` includes fields such as `accounts_ready`, `journal_ready`, `periods_ready`, `latest_period`, `latest_state`, and `close_flow_ready`. This is the command to use when you want a fast “is this workspace basically ready?” answer.
@@ -64,6 +69,8 @@ Many users run these commands in a simple sequence:
 bus status readiness --year 2026
 bus status evidence-coverage --year 2026
 bus status close-readiness --year 2026 --compliance fi
+bus status --token-file .bus/auth/ai-token vm --format json
+bus status --token-file .bus/auth/ai-token containers --format json
 ```
 
 If `close-readiness` still reports blockers, the blocker rows usually tell you whether to continue in [bus-attachments](./bus-attachments), [bus-bank](./bus-bank), [bus-journal](./bus-journal), [bus-reconcile](./bus-reconcile), or [bus-reports](./bus-reports).
@@ -76,6 +83,8 @@ bus status readiness --year 2026 --format json --output ./out/status.json
 bus status evidence-coverage --year 2026 --format text
 bus status close-readiness --year 2026 --compliance fi --strict
 bus status -C ./workspace readiness --format tsv
+bus status --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" vm --format json
+bus status --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" containers --format json
 ```
 
 ### Exit status
