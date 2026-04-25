@@ -20,10 +20,23 @@ The provider is enabled through `bus-api` as an explicit provider named `auth`.
 For local development, set `BUS_AUTH_HS256_SECRET` to a deployment secret value
 of at least 32 bytes before starting `bus api serve --provider auth`.
 Set `BUS_AUTH_STORE_PATH` when account identities and revocations must survive
-process restarts. Set `BUS_AUTH_OTP_SENDER=console` for a development-only
-sender that writes OTP codes to stdout with a `BUS_AUTH_OTP` prefix. Set
-`BUS_AUTH_SMTP_HOST` and `BUS_AUTH_SMTP_FROM` when OTPs should be delivered
-through an SMTP relay.
+process restarts. Set `BUS_AUTH_POSTGRES_DSN` when the provider should use
+PostgreSQL persistence. Set `BUS_AUTH_OTP_SENDER=console` for a
+development-only sender that writes OTP codes to stdout with a `BUS_AUTH_OTP`
+prefix. Set `BUS_AUTH_SMTP_HOST` and `BUS_AUTH_SMTP_FROM` when OTPs should be
+delivered through an SMTP relay such as MailHog in local development.
+
+The local compose example in `bus-api-provider-auth/examples/local-compose/`
+starts PostgreSQL, MailHog, and `bus-api` with the auth provider mounted at
+`/local-dev/v1/modules/auth`. It uses only non-secret development defaults and
+prefers the published `ghcr.io/busdk/bus-api:latest` image by default. Operators
+can add the local-build override file when testing a checkout. MailHog exposes
+its HTTP UI/API on `http://127.0.0.1:8025`, which is also what e2e tests use to
+read OTP email messages.
+
+For an AI Platform smoke check, use the token returned by the local
+`bus auth` login and token flow against `https://ai.hg.fi/v1`. Do not depend on
+developer-specific checkout paths or external JWT-issuing commands.
 
 Use `bus-api-provider-auth --help` for operator-facing module help. The help
 output follows Git-style sections and is covered by automated tests so normal
