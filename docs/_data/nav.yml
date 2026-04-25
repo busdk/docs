@@ -57,6 +57,16 @@
       url: /modules/bus-data
     - label: bus api
       url: /modules/bus-api
+    - label: bus api provider auth
+      url: /modules/bus-api-provider-auth
+    - label: bus api provider books
+      url: /modules/bus-api-provider-books
+    - label: bus api provider data
+      url: /modules/bus-api-provider-data
+    - label: bus api provider session
+      url: /modules/bus-api-provider-session
+    - label: bus auth
+      url: /modules/bus-auth
     - label: bus sheets
       url: /modules/bus-sheets
     - label: bus dev
