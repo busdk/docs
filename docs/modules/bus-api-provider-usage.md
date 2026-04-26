@@ -64,6 +64,9 @@ BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disa
 bus-api-provider-usage --addr 127.0.0.1:8080
 ```
 
+Plain JWT secret values are raw text even when they look like base64; use
+`base64:<value>` only for an intentionally base64-encoded secret.
+
 If no database URL is configured, `/readyz` returns a service-unavailable JSON
 response explaining that usage storage is unavailable.
 

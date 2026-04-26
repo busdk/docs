@@ -27,6 +27,9 @@ bus-integration-ssh-runner \
 
 `BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
 must include the domain scope for SSH runner events, currently `ssh:run`.
+If that token is issued by `bus-api-provider-auth` as an internal service token,
+set `BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS` long enough for expected script
+runtimes or rotate/restart the worker before token expiry.
 
 It can also be registered into a shared `bus-integration` host process through
 the Go `sshrunner.Registration(...)` function.

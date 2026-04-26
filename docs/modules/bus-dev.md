@@ -9,7 +9,7 @@ description: "bus dev is a developer-only companion that centralizes workflow lo
 
 `bus dev [-h] [-V] [--check] [-v] [-q] [-C <dir>] [-o <file>] [--color <auto|always|never>] [--no-color] [--agent <cursor|codex|codex:local|gemini|claude>] <operation> [operation ...]`
 
-Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`e2e`**, **`triage`**, **`each`**, **`retry`**, **`quality`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
+Operations: **`init`**, **`commit`**, **`plan`**, **`spec`**, **`stage`**, **`work`**, **`task`**, **`e2e`**, **`triage`**, **`each`**, **`retry`**, **`quality`**, **`set`**, **`context`**, **`list`**, **`pipeline`**, **`action`**, and **`script`**.
 
 Each operation token can be a base operation name, a **pipeline name** (built-in, repository-local, or preference), or a **user-defined action name** (repository-local prompt or script).
 
@@ -27,50 +27,51 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 
 `init` accepts an optional directory, then zero or more workflow tokens that expand only to plan, spec, work, and e2e.
 
-`bus dev init [DIR] [--lang go] [plan|spec|work|e2e ...]` — initialize module files in the current directory by default, or in `DIR` when provided; does not run plan/spec/work/e2e unless explicitly listed.  
-`bus dev commit` — commit staged changes with high-quality messages (no remote, no history rewrite).  
-`bus dev stage` — prepare the working tree for commit by having the agent ensure only intended files are staged: identify temporary files, e2e leftovers, and other files that should not be tracked, add them to `.gitignore` or remove them, then stage the rest; if there are no unstaged or untracked changes, stage exits 0 without invoking the agent or running `git add`; combinable with plan, spec, work, e2e, and commit so you can run full cycles in one invocation.  
-`bus dev plan` — review SDD and docs against repository state, then refresh `PLAN.md` with prioritized unchecked undone work items only.  
-`bus dev spec` — ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool; creates AGENTS.md from online SDD and user documentation when missing.  
-`bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).  
-`bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.  
-`bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.  
-`bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential. When `--jobs` is omitted, the default is the processor count capped at 4.  
+`bus dev init [DIR] [--lang go] [plan|spec|work|e2e ...]` — initialize module files in the current directory by default, or in `DIR` when provided; does not run plan/spec/work/e2e unless explicitly listed.
+`bus dev commit` — commit staged changes with high-quality messages (no remote, no history rewrite).
+`bus dev stage` — prepare the working tree for commit by having the agent ensure only intended files are staged: identify temporary files, e2e leftovers, and other files that should not be tracked, add them to `.gitignore` or remove them, then stage the rest; if there are no unstaged or untracked changes, stage exits 0 without invoking the agent or running `git add`; combinable with plan, spec, work, e2e, and commit so you can run full cycles in one invocation.
+`bus dev plan` — review SDD and docs against repository state, then refresh `PLAN.md` with prioritized unchecked undone work items only.
+`bus dev spec` — ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool; creates AGENTS.md from online SDD and user documentation when missing.
+`bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).
+`bus dev task <new|list|next|show|watch|wait|say|close|fail|block> ...` — independent development task streams over Bus Events.  
+`bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.
+`bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.
+`bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential. When `--jobs` is omitted, the default is the processor count capped at 4.
 `bus dev retry --on-fail|-f <TOKEN>[,<TOKEN>...] [--attempts N] <workflow-token>...` — run the workflow token sequence, and if it fails, run the fallback token list and retry the workflow up to `N` additional times with exponential backoff (`1s`, `2s`, `4s`, ...). Workflow and fallback token lists are each resolved and normalized before execution. Omit `--attempts` to default to one additional retry. `--attempts 0` is valid, runs the workflow once, and skips fallback execution. Built-in-only fallback tokens can be forced with `@` (for example `@commit`).
-`bus dev quality lint [--profile cli|library|http-service] [PATH...]` — run reusable BusDK custom Go AST checks over production Go files. The `cli` and `library` profiles cover the shared baseline, including fixed-string `fmt.Fprint`/`fmt.Fprintln`/`fmt.Fprintf` stdout writer-output checks that prefer `io.WriteString`; `http-service` also enforces HTTP boundary hardening such as bounded strict JSON decoding, explicit server timeouts, and shared `http.Client` ownership.  
-`bus dev quality golangci-config` — print the shared BusDK `golangci-lint` baseline to stdout so a module can check in the same lint profile without copying it by hand.  
-`bus dev quality makefile-fragment` — print the standard module Makefile integration for `lint`, `security`, `test-race`, optional fuzzing, optional benchmarks, and Docker validation; modules can adapt the fragment while keeping `bus-dev quality lint` as the custom-rule entry point.  
-`bus dev set agent <cursor|codex|codex:local|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.  
-`bus dev set model <value>` — set the bus-dev persistent default model (`bus-dev.model`).  
-`bus dev set model-reasoning-effort <minimal|low|medium|high|xhigh>` — set default model reasoning effort (`bus-dev.model_reasoning_effort`).  
-`bus dev set model-verbosity <low|medium|high>` — set default model verbosity (`bus-dev.model_verbosity`).  
-`bus dev set output-format <ndjson|text>` — set the bus-dev persistent default output format (`bus-dev.output_format`).  
-`bus dev set timeout <duration>` — set the bus-dev persistent default timeout (`bus-dev.timeout`).  
-`bus dev set agent-for <token|@token> <cursor|codex|codex:local|gemini|claude>` — set the bus-dev per-step runtime default (`bus-dev.agent_for.*`).  
-`bus dev set model-for <token|@token> <value>` — set the bus-dev per-step model default (`bus-dev.model_for.*`).  
-`bus dev set model-reasoning-effort-for <token|@token> <minimal|low|medium|high|xhigh>` — set per-step reasoning effort (`bus-dev.model_reasoning_effort_for.*`).  
-`bus dev set model-verbosity-for <token|@token> <low|medium|high>` — set per-step verbosity (`bus-dev.model_verbosity_for.*`).  
-`bus dev set model-reasoning-effort-for-model <model> <minimal|low|medium|high|xhigh>` — set per-model reasoning effort (`bus-dev.model_reasoning_effort_for_model.*`).  
-`bus dev set model-verbosity-for-model <model> <low|medium|high>` — set per-model verbosity (`bus-dev.model_verbosity_for_model.*`).  
-`bus dev set env-for <token|@token> <ENV_NAME> <value>` — set per-step environment override (`bus-dev.env_for.*`).  
-`bus dev set allow-dirs-for <token|@token> <dir...>` — set per-step allowed directories for agent runtimes that support directory allow-lists (`bus-dev.allowed_dirs_for.*`).  
-`bus dev set allow-dirs-for-module <module> <token|@token> <dir...>` — set per-module per-step allowed directories (`bus-dev.allowed_dirs_for_module.*`).  
-`bus dev context` — print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) for use by prompt and script authors; requires a Git repository and exits 2 when not in one.  
-`bus dev list` — print every runnable token (operations, pipelines, prompt actions, script actions) and what they execute, without running any agent, script, or Git operation; outside a repo shows only built-in operations and pipelines with descriptions and expanded steps; inside a repo adds repository-local and preference pipelines, prompt actions, and script actions with source and expansion.  
-`bus dev pipeline set repo NAME TOKEN...` — write or overwrite `.bus/dev/NAME.yml` with a YAML sequence of tokens.  
-`bus dev pipeline unset repo NAME` — remove `.bus/dev/NAME.yml` if present; exit 0 if absent.  
-`bus dev pipeline set prefs NAME TOKEN...` — write preference `bus-dev.pipeline.NAME` as a JSON array of strings (via bus-preferences library, no shell-out).  
-`bus dev pipeline unset prefs NAME` — remove the preference key if present; exit 0 if absent.  
-`bus dev pipeline list [all|repo|prefs|builtin]` — print a deterministic listing of pipelines and their source; output to stdout, lexicographic by name then source.  
-`bus dev pipeline preview TOKEN...` — resolve and expand tokens, apply the same normalization used by runnable invocations (merge only repeated direct base-operation steps; no merge across pipeline invocations), print one step name per line to stdout, and exit without running any step.  
-`bus dev action set NAME` — read content from stdin and write `.bus/dev/NAME.txt`; stdin must be non-empty (empty stdin → exit 2).  
-`bus dev action unset NAME` — remove `.bus/dev/NAME.txt` if present; exit 0 if absent.  
-`bus dev action list` — print available repository actions to stdout.  
-`bus dev action generate NAME INSTRUCTION...` — agent-assisted: produce a prompt template and write it to `.bus/dev/NAME.txt`.  
-`bus dev script set NAME [--platform=unix|windows|windows-ps1|both]` — write `.bus/dev/NAME.sh` (unix), `.bus/dev/NAME.bat` (windows), and/or `.bus/dev/NAME.ps1` (windows-ps1) from stdin; set executable bit on `.sh` (chmod failure → exit 1).  
-`bus dev script unset NAME [--platform=unix|windows|windows-ps1|both]` — remove the selected script variant(s); exit 0 if absent.  
-`bus dev script list` — print available repository scripts and variant/enabled status to stdout.  
-`bus dev script generate NAME --platform=unix|windows|windows-ps1|both INSTRUCTION...` — agent-assisted: produce script content and write to the correct file(s).  
+`bus dev quality lint [--profile cli|library|http-service] [PATH...]` — run reusable BusDK custom Go AST checks over production Go files. The `cli` and `library` profiles cover the shared baseline, including fixed-string `fmt.Fprint`/`fmt.Fprintln`/`fmt.Fprintf` stdout writer-output checks that prefer `io.WriteString`; `http-service` also enforces HTTP boundary hardening such as bounded strict JSON decoding, explicit server timeouts, and shared `http.Client` ownership.
+`bus dev quality golangci-config` — print the shared BusDK `golangci-lint` baseline to stdout so a module can check in the same lint profile without copying it by hand.
+`bus dev quality makefile-fragment` — print the standard module Makefile integration for `lint`, `security`, `test-race`, optional fuzzing, optional benchmarks, and Docker validation; modules can adapt the fragment while keeping `bus-dev quality lint` as the custom-rule entry point.
+`bus dev set agent <cursor|codex|codex:local|gemini|claude>` — set the bus-dev persistent default agent (`bus-dev.agent`) via the bus-preferences Go library.
+`bus dev set model <value>` — set the bus-dev persistent default model (`bus-dev.model`).
+`bus dev set model-reasoning-effort <minimal|low|medium|high|xhigh>` — set default model reasoning effort (`bus-dev.model_reasoning_effort`).
+`bus dev set model-verbosity <low|medium|high>` — set default model verbosity (`bus-dev.model_verbosity`).
+`bus dev set output-format <ndjson|text>` — set the bus-dev persistent default output format (`bus-dev.output_format`).
+`bus dev set timeout <duration>` — set the bus-dev persistent default timeout (`bus-dev.timeout`).
+`bus dev set agent-for <token|@token> <cursor|codex|codex:local|gemini|claude>` — set the bus-dev per-step runtime default (`bus-dev.agent_for.*`).
+`bus dev set model-for <token|@token> <value>` — set the bus-dev per-step model default (`bus-dev.model_for.*`).
+`bus dev set model-reasoning-effort-for <token|@token> <minimal|low|medium|high|xhigh>` — set per-step reasoning effort (`bus-dev.model_reasoning_effort_for.*`).
+`bus dev set model-verbosity-for <token|@token> <low|medium|high>` — set per-step verbosity (`bus-dev.model_verbosity_for.*`).
+`bus dev set model-reasoning-effort-for-model <model> <minimal|low|medium|high|xhigh>` — set per-model reasoning effort (`bus-dev.model_reasoning_effort_for_model.*`).
+`bus dev set model-verbosity-for-model <model> <low|medium|high>` — set per-model verbosity (`bus-dev.model_verbosity_for_model.*`).
+`bus dev set env-for <token|@token> <ENV_NAME> <value>` — set per-step environment override (`bus-dev.env_for.*`).
+`bus dev set allow-dirs-for <token|@token> <dir...>` — set per-step allowed directories for agent runtimes that support directory allow-lists (`bus-dev.allowed_dirs_for.*`).
+`bus dev set allow-dirs-for-module <module> <token|@token> <dir...>` — set per-module per-step allowed directories (`bus-dev.allowed_dirs_for_module.*`).
+`bus dev context` — print the full prompt-variable catalog and current resolved values (one `KEY=VALUE` line per variable, sorted by key) for use by prompt and script authors; requires a Git repository and exits 2 when not in one.
+`bus dev list` — print every runnable token (operations, pipelines, prompt actions, script actions) and what they execute, without running any agent, script, or Git operation; outside a repo shows only built-in operations and pipelines with descriptions and expanded steps; inside a repo adds repository-local and preference pipelines, prompt actions, and script actions with source and expansion.
+`bus dev pipeline set repo NAME TOKEN...` — write or overwrite `.bus/dev/NAME.yml` with a YAML sequence of tokens.
+`bus dev pipeline unset repo NAME` — remove `.bus/dev/NAME.yml` if present; exit 0 if absent.
+`bus dev pipeline set prefs NAME TOKEN...` — write preference `bus-dev.pipeline.NAME` as a JSON array of strings (via bus-preferences library, no shell-out).
+`bus dev pipeline unset prefs NAME` — remove the preference key if present; exit 0 if absent.
+`bus dev pipeline list [all|repo|prefs|builtin]` — print a deterministic listing of pipelines and their source; output to stdout, lexicographic by name then source.
+`bus dev pipeline preview TOKEN...` — resolve and expand tokens, apply the same normalization used by runnable invocations (merge only repeated direct base-operation steps; no merge across pipeline invocations), print one step name per line to stdout, and exit without running any step.
+`bus dev action set NAME` — read content from stdin and write `.bus/dev/NAME.txt`; stdin must be non-empty (empty stdin → exit 2).
+`bus dev action unset NAME` — remove `.bus/dev/NAME.txt` if present; exit 0 if absent.
+`bus dev action list` — print available repository actions to stdout.
+`bus dev action generate NAME INSTRUCTION...` — agent-assisted: produce a prompt template and write it to `.bus/dev/NAME.txt`.
+`bus dev script set NAME [--platform=unix|windows|windows-ps1|both]` — write `.bus/dev/NAME.sh` (unix), `.bus/dev/NAME.bat` (windows), and/or `.bus/dev/NAME.ps1` (windows-ps1) from stdin; set executable bit on `.sh` (chmod failure → exit 1).
+`bus dev script unset NAME [--platform=unix|windows|windows-ps1|both]` — remove the selected script variant(s); exit 0 if absent.
+`bus dev script list` — print available repository scripts and variant/enabled status to stdout.
+`bus dev script generate NAME --platform=unix|windows|windows-ps1|both INSTRUCTION...` — agent-assisted: produce script content and write to the correct file(s).
 `bus dev [plan|spec|work|e2e|triage|stage|commit] ...` — run one or more base operations, pipeline names, or user-defined action names in the order you list them (e.g. `bus dev plan spec work`, `bus dev round`, or `bus dev round refresh`); tokens are resolved and expanded first, then normalization is applied (repeated direct base-operation tokens are merged to one run each; steps from pipeline expansion are not merged across pipeline invocations), then the normalized sequence runs and stops on first failure.
 
 ### Description
@@ -88,6 +89,54 @@ Use **`bus dev list`** to see every runnable token in the current context, and *
 Most subcommands operate on the current Git repository. `bus dev init` is the exception: it can initialize files in place or in an explicit target directory without creating or modifying a Git repository.
 
 The tool does not operate on workspace accounting datasets. End-user accounting workflows should use module CLIs such as `bus accounts`, `bus journal`, and `bus validate`.
+
+### Developer Task Wrapper
+
+`bus dev task` is an independent development task feature over Bus Events. It is separate from both the local `bus dev work` pipeline and the generic [`bus work`](./bus-work) CLI: `work` asks the configured agent to work in the current repository now, `bus work` manages generic non-development work streams, and `task` creates development work streams so the sender can read progress, reply while work is running, and see completion events later.
+
+The primary command creates a task for the current repository unless a recipient is provided:
+
+```bash
+bus dev task new "Fix the failing import test"
+bus dev task new @ "Review the current PLAN.md"
+bus dev task new @bus-ledger "Fix the failing import test"
+bus dev task new @bus-ledger @docs "Fix behavior and update docs"
+bus dev task new @acme/payroll "Review the import API"
+bus dev task new --to bus-ledger "Fix the failing import test"
+bus dev task new @bus-ledger --file work.md
+bus dev task new @bus-ledger "Fix this; details attached" --attach repro.log
+```
+
+Recipient syntax is explicit: leading `@recipient` tokens are recipients, `@` means the current project, and repeatable `--to <recipient>` is the flag form for scripts. If no recipient is provided, the current repository is the recipient. The message is the remaining text, `--file` supplies the main task body, and repeatable `--attach` adds supporting material.
+
+Multi-recipient tasks are fan-out, like email. A command such as `bus dev task new @bus-ledger @docs "Fix behavior and update docs"` creates one task group and one recipient-specific work stream for each recipient. Human-facing ids are simple: `123` identifies the task group, while `123.1` and `123.2` identify recipient work streams. Cross-project references use `org/repo#123` and `org/repo#123.1`.
+
+The read/reply workflow is stream-oriented rather than result-oriented:
+
+```bash
+bus dev task show 123
+bus dev task watch 123
+bus dev task wait 123 --until event --timeout 5m
+bus dev task say 123 "Use the shared storage API."
+bus dev task say 123.1 "This note is only for bus-ledger."
+```
+
+`show` replays status and readable event history, `watch` follows events, and `wait` is intended for scripts and main agent sessions that need to block until a new event or terminal state appears. Saying something to a task group appends a group-level message; saying something to a work id targets that recipient-specific stream.
+
+Workers receive work explicitly:
+
+```bash
+bus dev task list
+bus dev task next
+bus dev task next --json
+bus dev task close 123.1 "Fixed and verified with make test."
+bus dev task fail 123.1 "Cannot reproduce; fixture is missing."
+bus dev task block 123.1 "Need a domain decision about config vs schema metadata."
+```
+
+`next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; the worker decides how to perform the work. Automatic Codex or container execution may be added later as an optional worker backend, but the task protocol itself is generic.
+
+The command uses development-specific `bus.dev.task.*` events and scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. It uses explicit token flags and normal Bus auth session state; repository-local token files are not read. Use [`bus work`](./bus-work) separately for generic non-development work streams.
 
 For a practical `.bus` file that runs `dev`, `agent`, and `run` commands together in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
@@ -341,7 +390,7 @@ bus dev each --skip bus-docs --skip bus-legacy stage commit
 
 ### Files
 
-`bus dev` does not read or write workspace accounting datasets (CSV, schemas, datapackage.json). It operates on the Git repository (metadata and index) and, when running the agent, on the repository working tree (source files, repository-root **AGENTS.md** as the canonical project instruction source). To ensure only one run per directory at a time, the tool uses a lock file (e.g. `.bus-dev.lock`) in the effective operation directory; the lock is released when the command exits. The documentation base URL used in prompts and diagnostics is configurable via `BUS_DEV_DOCS_BASE_URL` (default `https://docs.busdk.com`). `bus dev spec` creates or updates repository-root `AGENTS.md`, creating it from the online SDD and module end-user documentation when missing so the result is a compact local implementation spec; if a Cursor rule file exists at `.cursor/rules/<module-name>.mdc` (module name = base name of the repo), its content is merged into `AGENTS.md` and that file is then removed — this is the only case where bus-dev may remove or replace existing repo content for instruction standardization. The tool also uses repository-root `PLAN.md` for planning continuity: `bus dev work` checks off completed plan items, `bus dev e2e` validates that checked items are fully covered by e2e tests and still searches docs for other missing tests, and neither `work` nor `e2e` removes checked items. `bus dev plan` is the command that re-validates the plan and prunes completed checked items while adding newly detected missing work. When Gemini CLI is selected, the tool uses only repository-local Gemini files (e.g. repo-root `GEMINI.md`, `.gemini/settings.json`, `.geminiignore`) and never modifies user-global Gemini configuration or memory. How each runtime (Codex, Cursor, Gemini CLI, Claude Code) loads AGENTS.md is defined by the shared instruction contract in the [bus-agent reference](../modules/bus-agent). No bus-dev-specific config file is required; configuration is via flags and environment only. User-defined pipelines are read from bus-preferences (keys `bus-dev.pipeline.<name>`) when resolving operation tokens; see [Pipelines and repository-local extensions](#pipelines-and-repository-local-extensions). Repository-local extensions (prompt actions, script actions, and pipelines) live under **`.bus/dev/`** at the repository root; see that section for the three supported file types (`.txt`, `.yml`, `.sh` / `.bat`) and for **`bus dev context`**, which prints the prompt-variable catalog for authors.
+`bus dev` does not read or write workspace accounting datasets (CSV, schemas, datapackage.json). It operates on the Git repository (metadata and index) and, when running the agent, on the repository working tree (source files, repository-root **AGENTS.md** as the canonical project instruction source). To ensure only one run per directory at a time, the tool uses a lock file (e.g. `.bus-dev.lock`) in the effective operation directory; the lock is released when the command exits. The documentation base URL used in prompts and diagnostics is configurable via `BUS_DEV_DOCS_BASE_URL` (default `https://docs.busdk.com`). `bus dev spec` creates or updates repository-root `AGENTS.md`, creating it from the online SDD and module end-user documentation when missing so the result is a compact local implementation spec; if a Cursor rule file exists at `.cursor/rules/<module-name>.mdc` (module name = base name of the repo), its content is merged into `AGENTS.md` and that file is then removed — this is the only case where bus-dev may remove or replace existing repo content for instruction standardization. The tool also uses repository-root `PLAN.md` for planning continuity: `bus dev work` checks off completed plan items, `bus dev e2e` validates that checked items are fully covered by e2e tests and still searches docs for other missing tests, and neither `work` nor `e2e` removes checked items. `bus dev plan` is the command that re-validates the plan and prunes completed checked items while adding newly detected missing work. When Gemini CLI is selected, the tool uses only repository-local Gemini files (e.g. repo-root `GEMINI.md`, `.gemini/settings.json`, `.geminiignore`) and never modifies user-global Gemini configuration or memory. How each runtime (Codex, Cursor, Gemini CLI, Claude Code) loads AGENTS.md is defined by the shared instruction contract in the [bus-agent reference](../modules/bus-agent). Existing local workflow commands do not require a bus-dev-specific config file; configuration is via flags and environment. User-defined pipelines are read from bus-preferences (keys `bus-dev.pipeline.<name>`) when resolving operation tokens; see [Pipelines and repository-local extensions](#pipelines-and-repository-local-extensions). Repository-local extensions (prompt actions, script actions, and pipelines) live under **`.bus/dev/`** at the repository root; see that section for the three supported file types (`.txt`, `.yml`, `.sh` / `.bat`) and for **`bus dev context`**, which prints the prompt-variable catalog for authors. `bus dev task` stores only non-secret task state under `.bus/dev`; credentials remain in user Bus config/auth storage, never in the repository.
 
 ### Exit status and errors
 
@@ -404,6 +453,10 @@ dev -C .. each --skip bus-docs context
 
 - [BusDK — installation and overview](https://busdk.com/)
 - [Module reference: bus-agent](../modules/bus-agent)
+- [Module reference: bus-auth](../modules/bus-auth)
+- [Module reference: bus-events](../modules/bus-events)
+- [Module reference: bus-work](../modules/bus-work)
+- [Module reference: bus-api-provider-events](../modules/bus-api-provider-events)
 - [Module reference: bus-preferences](../modules/bus-preferences)
 - [Module reference: bus-dev](../modules/bus-dev)
 - [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)

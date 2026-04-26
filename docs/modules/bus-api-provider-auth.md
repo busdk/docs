@@ -22,7 +22,12 @@ provider only issues user API scopes allowed by `BUS_AUTH_API_USER_SCOPES`.
 
 The provider is enabled through `bus-api` as an explicit provider named `auth`.
 For local development, set `BUS_AUTH_HS256_SECRET` to a deployment secret value
-of at least 32 bytes before starting `bus api serve --provider auth`.
+of at least 32 bytes before starting `bus api serve --provider auth`. Plain
+secret values are raw text even when they look like base64; use `base64:<value>`
+only for an intentionally base64-encoded secret.
+`BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS` configures the lifetime for trusted
+internal service tokens issued by `/api/internal/auth/token`; it defaults to 600
+seconds and should be raised for long-running trusted workers.
 Set `BUS_AUTH_STORE_PATH` when account identities and revocations must survive
 process restarts. Set `BUS_AUTH_POSTGRES_DSN` when the provider should use
 PostgreSQL persistence. Set `BUS_AUTH_OTP_SENDER=console` for a

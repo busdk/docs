@@ -30,7 +30,13 @@ bus-integration-upcloud --events-url "$BUS_EVENTS_API_URL" --api-token "$BUS_API
 `BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
 must include the domain scopes for the events this worker listens to and emits,
 such as `vm:read`, `vm:write`, `container:read`, `container:run`, and
-`container:delete`.
+`container:delete`. Internal runner lifecycle events also require
+`container:admin` when the containers provider exposes
+`/api/internal/containers/runner` through the Events backend.
+If that token is issued by `bus-api-provider-auth` as an internal service token,
+set `BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS` long enough for the expected
+VM/container operation lifetime or rotate/restart the worker before token
+expiry.
 
 For real UpCloud VM lifecycle calls, use the `upcloud` provider:
 
@@ -49,6 +55,11 @@ exits instead of listening for events. Real credentials must come from local
 environment variables, deployment secrets, or untracked operator configuration;
 do not commit them to the BusDK superproject.
 
+When UpCloud returns `SERVER_STATE_ILLEGAL` or reports the configured VM or
+runner in maintenance during start, the worker treats that as transient. It
+polls until the server leaves maintenance or the bounded operation timeout
+expires, then returns a clear maintenance timeout error.
+
 For container execution, configure runner creation and target selection with
 environment variables or the matching command flags. Common settings are
 `UPCLOUD_CONTAINER_SSH_KEYS` for public key files used when creating a runner,
@@ -64,6 +75,12 @@ For container execution, run `bus-integration-ssh-runner` against the same Bus
 Events API or host both UpCloud and SSH-runner registrations with
 `bus-integration`. UpCloud sends `bus.ssh.script.run.request` events and waits
 for correlated `bus.ssh.script.run.response` events.
+
+The worker also handles protected runner administration events:
+`bus.containers.runner.status.request`,
+`bus.containers.runner.start.request`, and
+`bus.containers.runner.delete.request`. These operate on the configured runner
+only and are intended for internal service cleanup/startup flows.
 
 ### Sources
 

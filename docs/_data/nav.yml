@@ -81,6 +81,10 @@
       url: /modules/bus-dev
     - label: bus agent
       url: /modules/bus-agent
+    - label: bus run
+      url: /modules/bus-run
+    - label: bus work
+      url: /modules/bus-work
     - label: bus secrets
       url: /modules/bus-secrets
     - label: bus bfl

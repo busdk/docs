@@ -59,6 +59,9 @@ bus-integration-usage \
 `BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
 must include the usage domain scopes for the events this worker listens to and
 emits, such as `usage:write`, `usage:read`, and `usage:delete`.
+If that token is issued by `bus-api-provider-auth` as an internal service token,
+set `BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS` long enough for the worker lifetime or
+rotate/restart the worker before token expiry.
 
 For deployed collection, use PostgreSQL:
 

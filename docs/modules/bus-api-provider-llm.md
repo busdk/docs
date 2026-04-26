@@ -45,7 +45,9 @@ Streaming chat/completion requests that set `stream=true` are amended with
 `stream_options.include_usage=true` when possible, so streamed responses can
 include billing usage. The provider records `request_started`, `runtime_ready`,
 `backend_request_started`, `backend_request_finished`, `usage_recorded`,
-`usage_missing`, `request_failed`, and `client_aborted`.
+`usage_missing`, `request_failed`, and `client_aborted`. Client-abort recording
+uses a bounded post-response context so a disconnected streaming caller does not
+hide the terminal usage event.
 
 The module e2e suite proves the replacement flow with local non-secret
 components: `bus auth` issues the model token, Events API wakes the runtime,

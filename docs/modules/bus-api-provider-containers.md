@@ -19,6 +19,9 @@ and publish result events.
 GET    /api/v1/containers/status
 POST   /api/v1/containers/runs
 DELETE /api/v1/containers/runs/{run_id}
+GET    /api/internal/containers/runner
+POST   /api/internal/containers/runner
+DELETE /api/internal/containers/runner
 GET    /readyz
 ```
 
@@ -31,6 +34,15 @@ start the provider with `--backend events`, `--events-url`, and `--api-token`;
 container domain scopes needed for the events it sends and receives. The
 provider process owns the response listener and correlates responses to
 in-flight HTTP requests.
+
+The internal runner lifecycle endpoints are for service operations during the
+old api-proxy replacement. They require a JWT with audience
+`ai.hg.fi/internal` and scope `container:admin`, and are not exposed through
+the end-user `bus containers` command surface. In events mode they publish
+`bus.containers.runner.status.request`,
+`bus.containers.runner.start.request`, or
+`bus.containers.runner.delete.request` and wait for the matching response
+events.
 
 `POST /api/v1/containers/runs` executes a foreground request through the
 configured backend. End users normally call it through `bus containers run`,

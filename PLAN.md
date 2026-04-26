@@ -1,5 +1,7 @@
 # Docs Refactor Plan
 
+- [x] Add public end-user documentation for the new `bus-work` skeleton: document the planned generic `bus work` durable work-stream UX, recipient syntax, fan-out behavior, ids/refs, worker loop, config/auth boundary, and relationship to `bus run` and `bus dev`.
+- [x] Document the planned `bus dev task` delegated development workflow for end users in the public `bus-dev` module reference: keep the page clear that the feature is planned, describe the short task CLI, recipient syntax, current-repository default, multi-recipient fan-out, task/work ids, files/attachments, auth/host behavior, and generic worker model without exposing private implementation contracts.
 - [x] Enforce no-information-loss migration rule for this plan: when implementation-heavy content moves from `docs/docs` to `sdd/docs`, preserve the full technical content in SDD pages and leave concise end-user-facing summaries or pointers in public docs instead of deleting substance.
 - [x] Allow dual-page audience refinement for the same topic where useful: keep/refine `docs/docs/*` for end users and keep/refine corresponding `sdd/docs/*` for implementers/developers, with information preserved across the pair.
 - [x] Move developer-maintainer workflow documentation out of public docs: migrate `docs/docs/implementation/developer-module-workflow.md` to `sdd/docs/implementation/` and replace the public page with a short end-user-facing note (or remove from public IA) so `docs` does not describe module implementation runtime coverage/e2e status.
