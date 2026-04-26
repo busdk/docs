@@ -21,9 +21,9 @@ terminal session alive.
 bus work new [@recipient ...] [message...] [--to recipient ...] [--file path] [--attach path ...]
 bus work list [recipient] [--all]
 bus work next [recipient] [--json]
-bus work show <id...>
-bus work watch <id...>
-bus work wait <id...> [--until event|message|done|failed|closed|terminal] [--since N] [--timeout D]
+bus work show [--replay|--no-replay] [--follow|--no-follow] <id...>
+bus work watch [--replay|--no-replay] [--follow|--no-follow] <id...>
+bus work wait [--replay|--no-replay] [--follow|--no-follow] <id...> [--until event|message|done|failed|closed|terminal] [--timeout D]
 bus work say <id> <message...>
 bus work close <id> [message...]
 bus work fail <id> <message...>
@@ -65,8 +65,8 @@ and `123.2`. Canonical cross-context references include the owner, for example
 
 ```bash
 bus work show 123
-bus work watch 123
-bus work wait 123 --until event --timeout 5m
+bus work watch --no-follow 123
+bus work wait --no-replay 123 --until event --timeout 5m
 bus work say 123 "Use the attached statement."
 bus work say 123.1 "This note is only for the first recipient."
 ```
@@ -76,6 +76,11 @@ replays existing events and follows new events. `wait` blocks until a matching
 event or requested state transition arrives. Saying something to a group fans
 the message out to all non-terminal child work items; saying something to a
 work id targets that recipient-specific stream.
+
+For scripts, `--replay`, `--no-replay`, `--follow`, and `--no-follow` make
+stream behavior explicit. `show` defaults to `--replay --no-follow`, `watch`
+defaults to `--replay --follow`, and `wait` defaults to replaying existing
+events before following live events until the requested condition is found.
 
 ### Receiving Work
 
@@ -95,6 +100,11 @@ or explicit recipient. JSON output is intended for scripts and agent wrappers.
 Automatic Codex or container execution can be added later as separate worker
 adapters; the work protocol itself stays generic.
 
+Lifecycle commands target one item when the id includes a child suffix such as
+`123.1`. When `close`, `fail`, or `block` targets a group id such as `123`, the
+CLI replays current group state and fans the lifecycle event out only to
+non-terminal child items.
+
 ### Config And Auth
 
 Repo/project-local config is command-managed, non-secret JSON:
@@ -103,10 +113,16 @@ Repo/project-local config is command-managed, non-secret JSON:
 .bus/work/config.json
 ```
 
-It may contain the current project/context identity, default Bus API host, and
-recipient aliases. It must not contain JWTs, refresh tokens, API tokens, or
-account-specific secrets. Credentials use normal Bus user config and auth
-storage, not repository-local `.bus/` files.
+It may contain the current project/context identity, default Bus API host,
+recipient aliases, and the local human id counter. The accepted JSON fields are
+`project`, `api_url`, `aliases`, and `next_group_id`. The API URL must be an
+absolute `http` or `https` URL. Project and alias values must be non-empty Bus
+identities without whitespace, `@` prefixes, `#`, or control characters.
+
+The file must not contain JWTs, refresh tokens, API tokens, or account-specific
+secrets. Unknown fields are rejected, so accidentally adding `token` or
+`api_token` fails before any Events API call is made. Credentials use normal
+Bus user config and auth storage, not repository-local `.bus/` files.
 
 The default host is `ai.hg.fi`, normalized to the Events API endpoint
 `https://ai.hg.fi/api/v1/events`. The generic event namespace is `bus.work.*`,

@@ -22,12 +22,16 @@ bus events --api-token "$BUS_API_TOKEN" send --name example.ping --payload '{"ok
 bus events send --name bus.vm.start.request --payload '{"runtime":"default"}'
 bus events listen --name example.ping
 bus events listen --name example.job --delivery work --group workers --consumer worker-a
+bus events listen --name example.history --replay --no-follow
 ```
 
 `send` publishes one event. `listen` streams newline-delimited JSON event
 envelopes. The default `broadcast` delivery mode sends each event to every
 matching listener. Use `--delivery work --group <name>` when matching listeners
 are competing workers and only one of them should receive each event.
+By default `listen` follows new events. Use `--replay` to include existing
+matching events and `--no-follow` to return after replaying the current
+history snapshot.
 
 ### Ownership Boundary
 
