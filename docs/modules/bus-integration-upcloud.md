@@ -24,8 +24,13 @@ Podman scripts, but generic SSH transport is delegated to the independent
 For local development, run the static provider against a Bus Events API:
 
 ```sh
-bus-integration-upcloud --events-url "$BUS_EVENTS_API_URL" --events-token "$BUS_EVENTS_TOKEN"
+bus-integration-upcloud --events-url "$BUS_EVENTS_API_URL" --api-token "$BUS_API_TOKEN"
 ```
+
+`BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
+must include the domain scopes for the events this worker listens to and emits,
+such as `vm:read`, `vm:write`, `container:read`, `container:run`, and
+`container:delete`.
 
 For real UpCloud VM lifecycle calls, use the `upcloud` provider:
 
@@ -33,7 +38,7 @@ For real UpCloud VM lifecycle calls, use the `upcloud` provider:
 bus-integration-upcloud \
   --provider upcloud \
   --events-url "$BUS_EVENTS_API_URL" \
-  --events-token "$BUS_EVENTS_TOKEN" \
+  --api-token "$BUS_API_TOKEN" \
   --upcloud-token "$UPCLOUD_TOKEN" \
   --vm-name "$UPCLOUD_VM_NAME" \
   --container-runner-name "$UPCLOUD_CONTAINER_RUNNER_NAME"

@@ -26,8 +26,10 @@ Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default.
 Status requires `container:read`; run creation requires `container:run`; delete
 requires `container:delete`. The provider can run with a deterministic static
 backend for local tests or in Bus Events request/reply mode. In events mode,
-start the provider with `--backend events`, `--events-url`, and `--events-token`;
-the provider process owns the response listener and correlates responses to
+start the provider with `--backend events`, `--events-url`, and `--api-token`;
+`--api-token` is a normal Bus API JWT with audience `ai.hg.fi/api` and the
+container domain scopes needed for the events it sends and receives. The
+provider process owns the response listener and correlates responses to
 in-flight HTTP requests.
 
 `POST /api/v1/containers/runs` executes a foreground request through the

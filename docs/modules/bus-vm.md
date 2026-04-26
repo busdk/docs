@@ -12,11 +12,14 @@ runtime lifecycle state directly.
 ### Common task
 
 ```bash
-bus vm --token-file .bus/auth/ai-token status
+bus vm status
 ```
 
 The token must be an AI Platform bearer JWT, usually obtained through
-`bus-auth`. The token subject is the account UUID used by the AI Platform.
+`bus-auth`. By default the CLI reads the normal Bus API token from
+`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`; explicit
+`--token`, `--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that
+default. The token subject is the account UUID used by the AI Platform.
 
 ### API ownership
 
@@ -34,5 +37,5 @@ inline bearer token or `--token-file` for a token stored by local tooling. Use
 
 ```bash
 bus vm --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" status
-bus vm --token-file .bus/auth/ai-token status --format text
+bus vm status --format text
 ```

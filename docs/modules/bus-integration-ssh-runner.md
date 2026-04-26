@@ -20,10 +20,13 @@ Run it as a standalone worker when you want a separate process:
 ```sh
 bus-integration-ssh-runner \
   --events-url "$BUS_EVENTS_API_URL" \
-  --events-token "$BUS_EVENTS_TOKEN" \
+  --api-token "$BUS_API_TOKEN" \
   --ssh-private-key "$BUS_SSH_RUNNER_PRIVATE_KEY" \
   --ssh-known-hosts "$BUS_SSH_RUNNER_KNOWN_HOSTS"
 ```
+
+`BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
+must include the domain scope for SSH runner events, currently `ssh:run`.
 
 It can also be registered into a shared `bus-integration` host process through
 the Go `sshrunner.Registration(...)` function.

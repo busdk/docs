@@ -25,8 +25,10 @@ Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default.
 Status requires `vm:read`; lifecycle requests require `vm:write`. The provider
 can run with a deterministic static backend for local tests or in Bus Events
 request/reply mode. In events mode, start the provider with `--backend events`,
-`--events-url`, and `--events-token`; the provider process owns the response
-listener and correlates responses to in-flight HTTP requests.
+`--events-url`, and `--api-token`; `--api-token` is a normal Bus API JWT
+with audience `ai.hg.fi/api` and the VM domain scopes needed for the events it
+sends and receives. The provider process owns the response listener and
+correlates responses to in-flight HTTP requests.
 
 ### Sources
 

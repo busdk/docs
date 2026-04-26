@@ -69,8 +69,8 @@ Many users run these commands in a simple sequence:
 bus status readiness --year 2026
 bus status evidence-coverage --year 2026
 bus status close-readiness --year 2026 --compliance fi
-bus status --token-file .bus/auth/ai-token vm --format json
-bus status --token-file .bus/auth/ai-token containers --format json
+bus status vm --format json
+bus status containers --format json
 ```
 
 If `close-readiness` still reports blockers, the blocker rows usually tell you whether to continue in [bus-attachments](./bus-attachments), [bus-bank](./bus-bank), [bus-journal](./bus-journal), [bus-reconcile](./bus-reconcile), or [bus-reports](./bus-reports).
@@ -86,6 +86,11 @@ bus status -C ./workspace readiness --format tsv
 bus status --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" vm --format json
 bus status --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" containers --format json
 ```
+
+For AI Platform status commands, `bus status` uses the normal Bus API token
+from `~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token` by
+default. Explicit `--token`, `--token-file`, `BUS_AI_TOKEN`, and
+`BUS_API_TOKEN` override that default.
 
 ### Exit status
 

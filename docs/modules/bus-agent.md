@@ -11,7 +11,7 @@ description: "CLI reference for bus agent: detect enabled runtimes, render promp
 
 Commands: **`detect`**, **`set`**, **`render`**, **`run`**, **`format`**. These operations are intended for diagnostics and development (for example, checking which agent runtimes are available, testing prompt templates, or formatting raw agent output). They do not implement business workflows; higher-level modules such as [bus dev](./bus-dev) use the same agent runner via the library and provide workflow-specific behavior (commit, work, spec, e2e).
 
-`bus agent detect [-1|--first]` — list available agent runtimes (first is the default); with `-1` or `--first`, output only the default runtime.  
+`bus agent detect [-1|--first]` — list available agent runtimes; with `-1` or `--first`, output only the configured default runtime.  
 `bus agent set runtime <runtime>` — set the default agent (e.g. `cursor`, `codex`, `codex:local`, `gemini`) via the bus-preferences Go library.  
 `bus agent set model <value>` — set the default model (default when unset is `auto`).  
 `bus agent set model-reasoning-effort <minimal|low|medium|high|xhigh>` — set default model reasoning effort (for runtimes that support it).  
@@ -54,9 +54,9 @@ Gemini and Claude integrations are still in-progress and not yet fully verified 
 
 **`detect`** — List currently available agent runtimes. A runtime is available when its CLI executable is in `PATH`, executable, and not disabled by configuration.
 
-Output is one runtime ID per line, in the same effective order used for automatic default selection (configured order if present, otherwise alphabetical).
+Output is one runtime ID per line. This command shows what is available, but it does not choose a runtime for you.
 
-With **`--first`** (or **`-1`**), output only the default runtime. If no runtime is available, exit code is 1.
+With **`--first`** (or **`-1`**), output only the configured default runtime. If no default is configured, the command exits 1 and prints the detected runtime options, the supported runtime options that were not detected, and an example command such as `bus agent set runtime codex`.
 
 **`render`** — Render a prompt template with the supplied variables and print the result to stdout. You must supply either `--template <file>` (path to a UTF-8 file containing the template) or `--text <text>` (the template string). Variables are passed with `--var KEY=VALUE`; you can repeat `--var` for multiple keys. Templates use {% raw %}`{{VARIABLE}}`{% endraw %} placeholders. Rendering is deterministic; every placeholder must be supplied. If a required variable is missing or any {% raw %}`{{...}}`{% endraw %} token remains after substitution, the command fails with invalid usage (exit 2) and no external process is run. Use this to test template expansion or to produce a final prompt for inspection before passing it to `bus agent run`.
 
@@ -64,7 +64,7 @@ With **`--first`** (or **`-1`**), output only the default runtime. If no runtime
 
 Supply either `--prompt <file>` or `--text <text>`. Agent working directory defaults to the current directory unless you set `--workdir <dir>`. Timeout comes from `--timeout <duration>` or defaults.
 
-Runtime resolution order is: `--agent`, `BUS_AGENT`, `bus-agent.runtime`, then first available runtime in effective order. If a selected runtime is disabled, the tool warns and continues with the next source.
+Runtime resolution order is: `--agent`, `BUS_AGENT`, then `bus-agent.runtime`. If none is configured, the tool exits 1 and prints setup guidance instead of silently selecting Cursor, Codex, Gemini, Claude, or any other runtime.
 
 At start, bus-agent prints the active agent and model to stderr. If the selected runtime is missing from `PATH`, the command exits with a clear diagnostic and installation URL.
 
@@ -95,7 +95,7 @@ Install references: Gemini CLI (<https://geminicli.com/>), Cursor CLI (<https://
 For Codex-specific argv details (`--oss`, `--model`, `-c model_reasoning_effort=...`, `-c model_verbosity=...`, workdir and add-dir handling), use [Codex CLI reference and argument patterns](../references/codex-cli).
 
 Runtime selection order for `bus agent run`:
-`--agent`, then `BUS_AGENT`, then `bus-agent.runtime` from [bus-preferences](./bus-preferences), then the first available runtime in effective order.
+`--agent`, then `BUS_AGENT`, then `bus-agent.runtime` from [bus-preferences](./bus-preferences). When none is configured, run `bus agent detect` to inspect available runtimes, then choose one with `bus agent set runtime <runtime>`.
 
 Invalid runtime names return usage error (`2`).
 
@@ -118,18 +118,16 @@ Session default can also be set with `BUS_AGENT`.
 Set preferences with `bus agent set ...` subcommands or with [bus preferences](./bus-preferences).
 Inspect current value with `bus preferences get <key>`.
 
-### Agent order and enable/disable
+### Default selection
 
-When multiple agent runtimes are available (CLI found in PATH) and no persistent or session preference is set, the automatic default is chosen from that set in a deterministic order. By default the order is alphabetical by runtime ID (e.g. claude, codex, cursor, gemini); the first available runtime in that order is used.
-
-You can change which agent is used first by configuring the order: supply an ordered list of runtime IDs so that the first available runtime in that list becomes the automatic default. You can also disable specific runtimes (exclude them from the available set) or enable only a subset (so that only those runtimes are considered available). Configuration is via environment variables or, when supported, [bus-preferences](./bus-preferences); the exact variable names and format are documented in the [module reference](../modules/bus-agent) (FR-AGT-005a). For example, you might set an order so that `gemini` is tried first, then `cursor`, and disable `codex` and `claude` for the session.
+Bus does not silently choose a default agent runtime from detected tools. When no `--agent`, `BUS_AGENT`, or `bus-agent.runtime` preference is set, commands that need a runtime exit 1 and print which runtimes are available, which supported runtimes were not detected, and how to choose a default.
 
 ### Examples
 
 ```bash
-bus agent detect --first
-bus agent set runtime codex
 bus agent detect
+bus agent set runtime codex
+bus agent detect --first
 bus agent render --text "Module={{MODULE}} Ticket={{TICKET}}" \
   --var MODULE=bus-books \
   --var TICKET=FR-1234

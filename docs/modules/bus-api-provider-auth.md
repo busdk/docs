@@ -55,7 +55,7 @@ endpoints are `GET /auth/admin/waitlist`,
 `POST /auth/admin/approve`, and `POST /auth/admin/reject`. Internal token
 issuing is separate from the public user flow and is protected by the
 configured internal shared key. Internal service tokens may target either the
-auth-service audience or the Bus Events API audience.
+auth-service audience or the normal Bus API audience with domain scopes.
 
 api-proxy should validate the JWT, read `sub` as `account_id`, check `aud` and
 `scope`, and record usage. It should not know emails, OTPs, or auth-service user

@@ -12,15 +12,18 @@ run lifecycle operations.
 ### Common tasks
 
 ```bash
-bus containers --token-file .bus/auth/ai-token status
-bus containers --token-file .bus/auth/ai-token run --profile codex -- sh -c 'printf OK'
-bus containers --token-file .bus/auth/ai-token runs
-bus containers --token-file .bus/auth/ai-token delete run_123
+bus containers status
+bus containers run --profile codex -- sh -c 'printf OK'
+bus containers runs
+bus containers delete run_123
 ```
 
 The token must be an AI Platform bearer JWT, usually obtained through
-`bus-auth`. The service must use the JWT `sub` account UUID as the owner and
-must not trust a client-supplied account ID.
+`bus-auth`. By default the CLI reads the normal Bus API token from
+`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`; explicit
+`--token`, `--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that
+default. The service must use the JWT `sub` account UUID as the owner and must
+not trust a client-supplied account ID.
 
 ### API ownership
 

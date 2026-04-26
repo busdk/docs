@@ -59,7 +59,9 @@ Invalid prefix returns exit code `2`.
 
 The preferences file path is resolved in this order:
 
-If the environment variable **`BUS_PREFERENCES_PATH`** is set, that path is used exactly. Otherwise, on Windows the default path is **`%APPDATA%\BusDK\preferences.json`**. On Unix-like systems, the default is **`$XDG_CONFIG_HOME/busdk/preferences.json`**, or **`~/.config/busdk/preferences.json`** when `XDG_CONFIG_HOME` is not set.
+If the environment variable **`BUS_PREFERENCES_PATH`** is set, that path is used exactly. If **`BUS_CONFIG_DIR`** is set, the default is **`${BUS_CONFIG_DIR}/preferences.json`**. Otherwise, on Windows the default path is **`%APPDATA%\Bus\preferences.json`**. On Unix-like systems, the default is **`$XDG_CONFIG_HOME/bus/preferences.json`**, or **`~/.config/bus/preferences.json`** when `XDG_CONFIG_HOME` is not set.
+
+For backwards compatibility, if the new default file does not exist but the old default **`$XDG_CONFIG_HOME/busdk/preferences.json`**, **`~/.config/busdk/preferences.json`**, or **`%APPDATA%\BusDK\preferences.json`** exists, Bus moves the old file to the new Bus config root before reading or writing. Explicit **`BUS_PREFERENCES_PATH`** disables this migration because the operator has selected an exact path.
 
 The directory is created automatically on first write.
 All consumers should use this same resolution so every BusDK tool reads the same file.

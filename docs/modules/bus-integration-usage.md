@@ -42,8 +42,12 @@ For local development, use the memory backend:
 bus-integration-usage \
   --usage-backend memory \
   --events-url "$BUS_EVENTS_API_URL" \
-  --events-token "$BUS_EVENTS_TOKEN"
+  --api-token "$BUS_API_TOKEN"
 ```
+
+`BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
+must include the usage domain scopes for the events this worker listens to and
+emits, such as `usage:write`, `usage:read`, and `usage:delete`.
 
 For deployed collection, use PostgreSQL:
 
@@ -52,11 +56,11 @@ BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disa
 bus-integration-usage \
   --usage-backend postgres \
   --events-url "$BUS_EVENTS_API_URL" \
-  --events-token "$BUS_EVENTS_TOKEN"
+  --api-token "$BUS_API_TOKEN"
 ```
 
 Use only non-secret local examples in documentation and tests. Real database
-URLs and Events API tokens must come from deployment secrets or local untracked
+URLs and Bus API tokens must come from deployment secrets or local untracked
 configuration.
 
 The worker can run as its own process or be registered into a shared

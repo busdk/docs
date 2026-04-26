@@ -17,10 +17,10 @@ should not depend on HTTP controller internals.
 ### Common Tasks
 
 ```bash
-BUS_EVENTS_TOKEN="$(bus auth --token-file .bus/auth/token token --scope "vm:read" | jq -r .access_token)"
-bus events --token "$BUS_EVENTS_TOKEN" send --name example.ping --payload '{"ok":true}'
-bus events --token "$BUS_EVENTS_TOKEN" listen --name example.ping
-bus events --token "$BUS_EVENTS_TOKEN" listen --name example.job --delivery work --group workers --consumer worker-a
+BUS_API_TOKEN="$(bus auth --token-file ~/.config/bus/auth/token token --scope "vm:read" | jq -r .access_token)"
+bus events --api-token "$BUS_API_TOKEN" send --name example.ping --payload '{"ok":true}'
+bus events listen --name example.ping
+bus events listen --name example.job --delivery work --group workers --consumer worker-a
 ```
 
 `send` publishes one event. `listen` streams newline-delimited JSON event
@@ -37,5 +37,11 @@ to know how HTTP requests were mapped into those events.
 
 ### Environment
 
-`BUS_EVENTS_API_URL` sets the default Events API URL. `BUS_EVENTS_TOKEN` supplies
-the bearer token when `--token` and `--token-file` are omitted.
+`BUS_EVENTS_API_URL` sets the default Events API URL. `BUS_API_TOKEN` supplies
+the bearer token when `--api-token`, `--token`, and `--token-file` are omitted.
+If no token flag or environment variable is set, `bus events` reads the normal
+Bus auth API token from `auth/api-token` under the user Bus config root. The
+root is `BUS_CONFIG_DIR` when set, otherwise `$XDG_CONFIG_HOME/bus` or
+`~/.config/bus` on Unix-like systems. This lets a user or service run
+`bus events` after local Bus auth session setup without repeating token flags.
+The CLI never auto-reads repository-local `.bus/` token files.
