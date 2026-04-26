@@ -35,8 +35,13 @@ errors use the common Bus API error envelope:
 
 The MVP backend is PostgreSQL. The provider creates a small schema at startup
 when it is missing: `accounts`, `usage_events`, and indexes for deterministic
-pagination. The database is an intermediate collector feed and can be recreated
-from scratch; long-term billing records belong to downstream billing systems.
+pagination and non-empty `event_id` idempotency. The database is an intermediate
+collector feed and can be recreated from scratch; long-term billing records
+belong to downstream billing systems.
+
+`bus-integration-usage` is the event-worker boundary for usage business logic
+and storage access. This provider remains the JWT-secured HTTP facade for
+trusted collectors.
 
 ### Local Development
 
@@ -54,3 +59,4 @@ response explaining that usage storage is unavailable.
 ### Sources
 
 - [bus-api-provider-usage README](../../../bus-api-provider-usage/README.md)
+- [bus-integration-usage](./bus-integration-usage.md)

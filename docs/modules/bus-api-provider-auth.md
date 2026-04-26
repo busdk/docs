@@ -15,6 +15,10 @@ The public flow is passwordless but approval-gated. OTP verification returns an
 auth-service token with `aud=ai.hg.fi/auth`; it does not grant model access.
 Only an approved verified user can request an AI Platform token with
 `aud=ai.hg.fi/api` and `scope=llm:proxy`.
+Approved users can request the same API-audience JWT with domain scopes such as
+`vm:read` and `container:run`, not broad event-pattern scopes. Those tokens use
+`aud=ai.hg.fi/api` and work for both REST APIs and Events API endpoints. The
+provider only issues user API scopes allowed by `BUS_AUTH_API_USER_SCOPES`.
 
 The provider is enabled through `bus-api` as an explicit provider named `auth`.
 For local development, set `BUS_AUTH_HS256_SECRET` to a deployment secret value
@@ -47,9 +51,11 @@ quality runs catch formatting regressions.
 The provider exposes `POST /auth/register`, `POST /auth/otp/request`,
 `POST /auth/otp/verify`, `GET /auth/status`, `POST /auth/token`,
 `POST /auth/token/refresh`, `POST /auth/logout`, and `GET /me`. Admin waitlist
-endpoints are `GET /auth/admin/waitlist`, `POST /auth/admin/approve`, and
-`POST /auth/admin/reject`. Internal auth-service token issuing is separate from
-the public user flow and is protected by the configured internal shared key.
+endpoints are `GET /auth/admin/waitlist`,
+`POST /auth/admin/approve`, and `POST /auth/admin/reject`. Internal token
+issuing is separate from the public user flow and is protected by the
+configured internal shared key. Internal service tokens may target either the
+auth-service audience or the Bus Events API audience.
 
 api-proxy should validate the JWT, read `sub` as `account_id`, check `aud` and
 `scope`, and record usage. It should not know emails, OTPs, or auth-service user

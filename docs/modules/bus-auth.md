@@ -14,6 +14,9 @@ exchange the OTP for an auth-service JWT, `status` to check approval state, and
 `token` to request an AI Platform `llm:proxy` JWT after approval. Admin users
 use `admin waitlist`, `admin approve`, and `admin reject` with an auth-service
 JWT that has waitlist scopes.
+Use `token --scope "<scopes>"` to request an approved-user API JWT with domain
+scopes such as `vm:read` or `container:run`. The same `aud=ai.hg.fi/api` token
+is used for REST APIs and Events API endpoints.
 
 ```bash
 bus auth --api-url http://127.0.0.1:8080 register --email user@example.com
@@ -21,6 +24,7 @@ bus auth --api-url http://127.0.0.1:8080 login --email user@example.com
 bus auth --api-url http://127.0.0.1:8080 verify --email user@example.com --otp 123456 --token-file .bus/auth/token
 bus auth --api-url http://127.0.0.1:8080 --token-file .bus/auth/token status
 bus auth --api-url http://127.0.0.1:8080 --token-file .bus/auth/token token
+bus auth --api-url http://127.0.0.1:8080 --token-file .bus/auth/token token --scope "vm:read container:run"
 ```
 
 The API base URL can also be provided by `BUS_AUTH_API_URL`. Tokens are not

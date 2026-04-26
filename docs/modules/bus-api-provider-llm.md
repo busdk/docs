@@ -23,7 +23,9 @@ Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default
 and require `llm:proxy`. The JWT `sub` must be the stable account UUID. The
 provider forwards OpenAI-compatible requests to the configured backend, strips
 client authorization before forwarding, and records request and token usage
-through `bus-api-provider-usage`.
+through direct usage storage or through `bus-integration-usage`. When started
+with `--usage-backend events`, usage recording sends
+`bus.usage.record.request` and waits for `bus.usage.record.response`.
 
 ### Sources
 

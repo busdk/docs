@@ -6,8 +6,9 @@ description: bus events sends and listens for Bus Events API messages using shar
 ## `bus-events` — Bus Events API client and SDK
 
 `bus events` is the command-line client for the Bus Events API. It can publish
-events and listen for matching events using a bearer JWT with the required
-scope.
+events and listen for matching events using the same `aud=ai.hg.fi/api` bearer
+JWTs as other Bus API endpoints, with the required domain scopes for each event
+name.
 
 The same module owns the shared Go contracts for event-oriented integrations.
 Functional providers should use those contracts or the Events API SDK and
@@ -16,7 +17,8 @@ should not depend on HTTP controller internals.
 ### Common Tasks
 
 ```bash
-bus events --token-file .bus/auth/events-token send --name example.ping --payload '{"ok":true}'
+BUS_EVENTS_TOKEN="$(bus auth --token-file .bus/auth/token token --scope "vm:read" | jq -r .access_token)"
+bus events --token "$BUS_EVENTS_TOKEN" send --name example.ping --payload '{"ok":true}'
 bus events --token "$BUS_EVENTS_TOKEN" listen --name example.ping
 bus events --token "$BUS_EVENTS_TOKEN" listen --name example.job --delivery work --group workers --consumer worker-a
 ```

@@ -137,6 +137,8 @@
       url: /modules/bus-gateway
     - label: bus integration ssh runner
       url: /modules/bus-integration-ssh-runner
+    - label: bus integration usage
+      url: /modules/bus-integration-usage
     - label: bus integration upcloud
       url: /modules/bus-integration-upcloud
 

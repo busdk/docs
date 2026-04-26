@@ -33,10 +33,11 @@ Integration binaries can expose `WorkerRegistration` values. A host command can
 run one or more registrations in the same process, while each
 `bus-integration-*` module can still keep its standalone binary entrypoint.
 
-`bus-integration-upcloud` is the current example of the intended boundary: the
-worker listens for cloud-neutral VM/container request events, but UpCloud API
-calls and container-runner behavior remain in `bus-integration-upcloud`.
-Generic SSH execution remains in `bus-integration-ssh-runner`.
+`bus-integration-upcloud` is one example of the intended boundary: the worker
+listens for cloud-neutral VM/container request events, but UpCloud API calls
+and container-runner behavior remain in `bus-integration-upcloud`. Generic SSH
+execution remains in `bus-integration-ssh-runner`, and usage storage/business
+logic remains in `bus-integration-usage`.
 
 ### Sources
 
@@ -44,3 +45,4 @@ Generic SSH execution remains in `bus-integration-ssh-runner`.
 - [bus-events](./bus-events.md)
 - [bus-integration-upcloud](./bus-integration-upcloud.md)
 - [bus-integration-ssh-runner](./bus-integration-ssh-runner.md)
+- [bus-integration-usage](./bus-integration-usage.md)

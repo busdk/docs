@@ -18,9 +18,18 @@ GET  /api/v1/events/stream?name=<event-name>&delivery=broadcast
 GET  /api/v1/events/stream?name=<event-name>&delivery=work&group=<group>&consumer=<consumer>
 ```
 
-Publishing requires `events:send`. Listening requires `events:listen`. The
-provider verifies the JWT and derives account identity from `sub`; callers do
-not provide account IDs for authorization.
+The provider verifies the normal Bus API JWT audience `ai.hg.fi/api` and derives
+account identity from `sub`; callers do not provide account IDs for
+authorization. Unprotected event names require `events:send` to publish and
+`events:listen` to stream.
+
+Protected Bus integration events use domain scopes. VM events use `vm:read` or
+`vm:write`, container events use scopes such as `container:read` and
+`container:run`, and usage collector events use scopes such as `usage:read` or
+`usage:delete`. This keeps event access aligned with the domain API permissions
+instead of exposing broad event-pattern scopes to end users. Wildcard streams
+are rejected by default because the provider cannot safely prove that one token
+may receive every future protected event.
 
 The internal event backend is selectable. `memory` is non-durable and intended
 for local development and tests. Redis is available through Redis Streams with
