@@ -30,6 +30,14 @@ with audience `ai.hg.fi/api` and the VM domain scopes needed for the events it
 sends and receives. The provider process owns the response listener and
 correlates responses to in-flight HTTP requests.
 
+Start the provider with `--usage-backend events` to report runtime lifecycle
+operations through `bus-integration-usage`. Start/stop requests record
+`runtime_start_requested`, `runtime_start_finished`,
+`runtime_start_failed`, `runtime_stop_requested`,
+`runtime_stop_finished`, or `runtime_stop_failed` with the stable account UUID
+and request/action metadata. Status reads are not treated as billable lifecycle
+events.
+
 ### Sources
 
 - [bus-api-provider-vm README](../../../bus-api-provider-vm/README.md)

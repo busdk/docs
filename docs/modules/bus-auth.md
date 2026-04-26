@@ -21,18 +21,19 @@ is used for REST APIs and Events API endpoints.
 ```bash
 bus auth --api-url http://127.0.0.1:8080 register --email user@example.com
 bus auth --api-url http://127.0.0.1:8080 login --email user@example.com
-bus auth --api-url http://127.0.0.1:8080 verify --email user@example.com --otp 123456 --token-file ~/.config/bus/auth/token
-bus auth --api-url http://127.0.0.1:8080 --token-file ~/.config/bus/auth/token status
-bus auth --api-url http://127.0.0.1:8080 --token-file ~/.config/bus/auth/token token
-bus auth --api-url http://127.0.0.1:8080 --token-file ~/.config/bus/auth/token token --scope "vm:read container:run"
+bus auth --api-url http://127.0.0.1:8080 verify --email user@example.com --otp 123456
+bus auth --api-url http://127.0.0.1:8080 status
+bus auth --api-url http://127.0.0.1:8080 token
+bus auth --api-url http://127.0.0.1:8080 token --scope "vm:read container:run"
 ```
 
-The API base URL can also be provided by `BUS_AUTH_API_URL`. Tokens are not
-stored unless `--token-file` is explicitly provided. When `token` is run with
-`--token-file`, the returned normal Bus API JWT is saved as `auth/api-token`
-under the Bus user config root. The root is `BUS_CONFIG_DIR` when set,
-otherwise `$XDG_CONFIG_HOME/bus` or `~/.config/bus` on Unix-like systems.
-Tokens are never auto-written under repository-local `.bus/` paths.
+The API base URL can also be provided by `BUS_AUTH_API_URL`. `verify` stores the
+auth-service session token as `auth/token` under the Bus user config root by
+default. `token` stores the returned normal Bus API JWT as `auth/api-token` in
+the same root. The root is `BUS_CONFIG_DIR` when set, otherwise
+`$XDG_CONFIG_HOME/bus` or `~/.config/bus` on Unix-like systems. `--token` and
+`--token-file` remain explicit overrides. Tokens are never auto-written under
+repository-local `.bus/` paths.
 
 For a complete local flow, start the compose stack in
 `bus-api-provider-auth/examples/local-compose/`. It runs PostgreSQL, MailHog,

@@ -48,14 +48,22 @@ quality runs catch formatting regressions.
 
 ### API Surface
 
-The provider exposes `POST /auth/register`, `POST /auth/otp/request`,
-`POST /auth/otp/verify`, `GET /auth/status`, `POST /auth/token`,
-`POST /auth/token/refresh`, `POST /auth/logout`, and `GET /me`. Admin waitlist
-endpoints are `GET /auth/admin/waitlist`,
-`POST /auth/admin/approve`, and `POST /auth/admin/reject`. Internal token
-issuing is separate from the public user flow and is protected by the
-configured internal shared key. Internal service tokens may target either the
-auth-service audience or the normal Bus API audience with domain scopes.
+The canonical provider paths are `POST /api/v1/auth/register`,
+`POST /api/v1/auth/otp/request`, `POST /api/v1/auth/otp/verify`,
+`GET /api/v1/auth/status`, `POST /api/v1/auth/token`,
+`POST /api/v1/auth/token/refresh`, `POST /api/v1/auth/logout`,
+`GET /api/v1/auth/me`, and `GET /api/v1/auth/check`. Admin waitlist endpoints
+are `GET /api/v1/auth/admin/waitlist`, `POST /api/v1/auth/admin/approve`, and
+`POST /api/v1/auth/admin/reject`. Current `/auth/*`, `/me`, and
+`/internal/token` paths remain aliases for local deployments.
+
+`GET /api/v1/auth/check` validates bearer JWT signature, expiry, token ID, and
+revocation state, then returns parsed claims. It is a diagnostic/auth-service
+check endpoint only; API providers still enforce their own audience and scope
+requirements. Internal token issuing is separate from the public user flow at
+`POST /api/internal/auth/token` and is protected by the configured internal
+shared key. Internal service tokens may target either the auth-service audience
+or the normal Bus API audience with domain scopes.
 
 api-proxy should validate the JWT, read `sub` as `account_id`, check `aud` and
 `scope`, and record usage. It should not know emails, OTPs, or auth-service user

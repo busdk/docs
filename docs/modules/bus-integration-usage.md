@@ -30,6 +30,17 @@ Record requests use JSON with `event_type`, optional `event_id`, optional
 a stable `event_id` for retried billable actions so duplicate delivery does not
 create duplicate usage rows.
 
+Accepted `event_type` values are the Bus billing taxonomy used by the AI
+Platform replacement: `request_started`, `runtime_ready`,
+`backend_request_started`, `backend_request_finished`, `usage_recorded`,
+`usage_missing`, `request_failed`, `client_aborted`,
+`container_run_requested`, `container_run_finished`, `container_run_failed`,
+`runtime_start_requested`, `runtime_start_finished`, `runtime_start_failed`,
+`runtime_stop_requested`, `runtime_stop_finished`, and
+`runtime_stop_failed`. The worker also accepts the transitional `container.run`
+record type until container usage recording is fully split into request,
+finish, and failure events. If `account_id` is present, it must be a UUID.
+
 List and delete requests use `before`, `page`, and `page_size` pagination. The
 worker returns deterministic pages ordered by usage occurrence time and storage
 ID.

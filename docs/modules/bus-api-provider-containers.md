@@ -38,9 +38,12 @@ which sends a `profile`, `args`, and optional timeout. The API also accepts an
 explicit `image` and `command`. Successful responses include the runner name,
 image, args, exit code, stdout, stderr, duration, and runner status.
 
-When started with `--usage-backend events`, successful container runs are also
-reported through `bus-integration-usage` by sending
-`bus.usage.record.request` and waiting for `bus.usage.record.response`.
+When started with `--usage-backend events`, container runs are also reported
+through `bus-integration-usage`. The provider records
+`container_run_requested` before backend delegation and then records
+`container_run_finished` or `container_run_failed` with request/run IDs, stable
+account UUID, profile, image, duration, exit code, runner name, and failure
+details when available.
 
 ### Sources
 
