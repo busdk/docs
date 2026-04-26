@@ -61,10 +61,18 @@
       url: /modules/bus-api-provider-auth
     - label: bus api provider books
       url: /modules/bus-api-provider-books
+    - label: bus api provider containers
+      url: /modules/bus-api-provider-containers
     - label: bus api provider data
       url: /modules/bus-api-provider-data
+    - label: bus api provider llm
+      url: /modules/bus-api-provider-llm
     - label: bus api provider session
       url: /modules/bus-api-provider-session
+    - label: bus api provider usage
+      url: /modules/bus-api-provider-usage
+    - label: bus api provider vm
+      url: /modules/bus-api-provider-vm
     - label: bus auth
       url: /modules/bus-auth
     - label: bus sheets
@@ -127,6 +135,10 @@
       url: /modules/bus-filing-vero
     - label: bus gateway
       url: /modules/bus-gateway
+    - label: bus integration ssh runner
+      url: /modules/bus-integration-ssh-runner
+    - label: bus integration upcloud
+      url: /modules/bus-integration-upcloud
 
 - title: Design
   links:
