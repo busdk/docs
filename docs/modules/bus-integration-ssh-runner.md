@@ -40,6 +40,26 @@ mode with `bus.ssh.script.run.request` and `bus.ssh.script.run.response`
 events. `Request` and `Result` remain compatibility aliases for the initial
 library API.
 
+### Optional Network Bootstrap
+
+Provider integrations can attach `network_bootstrap` to `ScriptRequest`. When
+`apply_netplan` is true, the SSH runner renders generic netplan setup before
+the caller script. This is intended for runner bootstraps where DNS must be
+configured before package installation:
+
+```json
+{
+  "apply_netplan": true,
+  "netplan_mode": "mac-match",
+  "dns_servers": ["1.1.1.1", "8.8.8.8"],
+  "interface_mac": "de:ad:be:ef:00:01"
+}
+```
+
+The SSH runner only renders and applies the generic bootstrap. It does not know
+how to discover cloud NICs. UpCloud and other providers discover safe interface
+metadata, preferably the private NIC MAC address, and pass it through this DTO.
+
 End users usually do not call this module directly. Operators configure SSH
 keys and known_hosts paths on the SSH runner process or shared integration
 host. No real SSH keys, hostnames, or credentials should be committed to the

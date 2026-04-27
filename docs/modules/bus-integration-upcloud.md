@@ -71,10 +71,44 @@ shape and network selection use `UPCLOUD_CONTAINER_ZONE`,
 `UPCLOUD_CONTAINER_PRIVATE_NETWORK_NAME`. Private-key loading and known_hosts
 validation are configured on the separate SSH runner process.
 
+Optional DNS/netplan bootstrap is configured through generic runner variables,
+not through UpCloud-specific container logic:
+
+```bash
+BUS_RUNNER_DNS_SERVERS=1.1.1.1,8.8.8.8
+BUS_RUNNER_NETPLAN_MODE=mac-match
+BUS_RUNNER_APPLY_NETPLAN=1
+```
+
+When enabled, UpCloud discovers the private runner NIC MAC address and passes it
+as generic `network_bootstrap` data to `bus-integration-ssh-runner`. The SSH
+runner applies netplan before the package-install/bootstrap script. Other
+providers can omit this data or provide their own bootstrap config.
+
+Runner deletion is also policy-driven:
+
+```bash
+BUS_RUNNER_DELETE_STOP_FIRST=1
+BUS_RUNNER_DELETE_READY_STATES=stopped
+BUS_RUNNER_TRANSIENT_STATES=maintenance,pending
+BUS_RUNNER_DELETE_TIMEOUT=10m
+BUS_RUNNER_DELETE_POLL_INTERVAL=5s
+BUS_RUNNER_DELETE_STORAGE=1
+```
+
+UpCloud maps its provider states into generic lifecycle states and the generic
+policy decides when to stop, wait, retry, and delete. UpCloud still performs the
+actual provider API stop/delete calls.
+
 For container execution, run `bus-integration-ssh-runner` against the same Bus
 Events API or host both UpCloud and SSH-runner registrations with
 `bus-integration`. UpCloud sends `bus.ssh.script.run.request` events and waits
 for correlated `bus.ssh.script.run.response` events.
+
+To avoid startup-order coupling with the Events API, the worker supports the
+shared integration listener retry environment: `BUS_EVENTS_LISTENER_RETRY`,
+`BUS_EVENTS_LISTENER_RETRY_MIN`, `BUS_EVENTS_LISTENER_RETRY_MAX`,
+`BUS_EVENTS_LISTENER_REQUIRED`, and `BUS_EVENTS_TOKEN_REFRESH`.
 
 The worker also handles protected runner administration events:
 `bus.containers.runner.status.request`,
