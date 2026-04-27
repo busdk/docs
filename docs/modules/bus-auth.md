@@ -12,8 +12,8 @@ logic; it sends HTTP requests to a configured auth provider API.
 Use `register` to enter the waitlist, `login` to request an OTP, `verify` to
 exchange the OTP for an auth-service JWT, `status` to check approval state, and
 `token` to request an AI Platform `llm:proxy` JWT after approval. Admin users
-use `admin waitlist`, `admin approve`, and `admin reject` with an auth-service
-JWT that has waitlist scopes.
+use `bus operator auth waitlist`, `bus operator auth approve`, and
+`bus operator auth reject` with an auth-service JWT that has waitlist scopes.
 Use `token --scope "<scopes>"` to request an approved-user API JWT with domain
 scopes such as `vm:read` or `container:run`. The same `aud=ai.hg.fi/api` token
 is used for REST APIs and Events API endpoints.
@@ -41,7 +41,7 @@ and `bus-api` with the auth provider mounted at
 `http://127.0.0.1:8080/local-dev/v1/modules/auth`. Configure
 `BUS_AUTH_API_URL` to that URL, register and request an OTP with `bus auth`,
 read the OTP from MailHog at `http://127.0.0.1:8025`, verify the OTP, and then
-request the AI Platform token after approval. The token returned by
+request the AI Platform token after operator approval. The token returned by
 `bus auth token` is the token to use with `https://ai.hg.fi/v1`; when saved as
 `~/.config/bus/auth/api-token` by default, other Bus API clients such as
 `bus events` can discover it without repeating token flags. Do not use
@@ -57,4 +57,5 @@ runs.
 ### Sources
 
 - [bus-api-provider-auth](./bus-api-provider-auth)
+- [bus-operator](./bus-operator)
 - [bus-api](./bus-api)
