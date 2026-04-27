@@ -71,6 +71,13 @@ shape and network selection use `UPCLOUD_CONTAINER_ZONE`,
 `UPCLOUD_CONTAINER_PRIVATE_NETWORK_NAME`. Private-key loading and known_hosts
 validation are configured on the separate SSH runner process.
 
+Before UpCloud publishes bootstrap or foreground container run events to the SSH
+runner, it waits for the runner to reach a usable provider state and then polls
+SSH TCP connectivity on the discovered or explicit target addresses. Configure
+this bounded wait with `BUS_RUNNER_SSH_READY_TIMEOUT` and
+`BUS_RUNNER_SSH_READY_POLL_INTERVAL`. Connection refused, timeout, and no-route
+errors are treated as temporary until the configured timeout expires.
+
 Optional DNS/netplan bootstrap is configured through generic runner variables,
 not through UpCloud-specific container logic:
 

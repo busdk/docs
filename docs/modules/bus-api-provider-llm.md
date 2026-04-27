@@ -40,6 +40,16 @@ provide `--events-url` plus a normal Bus API token in `--api-token` or
 `BUS_API_TOKEN`. The provider then uses `bus.vm.status.request` and
 `bus.vm.start.request` events through `bus-api-provider-events`; concrete cloud
 or SSH work remains in the corresponding `bus-integration-*` workers.
+After runtime wake-up, execution endpoints wait for the configured backend
+service readiness path before proxying. Configure `--backend-ready-path`,
+`--backend-ready-timeout`, `--backend-ready-poll-interval`, and
+`--backend-ready-statuses`, or the matching `BUS_LLM_BACKEND_READY_*`
+environment variables. When runtime events are enabled and no readiness path is
+supplied, the default path is `/v1/models`. Catalog-mode `GET /v1/models` still
+returns local configured data and does not wake or probe the backend.
+Events response listeners use the shared `BUS_EVENTS_LISTENER_*` retry
+environment so the provider can start before Events API and reconnect after
+stream restarts; static-token auth failures fail fast by default.
 
 Streaming chat/completion requests that set `stream=true` are amended with
 `stream_options.include_usage=true` when possible, so streamed responses can

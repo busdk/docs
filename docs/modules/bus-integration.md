@@ -29,6 +29,9 @@ Request/reply integrations use `Requester` when they need to publish a request
 event and wait for a response event with the same correlation ID. The helper
 keeps pending requests in memory, routes responses by correlation ID, and
 returns either the response payload, a response error, or a timeout.
+Command-owned response listeners use `ListenResponses`, which applies the same
+retry and auth-failure policy as `RunWorker` while using broadcast delivery for
+correlated response events.
 
 Integration binaries can expose `WorkerRegistration` values. A host command can
 run one or more registrations in the same process, while each
