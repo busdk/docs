@@ -49,7 +49,9 @@ supplied, the default path is `/v1/models`. Catalog-mode `GET /v1/models` still
 returns local configured data and does not wake or probe the backend.
 Events response listeners use the shared `BUS_EVENTS_LISTENER_*` retry
 environment so the provider can start before Events API and reconnect after
-stream restarts; static-token auth failures fail fast by default.
+stream restarts; static-token auth failures fail fast by default. When
+`BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until the
+required runtime and usage response streams are connected.
 
 Streaming chat/completion requests that set `stream=true` are amended with
 `stream_options.include_usage=true` when possible, so streamed responses can

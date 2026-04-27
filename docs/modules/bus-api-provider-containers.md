@@ -34,6 +34,8 @@ start the provider with `--backend events`, `--events-url`, and `--api-token`;
 container domain scopes needed for the events it sends and receives. The
 provider process owns the response listener and correlates responses to
 in-flight HTTP requests.
+When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until
+the required container and usage response streams are connected.
 
 The internal runner lifecycle endpoints are for service operations during the
 old api-proxy replacement. They require a JWT with audience

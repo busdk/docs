@@ -29,6 +29,8 @@ request/reply mode. In events mode, start the provider with `--backend events`,
 with audience `ai.hg.fi/api` and the VM domain scopes needed for the events it
 sends and receives. The provider process owns the response listener and
 correlates responses to in-flight HTTP requests.
+When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until
+the required VM and usage response streams are connected.
 
 Start the provider with `--usage-backend events` to report runtime lifecycle
 operations through `bus-integration-usage`. Start/stop requests record

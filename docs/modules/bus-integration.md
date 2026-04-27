@@ -42,8 +42,9 @@ run one or more registrations in the same process, while each
 Workers that use Events request/reply should not depend on startup ordering.
 `RunWorker` can consume `ListenerRetryOptions` to reconnect after stream EOF or
 network failure with bounded backoff. Required listeners can publish readiness
-state through `ListenerReadiness`; readiness is false until the listener has
-observed connectivity and false again after a retryable failure.
+state through `ListenerReadiness`; readiness is false until the Events API
+stream is established and false again before a reconnect after a retryable
+failure.
 
 Standalone integrations can read the shared environment contract:
 
