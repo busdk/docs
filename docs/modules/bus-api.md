@@ -34,6 +34,7 @@ Requests outside token prefix return `404`.
 `--provider` controls explicit built-in provider allowlisting for module endpoints.
 `--route-config` configures HTTP method/path dispatch to request/reply events and provider capability declarations.
 `--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...` when matching providers are allowlisted.
+Some built-in providers also expose clean production route aliases when enabled. For example, `--provider auth --enable-module auth` serves the auth provider at `/{token}/v1/api/v1/auth/*` and `/{token}/v1/api/internal/auth/*` in addition to the generic module mount, so production deployments do not need awkward `/modules/auth/...` paths.
 For built-in adapters, module resource ownership is explicit and library-based for all built-ins. Data-owning modules resolve paths through their Go path APIs (including reports through `bus-reports/path`); modules without owned datasets return empty module resource lists.
 For complete API contract and security model, see [Module reference: bus-api](../modules/bus-api).
 
@@ -66,7 +67,7 @@ If base is `http://127.0.0.1:38472/abc123def/v1`, common endpoints include `GET 
 Mutation operations are atomic and leave workspace unchanged on failure.
 Error responses use stable JSON shape.
 
-When module adapters are enabled, module endpoints are mounted under `/{token}/v1/modules/{module}/...`.
+When module adapters are enabled, module endpoints are mounted under `/{token}/v1/modules/{module}/...`. Providers that declare public route aliases may additionally serve provider-native API paths under the same capability prefix.
 For full endpoint matrix and error contracts, see [Module reference: bus-api](../modules/bus-api).
 
 ### OpenAPI document

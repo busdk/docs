@@ -36,8 +36,10 @@ prefix. Set `BUS_AUTH_SMTP_HOST` and `BUS_AUTH_SMTP_FROM` when OTPs should be
 delivered through an SMTP relay such as MailHog in local development.
 
 The local compose example in `bus-api-provider-auth/examples/local-compose/`
-starts PostgreSQL, MailHog, and `bus-api` with the auth provider mounted at
-`/local-dev/v1/modules/auth`. It uses only non-secret development defaults and
+starts PostgreSQL, MailHog, and `bus-api` with the auth provider enabled. The
+generic module path remains available at `/local-dev/v1/modules/auth`, and the
+production-friendly routes are available at `/local-dev/v1/api/v1/auth/*` and
+`/local-dev/v1/api/internal/auth/*`. It uses only non-secret development defaults and
 prefers the published `ghcr.io/busdk/bus-api:latest` image by default. Operators
 can add the local-build override file when testing a checkout. MailHog exposes
 its HTTP UI/API on `http://127.0.0.1:8025`, which is also what e2e tests use to
