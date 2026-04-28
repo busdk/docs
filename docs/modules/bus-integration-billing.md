@@ -19,12 +19,19 @@ Production deployments should use `BUS_BILLING_STORE_BACKEND=postgres` and
 `BUS_BILLING_DATABASE_URL` so account subscription and entitlement state is
 durable. Memory storage is for local development and tests.
 
+Plan quotas are provider-neutral and loaded by the billing integration from a
+quota config/catalog file. Each plan can define multiple simultaneous windows
+for the same feature and meter, for example per-minute and per-month token
+limits for `llm:proxy`. Supported windows are `minute`, `hour`, `day`, `week`,
+`month`, and `total`. If any matching quota is exhausted, entitlement checks
+return `quota_exceeded` and upgrade guidance before billable API work starts.
+
 ### Events
 
 `bus.billing.status.request` asks for one account's billing status.
 
-`bus.billing.status.response` returns status, enabled features, and setup
-guidance.
+`bus.billing.status.response` returns status, enabled features, quota usage,
+and setup or upgrade guidance.
 
 `bus.billing.checkout_session.request` asks for a hosted billing setup URL.
 
@@ -46,7 +53,8 @@ billable feature scope.
 
 `bus.billing.entitlement.check.response` returns an allow/deny decision. Denied
 paid-feature access uses the provider-neutral `billing_required` reason and
-`bus billing setup` command.
+`bus billing setup` command. Exhausted plan quotas use `quota_exceeded` and
+include the exhausted quota window.
 
 `bus.billing.subscription.update` applies a provider-neutral subscription update
 from a payment provider integration. It is idempotent by `event_id`, enables
@@ -68,8 +76,13 @@ as failed and remain retryable.
 
 In event-backed mode, usage export triggers a provider meter event such as
 `bus.stripe.meter_event.record.request`.
+Successful usage exports increment matching quota buckets once per idempotency
+key; duplicate export requests do not double-count quota usage.
 
 ### Provider Backend Configuration
+
+`BUS_BILLING_QUOTA_CONFIG` points to the provider-neutral JSON quota
+configuration used for plan enforcement.
 
 - `BUS_BILLING_PROVIDER_BACKEND=local|events`
 - `BUS_BILLING_PROVIDER=stripe`

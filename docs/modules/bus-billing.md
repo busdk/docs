@@ -12,8 +12,11 @@ different payment provider behind the Billing API.
 
 ### Commands
 
-`bus billing status` shows billing state and enabled paid features. If billing
-is missing, the command prints the next command to run.
+`bus billing status` shows billing state, enabled paid features, and any usage
+quota state returned by the server. If billing is missing, the command prints
+the next command to run. If a plan quota is exhausted, it preserves the JSON
+quota details and prints upgrade guidance with the recommended plan when
+available.
 
 `bus billing setup` creates a hosted billing setup URL and prints it. The URL
 may point to Stripe Checkout or another provider-hosted setup page depending on

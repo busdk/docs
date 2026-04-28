@@ -23,8 +23,9 @@ error.
 
 ### API
 
-`GET /api/v1/billing/status` returns billing state and enabled features for the
-caller. It requires `aud=ai.hg.fi/api` with `billing:read`.
+`GET /api/v1/billing/status` returns billing state, enabled features, current
+quota usage, and upgrade guidance for the caller. It requires
+`aud=ai.hg.fi/api` with `billing:read`.
 
 `POST /api/v1/billing/checkout-session` creates a hosted billing setup URL for
 the caller. It requires `aud=ai.hg.fi/api` with `billing:setup`.
@@ -41,8 +42,11 @@ catalog. It requires `aud=ai.hg.fi/internal` with `billing:catalog:read`.
 catalog. It requires `aud=ai.hg.fi/internal` with `billing:catalog:write`.
 
 The catalog is provider-neutral JSON for products, plans, prices, usage meters,
-and optional non-secret provider mappings. Stripe-specific synchronization is
-handled separately by `bus operator stripe`.
+plan quotas, and optional non-secret provider mappings. A plan may define
+multiple quota windows at the same time, such as `minute`, `hour`, `day`,
+`week`, `month`, and `total`. Stripe-specific synchronization is handled
+separately by `bus operator stripe`; quota enforcement is handled by
+`bus-integration-billing`.
 
 `GET /api/internal/billing/accounts/{account_id}/status` returns billing status
 for an operator-selected account. It requires `aud=ai.hg.fi/internal` with
@@ -53,7 +57,7 @@ a paid feature or scope such as `llm:proxy`. It is an internal service endpoint
 for API providers, requires `aud=ai.hg.fi/internal` with
 `billing:entitlement:check`, and rejects end-user API tokens. Denied responses
 return deterministic guidance such as `billing_required` and
-`bus billing setup`.
+`bus billing setup`; exhausted quotas return `quota_exceeded`.
 
 ### Events
 

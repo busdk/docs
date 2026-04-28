@@ -17,6 +17,9 @@ mention that private implementation design specifications exist.
 files anywhere under `./docs/docs/`. Keep durable agent instructions in
 non-published paths such as `./docs/AGENTS.md`. Treat the Jekyll `_config.yml`
 exclude list as defense in depth, not as the primary reason this stays safe.
+When running commands from inside this `docs` repository, published module
+pages are under `docs/modules/...`; the `docs/docs/modules/...` path is only
+correct when the current working directory is the superproject root.
 
 ## Global documentation writing rules
 

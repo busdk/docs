@@ -35,7 +35,16 @@ container domain scopes needed for the events it sends and receives. The
 provider process owns the response listener and correlates responses to
 in-flight HTTP requests.
 When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until
-the required container and usage response streams are connected.
+the required container, usage, and billing response streams are connected.
+
+Commercial deployments should add `--billing-backend events` or
+`BUS_CONTAINERS_BILLING_BACKEND=events`. With that backend enabled,
+`POST /api/v1/containers/runs` checks `container:run` entitlement through
+`bus.billing.entitlement.check.request` before recording usage or sending any
+container worker request. A missing payment method, inactive subscription, or
+quota exhaustion returns HTTP `402` with a `bus billing ...` command hint.
+Status and delete endpoints remain protected by JWT scopes and account
+ownership checks, not by quota checks.
 
 The internal runner lifecycle endpoints are for service operations during the
 old api-proxy replacement. They require a JWT with audience

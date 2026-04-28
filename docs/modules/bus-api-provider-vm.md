@@ -30,7 +30,15 @@ with audience `ai.hg.fi/api` and the VM domain scopes needed for the events it
 sends and receives. The provider process owns the response listener and
 correlates responses to in-flight HTTP requests.
 When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until
-the required VM and usage response streams are connected.
+the required VM, usage, and billing response streams are connected.
+
+Commercial deployments should add `--billing-backend events` or
+`BUS_VM_BILLING_BACKEND=events`. With that backend enabled, lifecycle write
+requests check `vm:write` entitlement through
+`bus.billing.entitlement.check.request` before recording usage or sending any
+VM worker request. A missing payment method, inactive subscription, or quota
+exhaustion returns HTTP `402` with a `bus billing ...` command hint. Status
+reads stay controlled by `vm:read` and are not quota-gated.
 
 Start the provider with `--usage-backend events` to report runtime lifecycle
 operations through `bus-integration-usage`. Start/stop requests record
