@@ -1,4 +1,4 @@
-.PHONY: clean
+.PHONY: clean quality
 
 # Generated artifacts and local caches for the SDD Jekyll site.
 CLEAN_PATHS := \
@@ -12,3 +12,6 @@ CLEAN_PATHS := \
 
 clean:
 	rm -rf $(CLEAN_PATHS)
+
+quality:
+	@:
