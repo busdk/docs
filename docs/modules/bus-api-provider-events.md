@@ -29,6 +29,11 @@ Protected Bus integration events use domain scopes. VM events use `vm:read` or
 `container:admin`, and usage collector events use scopes such as `usage:read`
 or `usage:delete`. This keeps event access aligned with the domain API
 permissions instead of exposing broad event-pattern scopes to end users.
+Billing events are protected the same way: public status/setup events use
+`billing:read` or `billing:setup`, entitlement checks use
+`billing:entitlement:check`, subscription updates use
+`billing:subscription:write`, billing usage export uses
+`billing:usage:export`, and Stripe-provider events use `billing:provider`.
 Wildcard streams are rejected by default because the provider cannot safely
 prove that one token may receive every future protected event.
 

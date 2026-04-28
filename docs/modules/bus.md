@@ -15,7 +15,9 @@ bus [--check] [--transaction <provider>] [--scope <scope>] [--trace] <file.bus> 
 
 Use `bus` in two modes:
 
-Normal dispatch uses `bus <module> [args...]` and calls `bus-<module>` from PATH. Busfile mode uses `bus <file>.bus [...]` and executes one or more `.bus` command files.
+Normal dispatch uses `bus <module> [args...]` and calls the matching `bus-*`
+executable from PATH. Busfile mode uses `bus <file>.bus [...]` and executes one
+or more `.bus` command files.
 
 ### Description
 
@@ -42,6 +44,12 @@ This feature is available under FSL-1.1-MIT (Functional Source License 1.1, MIT 
 ### Normal dispatch
 
 `bus <module> <args...>` dispatches to `bus-<module>`. For example, `bus journal add ...` runs `bus-journal add ...`. `bus run ...` is treated like any other module dispatch target.
+
+Nested command words dispatch to the first command word owner. For example,
+`bus operator billing catalog sync` runs `bus-operator billing catalog sync`.
+Focused operator families such as billing or Stripe are owned behind
+`bus-operator` through Go library dispatch, not through root-dispatcher
+longest-prefix execution of nested child binaries.
 
 That same rule applies to BusDK installer and package-manager flows. `bus update ...` and `bus update package ...` both delegate to `bus-update`; the dispatcher does not embed package download, package database, or installer logic itself. In a bootstrap-installed setup, this keeps `bus` as the stable entrypoint while `bus-update` remains the owning module for release checks, managed executable packages, and bootstrap-root behavior.
 

@@ -59,6 +59,8 @@
       url: /modules/bus-api
     - label: bus api provider auth
       url: /modules/bus-api-provider-auth
+    - label: bus api provider billing
+      url: /modules/bus-api-provider-billing
     - label: bus api provider books
       url: /modules/bus-api-provider-books
     - label: bus api provider containers
@@ -75,6 +77,18 @@
       url: /modules/bus-api-provider-vm
     - label: bus auth
       url: /modules/bus-auth
+    - label: bus billing
+      url: /modules/bus-billing
+    - label: bus operator
+      url: /modules/bus-operator
+    - label: bus operator auth
+      url: /modules/bus-operator-auth
+    - label: bus operator billing
+      url: /modules/bus-operator-billing
+    - label: bus operator stripe
+      url: /modules/bus-operator-stripe
+    - label: bus operator token
+      url: /modules/bus-operator-token
     - label: bus sheets
       url: /modules/bus-sheets
     - label: bus dev
@@ -139,8 +153,12 @@
       url: /modules/bus-filing-vero
     - label: bus gateway
       url: /modules/bus-gateway
+    - label: bus integration billing
+      url: /modules/bus-integration-billing
     - label: bus integration ssh runner
       url: /modules/bus-integration-ssh-runner
+    - label: bus integration stripe
+      url: /modules/bus-integration-stripe
     - label: bus integration usage
       url: /modules/bus-integration-usage
     - label: bus integration upcloud

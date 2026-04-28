@@ -30,10 +30,17 @@ provider forwards execution requests to the configured backend, strips client
 responses to the caller, and records request lifecycle plus token usage through
 direct usage storage or through `bus-integration-usage`.
 
+When `--billing-backend events` is enabled, execution endpoints also require an
+active provider-neutral billing entitlement from `bus-integration-billing`
+before runtime wake-up or backend proxying. Denied access returns
+`billing_required` with `bus billing setup` guidance.
+
 `GET /v1/models` uses a configured local model catalog by default, so listing
 models does not wake GPU backends. Configure it with `--model-catalog <path>` or
 `BUS_LLM_MODEL_CATALOG`. Use `--models-backend proxy` only when a deployment
 explicitly wants model listing forwarded to the backend.
+Catalog-mode `GET /v1/models` does not check billing entitlement, wake runtime,
+or probe the backend.
 
 For runtime wake-up, start the provider with `--runtime-backend events` and
 provide `--events-url` plus a normal Bus API token in `--api-token` or
@@ -52,6 +59,8 @@ environment so the provider can start before Events API and reconnect after
 stream restarts; static-token auth failures fail fast by default. When
 `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until the
 required runtime and usage response streams are connected.
+Billing entitlement response streams are included in readiness when
+`--billing-backend events` is used with required listeners.
 
 Streaming chat/completion requests that set `stream=true` are amended with
 `stream_options.include_usage=true` when possible, so streamed responses can
@@ -68,6 +77,25 @@ to PostgreSQL, and `bus-api-provider-usage` exposes collector read/delete.
 Set `BUS_LLM_E2E_DATABASE_URL` or `BUS_USAGE_E2E_DATABASE_URL` to use an
 existing local PostgreSQL database, or let the e2e suite start a disposable
 Docker Compose PostgreSQL service when Docker is available.
+
+The complete paid LLM billing flow is available as an opt-in e2e because it
+uses Docker Compose and Stripe test-mode APIs:
+
+```sh
+set -a
+. ../.env
+set +a
+BUS_LLM_FULL_BILLING_E2E=1 make e2e
+```
+
+The local `.env` must provide Stripe test values such as
+`BUS_STRIPE_SECRET_KEY` and `BUS_STRIPE_WEBHOOK_SECRET`; do not commit it. The
+suite starts PostgreSQL and MailHog, registers a user by email OTP, verifies
+waitlist denial, approves the user through the internal auth route, creates an
+isolated Stripe test price, verifies checkout and webhook entitlement, performs
+a streamed LLM call, persists usage, exports usage to a Stripe meter, and checks
+account isolation, internal-only billing authorization, backend auth-header
+stripping, and secret redaction.
 
 ### Sources
 

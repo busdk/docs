@@ -17,7 +17,19 @@ Service and admin operations use `ai.hg.fi/internal` or `ai.hg.fi/auth`, not nor
 
 `ai.hg.fi/api` is the public end-user API audience. A token with this audience may be accepted only by APIs that an approved end user is allowed to call. It must not authorize reading other accounts, operating shared infrastructure outside an account boundary, collecting platform-wide billing data, or performing administrator maintenance.
 
-The auth provider issues this audience only after email verification and admin approval. Registration and OTP verification alone do not issue API access. The default approved-user API scope set is configurable, but it should remain limited to end-user features such as AI model access, user-visible VM status, and user-owned container operations.
+The auth provider issues this audience only after email verification and admin approval. Registration and OTP verification alone do not issue paid feature access. The default approved-user API scope set is configurable, but it should remain limited to end-user features such as billing setup, AI model access, user-visible VM status, and user-owned container operations.
+
+### Scope `billing:read`
+
+`billing:read` allows an approved account to read its own billing setup status and open a customer billing portal session. It must not expose another account's billing data, provider customer IDs, payment method details, invoices for other accounts, or platform-wide revenue data.
+
+This scope is intentionally safe to issue before paid product entitlements are active so the CLI can guide a user to finish setup.
+
+### Scope `billing:setup`
+
+`billing:setup` allows an approved account to create a provider-neutral billing checkout/setup session for that same account. It does not authorize LLM use, container runs, usage collection, refunds, plan changes for other accounts, or Stripe administration.
+
+The Billing API derives the account from JWT `sub` and hides payment-provider details behind `bus-integration-billing` and provider-specific integrations such as `bus-integration-stripe`.
 
 ### Scope `llm:proxy`
 

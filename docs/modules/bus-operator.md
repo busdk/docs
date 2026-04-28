@@ -5,21 +5,22 @@ description: bus operator is the command-line client for Bus operator, admin, an
 
 ## Operator CLI
 
-`bus-operator` owns the `bus operator ...` command namespace. It is the
-operator-facing companion to end-user tools such as `bus auth`. End users use
-`bus auth` to register, verify email ownership, check approval status, and
-request approved API tokens. Operators use `bus operator` for waitlist
-administration and service-token bootstrap.
+`bus-operator` is the umbrella dispatcher for the `bus operator ...` namespace.
+It is the operator-facing companion to end-user tools such as `bus auth`. End
+users use `bus auth` to register, verify email ownership, check approval
+status, and request approved API tokens. Operators use focused
+`bus operator <family> ...` commands for waitlist administration, service-token
+bootstrap, billing operations, and provider diagnostics.
 
-The CLI is a thin HTTP client. It does not implement auth policy locally and it
-does not sign JWTs. Waitlist commands call the auth provider admin endpoints
-using an admin-scoped auth-service Bearer JWT. Token bootstrap calls the auth
-provider internal token endpoint with an explicit internal shared key.
+Command implementations live in focused `bus-operator-*` modules. The umbrella
+module calls those modules through Go library entrypoints. It does not execute
+child binaries, duplicate command logic, implement auth policy locally, or sign
+JWTs.
 
 ```bash
-bus operator --api-url http://127.0.0.1:8080 --token <admin-jwt> auth waitlist
-bus operator --api-url http://127.0.0.1:8080 --token <admin-jwt> auth approve --email user@example.com
-bus operator --api-url http://127.0.0.1:8080 --token <admin-jwt> auth reject --email user@example.com
+bus operator auth --api-url http://127.0.0.1:8080 --token <admin-jwt> waitlist
+bus operator auth --api-url http://127.0.0.1:8080 --token <admin-jwt> approve --email user@example.com
+bus operator auth --api-url http://127.0.0.1:8080 --token <admin-jwt> reject --email user@example.com
 ```
 
 `token issue` is for internal service bootstrap and installation automation. It
@@ -29,9 +30,9 @@ the key from a deployment secret store, an untracked local secret file, or the
 operator environment.
 
 ```bash
-bus operator --api-url http://127.0.0.1:8080 \
+bus operator token --api-url http://127.0.0.1:8080 \
   --internal-key-file ./local/internal-key \
-  token issue \
+  issue \
   --subject usage-worker \
   --audience ai.hg.fi/auth \
   --scope "usage:read usage:delete"
@@ -39,9 +40,15 @@ bus operator --api-url http://127.0.0.1:8080 \
 
 Run `bus operator --help` for the full command reference. The help output uses
 Git-style sections covering name, synopsis, description, commands, options,
-environment, examples, and related documentation.
+environment, examples, and related documentation. Run
+`bus operator <family> --help` for the focused command-family flags and
+environment variables.
 
 ### Sources
 
 - [bus-operator](./bus-operator)
+- [bus-operator-auth](./bus-operator-auth)
+- [bus-operator-token](./bus-operator-token)
+- [bus-operator-billing](./bus-operator-billing)
+- [bus-operator-stripe](./bus-operator-stripe)
 - [bus-api-provider-auth](./bus-api-provider-auth)
