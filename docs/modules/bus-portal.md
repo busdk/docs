@@ -5,11 +5,20 @@ description: Customer portal for sending files and starting evidence-pack genera
 
 ## Overview
 
-`bus-portal` opens a local customer view for the current BusDK workspace. The
+`bus-portal` is being refactored into the generic modular web portal host for
+`bus-portal-*` UI modules. The host owns token-gated serving, module mounting,
+theme CSS variables, browser/session concerns, and shared static assets.
+
+The current built-in accounting customer view remains available during the
+split. It opens a local customer view for the current BusDK workspace. The
 page groups `Yleiskuva`, `Tilikartta`, `Aineisto`, and `Tilinpäätös` behind a
 collapsible left sidebar and shows workspace business details, the full chart
 of accounts, customer upload controls, and the latest evidence-pack outputs in
 those separate views.
+
+Portal modules are UI modules only. They use `bus-api-*` /
+`bus-api-provider-*` APIs for backend behavior and must not integrate directly
+with `bus-integration-*` workers.
 
 When the user presses `Aloita`, the portal runs `bus-reports evidence-pack`
 for the same workspace. Uploaded files are saved through `bus-attachments`
