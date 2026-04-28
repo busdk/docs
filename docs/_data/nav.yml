@@ -150,6 +150,8 @@
   links:
     - label: System architecture
       url: /architecture/
+    - label: API JWT audiences and scopes
+      url: /architecture/api-jwt-audiences-and-scopes
     - label: Data formats and storage
       url: /data/
     - label: Data directory layout
