@@ -12,9 +12,13 @@ prompts.
 Portal hosts mount the module under `/modules/ai/`. The module must use Bus API
 providers for backend work: auth, billing, LLM, containers, and terminal. It
 must not integrate directly with `bus-integration-*` workers.
-The module currently declares itself experimental and not default-enabled, so
-`bus-portal` requires an explicit `--experimental --enable-module ai` opt-in
-before mounting it.
+
+Enable the module from the portal host when you want to expose AI chat or
+container-backed Codex terminal access:
+
+```bash
+bus portal serve --print-url --experimental --enable-module ai
+```
 
 The module serves external JavaScript and reads the API token from the shared
 `bus-portal-auth` session. It calls billing status/setup/portal APIs, the
@@ -27,3 +31,12 @@ AI-assisted theme customization calls configured portal theme APIs for
 suggestions and persistence. It accepts only structured `--portal-*` theme
 tokens and rejects raw CSS, external resource references, nested CSS variable
 references, and rule breakouts before sending tokens to the persistence API.
+
+### Sources
+
+- [bus-portal](./bus-portal)
+- [bus-portal-auth](./bus-portal-auth)
+- [bus-api-provider-billing](./bus-api-provider-billing)
+- [bus-api-provider-llm](./bus-api-provider-llm)
+- [bus-api-provider-containers](./bus-api-provider-containers)
+- [bus-api-provider-terminal](./bus-api-provider-terminal)

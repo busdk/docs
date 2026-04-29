@@ -109,6 +109,15 @@ Do not invent project facts. If required facts are missing, ask targeted
 questions in **bold** and record uncertainty explicitly as assumptions or open
 questions.
 
+Public end-user module pages must describe what users and operators can do
+with the module now: purpose, commands, endpoints, configuration, security
+boundaries, and usage examples. Do not publish implementation meta-status such
+as "being refactored", "migration debt", "temporary", "MVP", "experimental",
+"not production ready", or "planned next" unless the content is explicitly a
+user-facing limitation that changes how the documented command/API should be
+used. Put engineering readiness and remaining work in the module `PLAN.md` or
+private `sdd/docs`, not in `docs/docs`.
+
 For BusDK module SDDs in `docs/modules`, keep document control at the end of
 the page, after prev/index/next navigation and after `### Sources` when
 present. Include at least: title, project identifier/name, document identifier,

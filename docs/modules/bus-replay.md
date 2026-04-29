@@ -19,7 +19,11 @@ The module is filesystem-only. Export reads the [workspace](../layout/minimal-wo
 
 Bus replay does not infer missing historical intent — it exports what exists in the workspace and does not guess missing invoices, evidence, or mappings. The module does not perform network, filing submission, or Git operations. To export another revision, run `git checkout <ref>` in the repository and then run export. The intended users are operators and automation performing workspace migration, parity verification, or reproducible setup.
 
-For ERP history migrations, the intended first-class workflow is profile-driven import commands with auditable import artifacts. That workflow is specified in the design specification but not yet implemented as a replay-first command pattern in current module releases.
+For ERP history migrations, use profile-driven import commands with auditable
+import artifacts when the source dataset has not already been normalized into a
+Bus workspace. Replay exports the workspace state it can observe; source-system
+history that is not represented in workspace datasets must be preserved through
+the import artifacts or generated append scripts used for that migration.
 
 ### Commands
 
@@ -39,11 +43,16 @@ For `render`, `--in <path>` or `--in -` is required input, `--format sh` is requ
 
 Global flags (e.g. `-C`, `-o`, `-q`, `-v`) are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus replay <subcommand> --help`.
 
-### ERP profile-import replay workflow (planned)
+### ERP profile-import replay workflow
 
-The target workflow captures short profile-driven import commands in replay logs, such as `bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024` and `bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`, instead of replaying thousands of generated per-row append commands. Replay keeps those operations deterministic by carrying stable operation IDs, guards, and references to import plan/result artifacts.
-
-This first-class workflow is not yet shipped. Current ERP history migration still uses generated explicit scripts, including `exports/2024/017-erp-invoices-2024.sh` and `exports/2024/018-erp-bank-2024.sh`, produced from ERP TSV mappings.
+For ERP profile imports, keep the short source import command and its generated
+artifacts together with the replay log. Typical commands look like
+`bus invoices import --profile imports/profiles/erp-invoices-2024.yaml --source exports/erp/invoices-2024.tsv --year 2024`
+and
+`bus bank import --profile imports/profiles/erp-bank-2024.yaml --source exports/erp/bank-2024.tsv --year 2024`.
+When row-level migration commands are generated from ERP TSV mappings, keep
+those generated scripts alongside the replay log so the full migration remains
+auditable and repeatable.
 
 ### Output formats
 

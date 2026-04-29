@@ -7,7 +7,7 @@ description: End-user guide for formula-related flags in bus data workbook extra
 
 This page explains how formula-related options behave when you run workbook-style table reads through `bus data`.
 
-Use this page when you need to run commands and verify outputs. Detailed implementation contracts are maintained in the private SDD workspace.
+Use this page when you need to run commands and verify workbook formula outputs.
 
 ### What the options do
 

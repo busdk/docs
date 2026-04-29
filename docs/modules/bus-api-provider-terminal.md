@@ -29,5 +29,7 @@ is present, include `exp`, pass issued-at/expiry checks with configured clock
 skew, match the accepted audience, and match the configured issuer when one is
 set. `none` and wrong-algorithm tokens are rejected.
 
-The MVP backend is in-memory for local development. Production container or SSH
-execution should remain behind this provider boundary.
+The local backend stores terminal session state in memory. Production container
+or SSH execution should remain behind this provider boundary so portal clients
+always use the authenticated terminal API instead of direct integration-worker
+access.

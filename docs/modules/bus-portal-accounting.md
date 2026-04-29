@@ -12,9 +12,13 @@ artifact preview/download.
 Portal hosts mount the module under `/modules/accounting/`. It is a UI module
 and should use Bus API/provider APIs for server behavior instead of calling
 integration workers directly.
-The module currently declares itself experimental and not default-enabled, so
-`bus-portal` requires an explicit `--experimental --enable-module accounting`
-opt-in before mounting it.
+
+Enable the module from the portal host when you want to expose accounting
+workspace views in the browser:
+
+```bash
+bus portal serve --print-url --experimental --enable-module accounting
+```
 
 The customer-facing navigation is Finnish: `Yleiskuva`, `Aineistot`, and
 `Tilinpäätös`.
@@ -28,3 +32,8 @@ generated/customer content same-origin.
 Server-side workspace mutation, report generation, and artifact serving do not
 belong in this UI module. Those behaviors belong behind provider APIs such as
 `bus-api-provider-books`.
+
+### Sources
+
+- [bus-portal](./bus-portal)
+- [bus-api-provider-books](./bus-api-provider-books)

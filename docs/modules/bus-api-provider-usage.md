@@ -39,7 +39,7 @@ container providers. Each item includes the storage `id`, optional idempotency
 
 ### Persistence
 
-The MVP backend is PostgreSQL. The provider creates a small schema at startup
+The provider stores collector feed data in PostgreSQL. It creates a small schema at startup
 when it is missing: `accounts`, `usage_events`, and indexes for deterministic
 pagination and non-empty `event_id` idempotency. The database is an intermediate
 collector feed and can be recreated from scratch; long-term billing records

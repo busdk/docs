@@ -5,122 +5,57 @@ description: Generic frontend portal host for Bus portal UI modules.
 
 ## Overview
 
-`bus-portal` is being refactored into the generic modular frontend portal host
-for `bus-portal-*` UI modules. The host owns frontend app serving, module
-mounting, theme CSS variables, browser security headers, shared static assets,
-and browser-facing configuration.
+`bus-portal` serves the Bus web portal shell. It hosts browser UI modules,
+serves shared frontend assets, applies the portal theme, and sets browser
+security headers for the app surface. Operators use it when they want a local
+or hosted browser entry point for Bus account, AI, accounting, and other portal
+modules.
 
-`bus-portal` does not own server-side Bus business logic. Auth, registration,
-billing, LLM access, container lifecycle, terminal sessions, uploads,
-accounting workspace reads, report generation, and artifact access must be
-provided through `bus-api` / `bus-api-provider-*` HTTP APIs. Portal frontend
-modules consume those APIs and must not call `bus-integration-*` workers.
-
-The current built-in accounting customer view remains available during the
-split. It opens a local customer view for the current BusDK workspace. The
-page groups `Yleiskuva`, `Tilikartta`, `Aineisto`, and `Tilinpäätös` behind a
-collapsible left sidebar and shows workspace business details, the full chart
-of accounts, customer upload controls, and the latest evidence-pack outputs in
-those separate views.
-
-Portal modules are UI modules only. They use `bus-api-*` /
-`bus-api-provider-*` APIs for backend behavior and must not integrate directly
-with `bus-integration-*` workers.
-
-Portal module mounting is explicit and readiness-aware. Each module declares
-whether it is stable or experimental and whether it belongs to the default
-module set. When no module list is configured, `bus-portal` mounts only
-default-enabled modules; the default set currently contains the auth module.
-Operators can mount specific stable modules with `--enable-module <id>`.
-Experimental modules, including the current AI and accounting modules, require
-`--experimental` in addition to explicit enablement. `--enable-module all`
-selects all non-experimental modules unless `--experimental` is also present.
-
-Capability-token URLs are valid for local/development "secret URL" mode. In
-that mode the full URL is intentionally shown to the user starting the service.
-Public web deployments should use normal frontend routes plus API-provider
-authentication/session handling instead of relying on secret URLs.
-
-For publish-oriented frontend hosting before the legacy accounting routes are
-fully migrated, run with `--disable-legacy-local-apis` or
-`BUS_PORTAL_DISABLE_LEGACY_LOCAL_APIS=1`. This leaves frontend assets and
-mounted modules available but returns 404 for temporary `/v1/demo*` and
-`/v1/submissions*` routes.
-
-Generated or customer-controlled artifacts should not be served directly from
-the portal frontend host in public portal mode. Artifact metadata, previews,
-and downloads should come from authenticated API/provider routes that enforce
-the caller's account/workspace access.
-
-The portal host is responsible for frontend-host security such as browser
-security headers and safe theme CSS output. API authentication, authorization,
-account isolation, session/CSRF checks, quota checks, and billing entitlement
-decisions are API-provider responsibilities.
-
-Themes are runtime configuration and may later be customized by end users with
-AI assistance. Theme customization must use validated structured design tokens,
-not raw CSS. Public deployments may also require JWT/session-protected frontend
-modules or assets; that mode should use `bus-portal-auth` session/client
-functionality while keeping sensitive data behind API providers.
-
-Runtime theme files are validated before CSS variables are emitted. The host
-rejects values that can break out of CSS declarations or load external
-resources, including `url(...)`, `@import`, `expression(...)`, `javascript:`,
-`data:`, and nested `var(...)` references.
-
-While legacy local uploads remain, deployments must use explicit upload limits
-for total request size, per-file size, aggregate uploaded bytes, and file count.
-The public portal architecture should move uploads behind authenticated
-provider APIs.
-
-`bus-portal` now applies frontend security headers to index, static asset, API,
-and mounted module responses. Configure extra API origins for CSP `connect-src`
-with `--api-connect-src` or `BUS_PORTAL_API_CONNECT_SRC`.
-
-Use module flags to keep public deployments small and predictable:
+Portal modules are mounted explicitly. With no module flags, the portal starts
+with the default module set. Add modules with `--enable-module <id>`; repeat
+the flag to mount several modules. `--enable-module all` selects all modules
+that are available without the extra `--experimental` opt-in.
 
 ```bash
+bus portal serve --print-url
 bus portal serve --print-url --enable-module auth
 bus portal serve --print-url --experimental --enable-module ai
 ```
 
-Legacy upload limits are configurable with `--max-upload-request-bytes`,
+The portal host is frontend infrastructure. Server-side behavior such as
+registration, billing, LLM access, container lifecycle, terminal sessions,
+workspace reads, uploads, report generation, and artifact access is provided by
+Bus API providers. Portal modules call those APIs from the browser; they do
+not call backend integration workers directly.
+
+In local mode, the server prints a capability URL containing a random token.
+Opening that URL gives access to the local portal session. Use `--print-url`
+for scripts or terminals, or the default webview behavior for local desktop
+use. Hosted deployments normally place `bus-portal` behind the deployment's
+normal public route and rely on API-provider authentication for protected
+data.
+
+The host applies a Content Security Policy, `Referrer-Policy: no-referrer`,
+`X-Content-Type-Options: nosniff`, frame restrictions, and a restrictive
+permissions policy. Add API origins to CSP `connect-src` with
+`--api-connect-src <source>` or `BUS_PORTAL_API_CONNECT_SRC`.
+
+Themes are runtime configuration. A theme file contains validated design tokens
+that become CSS variables. The host rejects values that can break out of CSS
+declarations or load external resources, including `url(...)`, `@import`,
+`expression(...)`, `javascript:`, `data:`, and nested `var(...)` references.
+
+Local workspace upload routes are protected by configurable limits for total
+request size, per-file size, aggregate uploaded bytes, file count, and
+multipart memory. Configure them with `--max-upload-request-bytes`,
 `--max-upload-file-bytes`, `--max-upload-aggregate-bytes`,
-`--max-upload-files`, and `--upload-memory-bytes`; matching environment
-variables use the `BUS_PORTAL_*` names documented in the module README.
-Set `BUS_PORTAL_DISABLE_LEGACY_LOCAL_APIS=1` or pass
-`--disable-legacy-local-apis` for frontend-only publish deployments.
-
-Legacy migration note: the current local accounting view still runs
-`bus-reports evidence-pack`, stores uploads through `bus-attachments`, and
-serves generated evidence artifacts directly. Treat this as temporary migration
-debt while the accounting behavior moves to `bus-portal-accounting` and
-provider-backed APIs. Active legacy artifact formats (`.html`, `.htm`, and
-`.svg`) are forced to attachment downloads and rendered in previews only as
-escaped text so generated/customer-controlled active content does not execute
-in the portal origin.
-
-### E2E Levels
-
-`make test-e2e` in `bus-portal` runs fast smoke checks by default. The default
-suite is for generic portal host behavior, safe theme loading, disabled legacy
-local APIs, and mounted portal modules.
-
-Browser, Docker image, and Docker Compose checks are intentionally opt-in
-because they are much slower and validate runtime packaging rather than normal
-source-level portal behavior:
-
-```bash
-RUN_BROWSER_E2E=1 make test-e2e
-RUN_DOCKER_E2E=1 make test-e2e
-E2E_SCOPE=full make test-e2e
-```
-
-Legacy local accounting route e2e scripts are not part of the `bus-portal`
-suite. Accounting behavior belongs in `bus-api-provider-books` and
-`bus-portal-accounting`.
+`--max-upload-files`, and `--upload-memory-bytes`, or the matching
+`BUS_PORTAL_*` environment variables. Public frontend-only deployments can
+disable local workspace APIs with `--disable-legacy-local-apis` or
+`BUS_PORTAL_DISABLE_LEGACY_LOCAL_APIS=1`.
 
 ### Sources
 
-- [bus-portal module page](/Users/jhh/git/busdk/busdk/docs/docs/modules/bus-portal.md)
-- [bus-portal README](/Users/jhh/git/busdk/busdk/bus-portal/README.md)
+- [bus-portal-auth](./bus-portal-auth)
+- [bus-portal-ai](./bus-portal-ai)
+- [bus-portal-accounting](./bus-portal-accounting)

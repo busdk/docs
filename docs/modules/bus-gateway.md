@@ -110,5 +110,5 @@ workspace.
 
 ### Sources
 
-- [bus-gateway module README](/Users/jhh/git/busdk/busdk/bus-gateway/README.md)
-- [bus-gateway module SDD](/Users/jhh/git/busdk/busdk/sdd/docs/modules/bus-gateway.md)
+- [bus-gateway module README](../../../bus-gateway/README.md)
+- [bus-gateway design notes](../../../sdd/docs/modules/bus-gateway.md)
