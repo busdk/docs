@@ -45,6 +45,16 @@ List and delete requests use `before`, `page`, and `page_size` pagination. The
 worker returns deterministic pages ordered by usage occurrence time and storage
 ID.
 
+Commercial deployments can enable automatic billing export so any usage metric
+that appears in a plan can be charged and quota-counted. The worker evaluates
+accepted records against a provider-neutral policy and emits
+`bus.billing.usage.export.request` for matching rules. The built-in default
+policy maps LLM `usage_recorded` `data.total_tokens` to `llm:proxy` /
+`bus_llm_tokens`, and successful `container_run_finished` `data.duration_ms`
+to `container:run` / `bus_container_runtime_seconds` using rounded-up seconds.
+Failed, aborted, or unmapped events are not billed unless an operator adds an
+explicit policy rule.
+
 ## Running The Worker
 
 For local development, use the memory backend:
@@ -72,6 +82,11 @@ bus-integration-usage \
   --events-url "$BUS_EVENTS_API_URL" \
   --api-token "$BUS_API_TOKEN"
 ```
+
+Enable the default LLM and container export rules with
+`--billing-export default` or `BUS_USAGE_BILLING_EXPORT=default`. Use
+`--billing-export file --billing-export-policy <path>` or
+`BUS_USAGE_BILLING_EXPORT_POLICY` when plans include additional usage metrics.
 
 Use only non-secret local examples in documentation and tests. Real database
 URLs and Bus API tokens must come from deployment secrets or local untracked

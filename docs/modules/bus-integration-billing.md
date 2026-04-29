@@ -64,10 +64,13 @@ for `past_due`, `canceled`, `incomplete`, or unknown statuses.
 `bus.billing.subscription.result` returns the correlated application result.
 
 `bus.billing.usage.export.request` asks the billing domain to export one
-normalized usage event to a payment meter. The first supported path is LLM
-tokens: use `event_type=usage_recorded`, provide `account_id`, and either set
-`quantity` directly or include token fields in `data`. The default feature is
-`llm:proxy`, and the default meter name is `bus_llm_tokens`.
+provider-neutral usage metric to a payment meter. Requests identify
+`account_id`, billable `feature`, `meter_event_name`, positive integer
+`quantity`, and an idempotency `event_id`. `bus-integration-usage` can emit
+these requests automatically from canonical usage records; the first built-in
+usage mappings are LLM tokens and successful container runtime seconds. If
+feature or meter is omitted, the billing worker keeps the LLM-compatible
+defaults `llm:proxy` and `bus_llm_tokens`.
 
 `bus.billing.usage.export.response` returns export status, quantity, meter name,
 idempotency key, and provider event metadata. Successfully exported

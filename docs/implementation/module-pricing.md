@@ -1,6 +1,6 @@
 ---
 title: BusDK source package pricing
-description: Generated source-package price estimates for BusDK modules, including dependency-inclusive totals and documented pricing-model assumptions.
+description: Generated source-package price estimates for BusDK modules, including dependency-inclusive module estimates and quote guidance.
 ---
 
 ## Overview
@@ -21,12 +21,11 @@ To buy source access for one or more modules, email [sales@hg.fi](mailto:sales@h
 
 {% if pricing and pricing.modules %}
 {% assign total_price_eur = pricing.total_price_eur | plus: 0 %}
-{% assign source_total_cost_eur = pricing.source_total_cost_eur | default: total_price_eur | plus: 0 %}
-{% assign assumptions = pricing.assumptions %}
 
-Generated source-package estimate for all commercial modules is `{{ total_price_eur | eur_rounded }} EUR`.
-The full cost pool behind the estimate is `{{ source_total_cost_eur | eur_rounded }} EUR`;
-the public `bus` dispatcher is part of the cost model but is excluded from commercial source-package pricing.
+Generated source-package estimate for all listed source packages is `{{ total_price_eur | eur_rounded }} EUR`.
+Use this page as a planning reference for source access discussions. For a
+binding quote, contract scope, support, deployment model, and licensing terms,
+contact [sales@hg.fi](mailto:sales@hg.fi).
 
 ### Pricing model
 
@@ -35,20 +34,11 @@ estimate covers only that module’s source release. Dependency-inclusive
 estimate covers that module plus its dependencies, calculated as a unique
 transitive set.
 
-The generator uses Git commit counts as the relative sizing weight between
-modules. It first builds a total cost pool, then allocates that pool across
-commercial `bus-*` modules by commit share. Current assumptions in this dataset:
-ChatGPT is estimated from `{{ assumptions.chatgpt_base_start_date }}` through
-`{{ assumptions.chatgpt_base_end_date }}` as `{{ assumptions.chatgpt_months }}`
-inclusive billing months at `{{ assumptions.chatgpt_monthly_eur | eur_rounded }} EUR`
-per month; Cursor is a fixed `{{ assumptions.cursor_total_usd | eur_rounded }} USD`
-assumption converted at `{{ assumptions.usd_to_eur_rate }}` USD/EUR; human labour
-has a date baseline from `{{ assumptions.human_labor_base_start_date }}` through
-`{{ assumptions.human_labor_base_end_date }}` (`{{ assumptions.human_labor_base_days }}`
-days) at `{{ assumptions.human_labor_base_per_day_eur | eur_rounded }} EUR` per
-day plus `{{ assumptions.human_labor_per_commit_total_eur | eur_rounded }} EUR`
-per commit. Module count itself is reported for transparency, but module sizes
-relative to each other still come from commits.
+The dependency-inclusive estimate is useful when a buyer wants source access
+for one module but also needs the source releases required to build, modify, or
+audit that module in context. Final commercial terms can combine source access
+with managed hosting, self-hosted deployment support, data-processing terms, or
+alternative licensing.
 
 {% assign category_core = "bus-init,bus-config,bus-data,bus-preferences" | split: "," %}
 {% assign category_ui = "bus-sheets,bus-books" | split: "," %}

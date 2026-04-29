@@ -18,9 +18,10 @@ guidance factual and user-facing: managed Finnish cloud operation, dedicated
 deployment, and customer self-hosting are deployment models; contractual data
 processing terms are commercial/legal arrangements, not module behavior.
 Pricing pages may show generated source-package estimates, but must not
-present them as final quotes. Document the generator assumptions near the
-numbers, including date-based human-labour baselines and fixed operating-cost
-assumptions when used.
+present them as final quotes. Keep public pricing docs buyer-facing: do not
+publish internal cost-pool details, ChatGPT/Cursor/human-labour assumptions, or
+mechanics such as open-source dispatcher exclusion unless the user explicitly
+asks to expose them.
 
 ## Publication Boundary
 

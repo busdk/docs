@@ -1,5 +1,6 @@
 # Docs Refactor Plan
 
+- [x] Refine public source-package pricing docs so the rendered page and generated docs data do not expose internal cost-pool details, ChatGPT/Cursor/human-labour assumptions, or `bus` exclusion mechanics; keep only buyer-facing generated estimates, quote caveats, module rows, timestamp, and sources; verify docs quality.
 - [x] Refresh source-package pricing docs so generated prices are current estimates from the pricing data generator, explain the date-based human-labour and fixed operating-cost assumptions, remove unsupported discount/package claims, update the purchasing FAQ, and verify docs quality.
 - [x] Refresh the public docs direction for the current BusDK platform: describe BusDK as a self-hostable AI product platform with CLI, API providers, events, portals, VM/container runtime, billing/operator tooling, and auditable business-data modules; add end-user deployment/data-control guidance; keep the tone documentation-focused rather than commercial landing copy; verify the docs site after editing.
 - [x] Add public end-user documentation for the new `bus-work` skeleton: document the planned generic `bus work` durable work-stream UX, recipient syntax, fan-out behavior, ids/refs, worker loop, config/auth boundary, and relationship to `bus run` and `bus dev`.
