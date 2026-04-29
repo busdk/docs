@@ -3,7 +3,7 @@ layout: home
 show_nav_cards: false
 home_grid_blocks: true
 title: BusDK Docs
-description: Documentation hub for humans and AI agents using the Business Development Kit to run a business — workflows, CLI modules, design documents, data references, and compliance guidance.
+description: Documentation hub for humans and AI agents using BusDK to build, host, bill, and operate AI products with self-hostable services and auditable workspace data.
 ---
 ## Understand BusDK Foundations
 
@@ -12,6 +12,7 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Overview](overview/index)
 - [FAQ: what are `bus` and BusDK?](faq/index)
 - [Purpose and scope](overview/purpose-and-scope)
+- [Deployment and data control](integration/deployment-and-data-control)
 - [Visual identity and branding on outputs](overview/visual-identity)
 - [Design goals and requirements](design-goals/index)
 - [Module CLI reference](modules/index)
@@ -31,6 +32,38 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - [Development cost summary](implementation/cost-summary)
 - [BusDK module pricing](implementation/module-pricing)
 - [Module CLI quickstart](modules/index)
+
+## Build and Operate AI Products {#build-and-operate-ai-products}
+
+### Platform operations
+
+- [Deployment and data control](integration/deployment-and-data-control)
+- [AI and external service integration](extensibility/ai-and-external-services)
+- [Integration and runtime interfaces](integration/index)
+- [API JWT audiences and scopes](architecture/api-jwt-audiences-and-scopes)
+- [Append-only and security](architecture/append-only-and-security)
+
+### Runtime and providers
+
+- `bus api` ([CLI](modules/bus-api))
+- `bus api provider llm` ([CLI](modules/bus-api-provider-llm))
+- `bus api provider vm` ([CLI](modules/bus-api-provider-vm))
+- `bus api provider containers` ([CLI](modules/bus-api-provider-containers))
+- `bus events` ([CLI](modules/bus-events))
+- `bus integration upcloud` ([CLI](modules/bus-integration-upcloud))
+- `bus integration ssh runner` ([CLI](modules/bus-integration-ssh-runner))
+
+### Product controls
+
+- `bus auth` ([CLI](modules/bus-auth))
+- `bus billing` ([CLI](modules/bus-billing))
+- `bus operator` ([CLI](modules/bus-operator))
+- `bus operator auth` ([CLI](modules/bus-operator-auth))
+- `bus operator billing` ([CLI](modules/bus-operator-billing))
+- `bus operator stripe` ([CLI](modules/bus-operator-stripe))
+- `bus integration billing` ([CLI](modules/bus-integration-billing))
+- `bus integration stripe` ([CLI](modules/bus-integration-stripe))
+- `bus integration usage` ([CLI](modules/bus-integration-usage))
 
 ## Follow Business Workflows {#follow-business-workflows}
 
@@ -84,17 +117,33 @@ description: Documentation hub for humans and AI agents using the Business Devel
 
 - `bus sheets` ([CLI](modules/bus-sheets))
 - `bus books` ([CLI](modules/bus-books))
+- `bus chat` ([CLI](modules/bus-chat))
 - `bus ui` ([CLI](modules/bus-ui))
 - `bus portal` ([CLI](modules/bus-portal))
+- `bus portal auth` ([CLI](modules/bus-portal-auth))
+- `bus portal ai` ([CLI](modules/bus-portal-ai))
+- `bus portal accounting` ([CLI](modules/bus-portal-accounting))
 
 ### Automation and integration
 
 - `bus api` ([CLI](modules/bus-api))
+- `bus api provider auth` ([CLI](modules/bus-api-provider-auth))
+- `bus api provider billing` ([CLI](modules/bus-api-provider-billing))
 - `bus api provider books` ([CLI](modules/bus-api-provider-books))
+- `bus api provider containers` ([CLI](modules/bus-api-provider-containers))
 - `bus api provider data` ([CLI](modules/bus-api-provider-data))
+- `bus api provider events` ([CLI](modules/bus-api-provider-events))
+- `bus api provider llm` ([CLI](modules/bus-api-provider-llm))
 - `bus api provider session` ([CLI](modules/bus-api-provider-session))
+- `bus api provider terminal` ([CLI](modules/bus-api-provider-terminal))
+- `bus api provider usage` ([CLI](modules/bus-api-provider-usage))
+- `bus api provider vm` ([CLI](modules/bus-api-provider-vm))
+- `bus auth` ([CLI](modules/bus-auth))
+- `bus billing` ([CLI](modules/bus-billing))
+- `bus containers` ([CLI](modules/bus-containers))
 - `bus run` ([CLI](modules/bus-run))
 - `bus agent` ([CLI](modules/bus-agent))
+- `bus work` ([CLI](modules/bus-work))
 - `bus secrets` ([CLI](modules/bus-secrets))
 - `bus dev` ([CLI](modules/bus-dev))
 - `bus update` ([CLI](modules/bus-update))
@@ -102,8 +151,20 @@ description: Documentation hub for humans and AI agents using the Business Devel
 - `bus gateway` ([CLI](modules/bus-gateway))
 - `bus factory` ([CLI](modules/bus-factory))
 - `bus events` ([CLI](modules/bus-events))
+- `bus integration` ([CLI](modules/bus-integration))
+- `bus integration billing` ([CLI](modules/bus-integration-billing))
+- `bus integration ssh runner` ([CLI](modules/bus-integration-ssh-runner))
+- `bus integration stripe` ([CLI](modules/bus-integration-stripe))
+- `bus integration usage` ([CLI](modules/bus-integration-usage))
+- `bus integration upcloud` ([CLI](modules/bus-integration-upcloud))
+- `bus operator` ([CLI](modules/bus-operator))
+- `bus operator auth` ([CLI](modules/bus-operator-auth))
+- `bus operator billing` ([CLI](modules/bus-operator-billing))
+- `bus operator stripe` ([CLI](modules/bus-operator-stripe))
+- `bus operator token` ([CLI](modules/bus-operator-token))
 - `bus faq` ([CLI](modules/bus-faq))
 - `bus inspection` ([CLI](modules/bus-inspection))
+- `bus vm` ([CLI](modules/bus-vm))
 
 ### Ledger foundation
 
@@ -234,8 +295,9 @@ The [module CLI reference](modules/index) covers every current top-level BusDK m
 
 ### Integration and quality
 
-- [Integration and future interfaces](integration/index)
+- [Integration and runtime interfaces](integration/index)
 - [Extensibility model](extensibility/index)
+- [Deployment and data control](integration/deployment-and-data-control)
 - [Testing](testing/index)
 - [References](references/index)
 - [Sources](references/link-list)
@@ -250,3 +312,4 @@ The [module CLI reference](modules/index) covers every current top-level BusDK m
 - [Overview](./overview/index)
 - [Module CLI reference](./modules/index)
 - [Workflow examples](./workflow/index)
+- [Deployment and data control](./integration/deployment-and-data-control)

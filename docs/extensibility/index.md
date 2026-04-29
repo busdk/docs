@@ -1,9 +1,9 @@
 ---
-title: "BusDK Design Spec: Extensibility model"
-description: "This section is split into **single-concept** documents:"
+title: "Extensibility model"
+description: BusDK extensibility docs for AI integration, external services, schema governance, events, ecosystem modules, and plugin datasets.
 ---
 
-## BusDK Design Spec: Extensibility model
+## Extension surfaces
 
 This section is split into **single-concept** documents:
 
@@ -11,7 +11,7 @@ This section is split into **single-concept** documents:
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../integration/future-interfaces">Future interfaces (APIs, dashboards, wrappers)</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../integration/future-interfaces">Runtime interfaces</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./ai-and-external-services">AI and external service integration</a> &rarr;</span>
 </p>

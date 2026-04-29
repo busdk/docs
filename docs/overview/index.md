@@ -1,21 +1,21 @@
 ---
-title: "BusDK Design Spec: Overview"
-description: Modular CLI-first accounting toolkit (schema-driven datasets with reviewable change history)
+title: "BusDK overview"
+description: BusDK is a modular platform for self-hostable AI products, deterministic CLIs, API providers, events, portals, and auditable business data.
 ---
 
-## BusDK Design Spec: Overview
+## What BusDK is
 
-Modular CLI-first accounting toolkit (schema-driven datasets with reviewable change history)
+BusDK is a modular platform for developing, hosting, billing, and operating AI products. Its current surface includes deterministic command-line tools, API providers, event workers, portal modules, VM and container runtime clients, authentication, billing, usage capture, and auditable workspace datasets.
 
 ### Purpose and scope
 
 This overview is split into **single-concept** documents:
 
-[Purpose and scope](./purpose-and-scope) and [Visual identity and branding on outputs](./visual-identity).
+[Purpose and scope](./purpose-and-scope), [Deployment and data control](../integration/deployment-and-data-control), and [Visual identity and branding on outputs](./visual-identity).
 
 ### Navigation
 
-Navigate from here to [Modules](../modules/index), [Design goals and requirements](../design-goals/index), [System architecture](../architecture/index), [Data format and storage](../data/index), and [CLI tooling and workflow](../cli/index). Compliance and business-context pages are [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack). Supporting material is in [Integration and future interfaces](../integration/index), [Extensibility model](../extensibility/index), [Data directory layout](../layout/index), [Example end-to-end workflow](../workflow/index), and [References and external foundations](../references/index). Detailed implementation design specifications exist in the private SDD workspace for contributors.
+Navigate from here to [Modules](../modules/index), [Design goals and requirements](../design-goals/index), [System architecture](../architecture/index), [Data format and storage](../data/index), and [CLI tooling and workflow](../cli/index). AI product operation is covered through [Integration and runtime interfaces](../integration/index), [AI and external service integration](../extensibility/ai-and-external-services), [Deployment and data control](../integration/deployment-and-data-control), and module pages for auth, billing, events, providers, portals, VM, containers, and operator commands. Compliance and business-context pages include [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit) and [Finnish company reorganisation (yrityssaneeraus) — audit and evidence pack](../compliance/fi-company-reorganisation-evidence-pack). Detailed implementation design specifications exist in the private SDD workspace for contributors.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -30,3 +30,4 @@ Navigate from here to [Modules](../modules/index), [Design goals and requirement
 - [Overview index](./index)
 - [Design goals index](../design-goals/index)
 - [Architecture index](../architecture/index)
+- [Deployment and data control](../integration/deployment-and-data-control)

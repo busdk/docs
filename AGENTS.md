@@ -10,6 +10,13 @@ use BusDK software. Do not use this site for commercial landing-page messaging
 (belongs in `./sdd/docs`).
 Do not link directly to private SDD pages from this public docs site; you may
 mention that private implementation design specifications exist.
+Current public docs should describe BusDK as a self-hostable platform for
+developing, hosting, billing, and operating AI products. Accounting,
+bookkeeping, filing, and compliance remain important documented use cases, but
+they are no longer the whole product scope. Keep deployment and data-control
+guidance factual and user-facing: managed Finnish cloud operation, dedicated
+deployment, and customer self-hosting are deployment models; contractual data
+processing terms are commercial/legal arrangements, not module behavior.
 
 ## Publication Boundary
 

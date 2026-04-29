@@ -6,6 +6,8 @@
   links:
     - label: Overview
       url: /overview/
+    - label: Deployment and data control
+      url: /integration/deployment-and-data-control
     - label: Design goals and requirements
       url: /design-goals/
     - label: Cost summary
@@ -179,8 +181,10 @@
   links:
     - label: Master data
       url: /master-data/
-    - label: Integration and future interfaces
+    - label: Integration and runtime interfaces
       url: /integration/
+    - label: Deployment and data control
+      url: /integration/deployment-and-data-control
     - label: Extensibility model
       url: /extensibility/
     - label: Testing

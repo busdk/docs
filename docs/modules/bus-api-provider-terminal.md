@@ -24,5 +24,10 @@ Session creation, input, and close require a Bus API JWT with audience
 `ai.hg.fi/api` and scope `terminal:write`. Read and output endpoints require
 `terminal:read`. Every operation is account-isolated by JWT `sub`.
 
+JWT validation is strict: tokens must be HS256 signed, use JWT type when `typ`
+is present, include `exp`, pass issued-at/expiry checks with configured clock
+skew, match the accepted audience, and match the configured issuer when one is
+set. `none` and wrong-algorithm tokens are rejected.
+
 The MVP backend is in-memory for local development. Production container or SSH
 execution should remain behind this provider boundary.

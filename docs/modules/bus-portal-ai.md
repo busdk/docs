@@ -12,3 +12,15 @@ prompts.
 Portal hosts mount the module under `/modules/ai/`. The module must use Bus API
 providers for backend work: auth, billing, LLM, containers, and terminal. It
 must not integrate directly with `bus-integration-*` workers.
+
+The module serves external JavaScript and reads the API token from the shared
+`bus-portal-auth` session. It calls billing status/setup/portal APIs, the
+OpenAI-compatible `/v1/chat/completions` API, user-owned container run APIs,
+and terminal session APIs with bearer authorization. Billing or entitlement
+failures are shown as guidance; the frontend does not make backend
+entitlement decisions.
+
+AI-assisted theme customization calls configured portal theme APIs for
+suggestions and persistence. It accepts only structured `--portal-*` theme
+tokens and rejects raw CSS, external resource references, nested CSS variable
+references, and rule breakouts before sending tokens to the persistence API.

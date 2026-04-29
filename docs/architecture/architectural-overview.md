@@ -1,13 +1,15 @@
 ---
 title: Architectural overview
-description: BusDK is a collection of loosely coupled modules centered around a canonical dataset with a reviewable, append-only change history.
+description: BusDK is a collection of loosely coupled modules for CLIs, APIs, events, portals, runtime workers, and auditable workspace datasets.
 ---
 
-## Architectural overview
+## Module architecture
 
-BusDK is a collection of loosely coupled modules centered around a canonical dataset with a reviewable, append-only change history. It intentionally avoids a monolithic application design and instead follows a “micro-tool” architecture: each feature area is implemented as an independent CLI tool (or service) that reads and writes shared workspace datasets (tables plus schemas) as repository data. Modules coordinate by sharing data and by relying on an append-only revision history, rather than by calling each other’s internal APIs.
+BusDK is a collection of loosely coupled modules for CLIs, API providers, event workers, portals, runtime clients, and auditable workspace datasets. It intentionally avoids a monolithic application design. Each feature area is implemented as an independent command, service, provider, or worker with a stable external contract.
 
-This design mirrors the practical benefits of Unix composability in modern toolchains, where interoperability arises from stable, simple interfaces and predictable conventions. See [The Art of Unix Programming: Basics of the Unix Philosophy](https://www.catb.org/esr/writings/taoup/html/ch01s06.html). In BusDK, the stable interface is the workspace datasets and their schemas: tables governed by a schema-driven data contract and organized in a consistent directory structure. The preferred default is that the repository is a Git repository and tables are stored as CSV, but Git and CSV are implementation choices rather than the definition of the architectural goal.
+For business-data modules, the stable interface is the workspace dataset: tables governed by schemas and organized in a consistent directory structure. For AI product modules, the stable interface may also be an HTTP route, event name, token scope, portal surface, or runtime worker contract. Modules should coordinate through those public contracts instead of calling each other's private internals.
+
+This design mirrors the practical benefits of Unix composability in modern toolchains, where interoperability arises from stable, simple interfaces and predictable conventions. See [The Art of Unix Programming: Basics of the Unix Philosophy](https://www.catb.org/esr/writings/taoup/html/ch01s06.html). The preferred default for workspace data is a Git repository with CSV tables, but Git and CSV are implementation choices rather than the definition of the architectural goal. The broader goal is deterministic operation across local CLIs, self-hosted services, managed deployments, and reviewable data workflows.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -22,3 +24,5 @@ This design mirrors the practical benefits of Unix composability in modern toolc
 - [Architecture index](./index)
 - [Data directory layout (principles)](../layout/layout-principles)
 - [Design goals index](../design-goals/index)
+- [Integration and runtime interfaces](../integration/index)
+- [Deployment and data control](../integration/deployment-and-data-control)

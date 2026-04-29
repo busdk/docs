@@ -1,15 +1,23 @@
 ---
 title: BusDK module CLI reference
-description: End-user guide to BusDK module CLIs, with a practical reading order for starting a workspace, importing data, posting entries, and producing reports.
+description: End-user guide to BusDK module CLIs for AI product hosting, runtime providers, automation, portals, billing, and auditable business workflows.
 ---
 
-## BusDK module CLI reference
+## How to read the module pages
 
 This section explains what each BusDK module is for, when you usually use it, and which command to try first. Command names follow [CLI command naming](../cli/command-naming). Most pages show a short synopsis and a few practical examples first; for the full flag list, run `bus <module> --help`.
 
 The adjacent [aiz](./aiz) toolchain is documented here too. It is not
 dispatched through `bus`, but it follows the same deterministic CLI style for
 single-file `.aiz` compression and offline restore with `unaiz`.
+
+## If you are building or operating an AI product
+
+BusDK's AI product surface is a set of cooperating modules rather than one monolithic server. Start with [bus-api](./bus-api) for the API host, [bus-auth](./bus-auth) and [bus-api-provider-auth](./bus-api-provider-auth) for login and scoped tokens, [bus-api-provider-llm](./bus-api-provider-llm) for OpenAI-compatible model proxying, [bus-api-provider-vm](./bus-api-provider-vm) and [bus-api-provider-containers](./bus-api-provider-containers) for runtime status and container runs, and [bus-events](./bus-events) with [bus-api-provider-events](./bus-api-provider-events) for request/reply and replayed event streams.
+
+Operational product controls are split into focused modules. [bus-billing](./bus-billing), [bus-api-provider-billing](./bus-api-provider-billing), [bus-integration-billing](./bus-integration-billing), [bus-integration-stripe](./bus-integration-stripe), [bus-integration-usage](./bus-integration-usage), and the `bus operator` family cover entitlement, checkout, usage export, internal catalog work, and service-token operations. Runtime-specific work belongs to [bus-integration-upcloud](./bus-integration-upcloud), [bus-integration-ssh-runner](./bus-integration-ssh-runner), [bus-vm](./bus-vm), and [bus-containers](./bus-containers).
+
+Developer and agent workflows usually start with [bus-agent](./bus-agent), [bus-dev](./bus-dev), [bus-run](./bus-run), [bus-work](./bus-work), [bus-secrets](./bus-secrets), and [bus-shell](./bus-shell). Browser-facing product surfaces are covered by [bus-portal](./bus-portal), [bus-portal-auth](./bus-portal-auth), [bus-portal-ai](./bus-portal-ai), [bus-portal-accounting](./bus-portal-accounting), [bus-ui](./bus-ui), [bus-chat](./bus-chat), [bus-books](./bus-books), and [bus-api-provider-terminal](./bus-api-provider-terminal).
 
 ## If you are starting a new workspace
 
@@ -39,7 +47,7 @@ Accounting domain modules are [`bus ledger`](./bus-ledger), [`bus accounts`](./b
 
 Reporting, quality, and filing modules are [`bus reports`](./bus-reports), [`bus replay`](./bus-replay), [`bus validate`](./bus-validate), [`bus vat`](./bus-vat), [`bus pdf`](./bus-pdf), [`bus filing`](./bus-filing), [`bus filing prh`](./bus-filing-prh), and [`bus filing vero`](./bus-filing-vero).
 
-All current top-level modules in this superproject have matching end-user pages under this reference section, including the supporting modules that are less often part of the first accounting workflow pass such as [`bus books`](./bus-books), [`bus faq`](./bus-faq), [`bus files`](./bus-files), [`bus gateway`](./bus-gateway), [`bus inspection`](./bus-inspection), [`bus portal`](./bus-portal), [`bus preferences`](./bus-preferences), [`bus shell`](./bus-shell), [`bus status`](./bus-status), and [`bus ui`](./bus-ui).
+All current top-level modules in this superproject have matching end-user pages under this reference section, including supporting modules that are less often part of the first accounting workflow pass such as [`bus auth`](./bus-auth), [`bus billing`](./bus-billing), [`bus chat`](./bus-chat), [`bus containers`](./bus-containers), [`bus events`](./bus-events), [`bus gateway`](./bus-gateway), [`bus inspection`](./bus-inspection), [`bus operator`](./bus-operator), [`bus portal`](./bus-portal), [`bus preferences`](./bus-preferences), [`bus shell`](./bus-shell), [`bus status`](./bus-status), [`bus ui`](./bus-ui), [`bus vm`](./bus-vm), and [`bus work`](./bus-work).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -55,6 +63,7 @@ All current top-level modules in this superproject have matching end-user pages 
 - [Standard global flags](../cli/global-flags)
 - [Module reference index](../modules/index)
 - [BusDK module feature table](./features)
+- [Deployment and data control](../integration/deployment-and-data-control)
 - [Independent modules](../architecture/independent-modules)
 - [Modularity](../design-goals/modularity)
 - [bus-books module](./bus-books)

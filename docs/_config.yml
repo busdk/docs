@@ -3,7 +3,7 @@
 #   description: Short page-specific description (used in meta description and og:description)
 #   image: Page-specific OG/twitter image (default below)
 title: BusDK Docs
-description: Documentation for BusDK, a modular CLI-first toolkit for running a business in a Git repository with reviewable workspace datasets and auditable workflows.
+description: Documentation for BusDK, a modular platform for developing, hosting, billing, and operating self-hostable AI products with auditable workspace data.
 image: /assets/preview/preview.webp
 theme: jekyll-theme-primer
 repository: busdk/docs
