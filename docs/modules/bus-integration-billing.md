@@ -19,6 +19,12 @@ Production deployments should use `BUS_BILLING_STORE_BACKEND=postgres` and
 `BUS_BILLING_DATABASE_URL` so account subscription and entitlement state is
 durable. Memory storage is for local development and tests.
 
+The PostgreSQL store contains the operational billing state used by Bus API
+providers: account subscription status, enabled feature scopes, provider
+customer and subscription identifiers, idempotently processed provider events,
+usage export state, and quota usage buckets. It is not a replacement for the
+payment provider ledger or invoice system.
+
 Plan quotas are provider-neutral and loaded by the billing integration from a
 quota config/catalog file. Each plan can define multiple simultaneous windows
 for the same feature and meter, for example per-minute and per-month token
@@ -96,6 +102,37 @@ configuration used for plan enforcement.
 The default provider event names target the current Stripe integration. The
 mapping is configurable through the Go `EventSessionProvider` and
 `EventMeterRecorder` boundaries for future providers.
+
+### Quota Configuration
+
+A quota rule connects a Bus feature, a usage meter, a time window, and a limit.
+The same plan can have several rules for the same feature. For example, an LLM
+plan can limit both tokens per minute and tokens per month; a container plan
+can limit runtime seconds per day and per month. When any matching quota is
+exhausted, entitlement checks deny new billable work before the API provider
+starts expensive processing.
+
+Common built-in meter names are `bus_llm_tokens` for LLM token usage and
+`bus_container_runtime_seconds` for successful container runtime. Additional
+meters can be added through the usage export policy in
+`bus-integration-usage` and corresponding plan quota rules.
+
+Quota counters are updated when usage export succeeds. Replayed usage export
+requests with the same idempotency key do not increment quota buckets again.
+
+### Production Flow
+
+In a Stripe-backed deployment, the billing provider receives a user checkout
+request from `bus-api-provider-billing`, asks `bus-integration-stripe` to create
+the hosted Checkout Session, and later receives a provider-neutral
+`bus.billing.subscription.update` event from the Stripe webhook path. Once the
+subscription is active, entitlement checks allow the enabled feature scopes.
+
+LLM and container API providers call the entitlement check before doing
+billable work. Accepted usage is recorded through `bus-integration-usage`,
+which can then emit usage export requests back to this billing worker. This
+keeps payment-provider details out of the API providers while still allowing
+plans to enforce limits for different usage metrics.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

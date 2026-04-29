@@ -15,6 +15,10 @@ service process used by Bus API deployments. Keeping usage storage in this
 worker lets model, VM, container, and future API providers report billable work
 without each service opening usage database credentials directly.
 
+For commercial deployments, run it with durable PostgreSQL storage and a
+billing export policy. The usage worker is the bridge between operational usage
+events and billing/quota accounting.
+
 ## Event Contract
 
 The worker consumes these request events and emits the matching response:
@@ -55,6 +59,10 @@ to `container:run` / `bus_container_runtime_seconds` using rounded-up seconds.
 Failed, aborted, or unmapped events are not billed unless an operator adds an
 explicit policy rule.
 
+Use explicit policy rules when a product plan charges or limits a new metric.
+The same mechanism supports LLM tokens, container runtime seconds, and future
+usage dimensions such as storage, files, jobs, or API calls.
+
 ## Running The Worker
 
 For local development, use the memory backend:
@@ -94,8 +102,27 @@ The worker can run as its own process or be registered into a shared
 `bus-integration` host through the Go `usageintegration.Registration(...)`
 function.
 
+### Billing Export Rules
+
+The default export policy maps successful LLM token usage to feature
+`llm:proxy` and meter `bus_llm_tokens`. It maps successful container run
+duration to feature `container:run` and meter
+`bus_container_runtime_seconds`, rounded up to whole seconds.
+
+Each exported usage request carries an idempotency key. The billing integration
+uses that key to avoid double-counting quota buckets and to avoid duplicate
+payment-provider meter events after retries.
+
+### Collector API
+
+`bus-api-provider-usage` exposes the internal collector feed for trusted
+backend jobs. It is separate from this worker. The provider gives collectors a
+JWT-secured HTTP read/delete interface, while this integration owns the event
+worker behavior and storage access used by API providers.
+
 ### Sources
 
 - [bus-integration-usage README](../../../bus-integration-usage/README.md)
-- [bus-integration](./bus-integration.md)
-- [bus-api-provider-usage](./bus-api-provider-usage.md)
+- [bus-integration](./bus-integration)
+- [bus-api-provider-usage](./bus-api-provider-usage)
+- [bus-integration-billing](./bus-integration-billing)

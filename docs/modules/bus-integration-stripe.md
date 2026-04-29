@@ -11,6 +11,11 @@ Stripe Checkout and Customer Portal sessions when deployment secrets are
 configured, records Stripe meter events, and defines Stripe-specific event DTOs.
 Public billing APIs and auth logic do not import Stripe code.
 
+Use this integration when a Bus deployment sells paid features through Stripe.
+End users still interact with `bus billing` and the Billing API; operators
+configure Stripe credentials, webhooks, products, prices, meters, and Customer
+Portal in the deployment.
+
 ### Events
 
 `bus.stripe.checkout_session.create.request` asks the Stripe integration to
@@ -19,7 +24,8 @@ create a Checkout Session. Requests can include a Bus feature scope such as
 
 `bus.stripe.checkout_session.create.response` returns a hosted Checkout URL. In
 development without `BUS_STRIPE_SECRET_KEY`, the URL is deterministic and local.
-With Stripe configuration, the worker creates a real Stripe Checkout Session.
+With Stripe configuration, the worker creates a real Stripe Checkout Session
+for the configured test or live account.
 
 `bus.stripe.portal_session.create.request` asks for a Stripe Customer Portal
 session.
@@ -63,6 +69,36 @@ Use these environment variables in deployments or untracked local test files:
 
 For old Stripe test accounts, pin `BUS_STRIPE_API_VERSION` explicitly.
 
+`BUS_STRIPE_SECRET_KEY` is the Stripe secret key, normally beginning with
+`sk_test_` for test mode or `sk_live_` for live mode. `BUS_STRIPE_WEBHOOK_SECRET`
+is the endpoint signing secret beginning with `whsec_`; it is not the Stripe
+publishable key. Browser publishable keys beginning with `pk_` are not needed
+by this server-side integration unless another frontend-specific flow is added.
+
+Pass secrets through the deployment environment, secret manager, or an
+untracked local environment file. Do not pass Stripe secret keys as command-line
+arguments.
+
+### Stripe Setup
+
+Create products, prices, and meters from a provider-neutral Bus catalog when
+possible:
+
+```sh
+bus operator billing catalog template > catalog.json
+bus operator stripe catalog sync --file catalog.json
+bus operator billing catalog put --file catalog.json
+```
+
+Configure Stripe Customer Portal in the Stripe Dashboard before enabling
+`bus billing portal`. Configure a Stripe webhook endpoint that forwards events
+to the Bus deployment path that verifies webhooks through this integration. The
+endpoint signing secret from that webhook becomes `BUS_STRIPE_WEBHOOK_SECRET`.
+
+In local development, Stripe CLI can forward signed webhooks to the local Bus
+webhook route. The CLI prints the `whsec_...` signing secret for that local
+listener.
+
 ### Live test-mode e2e
 
 Normal e2e is deterministic and avoids Stripe network calls. To validate the
@@ -77,6 +113,10 @@ customer, and Checkout Sessions. It verifies a signed checkout webhook into
 `bus.billing.subscription.update`, applies it through `bus-integration-billing`,
 checks `llm:proxy` entitlement, records one Stripe meter event, and verifies the
 result is not livemode.
+
+Use test-mode credentials for this validation. The test must never be pointed
+at live Stripe credentials unless the deployment has a separate live cutover
+procedure and explicit operator approval.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

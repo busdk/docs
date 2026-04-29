@@ -9,6 +9,10 @@ description: bus-api-provider-usage exposes JWT-secured internal usage event col
 backend collectors. It is not an end-user command module and does not provide a
 `bus usage` CLI.
 
+Use this provider when a deployment needs an HTTP collector feed for usage
+events after API providers and integrations have recorded them. End users
+should not call these endpoints.
+
 ### API
 
 ```text
@@ -36,6 +40,11 @@ container providers. Each item includes the storage `id`, optional idempotency
 `event_id`, `occurred_at`, optional `account_id`, `event_type`, and raw JSON
 `data`. Collectors should persist the page downstream before calling
 `DELETE /api/internal/usage-events` with the same pagination selector.
+
+The collector feed is internal infrastructure. Payment-provider export and
+quota bucket updates normally happen through `bus-integration-usage` and
+`bus-integration-billing`; collectors should not infer authorization or account
+ownership from caller-supplied data.
 
 ### Persistence
 
@@ -70,7 +79,18 @@ Plain JWT secret values are raw text even when they look like base64; use
 If no database URL is configured, `/readyz` returns a service-unavailable JSON
 response explaining that usage storage is unavailable.
 
+### Security Notes
+
+Use internal-audience JWTs only. End-user `aud=ai.hg.fi/api` tokens are not
+valid for this provider. Do not expose the internal usage API through public
+routes unless an API gateway enforces the same internal audience and scope
+checks.
+
+Usage records can contain operational metadata. Avoid placing bearer tokens,
+provider secrets, database URLs with passwords, SSH keys, or SMTP credentials
+inside usage `data`.
+
 ### Sources
 
 - [bus-api-provider-usage README](../../../bus-api-provider-usage/README.md)
-- [bus-integration-usage](./bus-integration-usage.md)
+- [bus-integration-usage](./bus-integration-usage)

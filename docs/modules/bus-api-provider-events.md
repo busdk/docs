@@ -10,6 +10,12 @@ It accepts authenticated event publishing requests and exposes authenticated
 event streams. Functional providers remain event-oriented and do not implement
 HTTP controllers themselves.
 
+Bus API providers and integrations use Events for request/reply workflows such
+as runtime wake-up, container runner work, billing status, usage export, and
+Stripe provider calls. End users may also use event APIs when the deployment
+grants the required domain scopes, but event access is still account- and
+scope-limited.
+
 ### API
 
 ```text
@@ -22,6 +28,10 @@ The provider verifies the normal Bus API JWT audience `ai.hg.fi/api` and derives
 account identity from `sub`; callers do not provide account IDs for
 authorization. Unprotected event names require `events:send` to publish and
 `events:listen` to stream.
+
+The provider stamps the event account from the JWT. Caller-supplied account
+metadata is not trusted for authorization. Streams only return events the token
+is allowed to receive, and user tokens cannot subscribe to unrelated accounts.
 
 Protected Bus integration events use domain scopes. VM events use `vm:read` or
 `vm:write`, public container events use scopes such as `container:read` and
@@ -73,3 +83,20 @@ For local development, use an obvious non-secret JWT secret and locally
 generated test tokens only. Plain secret values are raw text even when they look
 like base64; use `base64:<value>` only for an intentionally base64-encoded
 secret. Do not commit real deployment secrets.
+
+### Production Notes
+
+Use Redis or PostgreSQL for deployments that need restart tolerance or multiple
+processes. Use memory only for local development and tests. Keep wildcard
+streaming disabled unless an explicitly trusted internal/admin deployment needs
+it and the token audience/scope policy allows it.
+
+Provider and integration processes should use narrow tokens with only the
+domain scopes needed for the events they send and receive. Do not log bearer
+tokens or event payload fields that contain provider secrets.
+
+### Sources
+
+- [bus events](./bus-events)
+- [bus-integration](./bus-integration)
+- [Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes)

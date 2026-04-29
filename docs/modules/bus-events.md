@@ -11,8 +11,8 @@ JWTs as other Bus API endpoints, with the required domain scopes for each event
 name.
 
 The same module owns the shared Go contracts for event-oriented integrations.
-Functional providers should use those contracts or the Events API SDK and
-should not depend on HTTP controller internals.
+Functional providers use those contracts or the Events API SDK, so operators
+can run event workers without coupling them to HTTP controller internals.
 
 ### Common Tasks
 
@@ -45,12 +45,12 @@ listen timeout.
 `--color <auto|always|never>`, and `--no-color` provide the common Bus CLI
 working-directory and output controls.
 
-### Ownership Boundary
+### Module Boundary
 
 `bus-events` owns the CLI and SDK. `bus-api-provider-events` owns the public
-HTTP Events API server/controller. Other functional providers, such as a future
-UpCloud integration worker, should handle event envelopes and should not need
-to know how HTTP requests were mapped into those events.
+HTTP Events API server/controller. Functional providers, such as the UpCloud
+integration worker, handle event envelopes through the shared contracts instead
+of HTTP request details.
 
 ### Environment
 
@@ -66,7 +66,17 @@ auto-reads repository-local `.bus/` token files.
 Events API authorization is least-privilege and domain-scoped. The CLI does
 not decide which event names a token may access; it passes the normal Bus API
 JWT to the provider, and the provider maps event names to scopes such as
-`vm:write`, `container:run`, or `usage:read`. If a token is missing a required
-scope, the provider returns `403 Forbidden` and `bus events` prints the bounded
-provider diagnostic so the operator can request the correct scope with
+`vm:write`, `container:run`, `billing:read`, or `usage:read`. If a token is
+missing a required scope, the provider returns `403 Forbidden` and
+`bus events` prints the bounded provider diagnostic so the operator can request
+the correct scope with
 `bus auth token --scope "<scopes>"`.
+
+End-user tokens should only be granted scopes for user-accessible events.
+Service and operator maintenance events should use internal service tokens and
+internal routes where the deployment requires service-level access.
+
+### Sources
+
+- [bus-api-provider-events](./bus-api-provider-events)
+- [Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes)

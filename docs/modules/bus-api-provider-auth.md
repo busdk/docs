@@ -6,15 +6,17 @@ description: Bus auth provider verifies email ownership and issues short-lived A
 ## Auth Provider For Bus API
 
 `bus-api-provider-auth` is the authentication provider used by Bus API
-deployments that need AI Platform account access. Users register by email,
-verify email ownership with an OTP, wait for admin approval, and then request a
-short-lived JWT for api-proxy. Email is never the account ID, so an email change
-does not change the identity seen by api-proxy or billing systems.
+deployments that need account registration, approval, and API token issuing.
+Users register by email, verify email ownership with an OTP, wait for admin
+approval, and then request short-lived Bus API JWTs for services such as LLM
+hosting, billing, containers, events, and terminal access. Email is never the
+account ID, so an email change does not change the identity seen by API
+providers or billing systems.
 
 The public flow is passwordless but approval-gated. OTP verification returns an
 auth-service token with `aud=ai.hg.fi/auth`; it does not grant model access.
-Only an approved verified user can request an AI Platform token with
-`aud=ai.hg.fi/api` and `scope=llm:proxy`.
+Only an approved verified user can request a Bus API token with
+`aud=ai.hg.fi/api` and feature scopes such as `llm:proxy`.
 Approved users can request the same API-audience JWT with domain scopes such as
 `vm:read` and `container:run`, not broad event-pattern scopes. Those tokens use
 `aud=ai.hg.fi/api` and work for both REST APIs and Events API endpoints. The
@@ -72,11 +74,25 @@ requirements. Internal token issuing is separate from the public user flow at
 shared key. Internal service tokens may target either the auth-service audience
 or the normal Bus API audience with domain scopes.
 
-api-proxy should validate the JWT, read `sub` as `account_id`, check `aud` and
-`scope`, and record usage. It should not know emails, OTPs, or auth-service user
+API providers validate the JWT, read `sub` as `account_id`, check `aud` and
+`scope`, enforce their own account ownership rules, and record usage when work
+is billable. Providers should not know emails, OTPs, or auth-service user
 records.
+
+### Billing And Approval Boundary
+
+Approval controls whether a verified user may request feature scopes. Billing
+controls whether a paid feature may start work. For example, an approved user
+may receive an `llm:proxy` token, but `bus-api-provider-llm` can still deny a
+request with `billing_required` or `quota_exceeded` before waking a runtime.
+
+Admin and service operations use internal-audience tokens. End-user
+`aud=ai.hg.fi/api` tokens must not grant cross-account access, service
+maintenance powers, or billing catalog management.
 
 ### Sources
 
 - [bus-api](./bus-api)
 - [bus-auth](./bus-auth)
+- [bus-operator-auth](./bus-operator-auth)
+- [Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes)

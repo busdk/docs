@@ -26,10 +26,43 @@ and terminal session APIs with bearer authorization. Billing or entitlement
 failures are shown as guidance; the frontend does not make backend
 entitlement decisions.
 
+### User Experience
+
+Chat mode sends authenticated requests to the Bus LLM API. If the user is not
+logged in, not approved, missing billing setup, or over quota, the module shows
+the server-provided guidance instead of trying to bypass the provider decision.
+
+Container/Codex mode starts user-owned container work through the containers
+API and opens terminal access through the terminal API. Container runs are
+owned by the account in the API token and are subject to the same billing and
+quota checks as other container clients.
+
+The module can show billing setup and portal actions by calling the Billing
+API. It does not talk to Stripe directly and does not store payment provider
+secrets in the browser.
+
 AI-assisted theme customization calls configured portal theme APIs for
 suggestions and persistence. It accepts only structured `--portal-*` theme
 tokens and rejects raw CSS, external resource references, nested CSS variable
 references, and rule breakouts before sending tokens to the persistence API.
+
+### Required APIs
+
+An AI portal deployment normally provides these browser-reachable APIs:
+
+```text
+/api/v1/auth/*
+/api/v1/billing/*
+/v1/chat/completions
+/v1/models
+/api/v1/containers/status
+/api/v1/containers/runs
+/api/v1/terminal/sessions
+```
+
+The browser origin must be allowed by the portal Content Security Policy
+`connect-src`. Each backend API still validates its own JWT audience, scopes,
+account ownership, billing entitlement, and quota state.
 
 ### Sources
 

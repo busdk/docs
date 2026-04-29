@@ -28,6 +28,12 @@ workspace reads, uploads, report generation, and artifact access is provided by
 Bus API providers. Portal modules call those APIs from the browser; they do
 not call backend integration workers directly.
 
+For an end-user AI services portal, enable the auth and AI portal modules and
+provide browser-reachable API base URLs for auth, billing, LLM, containers, and
+terminal APIs. Users register and log in through the auth module, complete
+billing through the billing API, and then use chat or container-backed terminal
+features through the AI module.
+
 In local mode, the server prints a capability URL containing a random token.
 Opening that URL gives access to the local portal session. Use `--print-url`
 for scripts or terminals, or the default webview behavior for local desktop
@@ -53,6 +59,32 @@ multipart memory. Configure them with `--max-upload-request-bytes`,
 `BUS_PORTAL_*` environment variables. Public frontend-only deployments can
 disable local workspace APIs with `--disable-legacy-local-apis` or
 `BUS_PORTAL_DISABLE_LEGACY_LOCAL_APIS=1`.
+
+### Module Configuration
+
+`bus-portal-auth` provides registration, OTP login, logout, session discovery,
+and account status UI. It calls `bus-api-provider-auth`.
+
+`bus-portal-ai` provides chat, billing prompts, container session controls, and
+terminal entry points. It calls `bus-api-provider-billing`,
+`bus-api-provider-llm`, `bus-api-provider-containers`, and
+`bus-api-provider-terminal`.
+
+Portal modules should receive API base URLs through runtime configuration or
+deployment HTML data attributes. The portal host does not embed payment
+provider secrets, API tokens, database credentials, or integration worker
+credentials.
+
+### Deployment Notes
+
+Use HTTPS for hosted deployments. Configure CSP `connect-src` for every API
+origin the browser needs. Keep browser session state short-lived and rely on
+API-provider JWT validation and scope checks for protected data.
+
+When serving only public frontend code, disable legacy local workspace APIs.
+When local workspace APIs are enabled for desktop/local workflows, keep upload
+limits low enough for the deployment and do not serve generated untrusted HTML
+or SVG as active same-origin content.
 
 ### Sources
 

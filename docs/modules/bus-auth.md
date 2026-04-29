@@ -11,12 +11,13 @@ logic; it sends HTTP requests to a configured auth provider API.
 
 Use `register` to enter the waitlist, `login` to request an OTP, `verify` to
 exchange the OTP for an auth-service JWT, `status` to check approval state, and
-`token` to request an AI Platform `llm:proxy` JWT after approval. Admin users
-use `bus operator auth waitlist`, `bus operator auth approve`, and
+`token` to request a Bus API JWT after approval. Admin users use
+`bus operator auth waitlist`, `bus operator auth approve`, and
 `bus operator auth reject` with an auth-service JWT that has waitlist scopes.
 Use `token --scope "<scopes>"` to request an approved-user API JWT with domain
-scopes such as `vm:read` or `container:run`. The same `aud=ai.hg.fi/api` token
-is used for REST APIs and Events API endpoints.
+scopes such as `llm:proxy`, `billing:read`, `container:run`, or `terminal:read`.
+The same `aud=ai.hg.fi/api` token is used for REST APIs and Events API
+endpoints available to end users.
 
 ```bash
 bus auth --api-url http://127.0.0.1:8080 register --email user@example.com
@@ -46,6 +47,24 @@ reads or writes the auth-service session token at a caller-selected path.
 output to a file and `--quiet` suppresses normal output.
 
 `token --scope <scopes>` requests a space-separated API scope set.
+
+### Paid Feature Access
+
+Registration and OTP verification do not grant paid feature access. A user must
+be approved first, then request a token with the scopes needed by the feature.
+Billing may still be required by the feature provider before work starts.
+
+Common examples:
+
+```sh
+bus auth token --scope "billing:read billing:setup"
+bus auth token --scope "llm:proxy billing:read"
+bus auth token --scope "container:read container:run container:delete billing:read"
+```
+
+If the auth provider policy does not allow a requested scope for the account,
+the token request fails. If the token is allowed but billing is incomplete or
+quota is exhausted, the target API provider returns billing guidance.
 
 For a complete local flow, start the compose stack in
 `bus-api-provider-auth/examples/local-compose/`. It runs PostgreSQL, MailHog,

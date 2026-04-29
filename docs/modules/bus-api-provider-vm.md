@@ -12,6 +12,11 @@ In events mode, the provider sends VM lifecycle requests through the Bus Events
 API. A deployment can pair it with `bus-integration-upcloud` when the backing
 runtime is UpCloud.
 
+LLM deployments can use this provider behind `bus-api-provider-llm` runtime
+wake-up. The LLM provider should wake or check runtime readiness only for
+execution requests; model catalog reads can stay local and avoid waking GPU
+backends.
+
 ### API
 
 ```text
@@ -51,3 +56,6 @@ events.
 ### Sources
 
 - [bus-api-provider-vm README](../../../bus-api-provider-vm/README.md)
+- [bus-vm](./bus-vm)
+- [bus-api-provider-llm](./bus-api-provider-llm)
+- [bus-integration-usage](./bus-integration-usage)

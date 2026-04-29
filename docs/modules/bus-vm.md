@@ -16,10 +16,11 @@ bus vm status
 ```
 
 The token must be an AI Platform bearer JWT, usually obtained through
-`bus-auth`. By default the CLI reads the normal Bus API token from
-`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`; explicit
-`--token`, `--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that
-default. The token subject is the account UUID used by the AI Platform.
+`bus auth`. By default the CLI reads the normal Bus API token from
+`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`.
+`--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that default.
+Literal token values are not accepted on the command line. The token subject is
+the account UUID used by the AI Platform.
 
 ### API ownership
 
@@ -42,6 +43,6 @@ working-directory, output, color, and HTTP timeout controls.
 ### Examples
 
 ```bash
-BUS_AI_TOKEN=... bus vm --api-url https://ai.hg.fi status
 bus vm status --format text
+bus vm --api-url https://ai.hg.fi --token-file /run/secrets/bus-api-token status
 ```

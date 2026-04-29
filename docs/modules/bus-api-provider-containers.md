@@ -14,6 +14,10 @@ Events API. A deployment can pair it with `bus-integration-upcloud` for
 UpCloud runner lifecycle work and `bus-integration-ssh-runner` for SSH script
 execution.
 
+The public API is account-isolated. The provider derives the owner account from
+the JWT `sub`; callers cannot choose an account ID in request metadata. Users
+can list, read, and delete only runs owned by their own account.
+
 ### API
 
 ```text
@@ -47,10 +51,16 @@ quota exhaustion returns HTTP `402` with a `bus billing ...` command hint.
 Status and delete endpoints remain protected by JWT scopes and account
 ownership checks, not by quota checks.
 
-The internal runner lifecycle endpoints are for service operations during the
-old api-proxy replacement. They require a JWT with audience
-`ai.hg.fi/internal` and scope `container:admin`, and are not exposed through
-the end-user `bus containers` command surface. In events mode they publish
+Container plans can use the same billing quota system as LLM plans. A common
+meter is `bus_container_runtime_seconds`, produced from successful
+`container_run_finished` usage events. Operators can configure per-minute,
+hourly, daily, weekly, monthly, or total container runtime limits in the
+billing catalog or quota config.
+
+The internal runner lifecycle endpoints are for trusted service operations.
+They require a JWT with audience `ai.hg.fi/internal` and scope
+`container:admin`, and are not exposed through the end-user `bus containers`
+command surface. In events mode they publish
 `bus.containers.runner.status.request`,
 `bus.containers.runner.start.request`, or
 `bus.containers.runner.delete.request` and wait for the matching response
@@ -62,6 +72,11 @@ which sends a `profile`, `args`, and optional timeout. The API also accepts an
 explicit `image` and `command`. Successful responses include the runner name,
 image, args, exit code, stdout, stderr, duration, and runner status.
 
+`DELETE /api/v1/containers/runs/{run_id}` cancels or removes a user-owned run
+when the backend supports it. It must not remove runs owned by other accounts.
+Infrastructure runner deletion is separate and uses the internal runner
+endpoint with internal audience and admin scope.
+
 When started with `--usage-backend events`, container runs are also reported
 through `bus-integration-usage`. The provider records
 `container_run_requested` before backend delegation and then records
@@ -69,6 +84,35 @@ through `bus-integration-usage`. The provider records
 account UUID, profile, image, duration, exit code, runner name, and failure
 details when available.
 
+### End-User Access
+
+Approved users request a Bus API token with the container scopes their plan and
+approval policy allow:
+
+```sh
+bus auth token --scope "container:read container:run container:delete billing:read"
+```
+
+The token can be used by `bus containers` and by direct HTTP clients. Billing
+setup may still be required before run creation succeeds.
+
+### Operator Notes
+
+Run this provider with Events listener retry enabled in production so startup
+ordering and Events API restarts do not leave request/reply paths broken:
+
+```sh
+BUS_EVENTS_LISTENER_RETRY=1
+BUS_EVENTS_LISTENER_REQUIRED=1
+```
+
+Use internal runner endpoints only from trusted service or operator tooling.
+End-user container APIs are deliberately separate from runner lifecycle
+administration.
+
 ### Sources
 
 - [bus-api-provider-containers README](../../../bus-api-provider-containers/README.md)
+- [bus-containers](./bus-containers)
+- [bus-integration-usage](./bus-integration-usage)
+- [bus-api-provider-billing](./bus-api-provider-billing)
