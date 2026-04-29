@@ -30,7 +30,7 @@ description: Documentation hub for humans and AI agents using BusDK to build, ho
 
 - [Module capabilities](modules/features)
 - [Development cost summary](implementation/cost-summary)
-- [BusDK module pricing](implementation/module-pricing)
+- [Source package estimates](implementation/module-pricing)
 - [Module CLI quickstart](modules/index)
 
 ## Build and Operate AI Products {#build-and-operate-ai-products}

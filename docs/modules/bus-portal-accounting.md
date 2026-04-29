@@ -12,6 +12,9 @@ artifact preview/download.
 Portal hosts mount the module under `/modules/accounting/`. It is a UI module
 and should use Bus API/provider APIs for server behavior instead of calling
 integration workers directly.
+The module currently declares itself experimental and not default-enabled, so
+`bus-portal` requires an explicit `--experimental --enable-module accounting`
+opt-in before mounting it.
 
 The customer-facing navigation is Finnish: `Yleiskuva`, `Aineistot`, and
 `Tilinpäätös`.

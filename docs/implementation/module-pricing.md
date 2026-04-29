@@ -1,11 +1,13 @@
 ---
 title: BusDK source package pricing
-description: Pricing for BusDK source packages offered under source-available licenses, including dependency-inclusive totals and package pricing.
+description: Generated source-package price estimates for BusDK modules, including dependency-inclusive totals and documented pricing-model assumptions.
 ---
 
 ## Overview
 
-This page is about pricing for access to BusDK source code releases.
+This page shows generated estimates for access to BusDK source code releases.
+They are not final quotes. Contract price, deployment scope, support, data
+processing terms, and alternative licensing are agreed separately with sales.
 
 **All BusDK modules are currently available to test for free as binary releases.** Source code release access is sold separately on this page. Binary releases are free for now, and are planned to move to a subscription model later.
 
@@ -19,13 +21,34 @@ To buy source access for one or more modules, email [sales@hg.fi](mailto:sales@h
 
 {% if pricing and pricing.modules %}
 {% assign total_price_eur = pricing.total_price_eur | plus: 0 %}
-{% assign discounted_total_eur = total_price_eur | times: 0.8 | round: 2 %}
+{% assign source_total_cost_eur = pricing.source_total_cost_eur | default: total_price_eur | plus: 0 %}
+{% assign assumptions = pricing.assumptions %}
 
-All-inclusive total price is `{{ total_price_eur | eur_rounded }} EUR`. Full package price with 20% discount is `{{ discounted_total_eur | eur_rounded }} EUR`.
+Generated source-package estimate for all commercial modules is `{{ total_price_eur | eur_rounded }} EUR`.
+The full cost pool behind the estimate is `{{ source_total_cost_eur | eur_rounded }} EUR`;
+the public `bus` dispatcher is part of the cost model but is excluded from commercial source-package pricing.
 
 ### Pricing model
 
-Each module has a base price and a dependency-inclusive price. Base price covers only that module’s source release. Dependency-inclusive price covers that module plus its dependencies, calculated as a unique transitive set.
+Each module has a base estimate and a dependency-inclusive estimate. The base
+estimate covers only that module’s source release. Dependency-inclusive
+estimate covers that module plus its dependencies, calculated as a unique
+transitive set.
+
+The generator uses Git commit counts as the relative sizing weight between
+modules. It first builds a total cost pool, then allocates that pool across
+commercial `bus-*` modules by commit share. Current assumptions in this dataset:
+ChatGPT is estimated from `{{ assumptions.chatgpt_base_start_date }}` through
+`{{ assumptions.chatgpt_base_end_date }}` as `{{ assumptions.chatgpt_months }}`
+inclusive billing months at `{{ assumptions.chatgpt_monthly_eur | eur_rounded }} EUR`
+per month; Cursor is a fixed `{{ assumptions.cursor_total_usd | eur_rounded }} USD`
+assumption converted at `{{ assumptions.usd_to_eur_rate }}` USD/EUR; human labour
+has a date baseline from `{{ assumptions.human_labor_base_start_date }}` through
+`{{ assumptions.human_labor_base_end_date }}` (`{{ assumptions.human_labor_base_days }}`
+days) at `{{ assumptions.human_labor_base_per_day_eur | eur_rounded }} EUR` per
+day plus `{{ assumptions.human_labor_per_commit_total_eur | eur_rounded }} EUR`
+per commit. Module count itself is reported for transparency, but module sizes
+relative to each other still come from commits.
 
 {% assign category_core = "bus-init,bus-config,bus-data,bus-preferences" | split: "," %}
 {% assign category_ui = "bus-sheets,bus-books" | split: "," %}
@@ -40,7 +63,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Core commands
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_core contains module.name %}
@@ -57,7 +80,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### User interfaces
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_ui contains module.name %}
@@ -74,7 +97,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Automation and integration
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_automation contains module.name %}
@@ -91,7 +114,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Ledger foundation
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_ledger contains module.name %}
@@ -108,7 +131,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Journal flow
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_journal contains module.name %}
@@ -125,7 +148,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Assets and resources
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_assets contains module.name %}
@@ -142,7 +165,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Validation and reports
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_validation contains module.name %}
@@ -159,7 +182,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Filing targets
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% if category_filing_targets contains module.name %}
@@ -176,7 +199,7 @@ Each module has a base price and a dependency-inclusive price. Base price covers
 ### Other modules
 <table>
   <thead>
-    <tr><th>Module</th><th>Dependency-inclusive price (EUR)</th><th>Base price (EUR)</th><th>Dependencies</th></tr>
+    <tr><th>Module</th><th>Dependency-inclusive estimate (EUR)</th><th>Base estimate (EUR)</th><th>Dependencies</th></tr>
   </thead>
   <tbody>
     {% for module in pricing.modules %}{% unless all_frontpage_categories contains module.name %}

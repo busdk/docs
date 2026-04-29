@@ -27,6 +27,15 @@ Portal modules are UI modules only. They use `bus-api-*` /
 `bus-api-provider-*` APIs for backend behavior and must not integrate directly
 with `bus-integration-*` workers.
 
+Portal module mounting is explicit and readiness-aware. Each module declares
+whether it is stable or experimental and whether it belongs to the default
+module set. When no module list is configured, `bus-portal` mounts only
+default-enabled modules; the default set currently contains the auth module.
+Operators can mount specific stable modules with `--enable-module <id>`.
+Experimental modules, including the current AI and accounting modules, require
+`--experimental` in addition to explicit enablement. `--enable-module all`
+selects all non-experimental modules unless `--experimental` is also present.
+
 Capability-token URLs are valid for local/development "secret URL" mode. In
 that mode the full URL is intentionally shown to the user starting the service.
 Public web deployments should use normal frontend routes plus API-provider
@@ -67,6 +76,13 @@ provider APIs.
 `bus-portal` now applies frontend security headers to index, static asset, API,
 and mounted module responses. Configure extra API origins for CSP `connect-src`
 with `--api-connect-src` or `BUS_PORTAL_API_CONNECT_SRC`.
+
+Use module flags to keep public deployments small and predictable:
+
+```bash
+bus portal serve --print-url --enable-module auth
+bus portal serve --print-url --experimental --enable-module ai
+```
 
 Legacy upload limits are configurable with `--max-upload-request-bytes`,
 `--max-upload-file-bytes`, `--max-upload-aggregate-bytes`,

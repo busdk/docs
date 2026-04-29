@@ -17,6 +17,10 @@ they are no longer the whole product scope. Keep deployment and data-control
 guidance factual and user-facing: managed Finnish cloud operation, dedicated
 deployment, and customer self-hosting are deployment models; contractual data
 processing terms are commercial/legal arrangements, not module behavior.
+Pricing pages may show generated source-package estimates, but must not
+present them as final quotes. Document the generator assumptions near the
+numbers, including date-based human-labour baselines and fixed operating-cost
+assumptions when used.
 
 ## Publication Boundary
 

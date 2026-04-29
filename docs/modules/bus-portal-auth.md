@@ -12,6 +12,8 @@ logout, and waitlist/approval status. Auth business logic remains in
 Portal hosts mount the module under `/modules/auth/`. The module calls Bus auth
 APIs such as `/api/v1/auth/register`, `/api/v1/auth/otp/request`, and
 `/api/v1/auth/otp/verify`; it does not call integration workers directly.
+The module declares itself stable and default-enabled, so `bus-portal` may
+mount it when no explicit module list is configured.
 
 The module serves external JavaScript and exposes `window.BusPortalAuth`
 helpers for session discovery, authenticated fetches, OTP request/verify,

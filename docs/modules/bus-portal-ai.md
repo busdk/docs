@@ -12,6 +12,9 @@ prompts.
 Portal hosts mount the module under `/modules/ai/`. The module must use Bus API
 providers for backend work: auth, billing, LLM, containers, and terminal. It
 must not integrate directly with `bus-integration-*` workers.
+The module currently declares itself experimental and not default-enabled, so
+`bus-portal` requires an explicit `--experimental --enable-module ai` opt-in
+before mounting it.
 
 The module serves external JavaScript and reads the API token from the shared
 `bus-portal-auth` session. It calls billing status/setup/portal APIs, the
