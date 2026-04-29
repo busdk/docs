@@ -83,8 +83,8 @@ bus status readiness --year 2026 --format json --output ./out/status.json
 bus status evidence-coverage --year 2026 --format text
 bus status close-readiness --year 2026 --compliance fi --strict
 bus status -C ./workspace readiness --format tsv
-bus status --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" vm --format json
-bus status --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" containers --format json
+BUS_AI_TOKEN=... bus status --api-url https://ai.hg.fi vm --format json
+BUS_AI_TOKEN=... bus status --api-url https://ai.hg.fi containers --format json
 ```
 
 For AI Platform status commands, `bus status` uses the normal Bus API token

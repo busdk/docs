@@ -31,9 +31,21 @@ The API base URL can also be provided by `BUS_AUTH_API_URL`. `verify` stores the
 auth-service session token as `auth/token` under the Bus user config root by
 default. `token` stores the returned normal Bus API JWT as `auth/api-token` in
 the same root. The root is `BUS_CONFIG_DIR` when set, otherwise
-`$XDG_CONFIG_HOME/bus` or `~/.config/bus` on Unix-like systems. `--token` and
-`--token-file` remain explicit overrides. Tokens are never auto-written under
+`$XDG_CONFIG_HOME/bus` or `~/.config/bus` on Unix-like systems. Use
+`--token-file` or `BUS_AUTH_TOKEN` for automation; literal token values are not
+accepted on the command line. Tokens are never auto-written under
 repository-local `.bus/` paths.
+
+### Options
+
+`--help` and `--version` print command help or version information.
+
+`--api-url <url>` selects the auth provider base URL. `--token-file <path>`
+reads or writes the auth-service session token at a caller-selected path.
+`--timeout <duration>` sets the HTTP timeout. `--output <file>` writes command
+output to a file and `--quiet` suppresses normal output.
+
+`token --scope <scopes>` requests a space-separated API scope set.
 
 For a complete local flow, start the compose stack in
 `bus-api-provider-auth/examples/local-compose/`. It runs PostgreSQL, MailHog,

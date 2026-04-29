@@ -20,7 +20,6 @@ Run it as a standalone worker when you want a separate process:
 ```sh
 bus-integration-ssh-runner \
   --events-url "$BUS_EVENTS_API_URL" \
-  --api-token "$BUS_API_TOKEN" \
   --ssh-private-key "$BUS_SSH_RUNNER_PRIVATE_KEY" \
   --ssh-known-hosts "$BUS_SSH_RUNNER_KNOWN_HOSTS"
 ```

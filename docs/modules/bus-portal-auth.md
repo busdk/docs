@@ -11,7 +11,7 @@ logout, and waitlist/approval status. Auth business logic remains in
 
 Portal hosts mount the module under `/modules/auth/`. The module calls Bus auth
 APIs such as `/api/v1/auth/register`, `/api/v1/auth/otp/request`, and
-`/api/v1/auth/otp/verify`; it does not call integration workers directly.
+`/api/v1/auth/otp/verify`.
 It is the normal account entry point for portal deployments that need browser
 registration or login.
 

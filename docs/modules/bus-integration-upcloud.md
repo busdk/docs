@@ -9,22 +9,22 @@ description: bus-integration-upcloud is the event-driven UpCloud worker for Bus 
 and container operations. It listens for cloud-neutral Bus Events and emits
 correlated result/status events.
 
-This module must not expose UpCloud-specific REST APIs. REST controllers belong
-in cloud-neutral API provider modules.
+Use this integration when a Bus deployment should control UpCloud VMs or a
+configured UpCloud container runner through Bus Events. User-facing HTTP APIs
+remain available through modules such as `bus-api-provider-vm` and
+`bus-api-provider-containers`; this process is the UpCloud worker behind those
+event flows.
 
-### Current Status
-
-The module implements the reusable worker, Bus Events API worker mode,
-response-event contract, deterministic static provider, and real UpCloud HTTP
-API provider. It can handle VM status/start/stop and create or start the
-configured container runner. UpCloud still owns the container bootstrap and
-Podman scripts, but generic SSH transport is delegated to the independent
-`bus-integration-ssh-runner` worker through Bus Events.
+The worker supports Bus Events API mode, a deterministic static provider for
+local checks, and the real UpCloud HTTP API provider. It handles VM
+status/start/stop and can create, start, or clean up the configured container
+runner. Generic SSH transport is handled by
+`bus-integration-ssh-runner` through Bus Events.
 
 For local development, run the static provider against a Bus Events API:
 
 ```sh
-bus-integration-upcloud --events-url "$BUS_EVENTS_API_URL" --api-token "$BUS_API_TOKEN"
+bus-integration-upcloud --events-url "$BUS_EVENTS_API_URL"
 ```
 
 `BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
@@ -44,11 +44,122 @@ For real UpCloud VM lifecycle calls, use the `upcloud` provider:
 bus-integration-upcloud \
   --provider upcloud \
   --events-url "$BUS_EVENTS_API_URL" \
-  --api-token "$BUS_API_TOKEN" \
-  --upcloud-token "$UPCLOUD_TOKEN" \
   --vm-name "$UPCLOUD_VM_NAME" \
   --container-runner-name "$UPCLOUD_CONTAINER_RUNNER_NAME"
 ```
+
+### Command Options
+
+`--help` prints command help and exits.
+
+`--self-test` runs a deterministic in-memory worker self-test and exits.
+
+`--check-vm-status` prints one VM status response through the selected provider
+and exits instead of opening the Events listener.
+
+`--once` processes one event and exits.
+
+`--events-url <url>` sets the Bus Events API base URL. It defaults to
+`BUS_EVENTS_API_URL`.
+
+`--provider <static|upcloud>` selects the backend. `static` is for local tests;
+`upcloud` calls the UpCloud HTTP API.
+
+`--upcloud-api-url <url>` sets the UpCloud API base URL. It defaults to
+`UPCLOUD_API_BASE_URL` or the public UpCloud API.
+
+`--vm-name <name-or-uuid>` selects the UpCloud VM used for VM runtime events.
+It defaults to `UPCLOUD_VM_NAME`.
+
+`--container-runner-name <name-or-uuid>` selects the UpCloud server used as the
+container runner. It defaults to `UPCLOUD_CONTAINER_RUNNER_NAME`.
+
+`--container-codex-image <image>` sets the container image used for
+`profile=codex`. It defaults to `UPCLOUD_CONTAINER_CODEX_IMAGE` or Alpine.
+
+`--container-zone <zone>` sets the UpCloud zone for runner creation. It
+defaults to `UPCLOUD_CONTAINER_ZONE`.
+
+`--container-plan <plan>` sets the UpCloud plan for runner creation. It
+defaults to `UPCLOUD_CONTAINER_PLAN`.
+
+`--container-os <template>` sets the UpCloud OS template for runner creation.
+It defaults to `UPCLOUD_CONTAINER_OS`.
+
+`--container-os-storage-size <gb>` sets the runner OS disk size. It defaults to
+`UPCLOUD_CONTAINER_OS_STORAGE_SIZE`; zero leaves the provider default.
+
+`--container-network-mode <private|public>` selects runner networking. It
+defaults to `UPCLOUD_CONTAINER_NETWORK_MODE`.
+
+`--container-private-network <name-or-uuid>` selects the private network for
+private runner creation. It defaults to `UPCLOUD_CONTAINER_PRIVATE_NETWORK_NAME`.
+
+`--container-private-ip <ipv4>` requests a specific private IPv4 address for
+the runner. It defaults to `UPCLOUD_CONTAINER_PRIVATE_IP`.
+
+`--container-ssh-keys <paths>` gives space-separated SSH public key files used
+when creating a runner. It defaults to `UPCLOUD_CONTAINER_SSH_KEYS`.
+
+`--container-ssh-target <user@host>` sets an explicit runner SSH target and
+skips address discovery. It defaults to `UPCLOUD_CONTAINER_SSH_TARGET`.
+
+`--container-ssh-users <users>` gives space-separated usernames to try during
+target discovery. It defaults to `UPCLOUD_CONTAINER_USERNAME_CANDIDATES`.
+
+`--container-run-network <mode>` sets the Podman network mode for disposable
+runs. It defaults to `UPCLOUD_CONTAINER_RUN_NETWORK`.
+
+`--container-run-tmpfs-size <size>` sets the tmpfs size for disposable
+container work directories. It defaults to `UPCLOUD_CONTAINER_RUN_TMPFS_SIZE`.
+
+`--container-run-read-only` runs containers with a read-only root filesystem.
+It defaults to `UPCLOUD_CONTAINER_RUN_READ_ONLY` and is enabled by default.
+
+`--container-run-user <user>` sets the optional user inside the disposable
+container. It defaults to `UPCLOUD_CONTAINER_RUN_USER`.
+
+`--container-run-workdir <path>` sets the disposable container working
+directory. It defaults to `UPCLOUD_CONTAINER_RUN_WORKDIR`.
+
+`--container-run-timeout <duration>` sets the maximum foreground container run
+duration. It defaults to `UPCLOUD_CONTAINER_RUN_TIMEOUT`.
+
+`--container-start-timeout <duration>` sets the maximum runner start/bootstrap
+duration. It defaults to `UPCLOUD_CONTAINER_START_TIMEOUT`.
+
+`--runner-dns-servers <ip,ip>` sets optional DNS servers for provider-driven
+runner netplan bootstrap. It defaults to `BUS_RUNNER_DNS_SERVERS`.
+
+`--runner-netplan-mode <mac-match>` sets the safe interface matching mode for
+runner netplan bootstrap. It defaults to `BUS_RUNNER_NETPLAN_MODE`.
+
+`--runner-apply-netplan` enables provider-driven netplan before package
+installation. It defaults to `BUS_RUNNER_APPLY_NETPLAN`.
+
+`--runner-delete-stop-first` stops the runner before delete when required by
+provider state. It defaults to `BUS_RUNNER_DELETE_STOP_FIRST`.
+
+`--runner-delete-ready-states <states>` sets comma-separated generic states
+that are safe to delete. It defaults to `BUS_RUNNER_DELETE_READY_STATES`.
+
+`--runner-transient-states <states>` sets comma-separated generic states that
+are retried while deleting. It defaults to `BUS_RUNNER_TRANSIENT_STATES`.
+
+`--runner-delete-timeout <duration>` sets the maximum runner delete lifecycle
+wait. It defaults to `BUS_RUNNER_DELETE_TIMEOUT`.
+
+`--runner-delete-poll-interval <duration>` sets the runner delete lifecycle
+poll interval. It defaults to `BUS_RUNNER_DELETE_POLL_INTERVAL`.
+
+`--runner-delete-storage` deletes runner storage with the runner. It defaults
+to `BUS_RUNNER_DELETE_STORAGE`.
+
+`--runner-ssh-ready-timeout <duration>` sets the maximum wait for provider
+state and SSH TCP readiness. It defaults to `BUS_RUNNER_SSH_READY_TIMEOUT`.
+
+`--runner-ssh-ready-poll-interval <duration>` sets the runner SSH readiness
+poll interval. It defaults to `BUS_RUNNER_SSH_READY_POLL_INTERVAL`.
 
 Use `--check-vm-status` for a one-shot diagnostic that prints VM status and
 exits instead of listening for events. Real credentials must come from local

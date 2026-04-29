@@ -105,6 +105,17 @@ Lifecycle commands target one item when the id includes a child suffix such as
 CLI replays current group state and fans the lifecycle event out only to
 non-terminal child items.
 
+### Global Options
+
+`--help` and `--version` print command help or version information.
+
+`--api-url <url>` selects the Events API base URL. `--token-file <path>` reads
+the Bus API bearer token from a file. `--timeout <duration>` sets the HTTP and
+listen timeout.
+
+`--chdir <dir>`, `--output <file>`, `--format <text|json>`, and `--quiet`
+provide the common Bus CLI working-directory and output controls.
+
 ### Config And Auth
 
 Repo/project-local config is command-managed, non-secret JSON:

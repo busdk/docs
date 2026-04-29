@@ -10,8 +10,13 @@ calls the auth provider internal token endpoint and is not an end-user login
 flow.
 
 `issue --subject <id> [--audience <aud>] [--scope <scopes>]` creates a trusted
-token using an explicit internal shared key from `--internal-key`,
-`--internal-key-file`, or `BUS_OPERATOR_INTERNAL_KEY`.
+token using an internal shared key from `--internal-key-file` or
+`BUS_OPERATOR_INTERNAL_KEY`. Literal internal key values are not accepted on
+the command line.
+
+`--api-url <url>` selects the auth provider base URL. `--output <file>` writes
+output to a file, `--quiet` suppresses normal output, `--timeout <duration>`
+sets the HTTP timeout, and `--version` prints version information.
 
 Run `bus operator token --help` for the full command reference.
 

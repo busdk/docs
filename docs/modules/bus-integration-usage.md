@@ -62,8 +62,7 @@ For local development, use the memory backend:
 ```sh
 bus-integration-usage \
   --usage-backend memory \
-  --events-url "$BUS_EVENTS_API_URL" \
-  --api-token "$BUS_API_TOKEN"
+  --events-url "$BUS_EVENTS_API_URL"
 ```
 
 `BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
@@ -79,8 +78,7 @@ For deployed collection, use PostgreSQL:
 BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disable' \
 bus-integration-usage \
   --usage-backend postgres \
-  --events-url "$BUS_EVENTS_API_URL" \
-  --api-token "$BUS_API_TOKEN"
+  --events-url "$BUS_EVENTS_API_URL"
 ```
 
 Enable the default LLM and container export rules with

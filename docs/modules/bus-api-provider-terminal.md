@@ -6,8 +6,8 @@ description: bus-api-provider-terminal exposes authenticated user-owned web term
 ## `bus-api-provider-terminal` — terminal API provider
 
 `bus-api-provider-terminal` owns the API boundary for browser terminal access.
-Portal UI modules call this provider; they must not integrate directly with
-`bus-integration-*` workers.
+Portal UI modules call this provider for authenticated browser terminal
+sessions.
 
 ### API
 
@@ -29,7 +29,6 @@ is present, include `exp`, pass issued-at/expiry checks with configured clock
 skew, match the accepted audience, and match the configured issuer when one is
 set. `none` and wrong-algorithm tokens are rejected.
 
-The local backend stores terminal session state in memory. Production container
-or SSH execution should remain behind this provider boundary so portal clients
-always use the authenticated terminal API instead of direct integration-worker
-access.
+The local backend stores terminal session state in memory. Production
+deployments can connect this API boundary to container or SSH execution while
+keeping portal clients on the authenticated terminal API.

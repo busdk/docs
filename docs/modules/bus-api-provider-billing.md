@@ -16,7 +16,7 @@ audience with narrow billing scopes. Error responses redact bearer tokens,
 Stripe secret keys, and PostgreSQL passwords.
 
 Production deployments should set `BUS_BILLING_DATABASE_URL` or pass
-`--database-url` so operator-managed catalog data is durable. The provider
+`BUS_BILLING_DATABASE_URL` so operator-managed catalog data is durable. The provider
 creates a minimal PostgreSQL catalog schema when missing. Without a database
 URL, internal catalog endpoints return a deterministic storage-unavailable
 error.

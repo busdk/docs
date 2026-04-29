@@ -10,8 +10,7 @@ workspace summary, attachment upload/listing, evidence package generation, and
 artifact preview/download.
 
 Portal hosts mount the module under `/modules/accounting/`. It is a UI module
-and should use Bus API/provider APIs for server behavior instead of calling
-integration workers directly.
+that calls Bus API/provider APIs for server behavior.
 
 Enable the module from the portal host when you want to expose accounting
 workspace views in the browser:
@@ -29,9 +28,8 @@ and evidence-package start APIs. Artifact rendering uses provider-returned
 `preview_url` and `download_url` links and does not embed active
 generated/customer content same-origin.
 
-Server-side workspace mutation, report generation, and artifact serving do not
-belong in this UI module. Those behaviors belong behind provider APIs such as
-`bus-api-provider-books`.
+Server-side workspace mutation, report generation, and artifact serving are
+provided by APIs such as `bus-api-provider-books`.
 
 ### Sources
 

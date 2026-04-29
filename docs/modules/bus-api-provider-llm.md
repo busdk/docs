@@ -43,8 +43,8 @@ Catalog-mode `GET /v1/models` does not check billing entitlement, wake runtime,
 or probe the backend.
 
 For runtime wake-up, start the provider with `--runtime-backend events` and
-provide `--events-url` plus a normal Bus API token in `--api-token` or
-`BUS_API_TOKEN`. The provider then uses `bus.vm.status.request` and
+provide `--events-url` plus a normal Bus API token in `BUS_API_TOKEN`. The
+provider then uses `bus.vm.status.request` and
 `bus.vm.start.request` events through `bus-api-provider-events`; concrete cloud
 or SSH work remains in the corresponding `bus-integration-*` workers.
 After runtime wake-up, execution endpoints wait for the configured backend

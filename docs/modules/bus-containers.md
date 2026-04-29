@@ -20,10 +20,27 @@ bus containers delete run_123
 
 The token must be an AI Platform bearer JWT, usually obtained through
 `bus-auth`. By default the CLI reads the normal Bus API token from
-`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`; explicit
-`--token`, `--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that
-default. The service must use the JWT `sub` account UUID as the owner and must
-not trust a client-supplied account ID.
+`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`.
+`--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that default.
+Literal token values are not accepted on the command line. The service must use
+the JWT `sub` account UUID as the owner and must not trust a client-supplied
+account ID.
+
+### Options
+
+`--help` and `--version` print command help or version information.
+
+`--api-url <url>` selects the containers API base URL. `--token-file <path>`
+reads the bearer token from a file. `--timeout <duration>` sets the HTTP
+timeout.
+
+`--chdir <dir>`, `--output <file>`, `--format <json|text|tsv>`, `--quiet`,
+`--color <auto|always|never>`, and `--no-color` provide the common Bus CLI
+output and working-directory controls.
+
+`run --profile <name>` selects a run profile. `run --timeout-seconds <n>` sets
+the per-run timeout sent to the API. `--` ends Bus option parsing before the
+container command.
 
 ### API ownership
 

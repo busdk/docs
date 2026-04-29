@@ -32,4 +32,3 @@ module is selected.
 ### Sources
 
 - [bus-api](./bus-api)
-- SDD: `sdd/docs/modules/bus-api-provider-session.md`

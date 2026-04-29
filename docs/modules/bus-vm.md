@@ -29,13 +29,19 @@ owning this HTTP endpoint.
 
 ### Options
 
-Use `--api-url` to target another AI Platform deployment. Use `--token` for an
-inline bearer token or `--token-file` for a token stored by local tooling. Use
+Use `--api-url` to target another AI Platform deployment. Use `--token-file`,
+`BUS_AI_TOKEN`, `BUS_API_TOKEN`, or the default `bus auth` session for bearer
+tokens. Literal token values are not accepted on the command line. Use
 `--format json`, `--format text`, or `--format tsv` to select output.
+
+`--help` and `--version` print command help or version information.
+`--chdir <dir>`, `--output <file>`, `--quiet`, `--color <auto|always|never>`,
+`--no-color`, and `--timeout <duration>` provide common Bus CLI
+working-directory, output, color, and HTTP timeout controls.
 
 ### Examples
 
 ```bash
-bus vm --api-url https://ai.hg.fi --token "$BUS_AI_TOKEN" status
+BUS_AI_TOKEN=... bus vm --api-url https://ai.hg.fi status
 bus vm status --format text
 ```

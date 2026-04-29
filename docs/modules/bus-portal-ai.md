@@ -9,9 +9,8 @@ description: bus-portal-ai provides chat and Codex terminal browser UI for the m
 Codex/container session controls, terminal entry points, and billing/setup
 prompts.
 
-Portal hosts mount the module under `/modules/ai/`. The module must use Bus API
-providers for backend work: auth, billing, LLM, containers, and terminal. It
-must not integrate directly with `bus-integration-*` workers.
+Portal hosts mount the module under `/modules/ai/`. The module uses Bus API
+providers for backend work: auth, billing, LLM, containers, and terminal.
 
 Enable the module from the portal host when you want to expose AI chat or
 container-backed Codex terminal access:

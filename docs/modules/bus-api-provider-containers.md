@@ -1,6 +1,6 @@
 ---
 title: bus-api-provider-containers — container API provider
-description: bus-api-provider-containers is the planned cloud-neutral Bus API provider for user-owned container status and run lifecycle endpoints.
+description: bus-api-provider-containers exposes user-owned container status and run lifecycle endpoints.
 ---
 
 ## `bus-api-provider-containers` — container API provider
@@ -9,9 +9,10 @@ description: bus-api-provider-containers is the planned cloud-neutral Bus API pr
 container APIs. It owns cloud-neutral REST endpoints for container status and
 run lifecycle requests.
 
-Provider-specific cloud implementation details do not belong here. UpCloud
-behavior is planned for `bus-integration-upcloud`, which will consume Bus Events
-and publish result events.
+In events mode, the provider sends container lifecycle requests through the Bus
+Events API. A deployment can pair it with `bus-integration-upcloud` for
+UpCloud runner lifecycle work and `bus-integration-ssh-runner` for SSH script
+execution.
 
 ### API
 
@@ -29,9 +30,9 @@ Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default.
 Status requires `container:read`; run creation requires `container:run`; delete
 requires `container:delete`. The provider can run with a deterministic static
 backend for local tests or in Bus Events request/reply mode. In events mode,
-start the provider with `--backend events`, `--events-url`, and `--api-token`;
-`--api-token` is a normal Bus API JWT with audience `ai.hg.fi/api` and the
-container domain scopes needed for the events it sends and receives. The
+start the provider with `--backend events` and `--events-url`; `BUS_API_TOKEN`
+is a normal Bus API JWT with audience `ai.hg.fi/api` and the container domain
+scopes needed for the events it sends and receives. The
 provider process owns the response listener and correlates responses to
 in-flight HTTP requests.
 When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until

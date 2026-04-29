@@ -33,4 +33,3 @@ module is selected.
 
 - [bus-api](./bus-api)
 - [bus-data](./bus-data)
-- SDD: `sdd/docs/modules/bus-api-provider-data.md`

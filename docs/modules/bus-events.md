@@ -17,8 +17,8 @@ should not depend on HTTP controller internals.
 ### Common Tasks
 
 ```bash
-BUS_API_TOKEN="$(bus auth token --scope "vm:read vm:write" | jq -r .access_token)"
-bus events --api-token "$BUS_API_TOKEN" send --name example.ping --payload '{"ok":true}'
+bus auth token --scope "vm:read vm:write"
+bus events send --name example.ping --payload '{"ok":true}'
 bus events send --name bus.vm.start.request --payload '{"runtime":"default"}'
 bus events listen --name example.ping
 bus events listen --name example.job --delivery work --group workers --consumer worker-a
@@ -33,6 +33,18 @@ By default `listen` follows new events. Use `--replay` to include existing
 matching events and `--no-follow` to return after replaying the current
 history snapshot.
 
+### Global Options
+
+`--help` and `--version` print command help or version information.
+
+`--api-url <url>` selects the Events API base URL. `--token-file <path>` reads
+the Bus API bearer token from a file. `--timeout <duration>` sets the HTTP and
+listen timeout.
+
+`--chdir <dir>`, `--output <file>`, `--format <text|json>`, `--quiet`,
+`--color <auto|always|never>`, and `--no-color` provide the common Bus CLI
+working-directory and output controls.
+
 ### Ownership Boundary
 
 `bus-events` owns the CLI and SDK. `bus-api-provider-events` owns the public
@@ -43,13 +55,13 @@ to know how HTTP requests were mapped into those events.
 ### Environment
 
 `BUS_EVENTS_API_URL` sets the default Events API URL. `BUS_API_TOKEN` supplies
-the bearer token when `--api-token`, `--token`, and `--token-file` are omitted.
-If no token flag or environment variable is set, `bus events` reads the normal
-Bus auth API token from `auth/api-token` under the user Bus config root. The
+the bearer token when `--token-file` is omitted. If no environment variable is
+set, `bus events` reads the normal Bus auth API token from `auth/api-token` under the user Bus config root. The
 root is `BUS_CONFIG_DIR` when set, otherwise `$XDG_CONFIG_HOME/bus` or
 `~/.config/bus` on Unix-like systems. This lets a user or service run
 `bus events` after local Bus auth session setup without repeating token flags.
-The CLI never auto-reads repository-local `.bus/` token files.
+The CLI never accepts bearer tokens as command-line arguments and never
+auto-reads repository-local `.bus/` token files.
 
 Events API authorization is least-privilege and domain-scoped. The CLI does
 not decide which event names a token may access; it passes the normal Bus API

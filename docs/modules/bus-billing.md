@@ -29,6 +29,18 @@ The end-user CLI intentionally does not expose catalog, admin, Stripe, or
 product configuration commands. Operator workflows use modules such as
 `bus operator billing` and `bus operator stripe`.
 
+### Options
+
+`--help` and `--version` print command help or version information.
+
+`--api-url <url>` selects the Billing API base URL. `--token-file <path>` reads
+the bearer token from a file. `--timeout <duration>` sets the HTTP timeout.
+`--output <file>` writes command output to a file and `--quiet` suppresses
+normal output.
+
+`setup --return-url <url>` and `portal --return-url <url>` pass the post-flow
+return URL to the Billing API when creating hosted provider sessions.
+
 ### Credentials
 
 By default, `bus billing` reads the normal Bus API token saved by `bus auth`

@@ -18,9 +18,9 @@ child binaries, duplicate command logic, implement auth policy locally, or sign
 JWTs.
 
 ```bash
-bus operator auth --api-url http://127.0.0.1:8080 --token <admin-jwt> waitlist
-bus operator auth --api-url http://127.0.0.1:8080 --token <admin-jwt> approve --email user@example.com
-bus operator auth --api-url http://127.0.0.1:8080 --token <admin-jwt> reject --email user@example.com
+bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token waitlist
+bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token approve --email user@example.com
+bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token reject --email user@example.com
 ```
 
 `token issue` is for internal service bootstrap and installation automation. It
@@ -43,6 +43,12 @@ Git-style sections covering name, synopsis, description, commands, options,
 environment, examples, and related documentation. Run
 `bus operator <family> --help` for the focused command-family flags and
 environment variables.
+
+### Common Operator Flags
+
+`--version` prints the umbrella dispatcher version. Focused families document
+their own flags, including `--api-url`, `--token-file`, `--account`,
+`--api-key-file`, `--stripe-api-url`, and `--stripe-api-version`.
 
 ### Sources
 

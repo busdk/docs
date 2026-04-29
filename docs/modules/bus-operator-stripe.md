@@ -20,6 +20,14 @@ Use `BUS_STRIPE_SECRET_KEY` for the test secret key and
 `BUS_STRIPE_API_VERSION` when you need to pin response behavior for older Stripe
 accounts.
 
+Use `--api-key-file <path>` when the Stripe secret key is stored in an
+operator-managed local secret file. Literal Stripe API key values are not
+accepted on the command line. `--stripe-api-url <url>` selects the Stripe API
+base URL, `--stripe-api-version <version>` pins the Stripe API version,
+`--output <file>` writes output to a file, `--quiet` suppresses normal output,
+`--timeout <duration>` sets the HTTP timeout, and `--version` prints version
+information.
+
 Run `bus operator stripe --help` for the full command reference.
 
 ### Sources

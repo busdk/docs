@@ -49,8 +49,7 @@ enforces configurable total request, per-file, and file-count limits.
 and artifact metadata.
 
 `POST /api/v1/accounting/evidence-pack/start` invokes the configured provider
-evidence runner. The provider does not shell out to `bus-reports`; production
-wiring must use Go library integration.
+evidence runner for the deployment.
 
 `GET /api/v1/accounting/evidence-pack/artifact` downloads one generated artifact
 as an attachment after validating that the path stays inside the provider
@@ -62,4 +61,3 @@ as escaped text so active HTML or SVG cannot run in the portal origin.
 ### Sources
 
 - [bus-api](./bus-api)
-- SDD: `sdd/docs/modules/bus-api-provider-books.md`

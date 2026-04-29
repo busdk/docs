@@ -117,6 +117,12 @@ as "being refactored", "migration debt", "temporary", "MVP", "experimental",
 user-facing limitation that changes how the documented command/API should be
 used. Put engineering readiness and remaining work in the module `PLAN.md` or
 private `sdd/docs`, not in `docs/docs`.
+Avoid SDD-style module ownership rules in public pages. Phrases like "this
+module must not expose...", "REST controllers belong in...", or "provider
+details do not belong here" are implementation contracts and belong in
+`sdd/docs`. In public docs, state the user-visible result instead: which
+command/API the operator runs, which credentials or scopes are needed, and
+which related module/service provides the next operational step.
 
 For BusDK module SDDs in `docs/modules`, keep document control at the end of
 the page, after prev/index/next navigation and after `### Sources` when
