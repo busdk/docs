@@ -84,6 +84,26 @@ provider-backed APIs. Active legacy artifact formats (`.html`, `.htm`, and
 escaped text so generated/customer-controlled active content does not execute
 in the portal origin.
 
+### E2E Levels
+
+`make test-e2e` in `bus-portal` runs fast smoke checks by default. The default
+suite is for generic portal host behavior, safe theme loading, disabled legacy
+local APIs, and mounted portal modules.
+
+Browser, Docker image, and Docker Compose checks are intentionally opt-in
+because they are much slower and validate runtime packaging rather than normal
+source-level portal behavior:
+
+```bash
+RUN_BROWSER_E2E=1 make test-e2e
+RUN_DOCKER_E2E=1 make test-e2e
+E2E_SCOPE=full make test-e2e
+```
+
+Legacy local accounting route e2e scripts are not part of the `bus-portal`
+suite. Accounting behavior belongs in `bus-api-provider-books` and
+`bus-portal-accounting`.
+
 ### Sources
 
 - [bus-portal module page](/Users/jhh/git/busdk/busdk/docs/docs/modules/bus-portal.md)
