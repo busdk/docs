@@ -60,7 +60,8 @@ The request idempotency key is used for Stripe event identity and retry safety.
 Stripe API keys and webhook secrets are deployment secrets. Do not commit them
 to source control or print them in logs.
 
-Use these environment variables in deployments or untracked local test files:
+Use these environment variables in deployments or untracked local operator
+files:
 
 - `BUS_STRIPE_SECRET_KEY`
 - `BUS_STRIPE_WEBHOOK_SECRET`
@@ -99,24 +100,14 @@ In local development, Stripe CLI can forward signed webhooks to the local Bus
 webhook route. The CLI prints the `whsec_...` signing secret for that local
 listener.
 
-### Live test-mode e2e
+### Test Mode And Live Mode
 
-Normal e2e is deterministic and avoids Stripe network calls. To validate the
-real Stripe test-mode path with local credentials:
+Use Stripe test-mode credentials while configuring a new deployment. Test mode
+lets operators create products, prices, meters, customers, Checkout Sessions,
+and webhooks without charging real payment methods.
 
-```sh
-BUS_STRIPE_LIVE_E2E=1 make e2e
-```
-
-The live test creates isolated test products, prices, a billing meter, a test
-customer, and Checkout Sessions. It verifies a signed checkout webhook into
-`bus.billing.subscription.update`, applies it through `bus-integration-billing`,
-checks `llm:proxy` entitlement, records one Stripe meter event, and verifies the
-result is not livemode.
-
-Use test-mode credentials for this validation. The test must never be pointed
-at live Stripe credentials unless the deployment has a separate live cutover
-procedure and explicit operator approval.
+Switch to live-mode credentials only as part of an explicit production cutover.
+Keep live Stripe credentials isolated from local development environments.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -57,6 +57,5 @@ Run `bus operator billing --help` for the full command reference.
 
 ### Sources
 
-- [bus-operator-billing README](../../../bus-operator-billing/README.md)
 - [bus-api-provider-billing](./bus-api-provider-billing)
 - [bus-integration-billing](./bus-integration-billing)

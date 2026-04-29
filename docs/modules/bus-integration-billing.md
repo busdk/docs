@@ -17,7 +17,7 @@ importing provider SDKs or provider-specific packages.
 
 Production deployments should use `BUS_BILLING_STORE_BACKEND=postgres` and
 `BUS_BILLING_DATABASE_URL` so account subscription and entitlement state is
-durable. Memory storage is for local development and tests.
+durable. Memory storage is for local development.
 
 The PostgreSQL store contains the operational billing state used by Bus API
 providers: account subscription status, enabled feature scopes, provider

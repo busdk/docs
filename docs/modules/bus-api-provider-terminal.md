@@ -13,19 +13,11 @@ Use this provider when a web portal needs shell-style access to a user-owned
 runtime, such as a non-persistent container running Codex. The provider exposes
 an authenticated API surface for session creation, input, output, and cleanup.
 
-### API
+### Authentication
 
-```text
-POST   /api/v1/terminal/sessions
-GET    /api/v1/terminal/sessions/{id}
-GET    /api/v1/terminal/sessions/{id}/output
-POST   /api/v1/terminal/sessions/{id}/input
-DELETE /api/v1/terminal/sessions/{id}
-GET    /readyz
-```
+Terminal APIs require a Bus API JWT with audience `ai.hg.fi/api`.
 
-Session creation, input, and close require a Bus API JWT with audience
-`ai.hg.fi/api` and scope `terminal:write`. Read and output endpoints require
+Write operations require `terminal:write`. Read operations require
 `terminal:read`. Every operation is account-isolated by JWT `sub`.
 
 JWT validation is strict: tokens must be HS256 signed, use JWT type when `typ`
@@ -36,6 +28,44 @@ set. `none` and wrong-algorithm tokens are rejected.
 The local backend stores terminal session state in memory. Production
 deployments can connect this API boundary to container or SSH execution while
 keeping portal clients on the authenticated terminal API.
+
+### `POST /api/v1/terminal/sessions`
+
+Creates a terminal session for the authenticated account.
+
+Use this after the user has an approved account and the portal has a valid Bus
+API token.
+
+### `GET /api/v1/terminal/sessions/{id}`
+
+Returns metadata for one owned terminal session.
+
+The provider rejects reads for sessions owned by another account.
+
+### `GET /api/v1/terminal/sessions/{id}/output`
+
+Returns terminal output for one owned session.
+
+Use this endpoint for browser polling or streaming-style UI updates, depending
+on deployment configuration.
+
+### `POST /api/v1/terminal/sessions/{id}/input`
+
+Sends input to one owned terminal session.
+
+Treat terminal input as sensitive operational data. Do not log raw input in
+production.
+
+### `DELETE /api/v1/terminal/sessions/{id}`
+
+Closes one owned terminal session.
+
+Call this when the browser session ends or the owning container run is cleaned
+up.
+
+### `GET /readyz`
+
+Reports provider readiness.
 
 ### Portal Use
 

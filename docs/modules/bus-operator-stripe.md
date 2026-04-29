@@ -57,6 +57,5 @@ Run `bus operator stripe --help` for the full command reference.
 
 ### Sources
 
-- [bus-operator-stripe README](../../../bus-operator-stripe/README.md)
 - [bus-integration-stripe](./bus-integration-stripe)
 - [bus-operator-billing](./bus-operator-billing)

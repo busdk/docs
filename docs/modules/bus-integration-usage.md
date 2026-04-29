@@ -94,9 +94,8 @@ Enable the default LLM and container export rules with
 `--billing-export file --billing-export-policy <path>` or
 `BUS_USAGE_BILLING_EXPORT_POLICY` when plans include additional usage metrics.
 
-Use only non-secret local examples in documentation and tests. Real database
-URLs and Bus API tokens must come from deployment secrets or local untracked
-configuration.
+Use only non-secret local examples in documentation. Real database URLs and Bus
+API tokens must come from deployment secrets or local untracked configuration.
 
 The worker can run as its own process or be registered into a shared
 `bus-integration` host through the Go `usageintegration.Registration(...)`
@@ -122,7 +121,6 @@ worker behavior and storage access used by API providers.
 
 ### Sources
 
-- [bus-integration-usage README](../../../bus-integration-usage/README.md)
 - [bus-integration](./bus-integration)
 - [bus-api-provider-usage](./bus-api-provider-usage)
 - [bus-integration-billing](./bus-integration-billing)

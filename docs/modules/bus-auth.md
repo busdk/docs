@@ -82,8 +82,7 @@ commands.
 Run `bus auth --help` for the full command reference. The
 help output is organized into Git-style sections covering name, synopsis,
 description, commands, options, environment, examples, and related
-documentation. Automated tests validate that structure during normal quality
-runs.
+documentation.
 
 ### Sources
 

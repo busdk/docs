@@ -23,56 +23,158 @@ Approved users can request the same API-audience JWT with domain scopes such as
 provider only issues user API scopes allowed by `BUS_AUTH_API_USER_SCOPES`.
 
 The provider is enabled through `bus-api` as an explicit provider named `auth`.
-For local development, set `BUS_AUTH_HS256_SECRET` to a deployment secret value
-of at least 32 bytes before starting `bus api serve --provider auth`. Plain
-secret values are raw text even when they look like base64; use `base64:<value>`
-only for an intentionally base64-encoded secret.
-`BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS` configures the lifetime for trusted
-internal service tokens issued by `/api/internal/auth/token`; it defaults to 600
-seconds and should be raised for long-running trusted workers.
-Set `BUS_AUTH_STORE_PATH` when account identities and revocations must survive
-process restarts. Set `BUS_AUTH_POSTGRES_DSN` when the provider should use
-PostgreSQL persistence. Set `BUS_AUTH_OTP_SENDER=console` for a
-development-only sender that writes OTP codes to stdout with a `BUS_AUTH_OTP`
-prefix. Set `BUS_AUTH_SMTP_HOST` and `BUS_AUTH_SMTP_FROM` when OTPs should be
-delivered through an SMTP relay such as MailHog in local development.
 
 The local compose example in `bus-api-provider-auth/examples/local-compose/`
 starts PostgreSQL, MailHog, and `bus-api` with the auth provider enabled. The
 generic module path remains available at `/local-dev/v1/modules/auth`, and the
 production-friendly routes are available at `/local-dev/v1/api/v1/auth/*` and
 `/local-dev/v1/api/internal/auth/*`. It uses only non-secret development defaults and
-prefers the published `ghcr.io/busdk/bus-api:latest` image by default. Operators
-can add the local-build override file when testing a checkout. MailHog exposes
-its HTTP UI/API on `http://127.0.0.1:8025`, which is also what e2e tests use to
-read OTP email messages.
+prefers the published `ghcr.io/busdk/bus-api:latest` image by default. MailHog
+exposes its HTTP UI/API on `http://127.0.0.1:8025` so operators can read local
+OTP email messages.
 
 For an AI Platform smoke check, use the token returned by the local
 `bus auth` login and token flow against `https://ai.hg.fi/v1`. Do not depend on
 developer-specific checkout paths or external JWT-issuing commands.
 
 Use `bus-api-provider-auth --help` for operator-facing module help. The help
-output follows Git-style sections and is covered by automated tests so normal
-quality runs catch formatting regressions.
+output follows Git-style sections for name, synopsis, description, options,
+environment, examples, and related documentation.
 
-### API Surface
+### `BUS_AUTH_HS256_SECRET`
 
-The canonical provider paths are `POST /api/v1/auth/register`,
-`POST /api/v1/auth/otp/request`, `POST /api/v1/auth/otp/verify`,
-`GET /api/v1/auth/status`, `POST /api/v1/auth/token`,
-`POST /api/v1/auth/token/refresh`, `POST /api/v1/auth/logout`,
-`GET /api/v1/auth/me`, and `GET /api/v1/auth/check`. Admin waitlist endpoints
-are `GET /api/v1/auth/admin/waitlist`, `POST /api/v1/auth/admin/approve`, and
-`POST /api/v1/auth/admin/reject`. Current `/auth/*`, `/me`, and
-`/internal/token` paths remain aliases for local deployments.
+Sets the JWT signing secret.
 
-`GET /api/v1/auth/check` validates bearer JWT signature, expiry, token ID, and
-revocation state, then returns parsed claims. It is a diagnostic/auth-service
-check endpoint only; API providers still enforce their own audience and scope
-requirements. Internal token issuing is separate from the public user flow at
-`POST /api/internal/auth/token` and is protected by the configured internal
-shared key. Internal service tokens may target either the auth-service audience
-or the normal Bus API audience with domain scopes.
+Use a deployment secret value of at least 32 bytes. Plain values are raw text
+even when they look like base64; use `base64:<value>` only for intentionally
+base64-encoded secrets.
+
+### `BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS`
+
+Sets the lifetime for trusted internal service tokens issued by
+`/api/internal/auth/token`.
+
+The default is 600 seconds. Raise it only for trusted long-running workers that
+cannot rotate tokens more frequently.
+
+### `BUS_AUTH_STORE_PATH`
+
+Enables file-backed persistence for account identities and revocations.
+
+Use PostgreSQL for production deployments that need durable auth state.
+
+### `BUS_AUTH_POSTGRES_DSN`
+
+Enables PostgreSQL persistence.
+
+Store the DSN in deployment secrets or untracked operator configuration when it
+contains credentials.
+
+### `BUS_AUTH_OTP_SENDER`
+
+Selects the OTP sender.
+
+Use `console` only for local development. The console sender writes OTP codes
+to stdout with a `BUS_AUTH_OTP` prefix.
+
+### `BUS_AUTH_SMTP_HOST`
+
+Sets the SMTP host for email OTP delivery.
+
+MailHog is suitable for local development.
+
+### `BUS_AUTH_SMTP_FROM`
+
+Sets the sender address used for OTP email.
+
+### `POST /api/v1/auth/register`
+
+Creates or finds a registration candidate for an email address.
+
+New users start waitlisted. Registration alone does not issue paid API access.
+
+### `POST /api/v1/auth/otp/request`
+
+Creates a short-lived OTP challenge and sends it through the configured OTP
+provider.
+
+The console OTP provider is for local development only.
+
+### `POST /api/v1/auth/otp/verify`
+
+Verifies the OTP and returns an auth-service token when verification succeeds.
+
+The returned token uses audience `ai.hg.fi/auth`; it is not an LLM or container
+API token.
+
+### `GET /api/v1/auth/status`
+
+Returns the current user's verification and approval status.
+
+Use it after OTP verification to see whether the account is still waitlisted,
+approved, or rejected.
+
+### `POST /api/v1/auth/token`
+
+Issues a Bus API token for an approved user.
+
+The provider only grants scopes allowed by `BUS_AUTH_API_USER_SCOPES` and the
+account policy.
+
+### `POST /api/v1/auth/token/refresh`
+
+Refreshes an auth-service session when refresh is allowed by deployment
+configuration.
+
+### `POST /api/v1/auth/logout`
+
+Revokes or ends the current auth session.
+
+Clients should also clear local browser or CLI session storage.
+
+### `GET /api/v1/auth/me`
+
+Returns the current auth-service user identity and account information.
+
+Email remains auth-service data. API providers use the stable account UUID.
+
+### `GET /api/v1/auth/check`
+
+Validates a bearer JWT and returns parsed claims.
+
+This is a diagnostic auth-service endpoint. Domain API providers still enforce
+their own audience, scope, account ownership, and billing rules.
+
+### `GET /api/v1/auth/admin/waitlist`
+
+Lists waitlisted users for an authorized operator.
+
+Requires auth-service admin scopes.
+
+### `POST /api/v1/auth/admin/approve`
+
+Approves a verified waitlisted user.
+
+Approval creates or activates the stable account UUID used as API token `sub`.
+
+### `POST /api/v1/auth/admin/reject`
+
+Rejects a waitlisted user.
+
+Rejected users cannot request paid feature API tokens.
+
+### `POST /api/internal/auth/token`
+
+Issues trusted internal service tokens.
+
+This endpoint is separate from the public user flow and is protected by the
+configured internal shared key. Internal service tokens may target the
+auth-service audience or the normal Bus API audience with domain scopes.
+
+### Compatibility Paths
+
+Current `/auth/*`, `/me`, and `/internal/token` paths remain aliases for local
+deployments.
 
 API providers validate the JWT, read `sub` as `account_id`, check `aud` and
 `scope`, enforce their own account ownership rules, and record usage when work

@@ -117,6 +117,11 @@ as "being refactored", "migration debt", "temporary", "MVP", "experimental",
 user-facing limitation that changes how the documented command/API should be
 used. Put engineering readiness and remaining work in the module `PLAN.md` or
 private `sdd/docs`, not in `docs/docs`.
+Public end-user pages must not mention source-code release mechanics,
+implementation verification, test suites, e2e tests, quality gates, CI status,
+or source-tree-only validation details. Put those in module `PLAN.md`, module
+READMEs when developer-facing, or private `sdd/docs`; keep public docs focused
+on user/operator behavior and deployment usage.
 Avoid SDD-style module ownership rules in public pages. Phrases like "this
 module must not expose...", "REST controllers belong in...", or "provider
 details do not belong here" are implementation contracts and belong in
@@ -218,6 +223,11 @@ When this page's structure or behavior expectations change, update
 aligned.
 
 ## Interaction-driven updates
+
+When using `rg` against public docs for Markdown fence patterns, avoid putting
+literal triple backticks in shell command strings. Use safer structural
+patterns, single-quoted `-e` arguments, or split the scan into simpler
+patterns so the shell cannot treat backticks as command substitution.
 
 When user guidance adds or changes working rules, update this `AGENTS.md` in
 the same change so future runs follow the new rule without relying on memory.

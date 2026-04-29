@@ -28,6 +28,5 @@ Run `bus operator auth --help` for the full command reference.
 
 ### Sources
 
-- [bus-operator-auth README](../../../bus-operator-auth/README.md)
 - [bus-api-provider-auth](./bus-api-provider-auth)
 - [bus-auth](./bus-auth)

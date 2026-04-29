@@ -13,18 +13,16 @@ Use this provider when a deployment needs an HTTP collector feed for usage
 events after API providers and integrations have recorded them. End users
 should not call these endpoints.
 
-### API
+### Authentication
 
-```text
-GET    /api/internal/usage-events
-DELETE /api/internal/usage-events
-GET    /readyz
-```
+Requests use Bearer JWT authentication with audience `ai.hg.fi/internal`.
 
-Requests use Bearer JWT authentication. The default audience is
-`ai.hg.fi/internal`. Listing events requires `usage:read`; deleting events after
-successful collection requires `usage:delete`. The response format is JSON and
-errors use the common Bus API error envelope:
+Listing events requires `usage:read`. Deleting collected events requires
+`usage:delete`.
+
+### Error Format
+
+Errors use the common Bus API JSON envelope:
 
 ```json
 {
@@ -35,16 +33,34 @@ errors use the common Bus API error envelope:
 }
 ```
 
-List responses preserve mixed Bus usage records from LLM, runtime, and
-container providers. Each item includes the storage `id`, optional idempotency
-`event_id`, `occurred_at`, optional `account_id`, `event_type`, and raw JSON
-`data`. Collectors should persist the page downstream before calling
-`DELETE /api/internal/usage-events` with the same pagination selector.
-
 The collector feed is internal infrastructure. Payment-provider export and
 quota bucket updates normally happen through `bus-integration-usage` and
 `bus-integration-billing`; collectors should not infer authorization or account
 ownership from caller-supplied data.
+
+### `GET /api/internal/usage-events`
+
+Lists usage records for trusted collectors.
+
+Responses can include LLM, runtime, and container usage records. Each item
+contains storage `id`, optional idempotency `event_id`, occurrence time,
+optional `account_id`, event type, and raw JSON data.
+
+Collectors should persist a page downstream before deleting it.
+
+### `DELETE /api/internal/usage-events`
+
+Deletes collected usage records.
+
+Use the same pagination selector after the collector has safely persisted the
+page elsewhere.
+
+### `GET /readyz`
+
+Reports provider readiness.
+
+If no database URL is configured, readiness returns a service-unavailable JSON
+response explaining that usage storage is unavailable.
 
 ### Persistence
 
@@ -57,11 +73,6 @@ belong to downstream billing systems.
 `bus-integration-usage` is the event-worker boundary for usage business logic
 and storage access. This provider remains the JWT-secured HTTP facade for
 trusted collectors.
-
-The module e2e suite exercises the collector path against PostgreSQL. It uses
-`BUS_USAGE_E2E_DATABASE_URL` when provided, or a disposable Docker Compose
-PostgreSQL service when Docker is available, then writes a usage event through
-`bus-integration-usage` and reads/deletes it through this HTTP provider.
 
 ### Local Development
 
@@ -76,9 +87,6 @@ bus-api-provider-usage --addr 127.0.0.1:8080
 Plain JWT secret values are raw text even when they look like base64; use
 `base64:<value>` only for an intentionally base64-encoded secret.
 
-If no database URL is configured, `/readyz` returns a service-unavailable JSON
-response explaining that usage storage is unavailable.
-
 ### Security Notes
 
 Use internal-audience JWTs only. End-user `aud=ai.hg.fi/api` tokens are not
@@ -92,5 +100,4 @@ inside usage `data`.
 
 ### Sources
 
-- [bus-api-provider-usage README](../../../bus-api-provider-usage/README.md)
 - [bus-integration-usage](./bus-integration-usage)

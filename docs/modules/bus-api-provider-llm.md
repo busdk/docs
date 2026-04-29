@@ -15,91 +15,152 @@ OpenAI-compatible API can be used by tools such as `bus-agent`, but existing
 non-Bus model providers and credential flows can remain available in those
 client tools.
 
-### API
+### Authentication
 
-```text
-GET  /readyz
-GET  /v1/models
-POST /v1/responses
-POST /v1/chat/completions
-POST /v1/completions
-POST /v1/embeddings
-```
+Execution endpoints require a Bearer JWT with audience `ai.hg.fi/api` and
+scope `llm:proxy`.
 
-Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default
-and require `llm:proxy`. The JWT `sub` must be the stable account UUID. The
-provider forwards execution requests to the configured backend, strips client
-`Authorization` and `Proxy-Authorization` before forwarding, streams backend
-responses to the caller, and records request lifecycle plus token usage through
-direct usage storage or through `bus-integration-usage`.
+The JWT `sub` is the account UUID used for billing and usage records.
 
-When `--billing-backend events` is enabled, execution endpoints also require an
-active provider-neutral billing entitlement from `bus-integration-billing`
-before runtime wake-up or backend proxying. Denied access returns
-`billing_required` with `bus billing setup` guidance, or `quota_exceeded` when
-the active plan has exhausted a configured quota window.
+### `GET /v1/models`
 
-`GET /v1/models` uses a configured local model catalog by default, so listing
-models does not wake GPU backends. Configure it with `--model-catalog <path>` or
-`BUS_LLM_MODEL_CATALOG`. Use `--models-backend proxy` only when a deployment
-explicitly wants model listing forwarded to the backend.
-Catalog-mode `GET /v1/models` does not check billing entitlement, wake runtime,
-or probe the backend.
+Returns the model catalog shown to end users.
 
-For runtime wake-up, start the provider with `--runtime-backend events` and
-provide `--events-url` plus a normal Bus API token in `BUS_API_TOKEN`. The
-provider then uses `bus.vm.status.request` and
-`bus.vm.start.request` events through `bus-api-provider-events`; concrete cloud
-or SSH work remains in the corresponding `bus-integration-*` workers.
-After runtime wake-up, execution endpoints wait for the configured backend
-service readiness path before proxying. Configure `--backend-ready-path`,
-`--backend-ready-timeout`, `--backend-ready-poll-interval`, and
-`--backend-ready-statuses`, or the matching `BUS_LLM_BACKEND_READY_*`
-environment variables. When runtime events are enabled and no readiness path is
-supplied, the default path is `/v1/models`. Catalog-mode `GET /v1/models` still
-returns local configured data and does not wake or probe the backend.
-Events response listeners use the shared `BUS_EVENTS_LISTENER_*` retry
-environment so the provider can start before Events API and reconnect after
-stream restarts; static-token auth failures fail fast by default. When
-`BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until the
-required runtime and usage response streams are connected.
-Billing entitlement response streams are included in readiness when
-`--billing-backend events` is used with required listeners.
+By default this endpoint uses the configured local catalog. It does not wake
+GPU runtimes, check billing entitlement, or probe the backend.
 
-Typical production flags and environment include:
+Use proxy mode only when the deployment intentionally wants model listing to be
+forwarded to the backend.
 
-```sh
-BUS_API_TOKEN_FILE=/run/secrets/bus-api-token \
-bus-api-provider-llm \
-  --addr 127.0.0.1:8080 \
-  --backend-url http://127.0.0.1:11434 \
-  --model-catalog /etc/bus/llm-model-catalog.json \
-  --runtime-backend events \
-  --usage-backend events \
-  --billing-backend events \
-  --events-url http://127.0.0.1:8090/api/v1/events \
-  --backend-ready-path /v1/models
-```
+### `POST /v1/chat/completions`
 
-The provider token used for Events should be deployment-managed and should have
-only the scopes needed for runtime, usage, and billing event exchange. Do not
-pass bearer tokens as command-line arguments.
+Proxies OpenAI-compatible chat completion requests to the configured backend.
 
-Streaming chat/completion requests that set `stream=true` are amended with
-`stream_options.include_usage=true` when possible, so streamed responses can
-include billing usage. The provider records `request_started`, `runtime_ready`,
-`backend_request_started`, `backend_request_finished`, `usage_recorded`,
-`usage_missing`, `request_failed`, and `client_aborted`. Client-abort recording
-uses a bounded post-response context so a disconnected streaming caller does not
-hide the terminal usage event.
+Streaming requests are forwarded chunk by chunk. When possible, the provider
+adds `stream_options.include_usage=true` so streamed responses can include
+token usage for billing.
 
-The module e2e suite proves the replacement flow with local non-secret
-components: `bus auth` issues the model token, Events API wakes the runtime,
-the proxy streams the backend response, `bus-integration-usage` persists usage
-to PostgreSQL, and `bus-api-provider-usage` exposes collector read/delete.
-Set `BUS_LLM_E2E_DATABASE_URL` or `BUS_USAGE_E2E_DATABASE_URL` to use an
-existing local PostgreSQL database, or let the e2e suite start a disposable
-Docker Compose PostgreSQL service when Docker is available.
+### `POST /v1/completions`
+
+Proxies OpenAI-compatible text completion requests.
+
+The provider applies the same authentication, billing, runtime readiness, and
+usage recording behavior as chat completions.
+
+### `POST /v1/responses`
+
+Proxies OpenAI-compatible Responses API requests.
+
+Use this endpoint for clients that target the newer OpenAI-compatible response
+shape.
+
+### `POST /v1/embeddings`
+
+Proxies OpenAI-compatible embedding requests.
+
+Embedding requests are authenticated and metered under the same account as
+other execution requests.
+
+### `GET /readyz`
+
+Reports provider readiness.
+
+When required Events listeners are enabled, readiness stays unhealthy until the
+runtime, usage, and billing response streams are connected.
+
+### Billing Enforcement
+
+When `--billing-backend events` is enabled, execution endpoints check
+entitlement before runtime wake-up or backend proxying.
+
+Denied access returns `billing_required` or `quota_exceeded` with guidance from
+the billing system.
+
+### Runtime Wake-Up
+
+When `--runtime-backend events` is enabled, the provider uses VM runtime events
+to make the backend available before forwarding execution requests.
+
+Model catalog reads do not trigger runtime wake-up.
+
+### Usage Recording
+
+The provider records request lifecycle and token-usage events through direct
+storage or `bus-integration-usage`.
+
+Client disconnects during streaming cancel upstream work and record a terminal
+abort/failure event when backend work may have started.
+
+### `--addr <addr>`
+
+Selects the listen address for the provider.
+
+### `--backend-url <url>`
+
+Sets the OpenAI-compatible backend URL used for execution requests.
+
+### `--model-catalog <path>`
+
+Loads the local `/v1/models` catalog from a JSON file.
+
+The matching environment variable is `BUS_LLM_MODEL_CATALOG`.
+
+### `--models-backend <catalog|proxy>`
+
+Selects how `/v1/models` is served.
+
+Use `catalog` for production deployments that should not wake GPU backends on
+model listing. Use `proxy` only when backend model listing is intended.
+
+### `--runtime-backend <none|events>`
+
+Controls runtime wake-up.
+
+Use `events` when the provider should ask the Bus VM/runtime layer to start or
+verify the backend before execution requests.
+
+### `--usage-backend <none|events>`
+
+Controls usage recording.
+
+Use `events` when usage should be collected by `bus-integration-usage`.
+
+### `--billing-backend <none|events>`
+
+Controls billing entitlement checks.
+
+Use `events` for paid LLM plans.
+
+### `--events-url <url>`
+
+Sets the Bus Events API URL used by runtime, usage, and billing event backends.
+
+Provide the provider's Events token through deployment-managed configuration,
+such as `BUS_API_TOKEN`. Do not pass bearer tokens as command-line arguments.
+
+### `--backend-ready-path <path>`
+
+Sets the backend readiness path checked after runtime wake-up.
+
+Common values are `/v1/models` for OpenAI-compatible backends and `/api/tags`
+for Ollama-compatible backends.
+
+### `--backend-ready-timeout <duration>`
+
+Sets the maximum time to wait for backend readiness.
+
+### `--backend-ready-poll-interval <duration>`
+
+Sets the delay between backend readiness attempts.
+
+### `--backend-ready-statuses <codes>`
+
+Sets the HTTP status codes that count as backend-ready.
+
+### `BUS_EVENTS_LISTENER_REQUIRED`
+
+When set to `1`, readiness requires the Events response listeners needed by the
+enabled backends.
 
 ### End-User Access
 
@@ -131,25 +192,12 @@ terminal failure/abort usage event when backend work may have started. This
 keeps billing and operational records aligned with actual work attempted by the
 service.
 
-The complete paid LLM billing flow is available as an opt-in e2e because it
-uses Docker Compose and Stripe test-mode APIs:
-
-```sh
-set -a
-. ../.env
-set +a
-BUS_LLM_FULL_BILLING_E2E=1 make e2e
-```
-
-The local `.env` must provide Stripe test values such as
-`BUS_STRIPE_SECRET_KEY` and `BUS_STRIPE_WEBHOOK_SECRET`; do not commit it. The
-suite starts PostgreSQL and MailHog, registers a user by email OTP, verifies
-waitlist denial, approves the user through the internal auth route, creates an
-isolated Stripe test price, verifies checkout and webhook entitlement, performs
-a streamed LLM call, persists usage, exports usage to a Stripe meter, and checks
-account isolation, internal-only billing authorization, backend auth-header
-stripping, and secret redaction.
+For Stripe-backed deployments, configure billing and Stripe integrations before
+enabling paid LLM access for users. Keep Stripe keys and webhook secrets in
+deployment secrets or untracked local operator configuration.
 
 ### Sources
 
-- [bus-api-provider-llm README](../../../bus-api-provider-llm/README.md)
+- [bus-billing](./bus-billing)
+- [bus-integration-usage](./bus-integration-usage)
+- [bus-api-provider-vm](./bus-api-provider-vm)

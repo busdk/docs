@@ -21,58 +21,103 @@ it is missing. Without a database URL, internal catalog endpoints return a
 deterministic storage-unavailable error instead of silently using volatile
 storage.
 
-### API
+### Public Authentication
 
-`GET /api/v1/billing/status` returns billing state, enabled features, current
-quota usage, setup guidance, and upgrade guidance for the caller. It requires
-an end-user API JWT with `aud=ai.hg.fi/api` and `billing:read`.
+Public endpoints require an end-user API JWT with audience `ai.hg.fi/api`.
+The account is always derived from JWT `sub`.
 
-`POST /api/v1/billing/checkout-session` creates a hosted billing setup URL for
-the caller. It requires `aud=ai.hg.fi/api` with `billing:setup`. The response
-is provider-neutral and contains a URL that may point to Stripe Checkout or
-another configured payment provider.
+### Internal Authentication
 
-`POST /api/v1/billing/portal-session` creates a hosted billing portal URL for
-the caller. It requires `aud=ai.hg.fi/api` with `billing:read`. The portal is
-for payment method, invoice, and subscription management in the configured
-payment provider.
+Internal endpoints require audience `ai.hg.fi/internal` and narrow billing
+scopes. End-user API tokens are rejected.
 
-`GET /readyz` reports process readiness.
+### `GET /api/v1/billing/status`
 
-`GET /api/internal/billing/catalog` returns the active provider-neutral billing
-catalog. It requires `aud=ai.hg.fi/internal` with `billing:catalog:read`.
+Returns billing state for the authenticated account.
 
-`PUT /api/internal/billing/catalog` replaces the active provider-neutral billing
-catalog. It requires `aud=ai.hg.fi/internal` with `billing:catalog:write`.
+The response can include enabled features, current quota usage, setup guidance,
+and upgrade guidance. Requires `billing:read`.
 
-The catalog is provider-neutral JSON for products, plans, prices, usage meters,
-plan quotas, and optional non-secret provider mappings. A plan may define
-multiple quota windows at the same time, such as `minute`, `hour`, `day`,
-`week`, `month`, and `total`. Stripe-specific synchronization is handled
-separately by `bus operator stripe`; quota enforcement is handled by
-`bus-integration-billing`.
+### `POST /api/v1/billing/checkout-session`
 
-Catalog data should describe the commercial plan in Bus terms: feature scopes
-such as `llm:proxy` and `container:run`, meter names such as
-`bus_llm_tokens` and `bus_container_runtime_seconds`, limits, and optional
-upgrade targets. Keep secret provider credentials out of the catalog.
+Creates a hosted billing setup URL for the authenticated account.
 
-`GET /api/internal/billing/accounts/{account_id}/status` returns billing status
-for an operator-selected account. It requires `aud=ai.hg.fi/internal` with
-`billing:read`.
+The URL may point to Stripe Checkout or another configured provider. Requires
+`billing:setup`.
 
-`POST /api/internal/billing/entitlement-check` checks whether an account may use
-a paid feature or scope such as `llm:proxy` or `container:run`. It is an
-internal service endpoint for API providers, requires
-`aud=ai.hg.fi/internal` with `billing:entitlement:check`, and rejects end-user
-API tokens. Denied responses return deterministic guidance such as
-`billing_required` and `bus billing setup`; exhausted quotas return
-`quota_exceeded` with quota details.
+### `POST /api/v1/billing/portal-session`
 
-LLM and container API providers call this endpoint before starting billable
-work when billing enforcement is enabled. This prevents GPU wake-up, backend
-proxying, or container runner delegation for accounts that are unpaid,
-inactive, or over quota.
+Creates a hosted billing portal URL for the authenticated account.
+
+Users manage payment methods, invoices, and subscriptions in the provider
+portal. Requires `billing:read`.
+
+### `GET /api/internal/billing/catalog`
+
+Returns the active provider-neutral billing catalog.
+
+Requires `billing:catalog:read` with the internal audience.
+
+### `PUT /api/internal/billing/catalog`
+
+Replaces the active provider-neutral billing catalog.
+
+Requires `billing:catalog:write` with the internal audience.
+
+The catalog describes products, plans, prices, meters, feature scopes, quota
+rules, and optional non-secret provider mappings.
+
+### `GET /api/internal/billing/accounts/{account_id}/status`
+
+Returns billing status for an operator-selected account.
+
+Requires `billing:read` with the internal audience.
+
+### `POST /api/internal/billing/entitlement-check`
+
+Checks whether an account may use a paid feature such as `llm:proxy` or
+`container:run`.
+
+Requires `billing:entitlement:check` with the internal audience. LLM and
+container providers call this before starting billable work.
+
+Denied responses use stable reasons such as `billing_required` and
+`quota_exceeded`, with user-facing guidance when available.
+
+### `GET /readyz`
+
+Reports process readiness.
+
+Use this for load balancers and service supervisors.
+
+### Catalog Rules
+
+Catalog data should describe commercial plans in Bus terms. Common meters are
+`bus_llm_tokens` and `bus_container_runtime_seconds`.
+
+Plans may define several quota windows at the same time, such as `minute`,
+`hour`, `day`, `week`, `month`, and `total`.
+
+Do not store Stripe secret keys, webhook secrets, database passwords, or other
+deployment secrets in the catalog.
+
+### `BUS_BILLING_DATABASE_URL`
+
+Enables durable PostgreSQL catalog storage.
+
+Without this value, internal catalog endpoints return a deterministic
+storage-unavailable error instead of using volatile storage.
+
+### Events Backend
+
+When configured with Events, the provider maps HTTP requests to billing events
+and waits for correlated responses.
+
+Public status/setup requests use `bus.billing.status.request`,
+`bus.billing.checkout_session.request`, and
+`bus.billing.portal_session.request`.
+
+Internal entitlement checks use `bus.billing.entitlement.check.request`.
 
 ### Events
 

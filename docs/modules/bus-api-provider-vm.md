@@ -17,45 +17,69 @@ wake-up. The LLM provider should wake or check runtime readiness only for
 execution requests; model catalog reads can stay local and avoid waking GPU
 backends.
 
-### API
+### Authentication
 
-```text
-GET  /api/v1/vm/status
-POST /api/v1/vm/start
-POST /api/v1/vm/stop
-GET  /readyz
-```
+Requests use Bearer JWT authentication with audience `ai.hg.fi/api`.
 
-Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default.
-Status requires `vm:read`; lifecycle requests require `vm:write`. The provider
-can run with a deterministic static backend for local tests or in Bus Events
-request/reply mode. In events mode, start the provider with `--backend events`
-and `--events-url`; `BUS_API_TOKEN` is a normal Bus API JWT with audience
-`ai.hg.fi/api` and the VM domain scopes needed for the events it sends and
-receives. The provider process owns the response listener and
-correlates responses to in-flight HTTP requests.
-When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until
-the required VM, usage, and billing response streams are connected.
+Status reads require `vm:read`. Lifecycle writes require `vm:write`.
 
-Commercial deployments should add `--billing-backend events` or
-`BUS_VM_BILLING_BACKEND=events`. With that backend enabled, lifecycle write
-requests check `vm:write` entitlement through
-`bus.billing.entitlement.check.request` before recording usage or sending any
-VM worker request. A missing payment method, inactive subscription, or quota
-exhaustion returns HTTP `402` with a `bus billing ...` command hint. Status
-reads stay controlled by `vm:read` and are not quota-gated.
+### `GET /api/v1/vm/status`
 
-Start the provider with `--usage-backend events` to report runtime lifecycle
-operations through `bus-integration-usage`. Start/stop requests record
-`runtime_start_requested`, `runtime_start_finished`,
-`runtime_start_failed`, `runtime_stop_requested`,
-`runtime_stop_finished`, or `runtime_stop_failed` with the stable account UUID
-and request/action metadata. Status reads are not treated as billable lifecycle
+Returns user-visible runtime status.
+
+Status reads are not quota-gated and are not treated as billable lifecycle
 events.
+
+### `POST /api/v1/vm/start`
+
+Requests runtime start.
+
+With billing enabled, the provider checks `vm:write` entitlement before sending
+worker requests or recording lifecycle usage.
+
+### `POST /api/v1/vm/stop`
+
+Requests runtime stop.
+
+Use this only for runtime products where the caller is allowed to control the
+target runtime.
+
+### `GET /readyz`
+
+Reports provider readiness.
+
+When `BUS_EVENTS_LISTENER_REQUIRED=1`, readiness is unhealthy until required
+VM, usage, and billing response streams are connected.
+
+### `--backend <static|events>`
+
+Selects the VM backend.
+
+Use `static` for deterministic local checks. Use `events` for Bus Events
+request/reply mode.
+
+### `--events-url <url>`
+
+Sets the Bus Events API URL when Events mode is enabled.
+
+Provide the provider token through deployment-managed configuration such as
+`BUS_API_TOKEN`.
+
+### `--billing-backend <none|events>`
+
+Enables billing entitlement checks for lifecycle write requests.
+
+Denied requests return HTTP `402` with billing setup or quota guidance.
+
+### `--usage-backend <none|events>`
+
+Enables runtime lifecycle usage records through `bus-integration-usage`.
+
+Start and stop requests can record requested, finished, and failed lifecycle
+events with the stable account UUID.
 
 ### Sources
 
-- [bus-api-provider-vm README](../../../bus-api-provider-vm/README.md)
 - [bus-vm](./bus-vm)
 - [bus-api-provider-llm](./bus-api-provider-llm)
 - [bus-integration-usage](./bus-integration-usage)

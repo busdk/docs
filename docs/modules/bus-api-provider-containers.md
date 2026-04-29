@@ -18,71 +18,130 @@ The public API is account-isolated. The provider derives the owner account from
 the JWT `sub`; callers cannot choose an account ID in request metadata. Users
 can list, read, and delete only runs owned by their own account.
 
-### API
+### Authentication
 
-```text
-GET    /api/v1/containers/status
-POST   /api/v1/containers/runs
-DELETE /api/v1/containers/runs/{run_id}
-GET    /api/internal/containers/runner
-POST   /api/internal/containers/runner
-DELETE /api/internal/containers/runner
-GET    /readyz
-```
+Public endpoints use Bearer JWT authentication with audience `ai.hg.fi/api`.
+The provider derives the account from JWT `sub`.
 
-Requests use Bearer JWT authentication with audience `ai.hg.fi/api` by default.
-Status requires `container:read`; run creation requires `container:run`; delete
-requires `container:delete`. The provider can run with a deterministic static
-backend for local tests or in Bus Events request/reply mode. In events mode,
-start the provider with `--backend events` and `--events-url`; `BUS_API_TOKEN`
-is a normal Bus API JWT with audience `ai.hg.fi/api` and the container domain
-scopes needed for the events it sends and receives. The
-provider process owns the response listener and correlates responses to
-in-flight HTTP requests.
-When `BUS_EVENTS_LISTENER_REQUIRED=1`, `GET /readyz` reports unhealthy until
-the required container, usage, and billing response streams are connected.
+`container:read` allows status reads. `container:run` allows run creation.
+`container:delete` allows deleting owned runs.
 
-Commercial deployments should add `--billing-backend events` or
-`BUS_CONTAINERS_BILLING_BACKEND=events`. With that backend enabled,
-`POST /api/v1/containers/runs` checks `container:run` entitlement through
-`bus.billing.entitlement.check.request` before recording usage or sending any
-container worker request. A missing payment method, inactive subscription, or
-quota exhaustion returns HTTP `402` with a `bus billing ...` command hint.
-Status and delete endpoints remain protected by JWT scopes and account
-ownership checks, not by quota checks.
+Internal runner endpoints use audience `ai.hg.fi/internal` with
+`container:admin`.
 
-Container plans can use the same billing quota system as LLM plans. A common
-meter is `bus_container_runtime_seconds`, produced from successful
-`container_run_finished` usage events. Operators can configure per-minute,
-hourly, daily, weekly, monthly, or total container runtime limits in the
-billing catalog or quota config.
+### `GET /api/v1/containers/status`
 
-The internal runner lifecycle endpoints are for trusted service operations.
-They require a JWT with audience `ai.hg.fi/internal` and scope
-`container:admin`, and are not exposed through the end-user `bus containers`
-command surface. In events mode they publish
-`bus.containers.runner.status.request`,
-`bus.containers.runner.start.request`, or
-`bus.containers.runner.delete.request` and wait for the matching response
-events.
+Returns container status and runs visible to the authenticated account.
 
-`POST /api/v1/containers/runs` executes a foreground request through the
-configured backend. End users normally call it through `bus containers run`,
-which sends a `profile`, `args`, and optional timeout. The API also accepts an
-explicit `image` and `command`. Successful responses include the runner name,
-image, args, exit code, stdout, stderr, duration, and runner status.
+With `--backend events`, the provider sends
+`bus.containers.status.request` and waits for
+`bus.containers.status.response`.
 
-`DELETE /api/v1/containers/runs/{run_id}` cancels or removes a user-owned run
-when the backend supports it. It must not remove runs owned by other accounts.
-Infrastructure runner deletion is separate and uses the internal runner
-endpoint with internal audience and admin scope.
+### `POST /api/v1/containers/runs`
 
-When started with `--usage-backend events`, container runs are also reported
-through `bus-integration-usage`. The provider records
-`container_run_requested` before backend delegation and then records
-`container_run_finished` or `container_run_failed` with request/run IDs, stable
-account UUID, profile, image, duration, exit code, runner name, and failure
-details when available.
+Starts one foreground user-owned container run.
+
+End users normally call this through `bus containers run`. The request can use
+a named `profile` with `args`, or an explicit `image` and `command`.
+
+Successful responses include runner name, image, arguments, exit code, stdout,
+stderr, duration, and runner status.
+
+With `--billing-backend events`, the provider checks `container:run`
+entitlement before usage recording or backend delegation. Billing failures
+return HTTP `402` with `bus billing ...` guidance.
+
+With `--usage-backend events`, the provider records
+`container_run_requested`, then `container_run_finished` or
+`container_run_failed`.
+
+With `--backend events`, the provider sends `bus.containers.run.request` and
+waits for `bus.containers.run.response`.
+
+### `DELETE /api/v1/containers/runs/{run_id}`
+
+Deletes or cancels one user-owned container run when the backend supports it.
+
+The provider must reject attempts to delete runs owned by another account.
+Infrastructure runner deletion uses the internal runner endpoint instead.
+
+With `--backend events`, the provider sends
+`bus.containers.delete.request` and waits for
+`bus.containers.delete.response`.
+
+### `GET /api/internal/containers/runner`
+
+Returns protected operational status for the configured runner.
+
+This endpoint is for trusted service or operator tooling, not end-user
+container clients. With `--backend events`, it sends
+`bus.containers.runner.status.request`.
+
+### `POST /api/internal/containers/runner`
+
+Starts and bootstraps the configured runner for internal operations.
+
+With `--backend events`, it sends
+`bus.containers.runner.start.request`.
+
+### `DELETE /api/internal/containers/runner`
+
+Deletes the configured runner for internal cleanup.
+
+With `--backend events`, it sends
+`bus.containers.runner.delete.request`.
+
+### `GET /readyz`
+
+Reports provider readiness.
+
+When `BUS_EVENTS_LISTENER_REQUIRED=1`, readiness is unhealthy until required
+container, usage, and billing response streams are connected.
+
+### Billing And Quotas
+
+Container plans use the same billing quota system as LLM plans. A common meter
+is `bus_container_runtime_seconds`, produced from successful
+`container_run_finished` usage events.
+
+Operators can configure minute, hour, day, week, month, or total runtime
+limits in the billing catalog or quota config.
+
+### `--backend <static|events>`
+
+Selects the container backend.
+
+Use `static` for deterministic local checks. Use `events` for Bus Events
+request/reply mode.
+
+### `--events-url <url>`
+
+Sets the Bus Events API URL used when `--backend events`, `--usage-backend
+events`, or `--billing-backend events` is enabled.
+
+Provide the provider's Events token through deployment-managed configuration,
+such as `BUS_API_TOKEN`. Do not pass bearer tokens as command-line arguments.
+
+### `--usage-backend <none|events>`
+
+Enables usage recording through Events.
+
+Commercial deployments should use `events` so accepted container work is
+available for billing and quota accounting.
+
+### `--billing-backend <none|events>`
+
+Enables billing entitlement checks before container run creation.
+
+Use `events` with `bus-integration-billing` for paid container plans.
+
+### `BUS_EVENTS_LISTENER_REQUIRED`
+
+When set to `1`, readiness requires the Events response listeners needed by the
+enabled backends.
+
+Use it in production so startup ordering problems do not leave the provider
+active but unable to complete request/reply work.
 
 ### End-User Access
 
@@ -112,7 +171,6 @@ administration.
 
 ### Sources
 
-- [bus-api-provider-containers README](../../../bus-api-provider-containers/README.md)
 - [bus-containers](./bus-containers)
 - [bus-integration-usage](./bus-integration-usage)
 - [bus-api-provider-billing](./bus-api-provider-billing)

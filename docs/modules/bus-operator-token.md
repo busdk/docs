@@ -36,6 +36,5 @@ Run `bus operator token --help` for the full command reference.
 
 ### Sources
 
-- [bus-operator-token README](../../../bus-operator-token/README.md)
 - [bus-api-provider-auth](./bus-api-provider-auth)
 - [Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes)
