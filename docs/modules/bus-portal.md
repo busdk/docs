@@ -19,7 +19,7 @@ that are available without the extra `--experimental` opt-in.
 ```bash
 bus portal serve --print-url
 bus portal serve --print-url --enable-module auth
-bus portal serve --print-url --experimental --enable-module ai
+bus portal serve --print-url --enable-module ai
 ```
 
 The portal host is frontend infrastructure. Server-side behavior such as
@@ -41,6 +41,31 @@ use. Hosted deployments normally place `bus-portal` behind the deployment's
 normal public route and rely on API-provider authentication for protected
 data.
 
+### Protected Frontend Mode
+
+`bus-portal` can require a frontend JWT before it serves portal assets and
+mounted modules. This is useful when the frontend itself should not be public,
+for example for private customer portals or operator-only deployments.
+
+Enable it with `--require-frontend-auth` and provide the signing secret through
+a secret file or environment variable:
+
+```bash
+bus portal serve --print-url \
+  --require-frontend-auth \
+  --frontend-auth-secret-file /run/secrets/bus-portal-frontend-jwt
+```
+
+The portal accepts the JWT from `Authorization: Bearer ...` or from the
+configured cookie. Defaults are audience `ai.hg.fi/api`, scope `portal:read`,
+and cookie name `bus_portal_token`. Override them with
+`--frontend-auth-audience`, `--frontend-auth-scope`, and
+`--frontend-auth-cookie`.
+
+Protected frontend mode only controls delivery of the browser app. The API
+providers still enforce account ownership, feature scopes, billing state,
+quota limits, and all business authorization.
+
 The host applies a Content Security Policy, `Referrer-Policy: no-referrer`,
 `X-Content-Type-Options: nosniff`, frame restrictions, and a restrictive
 permissions policy. Add API origins to CSP `connect-src` with
@@ -51,14 +76,10 @@ that become CSS variables. The host rejects values that can break out of CSS
 declarations or load external resources, including `url(...)`, `@import`,
 `expression(...)`, `javascript:`, `data:`, and nested `var(...)` references.
 
-Local workspace upload routes are protected by configurable limits for total
-request size, per-file size, aggregate uploaded bytes, file count, and
-multipart memory. Configure them with `--max-upload-request-bytes`,
-`--max-upload-file-bytes`, `--max-upload-aggregate-bytes`,
-`--max-upload-files`, and `--upload-memory-bytes`, or the matching
-`BUS_PORTAL_*` environment variables. Public frontend-only deployments can
-disable local workspace APIs with `--disable-legacy-local-apis` or
-`BUS_PORTAL_DISABLE_LEGACY_LOCAL_APIS=1`.
+`bus-portal` does not serve upload, report-generation, accounting-data, or
+artifact APIs. Those routes belong to authenticated Bus API providers. Portal
+modules should render provider-returned links for previews and downloads
+rather than exposing local files from the portal host.
 
 ### Module Configuration
 
@@ -81,10 +102,9 @@ Use HTTPS for hosted deployments. Configure CSP `connect-src` for every API
 origin the browser needs. Keep browser session state short-lived and rely on
 API-provider JWT validation and scope checks for protected data.
 
-When serving only public frontend code, disable legacy local workspace APIs.
-When local workspace APIs are enabled for desktop/local workflows, keep upload
-limits low enough for the deployment and do not serve generated untrusted HTML
-or SVG as active same-origin content.
+Do not put payment provider secrets, database credentials, API keys, or worker
+credentials into portal frontend configuration. Browser code should receive
+only public API base URLs and short-lived user/session credentials.
 
 ### Sources
 

@@ -14,8 +14,7 @@ bootstrap, billing operations, and provider diagnostics.
 
 Command implementations live in focused `bus-operator-*` modules. The umbrella
 module calls those modules through Go library entrypoints. It does not execute
-child binaries, duplicate command logic, implement auth policy locally, or sign
-JWTs.
+child binaries, duplicate command logic, or implement auth policy locally.
 
 ```bash
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token waitlist
@@ -36,6 +35,19 @@ bus operator token --api-url http://127.0.0.1:8080 \
   --subject usage-worker \
   --audience ai.hg.fi/auth \
   --scope "usage:read usage:delete"
+```
+
+For trusted local developer automation, `token issue --local` signs a
+short-lived HS256 Bus JWT from `BUS_AUTH_HS256_SECRET` or
+`--hs256-secret-file` without an auth provider HTTP call. Use `--format token`
+when the caller expects only the raw bearer token.
+
+```bash
+bus operator token --format token issue --local \
+  --subject local-codex \
+  --audience ai.hg.fi/api \
+  --scope llm:proxy \
+  --ttl 1h
 ```
 
 Run `bus operator --help` for the full command reference. The help output uses

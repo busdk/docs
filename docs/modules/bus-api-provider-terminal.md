@@ -49,12 +49,27 @@ Returns terminal output for one owned session.
 Use this endpoint for browser polling or streaming-style UI updates, depending
 on deployment configuration.
 
+### `GET /api/v1/terminal/sessions/{id}/stream`
+
+Streams terminal output for one owned session as Server-Sent Events.
+
+Each event uses `event: output` and a JSON `data` payload containing the
+session `id` and one output line. Closing the browser stream cancels the server
+subscription.
+
 ### `POST /api/v1/terminal/sessions/{id}/input`
 
 Sends input to one owned terminal session.
 
 Treat terminal input as sensitive operational data. Do not log raw input in
 production.
+
+### `POST /api/v1/terminal/sessions/{id}/resize`
+
+Updates terminal dimensions for one owned session.
+
+The JSON body contains positive integer `rows` and `cols`. Use this when the
+browser terminal viewport changes size.
 
 ### `DELETE /api/v1/terminal/sessions/{id}`
 

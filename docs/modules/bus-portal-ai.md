@@ -16,7 +16,7 @@ Enable the module from the portal host when you want to expose AI chat or
 container-backed Codex terminal access:
 
 ```bash
-bus portal serve --print-url --experimental --enable-module ai
+bus portal serve --print-url --enable-module ai
 ```
 
 The module serves external JavaScript and reads the API token from the shared
@@ -32,10 +32,19 @@ Chat mode sends authenticated requests to the Bus LLM API. If the user is not
 logged in, not approved, missing billing setup, or over quota, the module shows
 the server-provided guidance instead of trying to bypass the provider decision.
 
+The model selector is deployment configuration. Operators can expose hosted
+models and Codex-backed local models in the same list. The portal sends only
+the selected model name to `/v1/chat/completions`; the LLM provider decides
+which runtime to use and records usage for billing.
+
 Container/Codex mode starts user-owned container work through the containers
 API and opens terminal access through the terminal API. Container runs are
 owned by the account in the API token and are subject to the same billing and
 quota checks as other container clients.
+
+Terminal output uses the terminal provider's authenticated Server-Sent Events
+stream. Terminal input and resize actions use the terminal provider's input and
+resize endpoints. Account isolation remains enforced by the terminal provider.
 
 The module can show billing setup and portal actions by calling the Billing
 API. It does not talk to Stripe directly and does not store payment provider
@@ -58,6 +67,8 @@ An AI portal deployment normally provides these browser-reachable APIs:
 /api/v1/containers/status
 /api/v1/containers/runs
 /api/v1/terminal/sessions
+/api/v1/terminal/sessions/{id}/stream
+/api/v1/terminal/sessions/{id}/resize
 ```
 
 The browser origin must be allowed by the portal Content Security Policy
