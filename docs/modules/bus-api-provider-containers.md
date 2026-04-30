@@ -32,6 +32,8 @@ Internal runner endpoints use audience `ai.hg.fi/internal` with
 ### `GET /api/v1/containers/status`
 
 Returns container status and runs visible to the authenticated account.
+Success returns `200 OK` with `{"items":[...]}` where each item has `id`,
+`state`, optional `owner_account_id`, and optional `details`.
 
 With `--backend events`, the provider sends
 `bus.containers.status.request` and waits for
@@ -43,9 +45,26 @@ Starts one foreground user-owned container run.
 
 End users normally call this through `bus containers run`. The request can use
 a named `profile` with `args`, or an explicit `image` and `command`.
+Send `Content-Type: application/json`. A profile run looks like:
+
+```json
+{"profile":"codex","args":["sh","-c","printf OK"],"timeout_seconds":300}
+```
+
+An explicit image run looks like:
+
+```json
+{"image":"alpine:latest","command":["sh","-c","printf OK"],"timeout_seconds":300}
+```
+
+`profile` and `image` are alternatives; at least one is required. `args` is a
+compatibility alias for `command` when `command` is omitted.
+`timeout_seconds` is optional and must be non-negative.
 
 Successful responses include runner name, image, arguments, exit code, stdout,
 stderr, duration, and runner status.
+Success returns `200 OK` with `run_id`, `owner_account_id`, `runner_name`,
+`image`, `args`, `exit_code`, `stdout`, `stderr`, `duration_ms`, and `runtime`.
 
 With `--billing-backend events`, the provider checks `container:run`
 entitlement before usage recording or backend delegation. Billing failures
@@ -64,6 +83,7 @@ Deletes or cancels one user-owned container run when the backend supports it.
 
 The provider must reject attempts to delete runs owned by another account.
 Infrastructure runner deletion uses the internal runner endpoint instead.
+Success returns `200 OK` with `{"deleted":true,"run_id":"...","owner_account_id":"..."}`.
 
 With `--backend events`, the provider sends
 `bus.containers.delete.request` and waits for
@@ -97,6 +117,14 @@ Reports provider readiness.
 
 When `BUS_EVENTS_LISTENER_REQUIRED=1`, readiness is unhealthy until required
 container, usage, and billing response streams are connected.
+
+Common error bodies use
+`{"error":{"type":"...","message":"...","action":"...","command":"..."}}`.
+Invalid or missing bearer tokens return `401 invalid_auth`. Missing scopes or
+cross-account run results return `403 forbidden`. Missing `profile`/`image` or
+bad JSON returns `400 bad_request`. Billing denial returns `402
+billing_required` with setup guidance. Backend timeouts or unavailable event
+listeners return `503`, and malformed integration responses return `502`.
 
 ### Billing And Quotas
 

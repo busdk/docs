@@ -31,7 +31,7 @@ the import artifacts or generated append scripts used for that migration.
 
 `apply` executes a replay log against a target workspace. It reads operations from `--in` (or stdin with `--in -`), evaluates idempotency guards, skips satisfied operations, and runs the rest. It produces a deterministic TSV/JSON report of applied/skipped/failed operations. Use `--dry-run` for preview.
 
-`render` transforms a replay log into another format. Currently supported target is `--format sh`, which produces a deterministically quoted POSIX shell script.
+`render` transforms a replay log into another format. Currently supported target is `--format sh`, which produces a deterministically quoted Bash script with `#!/usr/bin/env bash` and strict shell settings.
 
 ### Options
 

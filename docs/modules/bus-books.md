@@ -50,7 +50,9 @@ Agent integration is disabled by default and can be enabled only at startup.
 
 See [Serve flags](#serve-flags), [Agent chat](#agent-chat-when-enabled), and [bus-books reference](../modules/bus-books) for full behavior and security model.
 
-Finland-focused UI requirements are documented as split topic pages in [Finnish WebView bookkeeping UI requirements](../modules/bus-books), with dedicated pages for IA/navigation, table-first UX, compliance and audit UX, and accessibility/performance.
+Finland-focused UI requirements are documented on the related workflow and
+module pages linked from this reference, including IA/navigation, table-first
+UX, compliance and audit UX, and accessibility/performance topics.
 
 ### Commands
 

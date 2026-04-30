@@ -16,7 +16,7 @@ Bus entitlement checks and Stripe synchronization.
 
 `status --account <account-id>` reads one account's internal billing status from
 the Billing API. This is an internal/operator operation and requires an
-internal-audience Bearer JWT with the billing status scope.
+internal-audience Bearer JWT with the literal `billing:read` scope.
 
 `catalog template` prints a starter provider-neutral catalog JSON document. Use
 it as the starting point for commercial plans such as an LLM plan with token

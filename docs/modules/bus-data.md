@@ -57,6 +57,12 @@ bus data init
 
 Start by defining a schema and letting `bus data` create the table and its beside-the-table schema file. The table path may omit the `.csv` suffix, and `schema init` writes both the CSV and the `.schema.json` in one deterministic step. Schema metadata such as `primaryKey`, `foreignKeys`, and `missingValues` is preserved when you initialize the table. Use `--force` when you need to overwrite an existing table and schema with a new definition.
 
+Create the schema file before running the command. A minimal customer schema can be:
+
+```json
+{"fields":[{"name":"id","type":"string"},{"name":"name","type":"string"}],"primaryKey":["id"]}
+```
+
 ```text
 bus data schema init customers --schema customers.schema.json
 bus data schema init customers --schema customers.schema.json --force
@@ -377,7 +383,7 @@ For replay performance diagnostics, set `BUSDK_PERF=1` when running `row add`. T
 
 ```bash
 BUSDK_PERF=1 bus data row add customers --set id=3 --set name=Celia
-# bus-data: perf op=row.add table=customers rows=1 elapsed_ms=... rows_per_sec=...
+# INFO perf bus-data row.add 0.123
 ```
 
 If a table name starts with `-`, place `--` before the command arguments to stop flag parsing.

@@ -13,11 +13,17 @@ Portal hosts mount the module under `/modules/accounting/`. It is a UI module
 that calls Bus API/provider APIs for server behavior.
 
 Enable the module from the portal host when you want to expose accounting
-workspace views in the browser:
+workspace views in the browser. The portal host must already be configured with
+the shared auth session, API base URLs, and the accounting provider APIs used
+by this module.
 
 ```bash
 bus portal serve --print-url --experimental --enable-module accounting
 ```
+
+Success prints a tokenized portal URL. Open the URL and browse to
+`/modules/accounting/` to verify the accounting navigation and provider-backed
+workspace data load.
 
 The customer-facing navigation is Finnish: `Yleiskuva`, `Aineistot`, and
 `Tilinpäätös`.

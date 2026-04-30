@@ -19,12 +19,12 @@ time.
 
 ```bash
 make build
-aiz note.txt
-aiz --explain note.txt
-aiz --no-ai --explain note.txt
-aiz -o note.archive.aiz note.txt
-unaiz note.txt.aiz
-unaiz -C ./restore note.txt.aiz
+./bin/aiz note.txt
+./bin/aiz --explain note.txt
+./bin/aiz --no-ai --explain note.txt
+./bin/aiz -o note.archive.aiz note.txt
+./bin/unaiz note.txt.aiz
+./bin/unaiz -C ./restore note.txt.aiz
 ```
 
 ### Synopsis

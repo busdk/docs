@@ -67,6 +67,7 @@ An AI portal deployment normally provides these browser-reachable APIs:
 /api/v1/containers/status
 /api/v1/containers/runs
 /api/v1/terminal/sessions
+/api/v1/terminal/sessions/{id}/input
 /api/v1/terminal/sessions/{id}/stream
 /api/v1/terminal/sessions/{id}/resize
 ```

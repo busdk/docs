@@ -57,12 +57,35 @@ Repository key profile is stored at `.bus/secrets/config.json`.
 
 Private keys are not stored in the repository by `bus-secrets`. Key source configuration is local through preferences or environment variables, and can use hardware-backed providers.
 
-### Typical workflow
+### Setup guide
 
-Set a secret value, then use a reference in step-level env configuration:
+`bus secrets` requires `sops` plus a configured key backend. For most teams,
+`age` is the simplest backend. On macOS with Homebrew, install the tools with:
 
 ```bash
-bus secrets set openai_api_key 'sk-...'
+brew install sops age-plugin-se
+bus secrets init
+```
+
+On Linux, install `sops` from your distribution package repository or the
+official SOPS release packages, install an `age` backend, then run
+`bus secrets init` in the workspace.
+
+On macOS, if you want Secure Enclave-backed keys, run:
+
+```bash
+bus secrets init --secure-enclave
+```
+
+`bus secrets init` already writes persistent local key-source preferences and
+repository recipients.
+
+### Typical workflow
+
+After setup, set a secret value, then use a reference in step-level env configuration:
+
+```bash
+bus secrets set smoke_value 'not-a-secret'
 bus dev set env-for @work OPENAI_API_KEY secret:openai_api_key
 bus run set env-for summarize OPENAI_API_KEY secret:openai_api_key
 ```
@@ -71,8 +94,8 @@ Check what is stored and how resolution works:
 
 ```bash
 bus secrets list
-bus secrets get openai_api_key
-bus secrets resolve secret:openai_api_key
+bus secrets doctor
+bus secrets resolve secret:smoke_value
 ```
 
 ### Security guidance
@@ -86,25 +109,6 @@ Standard global flags are supported: `-h`, `-V`, `-C`, `-o`, and `-q`.
 `sops` must be available in `PATH`, and SOPS key configuration must be available for encrypt/decrypt operations.
 
 If `sops` is not installed, `bus secrets` fails with an explicit diagnostic that tells you to install `sops` and retry. Install instructions: <https://getsops.io/>.
-
-### SOPS setup
-
-`bus secrets` requires `sops` plus a configured key backend. For most teams, `age` is the simplest backend.
-
-### Setup guide
-
-```bash
-brew install sops age-plugin-se
-bus secrets init
-```
-
-On macOS, if you want Secure Enclave-backed keys, run:
-
-```bash
-bus secrets init --secure-enclave
-```
-
-`bus secrets init` already writes persistent local key-source preferences and repository recipients.
 
 ### Verify setup
 

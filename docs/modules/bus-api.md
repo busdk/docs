@@ -36,7 +36,9 @@ Requests outside token prefix return `404`.
 `--enable-module` can expose module adapter endpoints under `/{token}/v1/modules/{module}/...` when matching providers are allowlisted.
 Some built-in providers also expose clean production route aliases when enabled. For example, `--provider auth --enable-module auth` serves the auth provider at `/{token}/v1/api/v1/auth/*` and `/{token}/v1/api/internal/auth/*` in addition to the generic module mount, so production deployments do not need awkward `/modules/auth/...` paths.
 For built-in adapters, module resource ownership is explicit and library-based for all built-ins. Data-owning modules resolve paths through their Go path APIs (including reports through `bus-reports/path`); modules without owned datasets return empty module resource lists.
-For complete API contract and security model, see [Module reference: bus-api](../modules/bus-api).
+For module endpoint contracts, use the individual `bus-api-provider-*` module
+pages listed in this reference. The core `bus-api` page documents provider
+loading, routing, capability URLs, and host-level security behavior.
 
 ### Commands
 

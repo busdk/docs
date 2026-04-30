@@ -7,8 +7,8 @@ description: bus payroll validates payroll datasets and exports deterministic jo
 
 ### Synopsis
 
-`bus payroll validate [-C <dir>] [global flags]`  
-`bus payroll export <payrun-id> [-C <dir>] [global flags]`
+`bus payroll [-C <dir>] [global flags] validate`  
+`bus payroll [-C <dir>] [global flags] export <payrun-id>`
 
 ### Description
 

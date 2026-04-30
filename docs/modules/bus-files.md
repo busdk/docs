@@ -114,7 +114,11 @@ It is also intentionally separate from [bus bank](./bus-bank) and [bus journal](
 
 ### Output intent
 
-The intended default ergonomics are lightweight and human-readable. With one file, `parse` may print one readable block. With several files, it may print one block per file separated by blank lines, or one stable line per file when that is clearer for the chosen subcommand. Machine-readable output still belongs behind explicit `--format` selection.
+The default `parse` output is lightweight and human-readable. With one file,
+`parse` prints one readable block for that file. With several files, it prints
+one block per file in argument order, separated by blank lines. Use
+`--format json` for machine-readable structured output and `--format text` for
+the default readable form.
 
 For `find`, duplicate detection should remain deterministic. Exact file hashes, normalized content hashes, and other explicit identity signals are acceptable. Fuzzy similarity guesses should not be the default behavior.
 

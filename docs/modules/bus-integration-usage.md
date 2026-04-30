@@ -65,20 +65,22 @@ usage dimensions such as storage, files, jobs, or API calls.
 
 ## Running The Worker
 
+Set the Events API URL and bearer token before starting the worker. The token
+is supplied through `BUS_API_TOKEN` and must be a Bus API JWT with audience
+`ai.hg.fi/api`. It must include the usage domain scopes for the events this
+worker listens to and emits, such as `usage:write`, `usage:read`, and
+`usage:delete`. If that token is issued as an internal service token, set its
+TTL long enough for the worker lifetime or rotate/restart the worker before
+expiry.
+
 For local development, use the memory backend:
 
 ```sh
+export BUS_API_TOKEN="$(bus auth token --scope "usage:write usage:read usage:delete")"
 bus-integration-usage \
   --usage-backend memory \
   --events-url "$BUS_EVENTS_API_URL"
 ```
-
-`BUS_API_TOKEN` is a normal Bus API JWT with audience `ai.hg.fi/api`. It
-must include the usage domain scopes for the events this worker listens to and
-emits, such as `usage:write`, `usage:read`, and `usage:delete`.
-If that token is issued by `bus-api-provider-auth` as an internal service token,
-set `BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS` long enough for the worker lifetime or
-rotate/restart the worker before token expiry.
 
 For deployed collection, use PostgreSQL:
 
@@ -93,6 +95,15 @@ Enable the default LLM and container export rules with
 `--billing-export default` or `BUS_USAGE_BILLING_EXPORT=default`. Use
 `--billing-export file --billing-export-policy <path>` or
 `BUS_USAGE_BILLING_EXPORT_POLICY` when plans include additional usage metrics.
+The policy file is JSON with a `rules` array. Each rule matches a usage event
+type and writes one billing export feature/meter:
+
+```json
+{"rules":[{"event_type":"llm_request_finished","feature":"llm:proxy","meter_event_name":"bus_llm_tokens","quantity_field":"total_tokens"}]}
+```
+
+Invalid JSON, missing `event_type`, missing `feature`, or missing
+`meter_event_name` makes startup fail.
 
 Use only non-secret local examples in documentation. Real database URLs and Bus
 API tokens must come from deployment secrets or local untracked configuration.
@@ -100,6 +111,10 @@ API tokens must come from deployment secrets or local untracked configuration.
 The worker can run as its own process or be registered into a shared
 `bus-integration` host through the Go `usageintegration.Registration(...)`
 function.
+Successful startup connects to the Events API and begins waiting for usage
+events. Verify the path by publishing a usage record request and checking that
+the corresponding usage response or stored usage event appears in the usage
+collector API.
 
 ### Billing Export Rules
 

@@ -92,7 +92,7 @@ Generate suggested lines for sole-proprietor owner withdrawal or investment:
 
 ```bash
 bus accounts sole-proprietor withdrawal \
-  --equity-code 3000 \
+  --equity-code 2300 \
   --cash-code 1910 \
   --amount 500.00
 ```

@@ -65,12 +65,31 @@ Publishes one event.
 
 The provider stamps the event account from the JWT. Caller-supplied account
 metadata is not trusted for ownership or stream authorization.
+Send `Content-Type: application/json` with an event envelope:
+
+```json
+{
+  "name": "example.ping",
+  "correlation_id": "optional-correlation-id",
+  "delivery": "broadcast",
+  "payload": {"ok": true}
+}
+```
+
+`name` is required. `payload` may be any JSON value. `delivery` defaults to
+`broadcast` and can be `work` when `group` is also provided. Success returns
+`202 Accepted` or `200 OK` with the stored event metadata. Bad JSON or invalid
+event names return `400`, missing auth returns `401`, and missing domain scope
+returns `403`.
 
 ### `GET /api/v1/events/stream?name=<event-name>&delivery=broadcast`
 
 Streams matching events to every authorized listener.
 
 Use broadcast delivery when all subscribers should receive the same event.
+The response is `application/x-ndjson`: each line is one JSON event envelope.
+Clients should read incrementally until the connection closes or their timeout
+expires.
 
 ### `GET /api/v1/events/stream?name=<event-name>&delivery=work&group=<group>&consumer=<consumer>`
 
@@ -78,6 +97,8 @@ Streams matching events as competing work.
 
 Use work delivery when only one worker in a group should receive each event. If
 `group` is omitted, the provider uses `default`.
+Work streams use the same newline-delimited JSON framing as broadcast streams.
+Only one authorized consumer in the group receives each event.
 
 ### `name=<event-name>`
 
@@ -85,6 +106,12 @@ Selects the event name to publish or stream.
 
 Protected Bus event names require domain scopes such as `vm:write`,
 `container:run`, `billing:read`, or `usage:read`.
+Event names are dot-separated lowercase identifiers such as
+`bus.vm.status.request` or `example.ping`. Use letters, digits, hyphen,
+underscore, and dots; avoid wildcards unless the deployment explicitly enables
+admin-only broad listening. Protected namespace scope mapping is documented in
+the authentication section above and in
+[Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes).
 
 ### `delivery=broadcast`
 

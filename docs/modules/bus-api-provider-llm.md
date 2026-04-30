@@ -18,7 +18,9 @@ client tools.
 ### Authentication
 
 Execution endpoints require a Bearer JWT with audience `ai.hg.fi/api` and
-scope `llm:proxy`.
+scope `llm:proxy`. `GET /v1/models` also requires a valid bearer token so the
+catalog is not public, but it does not check billing entitlement or wake the
+runtime.
 
 The JWT `sub` is the account UUID used for billing and usage records.
 
@@ -137,6 +139,13 @@ Sets the Bus Events API URL used by runtime, usage, and billing event backends.
 
 Provide the provider's Events token through deployment-managed configuration,
 such as `BUS_API_TOKEN`. Do not pass bearer tokens as command-line arguments.
+When `--runtime-backend events` is enabled, the token must be able to send VM
+start/status requests and receive the correlated responses, typically
+`vm:write` and `vm:read`. When `--usage-backend events` is enabled, it needs
+usage write permissions such as `usage:write`. When `--billing-backend events`
+is enabled, it needs entitlement-check permission such as
+`billing:entitlement:check`. Deployments may use an internal service token for
+these provider-to-provider calls.
 
 ### `--backend-ready-path <path>`
 
@@ -167,8 +176,11 @@ enabled backends.
 Approved users request an API token with LLM scope:
 
 ```sh
-bus auth token --scope "llm:proxy billing:read"
+bus auth token --scope "llm:proxy"
 ```
+
+`llm:proxy` is the required scope for model execution. Add `billing:read` only
+when the same token will also call billing status or setup APIs.
 
 They can then use the token with OpenAI-compatible clients by setting the base
 URL to the Bus LLM endpoint and using the Bus API token as the bearer token.

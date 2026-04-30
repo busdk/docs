@@ -21,7 +21,7 @@ bus-debts receipt add \
   --year 2023 \
   --sent-date 06.04.2023 \
   --payment-date 04.04.2023 \
-  --paid-amount '14 137,80' \
+  --paid-amount '1 567,65' \
   --accrual-method 'Määrittelemätön' \
   --pdf-path original/suomiFi/jhh/2023/example.pdf
 

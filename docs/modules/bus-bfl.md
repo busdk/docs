@@ -103,7 +103,12 @@ bus-bfl eval --expr "price * qty" --context context.json --schema schema.json
 
 The default output is a typed value on one line, for example `number 59.85`. Array values are rendered as a shape plus a flattened item list, for example `array 2x2 [integer 1, integer 2, integer 3, integer 4]`. With `--format json` you get a JSON object with `type` and `value` (for example `{ "type": "number", "value": "59.85" }`, or an array value with `rows`, `cols`, and `items`). If you omit `--context`, the tool prints an error to stderr and exits with a non-zero status.
 
-Range evaluation requires a runtime context that can resolve ranges deterministically. If you evaluate an expression containing a range and the context does not provide range resolution, evaluation fails with a deterministic error. Array values in the context must have a consistent `rows`, `cols`, and `items` length; if the shape does not match the item count, evaluation fails with an error.
+Range evaluation requires an embedding library resolver; the CLI context JSON
+does not resolve spreadsheet ranges by itself. If you evaluate an expression
+containing a range without a resolver, evaluation fails with a deterministic
+error. Array values in the context must have a consistent `rows`, `cols`, and
+`items` length; if the shape does not match the item count, evaluation fails
+with an error.
 
 The context file is a JSON object that supplies values for the symbols used in the expression. Numbers and integers are encoded as strings to preserve precision:
 
@@ -125,7 +130,7 @@ Consumers such as [bus-data](./bus-data) use the BFL library to evaluate formula
 ### Examples
 
 ```bash
-bus bfl parse --expr "=A1*1.24" --dialect spreadsheet
+bus bfl parse --expr "=A1*1.24" --dialect dialect.spreadsheet
 bus bfl eval --expr "a+b" --context ./examples/bfl-context.json
 ```
 

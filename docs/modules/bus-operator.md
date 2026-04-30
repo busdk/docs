@@ -22,6 +22,12 @@ bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-tok
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token reject --email user@example.com
 ```
 
+The auth provider must be reachable at `--api-url`, and `--token-file` must
+contain an operator/admin token accepted by that provider. A successful
+`waitlist` call prints pending registrations, while successful `approve` and
+`reject` calls exit 0 and print the updated user decision or no output when
+`--quiet` is used.
+
 `token issue` is for internal service bootstrap and installation automation. It
 uses `/api/internal/auth/token`, which is protected by the provider's
 `X-Bus-Internal-Key` check. Keep that endpoint on internal routing and provide

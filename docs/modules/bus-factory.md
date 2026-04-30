@@ -75,6 +75,16 @@ Under `/{token}/`:
 - `POST v1/ai/approval/respond` resolves a pending approval request with a decision
 - `POST v1/client-log` forwards browser UI logs to server logs
 
+`POST v1/actions/run` accepts `{"id":"daily-check","args":[],"env":{}}`;
+`id` is required and names a configured action. `args` is optional and is
+passed to the action when supported. `env` is optional and only accepts
+deployment-allowed keys.
+
+`POST v1/ai/approval/respond` accepts
+`{"approval_id":"...","decision":"approve"}` or
+`{"approval_id":"...","decision":"reject","message":"reason"}`. Both
+`approval_id` and `decision` are required.
+
 Prompt action behavior:
 
 - `.txt` actions are routed to AI input (prefill + open AI panel)

@@ -44,6 +44,9 @@ Creates a hosted billing setup URL for the authenticated account.
 
 The URL may point to Stripe Checkout or another configured provider. Requires
 `billing:setup`.
+Send `Content-Type: application/json` with either `{}` or
+`{"feature":"llm:proxy","return_url":"https://app.example.test/billing/return"}`.
+Success returns `200 OK` with `{"url":"https://...","provider":"stripe"}`.
 
 ### `POST /api/v1/billing/portal-session`
 
@@ -51,6 +54,8 @@ Creates a hosted billing portal URL for the authenticated account.
 
 Users manage payment methods, invoices, and subscriptions in the provider
 portal. Requires `billing:read`.
+Send `{}` or `{"return_url":"https://app.example.test/billing/return"}`.
+Success returns `200 OK` with `{"url":"https://...","provider":"stripe"}`.
 
 ### `GET /api/internal/billing/catalog`
 
@@ -66,6 +71,23 @@ Requires `billing:catalog:write` with the internal audience.
 
 The catalog describes products, plans, prices, meters, feature scopes, quota
 rules, and optional non-secret provider mappings.
+Send JSON with top-level `products`, `plans`, and `meters` arrays. Product and
+plan IDs must be stable strings, prices use integer minor units, and quota
+limits must be positive integers. A minimal accepted catalog is:
+
+```json
+{
+  "products": [{"id": "llm", "name": "LLM access"}],
+  "meters": [{"name": "bus_llm_tokens", "unit": "tokens"}],
+  "plans": [{
+    "id": "llm-basic",
+    "product_id": "llm",
+    "features": ["llm:proxy"],
+    "prices": [{"currency": "eur", "unit_amount": 1000, "interval": "month"}],
+    "quotas": [{"feature": "llm:proxy", "meter_event_name": "bus_llm_tokens", "window": "month", "limit": 1000000}]
+  }]
+}
+```
 
 ### `GET /api/internal/billing/accounts/{account_id}/status`
 
@@ -83,6 +105,13 @@ container providers call this before starting billable work.
 
 Denied responses use stable reasons such as `billing_required` and
 `quota_exceeded`, with user-facing guidance when available.
+Send `{"account_id":"account-uuid","scope":"llm:proxy","usage":{"meter_event_name":"bus_llm_tokens","quantity":1200}}`.
+`usage` is optional for setup-only checks and required when the caller wants a
+quota-aware decision for a specific unit count. Success returns `200 OK` with
+`{"allowed":true,"reason":"billing_active"}` or
+`{"allowed":false,"reason":"quota_exceeded","command":"bus billing setup"}`.
+Invalid requests return `400`, missing or wrong internal authority returns
+`401` or `403`, and unavailable billing storage returns `503`.
 
 ### `GET /readyz`
 

@@ -127,11 +127,18 @@ surface over workspace data.
 `serve` starts the local web server. By default it binds to `127.0.0.1` and an
 auto-selected port. `version` prints tool name and version.
 
-Serve supports `--listen`, `--port`, `--token`, `--token-bytes`,
-`--journal-file`, `--ai`, `--no-ai`, `--webview`, and `--print-url`. By default
-`--webview` opens an app-style local web shell window and `--print-url` disables auto-open.
-Journal source is resolved
-via `bus-journal` layout APIs unless overridden by `--journal-file`.
+Run `serve` from a Bus workspace that already contains journal data. Journal
+source is resolved via `bus-journal` layout APIs unless overridden by
+`--journal-file <path>`; use that override when the journal file is outside the
+standard workspace location.
+
+Serve supports `--listen <addr>` and `--port <n>` for the local listener,
+defaulting to `127.0.0.1` and an auto-selected port. `--token <value>` and
+`--token-bytes <n>` control the browser capability token; prefer the generated
+token for normal use. `--journal-file <path>` selects a specific journal CSV.
+`--ai` and `--no-ai` enable or disable AI panel features. `--webview` opens an
+app-style local web shell window, and `--print-url` prints the tokenized URL;
+using `--print-url` disables auto-open.
 
 ### Examples
 
@@ -140,6 +147,9 @@ bus ledger serve --print-url
 bus ledger -C ./workspace serve --journal-file journal.csv --print-url
 bus-ledger version
 ```
+
+Successful `serve --print-url` prints a local URL containing the generated
+capability token. Open that URL in a browser to reach the ledger UI.
 
 ### Using from `.bus` files
 

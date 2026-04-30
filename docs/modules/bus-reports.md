@@ -182,6 +182,13 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
   --account-buckets ./imports/account-buckets.csv
 ```
 
+`--source-summary` is a CSV containing imported source totals for comparison
+with Bus journal totals. It must include account or bucket identity, source
+amount, and period/date fields matching the imported data set. The
+`journal-gap` command also requires `--account-buckets`, a CSV that maps source
+accounts or categories to Bus account buckets. A minimal bucket file contains
+`source_account,bucket` rows such as `4000,revenue`.
+
 ### Synopsis
 
 `bus reports trial-balance --as-of <YYYY-MM-DD> [--grouped] [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
@@ -205,7 +212,7 @@ bus reports journal-gap --from 2026-01-01 --to 2026-03-31 \
 `bus reports bank-transactions --period <PERIOD_ID> [--account <code>] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports materials-register [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports methods-description [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports evidence-pack (--period <PERIOD_ID> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--with-ai-accounts] [-C <dir>] [global flags]`  
+`bus reports evidence-pack (--period <PERIOD_ID> | --as-of <YYYY-MM-DD>) --output-dir <dir> [--format <text|tsv|json>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--with-ai-accounts] [-C <dir>] [global flags]`  
 `bus reports journal-coverage [options] | parity [options] | journal-gap [options] | compliance-checklist [options] | filing-package [options] | annual-template [options] | annual-validate [options]`
 
 `PERIOD_ID` accepts the usual Bus shorthand identifiers such as `2024`, `2024-01`, and `2024Q1`, and it also accepts any custom `period_id` defined in the workspace `periods.csv`, such as `FY2024-2025`.

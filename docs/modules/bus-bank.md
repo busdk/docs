@@ -81,6 +81,7 @@ bus bank config extractors add \
 `bus bank backlog [--month <YYYY-MM>] [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--detail] [--fail-on-backlog] [--max-unposted <n>] [-C <dir>] [global flags]`  
 `bus bank coverage --year <YYYY> [-C <dir>] [global flags]`  
 `bus bank control [--month <YYYY-MM> | --year <YYYY> | --from <YYYY-MM-DD> --to <YYYY-MM-DD>] [--account <id>] [-C <dir>] [global flags]`  
+`bus bank add --date <YYYY-MM-DD> --amount <decimal> --account <id> --counterparty <name> [--message <text>] [-C <dir>] [global flags]`  
 `bus bank statement extract --file <path> [options] [-C <dir>] [global flags]`  
 `bus bank statement parse --file <path> [options] [-C <dir>] [global flags]`  
 `bus bank statement verify [--statement <parsed.json|attachment-id>] [--year <YYYY>] [--account <id>] [--fail-if-diff-over <amount>] [-C <dir>] [global flags]`  

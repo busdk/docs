@@ -63,10 +63,12 @@ to source control or print them in logs.
 Use these environment variables in deployments or untracked local operator
 files:
 
-- `BUS_STRIPE_SECRET_KEY`
-- `BUS_STRIPE_WEBHOOK_SECRET`
-- `BUS_STRIPE_API_VERSION`
-- `BUS_STRIPE_DEFAULT_PRICE_ID`
+- `BUS_STRIPE_SECRET_KEY` is required for Stripe API calls.
+- `BUS_STRIPE_WEBHOOK_SECRET` is required for webhook verification.
+- `BUS_STRIPE_API_VERSION` is optional; when set, it pins the Stripe API
+  version used by requests.
+- `BUS_STRIPE_DEFAULT_PRICE_ID` is optional; set it only when a deployment
+  needs a fallback Stripe price for checkout/session creation.
 
 For old Stripe test accounts, pin `BUS_STRIPE_API_VERSION` explicitly.
 
@@ -91,14 +93,23 @@ bus operator stripe catalog sync --file catalog.json
 bus operator billing catalog put --file catalog.json
 ```
 
+After synchronization, `bus operator stripe test` should report that the Stripe
+API key is usable. `bus operator billing catalog get` should return the catalog
+you published, including the plan, price, meter, and quota entries.
+
 Configure Stripe Customer Portal in the Stripe Dashboard before enabling
 `bus billing portal`. Configure a Stripe webhook endpoint that forwards events
-to the Bus deployment path that verifies webhooks through this integration. The
-endpoint signing secret from that webhook becomes `BUS_STRIPE_WEBHOOK_SECRET`.
+to the Bus deployment path that verifies webhooks through this integration:
+`/api/internal/stripe/webhook`. The endpoint signing secret from that webhook
+becomes `BUS_STRIPE_WEBHOOK_SECRET`.
 
 In local development, Stripe CLI can forward signed webhooks to the local Bus
 webhook route. The CLI prints the `whsec_...` signing secret for that local
 listener.
+
+```sh
+stripe listen --forward-to http://127.0.0.1:8080/api/internal/stripe/webhook
+```
 
 ### Test Mode And Live Mode
 

@@ -81,7 +81,7 @@ bus invoices postings
 
 `bus invoices init [-C <dir>] [global flags]`  
 `bus invoices add [<invoice-shorthand>] [--type <sales|purchase>] [--invoice-id <id>] --invoice-date <YYYY-MM-DD> [--due-date <YYYY-MM-DD>] --counterparty <name> [-C <dir>] [global flags]`  
-`bus invoices list [--type <sales|purchase>] [--status <status>] [--month <YYYY-M>] [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--due-from <YYYY-MM-DD>] [--due-to <YYYY-MM-DD>] [--counterparty <entity-id>] [--invoice-id <id>] [-C <dir>] [global flags]`  
+`bus invoices list [--type <sales|purchase>] [--status <status>] [--month <YYYY-MM>] [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--due-from <YYYY-MM-DD>] [--due-to <YYYY-MM-DD>] [--counterparty <entity-id>] [--invoice-id <id>] [-C <dir>] [global flags]`  
 `bus invoices import --profile <path> --source <path> [--source-lines <path>] [--year <YYYY>] [-C <dir>] [global flags]`  
 `bus invoices validate [-C <dir>] [global flags]`  
 `bus invoices classify [--min-confidence <0..1>] [--apply] [--fail-on-missing-evidence] [-C <dir>] [global flags]`  

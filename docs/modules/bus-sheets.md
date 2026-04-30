@@ -14,7 +14,7 @@ With no subcommand, `bus sheets` runs **serve**. Global flags follow [CLI comman
 
 Serve (default):
 
-`bus-sheets serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--tls-cert <file>] [--tls-key <file>] [--read-only] [--enable-agent] [global flags]`
+`bus-sheets [global flags] serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--tls-cert <file>] [--tls-key <file>] [--read-only] [--enable-agent]`
 
 `bus-sheets version` — Print the tool name and version to stdout and exit 0.
 
@@ -34,13 +34,16 @@ Default bind is `127.0.0.1`, so UI is local-only unless you change `--listen`.
 
 Optional agent chat is enabled only with `--enable-agent`.
 When enabled, you can run agent-assisted workspace commands from the UI.
-For full design/security details, see [Module reference: bus-sheets](../modules/bus-sheets).
+Security-relevant behavior is summarized below in the binding, capability URL,
+and agent-chat sections.
 
 ### Commands
 
 **`serve`** (default) — Start the local HTTP server that serves the Bus Sheets web UI. The effective workspace root is the current directory or the directory given by `-C` / `--chdir`. The server generates an unguessable token (unless you pass `--token`), binds to the address and port given by `--listen` and `--port`, and prints the capability base URL to **stdout**. All diagnostics go to **stderr**. Open the printed URL in a browser to use the workbook; there is no separate login. The server does not mutate workspace data until you perform an edit or mutation in the UI (or until the agent performs an action when agent is enabled). If the workspace root is not readable, startup fails with a deterministic diagnostic and a non-zero exit code.
 
-**`version`** — Print the tool name and version to stdout and exit 0. Other flags and arguments are ignored when version is requested.
+**`version`** — Print the tool name and version to stdout and exit 0. Global
+output flags such as `--output` are honored when they are provided before the
+subcommand.
 
 ### Serve flags
 

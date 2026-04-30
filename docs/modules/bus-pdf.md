@@ -21,7 +21,10 @@ Use `bus pdf --help`, `bus pdf render --help`, and `bus pdf list-templates --hel
 Callers such as [bus-invoices](./bus-invoices) load workspace data and pass a single JSON payload to this module.
 Output PDFs can then be registered as attachments.
 
-Template selection is inside the render model via the `template` field (template id or repository-relative template path).
+Template selection is inside the render model via the `template` field. The
+value can be a built-in template id or a template path relative to the current
+workspace/repository root selected by the caller. Paths must stay inside that
+root; use built-in template ids when rendering from untrusted input.
 There is no separate CLI template flag.
 Built-in templates are **fi-invoice-a4** and **plain-a4**.
 
@@ -33,8 +36,22 @@ The JSON render model must include top-level `template`.
 The value can be a template identifier or repository-relative template path.
 The module uses this value to select the template for rendering.
 
-For invoice PDFs, payload must conform to invoice render-model schema (header, lines, totals/VAT as applicable).
-Full schema details are in [Module reference: bus-pdf](../modules/bus-pdf).
+For invoice PDFs, payload must include header, line, and total fields needed by
+the selected template. A minimal model is:
+
+```json
+{
+  "template": "plain-a4",
+  "invoice": {
+    "invoice_id": "INV-1",
+    "invoice_date": "2026-01-31",
+    "seller": {"name": "Example Oy"},
+    "buyer": {"name": "Customer Oy"},
+    "lines": [{"description": "Service", "quantity": "1", "unit_price": "100.00", "vat_rate": "24"}],
+    "totals": {"net": "100.00", "vat": "24.00", "gross": "124.00"}
+  }
+}
+```
 
 ### Options
 

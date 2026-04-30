@@ -19,6 +19,11 @@ Requests use Bearer JWT authentication with audience `ai.hg.fi/internal`.
 
 Listing events requires `usage:read`. Deleting collected events requires
 `usage:delete`.
+Operators mint these trusted collector tokens with `bus operator token issue`
+or another deployment-controlled internal-token flow. The token must be HS256
+signed with `BUS_USAGE_JWT_SECRET`, include `sub`, `aud=ai.hg.fi/internal`,
+space-separated `scope`, `iat`, and `exp`, and be sent as
+`Authorization: Bearer <token>`.
 
 ### Error Format
 
@@ -47,6 +52,10 @@ contains storage `id`, optional idempotency `event_id`, occurrence time,
 optional `account_id`, event type, and raw JSON data.
 
 Collectors should persist a page downstream before deleting it.
+Query parameters are `before=<RFC3339 timestamp>`, `page=<n>`, and
+`page_size=<n>`. Defaults are current time, page `1`, and page size `1000`;
+page size is capped at `10000`. Results are ordered by `occurred_at,id` and
+return `items`, `page`, `page_size`, `before`, and `has_more`.
 
 ### `DELETE /api/internal/usage-events`
 
@@ -54,6 +63,9 @@ Deletes collected usage records.
 
 Use the same pagination selector after the collector has safely persisted the
 page elsewhere.
+The DELETE endpoint accepts the same `before`, `page`, and `page_size`
+selector as GET and deletes that deterministic page. Success returns
+`{"deleted": <count>}`.
 
 ### `GET /readyz`
 
@@ -78,10 +90,19 @@ trusted collectors.
 
 Use non-secret local configuration values only:
 
+Start PostgreSQL first and ensure the database in `BUS_USAGE_DATABASE_URL`
+exists and is reachable.
+
 ```sh
 BUS_USAGE_JWT_SECRET=dev-secret \
 BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disable' \
 bus-api-provider-usage --addr 127.0.0.1:8080
+```
+
+Verify readiness with:
+
+```sh
+curl -fsS http://127.0.0.1:8080/readyz
 ```
 
 Plain JWT secret values are raw text even when they look like base64; use

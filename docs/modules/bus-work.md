@@ -30,6 +30,12 @@ bus work fail <id> <message...>
 bus work block <id> <message...>
 ```
 
+Before running work commands, configure the Bus API host and authenticate with
+`bus auth` or a service token that has the work scopes required by the
+deployment. The examples assume a current project or context is configured and
+the client can read its token from the normal Bus config root or an operator
+token file.
+
 Create work for the current project or context:
 
 ```bash

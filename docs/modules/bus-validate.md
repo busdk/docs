@@ -98,7 +98,7 @@ For migration work, the sequence is often:
 
 ```bash
 bus validate parity --source ./imports/source-summary.tsv --max-abs-delta 0.01
-bus validate journal-gap --source ./imports/source-summary.tsv --max-abs-delta 0.01
+bus validate journal-gap --source ./imports/journal-gap.tsv --max-abs-delta 0.01
 ```
 
 ### Output and flags

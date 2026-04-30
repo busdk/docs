@@ -7,9 +7,9 @@ description: bus filing produces deterministic filing bundles from validated, cl
 
 ### Synopsis
 
-`bus filing prh [module-specific options] [-C <dir>] [global flags]`  
-`bus filing vero [module-specific options] [-C <dir>] [global flags]`  
-`bus filing tax-audit-pack [module-specific options] [-C <dir>] [global flags]`
+`bus filing [-C <dir>] [global flags] prh [module-specific options]`  
+`bus filing [-C <dir>] [global flags] vero [module-specific options]`  
+`bus filing [-C <dir>] [global flags] tax-audit-pack [module-specific options]`
 
 ### Description
 
@@ -17,12 +17,14 @@ Command names follow [CLI command naming](../cli/command-naming).
 
 `bus filing` orchestrates deterministic filing bundle creation from validated, closed-period data.
 It delegates target-specific formats to `bus filing prh` and `bus filing vero`.
-Use after validation and period close.
+Use after validation and period close. Verify prerequisites with
+`bus validate` and `bus status close-readiness --year <YYYY>` before building
+the filing bundle.
 Run `bus filing --help` for the dispatcher shapes and `bus filing <target> --help` for the current target hand-off syntax.
 
 ### Commands
 
-`prh` produces a PRH-ready export bundle by invoking [bus-filing-prh](./bus-filing-prh). `vero` produces a Vero-ready export bundle by invoking [bus-filing-vero](./bus-filing-vero). `tax-audit-pack` produces a tax-audit filing bundle.
+`prh` produces a PRH-ready export bundle by invoking [bus-filing-prh](./bus-filing-prh). `vero` produces a Vero-ready export bundle by invoking [bus-filing-vero](./bus-filing-vero). `tax-audit-pack` produces a tax-audit filing bundle; run `bus filing tax-audit-pack --help` for its supported output formats, required closed-period inputs, and target-specific options.
 
 ### Options
 

@@ -61,13 +61,13 @@ bus reconcile post \
 
 ### Synopsis
 
-`bus reconcile init [--if-missing] [--force] [-C <dir>] [global flags]`  
-`bus reconcile match --bank-id <id|source-ref> (--invoice-id <id> | --journal-id <id>) [-C <dir>] [global flags]`  
-`bus reconcile allocate --bank-id <id|source-ref> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ... [-C <dir>] [global flags]`  
-`bus reconcile list [-C <dir>] [global flags]`  
-`bus reconcile propose [options] [-C <dir>] [global flags]`  
-`bus reconcile apply --in <path>|- [--dry-run] [--fail-if-partial] [options] [-C <dir>] [global flags]`  
-`bus reconcile post --kind invoice_payment [posting options] [-C <dir>] [global flags]`
+`bus reconcile [-C <dir>] [global flags] init [--if-missing] [--force]`  
+`bus reconcile [-C <dir>] [global flags] match --bank-id <id|source-ref> (--invoice-id <id> | --journal-id <id>)`  
+`bus reconcile [-C <dir>] [global flags] allocate --bank-id <id|source-ref> [--invoice <id>=<amount>] ... [--journal <id>=<amount>] ...`  
+`bus reconcile [-C <dir>] [global flags] list`  
+`bus reconcile [-C <dir>] [global flags] propose [options]`  
+`bus reconcile [-C <dir>] [global flags] apply --in <path>|- [--dry-run] [--fail-if-partial] [options]`  
+`bus reconcile [-C <dir>] [global flags] post --kind invoice_payment [posting options]`
 
 ### Which command should you use?
 

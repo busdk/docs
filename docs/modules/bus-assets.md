@@ -70,7 +70,7 @@ bus assets add \
   --asset-account 1130 \
   --depreciation-account 1190 \
   --expense-account 6800 \
-  --method straight_line \
+  --method straight_line_monthly \
   --life-months 36
 bus assets depreciate --period 2026-03 --post-date 2026-03-31
 bus assets dispose \

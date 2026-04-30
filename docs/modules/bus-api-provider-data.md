@@ -21,6 +21,11 @@ The provider is normally loaded by `bus-api` through explicit provider
 configuration. It should not replace the core `bus-api` workspace CRUD surface
 or the `bus-data` library; those remain the authority for generic workspace
 tables, schemas, and packages.
+Enable it by adding provider `data` to the Bus API provider allowlist and
+serving the intended workspace root. A minimal local command is
+`bus-api serve --provider data --enable-module data -C <workspace>`. Verify the
+provider is available with `bus-api-provider-data --help` and the running
+`bus-api` provider/module listing for that deployment.
 
 ### Help And Quality
 

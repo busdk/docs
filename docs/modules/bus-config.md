@@ -102,8 +102,8 @@ bus config set \
 
 ### Synopsis
 
-`bus config init [common options] [-C <dir>] [global flags]`  
-`bus config set [common options] [-C <dir>] [global flags]`  
+`bus config [-C <dir>] [global flags] init [common options]`  
+`bus config [-C <dir>] [global flags] set [common options]`  
 `bus config set <key> <value>`  
 `bus config id-generation <action> ...`
 

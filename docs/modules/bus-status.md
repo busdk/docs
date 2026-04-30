@@ -33,6 +33,8 @@ bus status close-readiness --year 2026 --compliance fi --format json \
 `bus status readiness [--year <YYYY>] [--strict] [--compliance [fi]] [-C <dir>] [-f <text|json|tsv>] [-o <file>] [global flags]`  
 `bus status evidence-coverage [--year <YYYY>] [--strict] [-C <dir>] [-f <text|json|tsv>] [-o <file>] [global flags]`  
 `bus status close-readiness --year <YYYY> [--strict] [--compliance [fi]] [-C <dir>] [-f <text|json|tsv>] [-o <file>] [global flags]`
+`bus status vm [--api-url <url>] [--token-file <path>] [-f <text|json|tsv>] [global flags]`  
+`bus status containers [--api-url <url>] [--token-file <path>] [-f <text|json|tsv>] [global flags]`
 
 ### Commands
 
@@ -46,6 +48,10 @@ bus status close-readiness --year 2026 --compliance fi --format json \
 domain-owned Go clients from [bus-vm](./bus-vm) and
 [bus-containers](./bus-containers), so `bus-status` provides the status UX
 without owning those HTTP API contracts.
+Before using them, set the API URL for the deployment and authenticate with
+`bus auth` or provide a token file. VM status requires `vm:read`; container
+status requires `container:read`. The normal Bus auth token from the user
+config root is used when no token file or environment token override is set.
 
 ### What the output tells you
 

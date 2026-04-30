@@ -115,6 +115,9 @@ Use `bus run context` to inspect the prompt/script variables that `.txt` and scr
 
 Name grammar: names must start with a letter and contain only lowercase ASCII letters, digits, hyphens, and underscores. The same name cannot be used for more than one type (e.g. both a prompt and a pipeline); that ambiguity yields exit 2.
 
+`--timeout <duration>` sets the maximum agent run time for commands that invoke
+an agent. Durations use Go syntax such as `30s`, `5m`, or `1h`.
+
 **Token resolution.** When you pass tokens to `bus run`, resolution order is:
 1. Directory-local prompt (`.bus/run/<name>.txt`)
 2. Directory-local script (non-Windows `.sh`; Windows `.ps1` if present, else `.bat`)

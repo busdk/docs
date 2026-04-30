@@ -17,11 +17,20 @@ servers, and does not require a ChatGPT login.
 
 ## Usage
 
+Run these commands after BusDK is installed and from the workspace root you
+want the chat state to use. For `--backend bus-agent`, the selected
+`bus-agent` runtime must be available and authenticated when that runtime
+requires login. For `--backend local`, the local OpenAI-compatible endpoint
+must already be reachable.
+
 Build and start the standalone chat UI:
 
 ```sh
 bus chat serve --print-url
 ```
+
+Success prints a tokenized local URL. Open that URL in a browser to reach the
+chat panel; the token gates the local browser session.
 
 To force a `bus-agent` runtime for this invocation, pass `--agent` and
 optionally `--model`:
@@ -72,11 +81,22 @@ backends remain login-free and report as authenticated immediately.
 
 ## Flags
 
-The `serve` command supports workspace and listener flags (`--root`, `--listen`,
-`--port`, `--token`, `--print-url`, `--webview`, `--no-webview`), AI enablement
-flags (`--enable-ai`, `--disable-ai`), backend flags (`--backend`, `--agent`,
-`--model`, `--local-base-url`, `--local-api-key`, `--local-timeout`), and prompt
-configuration flags (`--system-prompt`, `--system-prompt-file`).
+The `serve` command supports workspace and listener flags. `--root <dir>`
+selects the workspace root and defaults to the current directory.
+`--listen <addr>` selects the bind address, usually `127.0.0.1`.
+`--port <n>` selects the port; `0` means choose a free local port.
+`--token <value>` overrides the generated browser capability token and should
+only be used with non-secret local smoke values. `--print-url` prints the
+tokenized URL, `--webview` opens the local app window, and `--no-webview`
+disables auto-open.
+
+AI flags control the backend. `--enable-ai` and `--disable-ai` toggle the panel
+integration. `--backend <bus-agent|local>` chooses the runtime family.
+`--agent <runtime>` and `--model <name>` apply to the `bus-agent` backend.
+`--local-base-url <url>`, `--local-api-key <env-or-local-token>`,
+`--local-timeout <duration>`, and `--model <name>` apply to local
+OpenAI-compatible servers. Prompt flags `--system-prompt <text>` and
+`--system-prompt-file <path>` override the assistant instructions.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

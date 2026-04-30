@@ -55,6 +55,10 @@ bus period reopen \
 
 Generate opening balances for the new year from a prior workspace:
 
+Before running `opening`, create and open the target period in the current
+workspace. `--from` must point to the prior workspace whose balances are used
+as of `--as-of`.
+
 ```bash
 bus period opening \
   --from ../books-2025 \

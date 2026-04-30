@@ -48,7 +48,8 @@ mounted modules. This is useful when the frontend itself should not be public,
 for example for private customer portals or operator-only deployments.
 
 Enable it with `--require-frontend-auth` and provide the signing secret through
-a secret file or environment variable:
+`--frontend-auth-secret-file <path>` or `BUS_PORTAL_FRONTEND_AUTH_SECRET`.
+The secret file takes precedence when both are set.
 
 ```bash
 bus portal serve --print-url \
@@ -61,6 +62,10 @@ configured cookie. Defaults are audience `ai.hg.fi/api`, scope `portal:read`,
 and cookie name `bus_portal_token`. Override them with
 `--frontend-auth-audience`, `--frontend-auth-scope`, and
 `--frontend-auth-cookie`.
+
+Frontend tokens use HS256 with the configured secret. They must include `sub`,
+`aud`, `scope`, `iat`, and `exp`. The configured scope is represented inside
+the space-separated `scope` claim, for example `"scope":"portal:read"`.
 
 Protected frontend mode only controls delivery of the browser app. The API
 providers still enforce account ownership, feature scopes, billing state,

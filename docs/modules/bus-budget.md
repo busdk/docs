@@ -31,7 +31,7 @@ The owned `budgets.csv` dataset can resolve either as ordinary CSV or as `PCSV-1
 
 `add` and `set` accept `--account <account-id>`, `--year <YYYY>`, `--period <MM|Qn>`, and `--amount <decimal>`.
 
-`report` accepts either `--year <YYYY>` or `--period <period>`.
+`report` accepts either `--year <YYYY>` or `--period <period>`. Use `--period <YYYYQn>` for a quarter such as `2026Q1`, or use `--year <YYYY>` with `add` and `set` period values `MM` or `Qn` when writing budget rows.
 
 Global flags are defined in [Standard global flags](../cli/global-flags). For command-specific help, run `bus budget --help`.
 

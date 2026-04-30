@@ -16,8 +16,14 @@ can run event workers without coupling them to HTTP controller internals.
 
 ### Common Tasks
 
+Set the Events API endpoint before using the client. Provide the bearer token
+through the normal Bus auth config, a token file, or `BUS_API_TOKEN`; do not
+pass literal token values on the command line. A local auth flow can write the
+default token, or you can export a short-lived token for the current shell:
+
 ```bash
-bus auth token --scope "vm:read vm:write"
+export BUS_EVENTS_API_URL=https://ai.hg.fi/api/v1/events
+export BUS_API_TOKEN="$(bus auth token --scope "vm:read vm:write")"
 bus events send --name example.ping --payload '{"ok":true}'
 bus events send --name bus.vm.start.request --payload '{"runtime":"default"}'
 bus events listen --name example.ping

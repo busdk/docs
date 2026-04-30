@@ -17,7 +17,10 @@ Command names follow [CLI command naming](../cli/command-naming).
 Packaging, manifests, and hashes are deterministic.
 
 It is usually invoked as `bus filing prh`.
-Inputs come from closed-period data and upstream reporting/VAT outputs.
+Inputs come from closed-period data and upstream reporting/VAT outputs. Before
+running it, validate the workspace with `bus validate`, close the target period
+with `bus period close --period <period>`, and generate the report/VAT
+artifacts required by the filing package.
 
 ### Options
 
@@ -48,11 +51,11 @@ bus filing -C ./workspace prh
 Inside a `.bus` file, write this module target without the `bus` prefix.
 
 ```bus
-# same as: bus filing-prh --format json
-filing-prh --format json
+# same as: bus filing prh --format json
+filing prh --format json
 
-# same as: bus filing-prh --output ./out/prh-export.tsv
-filing-prh --output ./out/prh-export.tsv
+# same as: bus filing prh --output ./out/prh-export.tsv
+filing prh --output ./out/prh-export.tsv
 ```
 
 <!-- busdk-docs-nav start -->

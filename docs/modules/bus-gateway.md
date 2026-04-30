@@ -55,6 +55,10 @@ one-time bootstrap admin password in the same
 
 Start the gateway server and print the token-gated URL:
 
+Run the command from the workspace root the gateway should manage, or pass
+`-C <workspace>`. The first run creates gateway-managed tables and settings in
+that workspace.
+
 ```bash
 bus-gateway serve --print-url
 ```
@@ -91,14 +95,20 @@ User settings then define which configured services are visible and launchable
 for each account. This keeps the service catalog separate from per-user access
 while still using the same workspace storage backend as the rest of BusDK data.
 
-The CLI exposes the same model for automation. `bus-gateway -C ./workspace
-service add/get/set/remove ...` and `service list` provide full CRUD-style
-control over the workspace service catalog. `bus-gateway -C ./workspace user
-add/get/set/remove ...` and `user list` do the same for local gateway users,
-while `bus-gateway -C ./workspace user services set ...` replaces the
-visible-service list for one account. `bus-gateway -C ./workspace settings
-get` and `settings set ...` read or update the login title/helper copy for the
-workspace.
+The CLI exposes the same model for automation. For example:
+
+```bash
+bus-gateway -C ./workspace service add --id bus-ledger --title "Ledger" --command "bus ledger serve --print-url"
+bus-gateway -C ./workspace user add --user-id alice --display-name "Alice"
+bus-gateway -C ./workspace user services set --user-id alice --service bus-ledger
+bus-gateway -C ./workspace settings set --login-title "Bus workspace"
+```
+
+`service add/get/set/remove` and `service list` provide CRUD-style control over
+the workspace service catalog. `user add/get/set/remove` and `user list` do the
+same for local gateway users. `user services set` replaces the visible-service
+list for one account. `settings get` and `settings set` read or update the
+login title/helper copy for the workspace.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

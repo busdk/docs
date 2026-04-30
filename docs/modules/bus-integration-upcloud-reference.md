@@ -214,8 +214,8 @@ Go duration syntax; integer environment values are seconds.
 
 Optional boolean flag. Defaults to `BUS_RUNNER_DELETE_STORAGE` or true. When
 true, runner storage is deleted with the runner. This is destructive for the
-runner disk. Set `BUS_RUNNER_DELETE_STORAGE=0` or omit this flag when the disk
-must be preserved for inspection.
+runner disk. Set `BUS_RUNNER_DELETE_STORAGE=0` when the disk must be preserved
+for inspection.
 
 ### `--runner-ssh-ready-timeout <duration>`
 

@@ -9,7 +9,8 @@ description: bus entities maintains canonical juridical entity rows for a BusDK 
 
 `bus entities init [-C <dir>] [global flags]`  
 `bus entities list [-C <dir>] [-o <file>] [-f <format>] [global flags]`  
-`bus entities add --entity-type <organization|person> --display-name <name> [flags]`
+`bus entities add --entity-type organization --display-name <name> (--business-id <id>|--org-id <id>) [-C <dir>] [global flags]`  
+`bus entities add --entity-type person --display-name <name> --entity-id <prefixed-id> [-C <dir>] [global flags]`
 
 ### Description
 

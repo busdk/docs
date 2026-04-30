@@ -87,36 +87,60 @@ MailHog is suitable for local development.
 
 Sets the sender address used for OTP email.
 
+### `BUS_AUTH_API_USER_SCOPES`
+
+Sets the end-user API scopes the provider is allowed to issue after approval.
+The value is a space-separated list such as
+`llm:proxy billing:read vm:read container:read container:run`. If the variable
+is empty, the deployment default applies. A token request that asks for a scope
+outside this allow-list fails with a deterministic authorization error instead
+of silently widening access.
+
 ### `POST /api/v1/auth/register`
 
-Creates or finds a registration candidate for an email address.
+Creates or finds a registration candidate for an email address. Send
+`Content-Type: application/json` with `{"email":"user@example.com"}`. Success
+returns `200 OK` with the user status, usually `waitlisted`. Registration
+alone does not issue paid API access. Invalid email returns `400 Bad Request`.
 
-New users start waitlisted. Registration alone does not issue paid API access.
+New users start waitlisted.
 
 ### `POST /api/v1/auth/otp/request`
 
 Creates a short-lived OTP challenge and sends it through the configured OTP
-provider.
+provider. Send `{"email":"user@example.com"}`. Success returns `200 OK` with a
+challenge status and no OTP secret in the response. Rate-limit failures return
+`429 Too Many Requests`.
 
 The console OTP provider is for local development only.
 
 ### `POST /api/v1/auth/otp/verify`
 
 Verifies the OTP and returns an auth-service token when verification succeeds.
+Send `{"email":"user@example.com","otp":"123456"}`. Success returns `200 OK`
+with a token, expiry, user UUID, verification status, and waitlist status.
+Wrong, expired, or reused OTPs return `401 Unauthorized` or `400 Bad Request`
+depending on the failure.
 
 The returned token uses audience `ai.hg.fi/auth`; it is not an LLM or container
 API token.
 
 ### `GET /api/v1/auth/status`
 
-Returns the current user's verification and approval status.
+Returns the current user's verification and approval status. Send
+`Authorization: Bearer <auth-service JWT>`. Success returns `200 OK` with
+`verified`, `status`, `user_id`, and `account_id` when approved.
 
 Use it after OTP verification to see whether the account is still waitlisted,
 approved, or rejected.
 
 ### `POST /api/v1/auth/token`
 
-Issues a Bus API token for an approved user.
+Issues a Bus API token for an approved user. Send
+`Authorization: Bearer <auth-service JWT>` and a JSON body such as
+`{"scope":"llm:proxy billing:read","ttl_seconds":3600}`. Success returns
+`200 OK` with the API JWT, expiry, audience `ai.hg.fi/api`, and granted scope.
+Waitlisted, rejected, unverified, or underscoped users receive `403 Forbidden`.
 
 The provider only grants scopes allowed by `BUS_AUTH_API_USER_SCOPES` and the
 account policy.
@@ -124,42 +148,61 @@ account policy.
 ### `POST /api/v1/auth/token/refresh`
 
 Refreshes an auth-service session when refresh is allowed by deployment
-configuration.
+configuration. Send `Authorization: Bearer <auth-service JWT>`. Success returns
+a replacement auth-service token. Expired or revoked sessions return
+`401 Unauthorized`.
 
 ### `POST /api/v1/auth/logout`
 
-Revokes or ends the current auth session.
+Revokes or ends the current auth session. Send
+`Authorization: Bearer <auth-service JWT>`. Success returns `204 No Content`
+or a small JSON confirmation. Clients should also clear local browser or CLI
+session storage.
 
-Clients should also clear local browser or CLI session storage.
 
 ### `GET /api/v1/auth/me`
 
-Returns the current auth-service user identity and account information.
+Returns the current auth-service user identity and account information. Send
+`Authorization: Bearer <auth-service JWT>`. Success returns `200 OK` with user
+UUID, email, verification state, approval status, and account UUID when one is
+active.
 
 Email remains auth-service data. API providers use the stable account UUID.
 
 ### `GET /api/v1/auth/check`
 
-Validates a bearer JWT and returns parsed claims.
+Validates a bearer JWT and returns parsed claims. Send
+`Authorization: Bearer <JWT>`. Success returns `200 OK` with `sub`, `aud`,
+`scope`, `iat`, and `exp`. Invalid signatures, wrong audience, missing expiry,
+or revoked tokens return `401 Unauthorized`.
 
 This is a diagnostic auth-service endpoint. Domain API providers still enforce
 their own audience, scope, account ownership, and billing rules.
 
 ### `GET /api/v1/auth/admin/waitlist`
 
-Lists waitlisted users for an authorized operator.
-
-Requires auth-service admin scopes.
+Lists waitlisted users for an authorized operator. Send
+`Authorization: Bearer <auth-service admin JWT>`. Requires
+`waitlist:read`; deployments often mint this through `bus operator token issue`
+or an internal operator secret store. Success returns `200 OK` with a list of
+emails, verification state, status, and timestamps.
 
 ### `POST /api/v1/auth/admin/approve`
 
-Approves a verified waitlisted user.
+Approves a verified waitlisted user. Send
+`Authorization: Bearer <auth-service admin JWT>` with
+`{"email":"user@example.com"}`. Requires `waitlist:approve` or
+`admin:manage`. Success returns `200 OK` with the stable `account_id`.
 
 Approval creates or activates the stable account UUID used as API token `sub`.
 
 ### `POST /api/v1/auth/admin/reject`
 
-Rejects a waitlisted user.
+Rejects a waitlisted user. Send
+`Authorization: Bearer <auth-service admin JWT>` with
+`{"email":"user@example.com","reason":"optional operator note"}`. Requires
+`waitlist:approve` or `admin:manage`. Success returns `200 OK` with status
+`rejected`.
 
 Rejected users cannot request paid feature API tokens.
 

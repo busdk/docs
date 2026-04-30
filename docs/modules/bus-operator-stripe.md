@@ -42,7 +42,7 @@ this operator CLI.
 Typical test-mode setup:
 
 ```sh
-export BUS_STRIPE_SECRET_KEY=sk_test_...
+. ./.env.stripe-test
 bus operator stripe test
 bus operator billing catalog template > catalog.json
 bus operator stripe catalog sync --file catalog.json
@@ -50,8 +50,8 @@ bus operator billing catalog put --file catalog.json
 ```
 
 Keep `BUS_STRIPE_SECRET_KEY` in a secret manager or untracked local environment
-file. Do not put it in public docs, committed compose files, shell history, or
-command arguments.
+file such as `./.env.stripe-test`. Do not put it in public docs, committed
+compose files, shell history, or command arguments.
 
 Run `bus operator stripe --help` for the full command reference.
 

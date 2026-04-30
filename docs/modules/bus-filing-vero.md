@@ -55,7 +55,7 @@ Reads validated datasets and VAT and report outputs from the canonical layout, w
 ```bash
 bus filing vero export --bundle filing/vero/2026-01
 bus filing vero verify --bundle filing/vero/2026-01
-bus filing vero export --bundle filing/vero/2026-01 --format json --output ./out/vero-export.json
+bus filing --format json --output ./out/vero-export.json vero export --bundle filing/vero/2026-01
 bus filing vero export --bundle filing/vero/2026-01 --dry-run
 ```
 

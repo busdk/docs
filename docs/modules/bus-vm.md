@@ -11,6 +11,13 @@ runtime lifecycle state directly.
 
 ### Common task
 
+Authenticate first with `bus auth` and request a token that includes the VM
+status scope enabled for your account:
+
+```sh
+bus auth token --scope "vm:read"
+```
+
 ```bash
 bus vm status
 ```
@@ -46,3 +53,7 @@ working-directory, output, color, and HTTP timeout controls.
 bus vm status --format text
 bus vm --api-url https://ai.hg.fi --token-file /run/secrets/bus-api-token status
 ```
+
+A successful status call exits 0 and prints the current runtime state in the
+selected format. Text output includes whether the runtime is ready, starting,
+stopped, or unavailable according to the provider response.

@@ -11,15 +11,18 @@ Use this page when you need to run commands and verify workbook formula outputs.
 
 ### What the options do
 
-`--formula` enables formula evaluation when formula-enabled fields are declared in a beside-the-table schema.
+`--formula` enables formula evaluation when formula-enabled fields are declared in a beside-the-table schema. The schema must live beside the source table as `<table>.schema.json`; fields that should be evaluated declare formula metadata in that schema before the command is run.
 
 `--formula-source` includes the formula source text in output together with evaluated values.
 
-`--formula-dialect <name>` selects a source profile (`spreadsheet`, `excel_like`, or `sheets_like`) when source expression syntax differs.
+`--formula-dialect <name>` selects a source profile (`spreadsheet`, `excel_like`, or `sheets_like`) when source expression syntax differs. The default is `spreadsheet`. Use `excel_like` for Excel-style source quirks and `sheets_like` for Google Sheets-style source quirks.
 
 `--decimal-sep <char>` and `--thousands-sep <char>` control locale parsing and output normalization for numeric values.
 
 ### Typical command
+
+Replace `source.csv` with the workbook/table export you are reading. Replace
+`A1:C10` with the cell range that contains the table in that source.
 
 ```bash
 bus data table workbook source.csv A1:C10 \

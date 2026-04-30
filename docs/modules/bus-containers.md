@@ -16,25 +16,25 @@ metered and limited by the account plan.
 
 ### Common tasks
 
+Before running container commands, authenticate with `bus auth` and request a
+token that includes the container scopes enabled for your account:
+
+```sh
+bus auth token --scope "container:read container:run container:delete billing:read"
+```
+
+The token must be an AI Platform bearer JWT. By default the CLI reads the
+normal Bus API token from `~/.config/bus/auth/api-token` or
+`${BUS_CONFIG_DIR}/auth/api-token`. `--token-file`, `BUS_AI_TOKEN`, and
+`BUS_API_TOKEN` override that default. Literal token values are not accepted on
+the command line. The service must use the JWT `sub` account UUID as the owner
+and must not trust a client-supplied account ID.
+
 ```bash
 bus containers status
 bus containers run --profile codex -- sh -c 'printf OK'
 bus containers runs
 bus containers delete run_123
-```
-
-The token must be an AI Platform bearer JWT, usually obtained through
-`bus auth`. By default the CLI reads the normal Bus API token from
-`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`.
-`--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that default.
-Literal token values are not accepted on the command line. The service must use
-the JWT `sub` account UUID as the owner and must not trust a client-supplied
-account ID.
-
-Request a token with the container scopes enabled for your account:
-
-```sh
-bus auth token --scope "container:read container:run container:delete billing:read"
 ```
 
 If billing is required and missing, or if a quota is exhausted, the server

@@ -16,6 +16,7 @@ an authenticated API surface for session creation, input, output, and cleanup.
 ### Authentication
 
 Terminal APIs require a Bus API JWT with audience `ai.hg.fi/api`.
+Clients send it as `Authorization: Bearer <Bus API JWT>`.
 
 Write operations require `terminal:write`. Read operations require
 `terminal:read`. Every operation is account-isolated by JWT `sub`.
@@ -35,12 +36,16 @@ Creates a terminal session for the authenticated account.
 
 Use this after the user has an approved account and the portal has a valid Bus
 API token.
+The request body may be `{}` for the default local backend. Success returns
+`201 Created` with `id`, `account_id`, `state`, optional `rows`, `cols`, and
+initial `output`.
 
 ### `GET /api/v1/terminal/sessions/{id}`
 
 Returns metadata for one owned terminal session.
 
 The provider rejects reads for sessions owned by another account.
+Success returns `200 OK` with the session object.
 
 ### `GET /api/v1/terminal/sessions/{id}/output`
 
@@ -48,6 +53,7 @@ Returns terminal output for one owned session.
 
 Use this endpoint for browser polling or streaming-style UI updates, depending
 on deployment configuration.
+Success returns `200 OK` with `{"id":"...","output":["..."]}`.
 
 ### `GET /api/v1/terminal/sessions/{id}/stream`
 
@@ -63,6 +69,8 @@ Sends input to one owned terminal session.
 
 Treat terminal input as sensitive operational data. Do not log raw input in
 production.
+Send `{"input":"command text\n"}`. Success returns `202 Accepted` with the
+updated session object.
 
 ### `POST /api/v1/terminal/sessions/{id}/resize`
 
@@ -70,6 +78,8 @@ Updates terminal dimensions for one owned session.
 
 The JSON body contains positive integer `rows` and `cols`. Use this when the
 browser terminal viewport changes size.
+Rows and columns must be between 1 and 1000. Success returns `202 Accepted`
+with the updated session object.
 
 ### `DELETE /api/v1/terminal/sessions/{id}`
 
@@ -77,10 +87,17 @@ Closes one owned terminal session.
 
 Call this when the browser session ends or the owning container run is cleaned
 up.
+Success returns `200 OK` with the closed session object.
 
 ### `GET /readyz`
 
 Reports provider readiness.
+Success returns `200 OK` with `{"ok":true}`.
+
+Errors use `{"error":{"type":"...","message":"..."}}`. Missing or invalid
+bearer tokens return `401 invalid_auth`, invalid JSON or dimensions return
+`400 bad_request`, missing sessions return `404 not_found`, and unavailable
+streaming returns `500 streaming_unavailable`.
 
 ### Portal Use
 
