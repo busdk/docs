@@ -136,7 +136,7 @@ For BusDK, every account must have one of these types:
 | `income` | sales and other revenue |
 | `expense` | purchases, services, wages, fees, depreciation |
 
-If you are following a Finnish numbered chart, the common practical pattern is still useful: `1xxx` often means assets, `2xxx` liabilities, `3xxx` equity, `4xxx` income, and `5xxx` to `7xxx` expenses. BusDK does not force a national numbering scheme, but consistent typing matters because downstream modules use it.
+If you are following a Finnish numbered chart, the common practical pattern is still useful: `1xxx` often means assets, `2xxx` equity and liabilities, `3xxx` income, and `4xxx` to `8xxx` expenses and adjustments. BusDK does not force a national numbering scheme, but consistent typing matters because downstream modules use it.
 
 ### Reports and groups
 

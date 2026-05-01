@@ -14,7 +14,7 @@ With no subcommand, `bus api` runs **serve**. Global flags follow [CLI command n
 
 Serve (default):
 
-`bus-api serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--base-path <path>] [--cors-origin <origin>] ... [--tls-cert <file>] [--tls-key <file>] [--read-only] [--provider <id> ...] [--enable-module <name> ...] [--route-config <file>] [global flags]`
+`bus-api [global flags] serve [--listen <addr>] [--port <n>] [--token <string>] [--token-bytes <n>] [--base-path <path>] [--cors-origin <origin>] ... [--tls-cert <file>] [--tls-key <file>] [--read-only] [--provider <id> ...] [--enable-module <name> ...] [--route-config <file>]`
 
 `bus-api openapi` — Print the OpenAPI document (JSON) to stdout.  
 `bus-api version` — Print the tool name and version to stdout and exit 0.
@@ -50,7 +50,7 @@ loading, routing, capability URLs, and host-level security behavior.
 
 ### Serve flags
 
-Serve-specific flags are `--listen <addr>` (default `127.0.0.1`), `--port <n>` (default `0`, auto-choose), `--token <string>`, `--token-bytes <n>`, `--base-path <path>` (default `/{token}/v1`), repeatable `--cors-origin <origin>`, `--tls-cert <file>` with `--tls-key <file>` for HTTPS, `--read-only` to block mutating endpoints, repeatable `--provider <id>` for explicit built-in provider allowlisting, repeatable `--enable-module <name>` (`all` for allowlisted built-ins), and `--route-config <file>` for HTTP-to-event mapping plus provider capabilities.
+Serve-specific flags are `--listen <addr>` (default `127.0.0.1`), `--port <n>` (default `0`, auto-choose), `--token <string>`, `--token-bytes <n>`, `--base-path <path>` (default `/{token}/v1`), repeatable `--cors-origin <origin>`, `--tls-cert <file>` with `--tls-key <file>` for HTTPS, `--read-only` to block mutating endpoints, repeatable `--provider <id>` for explicit built-in provider allowlisting, repeatable `--enable-module <name>` (`all` for allowlisted built-ins), and `--route-config <file>` for HTTP-to-event mapping plus provider capabilities. `--base-path` must include the literal `{token}` placeholder when you customize it; startup fails with usage status when the token placeholder is missing.
 
 ### Global flags
 
@@ -70,7 +70,7 @@ Mutation operations are atomic and leave workspace unchanged on failure.
 Error responses use stable JSON shape.
 
 When module adapters are enabled, module endpoints are mounted under `/{token}/v1/modules/{module}/...`. Providers that declare public route aliases may additionally serve provider-native API paths under the same capability prefix.
-For full endpoint matrix and error contracts, see [Module reference: bus-api](../modules/bus-api).
+Use the OpenAPI document described below as the endpoint matrix and error-contract reference for the exact server build you are running.
 
 ### OpenAPI document
 
@@ -98,7 +98,7 @@ Error messages are written to stderr. When the workspace root does not exist or 
 
 ```bash
 bus api serve --port 8080 --token-bytes 32
-bus api serve --read-only --enable-module accounts --enable-module journal
+bus api serve --read-only --provider accounts --provider journal --enable-module accounts --enable-module journal
 bus api openapi --output ./out/openapi.json
 bus api version
 ```

@@ -61,7 +61,7 @@ it ends with `.bus`, or it is executable and starts with `#!/usr/bin/bus` or `#!
 
 Busfile line rules:
 
-Blank lines are ignored. Lines whose first non-whitespace character is `#` are comments. Lines ending with `.bus` are treated as nested includes. Other lines are parsed as a single command line with shell-like quoting.
+Blank lines are ignored. Lines whose first non-whitespace character is `#` are comments. Lines ending with `.bus` are treated as nested includes. Other lines are parsed as a single command line with shell-like quoting. A trailing backslash joins the next physical line before tokenization, so multi-line command examples are equivalent to one logical line. A dangling trailing backslash at end of file is a syntax error and exits 65.
 
 A line that contains only dispatcher global flags acts as a sticky directive for
 subsequent commands in the same `.bus` session. This uses the same global-flag
@@ -189,7 +189,7 @@ Atomicity is configurable and the default transaction provider is `none`. Prefer
 
 Dispatch during busfile runs is automatic: an in-process runner is used when available, otherwise shell lookup (`bus-<module>` on `PATH`) is used when enabled. Shell lookup can be disabled with `bus.busfile.dispatch.shell_lookup_enabled=false` in preferences or workspace config.
 
-For deeper transaction/dispatch internals, see [Module reference: bus (dispatcher)](../modules/bus).
+For a step-by-step script authoring guide, use [`.bus` files — getting started step by step](../cli/bus-script-files-getting-started).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
