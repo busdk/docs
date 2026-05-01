@@ -11,7 +11,7 @@ Use test-mode Stripe keys and non-production UpCloud resources first. Replace ev
 
 ## Prerequisites
 
-Start from a Bus API deployment with the auth, events, billing, usage, VM, and container API providers enabled. The auth provider must issue `aud=ai.hg.fi/api` user tokens for public APIs and `aud=ai.hg.fi/internal` service tokens for trusted workers. Events should use Redis or PostgreSQL when requests must survive process restarts; memory is useful only for local development.
+Start from a Bus API deployment with the auth, events, billing, usage, VM, and container API providers enabled. The auth provider must issue `aud=ai.hg.fi/api` user tokens for public APIs. Workers that publish or listen through the Events API also use `aud=ai.hg.fi/api` tokens with narrow event-domain scopes, while internal service-only endpoints use `aud=ai.hg.fi/internal` tokens. Events should use Redis or PostgreSQL when requests must survive process restarts; memory is useful only for local development.
 
 Prepare durable PostgreSQL databases for auth, billing, and usage state. Billing state should survive restarts because it contains catalog data, subscription state, idempotency keys, usage export progress, and quota buckets. Usage state should survive restarts because billing export and quota accounting depend on stable usage records.
 
@@ -33,22 +33,24 @@ export BUS_BILLING_API_URL="$BUS_API_URL/api/v1/billing"
 Generate service tokens with narrow scopes. In a production deployment, issue these through the auth provider internal token endpoint or an operator token service. The examples show the command shape; store the output in private files or secret-manager entries:
 
 ```sh
+mkdir -p ./local
+
 bus operator token --format token issue \
   --subject bus-integration-billing \
   --audience ai.hg.fi/api \
-  --scope "billing:read billing:setup billing:entitlement:check billing:subscription:write billing:usage:export" \
+  --scope "events:send events:listen billing:read billing:setup billing:entitlement:check billing:subscription:write billing:usage:export billing:provider" \
   > ./local/billing-worker.token
 
 bus operator token --format token issue \
   --subject bus-integration-usage \
   --audience ai.hg.fi/api \
-  --scope "usage:write usage:read usage:delete billing:usage:export" \
+  --scope "events:send events:listen usage:write usage:read usage:delete billing:usage:export" \
   > ./local/usage-worker.token
 
 bus operator token --format token issue \
   --subject bus-integration-upcloud \
   --audience ai.hg.fi/api \
-  --scope "vm:read vm:write container:read container:run container:delete" \
+  --scope "events:send events:listen vm:read vm:write container:read container:run container:delete ssh:run" \
   > ./local/upcloud-worker.token
 ```
 
@@ -65,6 +67,13 @@ bus operator billing catalog template > catalog.json
 Edit `catalog.json` so products, plans, features, prices, quotas, meters, and Stripe lookup keys match your product. Keep prices as integer minor units and use stable IDs. Synchronize Stripe test-mode Products and Prices first:
 
 ```sh
+cat >./.env.stripe-test <<'EOF'
+export BUS_STRIPE_SECRET_KEY=sk_test_replace_me
+export BUS_STRIPE_WEBHOOK_SECRET=whsec_replace_me
+# Optional for older Stripe test accounts:
+# export BUS_STRIPE_API_VERSION=2025-02-24.acacia
+EOF
+
 . ./.env.stripe-test
 bus operator stripe test
 bus operator stripe catalog sync --file catalog.json
@@ -96,12 +105,20 @@ bus-integration-billing \
 Run the Stripe integration with test-mode secrets:
 
 ```sh
+. ./.env.stripe-test
 export BUS_API_TOKEN="$(cat ./local/billing-worker.token)"
-export BUS_STRIPE_SECRET_KEY="$(cat ./local/stripe-test-secret-key)"
-export BUS_STRIPE_WEBHOOK_SECRET="$(cat ./local/stripe-webhook-secret)"
 bus-integration-stripe \
-  --events-url "$BUS_EVENTS_API_URL"
+  --events-url "$BUS_EVENTS_API_URL" \
+  --webhook-addr 127.0.0.1:8081
 ```
+
+Expose the webhook listener through your HTTPS reverse proxy at
+`/api/internal/stripe/webhook` and configure the same path in Stripe. Subscribe
+the Stripe endpoint to `checkout.session.completed`,
+`customer.subscription.created`, `customer.subscription.updated`, and
+`customer.subscription.deleted`. The worker verifies `Stripe-Signature` with
+`BUS_STRIPE_WEBHOOK_SECRET` before it publishes Bus billing subscription
+updates.
 
 Run the usage worker with durable storage and billing export enabled:
 
@@ -121,6 +138,7 @@ The default export policy maps successful LLM token usage to `llm:proxy` / `bus_
 Choose the worker mode that matches your runtime. For VM status and lifecycle:
 
 ```sh
+printf '%s\n' "$OPERATOR_SUPPLIED_UPCLOUD_TOKEN" > ./local/upcloud-token
 export BUS_API_TOKEN="$(cat ./local/upcloud-worker.token)"
 export UPCLOUD_TOKEN="$(cat ./local/upcloud-token)"
 export UPCLOUD_VM_NAME=ai-platform-gpu
@@ -196,7 +214,7 @@ bus vm status
 bus containers status
 ```
 
-Check that usage records become available to trusted collectors and that billing export is enabled before relying on quotas:
+Inspect the usage worker and API configuration before relying on quota export:
 
 ```sh
 bus-integration-usage --help

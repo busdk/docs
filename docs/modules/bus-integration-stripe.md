@@ -103,12 +103,33 @@ to the Bus deployment path that verifies webhooks through this integration:
 `/api/internal/stripe/webhook`. The endpoint signing secret from that webhook
 becomes `BUS_STRIPE_WEBHOOK_SECRET`.
 
+Run the webhook ingress on the Stripe integration service. Set
+`BUS_EVENTS_API_URL` to the Bus Events API base URL and provide a Bus token with
+`billing:subscription:write` so the ingress can publish verified subscription
+updates:
+
+```sh
+BUS_STRIPE_WEBHOOK_SECRET="$(cat ./local/stripe-webhook-secret)" \
+BUS_API_TOKEN="$(cat ./local/billing-worker.token)" \
+bus-integration-stripe \
+  --events-url "$BUS_EVENTS_API_URL" \
+  --webhook-addr 127.0.0.1:8081
+```
+
+The ingress accepts only signed Stripe `POST` requests, preserves the raw body
+for signature verification, and publishes the verified checkout/subscription
+state as `bus.billing.subscription.update` through Bus Events. The Bus token
+used by the ingress needs `billing:subscription:write`. In production, expose
+`/api/internal/stripe/webhook` through your HTTPS reverse proxy to this
+integration service, or configure Stripe directly with the service URL when it
+is already reachable over HTTPS.
+
 In local development, Stripe CLI can forward signed webhooks to the local Bus
 webhook route. The CLI prints the `whsec_...` signing secret for that local
 listener.
 
 ```sh
-stripe listen --forward-to http://127.0.0.1:8080/api/internal/stripe/webhook
+stripe listen --forward-to http://127.0.0.1:8081/api/internal/stripe/webhook
 ```
 
 ### Test Mode And Live Mode
