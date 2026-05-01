@@ -8,26 +8,37 @@ description: bus operator stripe provides Stripe-specific billing diagnostics.
 `bus operator stripe` is the Stripe-specific operator client behind Bus billing.
 It is a sibling of `bus operator billing`, not a nested billing submodule.
 
-Use it to verify Stripe connectivity and synchronize Stripe Products and Prices
-from the same provider-neutral catalog used by Bus billing. End users should
-not use this command; end users use `bus billing setup` and
+Use it to verify Stripe connectivity and synchronize Stripe Products, Prices,
+and Billing Meters from the same provider-neutral catalog used by Bus billing.
+End users should not use this command; end users use `bus billing setup` and
 `bus billing portal`.
 
 `test` verifies Stripe credentials with a harmless balance read and prints only
 safe metadata such as whether the key is live mode. It never prints Stripe
 secret keys or webhook secrets.
 
-`catalog sync --file <catalog.json>` creates Stripe Products and Prices from a
-local operator-managed catalog file. It uses lookup keys for stable idempotency
-and prints only safe Stripe object IDs. Run it before publishing the catalog to
-Bus when the catalog references newly created Stripe objects.
+`catalog sync --file <catalog.json>` creates Stripe Products, Prices, and
+Billing Meters from a local operator-managed catalog file. It uses lookup keys
+for stable idempotency and prints only safe Stripe object IDs. Run it before
+publishing the catalog to Bus when the catalog references newly created Stripe
+objects.
+
+The catalog file is JSON with `products`, `prices`, and optional `meters`
+arrays. Products require `lookup_key` and `name`. Prices require `lookup_key`,
+`product_lookup_key`, `currency`, and positive `unit_amount`; `interval` is
+optional for recurring prices. Billing Meters require `lookup_key`,
+`display_name`, and `event_name`. Meter defaults are
+`aggregation_formula=sum`, `customer_mapping_type=by_id`,
+`customer_mapping_event_payload_key=stripe_customer_id`, and
+`value_settings_event_payload_key=value`. Missing required fields fail before
+Stripe is called.
 
 Use `BUS_STRIPE_SECRET_KEY` for the test secret key and
 `BUS_STRIPE_API_VERSION` when you need to pin response behavior for older Stripe
 accounts.
 Use a Stripe test-mode secret key for setup rehearsal. The key must be allowed
-to read balance metadata and create Products and Prices; otherwise `test` or
-`catalog sync` fails before Bus billing sees the catalog.
+to read balance metadata and create Products, Prices, and Billing Meters;
+otherwise `test` or `catalog sync` fails before Bus billing sees the catalog.
 
 Use `--api-key-file <path>` when the Stripe secret key is stored in an
 operator-managed local secret file. Literal Stripe API key values are not
@@ -45,17 +56,20 @@ this operator CLI.
 Typical test-mode setup:
 
 ```sh
+set -a
 . ./.env.stripe-test
+set +a
 bus operator stripe test
 bus operator billing catalog template > catalog.json
+# Edit catalog.json with real Product, Price, and Billing Meter values before syncing.
 bus operator stripe catalog sync --file catalog.json
 bus operator billing catalog put --file catalog.json
 ```
 
 `catalog sync` succeeds by printing a secret-safe summary containing synced
-Stripe Product and Price IDs. `catalog put` succeeds by returning the accepted
-Bus billing catalog response from the Billing API. After both commands, verify
-the operator-facing catalog view:
+Stripe Product, Price, and Billing Meter IDs. `catalog put` succeeds by
+returning the accepted Bus billing catalog response from the Billing API. After
+both commands, verify the operator-facing catalog view:
 
 ```sh
 bus operator billing catalog get
