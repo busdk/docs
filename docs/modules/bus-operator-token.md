@@ -21,6 +21,10 @@ creates the same HS256 Bus JWT claim shape locally from `BUS_AUTH_HS256_SECRET`
 or `--hs256-secret-file`. Use `--ttl <duration>` to choose the local token
 lifetime and `--format token` when a caller needs only the raw bearer token on
 stdout.
+`BUS_AUTH_HS256_SECRET` or the `--hs256-secret-file` value must match the HS256
+signing secret trusted by the target Bus API or auth service. If it does not
+match, the command can still print a JWT, but the receiving service rejects the
+token.
 
 Use it for trusted services and maintenance jobs that need internal-audience
 JWTs, for example billing catalog management, usage collection, provider

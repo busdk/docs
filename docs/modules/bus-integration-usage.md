@@ -76,6 +76,7 @@ expiry.
 For local development, use the memory backend:
 
 ```sh
+export BUS_EVENTS_API_URL=http://127.0.0.1:8080/api/v1/events
 export BUS_API_TOKEN="$(bus auth token --scope "usage:write usage:read usage:delete")"
 bus-integration-usage \
   --usage-backend memory \
@@ -85,6 +86,7 @@ bus-integration-usage \
 For deployed collection, use PostgreSQL:
 
 ```sh
+export BUS_EVENTS_API_URL=https://api.example.test/api/v1/events
 BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disable' \
 bus-integration-usage \
   --usage-backend postgres \
@@ -99,7 +101,7 @@ The policy file is JSON with a `rules` array. Each rule matches a usage event
 type and writes one billing export feature/meter:
 
 ```json
-{"rules":[{"event_type":"llm_request_finished","feature":"llm:proxy","meter_event_name":"bus_llm_tokens","quantity_field":"total_tokens"}]}
+{"rules":[{"event_type":"usage_recorded","feature":"llm:proxy","meter_event_name":"bus_llm_tokens","quantity_field":"total_tokens"}]}
 ```
 
 Invalid JSON, missing `event_type`, missing `feature`, or missing

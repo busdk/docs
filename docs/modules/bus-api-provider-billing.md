@@ -25,11 +25,14 @@ storage.
 
 Public endpoints require an end-user API JWT with audience `ai.hg.fi/api`.
 The account is always derived from JWT `sub`.
+Send the token as `Authorization: Bearer <jwt>` on every public request.
 
 ### Internal Authentication
 
 Internal endpoints require audience `ai.hg.fi/internal` and narrow billing
 scopes. End-user API tokens are rejected.
+Send the internal token as `Authorization: Bearer <jwt>` on every internal
+request.
 
 ### `GET /api/v1/billing/status`
 
@@ -54,7 +57,8 @@ Creates a hosted billing portal URL for the authenticated account.
 
 Users manage payment methods, invoices, and subscriptions in the provider
 portal. Requires `billing:read`.
-Send `{}` or `{"return_url":"https://app.example.test/billing/return"}`.
+Send `Content-Type: application/json` with `{}` or
+`{"return_url":"https://app.example.test/billing/return"}`.
 Success returns `200 OK` with `{"url":"https://...","provider":"stripe"}`.
 
 ### `GET /api/internal/billing/catalog`
@@ -117,7 +121,10 @@ Invalid requests return `400`, missing or wrong internal authority returns
 
 Reports process readiness.
 
-Use this for load balancers and service supervisors.
+Use this for load balancers and service supervisors. A ready process returns
+`200 OK` with `{"ok":true}`. If the process is not accepting requests, the
+supervisor or load balancer sees a connection failure or another non-2xx HTTP
+status and should keep the instance out of rotation.
 
 ### Catalog Rules
 

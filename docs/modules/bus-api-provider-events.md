@@ -19,6 +19,7 @@ scope-limited.
 ### Authentication
 
 The provider verifies the normal Bus API JWT audience `ai.hg.fi/api`.
+Send the token as `Authorization: Bearer <JWT>` on publish and stream requests.
 
 The account is derived from JWT `sub`. Callers do not provide account IDs for
 authorization.
@@ -72,15 +73,17 @@ Send `Content-Type: application/json` with an event envelope:
   "name": "example.ping",
   "correlation_id": "optional-correlation-id",
   "delivery": "broadcast",
+  "group": "default",
   "payload": {"ok": true}
 }
 ```
 
 `name` is required. `payload` may be any JSON value. `delivery` defaults to
-`broadcast` and can be `work` when `group` is also provided. Success returns
-`202 Accepted` or `200 OK` with the stored event metadata. Bad JSON or invalid
-event names return `400`, missing auth returns `401`, and missing domain scope
-returns `403`.
+`broadcast`; omit `group` for ordinary broadcast events. Use `delivery:"work"`
+with `group` when competing workers should receive the event through a named
+work group. Success returns `202 Accepted` or `200 OK` with the stored event
+metadata. Bad JSON or invalid event names return `400`, missing auth returns
+`401`, and missing domain scope returns `403`.
 
 ### `GET /api/v1/events/stream?name=<event-name>&delivery=broadcast`
 
@@ -143,10 +146,13 @@ Includes existing matching events before following new events.
 Returns after the replayed snapshot instead of waiting for new events.
 
 The PostgreSQL backend is intentionally migration-free. It creates `bus_events`
-and `bus_event_group_cursors` when missing, and the operator may destroy and
-recreate the database from scratch. PostgreSQL uses `LISTEN/NOTIFY` to wake
-listeners quickly, with SQL polling as the fallback and SQL transactions as the
-source of truth.
+and `bus_event_group_cursors` when missing. Use PostgreSQL for production
+deployments that need restart tolerance, multiple API processes, replayable
+event history, or durable work-group cursors. Destroying the PostgreSQL
+database loses queued events, replay history, and work-delivery cursors, so do
+that only for disposable local or test environments. PostgreSQL uses
+`LISTEN/NOTIFY` to wake listeners quickly, with SQL polling as the fallback and
+SQL transactions as the source of truth.
 
 ### Development
 

@@ -19,10 +19,16 @@ scopes such as `llm:proxy`, `billing:read`, `container:run`, or `terminal:read`.
 The same `aud=ai.hg.fi/api` token is used for REST APIs and Events API
 endpoints available to end users.
 
+An auth provider must already be running at the selected API URL. For local
+development, the compose example below exposes the auth provider at
+`http://127.0.0.1:8080/local-dev/v1/api/v1/auth` and sends OTP email to
+MailHog. For another deployment, replace the API URL and read the OTP from the
+configured OTP sender.
+
 ```bash
 bus auth --api-url http://127.0.0.1:8080 register --email user@example.com
 bus auth --api-url http://127.0.0.1:8080 login --email user@example.com
-bus auth --api-url http://127.0.0.1:8080 verify --email user@example.com --otp 123456
+bus auth --api-url http://127.0.0.1:8080 verify --email user@example.com --otp <otp-from-provider>
 bus auth --api-url http://127.0.0.1:8080 status
 bus auth --api-url http://127.0.0.1:8080 token
 bus auth --api-url http://127.0.0.1:8080 token --scope "vm:read container:run"
@@ -83,7 +89,21 @@ bus auth verify --email user@example.com --otp <otp-from-mailhog>
 ```
 
 An operator approves the verified user with `bus operator auth approve` using
-an auth-service admin token from the local deployment:
+an auth-service admin token from the local deployment. With the local compose
+defaults, create the untracked token file first:
+
+```sh
+mkdir -p ./local
+export BUS_AUTH_INTERNAL_TOKEN_URL=http://127.0.0.1:8080/local-dev/v1/api/internal/auth/token
+curl -fsS \
+  -H 'Content-Type: application/json' \
+  -H 'X-Bus-Internal-Key: not-a-secret-local-development-internal-key' \
+  -d '{"subject":"admin-user","scope":"waitlist:read waitlist:approve admin:manage"}' \
+  "$BUS_AUTH_INTERNAL_TOKEN_URL" \
+  | jq -r '.access_token' > ./local/admin-token
+```
+
+Then approve the user:
 
 ```sh
 bus operator auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth \

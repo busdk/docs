@@ -37,6 +37,13 @@ bus containers runs
 bus containers delete run_123
 ```
 
+`status` should show the runner state returned by the API, such as a ready or
+starting status. `run` should return a run identifier and final command output
+or a structured run result owned by the current account. `runs` should include
+that run until retention or deletion removes it. `delete run_123` should return
+success only for a run owned by the account in the bearer token; another
+account's run must return an authorization or not-found response.
+
 If billing is required and missing, or if a quota is exhausted, the server
 returns setup or upgrade guidance before starting the container work.
 

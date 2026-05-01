@@ -61,7 +61,11 @@ cannot rotate tokens more frequently.
 
 Enables file-backed persistence for account identities and revocations.
 
-Use PostgreSQL for production deployments that need durable auth state.
+When neither file-backed nor PostgreSQL persistence is configured, deployments
+use in-memory auth state. In-memory state is suitable only for local
+development because users, approvals, sessions, and revocations disappear on
+restart. Use PostgreSQL for production deployments that need durable auth
+state.
 
 ### `BUS_AUTH_POSTGRES_DSN`
 
@@ -211,8 +215,17 @@ Rejected users cannot request paid feature API tokens.
 Issues trusted internal service tokens.
 
 This endpoint is separate from the public user flow and is protected by the
-configured internal shared key. Internal service tokens may target the
-auth-service audience or the normal Bus API audience with domain scopes.
+configured internal shared key. Send `X-Bus-Internal-Key:
+<BUS_AUTH_INTERNAL_SHARED_KEY>` and `Content-Type: application/json`.
+
+The JSON body accepts `subject`, `audience`, and `scope`. `subject` defaults to
+`auth-admin` when omitted. `audience` defaults to the auth-service audience,
+usually `ai.hg.fi/auth`; set it to `ai.hg.fi/api` for scoped service tokens
+that call normal Bus APIs. `scope` is a space-separated scope list such as
+`waitlist:read waitlist:approve` or `billing:entitlement:check`. Success
+returns `200 OK` with an access token, token type, expiry, audience, subject,
+and scope. Missing or wrong internal key, invalid subject, or an invalid
+audience returns `403 Forbidden`; malformed JSON returns `400 Bad Request`.
 
 ### Compatibility Paths
 

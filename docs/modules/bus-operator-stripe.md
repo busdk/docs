@@ -25,6 +25,9 @@ Bus when the catalog references newly created Stripe objects.
 Use `BUS_STRIPE_SECRET_KEY` for the test secret key and
 `BUS_STRIPE_API_VERSION` when you need to pin response behavior for older Stripe
 accounts.
+Use a Stripe test-mode secret key for setup rehearsal. The key must be allowed
+to read balance metadata and create Products and Prices; otherwise `test` or
+`catalog sync` fails before Bus billing sees the catalog.
 
 Use `--api-key-file <path>` when the Stripe secret key is stored in an
 operator-managed local secret file. Literal Stripe API key values are not
@@ -47,6 +50,15 @@ bus operator stripe test
 bus operator billing catalog template > catalog.json
 bus operator stripe catalog sync --file catalog.json
 bus operator billing catalog put --file catalog.json
+```
+
+`catalog sync` succeeds by printing a secret-safe summary containing synced
+Stripe Product and Price IDs. `catalog put` succeeds by returning the accepted
+Bus billing catalog response from the Billing API. After both commands, verify
+the operator-facing catalog view:
+
+```sh
+bus operator billing catalog get
 ```
 
 Keep `BUS_STRIPE_SECRET_KEY` in a secret manager or untracked local environment
