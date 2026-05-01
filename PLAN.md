@@ -1,5 +1,7 @@
 # Docs Refactor Plan
 
+- [ ] Lint and refine the public UpCloud, billing, Stripe, usage, VM, container, event, auth, and operator module docs end to end with `bus lint`; fix actionable end-user documentation findings; add a public UpCloud + Stripe setup tutorial under `docs/docs/integration`; link it from docs navigation and related pages; and verify docs quality.
+
 - [x] Refine public billing, LLM hosting, container, usage, and portal module docs end to end: document what end users and operators need to know about account setup, billing setup, Stripe-backed payments, catalogs, quotas, LLM access, container access, usage metering, terminal/portal access, scopes, storage, and safe deployment; remove SDD-style ownership/meta-status language from those public pages; keep remaining engineering work in module `PLAN.md` or private SDD pages; verify docs quality.
 
 - [x] Restructure public API provider docs into short semantic sections: document each endpoint and each documented command-line option under its own meaningful subheading; avoid endpoint lists followed by long paragraphs; keep repeated JWT/account/billing rules in shared short sections; verify readability and docs quality.
