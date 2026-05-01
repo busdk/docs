@@ -7,7 +7,7 @@ description: BusDK integration docs for APIs, events, deployment, data control, 
 
 This section is split into **single-concept** documents:
 
-[Deployment and data control](./deployment-and-data-control), [External system integration patterns](./external-system-integration), and [Runtime interfaces (APIs, dashboards, wrappers)](./future-interfaces).
+[Deployment and data control](./deployment-and-data-control), [Set up UpCloud runtime and Stripe billing](./upcloud-stripe-setup), [External system integration patterns](./external-system-integration), and [Runtime interfaces (APIs, dashboards, wrappers)](./future-interfaces).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -21,5 +21,6 @@ This section is split into **single-concept** documents:
 
 - [Integration index](./index)
 - [Deployment and data control](./deployment-and-data-control)
+- [Set up UpCloud runtime and Stripe billing](./upcloud-stripe-setup)
 - [CLI as the primary interface](../architecture/cli-as-primary-interface)
 - [AI and external services](../extensibility/ai-and-external-services)

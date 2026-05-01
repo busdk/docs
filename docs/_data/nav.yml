@@ -8,6 +8,8 @@
       url: /overview/
     - label: Deployment and data control
       url: /integration/deployment-and-data-control
+    - label: UpCloud and Stripe setup
+      url: /integration/upcloud-stripe-setup
     - label: Design goals and requirements
       url: /design-goals/
     - label: Cost summary
@@ -185,6 +187,8 @@
       url: /integration/
     - label: Deployment and data control
       url: /integration/deployment-and-data-control
+    - label: UpCloud and Stripe setup
+      url: /integration/upcloud-stripe-setup
     - label: Extensibility model
       url: /extensibility/
     - label: Testing
