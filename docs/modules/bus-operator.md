@@ -10,11 +10,20 @@ It is the operator-facing companion to end-user tools such as `bus auth`. End
 users use `bus auth` to register, verify email ownership, check approval
 status, and request approved API tokens. Operators use focused
 `bus operator <family> ...` commands for waitlist administration, service-token
-bootstrap, billing operations, and provider diagnostics.
+bootstrap, billing operations, provider diagnostics, and deployment
+automation.
 
 Command implementations live in focused `bus-operator-*` modules. The umbrella
 module calls those modules through Go library entrypoints. It does not execute
 child binaries, duplicate command logic, or implement auth policy locally.
+
+The auth examples require `bus-api-provider-auth` to be reachable at
+`--api-url`, and `--token-file` must contain an operator/admin token accepted by
+that provider. For local bootstrap, create the token with `bus operator token
+--format token issue --local --hs256-secret-file ./local/hs256-secret
+--subject auth-operator --audience ai.hg.fi/auth --scope "waitlist:read
+waitlist:approve" > ./local/admin-token`, using the same verifier secret as
+the auth provider.
 
 ```bash
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token waitlist
@@ -22,17 +31,15 @@ bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-tok
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token reject --email user@example.com
 ```
 
-The auth provider must be reachable at `--api-url`, and `--token-file` must
-contain an operator/admin token accepted by that provider. A successful
-`waitlist` call prints pending registrations, while successful `approve` and
-`reject` calls exit 0 and print the updated user decision or no output when
-`--quiet` is used.
+A successful `waitlist` call prints pending registrations, while successful
+`approve` and `reject` calls exit 0 and print the updated user decision or no
+output when `--quiet` is used.
 
-`token issue` is for internal service bootstrap and installation automation. It
-uses `/api/internal/auth/token`, which is protected by the provider's
-`X-Bus-Internal-Key` check. Keep that endpoint on internal routing and provide
-the key from a deployment secret store, an untracked local secret file, or the
-operator environment.
+`bus operator token issue` is for internal service bootstrap and installation
+automation. It uses `/api/internal/auth/token`, which is protected by the
+provider's `X-Bus-Internal-Key` check. Keep that endpoint on internal routing
+and provide the key from a deployment secret store, an untracked local secret
+file, or the operator environment.
 
 ```bash
 bus operator token --api-url http://127.0.0.1:8080 \
@@ -43,13 +50,21 @@ bus operator token --api-url http://127.0.0.1:8080 \
   --scope "usage:read usage:delete"
 ```
 
+A successful issue command prints structured JSON by default. Use
+`--format token` when automation needs only the raw bearer token. Store the raw
+token in the service environment or secret file used by the worker you are
+bootstrapping, then start or restart that service.
+
 For trusted local developer automation, `token issue --local` signs a
 short-lived HS256 Bus JWT from `BUS_AUTH_HS256_SECRET` or
 `--hs256-secret-file` without an auth provider HTTP call. Use `--format token`
-when the caller expects only the raw bearer token.
+when the caller expects only the raw bearer token. The local signing secret
+must match the verifier secret configured in the target local service; a token
+signed with a different secret is intentionally rejected.
 
 ```bash
 bus operator token --format token issue --local \
+  --hs256-secret-file ./local/hs256-secret \
   --subject local-codex \
   --audience ai.hg.fi/api \
   --scope llm:proxy \
@@ -61,6 +76,11 @@ Git-style sections covering name, synopsis, description, commands, options,
 environment, examples, and related documentation. Run
 `bus operator <family> --help` for the focused command-family flags and
 environment variables.
+
+Deployment automation is split into focused command families. Use
+`bus operator deploy` as the controller for complete deployment flows, then use
+`bus operator cloud`, `bus operator database`, `bus operator node`, and
+`bus operator inference` to inspect or retry specific phases independently.
 
 ### Common Operator Flags
 
@@ -74,5 +94,10 @@ their own flags, including `--api-url`, `--token-file`, `--account`,
 - [bus-operator-auth](./bus-operator-auth)
 - [bus-operator-token](./bus-operator-token)
 - [bus-operator-billing](./bus-operator-billing)
+- [bus-operator-cloud](./bus-operator-cloud)
+- [bus-operator-database](./bus-operator-database)
+- [bus-operator-deploy](./bus-operator-deploy)
+- [bus-operator-inference](./bus-operator-inference)
+- [bus-operator-node](./bus-operator-node)
 - [bus-operator-stripe](./bus-operator-stripe)
 - [bus-api-provider-auth](./bus-api-provider-auth)

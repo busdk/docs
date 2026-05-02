@@ -67,12 +67,20 @@
       url: /modules/bus-api-provider-billing
     - label: bus api provider books
       url: /modules/bus-api-provider-books
+    - label: bus api provider cloud
+      url: /modules/bus-api-provider-cloud
     - label: bus api provider containers
       url: /modules/bus-api-provider-containers
     - label: bus api provider data
       url: /modules/bus-api-provider-data
+    - label: bus api provider database
+      url: /modules/bus-api-provider-database
+    - label: bus api provider inference
+      url: /modules/bus-api-provider-inference
     - label: bus api provider llm
       url: /modules/bus-api-provider-llm
+    - label: bus api provider node
+      url: /modules/bus-api-provider-node
     - label: bus api provider session
       url: /modules/bus-api-provider-session
     - label: bus api provider usage
@@ -89,6 +97,16 @@
       url: /modules/bus-operator-auth
     - label: bus operator billing
       url: /modules/bus-operator-billing
+    - label: bus operator cloud
+      url: /modules/bus-operator-cloud
+    - label: bus operator database
+      url: /modules/bus-operator-database
+    - label: bus operator deploy
+      url: /modules/bus-operator-deploy
+    - label: bus operator inference
+      url: /modules/bus-operator-inference
+    - label: bus operator node
+      url: /modules/bus-operator-node
     - label: bus operator stripe
       url: /modules/bus-operator-stripe
     - label: bus operator token
@@ -157,8 +175,20 @@
       url: /modules/bus-filing-vero
     - label: bus gateway
       url: /modules/bus-gateway
+    - label: bus integration cloud
+      url: /modules/bus-integration-cloud
+    - label: bus integration database
+      url: /modules/bus-integration-database
+    - label: bus integration inference
+      url: /modules/bus-integration-inference
     - label: bus integration billing
       url: /modules/bus-integration-billing
+    - label: bus integration node
+      url: /modules/bus-integration-node
+    - label: bus integration ollama
+      url: /modules/bus-integration-ollama
+    - label: bus integration postgres
+      url: /modules/bus-integration-postgres
     - label: bus integration ssh runner
       url: /modules/bus-integration-ssh-runner
     - label: bus integration stripe
