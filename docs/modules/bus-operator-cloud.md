@@ -6,8 +6,9 @@ description: bus operator cloud provides provider-neutral cloud lifecycle comman
 ## Cloud Operations
 
 `bus operator cloud` manages cloud infrastructure through Bus cloud contracts.
-It is provider-neutral: operators select a provider with `--provider`, an
-environment file, or `BUS_CLOUD_PROVIDER`; provider-specific behavior is
+It is provider-neutral: operators select a provider with `--provider`,
+`BUS_CLOUD_PROVIDER`, or a non-default file passed with `--env-file`;
+provider-specific behavior is
 implemented by integration modules such as `bus-integration-upcloud`.
 
 Use `doctor` to check the cloud command surface, `plan` to compute a cloud
@@ -27,7 +28,7 @@ install -m 700 -d ./deploy ./local
 printf '%s\n' "$UPCLOUD_TOKEN" > ./local/upcloud-token
 git check-ignore -q ./local/upcloud-token || printf '%s\n' '/local/' >> .git/info/exclude
 git check-ignore -q ./local/upcloud-token
-cat > ./deploy/cloud.env <<'EOF'
+cat > ./.env <<'EOF'
 BUS_DEPLOYMENT_ID=example-dev
 BUS_CLOUD_PROVIDER=upcloud
 BUS_UPCLOUD_TOKEN_FILE=./local/upcloud-token
@@ -38,8 +39,8 @@ BUS_CLOUD_INFERENCE_NODE=gpu
 EOF
 bus operator cloud doctor --provider upcloud
 bus-integration-upcloud --events
-bus operator cloud plan --env-file ./deploy/cloud.env
-bus operator cloud status --env-file ./deploy/cloud.env
+bus operator cloud plan
+bus operator cloud status
 ```
 
 `doctor` succeeds with `ok: true` and a provider-neutral availability note.
@@ -49,8 +50,8 @@ returns `apply-cloud-plan` after provider discovery and planning. `status`
 returns a provider-neutral cloud status read.
 
 ```sh
-bus operator cloud apply --env-file ./deploy/cloud.env
-bus operator cloud status --env-file ./deploy/cloud.env
+bus operator cloud apply
+bus operator cloud status
 ```
 
 Run `apply` only after reviewing the `plan` output and confirming the target
@@ -60,9 +61,13 @@ and print JSON with `"ok": true`, `"provider": "upcloud"`, and
 node bootstrap.
 
 Decommissioning is separate:
-`bus operator cloud destroy --env-file ./deploy/cloud.env --confirm <deployment-id>`
+`bus operator cloud destroy --confirm <deployment-id>`
 deletes resources for the exact deployment id from the reviewed plan or status
 output.
+
+When you run through the top-level `bus` dispatcher, `./.env` from the working
+directory is loaded into the operator command environment. Use
+`--env-file <path>` only for a non-default env-style file.
 
 The command is intended for bootstrap and operator troubleshooting. In a
 running Bus deployment, the matching service surface is

@@ -121,8 +121,8 @@ their own flags, including `--api-url`, `--token-file`, `--account`,
 Inside a `.bus` file, call the focused operator workflow directly:
 
 ```bus
-# same as: bus operator deploy doctor --env-file ./deploy/bus.env
-run command -- bus operator deploy doctor --env-file ./deploy/bus.env
+# same as: bus operator deploy doctor
+run command -- bus operator deploy doctor
 ```
 
 ### Sources

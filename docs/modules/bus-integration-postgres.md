@@ -10,7 +10,7 @@ description: bus-integration-postgres provides PostgreSQL-specific database inte
 verification behavior while `bus operator database` and
 `bus-api-provider-database` stay provider-neutral.
 
-Before running provider-backed commands, create `./deploy/database.env` as
+Before running provider-backed commands, create `./.env` as
 described on [bus operator database](./bus-operator-database). It must include
 `BUS_DEPLOYMENT_ID`, `BUS_DATABASE_PROVIDER=postgres`,
 `BUS_POSTGRES_ADMIN_DSN_FILE`, `BUS_DATABASE_NAMES`,
@@ -28,20 +28,19 @@ successful output includes `provider postgres` and
 `bus.database.plan.request`. Use `--dry-run plan` to inspect the
 PostgreSQL-specific action plan without changing the server; successful output
 returns `ok: true`, `provider: postgres`, and `dry_run: true`. Then run
-provider-backed apply through
-`bus operator database apply --env-file ./deploy/database.env`.
+provider-backed apply through `bus operator database apply`.
 That apply command succeeds with `ok: true` and an `apply-database-plan` action.
 `--self-test` succeeds by printing
 `OK bus-integration-postgres self-test`.
 
 ```sh
 set -a
-. ./deploy/database.env
+. ./.env
 set +a
 bus-integration-postgres --events
 bus-integration-postgres --events --format json
 bus-integration-postgres --dry-run plan
-bus operator database apply --env-file ./deploy/database.env
+bus operator database apply
 bus-integration-postgres --self-test
 ```
 

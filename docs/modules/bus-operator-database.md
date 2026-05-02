@@ -10,8 +10,9 @@ roles, databases, schemas, DSN references, listener policy, and connectivity
 checks. The command is provider-neutral and defaults to the PostgreSQL provider.
 
 Run these commands from the deployment repository or workspace root. Create
-`./deploy/database.env` as an operator-owned local file with mode `0600`. For
-PostgreSQL, include `BUS_DATABASE_PROVIDER=postgres` and references to the
+`./.env` as an operator-owned local file with mode `0600`. When you run through
+the top-level `bus` dispatcher, that file is loaded into the operator command
+environment. For PostgreSQL, include `BUS_DATABASE_PROVIDER=postgres` and references to the
 admin connection secret, service DSN output location, target databases, roles,
 and schema names used by the selected deployment. The PostgreSQL role used for
 `apply` must be allowed to create or update the requested roles, databases,
@@ -27,7 +28,7 @@ install -m 700 -d ./deploy ./local
 git check-ignore -q ./local/postgres-admin-dsn || printf '%s\n' '/local/' >> .git/info/exclude
 git check-ignore -q ./local/postgres-admin-dsn
 printf '%s\n' "$POSTGRES_ADMIN_DSN" > ./local/postgres-admin-dsn
-cat > ./deploy/database.env <<'EOF'
+cat > ./.env <<'EOF'
 BUS_DEPLOYMENT_ID=example-dev
 BUS_DATABASE_PROVIDER=postgres
 BUS_POSTGRES_ADMIN_DSN_FILE=./local/postgres-admin-dsn
@@ -36,15 +37,15 @@ BUS_DATABASE_SERVICE_ROLE=bus_service
 BUS_DATABASE_DSN_OUTPUT_DIR=./local/dsn
 EOF
 bus operator database doctor --provider postgres
-bus operator database plan --env-file ./deploy/database.env
+bus operator database plan
 ```
 
 Review the plan output before applying database changes:
 
 ```sh
-bus operator database apply --env-file ./deploy/database.env
-bus operator database status --env-file ./deploy/database.env
-bus operator database verify --env-file ./deploy/database.env
+bus operator database apply
+bus operator database status
+bus operator database verify
 ```
 
 Proceed to `apply` only when the plan is for the expected
@@ -55,10 +56,11 @@ DSN file generation under `BUS_DATABASE_DSN_OUTPUT_DIR`. Stop before `apply` if
 the plan references an unexpected host, database name, role name, output
 directory, destructive action, or a provider other than `postgres`.
 
-Use env-style files for local operator inputs. Keep passwords and DSNs in
-operator-owned secret files or environment variables outside Git. In a running
-Bus deployment, `bus-api-provider-database` exposes the matching internal API
-surface and `bus-integration-database` owns the shared event contract.
+Use `--env-file <path>` only when you intentionally want to read a non-default
+env-style file. Keep passwords and DSNs in operator-owned secret files or
+environment variables outside Git. In a running Bus deployment,
+`bus-api-provider-database` exposes the matching internal API surface and
+`bus-integration-database` owns the shared event contract.
 
 ### Sources
 

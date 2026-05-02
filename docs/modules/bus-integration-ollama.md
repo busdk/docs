@@ -44,7 +44,7 @@ For operator-driven bootstrap, use
 `bus operator inference install --node gpu --provider ollama --model llama3.2:3b` from the
 operator workstation; that command routes through the node/inference bootstrap
 contracts instead of installing Ollama on the workstation. Get the node id from
-`bus operator cloud status --env-file ./deploy/cloud.env` or the deployment
+`bus operator cloud status` or the deployment
 inventory; `gpu` is the example node id below. Successful readiness is reported through
 `bus operator inference verify --node gpu --provider ollama` returning
 `ok: true`.

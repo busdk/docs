@@ -34,18 +34,18 @@ this contract.
 Operators normally send these requests through `bus operator database`. Install
 the `bus` dispatcher with `bus-operator-database` and the selected provider
 module, for PostgreSQL `bus-integration-postgres`, from the same release set.
-For a local PostgreSQL contract check, create an env file with the selected
-provider before running the commands:
+For a local PostgreSQL contract check, create `./.env` with the selected
+provider before running the commands. The `bus` dispatcher loads this file into
+the operator command environment:
 
 ```sh
-install -m 700 -d ./deploy
-cat > ./deploy/database.env <<'EOF'
+cat > ./.env <<'EOF'
 BUS_DATABASE_PROVIDER=postgres
 EOF
-bus operator database plan --env-file ./deploy/database.env
-bus operator database apply --env-file ./deploy/database.env
-bus operator database status --env-file ./deploy/database.env
-bus operator database verify --env-file ./deploy/database.env
+bus operator database plan
+bus operator database apply
+bus operator database status
+bus operator database verify
 ```
 
 Each command exits 0 and prints JSON with `"ok": true` and
@@ -56,8 +56,8 @@ PostgreSQL objects by itself. A real PostgreSQL mutation must be handled by the
 provider integration with dry-run disabled and explicit confirmation. For the
 runnable PostgreSQL apply path, use the provider instructions in
 [bus-integration-postgres](./bus-integration-postgres), including
-`bus operator database apply --env-file ./deploy/database.env` after the
-PostgreSQL admin DSN and output directory prerequisites are satisfied.
+`bus operator database apply` after the PostgreSQL admin DSN and output
+directory prerequisites are satisfied.
 Provider-specific credentials such as PostgreSQL admin DSNs belong to
 `bus-integration-postgres` and should be supplied through untracked secret files
 or service environment when a real apply replaces the dry-run path.
