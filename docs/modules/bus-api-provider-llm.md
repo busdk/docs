@@ -36,7 +36,9 @@ forwarded to the backend.
 
 ### `POST /v1/chat/completions`
 
-Proxies OpenAI-compatible chat completion requests to the configured backend.
+Proxies OpenAI-compatible chat completion requests to the configured backend,
+or publishes a provider-neutral LLM execution event when
+`--execution-backend events` is selected.
 
 Streaming requests are forwarded chunk by chunk. When possible, the provider
 adds `stream_options.include_usage=true` so streamed responses can include
@@ -44,14 +46,16 @@ token usage for billing.
 
 ### `POST /v1/completions`
 
-Proxies OpenAI-compatible text completion requests.
+Proxies OpenAI-compatible text completion requests or sends the matching Bus
+LLM execution event when event-backed execution is enabled.
 
 The provider applies the same authentication, billing, runtime readiness, and
 usage recording behavior as chat completions.
 
 ### `POST /v1/responses`
 
-Proxies OpenAI-compatible Responses API requests.
+Proxies OpenAI-compatible Responses API requests or sends the matching Bus LLM
+execution event when event-backed execution is enabled.
 
 Use this endpoint for clients that target the newer OpenAI-compatible response
 shape.
@@ -99,7 +103,33 @@ Selects the listen address for the provider.
 
 ### `--backend-url <url>`
 
-Sets the OpenAI-compatible backend URL used for execution requests.
+Sets the OpenAI-compatible backend URL used for execution requests when
+`--execution-backend http` is selected.
+
+Use the provider root as the base URL, without appending `/v1`; the LLM
+provider appends the incoming `/v1/*` request path itself. For example:
+
+```sh
+bus-api-provider-llm --backend-url http://127.0.0.1:11434
+```
+
+### `--execution-backend <http|events>`
+
+Selects where model execution runs.
+
+Use `http` to proxy requests directly to an OpenAI-compatible backend at
+`--backend-url`.
+
+Use `events` to publish provider-neutral `bus.llm.*` execution events. This is
+the preferred local Bus architecture for Codex-backed development because
+`bus-api-provider-llm` stays responsible for REST compatibility, JWTs, billing,
+runtime readiness, and usage records while integrations such as
+[`bus-integration-codex`](./bus-integration-codex) own provider-specific model
+execution.
+
+When `events` is selected, the provider listens for correlated response events
+and does not require `--backend-url`. The provider service token must have
+`llm:proxy` for publishing and listening to `bus.llm.*` events.
 
 ### `--model-catalog <path>`
 
@@ -139,13 +169,14 @@ Sets the Bus Events API URL used by runtime, usage, and billing event backends.
 
 Provide the provider's Events token through deployment-managed configuration,
 such as `BUS_API_TOKEN`. Do not pass bearer tokens as command-line arguments.
-When `--runtime-backend events` is enabled, the token must be able to send VM
-start/status requests and receive the correlated responses, typically
-`vm:write` and `vm:read`. When `--usage-backend events` is enabled, it needs
-usage write permissions such as `usage:write`. When `--billing-backend events`
-is enabled, it needs entitlement-check permission such as
-`billing:entitlement:check`. Deployments may use an internal service token for
-these provider-to-provider calls.
+When `--execution-backend events` is enabled, the token must be able to send
+and receive `bus.llm.*` events with `llm:proxy`. When `--runtime-backend
+events` is enabled, the token must be able to send VM start/status requests and
+receive the correlated responses, typically `vm:write` and `vm:read`. When
+`--usage-backend events` is enabled, it needs usage write permissions such as
+`usage:write`. When `--billing-backend events` is enabled, it needs
+entitlement-check permission such as `billing:entitlement:check`. Deployments
+may use an internal service token for these provider-to-provider calls.
 
 ### `--backend-ready-path <path>`
 
@@ -164,7 +195,9 @@ Sets the delay between backend readiness attempts.
 
 ### `--backend-ready-statuses <codes>`
 
-Sets the HTTP status codes that count as backend-ready.
+Sets the HTTP status codes that count as backend-ready. Use comma-separated
+integer status codes, such as `200,204`. The default ready status set is
+`200,204`.
 
 ### `BUS_EVENTS_LISTENER_REQUIRED`
 
@@ -176,7 +209,7 @@ enabled backends.
 Approved users request an API token with LLM scope:
 
 ```sh
-bus auth token --scope "llm:proxy"
+bus auth token --audience ai.hg.fi/api --scope "llm:proxy"
 ```
 
 `llm:proxy` is the required scope for model execution. Add `billing:read` only
@@ -213,3 +246,4 @@ deployment secrets or untracked local operator configuration.
 - [bus-billing](./bus-billing)
 - [bus-integration-usage](./bus-integration-usage)
 - [bus-api-provider-vm](./bus-api-provider-vm)
+- [bus-integration-codex](./bus-integration-codex)
