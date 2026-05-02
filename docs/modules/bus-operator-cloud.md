@@ -69,6 +69,17 @@ When you run through the top-level `bus` dispatcher, `./.env` from the working
 directory is loaded into the operator command environment. Use
 `--env-file <path>` only for a non-default env-style file.
 
+Cloud reads deployment settings through an explicit allowlist. If the process
+environment contains a Bus/provider-looking variable that cloud does not read,
+the command prints a warning with the variable name only; secret values are not
+printed. To allow extra variable names for one invocation, set
+`BUS_OPERATOR_CLOUD_ENV_ALLOW` or the shared `BUS_OPERATOR_ENV_ALLOW`. To make
+the allowlist persistent, use
+`bus preferences set bus-operator-cloud.env-allow "NAME OTHER_NAME"` or the
+shared `bus preferences set bus-operator.env-allow "NAME OTHER_NAME"`.
+Multiple names may be separated by commas, colons, semicolons, spaces, tabs,
+or newlines. Preferences store variable names only, not credential values.
+
 The command is intended for bootstrap and operator troubleshooting. In a
 running Bus deployment, the matching service surface is
 `bus-api-provider-cloud`, which exposes cloud operations through Bus API and

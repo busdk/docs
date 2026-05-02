@@ -102,6 +102,17 @@ If verification fails, run the matching focused command first, for example
 `bus operator cloud status`, `bus operator database verify`,
 `bus operator node verify`, or `bus operator inference verify`.
 
+Deploy reads deployment settings through an explicit allowlist. If the process
+environment contains a Bus/provider-looking variable that deploy does not read,
+the command prints a warning with the variable name only; secret values are not
+printed. To allow extra variable names for one invocation, set
+`BUS_OPERATOR_DEPLOY_ENV_ALLOW` or the shared `BUS_OPERATOR_ENV_ALLOW`. To make
+the allowlist persistent, use
+`bus preferences set bus-operator-deploy.env-allow "NAME OTHER_NAME"` or the
+shared `bus preferences set bus-operator.env-allow "NAME OTHER_NAME"`.
+Multiple names may be separated by commas, colons, semicolons, spaces, tabs,
+or newlines. Preferences store variable names only, not credential values.
+
 ### Sources
 
 - [bus operator cloud](./bus-operator-cloud)
