@@ -31,26 +31,60 @@ Database request and response events include:
 Concrete database providers such as `bus-integration-postgres` register behind
 this contract.
 
-Operators normally send these requests through `bus operator database`:
+Operators normally send these requests through `bus operator database`. Install
+the `bus` dispatcher with `bus-operator-database` and the selected provider
+module, for PostgreSQL `bus-integration-postgres`, from the same release set.
+For a local PostgreSQL contract check, create an env file with the selected
+provider before running the commands:
 
 ```sh
+install -m 700 -d ./deploy
+cat > ./deploy/database.env <<'EOF'
+BUS_DATABASE_PROVIDER=postgres
+EOF
 bus operator database plan --env-file ./deploy/database.env
 bus operator database apply --env-file ./deploy/database.env
 bus operator database status --env-file ./deploy/database.env
 bus operator database verify --env-file ./deploy/database.env
 ```
 
+Each command exits 0 and prints JSON with `"ok": true` and
+`"provider": "postgres"` when the provider-neutral command path is available.
+The current `bus operator database apply` command is a provider-neutral
+controller check that prints `apply-database-plan`; it does not create
+PostgreSQL objects by itself. A real PostgreSQL mutation must be handled by the
+provider integration with dry-run disabled and explicit confirmation. For the
+runnable PostgreSQL apply path, use the provider instructions in
+[bus-integration-postgres](./bus-integration-postgres), including
+`bus operator database apply --env-file ./deploy/database.env` after the
+PostgreSQL admin DSN and output directory prerequisites are satisfied.
+Provider-specific credentials such as PostgreSQL admin DSNs belong to
+`bus-integration-postgres` and should be supplied through untracked secret files
+or service environment when a real apply replaces the dry-run path.
+
 The internal `bus-api-provider-database` route provides the running-Bus API
-surface for the same contract. Direct event publishers send the JSON payload to
-the Bus Events API with the matching event type, for example
+surface for the same contract. Before running the stream-and-grep example,
+Bus Events, `bus-api-provider-database`, and the selected database provider
+integration must be running and subscribed so a response event can be produced.
+Direct event publishers send the JSON payload to the Bus Events API with the
+matching event type, for example
 `POST /api/v1/events` on `bus-api-provider-events` with a bearer token that has
 event publish scope. Include a `correlation_id` field in the event envelope and
-consume the matching response event with the same correlation id.
+consume the matching response event with the same correlation id through
+`GET /api/v1/events/stream?name=bus.database.plan.response&delivery=broadcast`.
+Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider base URL and
+`$BUS_EVENTS_TOKEN` to a token with `events:write` for publish and
+`events:read` for streaming before running the example.
 
-```json
+```sh
+export BUS_EVENTS_API_BASE_URL="https://example.test"
+test -n "$BUS_EVENTS_TOKEN"
+install -m 700 -d ./deploy
+cat > ./deploy/database-plan-event.json <<'EOF'
 {
-  "event_type": "bus.database.plan.request",
+  "name": "bus.database.plan.request",
   "correlation_id": "deploy-001-db-plan",
+  "delivery": "broadcast",
   "payload": {
     "deployment_id": "example-dev",
     "provider": "postgres",
@@ -58,10 +92,22 @@ consume the matching response event with the same correlation id.
     "databases": ["bus_events"]
   }
 }
+EOF
+curl -fsS -N --max-time 15 "$BUS_EVENTS_API_BASE_URL/api/v1/events/stream?name=bus.database.plan.response&delivery=broadcast" \
+  -H "Authorization: Bearer $BUS_EVENTS_TOKEN" > ./deploy/database-plan-response.ndjson &
+stream_pid=$!
+curl -fsS -X POST "$BUS_EVENTS_API_BASE_URL/api/v1/events" \
+  -H "Authorization: Bearer $BUS_EVENTS_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data @./deploy/database-plan-event.json
+wait "$stream_pid" || true
+grep '"correlation_id":"deploy-001-db-plan"' ./deploy/database-plan-response.ndjson
 ```
 
 The bearer token used to publish this envelope must include the deployment's
-Bus Events publish scope, such as `events:write`.
+Bus Events publish scope, such as `events:write`, and response streaming needs
+the matching read scope, such as `events:read`. Successful publish returns
+`202 Accepted` or `200 OK` with stored event metadata.
 
 This is a minimal `bus.database.plan.request` or dry-run
 `bus.database.apply.request` payload:

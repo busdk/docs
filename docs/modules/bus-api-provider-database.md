@@ -42,6 +42,38 @@ curl -fsS http://127.0.0.1:8092/api/internal/database/capabilities
 The first check succeeds with `ok: true`; the second includes database event
 names such as `bus.database.plan.request`.
 
+For protected access through `bus-api`, enable the built-in provider by name
+and enable the matching module mount. Store the Bus API capability token in an
+untracked operator secret file before starting the service, then validate it is
+non-empty:
+
+```sh
+cd /path/to/deployment-repository
+install -m 700 -d ./local
+git check-ignore -q ./local/bus-api-capability-token || printf '%s\n' '/local/' >> .git/info/exclude
+git check-ignore -q ./local/bus-api-capability-token
+test -s ./local/bus-api-capability-token || openssl rand -hex 32 > ./local/bus-api-capability-token
+chmod 600 ./local/bus-api-capability-token
+test -s ./local/bus-api-capability-token
+BUS_API_CAPABILITY_TOKEN="$(tr -d '\r\n' < ./local/bus-api-capability-token)"
+test -n "$BUS_API_CAPABILITY_TOKEN"
+bus-api serve --token "$BUS_API_CAPABILITY_TOKEN" --port 8080 \
+  --provider database \
+  --enable-module database
+```
+
+Keep `bus-api serve` running in that shell. In a second shell, set
+`$BUS_API_BASE_URL` to the local capability URL printed by `bus-api`, then
+verify the protected route:
+
+```sh
+cd /path/to/deployment-repository
+BUS_API_CAPABILITY_TOKEN="$(tr -d '\r\n' < ./local/bus-api-capability-token)"
+test -n "$BUS_API_CAPABILITY_TOKEN"
+export BUS_API_BASE_URL="http://127.0.0.1:8080/${BUS_API_CAPABILITY_TOKEN}/v1"
+curl -fsS "$BUS_API_BASE_URL/api/internal/database/capabilities"
+```
+
 PostgreSQL-specific behavior belongs to `bus-integration-postgres`; this
 provider exposes the stable Bus API surface used by operators and deployment
 automation.
@@ -53,7 +85,7 @@ supervisor own public routing:
 
 ```bus
 # same as: BUS_DATABASE_PROVIDER=postgres bus-api-provider-database --addr 127.0.0.1:8092
-run command -- BUS_DATABASE_PROVIDER=postgres bus-api-provider-database --addr 127.0.0.1:8092
+run command -- sh -c 'BUS_DATABASE_PROVIDER=postgres exec bus-api-provider-database --addr 127.0.0.1:8092'
 ```
 
 ### Sources

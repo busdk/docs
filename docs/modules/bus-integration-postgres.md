@@ -16,7 +16,12 @@ described on [bus operator database](./bus-operator-database). It must include
 `BUS_POSTGRES_ADMIN_DSN_FILE`, `BUS_DATABASE_NAMES`,
 `BUS_DATABASE_SERVICE_ROLE`, and `BUS_DATABASE_DSN_OUTPUT_DIR`. The admin DSN
 file must be mode `0600` and readable by the operator; generated service DSN
-files must be readable only by the matching service account.
+files must be readable only by the matching service account. The admin DSN
+must connect to the target PostgreSQL cluster and have database privileges to
+create or update the configured databases, roles, and schemas before running
+`apply`. Separately, the operator account running bootstrap must have
+filesystem permission to write generated DSN files under
+`BUS_DATABASE_DSN_OUTPUT_DIR`.
 
 Run `--events` first to verify the provider advertises the database contract;
 successful output includes `provider postgres` and
@@ -30,6 +35,9 @@ That apply command succeeds with `ok: true` and an `apply-database-plan` action.
 `OK bus-integration-postgres self-test`.
 
 ```sh
+set -a
+. ./deploy/database.env
+set +a
 bus-integration-postgres --events
 bus-integration-postgres --events --format json
 bus-integration-postgres --dry-run plan

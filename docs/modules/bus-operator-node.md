@@ -38,11 +38,14 @@ cat > ./deploy/nodes.json <<'EOF'
 {"proxy":{"host":"10.0.0.10","user":"bus","port":22,"allowed_ports":[22,80,443,8080]}}
 EOF
 export BUS_NODE_TARGETS_FILE=./deploy/nodes.json
+test -n "${SSH_PRIVATE_KEY_SOURCE:-}" || { echo "set SSH_PRIVATE_KEY_SOURCE to the existing target-account private key" >&2; exit 2; }
+install -m 600 "$SSH_PRIVATE_KEY_SOURCE" ./local/id_ed25519
 export BUS_SSH_PRIVATE_KEY_FILE=./local/id_ed25519
-test "$(stat -f %Lp "$BUS_SSH_PRIVATE_KEY_FILE" 2>/dev/null || stat -c %a "$BUS_SSH_PRIVATE_KEY_FILE")" = "600"
+mode="$(stat -c %a "$BUS_SSH_PRIVATE_KEY_FILE" 2>/dev/null || stat -f %Lp "$BUS_SSH_PRIVATE_KEY_FILE")"
+test "$mode" = "600"
 bus operator node bootstrap --id proxy
-bus operator node harden --id proxy
 bus operator node status --id proxy
+bus operator node harden --id proxy
 bus operator node verify --id proxy
 ```
 

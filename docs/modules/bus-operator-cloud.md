@@ -25,7 +25,8 @@ umask 077
 : "${UPCLOUD_TOKEN:?export UPCLOUD_TOKEN with a token allowed to manage the target UpCloud resources}"
 install -m 700 -d ./deploy ./local
 printf '%s\n' "$UPCLOUD_TOKEN" > ./local/upcloud-token
-git check-ignore -q ./local/upcloud-token || printf '%s\n' './local/' >> .git/info/exclude
+git check-ignore -q ./local/upcloud-token || printf '%s\n' '/local/' >> .git/info/exclude
+git check-ignore -q ./local/upcloud-token
 cat > ./deploy/cloud.env <<'EOF'
 BUS_DEPLOYMENT_ID=example-dev
 BUS_CLOUD_PROVIDER=upcloud
@@ -49,10 +50,14 @@ returns a provider-neutral cloud status read.
 
 ```sh
 bus operator cloud apply --env-file ./deploy/cloud.env
+bus operator cloud status --env-file ./deploy/cloud.env
 ```
 
 Run `apply` only after reviewing the `plan` output and confirming the target
-deployment id and resource names.
+deployment id and resource names. The follow-up `status` command must exit 0
+and print JSON with `"ok": true`, `"provider": "upcloud"`, and
+`"read-cloud-status"` in the action list before the deployment flow moves on to
+node bootstrap.
 
 Decommissioning is separate:
 `bus operator cloud destroy --env-file ./deploy/cloud.env --confirm <deployment-id>`

@@ -19,15 +19,41 @@ child binaries, duplicate command logic, or implement auth policy locally.
 
 The auth examples require `bus-api-provider-auth` to be reachable at
 `--api-url`, and `--token-file` must contain an operator/admin token accepted by
-that provider. For local bootstrap, create the token with `bus operator token
---format token issue --local --hs256-secret-file ./local/hs256-secret
---subject auth-operator --audience ai.hg.fi/auth --scope "waitlist:read
-waitlist:approve" > ./local/admin-token`, using the same verifier secret as
-the auth provider.
+that provider. For local bootstrap, first create `./local/`, keep it ignored,
+and write the same verifier secret used by the auth provider to
+`./local/hs256-secret`. Run these commands from the repository root that
+contains `.git`. Then create the token:
+
+```bash
+install -m 700 -d ./local
+git check-ignore -q ./local/hs256-secret || printf '%s\n' '/local/' >> .git/info/exclude
+git check-ignore -q ./local/hs256-secret
+test -n "${BUS_AUTH_HS256_SECRET:-}" || { echo "export BUS_AUTH_HS256_SECRET with the verifier secret used by bus-api-provider-auth" >&2; exit 2; }
+printf '%s\n' "$BUS_AUTH_HS256_SECRET" > ./local/hs256-secret
+chmod 600 ./local/hs256-secret
+test -s ./local/hs256-secret
+bus operator token --format token issue --local \
+  --hs256-secret-file ./local/hs256-secret \
+  --subject auth-operator \
+  --audience ai.hg.fi/auth \
+  --scope "waitlist:read waitlist:approve waitlist:reject" \
+  > ./local/admin-token
+chmod 600 ./local/admin-token
+```
+
+Before using that token, verify the auth provider is configured with the same
+`BUS_AUTH_HS256_SECRET` value and accepts the `ai.hg.fi/auth` audience for
+operator waitlist scopes.
 
 ```bash
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token waitlist
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token approve --email user@example.com
+```
+
+For a real pending registration, run either `approve` or `reject`, not both.
+Use `reject` only when the registration should be denied:
+
+```bash
 bus operator auth --api-url http://127.0.0.1:8080 --token-file ./local/admin-token reject --email user@example.com
 ```
 
@@ -40,14 +66,16 @@ automation. It uses `/api/internal/auth/token`, which is protected by the
 provider's `X-Bus-Internal-Key` check. Keep that endpoint on internal routing
 and provide the key from a deployment secret store, an untracked local secret
 file, or the operator environment.
+Before running the command below, `./local/internal-key` must contain the exact
+auth provider internal key from the deployment secret store.
 
 ```bash
 bus operator token --api-url http://127.0.0.1:8080 \
   --internal-key-file ./local/internal-key \
   issue \
-  --subject usage-worker \
-  --audience ai.hg.fi/auth \
-  --scope "usage:read usage:delete"
+  --subject usage-exporter \
+  --audience ai.hg.fi/internal \
+  --scope "usage:read"
 ```
 
 A successful issue command prints structured JSON by default. Use
@@ -87,6 +115,15 @@ Deployment automation is split into focused command families. Use
 `--version` prints the umbrella dispatcher version. Focused families document
 their own flags, including `--api-url`, `--token-file`, `--account`,
 `--api-key-file`, `--stripe-api-url`, and `--stripe-api-version`.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, call the focused operator workflow directly:
+
+```bus
+# same as: bus operator deploy doctor --env-file ./deploy/bus.env
+run command -- bus operator deploy doctor --env-file ./deploy/bus.env
+```
 
 ### Sources
 

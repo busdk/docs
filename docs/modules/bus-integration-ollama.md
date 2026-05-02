@@ -11,11 +11,15 @@ loopback configuration, context-length configuration, model ensure, and
 readiness checks.
 
 Run `--events` first to verify the provider advertises the inference contract.
+Successful output must include `bus.inference.install.request`; the JSON form
+must include `"providers":["ollama"]` and the inference event names.
 Use `--dry-run install` to inspect the Ollama action plan without changing the
 host or downloading a model. A real install path runs on the target inference
-node, currently a Linux host prepared by `bus operator node`, and must have
-root privileges or `sudo` rights to install packages and manage the Ollama
-service. It must also have network access to fetch the requested model from the
+node shell, currently a Linux host prepared by `bus operator node`; do not run
+the non-dry-run install command from an operator workstation unless that
+workstation is the intended inference node. The target shell must have root
+privileges or `sudo` rights to install packages and manage the Ollama service.
+It must also have network access to fetch the requested model from the
 configured model source. `--self-test` succeeds by printing
 `OK bus-integration-ollama self-test`.
 
@@ -23,12 +27,23 @@ configured model source. `--self-test` succeeds by printing
 bus-integration-ollama --events
 bus-integration-ollama --events --format json
 bus-integration-ollama --dry-run install --model llama3.2:3b
-bus-integration-ollama install --model llama3.2:3b
 bus-integration-ollama --self-test
 ```
 
 The non-dry-run install command is the provider-specific path used by bootstrap
-automation after the operator has confirmed the plan. Get the node id from
+automation after the operator has confirmed the plan. For manual bootstrap,
+SSH to the inference node first, then run the non-dry-run install in that
+remote shell:
+
+```sh
+ssh bus@gpu.example.internal
+sudo bus-integration-ollama install --model llama3.2:3b
+```
+
+For operator-driven bootstrap, use
+`bus operator inference install --node gpu --provider ollama --model llama3.2:3b` from the
+operator workstation; that command routes through the node/inference bootstrap
+contracts instead of installing Ollama on the workstation. Get the node id from
 `bus operator cloud status --env-file ./deploy/cloud.env` or the deployment
 inventory; `gpu` is the example node id below. Successful readiness is reported through
 `bus operator inference verify --node gpu --provider ollama` returning

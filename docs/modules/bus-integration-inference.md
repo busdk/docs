@@ -25,16 +25,76 @@ bus-integration-inference --events --format json
 bus-integration-inference --self-test
 ```
 
-Inference request and response events include:
+Inference request and response events include these JSON payload fields:
 
-- `bus.inference.install.request` and `bus.inference.install.response`: request fields include provider, node id, runtime settings, credential references, dry-run, and confirmation; responses include install actions, runtime status, diagnostics, and error class.
-- `bus.inference.model.ensure.request` and `bus.inference.model.ensure.response`: request fields include provider, node id, model name, and policy flags; responses include model availability, actions, diagnostics, and error class.
-- `bus.inference.status.request` and `bus.inference.status.response`: request fields identify provider and node id; responses include runtime phase, model summary, and diagnostics.
-- `bus.inference.verify.request` and `bus.inference.verify.response`: request fields include provider, node id, and readiness expectations; responses include `ok`, check results, and first failing check.
+- `bus.inference.install.request`: `provider` string, `node_id` string, optional `runtime` object, optional `credentials` object, optional `dry_run` boolean defaulting to `true`, and optional `confirm` boolean defaulting to `false`.
+- `bus.inference.install.response`: `ok` boolean, `provider` string, `node_id` string, `actions` string array, optional `runtime_status` string, `diagnostics` string array, and optional `error_class` string when `ok` is `false`.
+- `bus.inference.model.ensure.request`: `provider` string, `node_id` string, `model` string, optional `dry_run` boolean defaulting to `true`, optional `confirm` boolean defaulting to `false`, and optional `policy` object.
+- `bus.inference.model.ensure.response`: `ok` boolean, `provider` string, `node_id` string, `model` string, `actions` string array, `diagnostics` string array, and optional `error_class` string when `ok` is `false`.
+- `bus.inference.status.request`: `provider` string and `node_id` string.
+- `bus.inference.status.response`: `ok` boolean, `provider` string, `node_id` string, `runtime_status` string, optional `models` string array, `diagnostics` string array, and optional `error_class` string when `ok` is `false`.
+- `bus.inference.verify.request`: `provider` string, `node_id` string, and optional `checks` string array. If `checks` is omitted, the provider uses its default runtime-readiness checks.
+- `bus.inference.verify.response`: `ok` boolean, `provider` string, `node_id` string, `checks` object or array, `diagnostics` string array, and optional `error_class` string when `ok` is `false`.
 
 Provider-specific inference modules register behind this contract. Bootstrap
 tools and running Bus API providers use the same event names and capability
 metadata.
+
+Allowed `credentials` keys are `api_token_secret`, `tls_ca_file`, and
+`ssh_private_key_secret`; inline secret values are invalid. Secret references
+use the `secret://deployment/<name>` form and must already exist in the
+deployment's Bus secret resolver, for example
+`"api_token_secret": "secret://deployment/ollama-registry-token"` or
+`"ssh_private_key_secret": "secret://deployment/gpu-ssh-key"`. Allowed
+`runtime` keys are `listen` string, `context_length` integer, `service_user`
+string, and `environment` string defaulting to `dev`. Allowed `policy` keys are
+`allow_model_download` boolean defaulting to `false`,
+`max_model_size_bytes` integer, and `require_confirmation_for_prod` boolean
+defaulting to `true`. `checks` is a string array; known values are
+`runtime-ready`, `model-ready`, and `loopback-only`, and unknown checks should
+fail validation.
+
+Submit these payloads through `POST $BUS_EVENTS_API_BASE_URL/api/v1/events` on
+[bus-api-provider-events](./bus-api-provider-events), or use
+[bus operator inference](./bus-operator-inference) for the operator CLI path.
+Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider base URL, for example
+`https://example.test`, and set `$BUS_EVENTS_TOKEN` to a bearer token with
+`events:write` for publish and `events:read` for streaming. The request must
+use `Content-Type: application/json`. The event envelope uses `name` for the
+event type and the request payload under `payload`. Save the envelope to
+`./deploy/inference-model-event.json` before posting it:
+
+```sh
+install -m 700 -d ./deploy
+cat > ./deploy/inference-model-event.json <<'EOF'
+{
+  "name": "bus.inference.model.ensure.request",
+  "correlation_id": "deploy-001-inference-model",
+  "delivery": "broadcast",
+  "payload": {
+    "provider": "ollama",
+    "node_id": "gpu",
+    "model": "llama3.2:3b",
+    "dry_run": true,
+    "confirm": false
+  }
+}
+EOF
+curl -fsS -X POST "$BUS_EVENTS_API_BASE_URL/api/v1/events" \
+  -H "Authorization: Bearer $BUS_EVENTS_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data @./deploy/inference-model-event.json
+```
+
+A successful publish returns `202 Accepted` or `200 OK` with stored event
+metadata. To wait for completion, stream the matching response event and filter
+the same `correlation_id`:
+
+```sh
+curl -fsS -N "$BUS_EVENTS_API_BASE_URL/api/v1/events/stream?name=bus.inference.model.ensure.response&delivery=broadcast" \
+  -H "Authorization: Bearer $BUS_EVENTS_TOKEN" |
+  grep 'deploy-001-inference-model'
+```
 
 This is a minimal `bus.inference.model.ensure.request` payload:
 
@@ -44,21 +104,19 @@ This is a minimal `bus.inference.model.ensure.request` payload:
   "node_id": "gpu",
   "model": "llama3.2:3b",
   "dry_run": true,
-  "confirm": false,
-  "runtime": {
-    "listen": "127.0.0.1:11434",
-    "context_length": 32768
-  }
+  "confirm": false
 }
 ```
 
 Use the request example for `bus.inference.model.ensure.request`. For
-`bus.inference.install.request`, omit `model` unless the installer also ensures
-a default model. `bus.inference.status.request` requires `provider` and
-`node_id`. `bus.inference.verify.request` requires `provider`, `node_id`, and
+`bus.inference.install.request`, omit `model`; model installation uses
+`bus.inference.model.ensure.request` unless a provider-specific extension
+explicitly documents another field. `bus.inference.status.request` requires
+`provider` and `node_id`. `bus.inference.verify.request` requires `provider`, `node_id`, and
 optional `checks`, for example `["runtime-ready","model-ready"]`.
 
-Minimal inference response payloads use this shape:
+Minimal `bus.inference.model.ensure.response` payloads use this shape. Install,
+status, and verify responses use their own required fields listed below.
 
 ```json
 {
@@ -73,8 +131,8 @@ Minimal inference response payloads use this shape:
 
 Required fields per event are:
 
-- `bus.inference.install.request`: `provider` string and `node_id` string; `runtime` is optional object metadata with keys such as `listen` string and `context_length` integer; `dry_run` defaults to `true`.
-- `bus.inference.model.ensure.request`: `provider` string, `node_id` string, and `model` string; `confirm` must be `true` unless `dry_run` is `true`.
+- `bus.inference.install.request`: `provider` string and `node_id` string; `runtime` is optional object metadata with keys such as `listen` string and `context_length` integer; `dry_run` defaults to `true`; `confirm` must be `true` unless `dry_run` is `true`.
+- `bus.inference.model.ensure.request`: `provider` string, `node_id` string, and `model` string; `dry_run` defaults to `true`; `confirm` must be `true` unless `dry_run` is `true`; use `policy` for model-specific limits and keep runtime listener settings in `install.request`.
 - `bus.inference.status.request`: `provider` string and `node_id` string.
 - `bus.inference.verify.request`: `provider` string, `node_id` string, and optional `checks` string array.
 

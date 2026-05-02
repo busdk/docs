@@ -24,7 +24,8 @@ listener-policy checks.
 umask 077
 : "${POSTGRES_ADMIN_DSN:?export POSTGRES_ADMIN_DSN with a PostgreSQL admin DSN allowed to create/update the requested roles, databases, schemas, and privileges}"
 install -m 700 -d ./deploy ./local
-git check-ignore -q ./local/postgres-admin-dsn || printf '%s\n' './local/' >> .git/info/exclude
+git check-ignore -q ./local/postgres-admin-dsn || printf '%s\n' '/local/' >> .git/info/exclude
+git check-ignore -q ./local/postgres-admin-dsn
 printf '%s\n' "$POSTGRES_ADMIN_DSN" > ./local/postgres-admin-dsn
 cat > ./deploy/database.env <<'EOF'
 BUS_DEPLOYMENT_ID=example-dev
@@ -45,6 +46,14 @@ bus operator database apply --env-file ./deploy/database.env
 bus operator database status --env-file ./deploy/database.env
 bus operator database verify --env-file ./deploy/database.env
 ```
+
+Proceed to `apply` only when the plan is for the expected
+`BUS_DEPLOYMENT_ID`, the provider is `postgres`, and the action list is limited
+to database setup actions such as `discover-provider`,
+`compute-database-plan`, role/database/schema creation, privilege grants, and
+DSN file generation under `BUS_DATABASE_DSN_OUTPUT_DIR`. Stop before `apply` if
+the plan references an unexpected host, database name, role name, output
+directory, destructive action, or a provider other than `postgres`.
 
 Use env-style files for local operator inputs. Keep passwords and DSNs in
 operator-owned secret files or environment variables outside Git. In a running
