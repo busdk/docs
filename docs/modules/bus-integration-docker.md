@@ -31,14 +31,58 @@ When using `--event-prefix bus.docker`, also run
 `bus-integration-containers --backend-event-prefix bus.docker` so public
 container events are routed to this backend prefix.
 
+Minimal local Events API prerequisite:
+
 ```sh
-export BUS_API_TOKEN="<token-with-container-scopes>"
+BUS_EVENTS_JWT_SECRET=not-a-secret-local-development-hs256-key \
+bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
+```
+
+Mint `BUS_API_TOKEN` with the same HS256 secret and container scopes, or use
+the deployment's normal service-token flow:
+
+```sh
+export BUS_API_TOKEN="$(BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key bus operator token --format token issue --local --audience ai.hg.fi/api --scope 'container:read container:run container:delete container:admin')"
 bus-integration-docker \
   --provider docker \
   --events-url http://127.0.0.1:8081 \
   --event-prefix bus.docker \
   --container-codex-image docker.io/library/alpine:3.20
 ```
+
+In a second terminal, start the provider-neutral router with the same backend
+prefix:
+
+```sh
+export BUS_API_TOKEN="<token-with-container-scopes>"
+bus-integration-containers \
+  --provider events \
+  --events-url http://127.0.0.1:8081 \
+  --backend-event-prefix bus.docker
+```
+
+The worker is ready when both long-running commands stay connected without
+Events authentication errors. To verify it manually, start the containers API
+provider in a third terminal:
+
+```sh
+BUS_API_TOKEN="<token-with-container-scopes>" \
+bus-api-provider-containers \
+  --addr 127.0.0.1:8080 \
+  --backend events \
+  --events-url http://127.0.0.1:8081
+```
+
+Then run the client in a fourth terminal:
+
+```sh
+export BUS_AI_API_URL=http://127.0.0.1:8080
+export BUS_API_TOKEN="$(BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key bus operator token --format token issue --local --audience ai.hg.fi/api --scope 'container:read container:run container:delete container:admin')"
+bus containers run --profile codex -- sh -lc 'printf OK'
+```
+
+The command should return a run result with exit code `0` and stdout `OK`. The
+compose smoke path below starts those services for you.
 
 `--provider static` performs deterministic self-test behavior. `--provider
 docker` talks to `DOCKER_HOST`, defaulting to `unix:///var/run/docker.sock`.

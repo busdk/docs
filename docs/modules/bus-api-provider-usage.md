@@ -25,12 +25,23 @@ signed with `BUS_USAGE_JWT_SECRET`, include `sub`, `aud=ai.hg.fi/internal`,
 space-separated `scope`, `iat`, and `exp`, and be sent as
 `Authorization: Bearer <token>`.
 
-For a local HS256 deployment where `BUS_AUTH_HS256_SECRET` matches
-`BUS_USAGE_JWT_SECRET`, mint a read/delete collector token with:
+For a local auth-backed deployment, configure the auth provider to sign with
+the same HS256 secret as `BUS_USAGE_JWT_SECRET`, then mint a read/delete
+collector token through the auth provider internal-token endpoint:
+the auth provider or local gateway must already be running at
+`http://127.0.0.1:8080/local-dev/v1`.
 
 ```sh
-BUS_AUTH_HS256_SECRET=dev-secret \
-bus operator token --format token issue --local \
+mkdir -p ./local
+export BUS_USAGE_JWT_SECRET=not-a-secret-local-development-hs256-key
+printf '%s' 'not-a-secret-local-development-internal-key' > ./local/auth-internal-shared-key
+# The auth provider must run with BUS_AUTH_HS256_SECRET="$BUS_USAGE_JWT_SECRET"
+# and BUS_AUTH_INTERNAL_SHARED_KEY from ./local/auth-internal-shared-key.
+bus operator token \
+  --api-url http://127.0.0.1:8080/local-dev/v1 \
+  --internal-key-file ./local/auth-internal-shared-key \
+  --format token \
+  issue \
   --subject usage-collector \
   --audience ai.hg.fi/internal \
   --scope "usage:read usage:delete" \
@@ -62,6 +73,14 @@ Lists usage records for trusted collectors.
 Responses can include LLM, runtime, and container usage records. Each item
 contains storage `id`, optional idempotency `event_id`, occurrence time,
 optional `account_id`, event type, and raw JSON data.
+Item fields are `id` (integer), `event_id` (string or omitted),
+`occurred_at` (RFC3339 string), `account_id` (UUID string or omitted),
+`event_type` (string), and `data` (JSON object or omitted). A non-empty page
+looks like:
+
+```json
+{"items":[{"id":1,"event_id":"usage-doc-check","occurred_at":"2026-05-03T12:00:00Z","account_id":"00000000-0000-4000-8000-000000000001","event_type":"usage_recorded","data":{"total_tokens":1}}],"page":1,"page_size":100,"before":"2026-05-03T12:05:00Z","has_more":false}
+```
 
 Collectors should persist a page downstream before deleting it.
 Query parameters are `before=<RFC3339 timestamp>`, `page=<n>`, and
@@ -75,7 +94,7 @@ Example collector request:
 before="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 curl -fsS \
   -H "Authorization: Bearer $(cat ./local/usage-collector.token)" \
-  "http://127.0.0.1:8080/api/internal/usage-events?before=${before}&page=1&page_size=100"
+  "http://127.0.0.1:8082/api/internal/usage-events?before=${before}&page=1&page_size=100"
 ```
 
 A successful response is `200 OK` with a deterministic page, for example
@@ -86,7 +105,13 @@ A successful response is `200 OK` with a deterministic page, for example
 Deletes collected usage records.
 
 Use the same pagination selector after the collector has safely persisted the
-page elsewhere.
+page elsewhere. "Safely persisted" means the downstream database transaction,
+file write plus fsync, or provider export acknowledgement has completed and can
+be retried without losing records. With offset-style pages, repeatedly read,
+persist, and delete `page=1` with the same fixed `before` value until the page
+is empty. Do not
+delete page `1` and then move to page `2`, because deleting earlier rows can
+shift later records and skip items.
 The DELETE endpoint accepts the same `before`, `page`, and `page_size`
 selector as GET and deletes that deterministic page. Success returns
 `{"deleted": <count>}`.
@@ -97,7 +122,7 @@ selector:
 ```sh
 curl -fsS -X DELETE \
   -H "Authorization: Bearer $(cat ./local/usage-collector.token)" \
-  "http://127.0.0.1:8080/api/internal/usage-events?before=${before}&page=1&page_size=100"
+  "http://127.0.0.1:8082/api/internal/usage-events?before=${before}&page=1&page_size=100"
 ```
 
 The response is `200 OK` with `{"deleted":0}` or the number of records removed
@@ -130,16 +155,19 @@ Start PostgreSQL first and ensure the database in `BUS_USAGE_DATABASE_URL`
 exists and is reachable.
 
 ```sh
-BUS_USAGE_JWT_SECRET=dev-secret \
+BUS_USAGE_JWT_SECRET=not-a-secret-local-development-hs256-key \
 BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disable' \
-bus-api-provider-usage --addr 127.0.0.1:8080
+bus-api-provider-usage --addr 127.0.0.1:8082
 ```
 
 Verify readiness with:
 
 ```sh
-curl -fsS http://127.0.0.1:8080/readyz
+curl -fsS http://127.0.0.1:8082/readyz
 ```
+
+A configured database returns `200 OK` with an `ok` readiness body. Missing or
+unreachable storage returns a service-unavailable JSON error.
 
 Plain JWT secret values are raw text even when they look like base64; use
 `base64:<value>` only for an intentionally base64-encoded secret.

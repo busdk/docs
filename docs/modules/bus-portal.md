@@ -29,27 +29,27 @@ Bus API providers. Portal modules call those APIs from the browser; they do
 not call backend integration workers directly.
 
 For an end-user AI services portal, enable the auth and AI portal modules and
-provide browser-reachable API base URLs for auth, billing, LLM, containers, and
-terminal APIs. Users register and log in through the auth module, complete
-billing through the billing API, and then use chat or container-backed terminal
-features through the AI module.
+serve the portal behind the same browser-facing gateway origin as the auth,
+billing, LLM, container, and terminal APIs. Users register and log in through
+the auth module, complete billing through the billing API, and then use chat or
+container-backed terminal features through the AI module.
 
-When those APIs are on one gateway origin, allow that origin in the portal CSP
-and enable the modules explicitly:
+With same-origin reverse proxying, enable the modules explicitly:
 
 ```sh
 bus portal serve --print-url \
   --enable-module auth \
-  --enable-module ai \
-  --api-connect-src https://api.example.test
+  --enable-module ai
 ```
 
 The gateway should route the browser-facing API paths used by the modules, such
 as `/api/v1/auth/*`, `/api/v1/billing/*`, `/v1/*`,
-`/api/v1/containers/*`, and terminal API paths. The equivalent environment
-setting for CSP is `BUS_PORTAL_API_CONNECT_SRC=https://api.example.test`. When
-the portal and APIs share the same origin through a reverse proxy, no separate
-module URL attributes are required.
+`/api/v1/containers/*`, and `/api/v1/terminal/*`. When the portal and APIs
+share the same origin through a reverse proxy, no separate module URL
+attributes are required. `--api-connect-src` and `BUS_PORTAL_API_CONNECT_SRC`
+only extend the browser CSP; they do not rewrite module API base URLs, so
+same-origin gateway routing is the documented configuration for the auth and AI
+modules on this page.
 
 In local mode, the server prints a capability URL containing a random token.
 Opening that URL gives access to the local portal session. Use `--print-url`
@@ -65,8 +65,9 @@ mounted modules. This is useful when the frontend itself should not be public,
 for example for private customer portals or operator-only deployments.
 
 Enable it with `--require-frontend-auth` and provide the signing secret through
-`--frontend-auth-secret-file <path>` or `BUS_PORTAL_FRONTEND_AUTH_SECRET`.
-The secret file takes precedence when both are set.
+`--frontend-auth-secret-file <path>`, `BUS_PORTAL_FRONTEND_JWT_SECRET`, or
+`BUS_PORTAL_FRONTEND_JWT_SECRET_FILE`. The secret file takes precedence when
+both are set.
 
 ```bash
 bus portal serve --print-url \
@@ -89,8 +90,8 @@ HS256 secret and pass it as either a bearer token or the configured cookie:
 
 ```sh
 mkdir -p ./local
-printf '%s' 'local-portal-secret' > ./local/portal-frontend.secret
-BUS_AUTH_HS256_SECRET=local-portal-secret \
+printf '%s' 'local-portal-secret-32-bytes-minimum-value' > ./local/portal-frontend.secret
+BUS_AUTH_HS256_SECRET="$(cat ./local/portal-frontend.secret)" \
 bus operator token --format token issue --local \
   --subject portal-user \
   --audience ai.hg.fi/api \
@@ -139,10 +140,10 @@ terminal entry points. It calls `bus-api-provider-billing`,
 `bus-api-provider-llm`, `bus-api-provider-containers`, and
 `bus-api-provider-terminal`.
 
-Portal modules should receive API base URLs through runtime configuration or
-deployment HTML data attributes. The portal host does not embed payment
-provider secrets, API tokens, database credentials, or integration worker
-credentials.
+For the auth and AI modules documented here, route the portal and APIs through
+the same browser origin as described above. The portal host does not embed
+payment provider secrets, API tokens, database credentials, or integration
+worker credentials.
 
 ### Local Compose Stack
 
@@ -163,6 +164,15 @@ API-provider JWT validation and scope checks for protected data.
 Do not put payment provider secrets, database credentials, API keys, or worker
 credentials into portal frontend configuration. Browser code should receive
 only public API base URLs and short-lived user/session credentials.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus portal serve --print-url --enable-module auth --enable-module ai
+portal serve --print-url --enable-module auth --enable-module ai
+```
 
 ### Sources
 

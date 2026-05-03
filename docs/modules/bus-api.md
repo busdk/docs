@@ -65,8 +65,7 @@ Standard global flags are supported; see [Standard global flags](../cli/global-f
 `--quiet` and `--verbose` are mutually exclusive.
 Command results go to stdout (or `--output`), diagnostics/logs to stderr.
 
-`bus-api --help` and subcommand help use Git-style sections. Automated
-`help-check` tests validate this structure as part of the normal quality gates.
+`bus-api --help` and subcommand help use Git-style sections.
 
 ### Using the API
 

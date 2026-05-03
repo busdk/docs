@@ -21,17 +21,16 @@ endpoints available to end users.
 
 An auth provider must already be running at the selected API URL. For local
 development, the compose example below exposes the auth provider at
-`http://127.0.0.1:8080/local-dev/v1/api/v1/auth` and sends OTP email to
+`http://127.0.0.1:8080/local-dev/v1/modules/auth` and sends OTP email to
 MailHog. For another deployment, replace the API URL and read the OTP from the
 configured OTP sender.
 
 ```bash
-bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth register --email user@example.com
-bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth login --email user@example.com
-bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth verify --email user@example.com --otp <otp-from-provider>
-bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth status
-bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth token
-bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth token --scope "vm:read container:run"
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/modules/auth register --email user@example.com
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/modules/auth login --email user@example.com
+OTP=123456
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/modules/auth verify --email user@example.com --otp "$OTP"
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/modules/auth status
 ```
 
 The API base URL can also be provided by `BUS_AUTH_API_URL`. `verify` stores the
@@ -72,12 +71,12 @@ If the auth provider policy does not allow a requested scope for the account,
 the token request fails. If the token is allowed but billing is incomplete or
 quota is exhausted, the target API provider returns billing guidance.
 
-For a complete local flow, start the compose stack in
-`bus-api-provider-auth/examples/local-compose/`:
+For a complete local flow, run from the BusDK superproject root with Docker,
+curl, and jq available, then start the compose stack:
 
 ```sh
-docker compose -f bus-api-provider-auth/examples/local-compose/docker-compose.yml up
-export BUS_AUTH_API_URL=http://127.0.0.1:8080/local-dev/v1/api/v1/auth
+docker compose -f bus-api-provider-auth/examples/local-compose/docker-compose.yml up -d
+export BUS_AUTH_API_URL=http://127.0.0.1:8080/local-dev/v1/modules/auth
 bus auth register --email user@example.com
 bus auth login --email user@example.com
 ```
@@ -85,12 +84,14 @@ bus auth login --email user@example.com
 Read the OTP from MailHog at `http://127.0.0.1:8025`, then verify it:
 
 ```sh
-bus auth verify --email user@example.com --otp <otp-from-mailhog>
+OTP=123456
+bus auth verify --email user@example.com --otp "$OTP"
 ```
 
 An operator approves the verified user with `bus operator auth approve` using
-an auth-service admin token from the local deployment. With the local compose
-defaults, create the untracked token file first:
+the `bus-operator-auth` CLI and an auth-service admin token from the local
+deployment. With the local compose defaults, create the untracked token file
+first. This example uses `jq` to extract the token from the JSON response:
 
 ```sh
 mkdir -p ./local
@@ -106,7 +107,7 @@ curl -fsS \
 Then approve the user:
 
 ```sh
-bus operator auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth \
+bus operator auth --api-url http://127.0.0.1:8080/local-dev/v1/modules/auth \
   --token-file ./local/admin-token \
   approve --email user@example.com
 ```
@@ -121,9 +122,9 @@ The token returned by this local compose flow is for the matching local API
 origin, not for the hosted `https://ai.hg.fi/v1` endpoint. When saved as
 `~/.config/bus/auth/api-token` by default, other local Bus API clients can
 discover it without repeating token flags. For the hosted AI Platform, run the
-same auth flow against the hosted auth API and use the hosted token with
-`https://ai.hg.fi/v1`. Do not use developer-machine paths, repository-local
-token files, or external JWT minting commands.
+same auth flow with `BUS_AUTH_API_URL=https://ai.hg.fi/api/v1/auth` and use the
+hosted token with `https://ai.hg.fi/v1`. Do not use developer-machine paths,
+repository-local token files, or external JWT minting commands.
 
 The BusDK superproject root `compose.yaml` exposes the broader local AI
 Platform auth route at

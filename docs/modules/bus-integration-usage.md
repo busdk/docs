@@ -47,7 +47,13 @@ finish, and failure events. If `account_id` is present, it must be a UUID.
 
 List and delete requests use `before`, `page`, and `page_size` pagination. The
 worker returns deterministic pages ordered by usage occurrence time and storage
-ID.
+ID. Delete is bounded by the same `before` timestamp and deletes the selected
+page of records older than or equal to that cutoff. Collectors should use a
+fixed `before` value and repeatedly process/delete `page=1` to avoid offset
+shifts.
+`before` is an RFC3339 timestamp; when omitted, the provider uses the current
+time. `page` defaults to `1` and must be positive. `page_size` defaults to
+`1000` and is capped at `10000`.
 
 Commercial deployments can enable automatic billing export so any usage metric
 that appears in a plan can be charged and quota-counted. The worker evaluates
@@ -65,7 +71,7 @@ usage dimensions such as storage, files, jobs, or API calls.
 
 ## Running The Worker
 
-Set the Events API URL and bearer token before starting the worker. The token
+Set the Events API service root URL and bearer token before starting the worker. The token
 is supplied through `BUS_API_TOKEN` and must be a Bus API JWT with audience
 `ai.hg.fi/api`. It must include the usage domain scopes for the events this
 worker listens to and emits, such as `usage:write`, `usage:read`, and
@@ -73,26 +79,47 @@ worker listens to and emits, such as `usage:write`, `usage:read`, and
 TTL long enough for the worker lifetime or rotate/restart the worker before
 expiry.
 
-For local development, use the memory backend:
+For local development without collector verification, use the memory backend:
 
 ```sh
-export BUS_EVENTS_API_URL=http://127.0.0.1:8080/api/v1/events
-export BUS_API_TOKEN="$(bus auth token --scope "usage:write usage:read usage:delete")"
+export BUS_EVENTS_API_URL=http://127.0.0.1:8081
+export BUS_API_TOKEN="$(bus auth token --audience ai.hg.fi/api --scope "usage:write usage:read usage:delete")"
 bus-integration-usage \
   --usage-backend memory \
   --events-url "$BUS_EVENTS_API_URL"
 ```
 
-For deployed collection, use PostgreSQL:
+The memory worker is connected when it stays running without Events
+authentication errors. Use the PostgreSQL path below when you need to verify
+stored records through `bus-api-provider-usage`.
+
+For local PostgreSQL collection, use a local DSN with `sslmode=disable`. Create
+an untracked local worker token before starting the worker; include
+`billing:usage:export` too if billing export will be enabled.
 
 ```sh
-export BUS_EVENTS_API_URL=https://api.example.test/api/v1/events
-export BUS_API_TOKEN="$(cat /run/secrets/bus-usage-worker.token)"
+mkdir -p ./local
+bus operator token \
+  --api-url http://127.0.0.1:8080/local-dev/v1 \
+  --internal-key-file ./local/auth-internal-shared-key \
+  --format token \
+  issue \
+  --subject usage-worker \
+  --audience ai.hg.fi/api \
+  --scope "usage:write usage:read usage:delete billing:usage:export" \
+  --ttl 1h > ./local/bus-usage-worker.token
+
+export BUS_EVENTS_API_URL=http://127.0.0.1:8081
+export BUS_API_TOKEN="$(cat ./local/bus-usage-worker.token)"
 BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disable' \
 bus-integration-usage \
   --usage-backend postgres \
   --events-url "$BUS_EVENTS_API_URL"
 ```
+
+For hosted deployments, provide `BUS_USAGE_DATABASE_URL` from a secret manager
+with a TLS-enabled PostgreSQL URL such as
+`postgres://user:password@postgres.example.internal:5432/bus_usage?sslmode=require`.
 
 Enable the default LLM and container export rules with
 `--billing-export default` or `BUS_USAGE_BILLING_EXPORT=default`. Use
@@ -119,10 +146,9 @@ API tokens must come from deployment secrets or local untracked configuration.
 The worker can run as its own process or be registered into a shared
 `bus-integration` host through the Go `usageintegration.Registration(...)`
 function.
-Successful startup connects to the Events API and begins waiting for usage
-events. Verify the path by publishing a usage record request and checking that
-the corresponding usage response or stored usage event appears in the usage
-collector API.
+Successful startup connects to the Events API service root and begins waiting
+for usage events. Verify the path by publishing a usage record request and
+checking that the stored usage event appears in the usage collector API.
 
 For example, publish a local record request through the Events API:
 
@@ -130,13 +156,36 @@ For example, publish a local record request through the Events API:
 curl -fsS -X POST \
   -H "Authorization: Bearer $BUS_API_TOKEN" \
   -H "Content-Type: application/json" \
-  "$BUS_EVENTS_API_URL" \
+  "$BUS_EVENTS_API_URL/api/v1/events" \
   -d '{"name":"bus.usage.record.request","correlation_id":"usage-doc-check","payload":{"event_type":"usage_recorded","event_id":"usage-doc-check","account_id":"00000000-0000-4000-8000-000000000001","data":{"total_tokens":1}}}'
 ```
 
-The worker should emit `bus.usage.record.response` with the same
-`correlation_id`, and the stored record should be visible through
-`bus-api-provider-usage` when PostgreSQL storage is enabled.
+The stored record should be visible through `bus-api-provider-usage` when
+PostgreSQL storage is enabled.
+
+To verify storage through the collector API, the worker and
+`bus-api-provider-usage` must share the same PostgreSQL database. Query the
+provider with a trusted usage collector token whose audience is
+`ai.hg.fi/internal` and whose scopes include `usage:read`:
+
+```sh
+bus operator token \
+  --api-url http://127.0.0.1:8080/local-dev/v1 \
+  --internal-key-file ./local/auth-internal-shared-key \
+  --format token \
+  issue \
+  --subject usage-collector \
+  --audience ai.hg.fi/internal \
+  --scope "usage:read" \
+  --ttl 1h > ./local/usage-collector.token
+
+curl -fsS \
+  -H "Authorization: Bearer $(cat ./local/usage-collector.token)" \
+  "http://127.0.0.1:8082/api/internal/usage-events?page=1&page_size=10"
+```
+
+The response should include an item with `event_id` `usage-doc-check` when the
+usage worker and collector API share the same PostgreSQL database.
 
 The BusDK superproject `compose.yaml` runs this worker as `bus-usage-worker`
 with `--usage-backend postgres` and `BUS_USAGE_DATABASE_URL` pointing at the
@@ -162,6 +211,15 @@ payment-provider meter events after retries.
 backend jobs. It is separate from this worker. The provider gives collectors a
 JWT-secured HTTP read/delete interface, while this integration owns the event
 worker behavior and storage access used by API providers.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus integration usage --usage-backend memory --events-url "$BUS_EVENTS_API_URL"
+integration usage --usage-backend memory --events-url "$BUS_EVENTS_API_URL"
+```
 
 ### Sources
 

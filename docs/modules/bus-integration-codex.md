@@ -52,6 +52,8 @@ Run against a Bus Events API after these prerequisites are true:
   service token.
 - The `codex` executable and its authentication material are configured for
   the process that runs `--provider codex`.
+- Replace `/workspace` with an existing repository or workspace path that the
+  Codex process can read and use as its working directory.
 
 ```sh
 BUS_API_TOKEN="$(bus operator token issue --local --scope llm:proxy --format token)" \
@@ -67,18 +69,29 @@ must be valid for the Events API selected by `--events-url` and include
 `bus.llm.*` request/reply events.
 
 The command is connected when it stays running without printing a startup
-error. In another shell, prove the event contract is visible before sending
-model traffic:
+error. This local capability check does not prove an active Events connection,
+but it confirms the declared event contract before sending model traffic:
 
 ```sh
 bus-integration-codex --events --format text | grep bus.llm.chat.completions.request
 ```
 
-To prove the running worker is connected end to end, start
+To prove the running worker is connected end to end, keep
+`bus-integration-codex` running, then start
 `bus-api-provider-llm` with `--execution-backend events` against the same
 Events API and send a small `/v1/chat/completions` request through the provider
 using an `llm:proxy` token. A successful OpenAI-compatible response proves the
 REST provider, Events API, and Codex worker all share the same event path.
+
+```sh
+BUS_API_TOKEN="$(bus operator token issue --local --scope llm:proxy --format token)" \
+bus-api-provider-llm \
+  --addr 127.0.0.1:8088 \
+  --execution-backend events \
+  --events-url http://127.0.0.1:8081
+```
+
+In another shell, call the provider with an `llm:proxy` token:
 
 ```sh
 TOKEN="$(bus operator token issue --local --scope llm:proxy --format token)"
@@ -105,7 +118,7 @@ bus-integration-codex --event-help codex.chat_completions.receive
 | Option                    | Environment variable | Purpose                                                    |
 | ------------------------- | -------------------- | ---------------------------------------------------------- |
 | `--events-url`            | `BUS_EVENTS_API_URL` | Bus Events API base URL.                                   |
-| `--provider codex|static` | `BUS_CODEX_PROVIDER` | `codex` starts Codex App Server; `static` is for tests.    |
+| `--provider codex\|static` | `BUS_CODEX_PROVIDER` | `codex` starts Codex App Server; `static` is for tests.    |
 | `--workdir`               | `BUS_CODEX_WORKDIR`  | Working directory passed to Codex App Server.              |
 | `--model`                 | `BUS_CODEX_MODEL`    | Optional Codex model setting.                              |
 | `--codex-command`         | `BUS_CODEX_COMMAND`  | Codex executable path, defaulting to `codex`.              |
@@ -125,14 +138,25 @@ mounts `${BUS_CODEX_HOME:-$HOME/.codex}` at `/root/.codex`. Public Bus model
 ids such as `codex-chatgpt` remain API/catalog ids; execution uses
 `BUS_CODEX_MODEL` when set and otherwise lets Codex choose `auto`.
 
-Start the stack and run the live check:
+Start the stack and run the default catalog smoke check:
 
 ```sh
 cd /path/to/busdk
 docker compose up --build -d
+bash tests/superproject/test_local_ai_platform_compose_smoke.sh
+```
+
+For the live Codex chat check, `${BUS_CODEX_HOME:-$HOME/.codex}` must contain
+valid Codex CLI credentials because the compose stack mounts that directory
+into the `bus-codex` container. Then run:
+
+```sh
 BUS_LOCAL_AI_PLATFORM_LIVE_CODEX=1 \
 bash tests/superproject/test_local_ai_platform_compose_smoke.sh
 ```
+
+Without that opt-in, the smoke script verifies the local `/v1/models` catalog
+and skips live Codex chat execution.
 
 Do not commit Codex credentials, session files, JWTs, or API keys to the
 repository. Keep them in local untracked configuration or deployment secrets.

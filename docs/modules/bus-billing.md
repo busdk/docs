@@ -42,7 +42,8 @@ Start with the normal Bus account flow:
 ```sh
 bus auth register --email user@example.com
 bus auth login --email user@example.com
-bus auth verify --email user@example.com --otp 123456
+OTP="<code-from-email>"
+bus auth verify --email user@example.com --otp "$OTP"
 bus auth status
 ```
 
@@ -133,6 +134,15 @@ arguments can be visible through shell history and process listings.
 for the account in the bearer token. Operator actions such as catalog updates,
 cross-account status checks, and Stripe synchronization require internal
 operator tools and internal-audience JWTs.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus billing status
+billing status
+```
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

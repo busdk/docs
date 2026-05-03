@@ -30,21 +30,50 @@ bus-integration-dev-task \
   --container-profile codex
 ```
 
+`--workspace-root` makes the worker run tasks from the addressed module
+repository. With `--workspace-root /workspace`, a task addressed to `@bus-dev`
+runs from `/workspace/bus-dev`, while `@bus-integration-docker` runs from
+`/workspace/bus-integration-docker`.
+
 `--command-json` sets the command sent to the container as a JSON array. The
-worker expands `{prompt}`, `{text}`, `{body}`, and `{work_ref}` placeholders.
+worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
+`{module}`, and `{repo_path}` placeholders.
 
 ```sh
 bus-integration-dev-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
   --container-profile codex \
+  --workspace-root /workspace \
   --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]'
 ```
+
+Use `--pre-command-json` and `--post-command-json` for repository-local hooks
+around the main command:
+
+```sh
+bus-integration-dev-task \
+  --events-url http://127.0.0.1:8081 \
+  --recipient bus-dev \
+  --container-profile codex \
+  --workspace-root /workspace \
+  --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]' \
+  --post-command-json '["go","run","../bus-dev/cmd/bus-dev","--agent","codex","stage","commit"]'
+```
+
+Remote Git push is intentionally not part of the default Bus development task
+post-command because `bus-dev` does not perform remote Git operations.
 
 ## Local Compose
 
 The BusDK superproject includes `compose.dev-task-docker.yaml` for local
 testing with Docker Desktop:
+
+The default compose command for real local use runs `codex exec` in the
+addressed module repository and then runs `bus dev --agent codex stage commit`.
+This consumes ChatGPT-backed Codex quota and can create local commits. Smoke
+tests override `BUS_DEV_TASK_COMMAND_JSON` to `["codex","--version"]` and
+`BUS_DEV_TASK_POST_COMMAND_JSON` to `[]` so they do not consume quota or commit.
 
 ```sh
 docker compose -f compose.dev-task-docker.yaml up --build -d
@@ -60,11 +89,9 @@ go run ./cmd/bus-dev task new @bus-dev "Show the Codex CLI version."
 go run ./cmd/bus-dev task watch <printed-task-ref> --timeout 5m
 ```
 
-The default compose command runs `codex --version`, so a successful task output
-includes `codex-cli`. For live `codex exec` testing, configure
-`BUS_DEV_TASK_COMMAND_JSON`, `BUS_DOCKER_CODEX_HOME_HOST`,
-`BUS_DOCKER_CODEX_HOME_WRITABLE=true`, and `BUS_DOCKER_CODEX_WORKSPACE_HOST`
-before starting compose.
+Successful smoke output includes the container stdout from `codex --version`
+and a completed task status. A timeout or failed container run leaves the task
+with a failed status and prints the failure message in `task watch`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

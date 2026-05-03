@@ -100,11 +100,15 @@ abort/failure event when backend work may have started.
 ### `--addr <addr>`
 
 Selects the listen address for the provider.
+Default is `127.0.0.1:8080`; use `--addr 0.0.0.0:<port>` inside containers
+that must accept traffic from other services.
 
 ### `--backend-url <url>`
 
 Sets the OpenAI-compatible backend URL used for execution requests when
 `--execution-backend http` is selected.
+Default is `http://127.0.0.1:11434`. It is required for HTTP execution unless
+the deployment intentionally uses the default local backend.
 
 Use the provider root as the base URL, without appending `/v1`; the LLM
 provider appends the incoming `/v1/*` request path itself. For example:
@@ -116,6 +120,7 @@ bus-api-provider-llm --backend-url http://127.0.0.1:11434
 ### `--execution-backend <http|events>`
 
 Selects where model execution runs.
+Default is `http`; accepted values are `http` and `events`.
 
 Use `http` to proxy requests directly to an OpenAI-compatible backend at
 `--backend-url`.
@@ -134,6 +139,8 @@ and does not require `--backend-url`. The provider service token must have
 ### `--model-catalog <path>`
 
 Loads the local `/v1/models` catalog from a JSON file.
+Required when `--models-backend catalog` is used and the deployment should
+serve a custom catalog.
 
 The matching environment variable is `BUS_LLM_MODEL_CATALOG`.
 The file uses the OpenAI-compatible model-list shape. Each entry needs at
@@ -151,6 +158,7 @@ least `id`, `object`, `created`, and `owned_by`:
 ### `--models-backend <catalog|proxy>`
 
 Selects how `/v1/models` is served.
+Default is `catalog`; accepted values are `catalog` and `proxy`.
 
 Use `catalog` for production deployments that should not wake GPU backends on
 model listing. Use `proxy` only when backend model listing is intended.
@@ -158,25 +166,33 @@ model listing. Use `proxy` only when backend model listing is intended.
 ### `--runtime-backend <none|events>`
 
 Controls runtime wake-up.
+Default is `none`; accepted values are `none` and `events`.
 
 Use `events` when the provider should ask the Bus VM/runtime layer to start or
 verify the backend before execution requests.
 
-### `--usage-backend <none|events>`
+### `--usage-backend <postgres|events|memory>`
 
 Controls usage recording.
 
-Use `events` when usage should be collected by `bus-integration-usage`.
+Default is `postgres`. Use `events` when usage should be collected by
+`bus-integration-usage`; use `memory` only for deterministic local checks.
+With the `postgres` default, set `BUS_USAGE_DATABASE_URL` to a reachable
+PostgreSQL URL before starting the provider. The provider creates or uses its
+minimal usage tables at startup; missing or unreachable storage makes usage
+recording unavailable instead of silently using memory.
 
 ### `--billing-backend <none|events>`
 
 Controls billing entitlement checks.
+Default is `none`; accepted values are `none` and `events`.
 
 Use `events` for paid LLM plans.
 
 ### `--events-url <url>`
 
 Sets the Bus Events API URL used by runtime, usage, and billing event backends.
+Required when any selected backend uses Events.
 
 Provide the provider's Events token through deployment-managed configuration,
 such as `BUS_API_TOKEN`. Do not pass bearer tokens as command-line arguments.
@@ -192,6 +208,8 @@ may use an internal service token for these provider-to-provider calls.
 ### `--backend-ready-path <path>`
 
 Sets the backend readiness path checked after runtime wake-up.
+No default is set. Configure it when `--runtime-backend events` should poll a
+specific backend readiness endpoint after wake-up.
 
 Common values are `/v1/models` for OpenAI-compatible backends and `/api/tags`
 for Ollama-compatible backends.
@@ -199,10 +217,12 @@ for Ollama-compatible backends.
 ### `--backend-ready-timeout <duration>`
 
 Sets the maximum time to wait for backend readiness.
+Default is `30s`; use a Go duration such as `5s`, `30s`, or `2m`.
 
 ### `--backend-ready-poll-interval <duration>`
 
 Sets the delay between backend readiness attempts.
+Default is `1s`; use a Go duration.
 
 ### `--backend-ready-statuses <codes>`
 
@@ -210,10 +230,16 @@ Sets the HTTP status codes that count as backend-ready. Use comma-separated
 integer status codes, such as `200,204`. The default ready status set is
 `200,204`.
 
+### `--timeout <duration>`
+
+Sets backend proxy and Events request timeouts. Default is `60s`; use a Go
+duration such as `15s`, `60s`, or `2m`.
+
 ### `BUS_EVENTS_LISTENER_REQUIRED`
 
 When set to `1`, readiness requires the Events response listeners needed by the
 enabled backends.
+The default is unset/false.
 
 ### Local Compose Stack
 
@@ -252,6 +278,10 @@ bus auth token --audience ai.hg.fi/api --scope "llm:proxy"
 
 `llm:proxy` is the required scope for model execution. Add `billing:read` only
 when the same token will also call billing status or setup APIs.
+By default, `bus auth token` writes the issued API token to
+`~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`, which the
+curl example below reads. If a deployment configures token output differently,
+write the token to that file or set `TOKEN` from the command output explicitly.
 
 They can then use the token with OpenAI-compatible clients by setting the base
 URL to the Bus LLM endpoint and using the Bus API token as the bearer token.
@@ -292,6 +322,15 @@ service.
 For Stripe-backed deployments, configure billing and Stripe integrations before
 enabling paid LLM access for users. Keep Stripe keys and webhook secrets in
 deployment secrets or untracked local operator configuration.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider llm --addr 127.0.0.1:8088 --execution-backend events
+api provider llm --addr 127.0.0.1:8088 --execution-backend events --events-url "$BUS_EVENTS_API_URL"
+```
 
 ### Sources
 

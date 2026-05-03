@@ -33,10 +33,13 @@ prefers the published `ghcr.io/busdk/bus-api:latest` image by default. MailHog
 exposes its HTTP UI/API on `http://127.0.0.1:8025` so operators can read local
 OTP email messages.
 
-Start the standalone auth compose example from the superproject root with:
+Start the standalone auth compose example from the BusDK superproject root
+after confirming Docker Compose is available, ports `8080` and `8025` are free,
+and the published `ghcr.io/busdk/bus-api:latest` image can be pulled or the
+local build can complete:
 
 ```sh
-docker compose -f bus-api-provider-auth/examples/local-compose/docker-compose.yml up --build
+docker compose -f bus-api-provider-auth/examples/local-compose/docker-compose.yml up -d --build
 curl -fsS http://127.0.0.1:8080/local-dev/v1/healthz
 ```
 
@@ -49,27 +52,66 @@ nginx exposes `/api/v1/auth/*` and `/api/internal/auth/*` on
 MailHog, and `BUS_AUTH_API_USER_SCOPES` controls which feature scopes an
 approved local user may request.
 
-For an AI Platform smoke check, use the token returned by the hosted
-`bus auth` login and token flow against `https://ai.hg.fi/v1`:
+For a hosted AI Platform smoke check, use the hosted auth API and read the OTP
+from the deployment's configured email sender. For the local compose examples,
+use the local auth URL shown above and read the OTP from MailHog instead. The
+hosted flow requires the Bus CLI to be installed; `BUS_AUTH_API_URL` selects
+the auth provider, and `bus auth verify` stores the verified auth-service
+session under the normal Bus config directory. The flow starts by verifying the
+email account:
 
 ```sh
 export BUS_AUTH_API_URL=https://ai.hg.fi/api/v1/auth
 bus auth login --email user@example.com
-bus auth verify --email user@example.com --otp <otp-from-email>
+OTP="<code-from-hosted-email-sender>"
+bus auth verify --email user@example.com --otp "$OTP"
+```
+
+Then an operator approves the verified account through
+`bus operator auth approve` or the deployment's normal approval workflow:
+the token file must contain an auth-service admin JWT with
+`waitlist:approve` or `admin:manage`, provisioned by the deployment's operator
+secret flow.
+
+```sh
+bus operator auth \
+  --api-url https://ai.hg.fi/api/v1/auth \
+  --token-file /run/secrets/bus-auth-admin.token \
+  approve --email user@example.com
+```
+
+After approval, request the hosted API token and use it against
+`https://ai.hg.fi/v1`:
+
+```sh
 bus auth token --scope "llm:proxy"
 curl -fsS -H "Authorization: Bearer $(cat ~/.config/bus/auth/api-token)" \
   https://ai.hg.fi/v1/models
 ```
 
-The email account must already be approved before `bus auth token` can issue an
-`llm:proxy` API token. Operators approve verified accounts through
-`bus operator auth approve` or the deployment's normal approval workflow. The
-final request should return the deployment's model catalog. Do not depend on
-developer-specific checkout paths or external JWT-issuing commands.
+The final request should return the deployment's model catalog. Do not depend
+on developer-specific checkout paths or external JWT-issuing commands.
 
 Use `bus-api-provider-auth --help` for operator-facing module help. The help
 output follows Git-style sections for name, synopsis, description, options,
 environment, examples, and related documentation.
+
+Minimal hosted configuration uses a durable signing secret, PostgreSQL store,
+SMTP OTP delivery, an internal shared key for service-token issuing when used,
+and an explicit user-scope allow-list:
+
+```sh
+BUS_AUTH_HS256_SECRET="$(cat /run/secrets/bus-auth-hs256)"
+BUS_AUTH_POSTGRES_DSN='postgres://bus_auth:password@postgres.example.internal:5432/bus_auth?sslmode=require'
+BUS_AUTH_OTP_SENDER=smtp
+BUS_AUTH_SMTP_HOST=smtp.example.internal
+BUS_AUTH_SMTP_PORT=587
+BUS_AUTH_SMTP_FROM=auth@example.test
+BUS_AUTH_SMTP_USERNAME=bus-auth
+BUS_AUTH_SMTP_PASSWORD="$(cat /run/secrets/bus-auth-smtp-password)"
+BUS_AUTH_INTERNAL_SHARED_KEY="$(cat /run/secrets/bus-auth-internal-key)"
+BUS_AUTH_API_USER_SCOPES="llm:proxy billing:read billing:setup vm:read container:read container:run"
+```
 
 ### `BUS_AUTH_HS256_SECRET`
 
@@ -113,19 +155,35 @@ Enables PostgreSQL persistence.
 
 Store the DSN in deployment secrets or untracked operator configuration when it
 contains credentials.
+The value is a PostgreSQL URL such as:
+
+```text
+postgres://bus_auth:password@postgres.example.internal:5432/bus_auth?sslmode=require
+```
+
+The configured role needs permission to create and update the auth provider's
+tables and indexes in the selected database/schema. Use
+`sslmode=disable` only for trusted local development networks.
 
 ### `BUS_AUTH_OTP_SENDER`
 
 Selects the OTP sender.
 
-Use `console` only for local development. The console sender writes OTP codes
-to stdout with a `BUS_AUTH_OTP` prefix.
+Supported values are `memory`, `console`, and `smtp`; the default is `memory`.
+Use `smtp` for hosted email delivery. Use `console` only for local development;
+the console sender writes OTP codes to stdout with a `BUS_AUTH_OTP` prefix.
 
 ### `BUS_AUTH_SMTP_HOST`
 
 Sets the SMTP host for email OTP delivery.
 
-MailHog is suitable for local development.
+Set this with `BUS_AUTH_SMTP_FROM` when `BUS_AUTH_OTP_SENDER=smtp`. Optional
+settings are `BUS_AUTH_SMTP_PORT`, `BUS_AUTH_SMTP_USERNAME`, and
+`BUS_AUTH_SMTP_PASSWORD`; the sender uses standard SMTP authentication when a
+username is provided. Use the relay's TLS/port policy, such as port `587` for
+authenticated submission or MailHog port `1025` for local development. Missing
+host/from configuration makes OTP delivery fail instead of silently falling
+back to another sender.
 
 ### `BUS_AUTH_SMTP_FROM`
 
@@ -139,6 +197,18 @@ The value is a space-separated list such as
 is empty, the deployment default applies. A token request that asks for a scope
 outside this allow-list fails with a deterministic authorization error instead
 of silently widening access.
+
+Production deployments should set this allow-list explicitly before enabling
+user token issuing. The root local AI Platform compose stack sets it from
+`BUS_LOCAL_TOKEN_SCOPES` so local users can exercise LLM, billing, VM,
+container, usage, events, work, and development-task paths with non-secret
+development tokens.
+
+Endpoint paths in this section are full route paths. The standalone auth
+compose example serves them under the capability prefix
+`http://127.0.0.1:8080/local-dev/v1`; the root local AI Platform gateway serves
+them at `http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}`; hosted deployments
+serve them under their public API origin.
 
 ### `POST /api/v1/auth/register`
 
@@ -287,6 +357,15 @@ request with `billing_required` or `quota_exceeded` before waking a runtime.
 Admin and service operations use internal-audience tokens. End-user
 `aud=ai.hg.fi/api` tokens must not grant cross-account access, service
 maintenance powers, or billing catalog management.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider auth --help
+api provider auth --help
+```
 
 ### Sources
 

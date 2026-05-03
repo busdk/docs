@@ -91,6 +91,7 @@ Then verify routing from a fourth terminal:
 
 ```sh
 export BUS_AI_API_URL=http://127.0.0.1:8080
+# Reuse the BUS_API_TOKEN exported for the worker, router, and provider.
 bus-containers run --profile codex -- sh -lc 'printf OK'
 ```
 

@@ -20,7 +20,7 @@ Remote issuing example:
 
 ```sh
 bus operator token \
-  --api-url https://api.example.test/api/internal/auth/token \
+  --api-url https://api.example.test \
   --internal-key-file /run/secrets/bus-auth-internal-key \
   --format token \
   issue \
@@ -53,7 +53,8 @@ work, and `ai.hg.fi/auth` for auth-service administrative flows. Keep scopes
 narrow, such as `billing:catalog:write`, `billing:entitlement:check`,
 `usage:read usage:delete`, or `container:admin`.
 
-`--api-url <url>` selects the auth provider base URL for remote issuing.
+`--api-url <url>` selects the auth provider base URL for remote issuing; the
+client posts to `/api/internal/auth/token` below that base URL.
 `--format json|token` selects a JSON response envelope or raw access-token
 output. `--output <file>` writes output to a file, `--quiet` suppresses normal
 output, `--timeout <duration>` sets the HTTP timeout, and `--version` prints
@@ -62,8 +63,10 @@ version information.
 Local developer token example:
 
 ```sh
-BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key \
+mkdir -p ./local
+printf '%s' 'not-a-secret-local-development-hs256-key' > ./local/hs256-secret
 bus operator token --format token issue --local \
+  --hs256-secret-file ./local/hs256-secret \
   --subject local-codex \
   --audience ai.hg.fi/api \
   --scope llm:proxy \
@@ -73,11 +76,22 @@ bus operator token --format token issue --local \
 The command prints a raw JWT signed with the provided HS256 secret. Use
 `--hs256-secret-file` instead of the environment variable when the local secret
 comes from an untracked file.
+Verify the token against the intended local service before using it in
+automation, for example:
 
-The BusDK superproject `compose.yaml` uses `bus-operator-token --local` inside
-service containers to mint short-lived local service tokens from the shared
-development HS256 secret. The `testing-agent` writes an API-audience token and
-an auth-audience admin token under `/root/.config/bus/auth/` for smoke checks.
+```sh
+TOKEN="$(bus operator token --format token issue --local --hs256-secret-file ./local/hs256-secret --subject local-codex --audience ai.hg.fi/api --scope llm:proxy --ttl 1h)"
+curl -fsS -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8080/v1/models
+```
+
+If the receiving service uses a different HS256 secret, the verification
+request fails with an authentication error.
+
+The BusDK superproject `compose.yaml` uses the `bus-operator-token` binary as a
+container entrypoint alias for `bus operator token issue --local` to mint
+short-lived local service tokens from the shared development HS256 secret. The
+`testing-agent` writes an API-audience token and an auth-audience admin token
+under `/root/.config/bus/auth/` for smoke checks.
 Those tokens are local compose artifacts only; do not reuse them for hosted or
 shared deployments.
 

@@ -93,11 +93,20 @@ limits must be positive integers. A minimal accepted catalog is:
 }
 ```
 
+Success returns `200 OK` with the stored catalog or update status. Invalid
+catalog JSON returns `400`, missing internal audience or
+`billing:catalog:write` returns `401` or `403`, and unavailable catalog storage
+returns `503`.
+
 ### `GET /api/internal/billing/accounts/{account_id}/status`
 
 Returns billing status for an operator-selected account.
 
 Requires `billing:read` with the internal audience.
+`account_id` must be the stable account UUID used as the API token subject.
+Success returns the same billing status shape as the public status endpoint for
+that account. Invalid UUIDs return `400`; missing internal authority returns
+`401` or `403`.
 
 ### `POST /api/internal/billing/entitlement-check`
 
@@ -109,7 +118,9 @@ container providers call this before starting billable work.
 
 Denied responses use stable reasons such as `billing_required` and
 `quota_exceeded`, with user-facing guidance when available.
-Send `{"account_id":"account-uuid","scope":"llm:proxy","usage":{"meter_event_name":"bus_llm_tokens","quantity":1200}}`.
+Use the stable account UUID from the auth provider or API token `sub`; for
+example, send
+`{"account_id":"00000000-0000-4000-8000-000000000001","scope":"llm:proxy","usage":{"meter_event_name":"bus_llm_tokens","quantity":1200}}`.
 `usage` is optional for setup-only checks and required when the caller wants a
 quota-aware decision for a specific unit count. Success returns `200 OK` with
 `{"allowed":true,"reason":"billing_active"}` or
@@ -143,6 +154,14 @@ Enables durable PostgreSQL catalog storage.
 
 Without this value, internal catalog endpoints return a deterministic
 storage-unavailable error instead of using volatile storage.
+Use a PostgreSQL URL with a role that can create and update the billing catalog
+tables and indexes in the selected database/schema:
+
+```text
+postgres://bus_billing:password@postgres.example.internal:5432/bus_billing?sslmode=require
+```
+
+Use `sslmode=disable` only for trusted local development networks.
 
 ### Events Backend
 
@@ -178,6 +197,35 @@ JWT-secured HTTP boundary for browser and API clients.
 Configure the provider with the same JWT audience and signing secret policy as
 the rest of the Bus API deployment. Public billing endpoints accept only
 end-user API JWTs. Internal endpoints accept only internal-audience JWTs.
+Set `BUS_BILLING_JWT_SECRET` to the HS256 secret trusted for billing API
+tokens, or use the deployment's configured JWT secret source. Public requests
+use audience `ai.hg.fi/api`; internal requests use `ai.hg.fi/internal`. The
+scope contract is documented in
+[Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes).
+
+Start the provider with either the local deterministic backend or the Events
+backend. Events mode requires the Events URL and a provider token with billing
+event scopes:
+
+```sh
+bus operator token \
+  --api-url https://api.example.test \
+  --internal-key-file /run/secrets/bus-auth-internal-key \
+  --format token \
+  issue \
+  --subject billing-provider \
+  --audience ai.hg.fi/api \
+  --scope "billing:read billing:setup billing:entitlement:check billing:subscription:write billing:usage:export billing:provider" \
+  --ttl 1h > /run/secrets/bus-billing-provider.token
+
+BUS_BILLING_JWT_SECRET="$(cat /run/secrets/bus-api-jwt-secret)" \
+BUS_BILLING_DATABASE_URL="$(cat /run/secrets/bus-billing-database-url)" \
+BUS_API_TOKEN="$(cat /run/secrets/bus-billing-provider.token)" \
+bus-api-provider-billing \
+  --addr 0.0.0.0:8083 \
+  --backend events \
+  --events-url http://bus-events:8081
+```
 
 Run `bus-integration-billing` with durable storage so subscription state,
 entitlements, idempotency keys, usage export state, and quota buckets survive
@@ -185,10 +233,36 @@ restarts. Run `bus-integration-stripe` or another payment-provider integration
 when hosted setup, portal sessions, webhooks, and payment-meter events should
 use a real provider.
 
-Use `bus operator billing catalog put --file <catalog.json>` to publish the
-provider-neutral catalog, and use `bus operator stripe catalog sync --file
-<catalog.json>` when Stripe products and prices should be synchronized from the
-same catalog.
+Create a provider-neutral catalog file, publish it, and verify it through the
+operator API:
+the operator token must target the Billing API deployment and include
+`billing:catalog:read` and `billing:catalog:write`.
+
+```sh
+bus operator token \
+  --api-url https://api.example.test \
+  --internal-key-file /run/secrets/bus-auth-internal-key \
+  --format token \
+  issue \
+  --subject billing-operator \
+  --audience ai.hg.fi/internal \
+  --scope "billing:catalog:read billing:catalog:write" \
+  --ttl 1h > /run/secrets/bus-billing-operator.token
+
+mkdir -p ./local
+bus operator billing catalog template > ./local/billing-catalog.json
+bus operator billing \
+  --api-url https://api.example.test \
+  --token-file /run/secrets/bus-billing-operator.token \
+  catalog put --file ./local/billing-catalog.json
+bus operator billing \
+  --api-url https://api.example.test \
+  --token-file /run/secrets/bus-billing-operator.token \
+  catalog get
+```
+
+Use `bus operator stripe catalog sync --file ./local/billing-catalog.json` when
+Stripe products and prices should be synchronized from the same catalog.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

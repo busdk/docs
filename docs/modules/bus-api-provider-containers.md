@@ -59,7 +59,21 @@ An explicit image run looks like:
 
 `profile` and `image` are alternatives; at least one is required. `args` is a
 compatibility alias for `command` when `command` is omitted.
+When `image` is used directly, provide `command`; there is no portable default
+command across images.
 `timeout_seconds` is optional and must be non-negative.
+
+Direct HTTP example:
+
+```sh
+bus auth token --scope "container:read container:run"
+TOKEN="$(cat ~/.config/bus/auth/api-token)"
+curl -fsS -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/api/v1/containers/runs \
+  -d '{"profile":"codex","args":["sh","-c","printf OK"],"timeout_seconds":300}'
+```
 
 Successful responses include runner name, image, arguments, exit code, stdout,
 stderr, duration, and runner status.
@@ -96,6 +110,9 @@ Returns protected operational status for the configured runner.
 This endpoint is for trusted service or operator tooling, not end-user
 container clients. With `--backend events`, it sends
 `bus.containers.runner.status.request`.
+The request body is empty. Success returns `200 OK` with runner state details,
+for example `{"status":{"state":"ready","provider":"docker","details":{}}}`.
+Missing or wrong internal-audience credentials return `401` or `403`.
 
 ### `POST /api/internal/containers/runner`
 
@@ -103,6 +120,9 @@ Starts and bootstraps the configured runner for internal operations.
 
 With `--backend events`, it sends
 `bus.containers.runner.start.request`.
+The request body is empty for the default runner target. Success returns
+`202 Accepted` or `200 OK` with an accepted/start result such as
+`{"accepted":true,"action":"start"}`.
 
 ### `DELETE /api/internal/containers/runner`
 
@@ -110,6 +130,9 @@ Deletes the configured runner for internal cleanup.
 
 With `--backend events`, it sends
 `bus.containers.runner.delete.request`.
+The request body is empty. Success returns `200 OK` with a deletion result such
+as `{"deleted":true}`. These endpoints require an internal token with
+`container:admin`.
 
 ### `GET /readyz`
 
@@ -117,6 +140,10 @@ Reports provider readiness.
 
 When `BUS_EVENTS_LISTENER_REQUIRED=1`, readiness is unhealthy until required
 container, usage, and billing response streams are connected.
+
+### Common Errors
+
+These errors apply to the API endpoints above.
 
 Common error bodies use
 `{"error":{"type":"...","message":"...","action":"...","command":"..."}}`.
@@ -141,6 +168,8 @@ Selects the container backend.
 
 Use `static` for deterministic local checks. Use `events` for Bus Events
 request/reply mode.
+The default is `static` for standalone deterministic operation unless the
+deployment overrides it.
 
 ### `--events-url <url>`
 
@@ -158,12 +187,14 @@ Commercial deployments should use `events` so accepted container work is
 available for billing and quota accounting.
 Use `memory` only for deterministic local checks where usage records should not
 leave the provider process.
+The default is `none`.
 
 ### `--billing-backend <none|events>`
 
 Enables billing entitlement checks before container run creation.
 
 Use `events` with `bus-integration-billing` for paid container plans.
+The default is `none`.
 
 ### `BUS_EVENTS_LISTENER_REQUIRED`
 
@@ -186,6 +217,13 @@ The local smoke path uses a local API token minted by `bus-operator-token` and
 runs `bus containers run --profile codex` from the testing container. A
 successful check returns a JSON run response with exit code `0` and captured
 stdout from the Docker-backed container.
+
+```sh
+cd /path/to/busdk
+docker compose up --build -d
+docker compose exec -T testing-agent sh -lc \
+  'cd /workspace/bus-containers && go run ./cmd/bus-containers run --profile codex -- sh -lc "printf OK"'
+```
 
 ### End-User Access
 

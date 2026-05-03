@@ -40,10 +40,20 @@ Run a deterministic local check with:
 bus-integration-billing --self-test
 ```
 
-For an Events-backed local worker with durable storage, provide a Bus Events API
-URL, a service token, and PostgreSQL storage:
+For an Events-backed local worker with durable storage, start a reachable Bus
+Events API first and create the PostgreSQL database/user referenced by
+`BUS_BILLING_DATABASE_URL`. Then create the local service token with the same
+HS256 secret trusted by the Events API:
 
 ```sh
+mkdir -p ./local
+BUS_AUTH_HS256_SECRET=dev-secret \
+bus operator token --format token issue --local \
+  --subject billing-worker \
+  --audience ai.hg.fi/api \
+  --scope "billing:read billing:setup billing:entitlement:check billing:subscription:write billing:usage:export billing:provider" \
+  --ttl 1h > ./local/billing-worker.token
+
 export BUS_EVENTS_API_URL=http://127.0.0.1:8081
 export BUS_API_TOKEN="$(cat ./local/billing-worker.token)"
 BUS_BILLING_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_billing?sslmode=disable' \
@@ -58,6 +68,10 @@ typically `billing:read`, `billing:setup`, `billing:entitlement:check`,
 `billing:subscription:write`, `billing:usage:export`, and
 `billing:provider` when provider-backed checkout, portal, or meter events are
 enabled.
+The worker is connected when it stays running without startup errors and the
+Events API accepts billing request streams for that token. With PostgreSQL
+storage, missing or invalid `BUS_BILLING_DATABASE_URL` fails startup instead of
+falling back to memory.
 
 ### Events
 
@@ -298,9 +312,9 @@ configuration used for plan enforcement.
 
 | Setting | Required | Default | Valid values | Failure behavior |
 | --- | --- | --- | --- | --- |
-| `BUS_EVENTS_API_URL` or `--events-url` | Required for event-listener mode. Not required for `--self-test`. | Empty. | Bus Events API collection URL. | Missing or unreachable URL prevents the worker from receiving billing requests. |
+| `BUS_EVENTS_API_URL` or `--events-url` | Required for event-listener mode. Not required for `--self-test`. | Empty. | Bus Events API base URL, without `/api/v1/events`; clients append event paths. | Missing or unreachable URL prevents the worker from receiving billing requests. |
 | `BUS_API_TOKEN` | Required when connecting to a secured Events API. Not required for in-memory self-test. | Empty. | Bus API token with scopes such as `billing:read`, `billing:setup`, `billing:entitlement:check`, `billing:subscription:write`, `billing:usage:export`, and `billing:provider` according to enabled provider flows. | Missing, expired, or underscoped tokens produce Events API authentication or authorization failures. |
-| `BUS_BILLING_PROVIDER_BACKEND` or `--provider-backend` | Optional. | `local`. | `local`, `events`. | Unknown values are not useful in production; provider calls fail when the selected backend cannot create sessions or meter events. |
+| `BUS_BILLING_PROVIDER_BACKEND` or `--provider-backend` | Optional. | `local`. | `local`, `events`. | Unsupported values fail startup. Production payment-provider routing should use `events`; `local` returns deterministic local sessions and meter acceptance. |
 | `BUS_BILLING_PROVIDER` or `--provider` | Optional for `local`; required operationally for `events` when provider labels matter. | `stripe`. | Provider label such as `stripe`. | Used in provider event payloads and responses; mismatched labels can route requests to the wrong provider integration. |
 | `BUS_BILLING_PROVIDER_TIMEOUT` or `--provider-timeout` | Optional. | `30s`. | Go duration such as `5s`, `30s`, or `2m`; integer environment values are seconds. | Provider request/reply calls return timeout errors after this duration. |
 | `BUS_BILLING_STORE_BACKEND` or `--store-backend` | Optional. | `memory`. | `memory`, `postgres`. | Unknown backends fail readiness with an unsupported-backend error. |
@@ -392,7 +406,24 @@ Minimal LLM and container quota file:
 Use it by setting:
 
 ```sh
+export BUS_EVENTS_API_URL=http://127.0.0.1:8081
+export BUS_API_TOKEN="$(cat ./local/billing-worker.token)"
 export BUS_BILLING_QUOTA_CONFIG=/etc/bus/billing-quotas.json
+export BUS_BILLING_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_billing?sslmode=disable'
+bus-integration-billing \
+  --events-url "$BUS_EVENTS_API_URL" \
+  --store-backend postgres \
+  --provider-backend local \
+  --quota-config "$BUS_BILLING_QUOTA_CONFIG"
+```
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus integration billing --events-url "$BUS_EVENTS_API_URL"
+integration billing --events-url "$BUS_EVENTS_API_URL" --store-backend memory
 ```
 
 ### Production Flow

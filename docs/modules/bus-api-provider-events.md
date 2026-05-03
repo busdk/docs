@@ -20,12 +20,20 @@ scope-limited.
 
 The provider verifies the normal Bus API JWT audience `ai.hg.fi/api`.
 Send the token as `Authorization: Bearer <JWT>` on publish and stream requests.
-For local development with the same HS256 secret configured on the Events
-provider, mint a token with the narrow scopes needed by the event namespace:
+For the local curl checks below, first start the provider on port `8081` with
+the same HS256 secret used to mint the token:
+
+```sh
+BUS_EVENTS_JWT_SECRET=not-a-secret-local-development-hs256-key \
+bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
+```
+
+Keep that provider running in one terminal. In another terminal, mint a token
+with the narrow scopes needed by the event namespace:
 
 ```sh
 mkdir -p ./local
-BUS_AUTH_HS256_SECRET=dev-secret \
+BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key \
 bus operator token --format token issue --local \
   --subject events-local \
   --audience ai.hg.fi/api \
@@ -48,16 +56,18 @@ metadata is not trusted for authorization. Streams only return events the token
 is allowed to receive, and user tokens cannot subscribe to unrelated accounts.
 
 Protected Bus integration events use domain scopes. VM events use `vm:read` or
-`vm:write`, public container events use scopes such as `container:read` and
-`container:run`, protected container runner administration events use
-`container:admin`, and usage collector events use scopes such as `usage:read`
-or `usage:delete`. This keeps event access aligned with the domain API
-permissions instead of exposing broad event-pattern scopes to end users.
+`vm:write`; LLM execution events use `llm:proxy`; public container events use
+`container:read`, `container:run`, and `container:delete`; protected container
+runner administration events use `container:admin`; usage events use
+`usage:write`, `usage:read`, and `usage:delete`; SSH run events use `ssh:run`.
 Billing events are protected the same way: public status/setup events use
 `billing:read` or `billing:setup`, entitlement checks use
 `billing:entitlement:check`, subscription updates use
 `billing:subscription:write`, billing usage export uses
 `billing:usage:export`, and Stripe-provider events use `billing:provider`.
+Deploy/bootstrap events use `cloud:read`, `cloud:write`, `cloud:destroy`,
+`database:read`, `database:admin`, `node:read`, `node:admin`,
+`inference:read`, and `inference:admin` according to the namespace action.
 Wildcard streams are rejected by default because the provider cannot safely
 prove that one token may receive every future protected event.
 
@@ -65,7 +75,8 @@ prove that one token may receive every future protected event.
 generic durable work streams and require dedicated scopes such as `work:send`,
 `work:read`, `work:reply`, `work:claim`, and `work:admin` instead of broad
 event scopes. Development task events use the separate `bus.dev.task.*`
-namespace with `dev:task:*` scopes. Future deployments may further qualify
+namespace with concrete scopes such as `dev:task:send`, `dev:task:read`,
+`dev:task:reply`, and `dev:task:claim`. Future deployments may further qualify
 these scopes by owner or repository, for example `work:claim:acme/payroll` or
 `dev:task:claim:busdk/bus-ledger`.
 
@@ -87,19 +98,16 @@ Send `Content-Type: application/json` with an event envelope:
 ```json
 {
   "name": "example.ping",
-  "correlation_id": "optional-correlation-id",
-  "delivery": "broadcast",
-  "group": "default",
+  "correlationId": "optional-correlation-id",
   "payload": {"ok": true}
 }
 ```
 
-`name` is required. `payload` may be any JSON value. `delivery` defaults to
-`broadcast`; omit `group` for ordinary broadcast events. Use `delivery:"work"`
-with `group` when competing workers should receive the event through a named
-work group. Success returns `202 Accepted` or `200 OK` with the stored event
-metadata. Bad JSON or invalid event names return `400`, missing auth returns
-`401`, and missing domain scope returns `403`.
+`name` is required. `payload` may be any JSON value. Work delivery is selected
+on stream URLs with `delivery=work` and `group=<group>`, not in the publish
+body. Success returns `202 Accepted` or `200 OK` with acceptance metadata such
+as `accepted`, `id`, and `name`. Bad JSON or invalid event names return `400`,
+missing auth returns `401`, and missing domain scope returns `403`.
 
 Runnable local publish check:
 
@@ -108,11 +116,11 @@ curl -fsS -X POST \
   -H "Authorization: Bearer $(cat ./local/events.token)" \
   -H "Content-Type: application/json" \
   http://127.0.0.1:8081/api/v1/events \
-  -d '{"name":"example.ping","correlation_id":"docs-ping","payload":{"ok":true}}'
+  -d '{"name":"example.ping","correlationId":"docs-ping","payload":{"ok":true}}'
 ```
 
-Success returns `202 Accepted` or `200 OK` with stored event metadata,
-including the event name and correlation identifier.
+Success returns `202 Accepted` or `200 OK` with acceptance metadata including
+the event `id` and `name`.
 
 ### `GET /api/v1/events/stream?name=<event-name>&delivery=broadcast`
 
@@ -133,7 +141,7 @@ curl -fsS \
 ```
 
 The first NDJSON line should be a JSON event envelope whose `name` is
-`example.ping` and whose `correlation_id` is `docs-ping`.
+`example.ping` and whose `correlationId` is `docs-ping`.
 
 Missing or invalid bearer tokens return `401 invalid_auth`. Missing listen
 scope for the requested event namespace returns `403 forbidden`. Invalid event
@@ -145,7 +153,9 @@ deployment explicitly enables broad admin-only event scopes.
 Streams matching events as competing work.
 
 Use work delivery when only one worker in a group should receive each event. If
-`group` is omitted, the provider uses `default`.
+`group` is omitted, the provider uses `default`. If `consumer` is omitted, the
+provider uses `default`; long-running workers should set a stable consumer name
+for logs and backend diagnostics.
 Work streams use the same newline-delimited JSON framing as broadcast streams.
 Only one authorized consumer in the group receives each event.
 Use short stable URL-safe `group` and `consumer` names such as
@@ -197,15 +207,6 @@ Includes existing matching events before following new events.
 
 Returns after the replayed snapshot instead of waiting for new events.
 
-The PostgreSQL backend is intentionally migration-free. It creates `bus_events`
-and `bus_event_group_cursors` when missing. Use PostgreSQL for production
-deployments that need restart tolerance, multiple API processes, replayable
-event history, or durable work-group cursors. Destroying the PostgreSQL
-database loses queued events, replay history, and work-delivery cursors, so do
-that only for disposable local or test environments. PostgreSQL uses
-`LISTEN/NOTIFY` to wake listeners quickly, with SQL polling as the fallback and
-SQL transactions as the source of truth.
-
 ### Development
 
 For local development, use an obvious non-secret JWT secret and locally
@@ -231,6 +232,15 @@ optional `BUS_EVENTS_REDIS_PASSWORD`, and optional
 and `BUS_EVENTS_POSTGRES_DSN`. Use memory only for local development. Keep
 wildcard streaming disabled unless an explicitly trusted internal/admin
 deployment needs it and the token audience/scope policy allows it.
+
+The PostgreSQL backend is intentionally migration-free. It creates `bus_events`
+and `bus_event_group_cursors` when missing. Use PostgreSQL for production
+deployments that need restart tolerance, multiple API processes, replayable
+event history, or durable work-group cursors. Destroying the PostgreSQL
+database loses queued events, replay history, and work-delivery cursors, so do
+that only for disposable local or test environments. PostgreSQL uses
+`LISTEN/NOTIFY` to wake listeners quickly, with SQL polling as the fallback and
+SQL transactions as the source of truth.
 
 Provider and integration processes should use narrow tokens with only the
 domain scopes needed for the events they send and receive. Do not log bearer

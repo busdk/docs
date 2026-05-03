@@ -85,9 +85,13 @@ arguments.
 ### Stripe Setup
 
 Create products, prices, and meters from a provider-neutral Bus catalog when
-possible:
+possible. The billing catalog commands need a Bus operator token with catalog
+scopes, such as `billing:catalog:read` and `billing:catalog:write`, and the
+operator API URL for the deployment:
 
 ```sh
+export BUS_API_BASE_URL=https://api.example.test
+export BUS_API_TOKEN="$(cat /run/secrets/bus-billing-operator.token)"
 export BUS_STRIPE_SECRET_KEY="$(cat ./local/stripe-secret-key)"
 bus operator billing catalog template > catalog.json
 bus operator stripe catalog sync --file catalog.json
@@ -99,6 +103,15 @@ sync` can write products, prices, or meters to Stripe.
 After synchronization, `bus operator stripe test` should report that the Stripe
 API key is usable. `bus operator billing catalog get` should return the catalog
 you published, including the plan, price, meter, and quota entries.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus integration stripe --events-url "$BUS_EVENTS_API_URL"
+integration stripe --events-url "$BUS_EVENTS_API_URL" --webhook-addr 127.0.0.1:8084
+```
 
 Configure Stripe Customer Portal in the Stripe Dashboard before enabling
 `bus billing portal`. Configure a Stripe webhook endpoint that forwards events
@@ -117,7 +130,7 @@ BUS_STRIPE_WEBHOOK_SECRET="$(cat ./local/stripe-webhook-secret)" \
 BUS_API_TOKEN="$(cat ./local/billing-worker.token)" \
 bus-integration-stripe \
   --events-url "$BUS_EVENTS_API_URL" \
-  --webhook-addr 127.0.0.1:8081
+  --webhook-addr 127.0.0.1:8084
 ```
 
 The ingress accepts only signed Stripe `POST` requests, preserves the raw body
@@ -133,8 +146,24 @@ webhook route. The CLI prints the `whsec_...` signing secret for that local
 listener.
 
 ```sh
-stripe listen --forward-to http://127.0.0.1:8081/api/internal/stripe/webhook
+stripe listen --forward-to http://127.0.0.1:8084/api/internal/stripe/webhook
 ```
+
+Copy the printed `whsec_...` value into `BUS_STRIPE_WEBHOOK_SECRET` and
+restart or relaunch `bus-integration-stripe` with that value before triggering
+events; otherwise signature verification fails.
+
+In another terminal, trigger a signed test event:
+
+```sh
+stripe trigger checkout.session.completed
+```
+
+The Stripe CLI should report a delivered `POST`; that confirms local signed
+webhook delivery and signature verification. A
+`bus.billing.subscription.update` event is emitted only when the delivered
+Stripe event includes Bus metadata such as `bus_account_id` and `bus_feature`,
+which the default Stripe CLI fixture may not include.
 
 The BusDK superproject `compose.yaml` starts this integration as `bus-stripe`
 with webhook ingress on port `8084`. Nginx exposes it at
