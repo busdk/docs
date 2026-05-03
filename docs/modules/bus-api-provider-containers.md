@@ -150,12 +150,14 @@ events`, or `--billing-backend events` is enabled.
 Provide the provider's Events token through deployment-managed configuration,
 such as `BUS_API_TOKEN`. Do not pass bearer tokens as command-line arguments.
 
-### `--usage-backend <none|events>`
+### `--usage-backend <none|events|memory>`
 
 Enables usage recording through Events.
 
 Commercial deployments should use `events` so accepted container work is
 available for billing and quota accounting.
+Use `memory` only for deterministic local checks where usage records should not
+leave the provider process.
 
 ### `--billing-backend <none|events>`
 
@@ -170,6 +172,20 @@ enabled backends.
 
 Use it in production so startup ordering problems do not leave the provider
 active but unable to complete request/reply work.
+
+### Local Compose Stack
+
+The BusDK superproject `compose.yaml` starts this provider as `bus-containers`
+with `--backend events`, `--usage-backend memory`, and `--billing-backend
+none`. Nginx exposes public container APIs at `/api/v1/containers/*` and
+internal runner APIs at `/api/internal/containers/*`. Container requests flow
+through `bus-integration-containers` to the `bus.docker.*` backend events
+handled by `bus-integration-docker`.
+
+The local smoke path uses a local API token minted by `bus-operator-token` and
+runs `bus containers run --profile codex` from the testing container. A
+successful check returns a JSON run response with exit code `0` and captured
+stdout from the Docker-backed container.
 
 ### End-User Access
 

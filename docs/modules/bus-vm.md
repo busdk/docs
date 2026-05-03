@@ -57,3 +57,10 @@ bus vm --api-url https://ai.hg.fi --token-file /run/secrets/bus-api-token status
 A successful status call exits 0 and prints the current runtime state in the
 selected format. Text output includes whether the runtime is ready, starting,
 stopped, or unavailable according to the provider response.
+
+### Local Compose
+
+The BusDK superproject `compose.yaml` exposes the local VM status API through
+nginx at `http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/api/v1/vm/status`.
+The stack uses the static VM provider, so `bus vm status` or an authenticated
+HTTP request should report provider `static` without starting a real runtime.

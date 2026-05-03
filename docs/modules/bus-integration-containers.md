@@ -143,13 +143,21 @@ docker compose -f compose.dev-task-docker.yaml ps
 docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
 ```
 
-Inside the testing shell, run a direct container check:
+Inside the testing shell, run a direct Codex-profile container check:
 
 ```sh
-go run ./bus-containers/cmd/bus-containers run --profile codex -- sh -lc 'printf OK'
+cd /workspace/bus-containers
+go run ./cmd/bus-containers run --profile codex -- codex --version
 ```
 
-The command should return a successful run response containing `OK`.
+The command should return a successful run response with exit code `0` and
+stdout from the Codex CLI. That proves the public `bus.containers.run.request`
+reached the configured Docker backend prefix and returned through the router.
+
+The root `compose.yaml` local AI Platform stack uses the same router shape for
+`bus containers run --profile codex`, while nginx exposes the containers API at
+`/api/v1/containers/*` and the protected runner API at
+`/api/internal/containers/*`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

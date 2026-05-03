@@ -88,11 +88,14 @@ Create products, prices, and meters from a provider-neutral Bus catalog when
 possible:
 
 ```sh
+export BUS_STRIPE_SECRET_KEY="$(cat ./local/stripe-secret-key)"
 bus operator billing catalog template > catalog.json
 bus operator stripe catalog sync --file catalog.json
 bus operator billing catalog put --file catalog.json
 ```
 
+`BUS_STRIPE_SECRET_KEY` must be present before `bus operator stripe catalog
+sync` can write products, prices, or meters to Stripe.
 After synchronization, `bus operator stripe test` should report that the Stripe
 API key is usable. `bus operator billing catalog get` should return the catalog
 you published, including the plan, price, meter, and quota entries.
@@ -109,6 +112,7 @@ Run the webhook ingress on the Stripe integration service. Set
 updates:
 
 ```sh
+export BUS_EVENTS_API_URL=http://127.0.0.1:8081
 BUS_STRIPE_WEBHOOK_SECRET="$(cat ./local/stripe-webhook-secret)" \
 BUS_API_TOKEN="$(cat ./local/billing-worker.token)" \
 bus-integration-stripe \
@@ -131,6 +135,14 @@ listener.
 ```sh
 stripe listen --forward-to http://127.0.0.1:8081/api/internal/stripe/webhook
 ```
+
+The BusDK superproject `compose.yaml` starts this integration as `bus-stripe`
+with webhook ingress on port `8084`. Nginx exposes it at
+`/api/internal/stripe/webhook` on the local API port. The compose default
+`BUS_STRIPE_WEBHOOK_SECRET=whsec_local_not_secret` is only a local development
+placeholder; use the signing secret printed by Stripe CLI or a deployment
+secret for real webhook verification. Without `BUS_STRIPE_SECRET_KEY`, checkout
+and portal responses remain deterministic local responses.
 
 ### Test Mode And Live Mode
 

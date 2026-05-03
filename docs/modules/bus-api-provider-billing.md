@@ -163,6 +163,16 @@ When configured with the Events backend, the provider triggers
 Internal entitlement checks trigger `bus.billing.entitlement.check.request` and
 return the correlated entitlement response.
 
+### Local Compose Stack
+
+The BusDK superproject `compose.yaml` starts this provider as
+`bus-billing-api` with `--backend events` and `--events-url
+http://bus-events:8081`. Nginx publishes public billing endpoints at
+`/api/v1/billing/*` and internal billing endpoints at
+`/api/internal/billing/*` on the local API port. Billing state and entitlement
+answers come from `bus-integration-billing`; this provider remains the
+JWT-secured HTTP boundary for browser and API clients.
+
 ### Deployment Checklist
 
 Configure the provider with the same JWT audience and signing secret policy as

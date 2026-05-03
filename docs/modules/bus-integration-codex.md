@@ -61,6 +61,11 @@ bus-integration-codex \
   --workdir /workspace
 ```
 
+The worker reads its Bus Events bearer token from `BUS_API_TOKEN`. The token
+must be valid for the Events API selected by `--events-url` and include
+`llm:proxy`; otherwise the worker fails to publish or listen for
+`bus.llm.*` request/reply events.
+
 The command is connected when it stays running without printing a startup
 error. In another shell, prove the event contract is visible before sending
 model traffic:
@@ -68,6 +73,24 @@ model traffic:
 ```sh
 bus-integration-codex --events --format text | grep bus.llm.chat.completions.request
 ```
+
+To prove the running worker is connected end to end, start
+`bus-api-provider-llm` with `--execution-backend events` against the same
+Events API and send a small `/v1/chat/completions` request through the provider
+using an `llm:proxy` token. A successful OpenAI-compatible response proves the
+REST provider, Events API, and Codex worker all share the same event path.
+
+```sh
+TOKEN="$(bus operator token issue --local --scope llm:proxy --format token)"
+curl -fsS \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  http://127.0.0.1:8088/v1/chat/completions \
+  -d '{"model":"codex-chatgpt","messages":[{"role":"user","content":"Reply OK"}]}'
+```
+
+The response should be an OpenAI-compatible chat completion JSON document, or a
+provider error that still arrives through the correlated Events response path.
 
 Print declared event capabilities:
 
@@ -91,8 +114,10 @@ bus-integration-codex --event-help codex.chat_completions.receive
 ### Local Compose
 
 The BusDK superproject root `compose.yaml` starts `bus-integration-codex`
-behind `bus-api-provider-llm --execution-backend events`. The stack verifies
-the OpenAI-compatible route and model catalog without requiring real Codex
+behind `bus-api-provider-llm --execution-backend events`. Nginx exposes the
+OpenAI-compatible route at `/v1/*` on
+`http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}`. The stack verifies the
+model catalog, including `codex-chatgpt`, without requiring real Codex
 credentials.
 
 The `bus-codex` service builds a local image with Codex CLI installed and
@@ -103,6 +128,7 @@ ids such as `codex-chatgpt` remain API/catalog ids; execution uses
 Start the stack and run the live check:
 
 ```sh
+cd /path/to/busdk
 docker compose up --build -d
 BUS_LOCAL_AI_PLATFORM_LIVE_CODEX=1 \
 bash tests/superproject/test_local_ai_platform_compose_smoke.sh

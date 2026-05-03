@@ -40,6 +40,13 @@ For module endpoint contracts, use the individual `bus-api-provider-*` module
 pages listed in this reference. The core `bus-api` page documents provider
 loading, routing, capability URLs, and host-level security behavior.
 
+The BusDK superproject `compose.yaml` uses `bus-api` for the local auth service.
+It starts `bus-api serve --provider auth --enable-module auth` with the stable
+local capability token `local-dev`, PostgreSQL auth storage, and MailHog SMTP.
+The stack's nginx gateway publishes the auth aliases as `/api/v1/auth/*` and
+`/api/internal/auth/*`, while `bus-api` still serves them internally under
+`/local-dev/v1/api/...`.
+
 ### Commands
 
 **`serve`** (default) — Start the HTTP server. The effective workspace root is the current directory or the directory given by `-C` / `--chdir`. The server generates an unguessable token (unless you pass `--token`), binds to the address and port given by `--listen` and `--port`, and prints the capability base URL to **stdout**. All diagnostics and logs go to **stderr**. You must use the printed URL (including the token path segment) for every API request; there is no separate login or session. The server does not mutate workspace data until a mutating endpoint is called. If the workspace root is not readable, startup fails with a deterministic diagnostic and a non-zero exit code.

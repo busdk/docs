@@ -20,6 +20,22 @@ scope-limited.
 
 The provider verifies the normal Bus API JWT audience `ai.hg.fi/api`.
 Send the token as `Authorization: Bearer <JWT>` on publish and stream requests.
+For local development with the same HS256 secret configured on the Events
+provider, mint a token with the narrow scopes needed by the event namespace:
+
+```sh
+mkdir -p ./local
+BUS_AUTH_HS256_SECRET=dev-secret \
+bus operator token --format token issue --local \
+  --subject events-local \
+  --audience ai.hg.fi/api \
+  --scope "events:send events:listen" \
+  --ttl 1h > ./local/events.token
+```
+
+Production deployments should use the normal auth or service-token flow and
+grant domain scopes such as `llm:proxy`, `container:run`, or `billing:read`
+instead of broad event scopes whenever the event namespace is protected.
 
 The account is derived from JWT `sub`. Callers do not provide account IDs for
 authorization.
@@ -85,6 +101,19 @@ work group. Success returns `202 Accepted` or `200 OK` with the stored event
 metadata. Bad JSON or invalid event names return `400`, missing auth returns
 `401`, and missing domain scope returns `403`.
 
+Runnable local publish check:
+
+```sh
+curl -fsS -X POST \
+  -H "Authorization: Bearer $(cat ./local/events.token)" \
+  -H "Content-Type: application/json" \
+  http://127.0.0.1:8081/api/v1/events \
+  -d '{"name":"example.ping","correlation_id":"docs-ping","payload":{"ok":true}}'
+```
+
+Success returns `202 Accepted` or `200 OK` with stored event metadata,
+including the event name and correlation identifier.
+
 ### `GET /api/v1/events/stream?name=<event-name>&delivery=broadcast`
 
 Streams matching events to every authorized listener.
@@ -94,6 +123,23 @@ The response is `application/x-ndjson`: each line is one JSON event envelope.
 Clients should read incrementally until the connection closes or their timeout
 expires.
 
+Use `replay=true&follow=false` for a deterministic one-shot local stream check
+after publishing `example.ping`:
+
+```sh
+curl -fsS \
+  -H "Authorization: Bearer $(cat ./local/events.token)" \
+  'http://127.0.0.1:8081/api/v1/events/stream?name=example.ping&delivery=broadcast&replay=true&follow=false'
+```
+
+The first NDJSON line should be a JSON event envelope whose `name` is
+`example.ping` and whose `correlation_id` is `docs-ping`.
+
+Missing or invalid bearer tokens return `401 invalid_auth`. Missing listen
+scope for the requested event namespace returns `403 forbidden`. Invalid event
+names return `400 bad_request`, and wildcard names are rejected unless the
+deployment explicitly enables broad admin-only event scopes.
+
 ### `GET /api/v1/events/stream?name=<event-name>&delivery=work&group=<group>&consumer=<consumer>`
 
 Streams matching events as competing work.
@@ -102,6 +148,12 @@ Use work delivery when only one worker in a group should receive each event. If
 `group` is omitted, the provider uses `default`.
 Work streams use the same newline-delimited JSON framing as broadcast streams.
 Only one authorized consumer in the group receives each event.
+Use short stable URL-safe `group` and `consumer` names such as
+`billing-worker` or `usage-collector-1`. Avoid spaces, slashes, control
+characters, and secrets; backend-specific invalid names return
+`400 bad_request` or a stream setup error.
+Invalid work group or consumer values return `400 bad_request`; missing or
+underscoped authorization returns `401` or `403` before any stream is opened.
 
 ### `name=<event-name>`
 
@@ -161,12 +213,24 @@ generated test tokens only. Plain secret values are raw text even when they look
 like base64; use `base64:<value>` only for an intentionally base64-encoded
 secret. Do not commit real deployment secrets.
 
+The BusDK superproject `compose.yaml` starts this provider as `bus-events` with
+`--events-backend postgres` and `BUS_EVENTS_POSTGRES_DSN` pointing at the local
+PostgreSQL service. Other local AI Platform services reach it at
+`http://bus-events:8081`, and nginx exposes `/api/v1/events` on the local
+public API port. The shared local token scopes include the domain scopes needed
+for LLM, billing, VM, container, usage, Stripe, work, and development-task
+events, so the compose stack can exercise request/reply workflows without
+enabling broad wildcard event access.
+
 ### Production Notes
 
 Use Redis or PostgreSQL for deployments that need restart tolerance or multiple
-processes. Use memory only for local development. Keep wildcard
-streaming disabled unless an explicitly trusted internal/admin deployment needs
-it and the token audience/scope policy allows it.
+processes. Select Redis with `--events-backend redis`, `BUS_EVENTS_REDIS_ADDR`,
+optional `BUS_EVENTS_REDIS_PASSWORD`, and optional
+`BUS_EVENTS_REDIS_PREFIX`. Select PostgreSQL with `--events-backend postgres`
+and `BUS_EVENTS_POSTGRES_DSN`. Use memory only for local development. Keep
+wildcard streaming disabled unless an explicitly trusted internal/admin
+deployment needs it and the token audience/scope policy allows it.
 
 Provider and integration processes should use narrow tokens with only the
 domain scopes needed for the events they send and receive. Do not log bearer

@@ -25,6 +25,18 @@ signed with `BUS_USAGE_JWT_SECRET`, include `sub`, `aud=ai.hg.fi/internal`,
 space-separated `scope`, `iat`, and `exp`, and be sent as
 `Authorization: Bearer <token>`.
 
+For a local HS256 deployment where `BUS_AUTH_HS256_SECRET` matches
+`BUS_USAGE_JWT_SECRET`, mint a read/delete collector token with:
+
+```sh
+BUS_AUTH_HS256_SECRET=dev-secret \
+bus operator token --format token issue --local \
+  --subject usage-collector \
+  --audience ai.hg.fi/internal \
+  --scope "usage:read usage:delete" \
+  --ttl 1h > ./local/usage-collector.token
+```
+
 ### Error Format
 
 Errors use the common Bus API JSON envelope:
@@ -57,6 +69,18 @@ Query parameters are `before=<RFC3339 timestamp>`, `page=<n>`, and
 page size is capped at `10000`. Results are ordered by `occurred_at,id` and
 return `items`, `page`, `page_size`, `before`, and `has_more`.
 
+Example collector request:
+
+```sh
+before="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+curl -fsS \
+  -H "Authorization: Bearer $(cat ./local/usage-collector.token)" \
+  "http://127.0.0.1:8080/api/internal/usage-events?before=${before}&page=1&page_size=100"
+```
+
+A successful response is `200 OK` with a deterministic page, for example
+`{"items":[],"page":1,"page_size":100,"before":"...","has_more":false}`.
+
 ### `DELETE /api/internal/usage-events`
 
 Deletes collected usage records.
@@ -66,6 +90,18 @@ page elsewhere.
 The DELETE endpoint accepts the same `before`, `page`, and `page_size`
 selector as GET and deletes that deterministic page. Success returns
 `{"deleted": <count>}`.
+
+Persist the GET page downstream before deleting it, then reuse the exact same
+selector:
+
+```sh
+curl -fsS -X DELETE \
+  -H "Authorization: Bearer $(cat ./local/usage-collector.token)" \
+  "http://127.0.0.1:8080/api/internal/usage-events?before=${before}&page=1&page_size=100"
+```
+
+The response is `200 OK` with `{"deleted":0}` or the number of records removed
+from that page.
 
 ### `GET /readyz`
 
@@ -107,6 +143,13 @@ curl -fsS http://127.0.0.1:8080/readyz
 
 Plain JWT secret values are raw text even when they look like base64; use
 `base64:<value>` only for an intentionally base64-encoded secret.
+
+The BusDK superproject `compose.yaml` starts this provider as `bus-usage-api`
+with `BUS_USAGE_DATABASE_URL` pointing at the local PostgreSQL service. Nginx
+exposes the trusted collector path at `/api/internal/usage-events`. The local
+usage worker writes usage records through Bus Events using PostgreSQL storage,
+and trusted collectors read or delete collected pages through this provider
+with internal-audience usage scopes.
 
 ### Security Notes
 

@@ -82,20 +82,30 @@ Enables billing entitlement checks for lifecycle write requests.
 Denied requests return HTTP `402` with billing setup or quota guidance.
 Default is `none`; use `events` for paid VM lifecycle plans.
 
-### `--usage-backend <none|events>`
+### `--usage-backend <none|events|memory>`
 
 Enables runtime lifecycle usage records through `bus-integration-usage`.
 
 Start and stop requests can record requested, finished, and failed lifecycle
 events with the stable account UUID.
-Default is `none`; use `events` when usage should flow to the usage
-integration.
+Default is `none`. Use `events` when usage should flow to
+`bus-integration-usage`, or `memory` for deterministic local checks that should
+not publish usage records to a shared Events API.
 
 Common errors use `{"error":{"type":"...","message":"..."}}`. Missing or
 invalid bearer tokens return `401 invalid_auth`, missing scopes return
 `401`/`403` depending gateway policy, entitlement denial returns `402`, event
 backend unavailability returns `503`, and malformed integration responses
 return `502`.
+
+### Local Compose Stack
+
+The BusDK superproject `compose.yaml` starts this provider as `bus-vm` with
+`--backend static`, `--usage-backend memory`, and `--billing-backend none`.
+Nginx exposes it at `/api/v1/vm/*` on the local API port. The static backend is
+for deterministic local AI Platform checks, including `/api/v1/vm/status`
+returning provider `static`; deployments that control real runtimes should use
+Events mode with a VM integration backend.
 
 ### Sources
 

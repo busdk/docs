@@ -92,6 +92,18 @@ The CLI does not make billing decisions locally. It displays the API error and
 guidance returned by the server, such as `bus billing setup` or an upgrade
 recommendation.
 
+### Local Compose
+
+The BusDK superproject `compose.yaml` exposes the local containers API through
+nginx at `http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/api/v1/containers`.
+Inside the stack's `testing-agent` container, `bus containers run --profile
+codex -- sh -lc 'printf OK'` uses the local API token written by
+`bus-operator-token` and executes through the Events router and Docker worker.
+
+For developer-task Docker checks, `compose.dev-task-docker.yaml` builds the
+local Codex image and runs `bus containers run --profile codex -- codex
+--version` from `/workspace/bus-containers`.
+
 ### Sources
 
 - [bus-api-provider-containers](./bus-api-provider-containers)

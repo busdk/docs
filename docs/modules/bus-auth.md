@@ -26,12 +26,12 @@ MailHog. For another deployment, replace the API URL and read the OTP from the
 configured OTP sender.
 
 ```bash
-bus auth --api-url http://127.0.0.1:8080 register --email user@example.com
-bus auth --api-url http://127.0.0.1:8080 login --email user@example.com
-bus auth --api-url http://127.0.0.1:8080 verify --email user@example.com --otp <otp-from-provider>
-bus auth --api-url http://127.0.0.1:8080 status
-bus auth --api-url http://127.0.0.1:8080 token
-bus auth --api-url http://127.0.0.1:8080 token --scope "vm:read container:run"
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth register --email user@example.com
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth login --email user@example.com
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth verify --email user@example.com --otp <otp-from-provider>
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth status
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth token
+bus auth --api-url http://127.0.0.1:8080/local-dev/v1/api/v1/auth token --scope "vm:read container:run"
 ```
 
 The API base URL can also be provided by `BUS_AUTH_API_URL`. `verify` stores the
@@ -117,11 +117,19 @@ After approval, request the AI Platform token:
 bus auth token --scope "llm:proxy"
 ```
 
-The token returned by `bus auth token` is the token to use with
-`https://ai.hg.fi/v1`; when saved as `~/.config/bus/auth/api-token` by default,
-other Bus API clients such as `bus events` can discover it without repeating
-token flags. Do not use developer-machine paths, repository-local token files,
-or external JWT minting commands.
+The token returned by this local compose flow is for the matching local API
+origin, not for the hosted `https://ai.hg.fi/v1` endpoint. When saved as
+`~/.config/bus/auth/api-token` by default, other local Bus API clients can
+discover it without repeating token flags. For the hosted AI Platform, run the
+same auth flow against the hosted auth API and use the hosted token with
+`https://ai.hg.fi/v1`. Do not use developer-machine paths, repository-local
+token files, or external JWT minting commands.
+
+The BusDK superproject root `compose.yaml` exposes the broader local AI
+Platform auth route at
+`http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/api/v1/auth`. That stack
+shares the same MailHog-backed OTP flow and allows approved users to request
+the local feature scopes configured by `BUS_AUTH_API_USER_SCOPES`.
 
 Run `bus auth --help` for the full command reference. The
 help output is organized into Git-style sections covering name, synopsis,

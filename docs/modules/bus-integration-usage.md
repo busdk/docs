@@ -87,6 +87,7 @@ For deployed collection, use PostgreSQL:
 
 ```sh
 export BUS_EVENTS_API_URL=https://api.example.test/api/v1/events
+export BUS_API_TOKEN="$(cat /run/secrets/bus-usage-worker.token)"
 BUS_USAGE_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_usage?sslmode=disable' \
 bus-integration-usage \
   --usage-backend postgres \
@@ -97,6 +98,8 @@ Enable the default LLM and container export rules with
 `--billing-export default` or `BUS_USAGE_BILLING_EXPORT=default`. Use
 `--billing-export file --billing-export-policy <path>` or
 `BUS_USAGE_BILLING_EXPORT_POLICY` when plans include additional usage metrics.
+The worker token also needs permission to publish billing usage export events,
+typically `billing:usage:export`, whenever billing export is enabled.
 The policy file is JSON with a `rules` array. Each rule matches a usage event
 type and writes one billing export feature/meter:
 
@@ -106,6 +109,9 @@ type and writes one billing export feature/meter:
 
 Invalid JSON, missing `event_type`, missing `feature`, or missing
 `meter_event_name` makes startup fail.
+`quantity_field` is read from the usage event `data` object. The value must be
+a positive integer or JSON number in the meter's unit; missing, non-numeric, or
+non-positive values prevent that record from being exported.
 
 Use only non-secret local examples in documentation. Real database URLs and Bus
 API tokens must come from deployment secrets or local untracked configuration.
@@ -117,6 +123,27 @@ Successful startup connects to the Events API and begins waiting for usage
 events. Verify the path by publishing a usage record request and checking that
 the corresponding usage response or stored usage event appears in the usage
 collector API.
+
+For example, publish a local record request through the Events API:
+
+```sh
+curl -fsS -X POST \
+  -H "Authorization: Bearer $BUS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  "$BUS_EVENTS_API_URL" \
+  -d '{"name":"bus.usage.record.request","correlation_id":"usage-doc-check","payload":{"event_type":"usage_recorded","event_id":"usage-doc-check","account_id":"00000000-0000-4000-8000-000000000001","data":{"total_tokens":1}}}'
+```
+
+The worker should emit `bus.usage.record.response` with the same
+`correlation_id`, and the stored record should be visible through
+`bus-api-provider-usage` when PostgreSQL storage is enabled.
+
+The BusDK superproject `compose.yaml` runs this worker as `bus-usage-worker`
+with `--usage-backend postgres` and `BUS_USAGE_DATABASE_URL` pointing at the
+local PostgreSQL service. It connects to `http://bus-events:8081` with a local
+service token minted by `bus-operator-token`, so LLM and container providers
+can record usage through Events while the collector feed remains available
+through `bus-api-provider-usage`.
 
 ### Billing Export Rules
 

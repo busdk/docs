@@ -33,8 +33,38 @@ prefers the published `ghcr.io/busdk/bus-api:latest` image by default. MailHog
 exposes its HTTP UI/API on `http://127.0.0.1:8025` so operators can read local
 OTP email messages.
 
-For an AI Platform smoke check, use the token returned by the local
-`bus auth` login and token flow against `https://ai.hg.fi/v1`. Do not depend on
+Start the standalone auth compose example from the superproject root with:
+
+```sh
+docker compose -f bus-api-provider-auth/examples/local-compose/docker-compose.yml up --build
+curl -fsS http://127.0.0.1:8080/local-dev/v1/healthz
+```
+
+The readiness request should return JSON with `"ok":true`.
+
+The BusDK superproject root `compose.yaml` uses the same auth provider through
+`bus-api`, together with the broader local AI Platform stack. In that stack,
+nginx exposes `/api/v1/auth/*` and `/api/internal/auth/*` on
+`http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}`. The default SMTP host is
+MailHog, and `BUS_AUTH_API_USER_SCOPES` controls which feature scopes an
+approved local user may request.
+
+For an AI Platform smoke check, use the token returned by the hosted
+`bus auth` login and token flow against `https://ai.hg.fi/v1`:
+
+```sh
+export BUS_AUTH_API_URL=https://ai.hg.fi/api/v1/auth
+bus auth login --email user@example.com
+bus auth verify --email user@example.com --otp <otp-from-email>
+bus auth token --scope "llm:proxy"
+curl -fsS -H "Authorization: Bearer $(cat ~/.config/bus/auth/api-token)" \
+  https://ai.hg.fi/v1/models
+```
+
+The email account must already be approved before `bus auth token` can issue an
+`llm:proxy` API token. Operators approve verified accounts through
+`bus operator auth approve` or the deployment's normal approval workflow. The
+final request should return the deployment's model catalog. Do not depend on
 developer-specific checkout paths or external JWT-issuing commands.
 
 Use `bus-api-provider-auth --help` for operator-facing module help. The help
@@ -56,6 +86,16 @@ Sets the lifetime for trusted internal service tokens issued by
 
 The default is 600 seconds. Raise it only for trusted long-running workers that
 cannot rotate tokens more frequently.
+
+### `BUS_AUTH_INTERNAL_SHARED_KEY`
+
+Protects `/api/internal/auth/token`.
+
+Set this as a deployment secret when trusted services or operator automation
+need the auth provider to mint internal or service tokens. If the key is unset
+or the request omits the matching `X-Bus-Internal-Key` header, internal token
+issuing fails with `403 Forbidden`. Store the value in a secret manager or
+untracked local operator configuration, not in command-line arguments.
 
 ### `BUS_AUTH_STORE_PATH`
 

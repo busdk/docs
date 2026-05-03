@@ -32,6 +32,33 @@ limits for `llm:proxy`. Supported windows are `minute`, `hour`, `day`, `week`,
 `month`, and `total`. If any matching quota is exhausted, entitlement checks
 return `quota_exceeded` and upgrade guidance before billable API work starts.
 
+### Run The Worker
+
+Run a deterministic local check with:
+
+```sh
+bus-integration-billing --self-test
+```
+
+For an Events-backed local worker with durable storage, provide a Bus Events API
+URL, a service token, and PostgreSQL storage:
+
+```sh
+export BUS_EVENTS_API_URL=http://127.0.0.1:8081
+export BUS_API_TOKEN="$(cat ./local/billing-worker.token)"
+BUS_BILLING_DATABASE_URL='postgres://bus:bus@127.0.0.1:5432/bus_billing?sslmode=disable' \
+bus-integration-billing \
+  --events-url "$BUS_EVENTS_API_URL" \
+  --store-backend postgres \
+  --provider-backend local
+```
+
+The service token needs the billing event scopes used by the enabled features,
+typically `billing:read`, `billing:setup`, `billing:entitlement:check`,
+`billing:subscription:write`, `billing:usage:export`, and
+`billing:provider` when provider-backed checkout, portal, or meter events are
+enabled.
+
 ### Events
 
 Every request/reply event uses the Bus Events envelope `correlation_id`.
@@ -272,7 +299,7 @@ configuration used for plan enforcement.
 | Setting | Required | Default | Valid values | Failure behavior |
 | --- | --- | --- | --- | --- |
 | `BUS_EVENTS_API_URL` or `--events-url` | Required for event-listener mode. Not required for `--self-test`. | Empty. | Bus Events API collection URL. | Missing or unreachable URL prevents the worker from receiving billing requests. |
-| `BUS_API_TOKEN` | Required when connecting to a secured Events API. Not required for in-memory self-test. | Empty. | Bus API token with billing event scopes for the deployment. | Missing, expired, or underscoped tokens produce Events API authentication or authorization failures. |
+| `BUS_API_TOKEN` | Required when connecting to a secured Events API. Not required for in-memory self-test. | Empty. | Bus API token with scopes such as `billing:read`, `billing:setup`, `billing:entitlement:check`, `billing:subscription:write`, `billing:usage:export`, and `billing:provider` according to enabled provider flows. | Missing, expired, or underscoped tokens produce Events API authentication or authorization failures. |
 | `BUS_BILLING_PROVIDER_BACKEND` or `--provider-backend` | Optional. | `local`. | `local`, `events`. | Unknown values are not useful in production; provider calls fail when the selected backend cannot create sessions or meter events. |
 | `BUS_BILLING_PROVIDER` or `--provider` | Optional for `local`; required operationally for `events` when provider labels matter. | `stripe`. | Provider label such as `stripe`. | Used in provider event payloads and responses; mismatched labels can route requests to the wrong provider integration. |
 | `BUS_BILLING_PROVIDER_TIMEOUT` or `--provider-timeout` | Optional. | `30s`. | Go duration such as `5s`, `30s`, or `2m`; integer environment values are seconds. | Provider request/reply calls return timeout errors after this duration. |
@@ -293,6 +320,18 @@ idempotency, and quota buckets.
 The default provider event names target the current Stripe integration. The
 mapping is configurable through the Go `EventSessionProvider` and
 `EventMeterRecorder` boundaries for future providers.
+
+The BusDK superproject `compose.yaml` runs this worker as `bus-billing-worker`
+with `--store-backend postgres`, `BUS_BILLING_DATABASE_URL`, and
+`--events-url http://bus-events:8081`. The default local provider backend is
+`local`, which returns deterministic setup and portal responses. Set
+`BUS_LOCAL_BILLING_PROVIDER_BACKEND=events` in the superproject `.env` file or
+on the compose command line when the local stack should route checkout, portal,
+and meter calls through a provider integration such as `bus-integration-stripe`:
+
+```sh
+BUS_LOCAL_BILLING_PROVIDER_BACKEND=events docker compose up --build
+```
 
 ### Quota Configuration
 

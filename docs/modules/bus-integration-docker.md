@@ -60,7 +60,7 @@ router.
 ## Local Compose
 
 The BusDK superproject includes `compose.dev-task-docker.yaml` for local
-testing. Run these commands from the superproject root:
+developer-task testing. Run these commands from the superproject root:
 
 ```sh
 cd /path/to/busdk
@@ -75,10 +75,20 @@ provider-neutral containers API, which emits public container events. The
 
 ```sh
 cd /workspace/bus-containers
-go run ./cmd/bus-containers --timeout 120s run --profile codex -- sh -lc 'printf OK'
+go run ./cmd/bus-containers run --profile codex -- codex --version
 ```
 
-A successful run prints JSON with `"exit_code": 0` and `"stdout": "OK"`.
+A successful run prints JSON with `"exit_code": 0` and stdout from the Codex
+CLI. This compose file builds the local Codex image first and can mount a host
+Codex home and workspace into Docker-backed runs with
+`BUS_DOCKER_CODEX_HOME_HOST`, `BUS_DOCKER_CODEX_HOME_WRITABLE`,
+`BUS_DOCKER_CODEX_WORKSPACE_HOST`, and
+`BUS_DOCKER_CODEX_WORKSPACE_CONTAINER`.
+
+The root `compose.yaml` local AI Platform stack also runs this worker as
+`bus-docker` with `--event-prefix bus.docker`. In that stack,
+`bus-integration-containers` owns the public `bus.containers.*` namespace and
+this worker owns the Docker-specific backend prefix.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

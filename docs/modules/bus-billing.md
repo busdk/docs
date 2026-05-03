@@ -113,6 +113,16 @@ requests are denied before runner delegation. Usage that is accepted by the
 providers is recorded for billing and quota counting through the usage and
 billing integrations.
 
+### Local Compose
+
+The BusDK superproject `compose.yaml` exposes the local Billing API through
+nginx at `http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/api/v1/billing`.
+The default local billing worker uses a deterministic local provider backend,
+so `bus billing status`, `bus billing setup`, and `bus billing portal` exercise
+the Bus billing API without contacting Stripe. Set
+`BUS_LOCAL_BILLING_PROVIDER_BACKEND=events` when the local stack should route
+provider calls through `bus-integration-stripe`.
+
 ### Security Notes
 
 Do not pass bearer tokens on the command line. Use the default `bus auth`

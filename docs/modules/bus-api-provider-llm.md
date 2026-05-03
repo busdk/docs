@@ -136,6 +136,17 @@ and does not require `--backend-url`. The provider service token must have
 Loads the local `/v1/models` catalog from a JSON file.
 
 The matching environment variable is `BUS_LLM_MODEL_CATALOG`.
+The file uses the OpenAI-compatible model-list shape. Each entry needs at
+least `id`, `object`, `created`, and `owned_by`:
+
+```json
+{
+  "object": "list",
+  "data": [
+    {"id": "codex-chatgpt", "object": "model", "created": 0, "owned_by": "bus-codex"}
+  ]
+}
+```
 
 ### `--models-backend <catalog|proxy>`
 
@@ -204,6 +215,33 @@ integer status codes, such as `200,204`. The default ready status set is
 When set to `1`, readiness requires the Events response listeners needed by the
 enabled backends.
 
+### Local Compose Stack
+
+The BusDK superproject `compose.yaml` starts this provider as `bus-llm` with
+`--execution-backend events`, `--usage-backend events`, `--runtime-backend
+none`, and `--events-url http://bus-events:8081`. Nginx exposes the
+OpenAI-compatible API at `/v1/*` on the local API port. The model catalog is
+loaded from `deploy/local-ai-platform/model-catalog.json`; the smoke check
+expects `GET /v1/models` to include `codex-chatgpt`.
+
+Start and verify the local stack from the superproject root:
+
+```sh
+cd /path/to/busdk
+docker compose up --build -d
+TOKEN="$(docker compose exec -T testing-agent cat /root/.config/bus/auth/api-token)"
+curl -fsS -H "Authorization: Bearer $TOKEN" \
+  http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/v1/models
+```
+
+The response should include a model with `"id":"codex-chatgpt"`.
+
+LLM execution requests are sent as `bus.llm.*` events to
+`bus-integration-codex`. Set `BUS_LOCAL_AI_PLATFORM_LIVE_CODEX=1` for the
+compose smoke script only after Codex credentials are available to the
+`bus-codex` container. Set `BUS_LLM_BILLING_BACKEND=events` when local LLM
+requests should require billing entitlement checks.
+
 ### End-User Access
 
 Approved users request an API token with LLM scope:
@@ -218,6 +256,20 @@ when the same token will also call billing status or setup APIs.
 They can then use the token with OpenAI-compatible clients by setting the base
 URL to the Bus LLM endpoint and using the Bus API token as the bearer token.
 For a hosted AI Platform deployment this is commonly the `/v1` API base URL.
+For example:
+
+```sh
+TOKEN="$(cat ~/.config/bus/auth/api-token)"
+curl -fsS \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  https://ai.hg.fi/v1/chat/completions \
+  -d '{"model":"codex-chatgpt","messages":[{"role":"user","content":"Say OK"}]}'
+```
+
+Success returns an OpenAI-compatible chat completion response. If billing is
+required or quota is exhausted, the provider returns a deterministic billing
+error instead of forwarding the request.
 
 Billing setup is required only when the deployment enforces billing for the
 feature. If billing is missing or quota is exhausted, the provider returns a

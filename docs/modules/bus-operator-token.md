@@ -16,6 +16,23 @@ token using an internal shared key from `--internal-key-file` or
 `BUS_OPERATOR_INTERNAL_KEY`. Literal internal key values are not accepted on
 the command line.
 
+Remote issuing example:
+
+```sh
+bus operator token \
+  --api-url https://api.example.test/api/internal/auth/token \
+  --internal-key-file /run/secrets/bus-auth-internal-key \
+  --format token \
+  issue \
+  --subject billing-worker \
+  --audience ai.hg.fi/api \
+  --scope "billing:read billing:entitlement:check" \
+  --ttl 1h
+```
+
+The command prints one bearer JWT to stdout when the auth provider accepts the
+internal key and requested claims.
+
 `issue --local --subject <id> --audience ai.hg.fi/api --scope llm:proxy`
 creates the same HS256 Bus JWT claim shape locally from `BUS_AUTH_HS256_SECRET`
 or `--hs256-secret-file`. Use `--ttl <duration>` to choose the local token
@@ -45,12 +62,24 @@ version information.
 Local developer token example:
 
 ```sh
+BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key \
 bus operator token --format token issue --local \
   --subject local-codex \
   --audience ai.hg.fi/api \
   --scope llm:proxy \
   --ttl 1h
 ```
+
+The command prints a raw JWT signed with the provided HS256 secret. Use
+`--hs256-secret-file` instead of the environment variable when the local secret
+comes from an untracked file.
+
+The BusDK superproject `compose.yaml` uses `bus-operator-token --local` inside
+service containers to mint short-lived local service tokens from the shared
+development HS256 secret. The `testing-agent` writes an API-audience token and
+an auth-audience admin token under `/root/.config/bus/auth/` for smoke checks.
+Those tokens are local compose artifacts only; do not reuse them for hosted or
+shared deployments.
 
 Store the internal shared key in a deployment secret or untracked local file.
 Store the local HS256 signing secret in the same kind of private secret source,

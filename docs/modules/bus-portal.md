@@ -34,6 +34,23 @@ terminal APIs. Users register and log in through the auth module, complete
 billing through the billing API, and then use chat or container-backed terminal
 features through the AI module.
 
+When those APIs are on one gateway origin, allow that origin in the portal CSP
+and enable the modules explicitly:
+
+```sh
+bus portal serve --print-url \
+  --enable-module auth \
+  --enable-module ai \
+  --api-connect-src https://api.example.test
+```
+
+The gateway should route the browser-facing API paths used by the modules, such
+as `/api/v1/auth/*`, `/api/v1/billing/*`, `/v1/*`,
+`/api/v1/containers/*`, and terminal API paths. The equivalent environment
+setting for CSP is `BUS_PORTAL_API_CONNECT_SRC=https://api.example.test`. When
+the portal and APIs share the same origin through a reverse proxy, no separate
+module URL attributes are required.
+
 In local mode, the server prints a capability URL containing a random token.
 Opening that URL gives access to the local portal session. Use `--print-url`
 for scripts or terminals, or the default webview behavior for local desktop
@@ -66,6 +83,32 @@ and cookie name `bus_portal_token`. Override them with
 Frontend tokens use HS256 with the configured secret. They must include `sub`,
 `aud`, `scope`, `iat`, and `exp`. The configured scope is represented inside
 the space-separated `scope` claim, for example `"scope":"portal:read"`.
+
+For a local protected-frontend check, create a short-lived JWT with the same
+HS256 secret and pass it as either a bearer token or the configured cookie:
+
+```sh
+mkdir -p ./local
+printf '%s' 'local-portal-secret' > ./local/portal-frontend.secret
+BUS_AUTH_HS256_SECRET=local-portal-secret \
+bus operator token --format token issue --local \
+  --subject portal-user \
+  --audience ai.hg.fi/api \
+  --scope portal:read \
+  --ttl 1h > ./local/portal-frontend.jwt
+
+bus portal serve --print-url \
+  --require-frontend-auth \
+  --frontend-auth-secret-file ./local/portal-frontend.secret
+
+curl -fsS -H "Authorization: Bearer $(cat ./local/portal-frontend.jwt)" \
+  http://127.0.0.1:<port>/<token>/
+```
+
+Run the `bus portal serve` command in one terminal and the `curl` command in a
+second terminal, using the URL printed by the server.
+For browser testing, set cookie `bus_portal_token` to the same JWT unless the
+deployment overrides the cookie name with `--frontend-auth-cookie`.
 
 Protected frontend mode only controls delivery of the browser app. The API
 providers still enforce account ownership, feature scopes, billing state,
@@ -100,6 +143,16 @@ Portal modules should receive API base URLs through runtime configuration or
 deployment HTML data attributes. The portal host does not embed payment
 provider secrets, API tokens, database credentials, or integration worker
 credentials.
+
+### Local Compose Stack
+
+The BusDK superproject `compose.yaml` starts `bus-portal` behind nginx at
+`/portal/local-dev/`. The compose command enables the auth, AI, and accounting
+portal modules, opts into experimental modules, and sets
+`BUS_PORTAL_API_CONNECT_SRC` to the local API gateway origin. The local stack
+uses a stable portal capability token only inside the private compose network;
+browser API calls still go to the JWT-secured auth, billing, LLM, VM, and
+container provider routes exposed by nginx.
 
 ### Deployment Notes
 
