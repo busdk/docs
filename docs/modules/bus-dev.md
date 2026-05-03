@@ -111,11 +111,19 @@ bus dev task new @bus-ledger "Fix the failing import test"
 bus dev task new @bus-ledger @docs "Fix behavior and update docs"
 bus dev task new @acme/payroll "Review the import API"
 bus dev task new --to bus-ledger "Fix the failing import test"
+bus dev task new --branch existing-work @bus-ledger "Continue the branch"
+bus dev task new --new-branch work/import-fix --base-branch main @bus-ledger "Fix the import test"
 bus dev task new @bus-ledger --file work.md
 bus dev task new @bus-ledger "Fix this; details attached" --attach repro.log
 ```
 
 Recipient syntax is explicit: leading `@recipient` tokens are recipients, `@` means the current project, and repeatable `--to <recipient>` is the flag form for scripts. If no recipient is provided, the current repository is the recipient. The message is the remaining text, `--file` supplies the main task body, and repeatable `--attach` adds supporting material.
+
+Task creation records branch metadata for disposable workers. Without a branch
+flag, `bus dev task new` uses the current Git branch when it can detect one.
+`--branch <name>` requests an existing work branch. `--new-branch <name>`
+requests a new disposable branch, and `--base-branch <name>` selects the base;
+when omitted, the base defaults to the current branch.
 
 Multi-recipient tasks are fan-out, like email. A command such as `bus dev task new @bus-ledger @docs "Fix behavior and update docs"` creates one task group and one recipient-specific work stream for each recipient. Human-facing ids are simple: `123` identifies the task group, while `123.1` and `123.2` identify recipient work streams. Cross-project references use `org/repo#123` and `org/repo#123.1`.
 

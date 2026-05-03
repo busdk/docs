@@ -58,11 +58,13 @@ bus-integration-dev-task \
   --container-profile codex \
   --workspace-root /workspace \
   --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]' \
-  --post-command-json '["go","run","../bus-dev/cmd/bus-dev","--agent","codex","stage","commit"]'
+  --post-command-json '["sh","-c","go run ../bus-dev/cmd/bus-dev --agent codex stage commit && git push -u origin {branch}"]'
 ```
 
 Remote Git push is intentionally not part of the default Bus development task
-post-command because `bus-dev` does not perform remote Git operations.
+command because `bus-dev` does not perform remote Git operations. It can be
+enabled as an explicit trusted worker post-command, as shown above, so
+disposable local Docker and cloud workers persist task work upstream.
 
 ## Local Compose
 
@@ -70,10 +72,12 @@ The BusDK superproject includes `compose.dev-task-docker.yaml` for local
 testing with Docker Desktop:
 
 The default compose command for real local use runs `codex exec` in the
-addressed module repository and then runs `bus dev --agent codex stage commit`.
-This consumes ChatGPT-backed Codex quota and can create local commits. Smoke
-tests override `BUS_DEV_TASK_COMMAND_JSON` to `["codex","--version"]` and
-`BUS_DEV_TASK_POST_COMMAND_JSON` to `[]` so they do not consume quota or commit.
+addressed module repository, prepares the requested task branch, then runs a
+trusted post-command that stages, commits, and pushes the task branch. This
+consumes ChatGPT-backed Codex quota and requires Git credentials with push
+access. Smoke tests override `BUS_DEV_TASK_COMMAND_JSON` to
+`["codex","--version"]` and `BUS_DEV_TASK_POST_COMMAND_JSON` to `[]` so they do
+not consume quota, commit, or contact upstream.
 
 ```sh
 docker compose -f compose.dev-task-docker.yaml up --build -d
@@ -85,7 +89,7 @@ the `task new` command:
 
 ```sh
 cd /workspace/bus-dev
-go run ./cmd/bus-dev task new @bus-dev "Show the Codex CLI version."
+go run ./cmd/bus-dev task new --new-branch work/codex-version @bus-dev "Show the Codex CLI version."
 go run ./cmd/bus-dev task watch <printed-task-ref> --timeout 5m
 ```
 
