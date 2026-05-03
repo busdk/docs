@@ -348,7 +348,7 @@ Preferences that affect `bus dev` are stored via the [bus-preferences](./bus-pre
 
 ### Example: building a module from scratch with AI
 
-BusDK specifications are openly readable. You can have an AI-assisted workflow build a bus module from scratch, then optionally initialize Git and commit. Prerequisites: install one of the supported agent runtimes (Cursor CLI, Codex, Gemini CLI, or Claude CLI), BusDK (at least v0.0.15), and Go.
+BusDK specifications are openly readable. You can have an AI-assisted workflow build a bus module from scratch, then optionally initialize Git and commit. Prerequisites: install one of the supported agent runtimes (Cursor CLI, Codex, Gemini CLI, or Claude CLI), BusDK (at least v0.0.15; at least v0.0.26 for `--agent codex`), and Go.
 
 **Option: initialize only, then run workflows explicitly.** From the module root you want to initialize, run `bus dev init [--lang go]`. Or from a parent directory, run `bus dev init bus-accounts [--lang go]`. The tool initializes a root [AGENTS.md](https://agents.md/) and a root `Makefile` (from a built-in sample when missing). It does not run any Git commands and does not run `spec`, `work`, or `e2e` unless you ask for them. After initialization, run `bus dev plan` to refresh `PLAN.md`, then run `bus dev spec work e2e` in that module directory when you want the AI workflow sequence.
 
