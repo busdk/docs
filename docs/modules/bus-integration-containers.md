@@ -22,12 +22,31 @@ reachable at the `--events-url` used by both processes. Start the backend
 worker and the router concurrently in separate terminals or services; both
 commands are long-running workers.
 
-Use a token issued through `bus operator token` or the deployment's normal
-service-token flow with `container:read`, `container:run`, `container:delete`,
-and `container:admin` scopes:
+For a local memory-backed Events API, start:
+
+```sh
+bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
+```
+
+For local testing, mint a token with:
+
+```sh
+export BUS_API_TOKEN="$(bus operator token issue --local \
+  --audience ai.hg.fi/api \
+  --scope 'container:read container:run container:delete container:admin' \
+  --ttl 12h \
+  --format token)"
+```
+
+Production deployments should use the normal service-token flow with the same
+container scopes. Export the resulting `BUS_API_TOKEN` in every terminal or
+service that runs an Events API client: backend worker, router, and test
+command.
 
 In the first terminal or service, run the matching Docker worker with the same
-backend prefix:
+backend prefix. `bus-integration-docker` must be installed or run from its
+module checkout, and the process must have permission to access the Docker
+daemon through `DOCKER_HOST` or `/var/run/docker.sock`:
 
 ```sh
 bus-integration-docker \
@@ -36,16 +55,48 @@ bus-integration-docker \
   --event-prefix bus.docker
 ```
 
+For Podman, use the same pattern with a Podman backend prefix:
+
+```sh
+bus-integration-podman \
+  --provider podman \
+  --events-url http://127.0.0.1:8081 \
+  --event-prefix bus.podman
+```
+
+Then set the router `--backend-event-prefix` to `bus.podman` instead of
+`bus.docker`.
+
 In the second terminal or service, run the router:
 
 ```sh
-export BUS_API_TOKEN="<service-token-with-container-scopes>"
 bus-integration-containers \
   --provider events \
   --events-url http://127.0.0.1:8081 \
   --backend-event-prefix bus.docker \
   --request-timeout 30m
 ```
+
+In a third terminal with the same token, start the containers API provider
+against the same Events API:
+
+```sh
+bus-api-provider-containers \
+  --addr 127.0.0.1:8080 \
+  --backend events \
+  --events-url http://127.0.0.1:8081
+```
+
+Then verify routing from a fourth terminal:
+
+```sh
+export BUS_AI_API_URL=http://127.0.0.1:8080
+bus-containers run --profile codex -- sh -lc 'printf OK'
+```
+
+The response should contain `OK`; that proves the public
+`bus.containers.run.request` reached the configured backend prefix and returned
+through the router.
 
 `--provider static` returns deterministic responses for self-tests.
 `--provider events` forwards public requests through Bus Events and waits for

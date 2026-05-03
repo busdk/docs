@@ -58,6 +58,19 @@ bus-integration-podman --events --format json
 The self-test prints `bus-integration-podman self-test OK`, and the event
 metadata includes `bus.podman.run.request`.
 
+For the full router path, start both long-running workers and then send a
+public container run through the containers API:
+
+```sh
+bus-containers run --profile codex -- sh -lc 'printf OK'
+```
+
+The `codex` profile is resolved by the Podman worker from
+`--container-codex-image` or `PODMAN_CONTAINER_CODEX_IMAGE`, defaulting to
+`docker.io/library/alpine:3.20`. A working router plus Podman backend returns a
+successful run response containing `OK`; the router maps the public
+`bus.containers.run.request` to `bus.podman.run.request`.
+
 ## Events
 
 | Direction | Event                                  | Scope              |
