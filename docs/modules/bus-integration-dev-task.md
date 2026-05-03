@@ -55,10 +55,16 @@ Inside the testing shell, create a task and watch the task reference printed by
 the `task new` command:
 
 ```sh
-cd /workspace
-go run ./bus-dev/cmd/bus-dev task new @bus-dev "Reply hello from Docker."
-go run ./bus-dev/cmd/bus-dev task watch <printed-task-ref> --timeout 5m
+cd /workspace/bus-dev
+go run ./cmd/bus-dev task new @bus-dev "Show the Codex CLI version."
+go run ./cmd/bus-dev task watch <printed-task-ref> --timeout 5m
 ```
+
+The default compose command runs `codex --version`, so a successful task output
+includes `codex-cli`. For live `codex exec` testing, configure
+`BUS_DEV_TASK_COMMAND_JSON`, `BUS_DOCKER_CODEX_HOME_HOST`,
+`BUS_DOCKER_CODEX_HOME_WRITABLE=true`, and `BUS_DOCKER_CODEX_WORKSPACE_HOST`
+before starting compose.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

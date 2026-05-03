@@ -1,5 +1,7 @@
 # Docs Refactor Plan
 
+- [ ] Refresh compose-backed local AI platform module docs end to end: review every Bus module invoked by the root `compose.yaml` local AI platform stack, align `docs/modules/bus-*.md` with the currently implemented command flags, environment variables, JWT scopes, PostgreSQL/event backends, container/Docker/Codex routing, and portal/API endpoints; preserve existing in-progress edits; run `bus lint` on the changed docs pages; and verify the docs change set.
+
 - [ ] Lint and refine the public UpCloud, billing, Stripe, usage, VM, container, event, auth, and operator module docs end to end with `bus lint`; fix actionable end-user documentation findings; add a public UpCloud + Stripe setup tutorial under `docs/docs/integration`; link it from docs navigation and related pages; and verify docs quality.
 
 - [x] Refine public billing, LLM hosting, container, usage, and portal module docs end to end: document what end users and operators need to know about account setup, billing setup, Stripe-backed payments, catalogs, quotas, LLM access, container access, usage metering, terminal/portal access, scopes, storage, and safe deployment; remove SDD-style ownership/meta-status language from those public pages; keep remaining engineering work in module `PLAN.md` or private SDD pages; verify docs quality.

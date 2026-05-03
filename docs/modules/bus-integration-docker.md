@@ -45,6 +45,13 @@ docker` talks to `DOCKER_HOST`, defaulting to `unix:///var/run/docker.sock`.
 When a container request uses `profile=codex`, the worker resolves the image
 from `--container-codex-image` or `DOCKER_CONTAINER_CODEX_IMAGE`.
 
+For local Codex task execution, `--codex-home-host-path` can mount a host Codex
+home into the container as `/root/.codex`. It is read-only by default. Trusted
+live `codex exec` sessions that need to create Codex session state must opt in
+with `--codex-home-writable` or `BUS_DOCKER_CODEX_HOME_WRITABLE=true`. The
+workspace mount is configured separately with `--codex-workspace-host-path` and
+is mounted read-write into `/workspace` by default.
+
 Leave `--event-prefix` unset only when the Docker worker is intentionally
 consuming public container events directly. When `bus-integration-containers`
 is active, set `--event-prefix` to the same backend prefix configured on the
