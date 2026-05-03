@@ -96,6 +96,13 @@ with `--codex-home-writable` or `BUS_DOCKER_CODEX_HOME_WRITABLE=true`. The
 workspace mount is configured separately with `--codex-workspace-host-path` and
 is mounted read-write into `/workspace` by default.
 
+Trusted local workers that need to push Git branches can also mount operator
+SSH access with `--codex-ssh-host-path`, `--codex-ssh-agent-host-path`, and
+`--codex-git-ssh-command`. These correspond to
+`BUS_DOCKER_CODEX_SSH_HOST`, `BUS_DOCKER_CODEX_SSH_AGENT_HOST`, and
+`BUS_DOCKER_CODEX_GIT_SSH_COMMAND`. Leave them unset for smoke tests that
+should not access upstream Git.
+
 Leave `--event-prefix` unset only when the Docker worker is intentionally
 consuming public container events directly. When `bus-integration-containers`
 is active, set `--event-prefix` to the same backend prefix configured on the
@@ -126,7 +133,8 @@ A successful run prints JSON with `"exit_code": 0` and stdout from the Codex
 CLI. This compose file builds the local Codex image first and can mount a host
 Codex home and workspace into Docker-backed runs with
 `BUS_DOCKER_CODEX_HOME_HOST`, `BUS_DOCKER_CODEX_HOME_WRITABLE`,
-`BUS_DOCKER_CODEX_WORKSPACE_HOST`, and
+`BUS_DOCKER_CODEX_SSH_HOST`, `BUS_DOCKER_CODEX_SSH_AGENT_HOST`,
+`BUS_DOCKER_CODEX_GIT_SSH_COMMAND`, `BUS_DOCKER_CODEX_WORKSPACE_HOST`, and
 `BUS_DOCKER_CODEX_WORKSPACE_CONTAINER`.
 
 The root `compose.yaml` local AI Platform stack also runs this worker as

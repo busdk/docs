@@ -58,13 +58,13 @@ bus-integration-dev-task \
   --container-profile codex \
   --workspace-root /workspace \
   --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]' \
-  --post-command-json '["sh","-c","go run ../bus-dev/cmd/bus-dev --agent codex stage commit && git push -u origin {branch}"]'
+  --post-command-json '["sh","-c","cd {repo_path} && git add . && (git diff --cached --quiet || git -c user.name=BusDevTask -c user.email=bus-dev-task@localhost commit -m chore:dev-task-{work_ref}) && git push -u origin {branch}"]'
 ```
 
-Remote Git push is intentionally not part of the default Bus development task
-command because `bus-dev` does not perform remote Git operations. It can be
-enabled as an explicit trusted worker post-command, as shown above, so
-disposable local Docker and cloud workers persist task work upstream.
+Remote Git push is intentionally an explicit trusted worker post-command. The
+default local compose hook stages, commits, and pushes deterministically after
+Codex exits so it does not start a nested Codex sandbox inside the task
+container.
 
 ## Local Compose
 
