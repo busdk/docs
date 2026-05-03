@@ -95,27 +95,15 @@ behind `bus-api-provider-llm --execution-backend events`. The stack verifies
 the OpenAI-compatible route and model catalog without requiring real Codex
 credentials.
 
-Live chat completion through Codex is opt-in because the `bus-codex` container
-must be able to run the `codex` executable and access the operator's Codex
-authentication material. The checked-in Compose file intentionally does not
-mount `~/.codex` by default. Create an untracked local override named
-`compose.codex.local.yaml`:
+The `bus-codex` service builds a local image with Codex CLI installed and
+mounts `${BUS_CODEX_HOME:-$HOME/.codex}` at `/root/.codex`. Public Bus model
+ids such as `codex-chatgpt` remain API/catalog ids; execution uses
+`BUS_CODEX_MODEL` when set and otherwise lets Codex choose `auto`.
 
-```yaml
-services:
-  bus-codex:
-    environment:
-      BUS_CODEX_COMMAND: /usr/local/bin/codex
-      CODEX_HOME: /root/.codex
-    volumes:
-      - ${BUS_CODEX_BINARY:?set BUS_CODEX_BINARY to the Codex executable path}:/usr/local/bin/codex:ro
-      - ${BUS_CODEX_HOME:?set BUS_CODEX_HOME to the Codex config directory}:/root/.codex:ro
-```
-
-Then start the stack with both files and run the live check:
+Start the stack and run the live check:
 
 ```sh
-docker compose --env-file .env.example -f compose.yaml -f compose.codex.local.yaml up -d
+docker compose up --build -d
 BUS_LOCAL_AI_PLATFORM_LIVE_CODEX=1 \
 bash tests/superproject/test_local_ai_platform_compose_smoke.sh
 ```
