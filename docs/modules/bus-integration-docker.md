@@ -10,10 +10,12 @@ Bus container API. Operators use it in development and live testing stacks when
 `bus containers run` or `/api/v1/containers/runs` should execute through Docker
 Desktop on macOS instead of a cloud runner.
 
-The worker connects to the Bus Events API, listens for `bus.containers.*`
-request events, and publishes correlated response events. The public REST API
-stays in [bus api provider containers](./bus-api-provider-containers), while
-this worker provides the local Docker execution backend.
+The worker connects to the Bus Events API and publishes correlated response
+events. In composed deployments, run it behind
+[bus integration containers](./bus-integration-containers) with
+`--event-prefix bus.docker` so the provider-neutral router owns the
+public `bus.containers.*` contract. Standalone compatibility mode can still
+consume public `bus.containers.*` events directly.
 
 Access to the Docker socket can control the host Docker daemon. Run this worker
 only in trusted local environments and do not expose it to untrusted tenants.
@@ -25,12 +27,16 @@ Before starting this worker, run a Bus Events API, provide `BUS_API_TOKEN` with
 and make the Docker Engine socket available through `DOCKER_HOST` or
 `/var/run/docker.sock`. The configured image, such as
 `docker.io/library/alpine:3.20`, must be pullable or already present locally.
+When using `--event-prefix bus.docker`, also run
+`bus-integration-containers --backend-event-prefix bus.docker` so public
+container events are routed to this backend prefix.
 
 ```sh
 export BUS_API_TOKEN="<token-with-container-scopes>"
 bus-integration-docker \
   --provider docker \
   --events-url http://127.0.0.1:8081 \
+  --event-prefix bus.docker \
   --container-codex-image docker.io/library/alpine:3.20
 ```
 
@@ -39,19 +45,26 @@ docker` talks to `DOCKER_HOST`, defaulting to `unix:///var/run/docker.sock`.
 When a container request uses `profile=codex`, the worker resolves the image
 from `--container-codex-image` or `DOCKER_CONTAINER_CODEX_IMAGE`.
 
+Leave `--event-prefix` unset only when the Docker worker is intentionally
+consuming public container events directly. When `bus-integration-containers`
+is active, set `--event-prefix` to the same backend prefix configured on the
+router.
+
 ## Local Compose
 
 The BusDK superproject includes `compose.dev-task-docker.yaml` for local
-testing:
+testing. Run these commands from the superproject root:
 
 ```sh
+cd /path/to/busdk
 docker compose -f compose.dev-task-docker.yaml up --build -d
 docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
 ```
 
 Inside the testing shell, `bus containers run --profile codex` reaches the
-provider-neutral containers API, which delegates execution to this Docker
-worker through Bus Events.
+provider-neutral containers API, which emits public container events. The
+`bus-integration-containers` router forwards them to
+`bus.docker.*` backend events consumed by this Docker worker.
 
 ```sh
 cd /workspace/bus-containers
@@ -71,6 +84,7 @@ A successful run prints JSON with `"exit_code": 0` and `"stdout": "OK"`.
 ### Sources
 
 - [bus api provider containers](./bus-api-provider-containers)
+- [bus integration containers](./bus-integration-containers)
 - [bus containers](./bus-containers)
 - [bus events](./bus-events)
 - [Docker Engine API](https://docs.docker.com/reference/api/engine/)
