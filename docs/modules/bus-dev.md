@@ -33,7 +33,7 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev plan` — review SDD and docs against repository state, then refresh `PLAN.md` with prioritized unchecked undone work items only.
 `bus dev spec` — ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool; creates AGENTS.md from online SDD and user documentation when missing.
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).
-`bus dev task <new|list|next|show|watch|wait|say|close|fail|block> ...` — independent development task streams over Bus Events.  
+`bus dev task <new|list|next|show|watch|wait|say|close|fail|block|cancel> ...` — independent development task streams over Bus Events.  
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.
 `bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential. When `--jobs` is omitted, the default is the processor count capped at 8.
@@ -120,7 +120,8 @@ bus dev task new @bus-ledger "Fix this; details attached" --attach repro.log
 Recipient syntax is explicit: leading `@recipient` tokens are recipients, `@` means the current project, and repeatable `--to <recipient>` is the flag form for scripts. If no recipient is provided, the current repository is the recipient. The message is the remaining text, `--file` supplies the main task body, and repeatable `--attach` adds supporting material.
 
 Task creation records branch metadata for disposable workers. Without a branch
-flag, `bus dev task new` uses the current Git branch when it can detect one.
+flag, `bus dev task new` uses the current Git branch only when the task is for
+the current project. Cross-module tasks do not inherit the sender branch.
 `--branch <name>` requests an existing work branch. `--new-branch <name>`
 requests a new disposable branch, and `--base-branch <name>` selects the base;
 when omitted, the base defaults to the current branch.
@@ -152,7 +153,13 @@ bus dev task next --json
 bus dev task close 123.1 "Fixed and verified with make test."
 bus dev task fail 123.1 "Cannot reproduce; fixture is missing."
 bus dev task block 123.1 "Need a domain decision about config vs schema metadata."
+bus dev task cancel 123.1 "Superseded by a corrected task."
 ```
+
+`cancel` publishes a terminal cancellation event for stale, incorrect, or
+superseded work. Events history is not deleted, but `list`, `show`, and
+`wait --until terminal` can use the canceled state to retire the task from
+active coordination.
 
 `next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; the worker decides how to perform the work. Automatic Codex or container execution may be added later as an optional worker backend, but the task protocol itself is generic.
 
