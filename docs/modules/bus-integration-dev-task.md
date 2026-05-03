@@ -37,7 +37,9 @@ runs from `/workspace/bus-dev`, while `@bus-integration-docker` runs from
 
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
-`{module}`, and `{repo_path}` placeholders.
+`{module}`, `{repo_path}`, `{branch}`, `{base_branch}`, and
+`{create_branch}` placeholders. `{branch}` comes from task metadata and is
+defaulted by `bus dev task new` to the current Git branch when possible.
 
 ```sh
 bus-integration-dev-task \
