@@ -19,8 +19,9 @@ other container integrations behind the same Events contract.
 
 Before starting this worker, run a Bus Events API, start a container
 integration that accepts the requested profile, and provide `BUS_API_TOKEN`
-with `dev:task:claim`, `dev:task:reply`, and `container:run`. For local
-testing, `bus-integration-docker` can provide the `codex` profile.
+with `events:send`, `events:listen`, `dev:task:read`, `dev:task:send`,
+`dev:task:reply`, `dev:task:claim`, and `container:run`. For local testing,
+`bus-integration-docker` can provide the `codex` profile.
 
 ```sh
 export BUS_API_TOKEN="<token-with-dev-task-and-container-scopes>"
@@ -35,11 +36,28 @@ repository. With `--workspace-root /workspace`, a task addressed to `@bus-dev`
 runs from `/workspace/bus-dev`, while `@bus-integration-docker` runs from
 `/workspace/bus-integration-docker`.
 
+`--workspace-recipient` names the recipient that maps to `--workspace-root`
+itself instead of a child repository. In the BusDK local task stack this is
+configured as `busdk`, so tasks addressed to `@busdk` intentionally edit the
+superproject root while normal module tasks keep their own recipient
+repository.
+
+`--worktree` runs each task in an isolated Git worktree. The container receives
+the workspace as a read-only dependency view and receives write access only to
+the task worktree. When the workspace is a Git superproject with `.gitmodules`,
+the worker creates task-local dependency links so relative module dependencies
+resolve through the read-only workspace instead of becoming writable.
+Successful task commits are promoted back to the primary checkout with a
+conservative fast-forward merge; dirty or non-fast-forward primary checkouts
+fail safely.
+
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
-`{module}`, `{repo_path}`, `{branch}`, `{base_branch}`, and
-`{create_branch}` placeholders. `{branch}` comes from task metadata and is
-defaulted by `bus dev task new` to the current Git branch when possible.
+`{module}`, `{main_repo_path}`, `{repo_path}`, `{worktree_path}`, `{branch}`,
+`{worktree_branch}`, `{base_branch}`, and `{create_branch}` placeholders.
+`{repo_path}` points at the isolated worktree when `--worktree` is enabled.
+`{branch}` comes from task metadata and is defaulted by `bus dev task new` to
+the current Git branch when possible.
 
 ```sh
 bus-integration-dev-task \
@@ -73,15 +91,19 @@ container.
 The BusDK superproject includes `compose.dev-task-docker.yaml` for local
 testing with Docker Desktop:
 
-The default compose command for real local use runs `codex exec` in the
-addressed module repository, prepares the requested task branch, then runs a
-trusted post-command that stages, commits, and pushes the task branch. This
-consumes ChatGPT-backed Codex quota and requires Git credentials with push
-access. Smoke tests override `BUS_DEV_TASK_COMMAND_JSON` to
+The default compose command for real local use runs `codex exec` in an isolated
+worktree for the addressed module repository, then runs a trusted post-command
+that stages, commits, and pushes the task branch. The workspace remains the
+read-only dependency view, while the addressed repository worktree is the only
+writable mount for the task container. This consumes ChatGPT-backed Codex quota
+and requires Git credentials with push access. Smoke tests override
+`BUS_DEV_TASK_COMMAND_JSON` to
 `["codex","--version"]` and `BUS_DEV_TASK_POST_COMMAND_JSON` to `[]` so they do
 not consume quota, commit, or contact upstream.
 
 ```sh
+BUS_DEV_TASK_COMMAND_JSON='["codex","--version"]' \
+BUS_DEV_TASK_POST_COMMAND_JSON='[]' \
 docker compose -f compose.dev-task-docker.yaml up --build -d
 docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
 ```

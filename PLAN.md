@@ -1,5 +1,7 @@
 # Docs Refactor Plan
 
+- [x] Update public `bus-integration-dev-task` docs for isolated task worktrees: document workspace-recipient mapping, read-only workspace dependency mounts, writable recipient task worktrees, `.gitmodules` dependency links, and the updated placeholder/help surface; verify with `bus lint`.
+
 - [x] Refresh compose-backed local AI platform module docs end to end: review every Bus module invoked by the root `compose.yaml` local AI platform stack, align `docs/modules/bus-*.md` with the currently implemented command flags, environment variables, JWT scopes, PostgreSQL/event backends, container/Docker/Codex routing, and portal/API endpoints; preserve existing in-progress edits; run `bus lint` on the changed docs pages; and verify the docs change set.
 
 - [ ] Lint and refine the public UpCloud, billing, Stripe, usage, VM, container, event, auth, and operator module docs end to end with `bus lint`; fix actionable end-user documentation findings; add a public UpCloud + Stripe setup tutorial under `docs/docs/integration`; link it from docs navigation and related pages; and verify docs quality.
