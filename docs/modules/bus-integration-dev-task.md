@@ -50,7 +50,9 @@ resolve through the read-only workspace instead of becoming writable.
 After a successful task container run, the trusted bridge can stage and commit
 worktree changes with `--commit`, then promote the task branch back to the
 primary checkout with a conservative fast-forward merge. Dirty or
-non-fast-forward primary checkouts fail safely.
+non-fast-forward primary checkouts fail safely. The generated checkout leaf is
+unique per task, which avoids Git worktree metadata collisions for repeated or
+concurrent tasks addressed to the same module.
 
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
