@@ -47,9 +47,10 @@ the workspace as a read-only dependency view and receives write access only to
 the task worktree. When the workspace is a Git superproject with `.gitmodules`,
 the worker creates task-local dependency links so relative module dependencies
 resolve through the read-only workspace instead of becoming writable.
-Successful task commits are promoted back to the primary checkout with a
-conservative fast-forward merge; dirty or non-fast-forward primary checkouts
-fail safely.
+After a successful task container run, the trusted bridge can stage and commit
+worktree changes with `--commit`, then promote the task branch back to the
+primary checkout with a conservative fast-forward merge. Dirty or
+non-fast-forward primary checkouts fail safely.
 
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
@@ -69,7 +70,9 @@ bus-integration-dev-task \
 ```
 
 Use `--pre-command-json` and `--post-command-json` for repository-local hooks
-around the main command:
+around the main command. Use `--commit` for the normal local isolated-worktree
+path so task containers edit files only and the bridge handles Git metadata,
+staging, and commit creation:
 
 ```sh
 bus-integration-dev-task \
@@ -78,13 +81,13 @@ bus-integration-dev-task \
   --container-profile codex \
   --workspace-root /workspace \
   --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]' \
-  --post-command-json '["sh","-c","cd {repo_path} && git add . && (git diff --cached --quiet || git -c user.name=BusDevTask -c user.email=bus-dev-task@localhost commit -m chore:dev-task-{work_ref}) && git push -u origin {branch}"]'
+  --commit
 ```
 
-Remote Git push is intentionally an explicit trusted worker post-command. The
-default local compose hook stages, commits, and pushes deterministically after
-Codex exits so it does not start a nested Codex sandbox inside the task
-container.
+Remote Git push is intentionally not part of the default isolated-worktree task
+container path because the task container does not own writable Git metadata for
+the shared workspace. The default local compose setup commits locally in the
+bridge and does not push.
 
 ## Local Compose
 
@@ -92,18 +95,17 @@ The BusDK superproject includes `compose.dev-task-docker.yaml` for local
 testing with Docker Desktop:
 
 The default compose command for real local use runs `codex exec` in an isolated
-worktree for the addressed module repository, then runs a trusted post-command
-that stages, commits, and pushes the task branch. The workspace remains the
-read-only dependency view, while the addressed repository worktree is the only
-writable mount for the task container. This consumes ChatGPT-backed Codex quota
-and requires Git credentials with push access. Smoke tests override
-`BUS_DEV_TASK_COMMAND_JSON` to
-`["codex","--version"]` and `BUS_DEV_TASK_POST_COMMAND_JSON` to `[]` so they do
-not consume quota, commit, or contact upstream.
+worktree for the addressed module repository, then the bridge stages and
+commits successful changes before fast-forward promotion. The workspace remains
+the read-only dependency view, while the addressed repository worktree is the
+only writable mount for the task container. This consumes ChatGPT-backed Codex
+quota. Smoke tests override `BUS_DEV_TASK_COMMAND_JSON` to
+`["codex","--version"]` and `BUS_DEV_TASK_COMMIT=false` so they do not consume
+quota or create commits.
 
 ```sh
 BUS_DEV_TASK_COMMAND_JSON='["codex","--version"]' \
-BUS_DEV_TASK_POST_COMMAND_JSON='[]' \
+BUS_DEV_TASK_COMMIT=false \
 docker compose -f compose.dev-task-docker.yaml up --build -d
 docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
 ```
