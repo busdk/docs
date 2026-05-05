@@ -6,9 +6,9 @@ description: Bridge Bus development task events to steerable development workers
 ## Overview
 
 `bus integration dev task` connects `bus dev work` / `bus dev task` streams to development
-workers. The worker claims `bus.dev.task.created` events for one recipient,
-publishes task progress, and closes or fails the task from the selected backend
-result.
+workers. The worker claims `bus.dev.task.created` and
+`bus.dev.task.reopened` events for one recipient, publishes task progress, and
+closes or fails the task from the selected backend result.
 
 The default local backend is `codex-appserver`, which runs Codex through the
 shared [bus agent](./bus-agent) App Server integration. While the child Codex
@@ -17,6 +17,9 @@ steers the active turn, approval requests are emitted as
 `bus.dev.task.approval.requested`, and `bus dev work approve` sends decisions
 back to the pending app-server request. The `container` backend is still
 available for provider-neutral one-shot execution through [bus containers](./bus-containers).
+Completed or blocked App Server work can be reopened with
+`bus dev work reopen` / `bus dev task reopen`; the worker resumes the stored
+Codex App Server thread when the task stream contains `app_server_thread_id`.
 Local Docker App Server workers default to Codex `danger-full-access` mode
 because the local image does not include Codex's Linux workspace sandbox
 helper; the bridge still promotes only the recipient task worktree and marks
@@ -63,7 +66,10 @@ superproject root while normal module tasks keep their own recipient
 repository.
 
 `--agent-backend codex-appserver` keeps a running session addressable by task
-reference. Use `bus dev work watch <ref>` to see approval request ids, then
+reference. Use `bus dev work say <ref> <message...>` while the turn is active
+to steer it directly. Use `bus dev work reopen <ref> <message...>` after a
+terminal state to publish a new open task event that resumes stored App Server
+thread state when present. Use `bus dev work watch <ref>` to see approval request ids, then
 answer with:
 
 ```sh
