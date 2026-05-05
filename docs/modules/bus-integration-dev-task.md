@@ -17,6 +17,11 @@ steers the active turn, approval requests are emitted as
 `bus.dev.task.approval.requested`, and `bus dev work approve` sends decisions
 back to the pending app-server request. The `container` backend is still
 available for provider-neutral one-shot execution through [bus containers](./bus-containers).
+Local Docker App Server workers default to Codex `danger-full-access` mode
+because the local image does not include Codex's Linux workspace sandbox
+helper; the bridge still promotes only the recipient task worktree and marks
+the task blocked instead of done when the turn produces no diff or reports
+incomplete evidence.
 
 ## Usage
 
@@ -79,6 +84,9 @@ primary checkout with a conservative fast-forward merge. Dirty or
 non-fast-forward primary checkouts fail safely. The generated checkout leaf is
 unique per task, which avoids Git worktree metadata collisions for repeated or
 concurrent tasks addressed to the same module.
+For Codex App Server tasks, a completed LLM turn is not enough to mark work
+done: no worktree changes, no tests run, an unclosed PLAN item, or explicit
+blocked evidence is recorded as a blocked task stream.
 
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
