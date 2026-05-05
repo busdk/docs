@@ -1,33 +1,40 @@
 ---
 title: bus integration dev task
-description: Bridge Bus development task events to provider-neutral container runs.
+description: Bridge Bus development task events to steerable development workers.
 ---
 
 ## Overview
 
-`bus integration dev task` connects `bus dev task` streams to container-backed
-agent execution. The worker claims `bus.dev.task.created` events for a
-recipient, starts one provider-neutral container run, publishes container output
-as task messages, and closes or fails the task from the container exit code.
+`bus integration dev task` connects `bus dev task` streams to development
+workers. The worker claims `bus.dev.task.created` events for one recipient,
+publishes task progress, and closes or fails the task from the selected backend
+result.
 
-The worker uses the Bus Events API and the same container request contract as
-[bus containers](./bus-containers). Local Docker execution is provided by
-[bus integration docker](./bus-integration-docker); cloud execution can use
-other container integrations behind the same Events contract.
+The default local backend is `codex-appserver`, which runs Codex through the
+shared [bus agent](./bus-agent) App Server integration. While the child Codex
+session runs, the task stream is the parent control plane: `bus dev task say`
+steers the active turn, approval requests are emitted as
+`bus.dev.task.approval.requested`, and `bus dev task approve` sends decisions
+back to the pending app-server request. The `container` backend is still
+available for provider-neutral one-shot execution through [bus containers](./bus-containers).
 
 ## Usage
 
-Before starting this worker, run a Bus Events API, start a container
-integration that accepts the requested profile, and provide `BUS_API_TOKEN`
+Before starting this worker, run a Bus Events API and provide `BUS_API_TOKEN`
 with `events:send`, `events:listen`, `dev:task:read`, `dev:task:send`,
-`dev:task:reply`, `dev:task:claim`, and `container:run`. For local testing,
-`bus-integration-docker` can provide the `codex` profile.
+`dev:task:reply`, and `dev:task:claim`. For the default
+`--agent-backend codex-appserver`, `codex app-server` and Codex
+authentication/configuration must be available in the worker environment. For
+`--agent-backend container`, also start a container integration that accepts the
+requested profile and grant `container:run`; local testing can use
+`bus-integration-docker` for the `codex` profile.
 
 ```sh
 export BUS_API_TOKEN="<token-with-dev-task-and-container-scopes>"
 bus-integration-dev-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
+  --agent-backend codex-appserver \
   --container-profile codex
 ```
 
@@ -41,6 +48,17 @@ itself instead of a child repository. In the BusDK local task stack this is
 configured as `busdk`, so tasks addressed to `@busdk` intentionally edit the
 superproject root while normal module tasks keep their own recipient
 repository.
+
+`--agent-backend codex-appserver` keeps a running session addressable by task
+reference. Use `bus dev task watch <ref>` to see approval request ids, then
+answer with:
+
+```sh
+bus dev task approve bus-dev#1.1 7 accept_for_session
+```
+
+The approval decision must be `accept`, `accept_for_session`, `decline`, or
+`cancel`.
 
 `--worktree` runs each task in an isolated Git worktree. The container receives
 the workspace as a read-only dependency view and receives write access only to
@@ -66,6 +84,7 @@ the current Git branch when possible.
 bus-integration-dev-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
+  --agent-backend container \
   --container-profile codex \
   --workspace-root /workspace \
   --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]'
@@ -80,8 +99,10 @@ staging, and commit creation:
 bus-integration-dev-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
+  --agent-backend container \
   --container-profile codex \
   --workspace-root /workspace \
+  --worktree \
   --command-json '["codex","exec","--skip-git-repo-check","{prompt}"]' \
   --commit
 ```

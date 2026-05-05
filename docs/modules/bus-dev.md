@@ -33,7 +33,7 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev plan` — review SDD and docs against repository state, then refresh `PLAN.md` with prioritized unchecked undone work items only.
 `bus dev spec` — ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool; creates AGENTS.md from online SDD and user documentation when missing.
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).
-`bus dev task <new|list|next|show|watch|wait|say|close|fail|block|cancel> ...` — independent development task streams over Bus Events.  
+`bus dev task <new|list|next|show|watch|wait|say|approve|close|fail|block|cancel> ...` — independent development task streams over Bus Events.  
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.
 `bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential. When `--jobs` is omitted, the default is the processor count capped at 8.
@@ -136,13 +136,17 @@ bus dev task watch 123
 bus dev task wait 123 --until event --timeout 5m
 bus dev task say 123 "Use the shared storage API."
 bus dev task say 123.1 "This note is only for bus-ledger."
+bus dev task approve 123.1 7 accept_for_session
 ```
 
 `show` replays status and readable event history, `watch` replays the current
 history first and then follows new events, and `wait` checks already-published
 history before blocking for a new event or terminal state. Saying something to
 a task group appends a group-level message; saying something to a work id
-targets that recipient-specific stream.
+targets that recipient-specific stream. `approve` answers a running worker's
+approval request; the numeric id is read from
+`bus.dev.task.approval.requested` or from the `watch` output, and the decision
+is one of `accept`, `accept_for_session`, `decline`, or `cancel`.
 
 Workers receive work explicitly:
 
@@ -163,7 +167,7 @@ active coordination.
 
 `next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; the worker decides how to perform the work. Automatic Codex or container execution may be added later as an optional worker backend, but the task protocol itself is generic.
 
-The command uses development-specific `bus.dev.task.*` events and scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. Token precedence is explicit flag, `BUS_API_TOKEN`, an explicit `BUS_CONFIG_DIR` token, the BusDK local compose token when present, then the normal Bus auth session token. Use [`bus work`](./bus-work) separately for generic non-development work streams.
+The command uses development-specific `bus.dev.task.*` events and requires Bus Events transport scopes such as `events:send` and `events:listen` plus task scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. Token precedence is explicit flag, `BUS_API_TOKEN`, an explicit `BUS_CONFIG_DIR` token, the BusDK local compose token when present, then the normal Bus auth session token. Use [`bus work`](./bus-work) separately for generic non-development work streams.
 
 For a practical `.bus` file that runs `dev`, `agent`, and `run` commands together in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
@@ -224,9 +228,9 @@ Diagnostics and progress go to stderr. Deterministic command results are written
 
 When you run `each`, the remaining tokens are exactly the command that each child module receives. For example, `bus dev each --check --skip bus-docs pipeline preview round` validates that every selected child can resolve `pipeline preview round` without executing a workflow step.
 
-**`retry --on-fail|-f <TOKEN>[,<TOKEN>...] [--attempts N] <workflow-token>...`** — Run one workflow sequence, and if it fails, run the fallback token list before retrying. `--on-fail` (or `-f`) is required and each token list is expanded and normalized using standard token rules before execution. Workflow tokens may include multiple entries (for example `test test_2`) so both run together on each attempt. `--attempts` defaults to one additional retry and accepts zero or greater. `--attempts 0` means the workflow runs once and exits with its original failure code without fallback. Fallback execution only occurs after a workflow failure. If fallback has no runnable steps (including after normalization), or if any token is invalid, execution fails with usage error. Built-in-only fallback tokens can be forced with `@` (for example `@commit`).
+**`retry --on-fail|-f <TOKEN>[,<TOKEN>...] [--attempts N] <workflow-token>...`** — Run one workflow sequence, and if it fails, run the fallback token list before retrying. `--on-fail` (or `-f`) is required and each token list is expanded and normalized using standard token rules before execution. Workflow tokens may include multiple built-in entries (for example `work e2e`) so both run together on each attempt, or repository-local action/script/pipeline tokens when those tokens already exist. `--attempts` defaults to one additional retry and accepts zero or greater. `--attempts 0` means the workflow runs once and exits with its original failure code without fallback. Fallback execution only occurs after a workflow failure. If fallback has no runnable steps (including after normalization), or if any token is invalid, execution fails with usage error. Built-in-only fallback tokens can be forced with `@` (for example `@commit`).
 
-The retry loop uses exponential backoff (`1s`, `2s`, `4s`, ...) between workflow attempts and stops as soon as the workflow succeeds. If fallback returns non-zero, that code is returned immediately. Examples: `bus dev retry --on-fail fix-tests,fix-tests-2 --attempts 2 test test_2`, `bus dev retry -f fix-tests,fix-tests-2 --attempts 1 test`.
+The retry loop uses exponential backoff (`1s`, `2s`, `4s`, ...) between workflow attempts and stops as soon as the workflow succeeds. If fallback returns non-zero, that code is returned immediately. Examples: `bus dev retry --on-fail plan --attempts 2 work e2e`, `bus dev retry -f @plan --attempts 1 work`.
 
 **`set`** — Set a persistent preference via the [bus-preferences](./bus-preferences) Go library (no shell-out to `bus preferences`). Bus-dev provides a dedicated subcommand for each key that affects agent use:
 
