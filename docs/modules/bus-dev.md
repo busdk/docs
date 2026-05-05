@@ -33,7 +33,8 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev plan` — review SDD and docs against repository state, then refresh `PLAN.md` with prioritized unchecked undone work items only.
 `bus dev spec` — ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool; creates AGENTS.md from online SDD and user documentation when missing.
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).
-`bus dev task <new|list|next|show|watch|wait|say|approve|close|fail|block|cancel> ...` — independent development task streams over Bus Events.  
+`bus dev work <start|list|stats|next|show|watch|wait|say|approve|close|fail|block|cancel> ...` — interactive controller for parallel development task streams over Bus Events.  
+`bus dev task <new|list|stats|next|show|watch|wait|say|approve|close|fail|block|cancel> ...` — low-level development task stream commands over Bus Events.  
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.
 `bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential. When `--jobs` is omitted, the default is the processor count capped at 8.
@@ -92,13 +93,13 @@ The tool does not operate on workspace accounting datasets. End-user accounting 
 
 ### Developer Task Wrapper
 
-`bus dev task` is an independent development task feature over Bus Events. It is separate from both the local `bus dev work` pipeline and the generic [`bus work`](./bus-work) CLI: `work` asks the configured agent to work in the current repository now, `bus work` manages generic non-development work streams, and `task` creates development work streams so the sender can read progress, reply while work is running, and see completion events later.
+`bus dev task` is an independent development task feature over Bus Events. The bare `bus dev work` pipeline still asks the configured agent to work in the current repository now, while `bus dev work <controller-command>` is the interactive controller facade for the same development task streams. Generic non-development streams remain owned by [`bus work`](./bus-work). The task stream commands let the sender create parallel recipient-owned work streams, read progress, reply while work is running, answer approval requests, and see completion events later.
 
 In a BusDK superproject checkout, after `docker compose up --build -d`, the
 local stack writes a non-secret development token to
 `tmp/local-ai-platform/bus-config/auth/api-token`. If no explicit
 `--token-file`, `BUS_API_TOKEN`, or `BUS_CONFIG_DIR` token is configured,
-`bus dev task` uses that source-checkout token automatically before falling
+`bus dev work <controller-command>` and `bus dev task` use that source-checkout token automatically before falling
 back to `~/.config/bus/auth/api-token`, so an unrelated production token does
 not break host-side local compose tasks at `http://127.0.0.1:8080`.
 
@@ -116,6 +117,22 @@ bus dev task new --new-branch work/import-fix --base-branch main @bus-ledger "Fi
 bus dev task new @bus-ledger --file work.md
 bus dev task new @bus-ledger "Fix this; details attached" --attach repro.log
 ```
+
+The `bus dev work` controller exposes the same stream behavior through a command
+surface intended for interactive supervision:
+
+```bash
+bus dev work start @bus-ledger @docs "Fix behavior and update docs"
+bus dev work watch bus-ledger#1.1 --timeout 5m
+bus dev work say bus-ledger#1.1 "Use the shared storage API."
+bus dev work approve bus-ledger#1.1 7 accept_for_session
+bus dev work cancel bus-ledger#1.1 "Superseded by a corrected task."
+```
+
+`start` is an alias for task creation. When multiple recipients are supplied,
+the command creates one task group and one recipient-specific stream per
+recipient, allowing independent workers for those modules to process work in
+parallel.
 
 Recipient syntax is explicit: leading `@recipient` tokens are recipients, `@` means the current project, and repeatable `--to <recipient>` is the flag form for scripts. If no recipient is provided, the current repository is the recipient. The message is the remaining text, `--file` supplies the main task body, and repeatable `--attach` adds supporting material.
 
@@ -141,17 +158,22 @@ bus dev task approve 123.1 7 accept_for_session
 
 `show` replays status and readable event history, `watch` replays the current
 history first and then follows new events, and `wait` checks already-published
-history before blocking for a new event or terminal state. Saying something to
-a task group appends a group-level message; saying something to a work id
-targets that recipient-specific stream. `approve` answers a running worker's
-approval request; the numeric id is read from
-`bus.dev.task.approval.requested` or from the `watch` output, and the decision
-is one of `accept`, `accept_for_session`, `decline`, or `cancel`.
+history before blocking for a new event or terminal state. The text stream
+includes the event name, task ref, message, status, source, and claimed worker
+when available, so App Server and worker failures are visible from the task
+stream itself. A requested task with no recorded events reports that explicitly
+instead of succeeding with empty output. Saying something to a task group
+appends a group-level message; saying something to a work id targets that
+recipient-specific stream. `approve` answers a running worker's approval
+request; the numeric id is read from `bus.dev.task.approval.requested` or from
+the `watch` output, and the decision is one of `accept`,
+`accept_for_session`, `decline`, or `cancel`.
 
 Workers receive work explicitly:
 
 ```bash
 bus dev task list
+bus dev task stats --all
 bus dev task next
 bus dev task next --json
 bus dev task close 123.1 "Fixed and verified with make test."
@@ -164,6 +186,12 @@ bus dev task cancel 123.1 "Superseded by a corrected task."
 superseded work. Events history is not deleted, but `list`, `show`, and
 `wait --until terminal` can use the canceled state to retire the task from
 active coordination.
+
+`stats` replays task events and reports actual terminal counts plus
+created-to-terminal and claimed-to-terminal wall time. Use it to measure real
+worker throughput and external-agent wait across live task streams. It is not a
+substitute for accepted backlog productivity; measure that by comparing
+`PLAN.md` checked/unchecked item counts before and after review.
 
 `next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; the worker decides how to perform the work. Automatic Codex or container execution may be added later as an optional worker backend, but the task protocol itself is generic.
 
@@ -216,7 +244,7 @@ Diagnostics and progress go to stderr. Deterministic command results are written
 
 **`plan`** — Build or refresh `PLAN.md` at repository root as a compact prioritized checklist of undone work. May be combined with **spec**, **work**, **e2e**, and **triage** in any order; operations run in the order you list them and stop on first failure. The command reviews the current repository, the current module reference, the current module end-user docs, and other project design-spec pages relevant to requirement coverage. It detects unimplemented features and other undone work and writes only `PLAN.md`. When `PLAN.md` already exists, the command re-validates existing items, removes items that are already done (including checked items), keeps items that are still undone, and adds newly detected missing work. This command is the one that prunes completed checked items from the plan. The file written by `bus dev plan` is a compact unchecked task list ordered by priority, with one unchecked item per undone work item and no implementation-level detail that should instead come from the design specification and related docs.
 
-**`work`** — Run the canonical “do the work in this repo now” workflow. May be combined with **plan**, **spec**, **e2e**, and **triage** in any order (e.g. `bus dev plan work` or `bus dev work plan spec e2e`); operations run in the order you list them and stop on first failure. At the start of each agent step (plan, work, spec, e2e, triage, stage), the tool prints to stderr which internal agent runtime and which model are in use for that step. The tool invokes the configured external agent runtime with an embedded prompt that tells it to operate only inside the current module repository: make concrete code changes, add or update tests, run the Makefile checks, and update README before finishing. The agent is allowed to read the repository’s AGENTS.md and design docs as the authoritative specs. When `PLAN.md` exists at repository root, the workflow reads it first and prioritizes unchecked items before proposing additional work. As work items are completed, `bus dev work` checks them off in `PLAN.md`. It does not remove already checked items; checked-item pruning is handled by `bus dev plan`. When the selected runtime is Gemini CLI, the agent may also use repository-local Gemini context (e.g. repo-root `GEMINI.md`, `.gemini/settings.json`, `.geminiignore`); Bus Dev never modifies user-global Gemini configuration or memory. Which agent runtime is used is determined by the agent selection configuration (see below). This subcommand does not perform any Git remote operations.
+**`work`** — Run the canonical “do the work in this repo now” workflow when invoked without a controller verb. May be combined with **plan**, **spec**, **e2e**, and **triage** in any order (e.g. `bus dev plan work` or `bus dev work plan spec e2e`); operations run in the order you list them and stop on first failure. At the start of each agent step (plan, work, spec, e2e, triage, stage), the tool prints to stderr which internal agent runtime and which model are in use for that step. The tool invokes the configured external agent runtime with an embedded prompt that tells it to operate only inside the current module repository: make concrete code changes, add or update tests, run the Makefile checks, and update README before finishing. The agent is allowed to read the repository’s AGENTS.md and design docs as the authoritative specs. When `PLAN.md` exists at repository root, the workflow reads it first and prioritizes unchecked items before proposing additional work. As work items are completed, bare `bus dev work` checks them off in `PLAN.md`. It does not remove already checked items; checked-item pruning is handled by `bus dev plan`. When the selected runtime is Gemini CLI, the agent may also use repository-local Gemini context (e.g. repo-root `GEMINI.md`, `.gemini/settings.json`, `.geminiignore`); Bus Dev never modifies user-global Gemini configuration or memory. Which agent runtime is used is determined by the agent selection configuration (see below). This workflow does not perform any Git remote operations. With controller verbs (`start`, `list`, `next`, `show`, `watch`, `wait`, `say`, `approve`, `close`, `fail`, `block`, or `cancel`), `bus dev work` controls Events-backed development task streams instead of invoking a local agent workflow.
 
 **`spec`** — Ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool. May be combined with **plan**, **work**, **e2e**, and **triage** in any order; operations run in the order you list them and stop on first failure. The file is always `AGENTS.md` at the repository root. When AGENTS.md does not exist, the command creates it from the online SDD and module end-user documentation in the same run. If a Cursor rule file exists at `.cursor/rules/<module-name>.mdc` (where the module name is the base name of the repo, e.g. `bus-accounts`), its content is refactored into AGENTS.md and that file is then removed. No source code, tests, or README are changed. The refinement is driven by an embedded prompt inside the binary; the agent may read BusDK docs and the AGENTS.md format to align the file. When Gemini CLI is selected, repository-local Gemini context is used in parallel; Bus Dev does not write to user-global Gemini config or memory.
 
@@ -419,7 +447,7 @@ bus dev each --skip bus-docs --skip bus-legacy stage commit
 
 ### Files
 
-`bus dev` does not read or write workspace accounting datasets (CSV, schemas, datapackage.json). It operates on the Git repository (metadata and index) and, when running the agent, on the repository working tree (source files, repository-root **AGENTS.md** as the canonical project instruction source). To ensure only one run per directory at a time, the tool uses a lock file (e.g. `.bus-dev.lock`) in the effective operation directory; the lock is released when the command exits. The documentation base URL used in prompts and diagnostics is configurable via `BUS_DEV_DOCS_BASE_URL` (default `https://docs.busdk.com`). `bus dev spec` creates or updates repository-root `AGENTS.md`, creating it from the online SDD and module end-user documentation when missing so the result is a compact local implementation spec; if a Cursor rule file exists at `.cursor/rules/<module-name>.mdc` (module name = base name of the repo), its content is merged into `AGENTS.md` and that file is then removed — this is the only case where bus-dev may remove or replace existing repo content for instruction standardization. The tool also uses repository-root `PLAN.md` for planning continuity: `bus dev work` checks off completed plan items, `bus dev e2e` validates that checked items are fully covered by e2e tests and still searches docs for other missing tests, and neither `work` nor `e2e` removes checked items. `bus dev plan` is the command that re-validates the plan and prunes completed checked items while adding newly detected missing work. When Gemini CLI is selected, the tool uses only repository-local Gemini files (e.g. repo-root `GEMINI.md`, `.gemini/settings.json`, `.geminiignore`) and never modifies user-global Gemini configuration or memory. How each runtime (Codex, Cursor, Gemini CLI, Claude Code) loads AGENTS.md is defined by the shared instruction contract in the [bus-agent reference](../modules/bus-agent). Existing local workflow commands do not require a bus-dev-specific config file; configuration is via flags and environment. User-defined pipelines are read from bus-preferences (keys `bus-dev.pipeline.<name>`) when resolving operation tokens; see [Pipelines and repository-local extensions](#pipelines-and-repository-local-extensions). Repository-local extensions (prompt actions, script actions, and pipelines) live under **`.bus/dev/`** at the repository root; see that section for the supported file types (`.txt`, `.yml`, `.sh`, `.bat`, and `.ps1`) and for **`bus dev context`**, which prints the prompt-variable catalog for authors. `bus dev task` stores task history and derives task group numbers from Events API replay/storage; credentials remain in user Bus config/auth storage, never in the repository.
+`bus dev` does not read or write workspace accounting datasets (CSV, schemas, datapackage.json). It operates on the Git repository (metadata and index) and, when running the agent, on the repository working tree (source files, repository-root **AGENTS.md** as the canonical project instruction source). To ensure only one run per directory at a time, the tool uses a lock file (e.g. `.bus-dev.lock`) in the effective operation directory; the lock is released when the command exits. The documentation base URL used in prompts and diagnostics is configurable via `BUS_DEV_DOCS_BASE_URL` (default `https://docs.busdk.com`). `bus dev spec` creates or updates repository-root `AGENTS.md`, creating it from the online SDD and module end-user documentation when missing so the result is a compact local implementation spec; if a Cursor rule file exists at `.cursor/rules/<module-name>.mdc` (module name = base name of the repo), its content is merged into `AGENTS.md` and that file is then removed — this is the only case where bus-dev may remove or replace existing repo content for instruction standardization. The tool also uses repository-root `PLAN.md` for planning continuity: bare `bus dev work` checks off completed plan items, `bus dev e2e` validates that checked items are fully covered by e2e tests and still searches docs for other missing tests, and neither `work` nor `e2e` removes checked items. `bus dev plan` is the command that re-validates the plan and prunes completed checked items while adding newly detected missing work. When Gemini CLI is selected, the tool uses only repository-local Gemini files (e.g. repo-root `GEMINI.md`, `.gemini/settings.json`, `.geminiignore`) and never modifies user-global Gemini configuration or memory. How each runtime (Codex, Cursor, Gemini CLI, Claude Code) loads AGENTS.md is defined by the shared instruction contract in the [bus-agent reference](../modules/bus-agent). Existing local workflow commands do not require a bus-dev-specific config file; configuration is via flags and environment. User-defined pipelines are read from bus-preferences (keys `bus-dev.pipeline.<name>`) when resolving operation tokens; see [Pipelines and repository-local extensions](#pipelines-and-repository-local-extensions). Repository-local extensions (prompt actions, script actions, and pipelines) live under **`.bus/dev/`** at the repository root; see that section for the supported file types (`.txt`, `.yml`, `.sh`, `.bat`, and `.ps1`) and for **`bus dev context`**, which prints the prompt-variable catalog for authors. `bus dev work <controller-command>` and `bus dev task` store task history and derive task group numbers from Events API replay/storage; credentials remain in user Bus config/auth storage, never in the repository.
 
 ### Exit status and errors
 

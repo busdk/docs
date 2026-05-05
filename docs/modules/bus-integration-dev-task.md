@@ -5,16 +5,16 @@ description: Bridge Bus development task events to steerable development workers
 
 ## Overview
 
-`bus integration dev task` connects `bus dev task` streams to development
+`bus integration dev task` connects `bus dev work` / `bus dev task` streams to development
 workers. The worker claims `bus.dev.task.created` events for one recipient,
 publishes task progress, and closes or fails the task from the selected backend
 result.
 
 The default local backend is `codex-appserver`, which runs Codex through the
 shared [bus agent](./bus-agent) App Server integration. While the child Codex
-session runs, the task stream is the parent control plane: `bus dev task say`
+session runs, the task stream is the parent control plane: `bus dev work say`
 steers the active turn, approval requests are emitted as
-`bus.dev.task.approval.requested`, and `bus dev task approve` sends decisions
+`bus.dev.task.approval.requested`, and `bus dev work approve` sends decisions
 back to the pending app-server request. The `container` backend is still
 available for provider-neutral one-shot execution through [bus containers](./bus-containers).
 
@@ -43,6 +43,14 @@ repository. With `--workspace-root /workspace`, a task addressed to `@bus-dev`
 runs from `/workspace/bus-dev`, while `@bus-integration-docker` runs from
 `/workspace/bus-integration-docker`.
 
+Stack-managed workers keep claiming additional matching tasks for their
+recipient after each task completes, so parallel local work does not require
+manual restarts. The containers are still disposable: remove and recreate them
+freely because durable coordination is in Bus Events and task file changes are
+kept in the recipient-owned Git worktree and promoted commit path, not in
+container-local storage. Use `--once` and `--idle-timeout` only for temporary
+one-shot workers.
+
 `--workspace-recipient` names the recipient that maps to `--workspace-root`
 itself instead of a child repository. In the BusDK local task stack this is
 configured as `busdk`, so tasks addressed to `@busdk` intentionally edit the
@@ -50,11 +58,11 @@ superproject root while normal module tasks keep their own recipient
 repository.
 
 `--agent-backend codex-appserver` keeps a running session addressable by task
-reference. Use `bus dev task watch <ref>` to see approval request ids, then
+reference. Use `bus dev work watch <ref>` to see approval request ids, then
 answer with:
 
 ```sh
-bus dev task approve bus-dev#1.1 7 accept_for_session
+bus dev work approve bus-dev#1.1 7 accept_for_session
 ```
 
 The approval decision must be `accept`, `accept_for_session`, `decline`, or
@@ -77,7 +85,7 @@ worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
 `{module}`, `{main_repo_path}`, `{repo_path}`, `{worktree_path}`, `{branch}`,
 `{worktree_branch}`, `{base_branch}`, and `{create_branch}` placeholders.
 `{repo_path}` points at the isolated worktree when `--worktree` is enabled.
-`{branch}` comes from task metadata and is defaulted by `bus dev task new` to
+`{branch}` comes from task metadata and is defaulted by `bus dev work start` or `bus dev task new` to
 the current Git branch when possible.
 
 ```sh
