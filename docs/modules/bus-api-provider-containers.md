@@ -21,7 +21,8 @@ can list, read, and delete only runs owned by their own account.
 ### Authentication
 
 Public endpoints use Bearer JWT authentication with audience `ai.hg.fi/api`.
-The provider derives the account from JWT `sub`.
+Tokens must include `sub`, `aud`, `scope`, `iat`, and `exp` claims. The
+provider derives the account from JWT `sub`.
 
 `container:read` allows status reads. `container:run` allows run creation.
 `container:delete` allows deleting owned runs.
@@ -148,10 +149,12 @@ These errors apply to the API endpoints above.
 Common error bodies use
 `{"error":{"type":"...","message":"...","action":"...","command":"..."}}`.
 Invalid or missing bearer tokens return `401 invalid_auth`. Missing scopes or
-cross-account run results return `403 forbidden`. Missing `profile`/`image` or
-bad JSON returns `400 bad_request`. Billing denial returns `402
-billing_required` with setup guidance. Backend timeouts or unavailable event
-listeners return `503`, and malformed integration responses return `502`.
+wrong audiences also return `401 invalid_auth`. Cross-account run results
+return `403 forbidden`. Missing `profile`/`image`, bad JSON, or trailing JSON
+after a run request document returns `400 bad_request`. Billing denial returns
+`402 billing_required` with setup guidance. Backend timeouts or unavailable
+event listeners return `503`, and malformed integration responses return
+`502`.
 
 ### Billing And Quotas
 

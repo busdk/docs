@@ -141,7 +141,9 @@ flag, `bus dev task new` uses the current Git branch only when the task is for
 the current project. Cross-module tasks do not inherit the sender branch.
 `--branch <name>` requests an existing work branch. `--new-branch <name>`
 requests a new disposable branch, and `--base-branch <name>` selects the base;
-when omitted, the base defaults to the current branch.
+when omitted, the base defaults to the current branch only for current-project
+tasks. Cross-module tasks leave the base unset so the recipient checkout uses
+its own `HEAD`.
 
 Multi-recipient tasks are fan-out, like email. A command such as `bus dev task new @bus-ledger @docs "Fix behavior and update docs"` creates one task group and one recipient-specific work stream for each recipient. Human-facing ids are simple: `123` identifies the task group, while `123.1` and `123.2` identify recipient work streams. Cross-project references use `org/repo#123` and `org/repo#123.1`.
 
