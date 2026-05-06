@@ -17,10 +17,11 @@ client tools.
 
 ### Authentication
 
-Execution endpoints require a Bearer JWT with audience `ai.hg.fi/api` and
-scope `llm:proxy`. `GET /v1/models` also requires a valid bearer token so the
-catalog is not public, but it does not check billing entitlement or wake the
-runtime.
+Execution endpoints require a Bearer JWT with `sub`, `aud`, `scope`, `iat`,
+and `exp` claims. The default accepted audience is `ai.hg.fi/api`, and the
+token must include scope `llm:proxy`. `GET /v1/models` also requires a valid
+bearer token so the catalog is not public, but it does not check billing
+entitlement or wake the runtime.
 
 The JWT `sub` is the account UUID used for billing and usage records.
 
@@ -43,6 +44,9 @@ or publishes a provider-neutral LLM execution event when
 Streaming requests are forwarded chunk by chunk. When possible, the provider
 adds `stream_options.include_usage=true` so streamed responses can include
 token usage for billing.
+
+Proxy request bodies larger than 2 MiB are rejected with
+`request_body_too_large` before runtime wake-up or backend forwarding.
 
 ### `POST /v1/completions`
 
