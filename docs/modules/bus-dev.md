@@ -160,7 +160,10 @@ bus dev task approve 123.1 7 accept_for_session
 
 `show` replays status and readable event history, `watch` replays the current
 history first and then follows new events, and `wait` checks already-published
-history before blocking for a new event or terminal state. The text stream
+history before blocking for a new event or terminal state. When the ref is a
+task group, `watch` follows until all known child work streams in that group are
+terminal, and `wait --until terminal` returns the child event that completes
+the group. The text stream
 includes the event name, task ref, message, status, source, and claimed worker
 when available, so App Server and worker failures are visible from the task
 stream itself. A requested task with no recorded events reports that explicitly
