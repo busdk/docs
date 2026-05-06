@@ -85,9 +85,10 @@ Repository-local automation should start the provider on loopback and let
 run command -- bus-api-provider-cloud --addr 127.0.0.1:8091
 ```
 
-Provider-specific credentials and API behavior belong to integration modules.
-For UpCloud-backed deployments, `bus-integration-upcloud` owns the UpCloud API
-calls and `bus-integration-cloud` owns the shared cloud event contract.
+Provider-specific credentials and API behavior are handled by integration
+modules. For UpCloud-backed deployments, use `bus-integration-upcloud` for the
+UpCloud API calls and `bus-integration-cloud` for the shared cloud event
+contract.
 
 ### Sources
 

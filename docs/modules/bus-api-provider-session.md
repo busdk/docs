@@ -1,11 +1,11 @@
 ---
 title: bus-api-provider-session
-description: Bus API session provider owns session lifecycle and token introspection behavior.
+description: Bus API session provider exposes session lifecycle and token introspection behavior.
 ---
 
 ## Session Provider For Bus API
 
-`bus-api-provider-session` owns session lifecycle and token introspection
+`bus-api-provider-session` exposes session lifecycle and token introspection
 behavior for the provider-based Bus API architecture. A session is policy and
 execution context; it is not the same thing as an authenticated identity.
 
@@ -29,9 +29,9 @@ and the running API provider/module listing.
 Create operations allocate a session identifier and initial policy context.
 Refresh extends or replaces a still-valid session according to deployment
 policy. Revoke marks a session unusable for future calls. Introspect returns
-session validity, subject, scopes, expiry, and context metadata without
-transferring identity ownership to this provider. Invalid, expired, or revoked
-tokens return deterministic authorization errors.
+session validity, subject, scopes, expiry, and context metadata while identity
+continues to come from the configured auth provider. Invalid, expired, or
+revoked tokens return deterministic authorization errors.
 
 ### Help And Quality
 

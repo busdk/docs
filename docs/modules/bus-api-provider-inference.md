@@ -71,7 +71,7 @@ curl -fsS "$BUS_API_BASE_URL/api/internal/inference/capabilities"
 ```
 
 Use this provider on internal Bus routes for operator and deployment
-automation. Ollama-specific work belongs to `bus-integration-ollama`.
+automation. Use `bus-integration-ollama` for Ollama-specific work.
 
 ### Using From .bus Files
 

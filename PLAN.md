@@ -10,7 +10,7 @@
 
 - [x] Restructure public API provider docs into short semantic sections: document each endpoint and each documented command-line option under its own meaningful subheading; avoid endpoint lists followed by long paragraphs; keep repeated JWT/account/billing rules in shared short sections; verify readability and docs quality.
 
-- [ ] Remove remaining SDD-style module ownership constraints from public module docs: rewrite visible module descriptions and overview paragraphs that say internals "must not", "do not belong here", or are "planned" into end-user/operator descriptions of available APIs, commands, configuration, and deployment boundaries; preserve architectural constraints in matching `sdd/docs/modules/*` pages; verify docs quality.
+- [x] Remove remaining SDD-style module ownership constraints from public module docs: rewrite visible module descriptions and overview paragraphs that say internals "must not", "do not belong here", or are "planned" into end-user/operator descriptions of available APIs, commands, configuration, and deployment boundaries; preserve architectural constraints in matching `sdd/docs/modules/*` pages; verify docs quality.
 
 - [x] Remove module-development meta status from public portal docs end to end: rewrite `docs/modules/bus-portal.md`, `docs/modules/bus-portal-auth.md`, `docs/modules/bus-portal-ai.md`, and `docs/modules/bus-portal-accounting.md` as end-user/operator module references that explain purpose, usage, configuration, and security boundaries without refactor/migration/PLAN-style readiness language; preserve implementation status in module `PLAN.md` or private SDD only; update docs guidance to prevent recurrence; and verify docs quality.
 

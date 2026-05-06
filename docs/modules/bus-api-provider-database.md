@@ -74,8 +74,8 @@ export BUS_API_BASE_URL="http://127.0.0.1:8080/${BUS_API_CAPABILITY_TOKEN}/v1"
 curl -fsS "$BUS_API_BASE_URL/api/internal/database/capabilities"
 ```
 
-PostgreSQL-specific behavior belongs to `bus-integration-postgres`; this
-provider exposes the stable Bus API surface used by operators and deployment
+Use `bus-integration-postgres` for PostgreSQL-specific behavior. This provider
+exposes the stable Bus API surface used by operators and deployment
 automation.
 
 ### Using from `.bus` files

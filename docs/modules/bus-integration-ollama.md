@@ -6,7 +6,7 @@ description: bus-integration-ollama provides Ollama-specific inference integrati
 ## Ollama Integration
 
 `bus-integration-ollama` registers Ollama behind the provider-neutral
-`bus-integration-inference` contract. It owns Ollama-specific installation,
+`bus-integration-inference` contract. It handles Ollama-specific installation,
 loopback configuration, context-length configuration, model ensure, and
 readiness checks.
 

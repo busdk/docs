@@ -60,7 +60,7 @@ the `bus-integration-ssh-runner` service.
 
 The node identifier comes from operator deployment inputs. In a running Bus
 deployment, `bus-api-provider-node` exposes the internal API surface and
-`bus-integration-node` owns the event-driven node work. Remote command
+`bus-integration-node` handles the event-driven node work. Remote command
 execution is delegated to `bus-integration-ssh-runner`.
 
 ### Using from `.bus` files

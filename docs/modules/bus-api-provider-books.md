@@ -1,14 +1,15 @@
 ---
 title: bus-api-provider-books
-description: Bus API books provider owns accounting and bookkeeping-domain API provider behavior.
+description: Bus API books provider exposes accounting and bookkeeping-domain API provider behavior.
 ---
 
 ## Books Provider For Bus API
 
 `bus-api-provider-books` is the provider module for accounting and
 bookkeeping-domain behavior in the provider-based Bus API architecture. The
-core `bus-api` service owns HTTP transport, route dispatch, OpenAPI generation,
-and capability URL handling; this provider owns books-specific API contracts.
+core `bus-api` service handles HTTP transport, route dispatch, OpenAPI
+generation, and capability URL handling; this provider exposes books-specific
+API contracts.
 
 The standalone command is for operator discovery:
 
@@ -18,10 +19,9 @@ bus-api-provider-books --version
 ```
 
 The provider is normally loaded by `bus-api` through explicit provider
-configuration. It should not be used as a separate end-user accounting CLI.
-User-facing accounting workflows remain in their owning Bus modules and portal
-frontends consume these provider APIs instead of reading workspace files
-directly.
+configuration. Use the regular accounting module commands for end-user
+accounting workflows. Portal frontends consume these provider APIs instead of
+reading workspace files directly.
 Enable it in the Bus API route/provider configuration by allowing provider
 `books` and mounting the accounting routes for the workspace. A minimal local
 serve command is `bus-api serve --provider books --enable-module books -C

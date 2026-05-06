@@ -139,7 +139,7 @@ bus bank control --month 2026-01 --account acct-1
 
 ### Files
 
-`bus bank` owns `bank-imports.csv`, `bank-transactions.csv`, and the statement checkpoint dataset. It can also create optional configuration tables for counterparty aliases, reference extractors, and statement-extract profiles. `bank-transactions.csv` now includes `source_links` for zero, one, or many pre-reconciliation source-object hints in addition to the older single-value extractor fields.
+`bus bank` maintains `bank-imports.csv`, `bank-transactions.csv`, and the statement checkpoint dataset. It can also create optional configuration tables for counterparty aliases, reference extractors, and statement-extract profiles. `bank-transactions.csv` now includes `source_links` for zero, one, or many pre-reconciliation source-object hints in addition to the older single-value extractor fields.
 
 When a statement-backed replay row has no reliable human-readable counterparty, `bus bank add` may store blank counterparty fields instead of forcing a fabricated placeholder name. The audit trail stays faithful to the source evidence, while `reference`, `message`, IBAN fields, and explicit `source_links` still remain available for later reconciliation.
 

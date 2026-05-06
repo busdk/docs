@@ -107,9 +107,9 @@ bus config set \
 `bus config set <key> <value>`  
 `bus config id-generation <action> ...`
 
-### What this module owns
+### Workspace descriptor
 
-`bus config` owns the workspace descriptor file `datapackage.json` at the workspace root. The most important subtree for BusDK users is `busdk.accounting_entity`.
+`bus config` maintains the workspace descriptor file `datapackage.json` at the workspace root. The most important subtree for BusDK users is `busdk.accounting_entity`.
 
 Other modules read this file instead of asking you to repeat the same settings elsewhere. For example, [bus-vat](./bus-vat) reads VAT defaults from here, [bus-reports](./bus-reports) reads reporting defaults from here, and [bus-journal](./bus-journal) reads shared ID-generation policy and duplicate-source policy from here.
 

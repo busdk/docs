@@ -13,12 +13,12 @@ description: Shared deterministic HTML/CSS component helpers and reusable AI UI 
 ### Description
 
 `bus-ui` provides shared UI building blocks for BusDK frontend modules. It
-owns deterministic HTML escaping and attribute ordering helpers, reusable core
-controls, shared CSS tokens, generic authentication surfaces, generic form
+includes deterministic HTML escaping and attribute ordering helpers, reusable
+core controls, shared CSS tokens, generic authentication surfaces, generic form
 surfaces, shared download/link actions, reusable summary and metric cards,
 generic timeline and gallery renderers, and generic AI interface components.
 
-The module also owns generic assistant text rendering and generic approval-card
+The module also provides generic assistant text rendering and generic approval-card
 formatting so module frontends can keep only workspace-specific behavior and
 action wiring in their local code. It also provides shared reusable AI runtime
 state objects (`AIPanelSessionState`, `AIConversationState`) so modules avoid
@@ -76,7 +76,7 @@ It also provides one shared committed-draft normalization rule
 (`NormalizeAICommittedDraft`) and matching composer event wiring so AI text
 areas keep raw trailing spaces while focused and only trim on intentional blur
 or send.
-For server-rendered HTML hosts, the shared plain-JS AI panel client also owns
+For server-rendered HTML hosts, the shared plain-JS AI panel client also handles
 the generic send/drop lifecycle. It refreshes the panel immediately after a
 turn starts so users see the shared responding indicator, tracks per-thread
 draft attachments, imports dropped files or file paths through `v1/ai/drop`,

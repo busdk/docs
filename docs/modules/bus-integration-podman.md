@@ -5,7 +5,7 @@ description: Run Bus container backend events against local or rootless Podman.
 
 ## Overview
 
-`bus integration podman` is the Podman runtime integration worker. It owns the
+`bus integration podman` is the Podman runtime integration worker. It handles the
 `bus.podman.*` Events namespace and is normally used behind
 [bus integration containers](./bus-integration-containers), which translates the
 public `bus.containers.*` contract to a selected backend such as `bus.podman.*`.

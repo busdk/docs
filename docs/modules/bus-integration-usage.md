@@ -209,7 +209,7 @@ payment-provider meter events after retries.
 
 `bus-api-provider-usage` exposes the internal collector feed for trusted
 backend jobs. It is separate from this worker. The provider gives collectors a
-JWT-secured HTTP read/delete interface, while this integration owns the event
+JWT-secured HTTP read/delete interface, while this integration handles the event
 worker behavior and storage access used by API providers.
 
 ### Using from `.bus` files

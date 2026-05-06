@@ -148,9 +148,9 @@ Journal-driven mode can use `vat-account-mapping.csv` for direction and rate fal
 
 ### Files
 
-This module owns the VAT master, report, return, and filed-evidence datasets at the workspace root. It also writes period-specific return and filed-evidence files when those commands are used.
+VAT master, report, return, and filed-evidence datasets live at the workspace root. The module also writes period-specific return and filed-evidence files when those commands are used.
 
-Owned VAT root tables use the shared `bus-data` storage-policy resolver. By default they are created as ordinary CSV, and `PCSV-1` is only used when workspace, module, or resource storage policy explicitly selects it.
+VAT root tables use the shared `bus-data` storage-policy resolver. By default they are created as ordinary CSV, and `PCSV-1` is only used when workspace, module, or resource storage policy explicitly selects it.
 
 ### Output and flags
 

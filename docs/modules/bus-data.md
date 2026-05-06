@@ -338,7 +338,7 @@ bus data table read laskelmat_const
 
 Formula evaluation uses a table snapshot, so range expressions resolve against the same read and do not depend on row-by-row mutation. Invalid formula metadata is rejected at read time and reports a formula error to standard error. To treat formula errors as empty values, set `on_error` to `null` in the formula block.
 
-### Import mapping profiles (planned)
+### Import mapping profiles
 
 The import-profile contract is a library surface, not an end-user accounting command.
 Domain modules provide target semantics and profiles; bus-data provides deterministic profile validation and mapping primitives.
@@ -396,7 +396,7 @@ Help and version output are printed to standard output. Diagnostics and validati
 
 ### Files
 
-The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files (same directory, `.csv` replaced by `.schema.json`). A workspace `datapackage.json` is stored at the workspace root and references resources by name and workspace-relative CSV path. Path ownership lies with domain modules: when a consumer needs to read or write a domain table (e.g. accounts, periods, journal), it obtains the path from the owning module’s Go library. Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define or hardcode which path is “accounts” or “periods” (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+The module operates on workspace datasets as CSV resources with beside-the-table Table Schema JSON files (same directory, `.csv` replaced by `.schema.json`). A workspace `datapackage.json` is stored at the workspace root and references resources by name and workspace-relative CSV path. Domain modules publish their table paths through module APIs; when a consumer needs to read or write a domain table such as accounts, periods, or journal, it obtains the path from that module instead of hardcoding it. Bus-data accepts table paths as input and performs schema-validated I/O on them; it does not define which path is “accounts” or “periods” (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
 
 ### Examples
 

@@ -1,13 +1,13 @@
 ---
 title: bus accounts — manage the chart of accounts
-description: bus accounts creates and maintains the chart of accounts, validates account definitions, renders a chart-of-accounts report, and owns the canonical account-group hierarchy.
+description: bus accounts creates and maintains the chart of accounts, validates account definitions, renders a chart-of-accounts report, and maintains the canonical account-group hierarchy.
 ---
 
 ## `bus accounts` — manage the chart of accounts
 
-`bus accounts` owns the chart of accounts for the workspace. Use it when you need to create the account table, add or rename accounts, validate the chart, or print a filing-grade `tililuettelo`.
+`bus accounts` maintains the chart of accounts for the workspace. Use it when you need to create the account table, add or rename accounts, validate the chart, or print a filing-grade `tililuettelo`.
 
-This is also the module that owns the canonical account-group hierarchy used by statutory reporting workflows.
+It also maintains the canonical account-group hierarchy used by statutory reporting workflows.
 
 ### Common tasks
 
@@ -178,7 +178,7 @@ opening-balance date explicitly.
 `groups assign` gives you a native way to set account-to-group membership in
 bulk without hand-editing CSV rows.
 
-For Finnish statutory reports, this module owns the only canonical reporting structure:
+For Finnish statutory reports, BusDK uses one canonical reporting structure:
 
 `account-groups.csv`
 
@@ -208,7 +208,7 @@ bus journal init
 ### Files
 
 The core files are `accounts.csv` and `accounts.schema.json` at the workspace root.
-This module also owns:
+The reporting hierarchy files are:
 - `account-groups.csv` and `account-groups.schema.json`
 
 ### Output and flags

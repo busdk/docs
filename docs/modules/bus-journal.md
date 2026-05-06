@@ -241,7 +241,7 @@ For the full option list, run `bus journal --help`. For exact `assert`, `list`, 
 
 ### Files
 
-This module owns `journals.csv`, period journal files such as `journal-2026.csv`, and journal dimension tables at the workspace root.
+Journal index, period journal files such as `journal-2026.csv`, and journal dimension tables live at the workspace root.
 
 ### Exit status
 

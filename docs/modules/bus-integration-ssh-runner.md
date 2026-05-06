@@ -6,12 +6,11 @@ description: bus-integration-ssh-runner provides generic SSH script execution fo
 ## `bus-integration-ssh-runner` — SSH script runner
 
 `bus-integration-ssh-runner` provides reusable SSH script execution for Bus
-integration modules. It owns private-key loading, known_hosts validation,
+integration modules. It handles private-key loading, known_hosts validation,
 host/user candidate selection, command timeouts, and bounded stdout/stderr
 capture.
 
-The module does not own Podman, container, cloud, or REST API behavior. Callers
-provide the target and the script to execute. For example,
+Callers provide the target and the script to execute. For example,
 `bus-integration-upcloud` provisions or discovers a runner and supplies its
 container bootstrap or Podman script as input to this SSH runner.
 

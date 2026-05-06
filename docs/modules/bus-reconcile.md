@@ -123,7 +123,7 @@ bus reconcile post \
 
 ### Files
 
-This module owns `matches.csv` and `matches.schema.json` at the workspace root. It reads bank rows, invoice datasets, and journal datasets from their owning modules.
+`matches.csv` and `matches.schema.json` live at the workspace root. The module reads bank rows, invoice datasets, and journal datasets through their documented module paths.
 
 ### Exit status
 

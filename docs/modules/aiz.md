@@ -79,10 +79,9 @@ README documents `make check`, `make test`, `make test-fuzz`, `make e2e`, and
 `make e2e-examples` as the normal verification surfaces, together with corpus,
 analysis, advice, and benchmark targets for deeper measurement work.
 
-The current implementation is still described as experimental. The working CLI,
-archive format, deterministic restore path, and measured corpus workflow are in
-place, but the README still treats runtime search cost and general usefulness as
-active areas of improvement.
+The working CLI, archive format, deterministic restore path, and measured
+corpus workflow are available. Use `--explain` or `--explain-json` when you
+want to inspect runtime search decisions for a specific archive.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

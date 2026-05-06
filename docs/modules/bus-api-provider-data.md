@@ -1,14 +1,15 @@
 ---
 title: bus-api-provider-data
-description: Bus API data provider owns reusable data-facing API provider contracts.
+description: Bus API data provider exposes reusable data-facing API provider contracts.
 ---
 
 ## Data Provider For Bus API
 
 `bus-api-provider-data` is the provider module for reusable data-facing
 provider contracts in the provider-based Bus API architecture. The core
-`bus-api` service owns HTTP transport, route dispatch, OpenAPI generation, and
-capability URL handling; this provider owns generic data-provider behavior.
+`bus-api` service handles HTTP transport, route dispatch, OpenAPI generation,
+and capability URL handling; this provider exposes generic data-provider
+behavior.
 
 The standalone command is for operator discovery:
 

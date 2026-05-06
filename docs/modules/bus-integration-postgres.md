@@ -6,7 +6,7 @@ description: bus-integration-postgres provides PostgreSQL-specific database inte
 ## PostgreSQL Integration
 
 `bus-integration-postgres` registers PostgreSQL behind the provider-neutral
-`bus-integration-database` contract. It owns PostgreSQL-specific setup and
+`bus-integration-database` contract. It handles PostgreSQL-specific setup and
 verification behavior while `bus operator database` and
 `bus-api-provider-database` stay provider-neutral.
 

@@ -198,13 +198,13 @@ worker throughput and external-agent wait across live task streams. It is not a
 substitute for accepted backlog productivity; measure that by comparing
 `PLAN.md` checked/unchecked item counts before and after review.
 
-`next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; the worker decides how to perform the work. Automatic Codex or container execution may be added later as an optional worker backend, but the task protocol itself is generic.
+`next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; configured workers decide how to perform the work, so the task protocol stays generic across Codex, container, and human-driven execution paths.
 
 The command uses development-specific `bus.dev.task.*` events and requires Bus Events transport scopes such as `events:send` and `events:listen` plus task scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. Token precedence is explicit flag, `BUS_API_TOKEN`, an explicit `BUS_CONFIG_DIR` token, the BusDK local compose token when present, then the normal Bus auth session token. Use [`bus work`](./bus-work) separately for generic non-development work streams.
 
 For a practical `.bus` file that runs `dev`, `agent`, and `run` commands together in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
-From **BusDK v0.0.26** onward, `bus dev` can select Codex through the shared `bus-agent` runtime layer (`--agent codex`, `--agent codex:local`, `BUS_DEV_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription (and other eligible ChatGPT plans), so contributors can use Codex-backed workflows without API-key-only setup. Gemini and Claude runtime paths exist but remain in-progress and not fully verified by end-to-end tests.
+From **BusDK v0.0.26** onward, `bus dev` can select Codex through the shared `bus-agent` runtime layer (`--agent codex`, `--agent codex:local`, `BUS_DEV_AGENT=codex`, or preferences). Codex CLI sign-in works with a ChatGPT Plus subscription and other eligible ChatGPT plans, so contributors can use Codex-backed workflows without API-key-only setup. Gemini and Claude runtime paths are available for environments where those CLIs are installed and configured.
 
 For ChatGPT Pro users, a practical research-preview setup is to pin Codex as the default runtime for both `bus dev` and `bus run`, then use a faster Codex model only for stage and commit steps.
 

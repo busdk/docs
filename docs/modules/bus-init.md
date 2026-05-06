@@ -57,7 +57,7 @@ With no subcommand and no module flags, `bus init` only runs `bus config init`. 
 
 `defaults` means the same config-only behavior explicitly.
 
-`all` runs `bus config init` and then all supported data-owning module init commands in a fixed order. `--all` means the same thing in flag form. Use `--no-<module>` flags to skip selected modules.
+`all` runs `bus config init` and then all supported dataset module init commands in a fixed order. `--all` means the same thing in flag form. Use `--no-<module>` flags to skip selected modules.
 
 If you pass explicit module flags instead of `all` or `--all`, only those selected modules run after config init.
 
@@ -112,7 +112,7 @@ For the complete bootstrap matrix, run `bus init --help`.
 
 ### Files
 
-`bus init` does not own the files it creates indirectly. `datapackage.json` belongs to [bus-config](./bus-config), accounts files belong to [bus-accounts](./bus-accounts), journal files belong to [bus-journal](./bus-journal), and so on.
+`bus init` delegates file creation to the selected module init commands. `datapackage.json` is maintained by [bus-config](./bus-config), account files by [bus-accounts](./bus-accounts), journal files by [bus-journal](./bus-journal), and so on.
 
 ### Exit status
 

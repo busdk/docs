@@ -6,7 +6,7 @@ description: bus-api-provider-containers exposes user-owned container status and
 ## Container API
 
 `bus-api-provider-containers` is the server-side provider for user-owned
-container APIs. It owns cloud-neutral REST endpoints for container status and
+container APIs. It exposes cloud-neutral REST endpoints for container status and
 run lifecycle requests.
 
 In events mode, the provider sends container lifecycle requests through the Bus

@@ -41,14 +41,13 @@ assistant sessions. The package is engine-oriented so additional app-server
 engines can be added later while callers keep the same lifecycle, event, and
 approval interfaces.
 
-The tool does not execute Git, does not read or write workspace datasets, and does not define workflow semantics. Workflow behavior belongs to modules such as [bus dev](./bus-dev).
+The tool does not execute Git or read or write workspace datasets. Use higher-level modules such as [bus dev](./bus-dev) for workflow behavior.
 
 Paths are resolved relative to the current directory unless you set `-C` / `--chdir`. Command results go to stdout; diagnostics and progress go to stderr.
 
 For a practical `.bus` file that combines `agent` with `dev` and `run` commands in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
-From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the standard runtime set.
-Gemini and Claude integrations are still in-progress and not yet fully verified by end-to-end coverage.
+From **BusDK v0.0.26** onward, `bus agent` includes Codex runtime support in the standard runtime set. Gemini and Claude runtime tokens are available for environments where those CLIs are installed and configured.
 
 ### Commands
 
@@ -138,7 +137,7 @@ bus agent run --agent codex --timeout 15m \
 
 ### Files
 
-`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). The module does not own the preferences file — bus-preferences owns it — so configuration for persistent defaults is through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation. When the runner enables AGENTS.md for a runtime that requires repo-local config (e.g. Gemini or Claude), it may create or merge files only under the additive, Bus-owned rules described in [Project instructions (AGENTS.md)](#project-instructions-agentsmd) and in the [module reference](../modules/bus-agent); it never edits user configuration outside the project working directory.
+`bus agent` does not read or write workspace datasets, schemas, or `datapackage.json`. It may read prompt template files or prompt files when you pass `--template` or `--prompt`. The default agent and run-config defaults (model, output format, timeout) are read from user-level preferences via the [bus-preferences](./bus-preferences) Go library; the user sets them with the [bus preferences](./bus-preferences) CLI (e.g. `bus preferences set bus-agent.runtime gemini`). Configure persistent defaults through [bus preferences](./bus-preferences); flags and environment still override for the session or single invocation. When the runner enables AGENTS.md for a runtime that requires repo-local config (e.g. Gemini or Claude), it may create or merge files only under the additive project-instruction rules described in [Project instructions (AGENTS.md)](#project-instructions-agentsmd) and in the [module reference](../modules/bus-agent); it never edits user configuration outside the project working directory.
 
 ### Exit status and errors
 

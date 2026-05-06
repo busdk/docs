@@ -167,7 +167,7 @@ bus period lock --period 2026-01
 
 ### Files
 
-This module owns `periods.csv` and `periods.schema.json` at the workspace root. When you close a period, it also writes the derived carry-forward artifact `periods/<period-id>/opening_balances.csv`. `close` does not append synthetic close vouchers or a separate `close_entries.csv`.
+`periods.csv` and `periods.schema.json` live at the workspace root. When you close a period, the module also writes the derived carry-forward artifact `periods/<period-id>/opening_balances.csv`. `close` does not append synthetic close vouchers or a separate `close_entries.csv`.
 
 ### Output and flags
 

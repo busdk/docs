@@ -1,11 +1,11 @@
 ---
 title: bus-balances — balance snapshot dataset and opening/cutover journal materialization
-description: bus balances owns an append-only snapshot dataset; use add or import to build snapshots, then apply to materialize one balanced journal transaction for opening or cutover.
+description: bus balances maintains an append-only snapshot dataset; use add or import to build snapshots, then apply to materialize one balanced journal transaction for opening or cutover.
 ---
 
 ## Overview
 
-`bus balances` owns a **balance snapshot dataset** (trial balance snapshot) at workspace root.
+`bus balances` maintains a **balance snapshot dataset** (trial balance snapshot) at workspace root.
 
 You can build snapshots from manual entry or CSV, then **materialize** a snapshot into one balanced journal transaction for opening/cutover.
 
@@ -66,7 +66,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Snapshot dataset and effective record
 
-The module owns **`balances.csv`** and **`balances.schema.json`** at the workspace root. Each row has an as-of date, account code, amount (signed), optional source and notes, and `recorded_at`. The dataset is **append-only**; you correct a balance by appending a new row. For a given as-of date and account, the **effective** balance is the row with the latest `recorded_at`. `list` and `apply` use only effective rows. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+`balances.csv` and `balances.schema.json` live at the workspace root. Each row has an as-of date, account code, amount (signed), optional source and notes, and `recorded_at`. The dataset is **append-only**; you correct a balance by appending a new row. For a given as-of date and account, the **effective** balance is the row with the latest `recorded_at`. `list` and `apply` use only effective rows. Other tools that need these paths use the module API described in the [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access).
 
 CSV is the default when no explicit storage policy exists. If shared `bus-data` policy resolution selects `PCSV-1` from workspace, module, or resource metadata in `datapackage.json`, `bus balances init` writes a PCSV-compatible schema with `_pad`, and the module reads and writes the snapshot through the shared storage-aware `bus-data` layer. Plain CSV workspaces keep the normal CSV form and do not need any migration until you explicitly opt into `PCSV-1`.
 

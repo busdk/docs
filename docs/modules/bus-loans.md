@@ -36,7 +36,7 @@ Global flags are defined in [Standard global flags](../cli/global-flags). For co
 
 ### Files
 
-Loan register and event datasets and their beside-the-table schemas live at the workspace root. The module does not use subdirectories such as `loans/`. Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)).
+Loan register and event datasets and their beside-the-table schemas live at the workspace root. The module does not use subdirectories such as `loans/`. Other tools that need these paths use the module API described in the [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access).
 
 Storage mode is resolved centrally by shared `bus-data` policy precedence. Without an explicit workspace/module/resource override, `bus loans` uses ordinary CSV. If shared storage policy selects `PCSV-1`, `bus loans init` bootstraps `loans.csv` and `events.csv` as storage-aware padded tables through shared `bus-data` operations. In that mode the materialized schemas include `_pad`, `loans.csv` supports in-place updates, and `events.csv` remains append-only. Plain CSV workspaces keep the same logical file layout and command behavior unchanged.
 
@@ -64,7 +64,7 @@ bus loans amortize --period 2026-02 --loan-id LOAN-2026-01 --post-date 2026-02-2
 
 `bus loans` does not currently classify arbitrary bank rows into principal vs interest automatically.
 Financing-style bank payments still need manual split or custom integration.
-For planned extension notes, see [Suggested extensions](../modules/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows).
+For classifier extension context, see [Suggested extensions](../modules/bus-loans#suggested-extensions-loan-payment-classifier-from-bank-rows).
 
 
 ### Using from `.bus` files

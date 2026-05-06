@@ -51,7 +51,7 @@ subsequent inspections and in the current dossier rendering without rewriting
 older inspection records.
 
 Use `bus-gateway --print-url` for normal operation, sign in there, and launch
-`bus-inspection` from the gateway tool list. The gateway owns credentials and
+`bus-inspection` from the gateway tool list. The gateway handles credentials and
 passes a trusted signed user identity into the inspection module, so
 `bus-inspection` no longer provides its own login form. Fresh workspaces still
 bootstrap the baseline inspection authorization profiles `admin`, `manager`,

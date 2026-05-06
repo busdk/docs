@@ -60,7 +60,7 @@ Use `--env-file <path>` only when you intentionally want to read a non-default
 env-style file. Keep passwords and DSNs in operator-owned secret files or
 environment variables outside Git. In a running Bus deployment,
 `bus-api-provider-database` exposes the matching internal API surface and
-`bus-integration-database` owns the shared event contract.
+`bus-integration-database` provides the shared event contract.
 
 ### Sources
 

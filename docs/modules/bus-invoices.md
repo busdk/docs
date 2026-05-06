@@ -7,7 +7,7 @@ description: bus invoices creates and validates sales and purchase invoices, imp
 
 `bus invoices` stores invoice headers and invoice lines as workspace data. Use it when you create sales invoices, record purchase invoices, import invoice history, validate invoice totals, or prepare invoice-driven posting data for downstream accounting.
 
-It is the invoice owner in BusDK. Evidence files belong in [bus-attachments](./bus-attachments), PDF rendering goes through [bus-pdf](./bus-pdf), and posting flows continue into [bus-journal](./bus-journal) or [bus-reconcile](./bus-reconcile).
+Invoice evidence files are recorded with [bus-attachments](./bus-attachments), PDF rendering goes through [bus-pdf](./bus-pdf), and posting flows continue into [bus-journal](./bus-journal) or [bus-reconcile](./bus-reconcile).
 
 ### Common tasks
 
@@ -164,7 +164,7 @@ If the source system already knows the VAT treatment, store it on the invoice li
 
 ### Files
 
-This module owns the sales and purchase invoice header and line datasets at the workspace root. It can also emit `invoice-postings.csv` and its schema for downstream posting flows.
+Sales and purchase invoice header and line datasets live at the workspace root. The module can also emit `invoice-postings.csv` and its schema for downstream posting flows.
 
 ### Output and flags
 

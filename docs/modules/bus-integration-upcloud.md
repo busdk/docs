@@ -25,8 +25,8 @@ A request/reply worker is a long-running process that listens for request
 events and publishes matching response events. Account isolation means users
 can see and control only resources owned by their own Bus account.
 
-For container execution, UpCloud owns VM lifecycle only. SSH means Secure
-Shell. `bus-integration-ssh-runner` owns SSH keys, known-hosts handling,
+For container execution, UpCloud covers VM lifecycle only. SSH means Secure
+Shell. `bus-integration-ssh-runner` handles SSH keys, known-hosts handling,
 script execution, and foreground command output.
 
 ## Prerequisites

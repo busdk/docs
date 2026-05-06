@@ -10,14 +10,13 @@ It is a library-only module used by `bus-integration-*` services that listen to
 Bus Events, publish correlated responses, or compose request/reply flows through
 the Events API.
 
-The module owns generic integration runtime behavior: Events API worker-loop
-setup, response-event publishing adapters, request/reply correlation, and a
-listener retry/readiness helper, and a host registration surface for grouping
-multiple workers with one shared Events API client. The command or service that
-uses the host owns concurrent worker lifetime and cancellation. It does not own
-cloud APIs, SSH transport, Podman scripts, container runtime behavior,
-credentials, or HTTP controllers. Those concerns stay in the module that owns
-the provider or transport domain.
+The module provides generic integration runtime behavior: Events API
+worker-loop setup, response-event publishing adapters, request/reply
+correlation, a listener retry/readiness helper, and a host registration surface
+for grouping multiple workers with one shared Events API client. The command or
+service that uses the host controls concurrent worker lifetime and
+cancellation. Provider modules still handle cloud APIs, SSH transport, Podman
+scripts, container runtime behavior, credentials, and HTTP controllers.
 
 ## How Integrations Use It
 

@@ -10,7 +10,7 @@ execution requests through Codex App Server. It uses the shared
 [`bus-agent`](./bus-agent) Go library for Codex App Server lifecycle, session,
 turn, and event handling.
 
-It does not own the public OpenAI-compatible REST API. That API remains in
+The public OpenAI-compatible REST API remains in
 [`bus-api-provider-llm`](./bus-api-provider-llm), which validates JWTs, checks
 billing entitlement, records usage, and maps `/v1/*` requests to `bus.llm.*`
 events when started with `--execution-backend events`.

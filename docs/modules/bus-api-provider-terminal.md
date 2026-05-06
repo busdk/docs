@@ -5,7 +5,7 @@ description: bus-api-provider-terminal exposes authenticated user-owned web term
 
 ## `bus-api-provider-terminal` — terminal API provider
 
-`bus-api-provider-terminal` owns the API boundary for browser terminal access.
+`bus-api-provider-terminal` exposes the API boundary for browser terminal access.
 Portal UI modules call this provider for authenticated browser terminal
 sessions.
 

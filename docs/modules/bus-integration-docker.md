@@ -13,7 +13,7 @@ Desktop on macOS instead of a cloud runner.
 The worker connects to the Bus Events API and publishes correlated response
 events. In composed deployments, run it behind
 [bus integration containers](./bus-integration-containers) with
-`--event-prefix bus.docker` so the provider-neutral router owns the
+`--event-prefix bus.docker` so the provider-neutral router handles the
 public `bus.containers.*` contract. Standalone compatibility mode can still
 consume public `bus.containers.*` events directly.
 
@@ -139,8 +139,8 @@ Codex home and workspace into Docker-backed runs with
 
 The root `compose.yaml` local AI Platform stack also runs this worker as
 `bus-docker` with `--event-prefix bus.docker`. In that stack,
-`bus-integration-containers` owns the public `bus.containers.*` namespace and
-this worker owns the Docker-specific backend prefix.
+`bus-integration-containers` handles the public `bus.containers.*` namespace
+and this worker handles the Docker-specific backend prefix.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

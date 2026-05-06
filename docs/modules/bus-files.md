@@ -110,7 +110,7 @@ Native bank-statement PDF row extraction is still narrower than the long-term go
 
 `bus files` is intentionally not the same thing as [bus attachments](./bus-attachments). `bus attachments` stores evidence inside the workspace and records attachment metadata in canonical datasets. `bus files` is the earlier filesystem-facing tool that inspects local files before they are attached, posted, or otherwise brought into a BusDK workflow.
 
-It is also intentionally separate from [bus bank](./bus-bank) and [bus journal](./bus-journal). `bus bank` owns canonical bank datasets after import, statement checkpoints, and reconciliation-ready bank rows. `bus journal` creates bookkeeping postings. `bus files` should stay a parser and finder tool, not a posting tool.
+It is also intentionally separate from [bus bank](./bus-bank) and [bus journal](./bus-journal). Use `bus bank` after import for canonical bank datasets, statement checkpoints, and reconciliation-ready bank rows. Use `bus journal` for bookkeeping postings. `bus files` provides parser and finder commands before local files enter those workflows.
 
 ### Output intent
 

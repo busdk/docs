@@ -130,7 +130,7 @@ bus-integration-dev-task \
 ```
 
 Remote Git push is intentionally not part of the default isolated-worktree task
-container path because the task container does not own writable Git metadata for
+container path because the task container does not receive writable Git metadata for
 the shared workspace. The default local compose setup commits locally in the
 bridge and does not push.
 

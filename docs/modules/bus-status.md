@@ -44,10 +44,10 @@ bus status close-readiness --year 2026 --compliance fi --format json \
 
 `close-readiness` is the higher-level year-end view. It combines artifact presence, evidence coverage, period close state, VAT filing parity, and deterministic blocker rows into one report.
 
-`vm` and `containers` are AI Platform aggregate status views. They use the
-domain-owned Go clients from [bus-vm](./bus-vm) and
-[bus-containers](./bus-containers), so `bus-status` provides the status UX
-without owning those HTTP API contracts.
+`vm` and `containers` are AI Platform aggregate status views. They use the Go
+clients from [bus-vm](./bus-vm) and [bus-containers](./bus-containers), so
+`bus-status` provides the status UX while those modules define the HTTP API
+contracts.
 Before using them, set the API URL for the deployment and authenticate with
 `bus auth` or provide a token file. VM status requires `vm:read`; container
 status requires `container:read`. The normal Bus auth token from the user

@@ -56,7 +56,7 @@ If an asset is fully depreciated before disposal month, no extra depreciation ro
 
 ### Files
 
-Fixed-asset datasets and schemas in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Path resolution is owned by this module; other tools obtain the path via this module’s API (see [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access)). The register schema includes the explicit padding field required for `PCSV-1` storage.
+Fixed-asset datasets and schemas live in the assets area. Master data for this module is stored in the workspace root only; the module does not use subdirectories (for example, no `assets/` folder). Other tools that need these paths use the module API described in the [Data path contract](../modules/index#data-path-contract-for-read-only-cross-module-access). The register schema includes the explicit padding field required for `PCSV-1` storage.
 
 ### Examples
 

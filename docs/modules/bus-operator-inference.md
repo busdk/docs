@@ -37,7 +37,7 @@ check the provider integration diagnostics such as `bus-integration-ollama
 
 Use this command when operating model-serving hosts as part of a Bus deployment.
 In a running Bus system, `bus-api-provider-inference` exposes the matching
-internal API surface and `bus-integration-inference` owns the shared event
+internal API surface and `bus-integration-inference` provides the shared event
 contract.
 
 ### Sources

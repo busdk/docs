@@ -14,7 +14,7 @@ description: bus entities maintains canonical juridical entity rows for a BusDK 
 
 ### Description
 
-`bus entities` owns the canonical juridical entity registry for a workspace. The dataset lives in `entities.csv` with a beside-the-table schema `entities.schema.json` at the workspace root.
+`bus entities` maintains the canonical juridical entity registry for a workspace. The dataset lives in `entities.csv` with a beside-the-table schema `entities.schema.json` at the workspace root.
 
 Organization rows use official identifiers. `--business-id` and `--org-id` feed the canonical `entity_id` format, so a Finnish business ID becomes `fi:business-id:<value>` and an org or association ID becomes `fi:org-id:<value>`. If both identifiers are present on one row, the canonical `entity_id` is still derived from `business_id` and the `org_id` is stored on the same entity.
 
