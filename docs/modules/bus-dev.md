@@ -153,6 +153,7 @@ The read/reply workflow is stream-oriented rather than result-oriented:
 bus dev task show 123
 bus dev task watch 123
 bus dev task wait 123 --until event --timeout 5m
+bus dev task wait --timeout 30m
 bus dev task say 123 "Use the shared storage API."
 bus dev task say 123.1 "This note is only for bus-ledger."
 bus dev task approve 123.1 7 accept_for_session
@@ -160,10 +161,12 @@ bus dev task approve 123.1 7 accept_for_session
 
 `show` replays status and readable event history, `watch` replays the current
 history first and then follows new events, and `wait` checks already-published
-history before blocking for a new event or terminal state. When the ref is a
-task group, `watch` follows until all known child work streams in that group are
-terminal, and `wait --until terminal` returns the child event that completes
-the group. The text stream
+history before blocking for a new event or terminal state. When no ref is
+supplied, `wait` follows the current repository's open task groups, which makes
+`bus dev work wait --timeout 30m` useful immediately after a multi-recipient
+`start`. When the ref is a task group, `watch` follows until all known child
+work streams in that group are terminal, and `wait --until terminal` returns
+the child event that completes the group. The text stream
 includes the event name, task ref, message, status, source, and claimed worker
 when available, so App Server and worker failures are visible from the task
 stream itself. A requested task with no recorded events reports that explicitly

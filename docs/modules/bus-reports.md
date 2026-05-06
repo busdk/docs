@@ -141,7 +141,13 @@ progress/result lines such as `INFO ai bus-reports profit-and-loss done 2/40
 5% 4000 Office Supplies codex Stationery=20.00; Software=10.00` so you can
 see that the AI branch is actively running and what it returned. AI account
 analysis now runs up to 4 accounts in parallel by default, but the visible
-rows are still rendered back in deterministic account order. In
+rows are still rendered back in deterministic account order. For
+AI account layouts, `--ai-profile fast|balanced|thorough` gives operators a
+simple tuning surface before lower-level model flags: `fast` selects the
+fast default model and low reasoning effort unless an explicit `--ai-model`,
+`--ai-runtime`, or `--ai-reasoning-effort` override is supplied. The AI batch
+resolves its runtime and configuration once and reuses that resolved setup for
+the account workers, so tuning does not add per-account setup overhead. In
 `evidence-pack`, those lines should appear while the AI artifact is still
 running, not only after it has finished. The same `evidence-pack` run should
 reuse one AI result set for the matching PDF and CSV companions, so both
@@ -197,7 +203,7 @@ accounts or categories to Bus account buckets. A minimal bucket file contains
 `bus reports day-book --period <PERIOD_ID> [--group-by <dim:KEY|source-voucher>] [--short-ids] [--show-source-voucher] [--show-external-source-ref] [--show-source-links] [--format <text|csv|markdown|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports ledger-log --period <PERIOD_ID> [options] [-C <dir>] [global flags]`  
 `bus reports account-ledger --account <code> --from <YYYY-MM-DD> --to <YYYY-MM-DD> [-C <dir>] [global flags]`  
-`bus reports profit-and-loss --period <PERIOD_ID> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports profit-and-loss --period <PERIOD_ID> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--format <text|csv|markdown|json|kpa|pma|pdf>] [--ai-profile <fast|balanced|thorough>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports statement-explain --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <PERIOD_ID>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports statement-validate --report <balance-sheet|profit-and-loss> (--as-of <YYYY-MM-DD> | --period <PERIOD_ID>) [--account <code>] [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports budget-vs-actual --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
@@ -205,7 +211,7 @@ accounts or categories to Bus account buckets. A minimal bucket file contains
 `bus reports net-worth --as-of <YYYY-MM-DD> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports account-movement --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports transfer-summary --period <PERIOD_ID> [--format <text|csv|markdown|json>] [-C <dir>] [-o <file>] [global flags]`  
-`bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|kpa|pma|pdf>] [-C <dir>] [-o <file>] [global flags]`  
+`bus reports balance-sheet --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--comparatives <on|off>] [--comparative-workspace <dir>|--comparative-account-balances <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|kpa|pma|pdf>] [--ai-profile <fast|balanced|thorough>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-specification --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|markdown|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports balance-sheet-reconciliation --as-of <YYYY-MM-DD> [--layout-id <id>|--layout <file>] [--allow-implicit-current-year-result] [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
 `bus reports voucher-list --period <PERIOD_ID> [--format <text|csv|json|pdf>] [-C <dir>] [-o <file>] [global flags]`  
