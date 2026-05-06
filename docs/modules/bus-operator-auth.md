@@ -3,7 +3,7 @@ title: bus operator auth
 description: bus operator auth manages Bus auth waitlist approvals.
 ---
 
-## `bus operator auth`
+## Waitlist Administration
 
 `bus operator auth` is the operator-facing auth waitlist client. It is separate
 from end-user `bus auth` login and token commands.
@@ -33,6 +33,15 @@ normal output to a file, `--quiet` suppresses normal output,
 `--version` prints version information.
 
 Run `bus operator auth --help` for the full command reference.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator auth --api-url "$BUS_AUTH_API_URL" waitlist
+operator auth --api-url "$BUS_AUTH_API_URL" waitlist
+```
 
 ### Sources
 

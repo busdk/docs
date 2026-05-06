@@ -817,12 +817,11 @@ bus containers --api-url "$BUS_API_BASE_URL" status --format json
 ```
 
 Success returns account-scoped JSON for the requesting account only. For this
-worker path, the response must include a container status collection or a
-runner/runtime status object, and it must not include runs owned by another
-account. If the JSON only contains an `error` field, treat it as a failed
-verification. If it fails with 401 or 403, check token audience and
-`container:read`. If it times out, verify Events API reachability and that the
-UpCloud worker is running.
+worker path, the response includes a container status collection or a
+runner/runtime status object. Runs owned by other accounts are omitted. If the
+JSON only contains an `error` field, treat it as a failed verification. If it
+fails with 401 or 403, check token audience and `container:read`. If it times
+out, verify Events API reachability and that the UpCloud worker is running.
 
 Minimal valid shape:
 
@@ -855,3 +854,23 @@ and response during the run. If the run fails before the runner starts, check
 container scopes and runner configuration. If it fails while waiting for SSH,
 use the SSH readiness troubleshooting path. If cleanup fails, use the runner
 delete troubleshooting path.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus integration upcloud --provider upcloud --events-url "$BUS_EVENTS_API_URL" --vm-name "$UPCLOUD_VM_NAME"
+integration upcloud --provider upcloud --events-url "$BUS_EVENTS_API_URL" --vm-name "$UPCLOUD_VM_NAME"
+```
+
+### Sources
+
+- [Set up UpCloud runtime and Stripe billing](../integration/upcloud-stripe-setup)
+- [bus-api-provider-events](./bus-api-provider-events)
+- [bus-api-provider-vm](./bus-api-provider-vm)
+- [bus-api-provider-containers](./bus-api-provider-containers)
+- [bus-containers](./bus-containers)
+- [bus-vm](./bus-vm)
+- [bus-integration-ssh-runner](./bus-integration-ssh-runner)
+- [bus-integration-upcloud option reference](./bus-integration-upcloud-reference)

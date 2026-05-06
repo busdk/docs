@@ -3,7 +3,7 @@ title: bus operator token
 description: bus operator token issues trusted internal service tokens.
 ---
 
-## `bus operator token`
+## Service Tokens
 
 `bus operator token` is the operator-facing service-token bootstrap client. It
 calls the auth provider internal token endpoint by default and is not an
@@ -102,6 +102,15 @@ not put internal keys, signing secrets, or real JWTs in shell history, public
 compose files, committed docs, or command-line arguments.
 
 Run `bus operator token --help` for the full command reference.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator token --format token issue --subject usage-worker --audience ai.hg.fi/api --scope "usage:write usage:read"
+operator token --format token issue --subject usage-worker --audience ai.hg.fi/api --scope "usage:write usage:read"
+```
 
 ### Sources
 

@@ -355,8 +355,9 @@ may receive an `llm:proxy` token, but `bus-api-provider-llm` can still deny a
 request with `billing_required` or `quota_exceeded` before waking a runtime.
 
 Admin and service operations use internal-audience tokens. End-user
-`aud=ai.hg.fi/api` tokens must not grant cross-account access, service
-maintenance powers, or billing catalog management.
+`aud=ai.hg.fi/api` tokens are limited to the caller's account and approved
+feature scopes; service maintenance and billing catalog management use separate
+internal audiences and scopes.
 
 ### Using from `.bus` files
 

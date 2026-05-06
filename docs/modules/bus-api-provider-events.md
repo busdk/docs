@@ -3,12 +3,12 @@ title: bus-api-provider-events — Bus Events API provider
 description: bus-api-provider-events exposes JWT-secured event publish and stream endpoints for Bus event-oriented integrations.
 ---
 
-## `bus-api-provider-events` — Bus Events API provider
+## Events API
 
 `bus-api-provider-events` is the HTTP controller for the public Bus Events API.
 It accepts authenticated event publishing requests and exposes authenticated
-event streams. Functional providers remain event-oriented and do not implement
-HTTP controllers themselves.
+event streams. Provider and integration workers use the event contracts without
+adding their own public HTTP event controllers.
 
 Bus API providers and integrations use Events for request/reply workflows such
 as runtime wake-up, container runner work, billing status, usage export, and
@@ -84,8 +84,8 @@ The internal event backend is selectable. `memory` is non-durable and intended
 for local development. Redis is available through Redis Streams with
 atomic `XADD` operations. PostgreSQL is available as a disposable durable event
 log that creates its minimal tables at startup. These backends plug in behind
-the same event bus boundary, so functional providers and HTTP controllers do
-not change when the backend changes.
+the same event bus boundary, so provider workers and HTTP handlers keep the
+same public behavior when the backend changes.
 
 ### `POST /api/v1/events`
 
@@ -245,6 +245,15 @@ SQL transactions as the source of truth.
 Provider and integration processes should use narrow tokens with only the
 domain scopes needed for the events they send and receive. Do not log bearer
 tokens or event payload fields that contain provider secrets.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider events --events-backend postgres
+api provider events --events-backend postgres
+```
 
 ### Sources
 

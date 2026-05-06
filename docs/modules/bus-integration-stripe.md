@@ -3,13 +3,14 @@ title: bus-integration-stripe — Stripe integration
 description: bus-integration-stripe owns Stripe-specific billing protocol behavior behind generic Bus billing.
 ---
 
-## `bus-integration-stripe` — Stripe integration
+## Stripe Worker
 
 `bus-integration-stripe` owns Stripe-specific billing protocol behavior behind
 the provider-neutral Bus billing boundary. It verifies Stripe webhooks, creates
 Stripe Checkout and Customer Portal sessions when deployment secrets are
 configured, records Stripe meter events, and defines Stripe-specific event DTOs.
-Public billing APIs and auth logic do not import Stripe code.
+Public billing APIs and auth flows call provider-neutral Bus billing surfaces;
+this integration handles the Stripe-specific work behind those surfaces.
 
 Use this integration when a Bus deployment sells paid features through Stripe.
 End users still interact with `bus billing` and the Billing API; operators

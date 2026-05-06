@@ -3,7 +3,7 @@ title: bus-integration-billing — billing integration
 description: bus-integration-billing owns provider-neutral billing state and entitlement events.
 ---
 
-## `bus-integration-billing` — billing integration
+## Billing Worker
 
 `bus-integration-billing` owns provider-neutral billing business logic. It
 tracks generic billing state and feature entitlements, creates hosted setup and

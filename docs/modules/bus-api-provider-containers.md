@@ -3,7 +3,7 @@ title: bus-api-provider-containers — container API provider
 description: bus-api-provider-containers exposes user-owned container status and run lifecycle endpoints.
 ---
 
-## `bus-api-provider-containers` — container API provider
+## Container API
 
 `bus-api-provider-containers` is the server-side provider for user-owned
 container APIs. It owns cloud-neutral REST endpoints for container status and
@@ -96,7 +96,7 @@ waits for `bus.containers.run.response`.
 
 Deletes or cancels one user-owned container run when the backend supports it.
 
-The provider must reject attempts to delete runs owned by another account.
+Delete requests are scoped to runs owned by the account in the bearer token.
 Infrastructure runner deletion uses the internal runner endpoint instead.
 Success returns `200 OK` with `{"deleted":true,"run_id":"...","owner_account_id":"..."}`.
 
@@ -253,6 +253,15 @@ BUS_EVENTS_LISTENER_REQUIRED=1
 Use internal runner endpoints only from trusted service or operator tooling.
 End-user container APIs are deliberately separate from runner lifecycle
 administration.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider containers --backend events --events-url "$BUS_EVENTS_API_URL"
+api provider containers --backend events --events-url "$BUS_EVENTS_API_URL"
+```
 
 ### Sources
 

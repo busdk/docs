@@ -6,8 +6,8 @@ description: Route provider-neutral Bus container events to Docker, Podman, or a
 ## Overview
 
 `bus integration containers` is the provider-neutral container integration
-router. It owns the public `bus.containers.*` Events contract and forwards each
-request to one configured backend event prefix such as
+router. It handles the public `bus.containers.*` Events contract and forwards
+each request to one configured backend event prefix such as
 `bus.docker` or `bus.podman`.
 
 Use this module when a deployment needs one stable container event contract for
@@ -120,9 +120,9 @@ With `--backend-event-prefix bus.docker`, a public
 `bus.docker.run.response` before publishing
 `bus.containers.run.response`.
 
-Do not run backend workers on the public `bus.containers.*` events when this
-router is active. Backends should consume backend-prefixed events so the router
-is the only owner of the public provider-neutral contract.
+When this router is active, backend workers consume backend-prefixed events
+such as `bus.docker.*` or `bus.podman.*`. The public `bus.containers.*` events
+stay on the provider-neutral side of the router.
 
 ## Local Compose
 
@@ -159,6 +159,15 @@ The root `compose.yaml` local AI Platform stack uses the same router shape for
 `bus containers run --profile codex`, while nginx exposes the containers API at
 `/api/v1/containers/*` and the protected runner API at
 `/api/internal/containers/*`.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus integration containers --events-url "$BUS_EVENTS_API_URL" --backend-event-prefix bus.docker
+integration containers --events-url "$BUS_EVENTS_API_URL" --backend-event-prefix bus.docker
+```
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

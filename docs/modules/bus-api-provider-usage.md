@@ -3,7 +3,7 @@ title: bus-api-provider-usage — internal usage API provider
 description: bus-api-provider-usage exposes JWT-secured internal usage event collection endpoints for trusted Bus backend jobs.
 ---
 
-## `bus-api-provider-usage` — internal usage API provider
+## Usage Collector API
 
 `bus-api-provider-usage` exposes the internal usage-events API used by trusted
 backend collectors. It is not an end-user command module and does not provide a
@@ -189,6 +189,15 @@ checks.
 Usage records can contain operational metadata. Avoid placing bearer tokens,
 provider secrets, database URLs with passwords, SSH keys, or SMTP credentials
 inside usage `data`.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider usage --addr 127.0.0.1:8082
+api provider usage --addr 127.0.0.1:8082
+```
 
 ### Sources
 

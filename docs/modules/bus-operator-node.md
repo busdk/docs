@@ -63,6 +63,15 @@ deployment, `bus-api-provider-node` exposes the internal API surface and
 `bus-integration-node` owns the event-driven node work. Remote command
 execution is delegated to `bus-integration-ssh-runner`.
 
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator node status --id proxy
+operator node status --id proxy
+```
+
 ### Sources
 
 - [bus-api-provider-node](./bus-api-provider-node)

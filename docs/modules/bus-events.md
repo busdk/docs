@@ -3,16 +3,17 @@ title: bus-events — Bus Events API client and SDK
 description: bus events sends and listens for Bus Events API messages using shared event-oriented contracts.
 ---
 
-## `bus-events` — Bus Events API client and SDK
+## Events Client
 
 `bus events` is the command-line client for the Bus Events API. It can publish
 events and listen for matching events using the same `aud=ai.hg.fi/api` bearer
 JWTs as other Bus API endpoints, with the required domain scopes for each event
 name.
 
-The same module owns the shared Go contracts for event-oriented integrations.
-Functional providers use those contracts or the Events API SDK, so operators
-can run event workers without coupling them to HTTP controller internals.
+The same module provides the shared Go contracts for event-oriented
+integrations. Providers and workers use those contracts or the Events API SDK,
+so operators can run event workers without coupling them to HTTP controller
+internals.
 
 ### Common Tasks
 
@@ -51,12 +52,12 @@ listen timeout.
 `--color <auto|always|never>`, and `--no-color` provide the common Bus CLI
 working-directory and output controls.
 
-### Module Boundary
+### Related APIs
 
-`bus-events` owns the CLI and SDK. `bus-api-provider-events` owns the public
-HTTP Events API server/controller. Functional providers, such as the UpCloud
-integration worker, handle event envelopes through the shared contracts instead
-of HTTP request details.
+`bus events` is the CLI and SDK surface. `bus-api-provider-events` is the
+public HTTP Events API server/controller. Integration workers such as the
+UpCloud worker handle event envelopes through the shared contracts instead of
+HTTP request details.
 
 ### Environment
 
@@ -81,6 +82,15 @@ the correct scope with
 End-user tokens should only be granted scopes for user-accessible events.
 Service and operator maintenance events should use internal service tokens and
 internal routes where the deployment requires service-level access.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus events listen --name example.ping --replay --no-follow
+events listen --name example.ping --replay --no-follow
+```
 
 ### Sources
 

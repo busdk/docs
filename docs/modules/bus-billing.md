@@ -3,7 +3,7 @@ title: bus billing — billing setup and status
 description: bus billing helps end users set up and manage provider-neutral Bus billing.
 ---
 
-## `bus billing` — billing setup and status
+## Billing Setup
 
 `bus billing` is the end-user command for paid Bus services. It shows whether
 the current account has billing enabled, opens the hosted payment setup flow,

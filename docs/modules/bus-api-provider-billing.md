@@ -3,7 +3,7 @@ title: bus-api-provider-billing — Billing API provider
 description: bus-api-provider-billing exposes provider-neutral billing status and setup APIs.
 ---
 
-## `bus-api-provider-billing` — Billing API provider
+## Billing API
 
 `bus-api-provider-billing` serves public end-user billing APIs. It validates Bus
 API JWTs, derives `account_id` from JWT `sub`, and delegates billing state and
@@ -263,6 +263,15 @@ bus operator billing \
 
 Use `bus operator stripe catalog sync --file ./local/billing-catalog.json` when
 Stripe products and prices should be synchronized from the same catalog.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider billing --backend events --events-url "$BUS_EVENTS_API_URL"
+api provider billing --backend events --events-url "$BUS_EVENTS_API_URL"
+```
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

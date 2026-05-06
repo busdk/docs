@@ -3,11 +3,11 @@ title: bus-containers — AI Platform container runner client
 description: bus containers starts, lists, checks, and deletes AI Platform container runs owned by the current account.
 ---
 
-## `bus-containers` — AI Platform container runner client
+## Container Runs
 
 `bus containers` is the domain client for public AI Platform container-runner
-APIs. It owns the client library for container status and user-owned container
-run lifecycle operations.
+APIs. It provides the client library for container status and user-owned
+container run lifecycle operations.
 
 Use it when an approved Bus account has access to non-persistent container
 workloads. Container runs are owned by the account in the bearer token. They
@@ -28,8 +28,8 @@ the normal Bus API token to `~/.config/bus/auth/api-token` or
 `${BUS_CONFIG_DIR}/auth/api-token`, and `bus containers` reads that file
 automatically. Use `--token-file`, `BUS_AI_TOKEN`, or `BUS_API_TOKEN` only when
 automation needs an explicit override. Literal token values are not accepted on
-the command line. The service must use the JWT `sub` account UUID as the owner
-and must not trust a client-supplied account ID.
+the command line. The service uses the JWT `sub` account UUID as the owner and
+ignores caller-supplied account IDs.
 
 ```bash
 bus containers status
@@ -42,9 +42,9 @@ bus containers delete run_123
 starting status. `run` should return a run identifier and final command output
 or a structured run result owned by the current account. `runs` should include
 that run until retention or deletion removes it. Replace `run_123` with the run
-identifier returned by `bus containers run`; deletion should return success
-only for a run owned by the account in the bearer token. Another account's run
-must return an authorization or not-found response.
+identifier returned by `bus containers run`; deletion succeeds only for a run
+owned by the account in the bearer token. Another account's run returns an
+authorization or not-found response.
 
 If billing is required and missing, or if a quota is exhausted, the server
 returns setup or upgrade guidance before starting the container work.
@@ -72,11 +72,11 @@ output and working-directory controls.
 the per-run timeout sent to the API. `--` ends Bus option parsing before the
 container command.
 
-### API ownership
+### Related APIs
 
-`bus-containers` owns the client/library for `/api/v1/containers/status` and
-`/api/v1/containers/runs*`. `bus-status` may show container runner status as
-part of an aggregate view, but it should call the `bus-containers` Go library.
+`bus containers` calls `/api/v1/containers/status` and
+`/api/v1/containers/runs*`. `bus status containers` may show container runner
+status as part of an aggregate view.
 
 ### User-owned delete
 
@@ -87,8 +87,8 @@ DELETE /api/v1/containers/runs/{run_id}
 ```
 
 This is separate from internal infrastructure cleanup endpoints such as runner
-administration. A normal user must be able to delete only runs owned by the
-account in the bearer token.
+administration. A normal user can delete only runs owned by the account in the
+bearer token.
 
 ### Billing And Quotas
 

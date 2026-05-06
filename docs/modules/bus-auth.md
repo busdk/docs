@@ -6,8 +6,9 @@ description: bus auth is the thin command-line client for Bus auth provider logi
 ## Auth Client CLI
 
 `bus-auth` is the command-line client for the Bus auth provider. Through the Bus
-dispatcher it is used as `bus auth ...`. It does not own authentication service
-logic; it sends HTTP requests to a configured auth provider API.
+dispatcher it is used as `bus auth ...`. It sends HTTP requests to the selected
+auth provider API for registration, OTP verification, status, and token
+requests.
 
 Use `register` to enter the waitlist, `login` to request an OTP, `verify` to
 exchange the OTP for an auth-service JWT, `status` to check approval state, and
@@ -136,6 +137,15 @@ Run `bus auth --help` for the full command reference. The
 help output is organized into Git-style sections covering name, synopsis,
 description, commands, options, environment, examples, and related
 documentation.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus auth status
+auth status
+```
 
 ### Sources
 

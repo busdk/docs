@@ -85,6 +85,15 @@ running Bus deployment, the matching service surface is
 `bus-api-provider-cloud`, which exposes cloud operations through Bus API and
 Events paths.
 
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator cloud status --provider upcloud
+operator cloud status --provider upcloud
+```
+
 ### Sources
 
 - [bus-api-provider-cloud](./bus-api-provider-cloud)

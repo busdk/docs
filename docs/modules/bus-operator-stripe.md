@@ -3,7 +3,7 @@ title: bus operator stripe
 description: bus operator stripe provides Stripe-specific billing diagnostics.
 ---
 
-## `bus operator stripe`
+## Stripe Diagnostics
 
 `bus operator stripe` is the Stripe-specific operator client behind Bus billing.
 It is a sibling of `bus operator billing`, not a nested billing submodule.
@@ -80,6 +80,15 @@ file such as `./.env.stripe-test`. Do not put it in public docs, committed
 compose files, shell history, or command arguments.
 
 Run `bus operator stripe --help` for the full command reference.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator stripe test
+operator stripe test
+```
 
 ### Sources
 

@@ -3,11 +3,10 @@ title: bus-vm — AI Platform VM status client
 description: bus vm reads the AI Platform VM/runtime lifecycle status with a Bus auth token.
 ---
 
-## `bus-vm` — AI Platform VM status client
+## Runtime Status
 
-`bus vm` is the domain client for the AI Platform VM/runtime API. It owns the
-client library for `GET /api/v1/vm/status`. Use it when you need the GPU
-runtime lifecycle state directly.
+`bus vm` is the domain client for the AI Platform VM/runtime API. Use it when
+you need the GPU runtime lifecycle state directly.
 
 ### Common task
 
@@ -38,11 +37,10 @@ The token must be an AI Platform bearer JWT, usually obtained through
 Literal token values are not accepted on the command line. The token subject is
 the account UUID used by the AI Platform.
 
-### API ownership
+### Related APIs
 
-`bus-vm` owns the VM API client. `bus-status` may show VM state as part of an
-aggregate status view, but it should call the `bus-vm` Go library instead of
-owning this HTTP endpoint.
+`bus vm` reads the VM API directly. `bus status vm` may show the same VM state
+as part of an aggregate status view.
 
 ### Options
 
@@ -80,3 +78,17 @@ docker compose up --build -d
 export BUS_API_TOKEN="$(docker compose exec -T testing-agent cat /root/.config/bus/auth/api-token)"
 bus vm --api-url "http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}" status
 ```
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus vm status --format json
+vm status --format json
+```
+
+### Sources
+
+- [bus-api-provider-vm](./bus-api-provider-vm)
+- [bus status](./bus-status)

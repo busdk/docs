@@ -113,6 +113,15 @@ shared `bus preferences set bus-operator.env-allow "NAME OTHER_NAME"`.
 Multiple names may be separated by commas, colons, semicolons, spaces, tabs,
 or newlines. Preferences store variable names only, not credential values.
 
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator deploy verify
+operator deploy verify
+```
+
 ### Sources
 
 - [bus operator cloud](./bus-operator-cloud)

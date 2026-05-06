@@ -3,7 +3,7 @@ title: bus operator billing
 description: bus operator billing provides provider-neutral billing administration.
 ---
 
-## `bus operator billing`
+## Billing Administration
 
 `bus operator billing` is the provider-neutral billing operator client. It is
 separate from end-user `bus billing`, which only handles caller-owned billing
@@ -54,6 +54,15 @@ After the catalog is active, end users use `bus billing setup` and
 cross-account status work.
 
 Run `bus operator billing --help` for the full command reference.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus operator billing catalog get
+operator billing catalog get
+```
 
 ### Sources
 

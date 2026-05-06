@@ -3,7 +3,7 @@ title: bus-api-provider-vm — VM API provider
 description: bus-api-provider-vm exposes Bus VM/runtime status and lifecycle endpoints.
 ---
 
-## `bus-api-provider-vm` — VM API provider
+## Runtime API
 
 `bus-api-provider-vm` is the server-side provider for cloud-neutral VM/runtime
 APIs.
@@ -185,6 +185,15 @@ Nginx exposes it at `/api/v1/vm/*` on the local API port. The static backend is
 for deterministic local AI Platform checks, including `/api/v1/vm/status`
 returning provider `static`; deployments that control real runtimes should use
 Events mode with a VM integration backend.
+
+### Using from `.bus` files
+
+Inside a `.bus` file, write the module target without the `bus` prefix:
+
+```bus
+# same as: bus api provider vm --backend events --events-url "$BUS_EVENTS_API_URL"
+api provider vm --backend events --events-url "$BUS_EVENTS_API_URL"
+```
 
 ### Sources
 
