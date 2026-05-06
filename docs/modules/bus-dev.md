@@ -174,7 +174,7 @@ Workers receive work explicitly:
 ```bash
 bus dev task list
 bus dev task stats --all
-bus dev task next
+bus dev task next              # claim one replayed open task or report none available
 bus dev task next --json
 bus dev task close 123.1 "Fixed and verified with make test."
 bus dev task fail 123.1 "Cannot reproduce; fixture is missing."

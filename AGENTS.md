@@ -339,3 +339,7 @@ attachment subfolders.
 When runnable evidence (tests or source) conflicts with a documented BusDK
 contract, document both explicitly: keep the contract statement, and note the
 current implementation mismatch with a clear migration/align action.
+
+This docs repository does not provide `make check`. Use `make quality` for the
+available Makefile quality target, and use `git diff --check` for whitespace
+validation on docs-only edits.
