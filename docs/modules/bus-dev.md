@@ -33,8 +33,8 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev plan` — review SDD and docs against repository state, then refresh `PLAN.md` with prioritized unchecked undone work items only.
 `bus dev spec` — ensure the repository has a compact but detailed local spec in [AGENTS.md](https://agents.md/) that reflects the latest BusDK specifications and describes how to implement this tool; creates AGENTS.md from online SDD and user documentation when missing.
 `bus dev work` — run the “do the work in this repo” agent workflow (code, tests, README).
-`bus dev work <start|list|stats|next|show|watch|wait|say|reopen|approve|close|fail|block|cancel> ...` — interactive controller for parallel development task streams over Bus Events.
-`bus dev task <new|list|stats|next|show|watch|wait|say|reopen|approve|close|fail|block|cancel> ...` — low-level development task stream commands over Bus Events.
+`bus dev work <start|list|status|stats|next|show|watch|wait|say|reopen|approve|close|fail|block|cancel> ...` — interactive controller for parallel development task streams over Bus Events.
+`bus dev task <new|list|status|stats|next|show|watch|wait|say|reopen|approve|close|fail|block|cancel> ...` — low-level development task stream commands over Bus Events.
 `bus dev e2e` — guided workflow to detect and scaffold missing end-to-end tests.
 `bus dev triage` — keep development-state documentation accurate and evidence-based by reconciling test-proven capabilities with planned work and dependencies; updates only documentation (development-status page and module docs), never code or tests.
 `bus dev each [--check] [--only MODULE[,MODULE...]]... [--skip MODULE[,MODULE...]]... [--jobs N|-j N] TOKEN...` — superproject-only helper that runs `bus dev TOKEN...` in every selected child module from the deterministic union of `.gitmodules` paths and top-level directories that contain `.bus/dev` (deduplicated): `bus` first when present, then remaining discovered paths sorted lexicographically. A discovered child is selected when it contains a `Makefile` or `.bus/dev`. Before execution, it preflights all selected modules and fails fast if any module cannot resolve the requested tokens or has a non-runnable script action (for Unix script actions, missing `+x` fails preflight). `--check` performs the same preflight without executing any module command. `--only` limits execution to exactly the named modules; it may be repeated and supports comma-separated names. `--skip` excludes one or more modules by directory name; it may be repeated and supports comma-separated names. `--jobs` / `-j` runs up to N child modules at a time while keeping each child module's own token sequence sequential. When `--jobs` is omitted, the default is the processor count capped at 8.
@@ -123,6 +123,7 @@ surface intended for interactive supervision:
 
 ```bash
 bus dev work start @bus-ledger @docs "Fix behavior and update docs"
+bus dev work status
 bus dev work watch bus-ledger#1.1 --timeout 5m
 bus dev work say bus-ledger#1.1 "Use the shared storage API."
 bus dev work approve bus-ledger#1.1 7 accept_for_session
@@ -181,6 +182,7 @@ Workers receive work explicitly:
 
 ```bash
 bus dev task list
+bus dev task status
 bus dev task stats --all
 bus dev task next              # claim one replayed open task or report none available
 bus dev task next --json
@@ -194,6 +196,13 @@ bus dev task cancel 123.1 "Superseded by a corrected task."
 superseded work. Events history is not deleted, but `list`, `show`, and
 `wait --until terminal` can use the canceled state to retire the task from
 active coordination.
+
+`bus dev work status` and `bus dev task status` are the operator snapshots for
+deciding what needs attention now. They separate active queued, claimed, and
+running work from historical terminal done, failed, blocked, and canceled ledger
+counts. Human-readable output shows the active and terminal groups separately,
+while JSON output includes explicit `active` and `terminal` totals so dashboards
+and scripts can distinguish live coordination load from completed task history.
 
 `stats` replays task events and reports actual terminal counts plus
 created-to-terminal and claimed-to-terminal wall time. Use it to measure real

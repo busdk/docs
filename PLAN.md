@@ -1,6 +1,6 @@
 # Docs Refactor Plan
 
-- [ ] Update the public `bus-dev` module reference for active-versus-terminal development task status reporting: include `status` in the `bus dev work` and `bus dev task` controller command lists, explain that `bus dev work status`/`bus dev task status` separates active queued/claimed/running work from historical done/failed/blocked/canceled ledger counts, mention that JSON includes explicit `active` and `terminal` totals, keep the wording end-user/operator focused, verify with `make quality` and `git diff --check`, and close this item.
+- [x] Update the public `bus-dev` module reference for active-versus-terminal development task status reporting: include `status` in the `bus dev work` and `bus dev task` controller command lists, explain that `bus dev work status`/`bus dev task status` separates active queued/claimed/running work from historical done/failed/blocked/canceled ledger counts, mention that JSON includes explicit `active` and `terminal` totals, keep the wording end-user/operator focused, verify with `make quality` and `git diff --check`, and close this item.
 
 - [x] Update public `bus-integration-dev-task` docs for isolated task worktrees: document workspace-recipient mapping, read-only workspace dependency mounts, writable recipient task worktrees, `.gitmodules` dependency links, and the updated placeholder/help surface; verify with `bus lint`.
 
