@@ -100,6 +100,12 @@ When making style changes, edit source files under `docs/docs/_sass` and
 `docs/docs/_layouts`, not generated files under `_site`. Use `git diff` to
 verify layout and styling changes are intentional.
 
+## Build and preview
+
+This docs repository does not provide `make check`. Use `make quality` for the
+available Makefile quality target, and use `git diff --check` for whitespace
+validation on docs-only edits.
+
 ## SDD rules (`docs/**/*.md`, strongest for `docs/modules`)
 
 Treat software design documents as deterministic source-of-truth artifacts for

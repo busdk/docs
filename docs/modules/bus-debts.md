@@ -51,6 +51,8 @@ bus-debts line add \
 
 Accepted date formats are `YYYY-MM-DD` and `DD.MM.YYYY`. Accepted amount formats include both canonical decimals such as `14137.80` and Finnish operator input such as `14 137,80`. Stored values are normalized to canonical date and decimal forms.
 
+Diagnostics go to stderr using the shared Bus TRACE, DEBUG, INFO, WARN, and ERROR levels. Normal execution uses INFO. Add `-v` or `--verbose` before the command for DEBUG output, repeat verbose or use `-vv`/`--trace` for TRACE output, and use `-q`/`--quiet` for ERROR-only output. Human help, version output, and list/export data remain on stdout.
+
 ### Sources
 
 - [Module implementation SDD](../../../sdd/docs/modules/bus-debts.md)
