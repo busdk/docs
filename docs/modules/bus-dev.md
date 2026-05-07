@@ -131,6 +131,13 @@ bus dev work approve bus-ledger#1.1 7 accept_for_session
 bus dev work cancel bus-ledger#1.1 "Superseded by a corrected task."
 ```
 
+For `drain` workers in the local task-container stack, the recipient module's
+writable worktree is isolated while dependency modules are available read-only
+under `/workspace/<module>` for inspection. When a leading unchecked item is
+genuinely dependency-blocked, the default prompt tells workers to leave it
+unchecked with a concrete follow-up and continue to the next recipient-owned
+item that can be completed now.
+
 `start` is an alias for task creation. When multiple recipients are supplied,
 the command creates one task group and one recipient-specific stream per
 recipient, allowing independent workers for those modules to process work in
