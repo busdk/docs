@@ -93,6 +93,13 @@ concurrent tasks addressed to the same module.
 For Codex App Server tasks, a completed LLM turn is not enough to mark work
 done: no worktree changes, no tests run, an unclosed PLAN item, or explicit
 blocked evidence is recorded as a blocked task stream.
+Workers also maintain a concise non-secret hourly engineering memo under
+`./logs/YYYYMMDD-HH-agent-memo.md` in the recipient worktree. The logical
+`agent_id` is the recipient module/AGENTS.md identity, while task `work_ref`,
+worker/container metadata, and App Server ids identify a concrete run. Terminal
+`app_server_closeout` evidence includes the `agent_id`, AGENTS.md path, and memo
+path so later review can group work by agent and inspect the memo for a
+specific attempt.
 
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,

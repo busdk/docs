@@ -137,10 +137,14 @@ under `/workspace/<module>` for inspection. The default prompt also tells
 workers to verify the recipient module's product-layer role from AGENTS.md,
 README, and SDD/module docs before implementing, and not to add local
 persistence, standalone workflow, or duplicate business logic to a thin client
-or provider when that behavior belongs in another Bus module. When a leading
-unchecked item is genuinely dependency-blocked, the default prompt tells
-workers to leave it unchecked with a concrete follow-up and continue to the
-next recipient-owned item that can be completed now. Worker closeout reserves
+or provider when that behavior belongs in another Bus module. Workers also
+write a safe hourly memo under `./logs/YYYYMMDD-HH-agent-memo.md` in the
+recipient worktree. The logical `agent_id` is the recipient module/AGENTS.md
+identity, while `work_ref`, worker/container ids, and App Server session ids
+identify a concrete run. When a leading unchecked item is genuinely
+dependency-blocked, the default prompt tells workers to leave it unchecked with
+a concrete follow-up and continue to the next recipient-owned item that can be
+completed now. Worker closeout reserves
 `remaining_blockers` for blockers that prevent the completed slice from being
 accepted; unrelated open PLAN items and dependency prerequisites should be
 reported as follow-ups or cross-module requests so valid completed work can be
