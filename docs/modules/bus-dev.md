@@ -138,10 +138,11 @@ workers to verify the recipient module's product-layer role from AGENTS.md,
 README, and SDD/module docs before implementing, and not to add local
 persistence, standalone workflow, or duplicate business logic to a thin client
 or provider when that behavior belongs in another Bus module. Workers also
-write a safe hourly memo under `./logs/YYYYMMDD-HH-agent-memo.md` in the
-recipient worktree. The logical `agent_id` is the recipient module/AGENTS.md
-identity, while `work_ref`, worker/container ids, and App Server session ids
-identify a concrete run. When a leading unchecked item is genuinely
+publish safe hourly notes through `bus notes add`, so the notes become Bus
+ecosystem data rather than hidden local files. The logical `agent_id` is the
+recipient module/AGENTS.md identity, while `work_ref`, worker/container ids,
+and App Server session ids identify a concrete run. Closeout reports Bus Notes
+IDs or query metadata for the worker notes. When a leading unchecked item is genuinely
 dependency-blocked, the default prompt tells workers to leave it unchecked with
 a concrete follow-up and continue to the next recipient-owned item that can be
 completed now. Worker closeout reserves
