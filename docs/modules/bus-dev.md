@@ -136,7 +136,11 @@ writable worktree is isolated while dependency modules are available read-only
 under `/workspace/<module>` for inspection. When a leading unchecked item is
 genuinely dependency-blocked, the default prompt tells workers to leave it
 unchecked with a concrete follow-up and continue to the next recipient-owned
-item that can be completed now.
+item that can be completed now. Worker closeout reserves
+`remaining_blockers` for blockers that prevent the completed slice from being
+accepted; unrelated open PLAN items and dependency prerequisites should be
+reported as follow-ups or cross-module requests so valid completed work can be
+promoted.
 
 `start` is an alias for task creation. When multiple recipients are supplied,
 the command creates one task group and one recipient-specific stream per
