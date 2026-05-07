@@ -133,10 +133,14 @@ bus dev work cancel bus-ledger#1.1 "Superseded by a corrected task."
 
 For `drain` workers in the local task-container stack, the recipient module's
 writable worktree is isolated while dependency modules are available read-only
-under `/workspace/<module>` for inspection. When a leading unchecked item is
-genuinely dependency-blocked, the default prompt tells workers to leave it
-unchecked with a concrete follow-up and continue to the next recipient-owned
-item that can be completed now. Worker closeout reserves
+under `/workspace/<module>` for inspection. The default prompt also tells
+workers to verify the recipient module's product-layer role from AGENTS.md,
+README, and SDD/module docs before implementing, and not to add local
+persistence, standalone workflow, or duplicate business logic to a thin client
+or provider when that behavior belongs in another Bus module. When a leading
+unchecked item is genuinely dependency-blocked, the default prompt tells
+workers to leave it unchecked with a concrete follow-up and continue to the
+next recipient-owned item that can be completed now. Worker closeout reserves
 `remaining_blockers` for blockers that prevent the completed slice from being
 accepted; unrelated open PLAN items and dependency prerequisites should be
 reported as follow-ups or cross-module requests so valid completed work can be
