@@ -101,6 +101,18 @@ concrete run. Terminal `app_server_closeout` evidence includes the `agent_id`,
 AGENTS.md path, and Bus Notes IDs or query metadata so later review can group
 work by agent and inspect the notes for a specific attempt.
 
+Lifecycle behavior is configured through a JSON policy file rather than hidden
+process-global modes. `--policy-file` / `BUS_DEV_TASK_POLICY_FILE` load the
+module-owned policy schema for worker count, one-worker-per-recipient behavior,
+disposable versus persistent workers, idle timeout, safe App Server crash retry,
+backend selection, isolated worktrees, read-only dependency worktrees,
+task-scoped App Server state, evidence requirements, cleanup retention, and
+progress log level. Explicit CLI flags and environment variables still override
+matching policy fields for one invocation. The local BusDK dev-task Compose
+stack mounts `config/dev-task-lifecycle-policy.json`, starts a local Notes API,
+and issues worker tokens with the dev-task, events, container, and Notes scopes
+needed for workers to publish `bus notes` evidence.
+
 `--command-json` sets the command sent to the container as a JSON array. The
 worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
 `{module}`, `{main_repo_path}`, `{repo_path}`, `{worktree_path}`, `{branch}`,
@@ -146,14 +158,16 @@ bridge and does not push.
 The BusDK superproject includes `compose.dev-task-docker.yaml` for local
 testing with Docker Desktop:
 
-The default compose command for real local use runs `codex exec` in an isolated
-worktree for the addressed module repository, then the bridge stages and
+The default compose command for real local use runs the Codex App Server backend
+in an isolated worktree for the addressed module repository, then the bridge stages and
 commits successful changes before fast-forward promotion. The workspace remains
 the read-only dependency view, while the addressed repository worktree is the
-only writable mount for the task container. This consumes ChatGPT-backed Codex
-quota. Smoke tests override `BUS_DEV_TASK_COMMAND_JSON` to
-`["codex","--version"]` and `BUS_DEV_TASK_COMMIT=false` so they do not consume
-quota or create commits.
+only writable mount for the task container. The same stack starts Bus Events,
+provider-neutral container routing, PostgreSQL, and the local Notes API so
+worker `bus notes add` calls are stored as Bus Notes data. This consumes
+ChatGPT-backed Codex quota. Smoke tests can override `BUS_DEV_TASK_AGENT_BACKEND`
+and `BUS_DEV_TASK_COMMAND_JSON` to use a deterministic command backend when the
+goal is plumbing verification rather than real LLM work.
 
 ```sh
 BUS_DEV_TASK_COMMAND_JSON='["codex","--version"]' \
