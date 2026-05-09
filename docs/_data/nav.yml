@@ -202,6 +202,25 @@
   links:
     - label: System architecture
       url: /architecture/
+    - label: UI framework
+      url: /ui/
+      children:
+        - label: Architecture
+          url: /ui/architecture
+        - label: Design system
+          url: /ui/design-system
+        - label: Rendering model
+          url: /ui/rendering
+        - label: Building blocks
+          url: /ui/components
+        - label: Component catalog
+          url: /ui/component-catalog
+        - label: Declarative UI documents
+          url: /ui/declarative-documents
+        - label: Portal modules
+          url: /ui/portal-modules
+        - label: Testing UI apps
+          url: /ui/testing
     - label: API JWT audiences and scopes
       url: /architecture/api-jwt-audiences-and-scopes
     - label: Data formats and storage
