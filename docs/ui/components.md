@@ -129,6 +129,10 @@ separate app architectures; they are actions or effects operating on resources.
 Product modules configure endpoint paths, labels, scopes, permission copy, and
 provider DTO projection.
 
+Existing provider clients can remain as compatibility adapters when they expose
+the same resource behavior. The reusable framework boundary is the resource
+contract, not the concrete helper name used by an older module.
+
 Runtime config components should render public configuration only. Secrets,
 tokens, private customer data, and raw credentials must not be embedded in
 public config blocks or client logs.

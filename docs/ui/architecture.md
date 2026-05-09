@@ -33,7 +33,9 @@ variants. A JSON endpoint, evidence link, preview URL, and upload target are
 all `Resource` variants. Polling, event streams, drop handling, resize
 listeners, close guards, and client logging are all `Effect` variants. Concrete
 helpers may make common cases convenient, but they should compose through this
-small model instead of creating separate runtime families.
+small model instead of creating separate runtime families. Compatibility
+helpers can wrap older APIs as adapters while modules migrate toward the shared
+contract.
 
 ## Ownership Boundaries
 
