@@ -18,7 +18,7 @@ renderer options using the same component catalog that Go code uses.
 
 ## Command Shape
 
-The `bus-ui` command should treat a document path as render input:
+The framework command contract treats a document path as render input:
 
 ```sh
 bus-ui sample.yml
@@ -62,10 +62,14 @@ actions:
   search:
     type: submit
     method: GET
-    target: /modules/notes/
+    target:
+      base: module
+      path: /
   approve:
     type: post
-    target: /modules/notes/review
+    target:
+      base: module
+      path: /review
 view:
   kind: PortalShell
   props:
@@ -149,11 +153,19 @@ Actions are named separately from components so they can be reviewed and tested.
 An action describes intent, method, target, payload binding, confirmation
 policy, and expected result handling. Components refer to actions by name.
 
+Targets can be literal paths in standalone samples, but portal-module documents
+should prefer host-resolved targets. A target such as `{ base: module, path:
+"/review" }` means "resolve this path under the current mounted module base."
+Literal `/modules/<id>/...` paths are mainly for fixtures that intentionally
+test a concrete mounted path.
+
 ```yaml
 actions:
   archive:
     type: post
-    target: /modules/notes/archive
+    target:
+      base: module
+      path: /archive
     payload:
       note_id: { bind: row.id }
     confirm:
@@ -164,6 +176,57 @@ actions:
 The renderer should emit stable action tokens. The Go/WASM runtime maps those
 tokens to typed handlers. Server-rendered forms may use the same action
 definition to produce native `method` and `action` attributes.
+
+## Auth Example
+
+Auth-oriented documents should describe the UI state without moving auth policy
+into the document. Endpoint paths, action tokens, field names, and provider
+status values come from the auth module view model. Session validation, CSRF
+enforcement, eligibility, authorization, approval, account status, waitlist
+state, and billing status remain provider/API decisions.
+
+```yaml
+version: bus-ui/v1
+metadata:
+  title: Account access
+renderer:
+  target: html
+  shell: portal
+data:
+  auth:
+    status: signed-out
+    provider_status: requires-otp
+actions:
+  register:
+    type: post
+    target: { base: module, path: /register }
+  request_otp:
+    type: post
+    target: { base: module, path: /otp/request }
+  verify_otp:
+    type: post
+    target: { base: module, path: /otp/verify }
+  request_token:
+    type: post
+    target: { base: module, path: /token }
+  logout:
+    type: post
+    target: { base: module, path: /logout }
+view:
+  kind: PortalShell
+  props:
+    title: Account
+  children:
+    - kind: CredentialLoginCard
+      props:
+        usernameLabel: Email
+        passwordLabel: Password or one-time code
+        submitAction: verify_otp
+    - kind: ResultPanel
+      props:
+        status: { bind: auth.provider_status }
+        title: Account status
+```
 
 ## Slots
 

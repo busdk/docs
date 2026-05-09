@@ -80,6 +80,12 @@ Do not re-test every generic component in every product module e2e. The shared
 component suite should own generic behavior; product e2e should only prove the
 module wiring and one or two critical workflows.
 
+Portal modules should keep a fast default host/module smoke path for normal
+verification: metadata, mounted route, token/frontend-auth gate, theme asset,
+and one representative fake-provider action. Browser, Docker, full provider, or
+long-running checks can be opt-in when they exercise runtime behavior that unit
+tests cannot cover cheaply.
+
 ## Accessibility And Security Checks
 
 UI tests should include accessibility and safety checks when the component

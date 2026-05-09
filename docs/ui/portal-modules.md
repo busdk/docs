@@ -34,6 +34,25 @@ The purpose is to remove hard-coded relative paths from feature modules. A
 module should render the same route correctly when mounted locally, under a
 token URL, or behind a portal distribution wrapper.
 
+The same host context must be available to HTTP handlers, deterministic Go
+render tests, and Go/WASM runtime setup. Tests should be able to assert the
+same base path, asset URL, API resolver, runtime config, and security metadata
+that the browser app receives.
+
+## Module Descriptor
+
+The portal module descriptor should be strict at the operator-facing boundary.
+It should validate stable ID, title, readiness, default enablement, navigation
+items, route/page specs, deterministic server-render entry points, WASM assets
+and hooks, public runtime config keys, declared provider API origins, and asset
+declarations.
+
+Validation should fail loudly for invalid IDs, duplicate IDs, bad nav paths,
+missing titles, unsupported readiness, nil handlers or pages, missing render or
+runtime declarations, unsafe public config keys, and undeclared provider
+origins. Defensive metadata normalization can still exist for internal
+robustness, but it should not hide invalid operator configuration.
+
 ## Product Module Responsibilities
 
 A product module owns its DTO adapters, view models, provider clients, copy,
@@ -46,6 +65,11 @@ module configures credential fields and scopes; `bus-ui` renders the form and
 session request mechanics. A notes module configures note filters, note rows,
 review actions, visibility, and safety labels; `bus-ui` renders filters, tables,
 status tags, action bars, reader surfaces, and safe links.
+
+Auth policy remains outside the portal renderer. Session validation, CSRF
+enforcement, account or waitlist state, approval and billing state, token
+eligibility, and authorization are provider/API responsibilities; portal
+modules project safe state and dispatch actions.
 
 ## Registration And Distribution
 

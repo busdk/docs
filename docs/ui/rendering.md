@@ -97,6 +97,16 @@ When a helper needs JavaScript because the browser API requires it, expose a
 Go-facing API and keep product modules in Go. Local hand-written JavaScript in a
 product module is a sign that a reusable helper may be missing.
 
+Existing modules may temporarily keep external JavaScript files or legacy
+`window.<Module>` compatibility facades while migrating to Go/WASM helpers.
+That compatibility must have an owner, a removal condition, CSP-safe external
+loading, no secrets in DOM data, and a Go-facing replacement path.
+
+Streaming readers need the same ownership discipline. Provider event streams
+and SSE-like flows should expose explicit abort handles, disposer cleanup,
+typed parsers, and pure parser tests for chunk boundaries, malformed payloads,
+provider errors, and user-initiated abort.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./design-system">Design system</a></span>

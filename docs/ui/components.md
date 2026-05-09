@@ -122,6 +122,12 @@ generic. The auth product module decides labels, scopes, and provider policy;
 the shared helpers provide forms, storage/request mechanics, safe failure
 presentation, and test seams.
 
+Provider/session runtime blocks should include browser storage adapters,
+authenticated request adapters, CSRF token providers, typed JSON GET/POST
+helpers, multipart upload helpers, async action state, provider-error
+projection, and fakes for unit tests. Product modules configure endpoint paths,
+labels, scopes, permission copy, and provider DTO projection.
+
 Runtime config components should render public configuration only. Secrets,
 tokens, private customer data, and raw credentials must not be embedded in
 public config blocks or client logs.
@@ -198,6 +204,11 @@ client-log endpoints when the host enables them.
 Polling helpers run refresh cycles with guard conditions, snapshot comparison,
 and error handling. Product modules configure the refresh function and state
 application; the framework owns repeatable lifecycle behavior.
+
+Event stream helpers consume provider event streams with typed parsing,
+explicit abort/disposer ownership, session header injection, and pure parser
+tests. Container-run UI should compose normal form, action, provider-error, and
+result blocks; provider APIs still own authorization and execution policy.
 
 ## Test Helpers
 

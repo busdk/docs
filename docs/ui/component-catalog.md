@@ -10,6 +10,11 @@ must be available to Go callers and to declarative JSON/YAML UI documents where
 that makes sense. A block should be small, deterministic, and useful outside a
 single product module.
 
+Rows define reusable contracts. Product modules should depend on a catalog row
+through a stable `bus-ui` API rather than copying local one-off code; when the
+stable API is missing, the owning `bus-ui` work should add it before downstream
+modules migrate to that block.
+
 The catalog uses five common fields: `kind` names the component or runtime
 block; `purpose` explains when to use it; `inputs` describes the props, slots,
 or view-model shape; `output` describes the rendered or runtime result; and
@@ -91,6 +96,11 @@ or view-model shape; `output` describes the rendered or runtime result; and
 | `RuntimeConfig` | Publish safe public config. | Public keys, URLs, feature flags. | JSON script or mounted config object. | Refuses or omits sensitive fields. |
 | `APIURLResolver` | Resolve relative API paths. | Current location, base path, endpoint path. | Canonical URL string. | Prefix rewriting and query preservation. |
 | `GatewayClient` | JSON API client abstraction. | URL resolver, expected status. | GET/POST decode behavior. | Success, non-200, invalid JSON, path resolution. |
+| `AuthenticatedRequest` | Attach browser session credentials to API requests. | Session source, header policy, request target. | Request adapter for bearer or session-backed calls. | Missing session, under-scoped session, redaction, retry behavior. |
+| `CSRFProvider` | Provide anti-forgery tokens to unsafe requests. | Token source, header/form field name, refresh behavior. | Token injection helper. | Missing token, stale token, provider rejection path. |
+| `JSONRequest` | Typed JSON GET/POST helper. | Method, URL resolver, payload, expected status, decoder. | Typed response or provider error. | Request path, status handling, invalid JSON, safe diagnostics. |
+| `MultipartUpload` | Upload files through provider routes. | File source, field names, metadata, endpoint, progress hooks. | Upload request and typed result. | Empty file, bad content type, provider error, no secret logging. |
+| `AsyncActionState` | Track busy/result/error state for one UI action. | Action token, pending flag, result, error, retry policy. | View-model state for buttons and result panels. | Duplicate prevention, success/error transitions, disabled controls. |
 | `CredentialLoginCard` | Generic credential login surface. | Labels, form attrs, username/password names, submit label. | Login panel with fields. | Labels, form action, no inline scripts. |
 | `SessionState` | Represent auth/session state. | Authenticated flag, identity label, scopes, expiry. | Status or hidden runtime data. | Safe display and expired state. |
 | `ProviderError` | Safe provider failure surface. | Title, status, summary, request ID, safe details. | Error/result block. | No raw secret payloads. |
@@ -99,6 +109,7 @@ or view-model shape; `output` describes the rendered or runtime result; and
 | `CloseGuard` | Protect active or unsaved work. | Working flags, draft flags, message. | beforeunload/native close decision. | Blocks only when needed. |
 | `Disposer` | Own browser listeners and callbacks. | Disposer callbacks. | Idempotent cleanup chain. | Double-call safety and callback release. |
 | `PollingCycle` | Refresh state repeatedly. | Enabled flag, fetch/apply functions, snapshot. | One refresh cycle or timer loop. | Guarding, error handling, changed-state detection. |
+| `EventStream` | Consume provider event streams or SSE-like output. | URL, session headers, parser, abort handle, apply callback. | Typed event batches and lifecycle state. | Chunk boundaries, malformed payloads, abort, reconnect/error display. |
 
 ## Assistant Components
 
@@ -125,6 +136,7 @@ or view-model shape; `output` describes the rendered or runtime result; and
 | `TerminalInputBox` | Stdin input and stop/send actions. | Value, placeholder, send/exit actions, disabled flags. | Textarea plus controls. | Disabled state and action attrs. |
 | `TerminalApprovalPrompt` | Command approval request. | Title, summary, decision actions. | Approval card. | Button variants and action tokens. |
 | `TerminalSessionAdapter` | Convert events into terminal view model. | AI events and approval map. | `TerminalSessionPanel` props. | Lifecycle, exit status, stderr/stdout, approval waits. |
+| `ContainerRunAction` | Configure and submit container-run requests from UI. | Image/command form view model, provider route, session adapter, result mapping. | Form/action/result composition for container runs. | Provider authorization stays external, validation, provider error guidance. |
 
 ## Evidence And Media Components
 
