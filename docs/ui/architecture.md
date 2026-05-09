@@ -27,6 +27,14 @@ The renderer layer turns the tree into HTML, a mounted Go/WASM app, or a test
 artifact. The target changes, but the view-model and component contract should
 remain the same.
 
+The architecture should resist parallel abstractions. A command submit, file
+upload, container run, approval decision, and AI send button are all `Action`
+variants. A JSON endpoint, evidence link, preview URL, and upload target are
+all `Resource` variants. Polling, event streams, drop handling, resize
+listeners, close guards, and client logging are all `Effect` variants. Concrete
+helpers may make common cases convenient, but they should compose through this
+small model instead of creating separate runtime families.
+
 ## Ownership Boundaries
 
 `bus-ui` owns general UI language: nodes, attributes, form controls, buttons,
@@ -78,15 +86,13 @@ should pass escaped text and typed props wherever possible.
 ## Runtime Contract
 
 Browser runtime helpers are small, composable pieces. Action dispatch maps a
-stable action token to a typed handler. Gateway clients resolve API paths and
-decode JSON. Polling helpers run one deterministic refresh cycle. Error hosts
-display recoverable failures. Close guards prevent losing active AI work or
-unsaved drafts. Drop handlers convert files and paths into typed attachments.
-Resize and mount helpers own browser listeners through explicit disposer
-callbacks.
+stable action token to a typed handler. Resources resolve provider, artifact,
+and upload targets and decode typed results. Effects own browser lifecycle
+behavior such as polling, event streams, close guards, drop handlers, resize
+listeners, and client logging through explicit disposer callbacks.
 
 Every runtime helper must expose enough seams for unit tests. A module should
-be able to test action behavior with fake gateway clients and fake view state,
+be able to test action behavior with fake resources and fake view state,
 without opening a browser for every case.
 
 ## Portal Host Contract

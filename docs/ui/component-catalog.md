@@ -20,6 +20,19 @@ block; `purpose` explains when to use it; `inputs` describes the props, slots,
 or view-model shape; `output` describes the rendered or runtime result; and
 `tests` names the behavior that should be covered by unit tests.
 
+## Core Vocabulary
+
+| Concept | Covers | Rule |
+| --- | --- | --- |
+| `Node` | Escaped text, trusted fragments, elements, props, virtual nodes, templates. | Rendering must be deterministic and inspectable. |
+| `Component` | Reusable functions from props, slots, and view-model data to nodes. | Components do not own product authority or provider policy. |
+| `Shell` | Page and app frames such as portal, sidebar, assistant, and split layouts. | A shell owns slots and chrome; product modules provide content. |
+| `Collection` | Tables, lists, timelines, galleries, summaries, and repeated records. | Collections receive projected rows/items and expose state slots. |
+| `State` | Empty, loading, busy, warning, error, result, and status surfaces. | State is visible and testable, not hidden inside local scripts. |
+| `Action` | Submit, click, approve, archive, send, stop, upload, and provider-job starts. | Actions use stable tokens and typed handlers. |
+| `Resource` | API endpoints, artifact URLs, evidence previews, upload targets, and provider data. | Resources centralize path resolution, auth, decoding, and fake clients. |
+| `Effect` | Polling, event streams, close guards, drops, resize, logging, and cleanup. | Effects have explicit start, apply, error, and dispose behavior. |
+
 ## Foundation Components
 
 | Kind | Purpose | Inputs | Output | Tests |
@@ -89,27 +102,22 @@ or view-model shape; `output` describes the rendered or runtime result; and
 | `ResultPanel` | Summarize operation result. | Status, title, summary, detail, actions. | Result/status surface. | Semantic status and safe details. |
 | `ErrorBanner` | Present recoverable error. | Message, dismiss action, attrs. | Alert block. | Escaping and dismiss action token. |
 
-## Provider, Session, And Runtime Components
+## Actions, Resources, And Effects
 
 | Kind | Purpose | Inputs | Output | Tests |
 | --- | --- | --- | --- | --- |
 | `RuntimeConfig` | Publish safe public config. | Public keys, URLs, feature flags. | JSON script or mounted config object. | Refuses or omits sensitive fields. |
 | `APIURLResolver` | Resolve relative API paths. | Current location, base path, endpoint path. | Canonical URL string. | Prefix rewriting and query preservation. |
-| `GatewayClient` | JSON API client abstraction. | URL resolver, expected status. | GET/POST decode behavior. | Success, non-200, invalid JSON, path resolution. |
-| `AuthenticatedRequest` | Attach browser session credentials to API requests. | Session source, header policy, request target. | Request adapter for bearer or session-backed calls. | Missing session, under-scoped session, redaction, retry behavior. |
-| `CSRFProvider` | Provide anti-forgery tokens to unsafe requests. | Token source, header/form field name, refresh behavior. | Token injection helper. | Missing token, stale token, provider rejection path. |
-| `JSONRequest` | Typed JSON GET/POST helper. | Method, URL resolver, payload, expected status, decoder. | Typed response or provider error. | Request path, status handling, invalid JSON, safe diagnostics. |
-| `MultipartUpload` | Upload files through provider routes. | File source, field names, metadata, endpoint, progress hooks. | Upload request and typed result. | Empty file, bad content type, provider error, no secret logging. |
-| `AsyncActionState` | Track busy/result/error state for one UI action. | Action token, pending flag, result, error, retry policy. | View-model state for buttons and result panels. | Duplicate prevention, success/error transitions, disabled controls. |
+| `Session` | Represent and apply browser session state. | Storage adapter, credential state, bearer/CSRF policy, expiry. | Safe session view model and request headers. | Missing session, stale CSRF, under-scoped session, redaction. |
+| `Action` | Dispatch one user-triggered command. | Token, handler, method, payload binding, busy/result/error state. | Typed handler call, native form, or request invocation. | Duplicate prevention, disabled state, success/error transitions. |
+| `Resource` | Resolve and fetch external data or media. | URL resolver, request method, payload/upload fields, expected status. | Typed response, provider error, artifact URL, or upload result. | Status handling, invalid JSON, bad file, path safety, no secret logging. |
+| `Effect` | Own background or browser lifecycle behavior. | Trigger, resource, parser/apply callback, abort/disposer policy. | Polling, event-stream, drop, resize, close-guard, or log lifecycle. | Cleanup, abort, malformed payloads, reconnect/error display. |
 | `CredentialLoginCard` | Generic credential login surface. | Labels, form attrs, username/password names, submit label. | Login panel with fields. | Labels, form action, no inline scripts. |
-| `SessionState` | Represent auth/session state. | Authenticated flag, identity label, scopes, expiry. | Status or hidden runtime data. | Safe display and expired state. |
 | `ProviderError` | Safe provider failure surface. | Title, status, summary, request ID, safe details. | Error/result block. | No raw secret payloads. |
 | `ClientLog` | Browser-to-server diagnostic channel. | App name, level, message, endpoint. | Structured log request. | Level filtering and redaction. |
 | `ErrorHost` | Dismissible runtime error display. | Current error, clear action. | Alert host. | Report/clear/recover behavior. |
 | `CloseGuard` | Protect active or unsaved work. | Working flags, draft flags, message. | beforeunload/native close decision. | Blocks only when needed. |
 | `Disposer` | Own browser listeners and callbacks. | Disposer callbacks. | Idempotent cleanup chain. | Double-call safety and callback release. |
-| `PollingCycle` | Refresh state repeatedly. | Enabled flag, fetch/apply functions, snapshot. | One refresh cycle or timer loop. | Guarding, error handling, changed-state detection. |
-| `EventStream` | Consume provider event streams or SSE-like output. | URL, session headers, parser, abort handle, apply callback. | Typed event batches and lifecycle state. | Chunk boundaries, malformed payloads, abort, reconnect/error display. |
 
 ## Assistant Components
 
@@ -136,7 +144,10 @@ or view-model shape; `output` describes the rendered or runtime result; and
 | `TerminalInputBox` | Stdin input and stop/send actions. | Value, placeholder, send/exit actions, disabled flags. | Textarea plus controls. | Disabled state and action attrs. |
 | `TerminalApprovalPrompt` | Command approval request. | Title, summary, decision actions. | Approval card. | Button variants and action tokens. |
 | `TerminalSessionAdapter` | Convert events into terminal view model. | AI events and approval map. | `TerminalSessionPanel` props. | Lifecycle, exit status, stderr/stdout, approval waits. |
-| `ContainerRunAction` | Configure and submit container-run requests from UI. | Image/command form view model, provider route, session adapter, result mapping. | Form/action/result composition for container runs. | Provider authorization stays external, validation, provider error guidance. |
+
+Container-run UI is not a separate architecture. Model it as `Form` +
+`Action` + `Resource` + `ResultPanel`, and add `TerminalSessionPanel` only when
+the run produces an interactive or streamed command session.
 
 ## Evidence And Media Components
 

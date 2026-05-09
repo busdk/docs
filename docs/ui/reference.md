@@ -29,7 +29,7 @@ Those files should use the same component catalog as Go code and should render
 through `bus-ui sample.yml` or the explicit render command.
 
 Wire actions through stable tokens. Register typed Go handlers for actions and
-test them with fake gateway clients or fake provider clients.
+test them with fake resources or fake provider clients.
 
 Test in layers. Add view-model tests, renderer tests, runtime/action tests, and
 only then thin e2e tests for host mounting and representative browser behavior.

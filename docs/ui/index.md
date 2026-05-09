@@ -36,12 +36,38 @@ render a form field, status tag, data table, action bar, terminal session, safe
 artifact link, error panel, or assistant message once the product module has
 already projected domain data into a generic shape.
 
+## Minimal Model
+
+The framework should stay small enough to explain in one pass:
+
+- `Node` is the deterministic render tree.
+- `Component` is a reusable function from props, slots, and view-model data to
+  nodes.
+- `Shell` is a component that owns page-level slots such as navigation, body,
+  assistant, and footer.
+- `Collection` is a component for repeated data: tables, lists, timelines, and
+  galleries.
+- `State` is visible status: empty, loading, result, warning, error, and busy
+  states.
+- `Action` is user-triggered behavior: submit, click, approve, upload, send,
+  stop, archive, or start a provider job.
+- `Resource` is external data or media: API endpoint, artifact link, evidence
+  preview, provider request, or upload target.
+- `Effect` is lifecycle behavior: polling, event streams, close guards, drops,
+  resize, logging, and cleanup.
+
+Specific helpers such as `CredentialLoginCard`, `TerminalSessionPanel`,
+`AIPanel`, `SidebarShell`, `TextTable`, or provider request adapters are
+variants of those concepts, not separate architectural layers. When a proposed
+feature cannot fit this model, it should be questioned before a new framework
+concept is added.
+
 ## Modules
 
 `bus-ui` owns reusable building blocks. Its public surface includes deterministic
 HTML helpers, virtual DOM nodes, component hooks, form and content primitives,
-shared CSS tokens, browser lifecycle helpers, gateway clients, AI workbench
-components, terminal session components, evidence helpers, and test fakes.
+shared CSS tokens, action/resource/effect helpers, AI workbench components,
+terminal session components, evidence helpers, and test fakes.
 
 `bus-portal` owns the host. It mounts feature modules, serves the shared CSS and
 static assets, applies security headers, exposes module metadata, passes runtime

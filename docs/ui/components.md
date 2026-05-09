@@ -114,19 +114,20 @@ markup.
 ## Provider And Session Helpers
 
 API URL helpers resolve provider routes relative to the current portal or local
-app path. Gateway clients perform JSON GET/POST requests against resolved
-paths.
+app path. They should feed the same resource contract used by forms, uploads,
+evidence links, previews, and background refreshes.
 
 Bearer session, CSRF, credential login, and provider-error helpers should be
 generic. The auth product module decides labels, scopes, and provider policy;
 the shared helpers provide forms, storage/request mechanics, safe failure
 presentation, and test seams.
 
-Provider/session runtime blocks should include browser storage adapters,
-authenticated request adapters, CSRF token providers, typed JSON GET/POST
-helpers, multipart upload helpers, async action state, provider-error
-projection, and fakes for unit tests. Product modules configure endpoint paths,
-labels, scopes, permission copy, and provider DTO projection.
+Provider/session runtime should use the same `Action`, `Resource`, and
+`Effect` model as the rest of the framework. A credential login submit, JSON
+request, file upload, token refresh, and provider status refresh are not
+separate app architectures; they are actions or effects operating on resources.
+Product modules configure endpoint paths, labels, scopes, permission copy, and
+provider DTO projection.
 
 Runtime config components should render public configuration only. Secrets,
 tokens, private customer data, and raw credentials must not be embedded in
@@ -201,21 +202,23 @@ Client and server loggers should use explicit levels and keep normal command
 output separate from diagnostics. Browser logs should be routed through shared
 client-log endpoints when the host enables them.
 
-Polling helpers run refresh cycles with guard conditions, snapshot comparison,
-and error handling. Product modules configure the refresh function and state
-application; the framework owns repeatable lifecycle behavior.
+Polling helpers are `Effect` variants that run refresh cycles with guard
+conditions, snapshot comparison, and error handling. Product modules configure
+the resource and state application; the framework owns repeatable lifecycle
+behavior.
 
-Event stream helpers consume provider event streams with typed parsing,
-explicit abort/disposer ownership, session header injection, and pure parser
-tests. Container-run UI should compose normal form, action, provider-error, and
-result blocks; provider APIs still own authorization and execution policy.
+Event stream helpers are also `Effect` variants with typed parsing, explicit
+abort/disposer ownership, session header injection, and pure parser tests.
+Container-run UI is an `Action` plus `Resource` plus result state. Add a
+terminal session panel only when the run produces interactive or streamed
+command I/O; provider APIs still own authorization and execution policy.
 
 ## Test Helpers
 
-`uikittest` provides fake gateway clients, AI API clients, HTTP response
-helpers, deterministic fixture builders, and browser-value helpers where WASM
-tests need them. Product modules should depend on these fakes instead of
-hand-writing local copies for every action flow.
+`uikittest` provides fake resources, AI API clients, HTTP response helpers,
+deterministic fixture builders, and browser-value helpers where WASM tests need
+them. Product modules should depend on these fakes instead of hand-writing
+local copies for every action flow.
 
 Renderer tests should verify semantic states: escaped output, stable action
 tokens, visible labels, accessibility attributes, expected classes, safe links,

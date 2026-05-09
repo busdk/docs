@@ -13,8 +13,9 @@ handoff from product design to implementation.
 The document format is not a replacement for Go product modules. Product
 modules still own DTO adapters, view models, provider clients, permission
 rules, and workflow behavior. The document format is the serializable view
-layer: it describes component trees, static sample data, bindings, actions, and
-renderer options using the same component catalog that Go code uses.
+layer: it describes component trees, static sample data, bindings, actions,
+resources, effects, and renderer options using the same component catalog that
+Go code uses.
 
 ## Command Shape
 
@@ -40,8 +41,10 @@ diagnostics without rendering.
 
 ## Document Shape
 
-A UI document has a version, metadata, optional sample data, optional action
-definitions, and one root component.
+A UI document has a version, metadata, optional sample data, optional action,
+resource, and effect definitions, and one root component. Most documents only
+need data, actions, and a view; resources and effects appear when the UI needs
+external data or browser lifecycle behavior.
 
 ```yaml
 version: bus-ui/v1
@@ -70,6 +73,11 @@ actions:
     target:
       base: module
       path: /review
+resources:
+  notes_api:
+    base: module
+    path: /api/notes
+effects: {}
 view:
   kind: PortalShell
   props:
@@ -176,6 +184,24 @@ actions:
 The renderer should emit stable action tokens. The Go/WASM runtime maps those
 tokens to typed handlers. Server-rendered forms may use the same action
 definition to produce native `method` and `action` attributes.
+
+Keep actions small. A file upload, AI send, approval decision, archive button,
+or container-run submit should all use the same action shape. Product-specific
+meaning belongs in the registered handler, not in a new component-specific
+action language.
+
+## Resources And Effects
+
+Resources name external data or media without fetching it by themselves. They
+cover provider endpoints, upload targets, evidence previews, artifact links,
+and background data sources. Components and actions refer to resources by name
+so host path resolution, auth headers, and test fakes stay centralized.
+
+Effects describe lifecycle behavior around resources. Polling, event streams,
+drop handling, resize behavior, close guards, and client logging should be
+modeled as effects with explicit start, apply, error, and dispose behavior.
+Documents should prefer named effects over inline scripts or ad hoc browser
+callbacks.
 
 ## Auth Example
 

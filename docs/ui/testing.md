@@ -31,8 +31,8 @@ Useful assertions include:
 - no inline script or unsafe raw HTML appears where forbidden;
 - class names and ARIA labels are present for shared controls.
 
-Runtime tests are the third layer. They should use fake gateway clients, fake
-AI clients, fake provider responses, and explicit app state to verify action
+Runtime tests are the third layer. They should use fake resources, fake AI
+clients, fake provider responses, and explicit app state to verify action
 handlers, polling cycles, close guards, drop handling, terminal approvals,
 error reporting, and disposer cleanup.
 

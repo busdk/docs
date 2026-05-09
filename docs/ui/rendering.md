@@ -60,7 +60,7 @@ A mounted Go/WASM app should own:
 - the current product view model or app state;
 - the render function;
 - action handler registration;
-- gateway clients and API URL resolution;
+- resource clients and API URL resolution;
 - lifecycle disposers for listeners, timers, and retained callbacks;
 - error reporting and logging.
 
