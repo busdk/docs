@@ -57,7 +57,7 @@ The framework should stay small enough to explain in one pass:
   resize, logging, and cleanup.
 
 Specific helpers such as `CredentialLoginCard`, `TerminalSessionPanel`,
-`AIPanel`, `SidebarShell`, `TextTable`, or provider request adapters are
+`AIPanel`, `SidebarShell`, `TextTable`, or provider resource adapters are
 variants of those concepts, not separate architectural layers. When a proposed
 feature cannot fit this model, it should be questioned before a new framework
 concept is added.

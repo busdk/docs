@@ -39,7 +39,7 @@ small model instead of creating separate runtime families.
 
 `bus-ui` owns general UI language: nodes, attributes, form controls, buttons,
 tables, status tags, cards, panels, navigation primitives, page shells, action
-dispatch, gateway helpers, close guards, error hosts, logging, drop handling,
+dispatch, resource helpers, close guards, error hosts, logging, drop handling,
 polling, assistant panels, terminal panes, evidence links, and test fakes.
 
 `bus-portal` owns the host environment: module discovery and mounting, route
