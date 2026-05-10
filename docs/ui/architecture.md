@@ -13,9 +13,10 @@ errors returned by this layer, but it must not duplicate provider authority in
 browser-only checks.
 
 The product view-model layer belongs to the feature module. It turns provider
-DTOs into screen-ready values: labels, empty states, disabled actions, selected
-rows, safe links, permissions, status summaries, and localized copy. This layer
-is where auth, notes, accounting, AI, or other product-specific meaning lives.
+data transfer objects (DTOs) into screen-ready values: labels, empty states,
+disabled actions, selected rows, safe links, permissions, status summaries, and
+localized copy. This layer is where auth, notes, accounting, AI, or other
+product-specific meaning lives.
 
 The `bus-ui` component layer owns reusable rendering and runtime blocks. A
 component receives generic props or a generic view model and emits a

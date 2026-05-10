@@ -229,9 +229,11 @@ tokens, visible labels, accessibility attributes, expected classes, safe links,
 and absence of inline scripts or unsafe HTML where the product contract forbids
 them.
 
-The full catalog is maintained as the canonical vocabulary for both Go code and
-declarative JSON/YAML UI documents. See [UI component catalog](./component-catalog)
-for the exact reusable component list, inputs, outputs, and tests.
+The [UI component catalog](./component-catalog) is the compact vocabulary for Go
+code and declarative JSON/YAML documents. The
+[UI component reference](./component-reference) gives practical guidance for
+each component and runtime block, while [UI framework examples](./examples)
+show complete documents that combine those blocks.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

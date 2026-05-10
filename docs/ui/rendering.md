@@ -27,10 +27,11 @@ every change.
 ## Node APIs
 
 `Node` is a deterministic HTML fragment. `Props` stores attributes. Helpers
-such as `P`, `Txt`, `Unsafe`, `El`, `Div`, `Section`, `Table`, `Tr`, `Td`, and
-`Th` let components assemble escaped HTML with stable attributes. These helpers
-are useful for low-level composition and for compatibility with string-based
-components.
+such as `P`, `Txt`, `El`, `Div`, `Section`, `Table`, `Tr`, `Td`, and `Th` let
+components assemble escaped HTML with stable attributes. `Unsafe` is the raw
+fragment escape hatch; use it only for framework-owned static fragments,
+sanitized Markdown, or another audited trusted source. These helpers are useful
+for low-level composition and for compatibility with string-based components.
 
 `VNode` is the preferred virtual DOM shape. It represents an element, escaped
 text, or trusted raw fragment. It can carry a key for incremental updates and

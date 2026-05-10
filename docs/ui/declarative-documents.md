@@ -19,7 +19,11 @@ Go code uses.
 
 ## Command Shape
 
-The framework command contract treats a document path as render input:
+Install or build `bus-ui` so the command is on `PATH`. Run the command from the
+directory that contains `sample.yml`, or pass a relative or absolute path to a
+document stored elsewhere. Save a UI document as `sample.yml` or choose one of
+the complete documents in [UI framework examples](./examples). The framework
+command contract treats that document path as render input:
 
 ```sh
 bus-ui sample.yml
@@ -49,67 +53,37 @@ external data or browser lifecycle behavior.
 ```yaml
 version: bus-ui/v1
 metadata:
-  title: Notes review
-  description: Notes list fixture with filters and review actions.
+  title: Save draft
 renderer:
   target: html
-  shell: portal
 data:
-  notes:
-    - id: note-1
-      title: Improve worker evidence gate
-      module: bus-integration-dev-task
-      status: review
-      visibility: team
+  draft:
+    title: Evidence note
 actions:
-  search:
-    type: submit
-    method: GET
-    target:
-      base: module
-      path: /
-  approve:
+  save:
     type: post
-    target:
-      base: module
-      path: /review
-resources:
-  notes_api:
-    base: module
-    path: /api/notes
+    target: { base: module, path: /draft/save }
+    payload:
+      title: { bind: draft.title }
+resources: {}
 effects: {}
 view:
-  kind: PortalShell
+  kind: Panel
   props:
-    title: Notes
+    title: Draft
   children:
-    - kind: FilterToolbar
-      props:
-        action: search
+    - kind: Field
+      props: { label: Title }
       children:
-        - kind: Field
+        - kind: TextInput
           props:
-            label: Search
-          children:
-            - kind: TextInput
-              props:
-                name: q
-                placeholder: Search notes
-    - kind: DataTable
+            name: title
+            value: { bind: draft.title }
+    - kind: Button
       props:
-        columns:
-          - key: title
-            label: Note
-          - key: module
-            label: Module
-          - key: status
-            label: Status
-        rows:
-          bind: notes
-        rowActions:
-          - label: Approve
-            action: approve
-            variant: primary
+        label: Save
+        action: save
+        variant: primary
 ```
 
 The same document can be written as JSON. YAML is preferred for hand-authored
@@ -203,56 +177,8 @@ modeled as effects with explicit start, apply, error, and dispose behavior.
 Documents should prefer named effects over inline scripts or ad hoc browser
 callbacks.
 
-## Auth Example
-
-Auth-oriented documents should describe the UI state without moving auth policy
-into the document. Endpoint paths, action tokens, field names, and provider
-status values come from the auth module view model. Session validation, CSRF
-enforcement, eligibility, authorization, approval, account status, waitlist
-state, and billing status remain provider/API decisions.
-
-```yaml
-version: bus-ui/v1
-metadata:
-  title: Account access
-renderer:
-  target: html
-  shell: portal
-data:
-  auth:
-    status: signed-out
-    provider_status: requires-otp
-actions:
-  register:
-    type: post
-    target: { base: module, path: /register }
-  request_otp:
-    type: post
-    target: { base: module, path: /otp/request }
-  verify_otp:
-    type: post
-    target: { base: module, path: /otp/verify }
-  request_token:
-    type: post
-    target: { base: module, path: /token }
-  logout:
-    type: post
-    target: { base: module, path: /logout }
-view:
-  kind: PortalShell
-  props:
-    title: Account
-  children:
-    - kind: CredentialLoginCard
-      props:
-        usernameLabel: Email
-        passwordLabel: Password or one-time code
-        submitAction: verify_otp
-    - kind: ResultPanel
-      props:
-        status: { bind: auth.provider_status }
-        title: Account status
-```
+Complete documents for notes, auth, assistant, terminal, and evidence
+workflows are maintained in [UI framework examples](./examples).
 
 ## Slots
 
@@ -317,9 +243,9 @@ to update when the UI changes and reduces the need for broad browser e2e tests.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./component-catalog">Component catalog</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./">UI framework index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./portal-modules">Portal modules</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./examples">Examples</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
@@ -327,3 +253,4 @@ to update when the UI changes and reduces the need for broad browser e2e tests.
 
 - [bus-ui module reference](../modules/bus-ui)
 - [UI component catalog](./component-catalog)
+- [UI framework examples](./examples)

@@ -94,8 +94,12 @@ does not move provider authorization or business policy into the browser.
   runtime helpers UI apps should compose.
 - [Component catalog](./component-catalog) gives the complete reusable
   component vocabulary with inputs, outputs, and test expectations.
+- [Component reference](./component-reference) gives practical usage guidance
+  for every catalog component and runtime block.
 - [Declarative UI documents](./declarative-documents) defines the JSON/YAML
   document format that lets `bus-ui sample.yml` render reviewable UI samples.
+- [Examples](./examples) shows complete YAML documents for notes, auth,
+  assistant, terminal, and evidence workflows.
 - [Portal modules](./portal-modules) explains how feature modules plug into the
   portal host.
 - [Testing UI apps](./testing) describes the unit-first testing model and the

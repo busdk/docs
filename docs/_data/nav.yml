@@ -215,8 +215,12 @@
           url: /ui/components
         - label: Component catalog
           url: /ui/component-catalog
+        - label: Component reference
+          url: /ui/component-reference
         - label: Declarative UI documents
           url: /ui/declarative-documents
+        - label: Examples
+          url: /ui/examples
         - label: Portal modules
           url: /ui/portal-modules
         - label: Testing UI apps

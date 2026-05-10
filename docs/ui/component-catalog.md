@@ -10,15 +10,18 @@ must be available to Go callers and to declarative JSON/YAML UI documents where
 that makes sense. A block should be small, deterministic, and useful outside a
 single product module.
 
-Rows define reusable contracts. Product modules should depend on a catalog row
-through a stable `bus-ui` API rather than copying local one-off code; when the
-stable API is missing, the owning `bus-ui` work should add it before downstream
-modules migrate to that block.
+Rows define reusable contracts. Product modules depend on catalog rows through
+the public `bus-ui` module surface instead of copying local one-off code.
+Component names map to declarative `kind` values and to Go component types,
+constructors, or helper functions under the `github.com/busdk/bus-ui/pkg/uikit`
+API.
 
 The catalog uses five common fields: `kind` names the component or runtime
 block; `purpose` explains when to use it; `inputs` describes the props, slots,
 or view-model shape; `output` describes the rendered or runtime result; and
-`tests` names the behavior that should be covered by unit tests.
+`tests` names the behavior that should be covered by unit tests. Availability
+is current for the documented framework contract; compatibility adapters may
+keep older helper names while exposing the same catalog behavior.
 
 ## Core Vocabulary
 
@@ -173,7 +176,7 @@ the run produces an interactive or streamed command session.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./components">Building blocks</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./">UI framework index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./declarative-documents">Declarative UI documents</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./component-reference">Component reference</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

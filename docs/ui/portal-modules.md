@@ -107,7 +107,7 @@ with the same component fixtures.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./declarative-documents">Declarative UI documents</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./examples">Examples</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./">UI framework index</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./testing">Testing UI apps</a> &rarr;</span>
 </p>

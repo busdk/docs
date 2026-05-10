@@ -80,7 +80,9 @@ Use familiar controls for the job:
 - tooltips or `title` text for icon-only controls.
 
 Actions must have stable tokens. A rendered button should expose a deterministic
-action name through a shared attribute, and the Go/WASM action router should map
+action name through `data-ui-action` for generic actions or `data-ai-action`
+for assistant-specific actions. Tokens use lower-case words separated by
+hyphens, such as `save-draft` or `send`, and the Go/WASM action router maps
 that token to a typed handler.
 
 ## Content Style
@@ -100,8 +102,9 @@ unfiltered provider payloads in UI diagnostics.
 All interactive controls need accessible names. Icon-only buttons need
 `aria-label` or equivalent text. Status changes should be represented in text.
 Form fields need labels. Tables need header cells where the data is tabular.
-Links that open external resources should use safe target and referrer
-attributes.
+Links that open external resources should use `target="_blank"` with
+`rel="noopener noreferrer"`. Hosts should also apply a no-referrer policy for
+portal pages so token-bearing URLs are not leaked through navigation.
 
 Unsafe HTML must be explicit and rare. User or provider text should be escaped
 by default. Markdown, document previews, and artifact links need product-owned
