@@ -1,5 +1,33 @@
 # Docs Refactor Plan
 
+- [x] Reorganize UI framework docs by document type: move loose topic pages under `docs/docs/ui/` into typed subdirectories such as architecture, guides, reference, and examples while preserving the `/ui/` landing page; update navigation, prev/index/next links, and cross-page Markdown links; verify no stale UI links remain; run docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 01: run `bus lint` for `docs/docs/ui/architecture.md`, `component-catalog.md`, `component-reference.md`, `components.md`, `components/action-bar.md`, `components/action.md`, `components/ai-approvals.md`, and `components/ai-attachment-list.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 02: run `bus lint` for `docs/docs/ui/components/ai-composer.md`, `ai-drop-controller.md`, `ai-markdown.md`, `ai-message.md`, `ai-model-select.md`, `ai-panel.md`, `ai-review-status.md`, and `ai-thread-isolation.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 03: run `bus lint` for `docs/docs/ui/components/ai-thread-list.md`, `apiurl-resolver.md`, `app-shell.md`, `assistant-shell.md`, `browser-open.md`, `button.md`, `cli-runtime-flags.md`, and `client-log.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 04: run `bus lint` for `docs/docs/ui/components/close-guard.md`, `component.md`, `credential-login-card.md`, `css-bundle.md`, `data-table.md`, `date-input.md`, `declarative-renderer.md`, and `disposer.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 05: run `bus lint` for `docs/docs/ui/components/drop-zone.md`, `effect.md`, `element.md`, `empty-state.md`, `error-banner.md`, `error-host.md`, `evidence-link.md`, and `evidence-preview.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 06: run `bus lint` for `docs/docs/ui/components/evidence-url-resolver.md`, `field.md`, `filter-toolbar.md`, `form.md`, `fragment.md`, `icon-button.md`, `icon.md`, and `image-gallery.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 07: run `bus lint` for `docs/docs/ui/components/input.md`, `link-button.md`, `loading-state.md`, `menu.md`, `metric-card.md`, `panel.md`, `password-input.md`, and `portal-shell.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 08: run `bus lint` for `docs/docs/ui/components/projection-detail.md`, `props.md`, `provider-error.md`, `raw-html.md`, `record-list.md`, `resource.md`, `result-panel.md`, and `runtime-config.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 09: run `bus lint` for `docs/docs/ui/components/select.md`, `session.md`, `sidebar-nav.md`, `sidebar-shell.md`, `split-layout.md`, `status-pill.md`, `submit-state.md`, and `summary-item.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 10: run `bus lint` for `docs/docs/ui/components/surface-card.md`, `tabs.md`, `template.md`, `terminal-approval-prompt.md`, `terminal-input-box.md`, `terminal-output-view.md`, `terminal-session-adapter.md`, and `terminal-session-panel.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 11: run `bus lint` for `docs/docs/ui/components/text-area.md`, `text-input.md`, `text-table.md`, `text.md`, `timeline.md`, `v-node.md`, `concepts/action.md`, and `concepts/collection.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 12: run `bus lint` for `docs/docs/ui/concepts/component.md`, `concepts/effect.md`, `concepts/node.md`, `concepts/resource.md`, `concepts/shell.md`, `concepts/state.md`, `declarative-documents.md`, and `design-system.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
+- [x] UI lint batch 13: run `bus lint` for `docs/docs/ui/examples.md`, `index.md`, `portal-modules.md`, `reference.md`, `rendering.md`, and `testing.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
+
 - [x] Update the public `bus-dev` module reference for active-versus-terminal development task status reporting: include `status` in the `bus dev work` and `bus dev task` controller command lists, explain that `bus dev work status`/`bus dev task status` separates active queued/claimed/running work from historical done/failed/blocked/canceled ledger counts, mention that JSON includes explicit `active` and `terminal` totals, keep the wording end-user/operator focused, verify with `make quality` and `git diff --check`, and close this item.
 
 - [x] Update public `bus-integration-dev-task` docs for isolated task worktrees: document workspace-recipient mapping, read-only workspace dependency mounts, writable recipient task worktrees, `.gitmodules` dependency links, and the updated placeholder/help surface; verify with `bus lint`.

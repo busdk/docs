@@ -85,26 +85,26 @@ does not move provider authorization or business policy into the browser.
 
 ## Documentation Map
 
-- [Architecture](./architecture) describes the package boundaries, data flow,
+- [Architecture](./architecture/) describes the package boundaries, data flow,
   host contract, and ownership rules.
-- [Design system](./design-system) defines the visual and interaction language.
-- [Rendering model](./rendering) explains deterministic HTML, Go/WASM mounting,
+- [Design system](./architecture/design-system) defines the visual and interaction language.
+- [Rendering model](./architecture/rendering) explains deterministic HTML, Go/WASM mounting,
   templates, lifecycle ownership, and renderer tests.
-- [Building block reference](./components) lists the generic components and
+- [Building block reference](./reference/components) lists the generic components and
   runtime helpers UI apps should compose.
-- [Component catalog](./component-catalog) gives the complete reusable
+- [Component catalog](./reference/component-catalog) gives the complete reusable
   component vocabulary with inputs, outputs, and test expectations.
-- [Component reference](./component-reference) gives practical usage guidance
+- [Component reference](./reference/component-reference) gives practical usage guidance
   for every catalog component and runtime block.
-- [Declarative UI documents](./declarative-documents) defines the JSON/YAML
+- [Declarative UI documents](./reference/declarative-documents) defines the JSON/YAML
   document format that lets `bus-ui sample.yml` render reviewable UI samples.
-- [Examples](./examples) shows complete YAML documents for notes, auth,
+- [Examples](./examples/) shows complete YAML documents for notes, auth,
   assistant, terminal, and evidence workflows.
-- [Portal modules](./portal-modules) explains how feature modules plug into the
+- [Portal modules](./guides/portal-modules) explains how feature modules plug into the
   portal host.
-- [Testing UI apps](./testing) describes the unit-first testing model and the
+- [Testing UI apps](./guides/testing) describes the unit-first testing model and the
   thin e2e layer.
-- [Reference checklist](./reference) gives a compact implementation checklist
+- [Reference checklist](./reference/) gives a compact implementation checklist
   for new UI modules.
 
 ## Core Rules
@@ -141,7 +141,7 @@ action handlers, and fake provider clients.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/">System architecture</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../">Documentation index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./architecture">Architecture</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./architecture/">Architecture</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

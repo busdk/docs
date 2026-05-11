@@ -206,25 +206,25 @@
       url: /ui/
       children:
         - label: Architecture
-          url: /ui/architecture
+          url: /ui/architecture/
         - label: Design system
-          url: /ui/design-system
+          url: /ui/architecture/design-system
         - label: Rendering model
-          url: /ui/rendering
+          url: /ui/architecture/rendering
         - label: Building blocks
-          url: /ui/components
+          url: /ui/reference/components
         - label: Component catalog
-          url: /ui/component-catalog
+          url: /ui/reference/component-catalog
         - label: Component reference
-          url: /ui/component-reference
+          url: /ui/reference/component-reference
         - label: Declarative UI documents
-          url: /ui/declarative-documents
+          url: /ui/reference/declarative-documents
         - label: Examples
-          url: /ui/examples
+          url: /ui/examples/
         - label: Portal modules
-          url: /ui/portal-modules
+          url: /ui/guides/portal-modules
         - label: Testing UI apps
-          url: /ui/testing
+          url: /ui/guides/testing
     - label: API JWT audiences and scopes
       url: /architecture/api-jwt-audiences-and-scopes
     - label: Data formats and storage
