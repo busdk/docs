@@ -22,10 +22,14 @@ Decorative icons omit titles when text already labels the action.
 ## Example
 
 ```yaml
-kind: Icon
-props:
-  name: download
-  title: Download
+kind: Fragment
+children:
+  - kind: Icon
+    props:
+      name: download
+  - kind: Text
+    props:
+      value: Download report
 ```
 
 ## Related
@@ -36,7 +40,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./status-pill">StatusPill</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./form">Form</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

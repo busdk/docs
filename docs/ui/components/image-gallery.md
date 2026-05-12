@@ -29,9 +29,16 @@ props:
 ## Runtime Terms
 
 `src` and `href` values must be same-origin paths or provider media URLs
-returned by a declared provider media resolver. External `https:` image links
-are rejected by default unless `mediaAllowedOrigins` in host config allowlists
-the origin; rejected links fail validation.
+returned by a named resolver registered by the portal host in
+[`RuntimeConfig`](./runtime-config). External `https:` image links are rejected
+by default unless the host runtime config sets `mediaAllowedOrigins` to exact
+allowed origins such as `https://media.example.com`; rejected links fail
+validation.
+
+Accepted examples: `/preview/a.png` and
+`https://media.example.com/invoices/a.png` when that exact origin is allowlisted.
+Rejected examples: `https://cdn.example.net/a.png` without an allowlist entry,
+`javascript:alert(1)`, and `../private/a.png`.
 
 ## Related
 
@@ -41,7 +48,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./drop-zone">DropZone</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./css-bundle">CSSBundle</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

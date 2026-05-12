@@ -30,7 +30,7 @@ props:
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./node">Node</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./shell">Shell</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

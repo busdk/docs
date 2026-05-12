@@ -47,7 +47,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./evidence-url-resolver">EvidenceURLResolver</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./evidence-preview">EvidencePreview</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

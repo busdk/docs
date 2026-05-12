@@ -30,7 +30,7 @@ fail late.
 
 ## Example
 
-This component-only example assumes `approve` and `delete` are already declared
+This component-only example assumes `approve` and `review` are already declared
 in the document `actions` map or registered by Go code.
 
 ```yaml
@@ -38,7 +38,7 @@ kind: ActionBar
 props:
   actions:
     - { label: Approve, action: approve, variant: primary }
-    - { label: Delete, action: delete, variant: danger }
+    - { label: Request review, action: review }
 ```
 
 ## Runtime Terms
@@ -55,7 +55,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./link-button">LinkButton</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./menu">Menu</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

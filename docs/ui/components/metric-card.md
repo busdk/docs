@@ -40,7 +40,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./surface-card">SurfaceCard</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./button">Button</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

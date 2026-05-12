@@ -13,7 +13,7 @@ description: Dedicated BusDK UI reference for TerminalApprovalPrompt.
 | --- | --- | --- | --- |
 | `title` | yes | string | Prompt title. |
 | `actions` | yes | array of `{label,action,requestID}` | Approval decisions for one pending request. `label` is public-safe text, `action` is one of the declared decision tokens such as `approve-command`, `deny-command`, or a host-registered equivalent, and `requestID` is the stable string or number of the pending request. Multiple decisions for the same request share the same `requestID`; duplicate `(requestID, action)` pairs fail validation. Unknown action tokens fail validation. |
-| `summary` | no | string | Command details. |
+| `summary` | yes | string | Public-safe command context shown before decisions. It must identify the requested command or operation, relevant working directory or target, and why approval is needed without including secrets, tokens, or private file contents. Empty or omitted summaries fail validation so hosts do not render decisions without user-visible detail. |
 
 ## Boundary
 
@@ -32,6 +32,7 @@ approval state; repeated clicks for the same `(requestID, action)` are ignored.
 kind: TerminalApprovalPrompt
 props:
   title: Approve command?
+  summary: Run `make test` in `/workspace/bus-ui` with network disabled.
   actions:
     - { label: Allow, action: approve-command, requestID: 17 }
 ```
@@ -44,7 +45,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./terminal-input-box">TerminalInputBox</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./terminal-session-adapter">TerminalSessionAdapter</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

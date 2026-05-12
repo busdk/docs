@@ -13,7 +13,7 @@ description: Dedicated BusDK UI reference for PortalShell.
 | --- | --- | --- | --- |
 | `title` | yes | string or binding | Module page title. |
 | `body` | yes | slot node | Feature content. |
-| `hostContext` | yes | object from portal host | Supplies base paths and assets. In portal-mounted documents the host injects this prop before validation; standalone examples must bind or provide it explicitly. |
+| `hostContext` | yes | object from portal host | Supplies base paths and assets. In portal-mounted documents the host injects this prop before validation; standalone examples must bind or provide it explicitly. The object requires `moduleBase` and `assetBase` same-origin path prefixes beginning and ending with `/`; optional `apiBase` must be a same-origin path prefix, and optional `externalNavOrigins` entries must be exact `https:` origins. Unknown sensitive-looking keys fail validation. |
 | `nav` | no | array of `{label,path,current}` | Module navigation. `label` is non-empty text, `path` is a same-origin path beginning with `/` or a host-resolved route from `hostContext`, and optional `current` marks the active item. Omitted `nav` renders no module nav. Unknown fields, empty labels, path traversal, and external URLs fail validation. |
 
 ## Boundary
@@ -56,7 +56,7 @@ Use the [component reference](../reference/component-reference) for the full ind
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./app-shell">AppShell</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../component-reference">Component reference</a></span>
+  <span class="busdk-prev-next-item busdk-index"><a href="../reference/component-reference">Component reference</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./sidebar-shell">SidebarShell</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
