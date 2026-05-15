@@ -5,6 +5,13 @@ description: BusDK UI v0.1.3 documentation index.
 
 ## Pages
 
-- [Bus UI v0.1.3 GX compiler](./compiler) - Patch roadmap for compiling GX source packages to pure Go after source tools exist.
-- [GX tooling](./gx-tooling) - Formatting, linting, diagnostics, and validation tools for Bus UI GX files.
-- [DeclarativeRenderer UI runtime block](./declarative-renderer) - Dedicated BusDK UI reference for DeclarativeRenderer.
+`v0.1.3` compiles checked GX source into generated Go and verifies static HTML
+output. The pages below follow that implementation flow.
+
+- [GX compiler](./compiler) - BusDK UI v0.1.3 compiler patch overview.
+- [Source-tool integration](./source-tool-integration) - Required source checks before compilation.
+- [Compile command](./compile-command) - `bus-gx compile` command contract.
+- [Generated Go](./generated-go) - Generated `.go` artifact shape.
+- [Template entries](./template-entries) - Named template entry contract.
+- [Static render](./static-render) - Static HTML render check.
+- [Compiler acceptance](./acceptance) - Public acceptance checks for this patch.

@@ -51,4 +51,4 @@ is not part of v0.1.4.
 ### Sources
 
 - [Component reference](./component-reference)
-- [GX tooling](../v0.1.3/gx-tooling)
+- [Source-tool integration](../v0.1.3/source-tool-integration)

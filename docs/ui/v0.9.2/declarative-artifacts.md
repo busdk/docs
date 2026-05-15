@@ -51,5 +51,5 @@ data, binding, and controller/runtime inputs.
 
 ### Sources
 
-- [GX tooling](../v0.1.3/gx-tooling)
+- [Source-tool integration](../v0.1.3/source-tool-integration)
 - [UI implementation roadmap](../)

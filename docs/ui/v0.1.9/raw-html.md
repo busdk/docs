@@ -11,33 +11,12 @@ future version page explicitly owns the sanitizer and trust-boundary contract.
 Once that version exists, use it only for sanitized Markdown or framework-owned
 static fragments.
 
-## Inputs
-
-| Field | Required | Type | Behavior |
-| --- | --- | --- | --- |
-| `html` | yes | trusted HTML string or binding | Inserted without escaping. |
-| `reason` | yes | short string | Explains why raw HTML is allowed. |
-| `trusted` | yes | boolean | Must be true. |
-| `sanitizer` | no | string | Names the sanitizer or source policy. Required for sanitized or bound HTML; may be omitted only for framework-owned static fragments packaged with the component. |
-
 ## Boundary
 
-`RawHTML` must not bind provider or user text directly. It receives only
-sanitizer-produced HTML or framework-owned static trusted fragments. The
-component records the trust reason and sanitizer/source policy so the bypassed
-escaping boundary remains explicit.
-
-## Example
-
-```yaml
-kind: RawHTML
-props:
-  trusted: true
-  reason: sanitized-markdown
-  sanitizer: bus-ui-markdown-safe-v1
-  html:
-    bind: message.safeHTML
-```
+Raw HTML bypasses the escaping boundary provided by the
+[v0.1.1 renderer](../v0.1.1/interfaces). Until a later patch defines the
+sanitizer, trust metadata, binding limits, and test contract, `RawHTML` has no
+accepted inputs and no copyable usage example.
 
 ## Runtime Terms
 
@@ -52,4 +31,4 @@ props:
 ### Sources
 
 - UI component reference
-- [GX tooling](../v0.1.3/gx-tooling)
+- [Source-tool integration](../v0.1.3/source-tool-integration)

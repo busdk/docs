@@ -38,7 +38,7 @@ assistant panes, terminal panes, and drop zones before adding product-local
 markup.
 
 Capture important screens as declarative template sets when practical. Use the
-versioned [GX tooling](../v0.1.3/gx-tooling) checks available for the current patch,
+versioned [Source-tool integration](../v0.1.3/source-tool-integration) checks available for the current patch,
 starting with [v0.1.2 source formatting and linting](../v0.1.2/) and adding
 [v0.1.3 compile and static render checks](../v0.1.3/) once the compiler
 exists.
@@ -128,6 +128,6 @@ module registration option, or runtime flag changes.
 - [UI framework](../)
 - [Core](../v0.1.1/)
 - [Library](../v0.2.1/)
-- [GX tooling](../v0.1.3/gx-tooling)
+- [Source-tool integration](../v0.1.3/source-tool-integration)
 - [bus-ui module reference](../../modules/bus-ui)
 - [bus-portal module reference](../../modules/bus-portal)

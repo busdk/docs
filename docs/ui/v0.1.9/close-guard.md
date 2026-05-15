@@ -12,8 +12,8 @@ component disposal when closing would lose active or unsaved work.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `activeWork` | yes | boolean | Running work flag. |
-| `unsavedWork` | yes | boolean | Dirty draft flag. |
+| `activeWork` | yes | boolean or binding | Running work flag. A literal boolean is read directly; object form binds to a boolean value. |
+| `unsavedWork` | yes | boolean or binding | Dirty draft flag. A literal boolean is read directly; object form binds to a boolean value. |
 | `message` | no | string | Custom in-app prompt; default is "Unsaved or active work may be lost." Browser navigation prompts may ignore custom text. |
 
 ## Boundary
@@ -45,4 +45,4 @@ props:
 ### Sources
 
 - UI component reference
-- [GX tooling](../v0.1.3/gx-tooling)
+- [Source-tool integration](../v0.1.3/source-tool-integration)

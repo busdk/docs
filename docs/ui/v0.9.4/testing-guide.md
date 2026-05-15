@@ -127,6 +127,6 @@ behave as expected.
 ### Sources
 
 - [Testing](./testing-guide)
-- [GX tooling](../v0.1.3/gx-tooling)
+- [Source-tool integration](../v0.1.3/source-tool-integration)
 - [bus-ui module reference](../../modules/bus-ui)
 - [bus-portal module reference](../../modules/bus-portal)

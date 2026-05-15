@@ -181,7 +181,7 @@ This page is the canonical linked index for those pages.
 - [`CSSBundle`](../v0.4.6/css-bundle) - Shared CSS token bundle.
 - [`CLIRuntimeFlags`](../v0.4.6/cli-runtime-flags) - Standard CLI flag behavior.
 - [`BrowserOpen`](../v0.4.6/browser-open) - Open local app URL.
-- [`DeclarativeRenderer`](../v0.1.3/declarative-renderer) - Bus UI template renderer.
+- [`Static render`](../v0.1.3/static-render) - Bus UI static render check.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

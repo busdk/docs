@@ -250,12 +250,20 @@
         - label: v0.1.3 GX compiler
           url: /ui/v0.1.3/
           children:
-            - label: Bus UI v0.1.3 GX compiler
+            - label: GX compiler
               url: /ui/v0.1.3/compiler
-            - label: GX tooling
-              url: /ui/v0.1.3/gx-tooling
-            - label: DeclarativeRenderer UI runtime block
-              url: /ui/v0.1.3/declarative-renderer
+            - label: Source-tool integration
+              url: /ui/v0.1.3/source-tool-integration
+            - label: Compile command
+              url: /ui/v0.1.3/compile-command
+            - label: Generated Go
+              url: /ui/v0.1.3/generated-go
+            - label: Template entries
+              url: /ui/v0.1.3/template-entries
+            - label: Static render
+              url: /ui/v0.1.3/static-render
+            - label: Compiler acceptance
+              url: /ui/v0.1.3/acceptance
         - label: v0.1.4 Custom components
           url: /ui/v0.1.4/
           children:
