@@ -1,18 +1,19 @@
 ---
 title: bus-gx — GX core render tree and source tools
-description: End-user reference for the bus-gx module and the currently implemented v0.1.4 GX component patch.
+description: End-user reference for the bus-gx module and the currently implemented v0.1.5 GX markup patch.
 ---
 
 ## `bus-gx` — GX core render tree and source tools
 
-Current implemented UI roadmap version: **v0.1.4 GX components**.
+Current implemented UI roadmap version: **v0.1.5 GX markup**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.4`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.5`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting
 helpers in `github.com/busdk/bus-gx/pkg/gx/source`, and a static compiler that
-lowers checked `.gx` entries into ordinary Go with package-scope function
-component calls.
+lowers checked `.gx` expressions into ordinary Go with package-scope function
+component calls, GX markup inside Go function bodies, braced expression
+children, and component body children.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
@@ -80,8 +81,10 @@ numbers fail validation.
 Source tools keep the same closed boundary. Lowercase `.gx` tags are limited
 to the safe structural element allowlist. Uppercase tags resolve to
 package-scope Go functions or method values shaped as `func(P) gx.Node`, where
-`P` is a struct props type. Raw text inside markup is rejected; authors must
-use `Text` so formatting cannot silently discard content.
+`P` is a struct props type. Braced body expressions are typed as ordinary Go:
+`string` becomes escaped text, `gx.Node` becomes one child, and `[]gx.Node` is
+spliced in source order. Raw text inside markup is rejected; authors must use
+`Text` or braced expressions so formatting cannot silently discard content.
 
 ## Source Tools
 
@@ -93,18 +96,20 @@ package notesui
 import "github.com/busdk/bus-gx/pkg/gx"
 
 type NoticeProps struct {
-	Message string
-	Tone    string `gx:",optional"`
+	Message  string
+	Tone     string `gx:",optional"`
+	Children []gx.Node
 }
 
 func Notice(props NoticeProps) gx.Node {
-	return gx.Element("p", gx.Props{"class": props.Tone}, gx.Text(props.Message))
+	return <section class={props.Tone}><p>{props.Message}</p>{props.Children}</section>
 }
 
-var hello = <Notice message={"Hello Bus"} tone={"message"}></Notice>
+var suffix = []gx.Node{gx.Text("!")}
+var hello = <Notice message={"Hello Bus"} tone={"message"}>{gx.Text(" from GX")}{suffix}</Notice>
 ```
 
-With BusDK commands on `PATH`:
+Save the sample as `hello.gx`. With BusDK commands on `PATH`:
 
 ```sh
 bus gx fmt --check hello.gx
@@ -118,29 +123,37 @@ Invalid source prints stable diagnostics with `file`, `line`, `column`,
 
 `compile` writes a generated Go file in the same package as the source file.
 `compile` preserves the surrounding Go declaration shape. The example above
-lowers the markup initializer to:
+lowers component body content to a `Children []gx.Node` field and lowers
+braced children according to their Go type:
 
 ```go
-var hello = Notice(NoticeProps{Message: "Hello Bus", Tone: "message"})
+var hello = Notice(NoticeProps{Message: "Hello Bus", Tone: "message", Children: func() []gx.Node {
+	var __gxChildren []gx.Node
+	__gxChildren = append(__gxChildren, gx.Text(" from GX"))
+	__gxChildren = append(__gxChildren, suffix...)
+	return __gxChildren
+}()})
 ```
 
 Direct `.gx` to HTML rendering is outside this version.
 
-## Checks
+## Verify Installed Command
 
-From the `bus-gx` module root:
+With BusDK commands on `PATH`, the installed dispatcher should report the
+implemented version:
 
 ```sh
-make fmt
-make test
-make lint
-make build
-make e2e
-make check
+bus gx version
 ```
 
-`make check` is the default release gate for `v0.1.4`. It formats, vets,
-lints, runs package tests, builds `./bin/bus-gx`, and runs the CLI e2e smoke.
+Expected output:
+
+```text
+bus-gx v0.1.5
+```
+
+Use `bus gx fmt --check`, `bus gx lint --format json`, and
+`bus gx compile <file.gx> --output <file.go>` on project `.gx` files in CI.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -160,3 +173,4 @@ lints, runs package tests, builds `./bin/bus-gx`, and runs the CLI e2e smoke.
 - [GX compiler acceptance](../ui/v0.1.3/acceptance)
 - [UI v0.1.4 GX components](../ui/v0.1.4/)
 - [GX component acceptance](../ui/v0.1.4/acceptance)
+- [UI v0.1.5 GX markup bodies](../ui/v0.1.5/)
