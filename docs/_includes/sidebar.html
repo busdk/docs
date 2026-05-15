@@ -25,15 +25,42 @@
       {% for child in link.children %}
       {% assign child_url = child.url | relative_url %}
       {% assign child_current = false %}
+      {% assign child_has_children_for_current = false %}
+      {% if child.children and child.children.size > 0 %}
+        {% assign child_has_children_for_current = true %}
+      {% endif %}
       {% if page.url == child_url %}
         {% assign child_current = true %}
       {% endif %}
-      {% if child_current == false and child_url != '/' and child_url != '' %}
+      {% if child_current == false and child_has_children_for_current == false and child_url != '/' and child_url != '' %}
         {% assign child_len = child_url | size %}
         {% assign child_page_prefix = page.url | slice: 0, child_len %}
         {% if child_page_prefix == child_url %}
           {% assign child_current = true %}
         {% endif %}
+      {% endif %}
+      {% if child_current %}
+        {% assign section_open = true %}
+      {% endif %}
+      {% if child.children %}
+      {% for grandchild in child.children %}
+      {% assign grandchild_url = grandchild.url | relative_url %}
+      {% assign grandchild_current = false %}
+      {% if page.url == grandchild_url %}
+        {% assign grandchild_current = true %}
+      {% endif %}
+      {% if grandchild_current == false and grandchild_url != '/' and grandchild_url != '' %}
+        {% assign grandchild_len = grandchild_url | size %}
+        {% assign grandchild_page_prefix = page.url | slice: 0, grandchild_len %}
+        {% if grandchild_page_prefix == grandchild_url %}
+          {% assign grandchild_current = true %}
+        {% endif %}
+      {% endif %}
+      {% if grandchild_current %}
+        {% assign section_open = true %}
+        {% assign child_current = true %}
+      {% endif %}
+      {% endfor %}
       {% endif %}
       {% if child_current %}
         {% assign section_open = true %}
@@ -74,18 +101,58 @@
                 {% for child in link.children %}
                 {% assign child_url = child.url | relative_url %}
                 {% assign child_is_current = false %}
+                {% assign child_has_children = false %}
+                {% if child.children and child.children.size > 0 %}
+                  {% assign child_has_children = true %}
+                {% endif %}
                 {% if page.url == child_url %}
                   {% assign child_is_current = true %}
                 {% endif %}
-                {% if child_is_current == false and child_url != '/' and child_url != '' %}
+                {% if child_is_current == false and child_has_children == false and child_url != '/' and child_url != '' %}
                   {% assign child_len = child_url | size %}
                   {% assign child_page_prefix = page.url | slice: 0, child_len %}
                   {% if child_page_prefix == child_url %}
                     {% assign child_is_current = true %}
                   {% endif %}
                 {% endif %}
-                <li>
+                {% if child_has_children %}
+                  {% for grandchild in child.children %}
+                  {% assign grandchild_url_for_child = grandchild.url | relative_url %}
+                  {% if page.url == grandchild_url_for_child %}
+                    {% assign child_is_current = true %}
+                  {% endif %}
+                  {% if child_is_current == false and grandchild_url_for_child != '/' and grandchild_url_for_child != '' %}
+                    {% assign grandchild_len_for_child = grandchild_url_for_child | size %}
+                    {% assign grandchild_page_prefix_for_child = page.url | slice: 0, grandchild_len_for_child %}
+                    {% if grandchild_page_prefix_for_child == grandchild_url_for_child %}
+                      {% assign child_is_current = true %}
+                    {% endif %}
+                  {% endif %}
+                  {% endfor %}
+                {% endif %}
+                <li class="{% if child_has_children %}busdk-sidebar-sub-item--group{% endif %}">
                   <a class="busdk-sidebar-sub-link{% if child_is_current %} busdk-sidebar-sub-link--current{% endif %}" href="{{ child_url }}">{{ child.label }}</a>
+                  {% if child_has_children %}
+                  <ul class="busdk-sidebar-sub-sub-links">
+                    {% for grandchild in child.children %}
+                    {% assign grandchild_url = grandchild.url | relative_url %}
+                    {% assign grandchild_is_current = false %}
+                    {% if page.url == grandchild_url %}
+                      {% assign grandchild_is_current = true %}
+                    {% endif %}
+                    {% if grandchild_is_current == false and grandchild_url != '/' and grandchild_url != '' %}
+                      {% assign grandchild_len = grandchild_url | size %}
+                      {% assign grandchild_page_prefix = page.url | slice: 0, grandchild_len %}
+                      {% if grandchild_page_prefix == grandchild_url %}
+                        {% assign grandchild_is_current = true %}
+                      {% endif %}
+                    {% endif %}
+                    <li>
+                      <a class="busdk-sidebar-sub-sub-link{% if grandchild_is_current %} busdk-sidebar-sub-sub-link--current{% endif %}" href="{{ grandchild_url }}">{{ grandchild.label }}</a>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
                 </li>
                 {% endfor %}
               </ul>

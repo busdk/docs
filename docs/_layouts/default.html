@@ -105,19 +105,24 @@
   }
 
   function setActiveByHash(hash) {
-    var subLinks = sidebar.querySelectorAll('.busdk-sidebar-sub-link');
+    var subLinks = sidebar.querySelectorAll('.busdk-sidebar-sub-link, .busdk-sidebar-sub-sub-link');
     var anySubCurrent = false;
     subLinks.forEach(function (a) {
       a.classList.remove('busdk-sidebar-sub-link--current');
+      a.classList.remove('busdk-sidebar-sub-sub-link--current');
       var n = norm(a.getAttribute('href'));
       if (n.path === pathname && n.hash === hash) {
-        a.classList.add('busdk-sidebar-sub-link--current');
+        if (a.classList.contains('busdk-sidebar-sub-sub-link')) {
+          a.classList.add('busdk-sidebar-sub-sub-link--current');
+        } else {
+          a.classList.add('busdk-sidebar-sub-link--current');
+        }
         anySubCurrent = true;
       }
     });
     if (anySubCurrent) {
       sidebar.querySelectorAll('.busdk-sidebar-item').forEach(function (item) {
-        var sub = item.querySelector('.busdk-sidebar-sub-link--current');
+        var sub = item.querySelector('.busdk-sidebar-sub-link--current, .busdk-sidebar-sub-sub-link--current');
         if (sub) item.querySelector('.busdk-sidebar-link').classList.remove('busdk-sidebar-link--current');
       });
     }
@@ -133,7 +138,7 @@
   var main = document.querySelector('.busdk-main');
   if (!main) return;
   var subLinkHrefs = [];
-  sidebar.querySelectorAll('.busdk-sidebar-sub-link').forEach(function (a) {
+  sidebar.querySelectorAll('.busdk-sidebar-sub-link, .busdk-sidebar-sub-sub-link').forEach(function (a) {
     var n = norm(a.getAttribute('href'));
     if (n.path === pathname && n.hash) subLinkHrefs.push(n.hash);
   });

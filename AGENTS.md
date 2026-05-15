@@ -32,6 +32,9 @@ exclude list as defense in depth, not as the primary reason this stays safe.
 When running commands from inside this `docs` repository, published module
 pages are under `docs/modules/...`; the `docs/docs/modules/...` path is only
 correct when the current working directory is the superproject root.
+When running `git -C docs ...` from the superproject root, pass paths relative
+to the `docs` repository, such as `docs/ui/index.md`; do not pass superproject
+paths or `../docs/...` paths.
 
 ## Global documentation writing rules
 
@@ -39,6 +42,10 @@ You are writing BusDK documentation. Prefer readable, self-contained paragraphs
 that explain intent, context, and implications. Do not default to bullet lists;
 use lists only when they are clearly the best structure for a tight, related
 set of items. If items are mixed or unrelated, split into separate paragraphs.
+
+For mechanical rewrites across documentation files, do not rely on recursive
+`**` shell globs unless `globstar` has been enabled in the current shell. Use
+`find docs/docs -name '*.md' -exec ... {} +` or an explicit file list instead.
 
 Use BusDK-native wording and concrete scope terms:
 
@@ -56,6 +63,144 @@ Use direct, declarative domain statements; avoid meta-commentary about the
 documentation process (for example, "this page intentionally..." or "in this
 section...").
 
+For public UI framework docs, keep human-review workflow guidance out of
+`docs/docs/ui/**`. The published pages may be organized from broad design
+choices to lower-level references, but they should present that organization as
+content structure, not as instructions to reviewers or agents. Keep guidance
+such as "review these pages first" or "search links after changing a decision"
+in this non-published `AGENTS.md` file only.
+
+In public UI framework YAML examples, prefer expanded YAML mappings over inline
+JSON/YAML object shorthand. For example, write `target:` with nested `base` and
+`path` keys on separate lines instead of `target: { base: module, path: / }`.
+
+## UI framework design review instructions
+
+When reviewing or rewriting `docs/docs/ui/**`, do not treat the current pages
+as fixed specifications. Treat them as editable design material for a system
+that should feel simple because the parts fit together naturally.
+
+The target design has a small `bus-gx` core with most higher-level UI built by
+dogfooding smaller Bus UI pieces. `bus-gx` owns the pure low-level GX template
+framework: source tools, parser, formatter, linter, render tree, safe elements,
+props, templates, bindings, event identity, lifecycle, diagnostics, and core
+test helpers. `bus-ui` owns the higher-level component library built on top of
+`bus-gx`, such as shells, forms, input controls, tables, assistant panels,
+terminal panes, evidence surfaces, and other reusable product-facing
+components. Raw Go, JavaScript, or host-specific code belongs only in core
+primitives, renderers, host bridges, security boundaries, and browser/runtime
+integrations that cannot be expressed as Bus UI components. Every higher-level
+component should be reviewed as a candidate for composition from smaller Bus UI
+components before accepting it as a raw-code component.
+
+Use this product model as the design center:
+
+- Templates are HTML-like view documents with Bus UI tags and user-defined
+  custom markup components. The preferred source format is `.gx`: a file-level
+  Go package with standard Go syntax except for GX markup literals such as
+  `var escapedTextTemplate = <p><Text value={greeting}></Text></p>`. Do not
+  design public examples around a required top-level `<Template>` wrapper.
+  Public `.gx` documentation should also mention the intended source tools:
+  `bus gx fmt` / `bus gx fmt --check` for canonical formatting and
+  `bus gx lint` for source-only GX diagnostics, `bus gx compile` for lowering
+  `.gx` to pure `.go`, `bus gx inspect` for template inventory, and
+  `bus gx validate` for template plus controller validation.
+  The future `bus-gx` module owns the `bus gx` command surface and the core GX
+  libraries; optional submodules such as `bus-gx-fmt` or `bus-gx-lint` may own
+  implementation internals later, but do not document them as initialized
+  modules until they exist.
+  When documenting AI-agent workflows, prefer machine-readable diagnostic
+  examples such as `--format json` and stable file/line/column output.
+- Data is a separate Go value, model document, or host object and may be any
+  data shape the controller can expose through Go bindings.
+- Bindings are Go-first controller adapters that adapt arbitrary data to
+  template/component props with minimal duplication, optional fields, defaults,
+  scoped loop values, and typed helper functions. YAML and JSON bindings are
+  portable fixture/import formats, not the primary runtime path.
+- Runtime/controller code defines events, resources, effects, formatters, host
+  resolvers, and handler registration. Prefer typed Go controllers and
+  generated Go from `.gx`; keep YAML/JSON runtime files for fixtures,
+  interchange, and tests unless a small fixture explicitly combines binding
+  plus runtime config for testing.
+- The extension path should resemble HTML: users and agents can define new
+  reusable tags using the system itself, then consume those tags like built-in
+  components.
+- Custom tags should support event-based design. A tag may declare the events
+  it emits and the events or slots it consumes. Templates attach event names to
+  tags; emitted events carry interaction identity only, while
+  typed controller code decides what model/form/component state to read and
+  wires those events to handlers, effects, resources, navigation, or host
+  callbacks.
+- Public UI examples should introduce lower-level foundations before showing
+  high-level components. Treat `Form`, `TextInput`, `SubmitState`, and similar
+  controls as components that should be dogfooded from GX/foundation pieces
+  unless there is a clear primitive or host-bridge reason they cannot be.
+
+Apply a "click test" during review. A design does not click yet when a concept
+has two owners, a page repeats another page's rules, a component requires raw
+code even though it could be composed from existing blocks, a binding requires
+duplicate boilerplate, a template has to know provider/runtime details, or an
+event has to bypass the tag/controller contract. A design is closer when each
+concept has one source of truth, each layer depends only on the layer below it,
+and an author can predict where a new concern belongs.
+
+Review UI design top-down before editing lower-level references. Start with
+the design decisions, then the independent Core section, then the Library
+section built from Core, then architecture/detail contracts, core concepts,
+individual component pages, references, and guides. Higher-level components
+such as forms belong under Library, preferably as their own focused pages.
+Preserve the UI implementation roadmap order in public docs and sidebar labels:
+Core starts with the smallest independent `v0.1.x` patches, and later Library
+features/components should be ordered by the version where they can be
+implemented from completed lower iterations. Public implementation pages should
+live in patch-level directories such as `docs/docs/ui/v0.1.1/` and
+`docs/docs/ui/v0.3.5/`, not only grouped minor-version directories.
+When a version page initializes a submodule or command surface, state exactly
+which repository/module files, packages, commands, tests, and development
+targets appear in that patch, and which related parts are intentionally absent.
+Keep concrete API names, command behavior, file formats, validation rules, and
+examples on the first version page that implements them. Higher-level design,
+architecture, design-system, rendering, and reference pages should summarize
+the intent and link to those version pages instead of repeating version-specific
+contracts.
+Public UI framework documentation under `docs/docs/ui/` must use version-only
+information architecture: the directory may contain only a minimal `index.md`
+and semver patch directories named `v0.X.Y/`. Do not add public UI docs under
+non-version directories such as `architecture/`, `components/`, `design/`,
+`examples/`, `guides/`, `reference/`, or `roadmap/`. Every version directory
+must have a compact `index.md` that only links to inner pages. Put the actual
+documentation in uniquely named inner pages such as
+`docs/docs/ui/v0.1.2/source-tools.md` so roadmap refactors can move pages
+without splitting index content. Each patch version should be the smallest
+complete implementation increment that can be reviewed and implemented in
+order. Later versions may link to earlier versions; earlier versions must not
+link to later versions. When a page uses a UI framework term, link the first
+plain-language mention to the same-version or latest earlier-version page that
+defines it.
+Do not create abstract UI roadmap versions whose only purpose is to state
+future design intent. Move each concept directly into the first patch version
+that implements or uses it, so `bus-gx`, `bus-ui`, host, controller, and
+browser-runtime concerns appear next to the actual work that needs them.
+Do not combine two design concepts into one public page. Pages such as
+"navigation and events", "shells and layout", or "provider and session" should
+be split into one page per concept, with any group page reduced to a compact
+link map.
+When lower-level pages conflict with a higher-level decision, fix or question
+the higher-level decision first instead of patching every dependent page
+independently.
+
+For each component, record or infer this composition review before changing the
+page: purpose, smaller Bus UI primitives it can use, required raw runtime
+bridge if any, props and defaults, binding/data expectations, event/resource/
+effect dependencies, emitted and consumed events, render targets, safety
+boundaries, and tests/examples that prove it works. If a component cannot be
+built from smaller pieces, the page should make the primitive or host-bridge
+reason obvious.
+
+Keep public pages compact and non-meta. Put review process guidance here, not
+inside `docs/docs/ui/**`. Public pages should show the resulting design
+structure through concise content, internal links, examples, and Sources.
+
 Each page must stay focused on a single clear topic. If content belongs
 elsewhere, move it to the most appropriate page and link only where that helps
 reader discovery without derailing the page.
@@ -63,10 +208,16 @@ reader discovery without derailing the page.
 Embed cross-links directly in body text where concepts are introduced. Keep
 link text natural; do not add link-only phrases like "See..." to force links.
 Avoid separate "See also" sections unless explicitly required.
+For versioned UI docs under `docs/docs/ui/v*/`, link references to concepts
+defined in the same version directory or an earlier version directory. Do not
+link from a version page to concepts introduced by a future version; move the
+future detail to the later version instead.
 
-Every documentation page should end with a `### Sources` section after the
-prev/index/next navigation block. Keep it as a simple link list of relevant
+Non-legacy documentation pages should end with a `### Sources` section after
+the prev/index/next navigation block. Keep it as a simple link list of relevant
 internal and external references. Do not introduce new claims in Sources.
+Legacy module design documents under `docs/modules` may put document-control
+metadata after Sources as described below.
 
 When citing authority (law, standards, guidance), link the authority directly
 with descriptive anchor text in the sentence where the claim is made.
@@ -106,10 +257,16 @@ This docs repository does not provide `make check`. Use `make quality` for the
 available Makefile quality target, and use `git diff --check` for whitespace
 validation on docs-only edits.
 
-## SDD rules (`docs/**/*.md`, strongest for `docs/modules`)
+## Legacy module design-document rules (`docs/modules/**/*.md`)
 
-Treat software design documents as deterministic source-of-truth artifacts for
-human verification first, then AI implementation use.
+Apply this section only to legacy public module pages under `docs/modules` that
+already contain document-control or requirements-style design-document
+structure. Do not use these rules for `docs/docs/ui/**` or for new public
+end-user pages; implementation/developer SDD contracts belong in `./sdd/docs`.
+
+For those legacy module design documents, preserve deterministic
+source-of-truth structure for human verification first, then AI implementation
+use.
 
 Do not invent project facts. If required facts are missing, ask targeted
 questions in **bold** and record uncertainty explicitly as assumptions or open
@@ -135,10 +292,10 @@ details do not belong here" are implementation contracts and belong in
 command/API the operator runs, which credentials or scopes are needed, and
 which related module/service provides the next operational step.
 
-For BusDK module SDDs in `docs/modules`, keep document control at the end of
-the page, after prev/index/next navigation and after `### Sources` when
-present. Include at least: title, project identifier/name, document identifier,
-version, status, last updated date, and owner/maintainer.
+For existing BusDK module design documents in `docs/modules`, keep document
+control at the end of the page, after prev/index/next navigation and after
+`### Sources` when present. Include at least: title, project identifier/name,
+document identifier, version, status, last updated date, and owner/maintainer.
 
 Use status terms including at least `Draft` and `Verified`. `Verified` means
 human-approved. Do not silently rewrite verified content; propose labeled
@@ -154,16 +311,18 @@ and Interfaces; Data Design; Assumptions and Dependencies; Glossary and
 Terminology. If a section is not applicable, keep it and mark it Not Applicable
 with a short rationale.
 
-When adding/refining a new SDD, update cross-links both ways:
+When adding/refining an applicable legacy module design document, update
+cross-links both ways:
 
 - include it in SDD/module indexes and module CLI references
 - link related module pages and "Used by"/"Uses" relationships
 - link from relevant workflow/overview pages
 - embed relevant links inside the new SDD naturally
 
-When refining an existing SDD: normalize structure, preserve meaning, surface
-conflicts without silently choosing one side, and keep terminology consistent.
-Use an Open Questions section only when unresolved items exist.
+When refining an applicable existing design document: normalize structure,
+preserve meaning, surface conflicts without silently choosing one side, and
+keep terminology consistent. Use an Open Questions section only when unresolved
+items exist.
 
 Do not introduce scope not present in requirements or explicit user direction.
 If something appears missing, add it as a clearly labeled suggested requirement
@@ -282,13 +441,15 @@ syntax or current runtime behavior.
 ## Gitignore Rule
 
 1. .bus MUST be tracked; never add .bus or .bus/ to .gitignore.
-2. In private repositories, .bus/ must be tracked; .bus/secrets may be tracked in private repositories only and must not be tracked otherwise.
+2. In private repositories, .bus/ must be tracked; .bus/secrets may be tracked
+   only when the tracked files contain encrypted secrets or explicitly
+   approved non-secret metadata. Do not track plaintext secrets.
 3. Runtime lock artifacts such as .bus-dev.lock may be ignored.
 
 For end-user documentation pages (for example under `docs/modules`,
 `docs/workflow`, and topic guides), prefer plain language and short, direct
 sentences so the text is easy for humans and agents to follow. Keep strict,
-contract-style wording in SDD pages (`docs/sdd`) and requirement sections where
+contract-style wording in SDD pages (`./sdd/docs`) and requirement sections where
 precision is mandatory.
 
 For module pages under `docs/docs/modules/`, start with the user outcome first:

@@ -185,6 +185,10 @@
   padding: 0 0 0.2rem 1rem;
 }
 
+.busdk-sidebar-sub-item--group {
+  margin-bottom: 0.15rem;
+}
+
 .busdk-sidebar-sub-link {
   display: block;
   font-size: 0.8125rem;
@@ -208,6 +212,37 @@
   border-left: 3px solid var(--busdk-link);
   margin-left: -3px;
   padding-left: calc(0.75rem - 3px); // keep text aligned with other sub-links
+}
+
+.busdk-sidebar-sub-sub-links {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0.15rem 0.85rem;
+}
+
+.busdk-sidebar-sub-sub-link {
+  display: block;
+  font-size: 0.765625rem;
+  color: var(--busdk-muted);
+  text-decoration: none;
+  padding: 0.18rem 0.75rem;
+  border-radius: 6px;
+  margin: 0 0.25rem 0 0;
+}
+
+.busdk-sidebar-sub-sub-link:hover,
+.busdk-sidebar-sub-sub-link:focus-visible {
+  color: var(--busdk-link);
+  background: var(--busdk-surface-1);
+}
+
+.busdk-sidebar-sub-sub-link--current {
+  font-weight: 600;
+  color: var(--busdk-link);
+  background: var(--busdk-surface-1);
+  border-left: 3px solid var(--busdk-link);
+  margin-left: -3px;
+  padding-left: calc(0.75rem - 3px);
 }
 
 // Main content column: takes remaining space; inner has max-width + padding.

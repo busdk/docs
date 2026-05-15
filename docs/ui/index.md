@@ -1,152 +1,59 @@
 ---
-title: BusDK UI framework
-description: Public reference for the reusable BusDK UI framework used by portal and local browser applications.
+title: UI framework
+description: BusDK UI framework patch roadmap.
 ---
 
-## Purpose
+## Versions
 
-The BusDK UI framework is the shared contract for building browser interfaces
-inside the Bus ecosystem. It gives product modules a small set of deterministic
-Go components, browser runtime hooks, and test helpers so that a module can
-focus on its business view model instead of rebuilding page shells, forms,
-tables, navigation, assistant panels, terminal panes, file evidence surfaces,
-and browser wiring.
+Follow these patch directories in order when implementing the framework. Start
+with `v0.1.1`; later patches assume the earlier patch contracts exist.
 
-The framework is intentionally Go-first. The same application view should be
-composable from Go when rendered on the server, mounted in a Go/WASM browser
-runtime, or inspected in unit tests. JavaScript remains an interoperability
-detail for browser APIs and legacy hosts, not the primary application language.
-
-## Framework Pipeline
-
-BusDK UI applications use a narrow data flow:
-
-`business DTO -> product view model -> bus-ui nodes/components -> renderer target`
-
-Business DTOs are provider or module API data. Product view models belong to
-the product module and describe the exact screen state, copy, permissions,
-actions, and errors for that module. `bus-ui` owns the generic components used
-to render those view models. Renderer targets turn the component tree into
-server HTML, a Go/WASM mounted app, or a deterministic unit-test artifact.
-
-This boundary keeps reusable UI code small. `bus-ui` should not know what an
-accounting voucher, auth session, note review, or AI provider policy means.
-Those concepts stay in the owning product module. `bus-ui` should know how to
-render a form field, status tag, data table, action bar, terminal session, safe
-artifact link, error panel, or assistant message once the product module has
-already projected domain data into a generic shape.
-
-## Minimal Model
-
-The framework should stay small enough to explain in one pass:
-
-- `Node` is the deterministic render tree.
-- `Component` is a reusable function from props, slots, and view-model data to
-  nodes.
-- `Shell` is a component that owns page-level slots such as navigation, body,
-  assistant, and footer.
-- `Collection` is a component for repeated data: tables, lists, timelines, and
-  galleries.
-- `State` is visible status: empty, loading, result, warning, error, and busy
-  states.
-- `Action` is user-triggered behavior: submit, click, approve, upload, send,
-  stop, archive, or start a provider job.
-- `Resource` is external data or media: API endpoint, artifact link, evidence
-  preview, provider request, or upload target.
-- `Effect` is lifecycle behavior: polling, event streams, close guards, drops,
-  resize, logging, and cleanup.
-
-Specific helpers such as `CredentialLoginCard`, `TerminalSessionPanel`,
-`AIPanel`, `SidebarShell`, `TextTable`, or provider resource adapters are
-variants of those concepts, not separate architectural layers. When a proposed
-feature cannot fit this model, it should be questioned before a new framework
-concept is added.
-
-## Modules
-
-`bus-ui` owns reusable building blocks. Its public surface includes deterministic
-HTML helpers, virtual DOM nodes, component hooks, form and content primitives,
-shared CSS tokens, action/resource/effect helpers, AI workbench components,
-terminal session components, evidence helpers, and test fakes.
-
-`bus-portal` owns the host. It mounts feature modules, serves the shared CSS and
-static assets, applies security headers, exposes module metadata, passes runtime
-context to modules, and routes token-gated requests under canonical module
-paths.
-
-`bus-portal-*` modules own product views. Examples include auth, AI,
-accounting, and notes. They convert provider DTOs into product view models,
-configure generic components, register module routes, and test business
-projection logic without duplicating shared UI infrastructure.
-
-Provider modules such as `bus-api-provider-*` and integration modules own data
-and behavior behind APIs. A portal module may call them, but the UI framework
-does not move provider authorization or business policy into the browser.
-
-## Documentation Map
-
-- [Architecture](./architecture/) describes the package boundaries, data flow,
-  host contract, and ownership rules.
-- [Design system](./architecture/design-system) defines the visual and interaction language.
-- [Rendering model](./architecture/rendering) explains deterministic HTML, Go/WASM mounting,
-  templates, lifecycle ownership, and renderer tests.
-- [Building block reference](./reference/components) lists the generic components and
-  runtime helpers UI apps should compose.
-- [Component catalog](./reference/component-catalog) gives the complete reusable
-  component vocabulary with inputs, outputs, and test expectations.
-- [Component reference](./reference/component-reference) gives practical usage guidance
-  for every catalog component and runtime block.
-- [Declarative UI documents](./reference/declarative-documents) defines the JSON/YAML
-  document format that lets `bus-ui sample.yml` render reviewable UI samples.
-- [Examples](./examples/) shows complete YAML documents for notes, auth,
-  assistant, terminal, and evidence workflows.
-- [Portal modules](./guides/portal-modules) explains how feature modules plug into the
-  portal host.
-- [Testing UI apps](./guides/testing) describes the unit-first testing model and the
-  thin e2e layer.
-- [Reference checklist](./reference/) gives a compact implementation checklist
-  for new UI modules.
-
-## Core Rules
-
-A BusDK UI module should keep business decisions in its own view-model layer,
-then render through generic `bus-ui` components. It should not hand-assemble a
-full page with raw strings when a shared shell, form, table, status, action, or
-runtime helper exists.
-
-Every reusable component must be deterministic. Escaped text, stable attribute
-ordering, stable action tokens, and predictable class names are part of the
-contract because they let unit tests verify UI behavior without broad browser
-automation.
-
-Browser behavior should be Go/WASM-first. The framework may provide thin
-JavaScript shims where the browser requires them, but product modules should
-not carry local JavaScript for ordinary form submission, action dispatch,
-polling, session requests, drop handling, close guards, resize behavior, or
-client logging when a shared Go runtime helper can do the job.
-
-UI samples and fixtures should be representable as declarative JSON or YAML
-documents. A declarative document uses the same component catalog as Go code,
-so a command such as `bus-ui sample.yml` can render a deterministic screen for
-review, testing, documentation, or a small tool. This gives AI agents a simple
-artifact to propose and modify while keeping runtime behavior attached to typed
-Go handlers.
-
-E2e tests still exist, but they should prove that the host, mounting path, auth
-gate, assets, and the real browser bridge work. Product correctness should come
-mostly from focused unit tests over view models, generic component renders,
-action handlers, and fake provider clients.
-
-<!-- busdk-docs-nav start -->
-<p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../architecture/">System architecture</a></span>
-  <span class="busdk-prev-next-item busdk-index"><a href="../">Documentation index</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./architecture/">Architecture</a> &rarr;</span>
-</p>
-<!-- busdk-docs-nav end -->
-
-### Sources
-
-- [bus-ui module reference](../modules/bus-ui)
-- [bus-portal module reference](../modules/bus-portal)
-- [System architecture](../architecture/)
+- [v0.1.1 Core node foundation](v0.1.1/)
+- [v0.1.2 GX source tools](v0.1.2/)
+- [v0.1.3 GX compiler](v0.1.3/)
+- [v0.1.4 Custom components](v0.1.4/)
+- [v0.1.5 Go bindings](v0.1.5/)
+- [v0.1.6 Go controllers and events](v0.1.6/)
+- [v0.1.7 Lifecycle](v0.1.7/)
+- [v0.1.8 Diagnostics](v0.1.8/)
+- [v0.1.9 Browser safety blocks](v0.1.9/)
+- [v0.1.10 Core test helpers](v0.1.10/)
+- [v0.2.0 Library design baseline](v0.2.0/)
+- [v0.2.1 Shells](v0.2.1/)
+- [v0.2.2 Layouts](v0.2.2/)
+- [v0.2.3 Surfaces](v0.2.3/)
+- [v0.2.4 Navigation](v0.2.4/)
+- [v0.2.5 Event controls](v0.2.5/)
+- [v0.2.6 Icons](v0.2.6/)
+- [v0.3.1 Forms](v0.3.1/)
+- [v0.3.2 Form fields](v0.3.2/)
+- [v0.3.3 Input controls](v0.3.3/)
+- [v0.3.4 Submit state](v0.3.4/)
+- [v0.3.5 Tables](v0.3.5/)
+- [v0.3.6 Lists](v0.3.6/)
+- [v0.3.7 Timelines](v0.3.7/)
+- [v0.3.8 Status surfaces](v0.3.8/)
+- [v0.4.1 Resources](v0.4.1/)
+- [v0.4.2 Runtime config and API URLs](v0.4.2/)
+- [v0.4.3 Sessions](v0.4.3/)
+- [v0.4.4 Credentials](v0.4.4/)
+- [v0.4.5 Provider errors](v0.4.5/)
+- [v0.4.6 Assets and host tools](v0.4.6/)
+- [v0.5.1 Assistant workbench shell](v0.5.1/)
+- [v0.5.2 Assistant threads and messages](v0.5.2/)
+- [v0.5.3 Assistant composer and attachments](v0.5.3/)
+- [v0.5.4 Assistant model selection](v0.5.4/)
+- [v0.5.5 Assistant review controls](v0.5.5/)
+- [v0.6.1 Terminal sessions](v0.6.1/)
+- [v0.6.2 Terminal IO](v0.6.2/)
+- [v0.6.3 Terminal approvals](v0.6.3/)
+- [v0.6.4 Terminal adapter](v0.6.4/)
+- [v0.7.1 Evidence URLs and links](v0.7.1/)
+- [v0.7.2 Evidence previews](v0.7.2/)
+- [v0.7.3 Projection details](v0.7.3/)
+- [v0.8.1 File drops](v0.8.1/)
+- [v0.8.2 Image galleries](v0.8.2/)
+- [v0.9.1 Component catalog](v0.9.1/)
+- [v0.9.2 Declarative artifacts](v0.9.2/)
+- [v0.9.3 Product module integration](v0.9.3/)
+- [v0.9.4 Examples, testing, and release review](v0.9.4/)

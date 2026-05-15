@@ -1,5 +1,198 @@
 # Docs Refactor Plan
 
+- [x] UI version-only documentation IA: ensure `docs/docs/ui/` contains only
+  `index.md` plus semver patch directories named `v0.X.Y/`; move every current
+  non-version page from `architecture/`, `components/`, `design/`,
+  `examples/`, `guides/`, `reference/`, and `roadmap/` into the first patch
+  version that owns the concept; delete empty non-version directories; update
+  navigation and internal links.
+
+- [x] UI root index cleanup: keep `docs/docs/ui/index.md` as a minimal
+  roadmap/link map to patch versions only, without architecture/reference
+  content that should live in a version page.
+
+- [x] UI `v0.1.0` retirement: remove the abstract design-foundation patch and
+  relocate its concepts to the first concrete implementation patch that uses
+  each concept, so the public roadmap starts with `v0.1.1`.
+
+- [x] UI `v0.1.1` core node foundation: keep `Node`, shared interfaces,
+  `VNode`, `Text`, `Element`, `Fragment`, `Props`, and render-tree API docs
+  together; move any remaining node/render-tree architecture material here;
+  make `index.md` a link-only page.
+
+- [x] UI `v0.1.2` GX source tools: keep `.gx` source shape, `bus gx fmt`,
+  `bus gx lint`, source diagnostics, and source-only agent workflow here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.1.3` GX compiler: keep generated Go output, compile/static render
+  behavior, declarative renderer, and template compile checks here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.1.4` custom components: keep reusable component tags, props,
+  children, slots, lowercase element adapters, component concept, and template
+  composition docs here; make `index.md` a link-only page.
+
+- [x] UI `v0.1.5` Go bindings: keep binding concept, typed binding helpers,
+  fixture binding formats, defaults, and missing-binding validation here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.1.6` Go controllers and events: keep event identity, trigger
+  attributes, controller handler registration, runtime contract basics, and
+  form submit event flow here; make `index.md` a link-only page.
+
+- [x] UI `v0.1.7` lifecycle: keep effect/disposer/lifecycle cleanup material
+  here; make `index.md` a link-only page.
+
+- [x] UI `v0.1.8` diagnostics: keep client logging, runtime errors,
+  close-guard diagnostics, and browser API diagnostic boundaries here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.1.9` browser safety blocks: split browser API boundaries,
+  close guard, error host, and raw HTML into their own patch between
+  diagnostics and test helpers.
+
+- [x] UI `v0.1.10` core test helpers: keep core test helper, renderer test,
+  GX validation test, and compact testing workflow material here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.2.0` library design baseline: move product character, content
+  style, accessibility/safety, design-system overview, and visual design
+  foundations here; make `index.md` a link-only page.
+
+- [x] UI `v0.2.1` shells: keep shell concept and shell components here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.2.2` layouts: keep layout contract, sidebar navigation, and split
+  layout here; make `index.md` a link-only page.
+
+- [x] UI `v0.2.3` surfaces: keep panel, surface card, metric card, layout
+  surface rules, density, and typography material here; make `index.md` a
+  link-only page.
+
+- [x] UI `v0.2.4` navigation: keep link button, menu, tabs, and navigation
+  component rules here; make `index.md` a link-only page.
+
+- [x] UI `v0.2.5` event controls: keep button, icon button, event bar, and
+  controls guidance here; make `index.md` a link-only page.
+
+- [x] UI `v0.2.6` icons: keep icon component and icon usage guidance here;
+  make `index.md` a link-only page.
+
+- [x] UI `v0.3.1` forms: keep form component and form-submission flow here;
+  make `index.md` a link-only page.
+
+- [x] UI `v0.3.2` form fields: keep field and filter toolbar material here;
+  make `index.md` a link-only page.
+
+- [x] UI `v0.3.3` input controls: keep input, text input, password input,
+  date input, text area, and select material here; make `index.md` a link-only
+  page.
+
+- [x] UI `v0.3.4` submit state: keep submit state material here; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.3.5` tables: keep table and dense data material here; move list,
+  timeline, and status material to later patches; make `index.md` a link-only
+  page.
+
+- [x] UI `v0.3.6` lists: create a list patch for collection/list records and
+  summary items; make `index.md` a link-only page.
+
+- [x] UI `v0.3.7` timelines: create a timeline patch for ordered event history
+  components; make `index.md` a link-only page.
+
+- [x] UI `v0.3.8` status surfaces: create a status-surface patch for status
+  pill, empty, loading, result, and error banner components plus color/status
+  rules; make `index.md` a link-only page.
+
+- [x] UI `v0.4.1` resources: keep resource concept and host resource behavior
+  here; make `index.md` a link-only page.
+
+- [x] UI `v0.4.2` runtime config and API URLs: create a runtime host patch for
+  runtime config, API URL resolver, portal host contract, and renderer targets;
+  make `index.md` a link-only page.
+
+- [x] UI `v0.4.3` sessions: create a session patch for safe browser session
+  views; make `index.md` a link-only page.
+
+- [x] UI `v0.4.4` credentials: create a credentials patch for credential login
+  surfaces; make `index.md` a link-only page.
+
+- [x] UI `v0.4.5` provider errors: create a provider-error patch for provider
+  failure projection; make `index.md` a link-only page.
+
+- [x] UI `v0.4.6` assets and host tools: create a small patch for CSS bundle,
+  CLI runtime flags, browser open, and host-adjacent tooling docs; make
+  `index.md` a link-only page.
+
+- [x] UI `v0.5.1` assistant workbench shell: keep only assistant workbench and
+  assistant panel material here; move unrelated assistant details to later
+  patches; make `index.md` a link-only page.
+
+- [x] UI `v0.5.2` assistant threads and messages: create a focused patch for
+  assistant threads, thread list, messages, and safe Markdown; make `index.md`
+  a link-only page.
+
+- [x] UI `v0.5.3` assistant composer and attachments: create a focused patch
+  for composer, attachments, and assistant drop controller; make `index.md` a
+  link-only page.
+
+- [x] UI `v0.5.4` assistant model selection: create a focused patch for model
+  select/picker behavior; make `index.md` a link-only page.
+
+- [x] UI `v0.5.5` assistant review controls: create a focused patch for
+  approvals, review status, and work isolation; make `index.md` a link-only
+  page.
+
+- [x] UI `v0.6.1` terminal sessions: create a focused patch for terminal
+  session and panel surfaces; make `index.md` a link-only page.
+
+- [x] UI `v0.6.2` terminal IO: create a focused patch for terminal output and
+  input controls; make `index.md` a link-only page.
+
+- [x] UI `v0.6.3` terminal approvals: create a focused patch for terminal
+  approval prompts; make `index.md` a link-only page.
+
+- [x] UI `v0.6.4` terminal adapter: create a focused patch for the
+  event-to-terminal adapter; make `index.md` a link-only page.
+
+- [x] UI `v0.7.1` evidence URLs and links: create a focused patch for evidence
+  URL resolver and evidence links; make `index.md` a link-only page.
+
+- [x] UI `v0.7.2` evidence previews: create a focused patch for evidence
+  preview behavior; make `index.md` a link-only page.
+
+- [x] UI `v0.7.3` projection details: create a focused patch for projection
+  detail surfaces; make `index.md` a link-only page.
+
+- [x] UI `v0.8.1` file drops: create a focused patch for drop zone/file drop
+  surfaces; make `index.md` a link-only page.
+
+- [x] UI `v0.8.2` image galleries: create a focused patch for image gallery
+  surfaces; make `index.md` a link-only page.
+
+- [x] UI `v0.9.1` component catalog: keep the component map and component
+  reference here as compact retrospective maps that link only to previous
+  versions; make `index.md` a link-only page.
+
+- [x] UI `v0.9.2` declarative artifacts: keep the cross-version declarative
+  artifact map here after the component catalog; make `index.md` a link-only
+  page.
+
+- [x] UI `v0.9.3` product module integration: keep product module shape and
+  portal module integration here; make `index.md` a link-only page.
+
+- [x] UI `v0.9.4` examples, testing, and release review: keep examples,
+  testing guide, reference checklist, and the retrospective roadmap here; make
+  `index.md` a link-only page.
+
+- [x] UI local link and quality verification: after the version-only refactor,
+  verify internal links, verify no `docs/docs/ui` Markdown files remain outside
+  `index.md` and `v0.X.Y/`, verify no version page links to a future version,
+  run `make -C docs quality`, `git -C docs diff --check`, and root
+  `git diff --check`. `bus lint` remains blocked in this sandbox by restricted
+  Codex runtime/network access unless permissions are granted.
+
 - [x] Reorganize UI framework docs by document type: move loose topic pages under `docs/docs/ui/` into typed subdirectories such as architecture, guides, reference, and examples while preserving the `/ui/` landing page; update navigation, prev/index/next links, and cross-page Markdown links; verify no stale UI links remain; run docs `make quality` and `git diff --check`.
 
 - [x] UI lint batch 01: run `bus lint` for `docs/docs/ui/architecture.md`, `component-catalog.md`, `component-reference.md`, `components.md`, `components/action-bar.md`, `components/action.md`, `components/ai-approvals.md`, and `components/ai-attachment-list.md`; fix every actionable finding in those files; rerun this exact batch until clean; verify docs `make quality` and `git diff --check`.
