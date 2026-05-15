@@ -218,6 +218,14 @@ Each page must stay focused on a single clear topic. If content belongs
 elsewhere, move it to the most appropriate page and link only where that helps
 reader discovery without derailing the page.
 
+When implementation or review of a current UI patch finds a defect, missing
+test, missing documentation, or incomplete behavior from an earlier patch, it
+may be fixed in the current patch. Document the correction in the current
+version's scope and acceptance evidence, keep older version pages historically
+coherent, and avoid pretending the correction was already complete in the older
+patch unless that older page is being deliberately clarified rather than
+rewritten.
+
 Embed cross-links directly in body text where concepts are introduced. Keep
 link text natural; do not add link-only phrases like "See..." to force links.
 Avoid separate "See also" sections unless explicitly required.
