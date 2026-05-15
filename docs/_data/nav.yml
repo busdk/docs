@@ -231,8 +231,18 @@
         - label: v0.1.2 GX source tools
           url: /ui/v0.1.2/
           children:
-            - label: Bus UI v0.1.2 GX source tools
+            - label: GX source tools
               url: /ui/v0.1.2/source-tools
+            - label: GX source files
+              url: /ui/v0.1.2/source-files
+            - label: GX formatter
+              url: /ui/v0.1.2/formatter
+            - label: GX linter
+              url: /ui/v0.1.2/linter
+            - label: GX source diagnostics
+              url: /ui/v0.1.2/diagnostics
+            - label: GX source tool acceptance
+              url: /ui/v0.1.2/acceptance
         - label: v0.1.3 GX compiler
           url: /ui/v0.1.3/
           children:

@@ -100,7 +100,7 @@ Use this product model as the design center:
   Go package with standard Go syntax except for GX markup literals such as
   `var escapedTextTemplate = <p><Text value={greeting}></Text></p>`. Do not
   design public examples around a required top-level `<Template>` wrapper.
-  Public `.gx` documentation should also mention the intended source tools:
+Public `.gx` documentation should also mention the intended source tools:
   `bus gx fmt` / `bus gx fmt --check` for canonical formatting and
   `bus gx lint` for source-only GX diagnostics, `bus gx compile` for lowering
   `.gx` to pure `.go`, `bus gx inspect` for template inventory, and
@@ -111,6 +111,11 @@ Use this product model as the design center:
   modules until they exist.
   When documenting AI-agent workflows, prefer machine-readable diagnostic
   examples such as `--format json` and stable file/line/column output.
+  Do not mention discarded template shapes such as a top-level `<Template>`
+  wrapper in public UI docs unless a current patch explicitly implements that
+  shape. Do not teach superproject checkout, Git submodule, or installation
+  mechanics inside UI patch pages; keep patch pages focused on what the patch
+  implements and what public result authors can observe.
 - Data is a separate Go value, model document, or host object and may be any
   data shape the controller can expose through Go bindings.
 - Bindings are Go-first controller adapters that adapt arbitrary data to

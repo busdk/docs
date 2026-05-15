@@ -20,8 +20,9 @@
   together; move any remaining node/render-tree architecture material here;
   make `index.md` a link-only page.
 
-- [x] UI `v0.1.2` GX source tools: keep `.gx` source shape, `bus gx fmt`,
-  `bus gx lint`, source diagnostics, and source-only agent workflow here; make
+- [x] UI `v0.1.2` GX source tools: split source shape, `bus gx fmt`,
+  `bus gx lint`, source diagnostics, and acceptance checks into focused pages;
+  remove references to discarded template wrappers and setup mechanics; make
   `index.md` a link-only page.
 
 - [x] UI `v0.1.3` GX compiler: keep generated Go output, compile/static render
