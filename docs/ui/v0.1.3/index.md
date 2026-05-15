@@ -5,9 +5,6 @@ description: BusDK UI v0.1.3 documentation index.
 
 ## Pages
 
-`v0.1.3` compiles checked GX source into generated Go and verifies static HTML
-output. The pages below follow that implementation flow.
-
 - [GX compiler](./compiler) - BusDK UI v0.1.3 compiler patch overview.
 - [Source-tool integration](./source-tool-integration) - Required source checks before compilation.
 - [Compile command](./compile-command) - `bus-gx compile` command contract.
