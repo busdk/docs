@@ -1,26 +1,32 @@
 ---
-title: bus-gx — GX core render tree library
-description: End-user reference for the bus-gx module and the currently implemented v0.1.1 Core node foundation.
+title: bus-gx — GX core render tree and source tools
+description: End-user reference for the bus-gx module and the currently implemented v0.1.2 GX source tools.
 ---
 
-## `bus-gx` — GX core render tree library
+## `bus-gx` — GX core render tree and source tools
 
-Current implemented UI roadmap version: **v0.1.1 Core node foundation**.
+Current implemented UI roadmap version: **v0.1.2 GX source tools**.
 
-`bus-gx` is the low-level Go library for BusDK GX render-tree code. In
-`v0.1.1`, it provides only the safe static HTML foundation in
-`github.com/busdk/bus-gx/pkg/gx`: nodes, props, validation, and deterministic
-escaped HTML rendering.
+`bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
+source tooling. Through `v0.1.2`, it provides the safe static HTML foundation
+in `github.com/busdk/bus-gx/pkg/gx` and source-only formatting and linting
+helpers in `github.com/busdk/bus-gx/pkg/gx/source`.
 
-There is no `bus gx` command in `v0.1.1`. `.gx` source files, GX formatting and
-linting commands, compilation, custom tags, controllers, bindings, events,
-lifecycle hooks, browser mounting, hydration, and generated Go belong to later
-UI roadmap versions.
+The module now builds `./bin/bus-gx`. It implements `fmt`, `fmt --check`,
+`lint`, and `lint --format json` for `.gx` files. The binary also accepts
+`gx fmt` and `gx lint` aliases so module tests can exercise the future
+`bus gx` dispatch shape. The superproject dispatcher, `.gx` compilation,
+custom tag registry resolution, controllers, bindings, events, lifecycle
+hooks, browser mounting, hydration, generated Go, and runtime rendering of
+`.gx` files belong to later UI roadmap versions.
 
 ## Import
 
 ```go
-import "github.com/busdk/bus-gx/pkg/gx"
+import (
+	"github.com/busdk/bus-gx/pkg/gx"
+	"github.com/busdk/bus-gx/pkg/gx/source"
+)
 ```
 
 ## Public API
@@ -36,6 +42,12 @@ import "github.com/busdk/bus-gx/pkg/gx"
 | `gx.Element` | Safe lowercase structural HTML element constructor. |
 | `gx.Fragment` | Child group that renders without a wrapper. |
 | `gx.Props` | Deterministic validated attribute map. |
+| `source.ParseFile` | Source-only `.gx` parser with stable locations. |
+| `source.FormatFile` | In-memory deterministic `.gx` formatter. |
+| `source.FormatPaths` | File formatter used by the CLI. |
+| `source.LintFile` | Source-only `.gx` linter. |
+| `source.WriteHuman` | Stable human diagnostics. |
+| `source.WriteJSON` | Stable JSON diagnostics. |
 
 ## Example
 
@@ -62,6 +74,34 @@ attributes such as `onclick`, URL-bearing attributes such as `href` and `src`,
 inline `style`, malformed names, unsupported scalar values, and non-finite
 numbers fail validation.
 
+Source tools keep the same closed boundary. Lowercase `.gx` tags are limited
+to the safe structural element allowlist. Uppercase tags are recognized as
+component syntax, but only `<Text value={...}></Text>` is supported in
+`v0.1.2`. Raw text inside markup is rejected; authors must use `Text` so
+formatting cannot silently discard content.
+
+## Source Tools
+
+Minimal `.gx` source:
+
+```gx
+package notesui
+
+var hello = <p><Text value={"Hello Bus"}></Text></p>
+```
+
+From the `bus-gx` module root:
+
+```sh
+make build
+./bin/bus-gx fmt --check hello.gx
+./bin/bus-gx lint --format json hello.gx
+```
+
+Valid source prints an empty JSON diagnostics array for `lint --format json`.
+Invalid source prints stable diagnostics with `file`, `line`, `column`,
+`endLine`, `endColumn`, `code`, `severity`, and `message`.
+
 ## Checks
 
 From the `bus-gx` module root:
@@ -70,13 +110,13 @@ From the `bus-gx` module root:
 make fmt
 make test
 make lint
+make build
+make e2e
 make check
 ```
 
-`make check` is the default release gate for `v0.1.1`. It formats, vets, lints,
-runs package tests, performs the library-only build, and runs the e2e smoke.
-The library-only build intentionally reports that no `cmd/bus-gx/main.go`
-exists.
+`make check` is the default release gate for `v0.1.2`. It formats, vets,
+lints, runs package tests, builds `./bin/bus-gx`, and runs the CLI e2e smoke.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -90,3 +130,5 @@ exists.
 - [Core node acceptance](../ui/v0.1.1/acceptance)
 - [Shared interfaces](../ui/v0.1.1/interfaces)
 - [Props reference](../ui/v0.1.1/props)
+- [UI v0.1.2 GX source tools](../ui/v0.1.2/)
+- [GX source tool acceptance](../ui/v0.1.2/acceptance)

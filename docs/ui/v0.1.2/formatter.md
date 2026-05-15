@@ -1,27 +1,30 @@
 ---
 title: GX formatter
-description: BusDK UI v0.1.2 bus gx fmt command contract.
+description: BusDK UI v0.1.2 bus-gx fmt command contract.
 ---
 
 ## Contract
 
-`bus gx fmt` canonicalizes `.gx` source files without changing their meaning.
+`bus-gx fmt` canonicalizes `.gx` source files without changing their meaning.
 It owns whitespace, indentation, markup literal layout, attribute ordering in
 source where ordering is semantically irrelevant, and stable newline behavior.
 
-`bus gx fmt --check` verifies that files are already canonical and does not
+`bus-gx fmt --check` verifies that files are already canonical and does not
 write files. It exits `0` when every checked file is canonical and `1` when any
 file would change.
 
-`bus gx fmt` exits `0` after a successful rewrite. It exits non-zero when
+`bus-gx fmt` exits `0` after a successful rewrite. It exits non-zero when
 parsing fails before any file is rewritten.
+
+The module binary also accepts `bus-gx gx fmt` as a local alias for the future
+`bus gx fmt` dispatch shape.
 
 ## Example
 
 ```sh
-bus gx fmt --check hello.gx
+bus-gx fmt --check hello.gx
 
-bus gx fmt hello.gx
+bus-gx fmt hello.gx
 ```
 
 The formatter reports parse diagnostics using the shared
