@@ -163,6 +163,14 @@ live in patch-level directories such as `docs/docs/ui/v0.1.1/` and
 When a version page initializes a submodule or command surface, state exactly
 which repository/module files, packages, commands, tests, and development
 targets appear in that patch, and which related parts are intentionally absent.
+Default DoD for implementing any UI roadmap patch under `docs/docs/ui/v*/`:
+the implementation for that patch is complete, unit tests are complete for the
+implemented public contract, public UI docs for that version are updated when
+implementation or testing changes the original spec or needs clarification,
+the owning module SDD such as `sdd/docs/modules/bus-gx.md` is complete through
+that version, and the end-user module page such as
+`docs/docs/modules/bus-gx.md` matches the actual implementation with the
+current implemented version clearly visible.
 Keep concrete API names, command behavior, file formats, validation rules, and
 examples on the first version page that implements them. Higher-level design,
 architecture, design-system, rendering, and reference pages should summarize

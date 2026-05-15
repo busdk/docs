@@ -18,8 +18,8 @@ bindings, controllers, or events.
 | `Node` | `VNode() (VNode, error)` | Normalizes a concrete node value into a validated [VNode](./v-node). |
 | `Renderer` | `RenderHTML(Node) (string, error)` | Renders a validated [Node](./node) to deterministic escaped HTML. |
 
-`Text`, `Element`, `Fragment`, and `VNode` implement `Node`. The default HTML
-renderer implements `Renderer`. The package exposes
+`Text`, `Element`, `Fragment`, and `VNode` implement `Node`. `HTMLRenderer`
+implements `Renderer`. The package exposes
 `RenderHTML(Node) (string, error)` as the default deterministic renderer for
 simple tests and call sites; it validates the node before returning escaped
 HTML.
@@ -40,6 +40,11 @@ type Renderer interface {
 }
 ```
 
+```go
+var renderer gx.Renderer = gx.HTMLRenderer{}
+html, err := renderer.RenderHTML(gx.Text("safe <text>"))
+```
+
 The interface boundary keeps `bus-ui` code independent from concrete
 constructors. A higher-level component can return `gx.Node`, and tests can
 compare the resulting [VNode](./v-node) or rendered HTML.
@@ -55,3 +60,4 @@ compare the resulting [VNode](./v-node) or rendered HTML.
 - [Core foundation](./)
 - [Node concept](./node)
 - [VNode](./v-node)
+- [Core node acceptance](./acceptance)

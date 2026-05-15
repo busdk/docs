@@ -11,7 +11,7 @@ only the first render-tree API surface:
 | API | Page | Purpose |
 | --- | --- | --- |
 | `Node` | [Shared interfaces](./interfaces) | Normalizes concrete values to validated virtual nodes. |
-| `Renderer` and `RenderHTML` | [Shared interfaces](./interfaces) | Render validated nodes to deterministic escaped HTML. |
+| `Renderer`, `HTMLRenderer`, and `RenderHTML` | [Shared interfaces](./interfaces) | Render validated nodes to deterministic escaped HTML. |
 | `VNode` | [VNode](./v-node) | Stores the normalized immutable node shape used by renderers and tests. |
 | `Text` | [Text](./text) | Creates escaped scalar text nodes. |
 | `Element` | [Element](./element) | Creates safe lowercase structural HTML nodes. |
@@ -35,3 +35,4 @@ browser mount API in this patch.
 - [Node UI concept](./node)
 - [Shared interfaces](./interfaces)
 - [VNode](./v-node)
+- [Core node acceptance](./acceptance)

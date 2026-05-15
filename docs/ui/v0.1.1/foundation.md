@@ -54,6 +54,9 @@ needed by the pages in this version. The package API should be small enough that
 `bus-ui` can import it to build higher-level components without depending on
 any command-line tooling.
 
+[Core node acceptance](./acceptance) defines the concrete module files and
+checks that prove this patch.
+
 No `bus gx` command is required in this version. Source parsing, `.gx` files,
 `bus gx fmt`, `bus gx lint`, compilation, custom components, bindings,
 controllers, events, lifecycle hooks, browser hydration, and generated Go
@@ -81,3 +84,4 @@ contracts.
 - [Element](./element)
 - [Fragment](./fragment)
 - [Props](./props)
+- [Core node acceptance](./acceptance)

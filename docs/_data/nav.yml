@@ -175,6 +175,8 @@
       url: /modules/bus-filing-vero
     - label: bus gateway
       url: /modules/bus-gateway
+    - label: bus-gx
+      url: /modules/bus-gx
     - label: bus integration cloud
       url: /modules/bus-integration-cloud
     - label: bus integration database
@@ -228,6 +230,8 @@
               url: /ui/v0.1.1/render-tree-contract
             - label: UI node API map
               url: /ui/v0.1.1/node-api-map
+            - label: Core node acceptance
+              url: /ui/v0.1.1/acceptance
         - label: v0.1.2 GX source tools
           url: /ui/v0.1.2/
           children:

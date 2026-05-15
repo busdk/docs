@@ -17,9 +17,11 @@ description: BusDK UI v0.1.1 deterministic props reference.
 ## Boundary
 
 Attribute ordering is stable across renders. Attribute names must be valid HTML
-attribute names or `data-*`/`aria-*` names. Direct `Props` validation rejects
-event handler attributes such as `onclick`. URL-bearing attributes such as
-`href` or `src` fail validation in `v0.1.1`.
+attribute names. Regular attributes are limited to `id`, `class`, `title`,
+`role`, `data-*`, and `aria-*`. Direct `Props` validation rejects event handler
+attributes such as `onclick`, uppercase or malformed names, and raw `style`.
+URL-bearing attributes such as `href` or `src` fail validation in `v0.1.1`.
+Numeric values must be finite.
 
 ## Go Shape
 
@@ -48,3 +50,4 @@ class="bus-button"
 
 - [Core foundation](./)
 - [Node concept](./node)
+- [Core node acceptance](./acceptance)

@@ -15,3 +15,4 @@ description: BusDK UI v0.1.1 documentation index.
 - [Fragment node](./fragment) - BusDK UI v0.1.1 fragment node reference.
 - [UI render tree contract](./render-tree-contract) - BusDK UI Node and VNode architecture contract.
 - [UI node API map](./node-api-map) - BusDK UI map for versioned Node, Props, VNode, and renderer APIs.
+- [Core node acceptance](./acceptance) - BusDK UI v0.1.1 implementation and verification contract.
