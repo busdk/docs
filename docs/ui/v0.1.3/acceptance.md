@@ -17,20 +17,18 @@ package notesui
 var hello = <p><Text value={"Hello Bus"}></Text></p>
 ```
 
-From the same directory:
+With BusDK commands on `PATH`, run:
 
 ```sh
-make build
+bus gx fmt --check hello.gx
 
-./bin/bus-gx fmt --check hello.gx
+bus gx lint --format json hello.gx
 
-./bin/bus-gx lint --format json hello.gx
-
-./bin/bus-gx compile hello.gx --output hello_gx.go
+bus gx compile hello.gx --output hello_gx.go
 
 go test ./...
 
-./bin/bus-gx render hello.gx --entry hello --format html
+bus gx render hello.gx --entry hello --format html
 ```
 
 Each command must exit `0`. `lint --format json` must print an empty

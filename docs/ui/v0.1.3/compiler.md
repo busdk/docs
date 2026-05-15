@@ -13,7 +13,7 @@ interfaces](../v0.1.1/interfaces).
 ## Deliverables
 
 1. Reuse the [source-tool checks](./source-tool-integration) before compile.
-2. Add the [`bus-gx compile`](./compile-command) command.
+2. Add the [`bus gx compile`](./compile-command) command.
 3. Define the [generated Go](./generated-go) artifact shape.
 4. Define [template entries](./template-entries).
 5. Add a [static render](./static-render) check for generated entries.

@@ -13,12 +13,16 @@ diagnostic shape instead of defining another GX grammar.
 Run source checks before compile:
 
 ```sh
-bus-gx fmt --check hello.gx
+bus gx fmt --check hello.gx
 
-bus-gx lint --format json hello.gx
+bus gx lint --format json hello.gx
 ```
 
-`bus-gx compile` must stop on source diagnostics and must report the same file,
+Replace `hello.gx` with the source file being compiled. Both commands must
+exit `0`; `lint --format json` must print an empty diagnostics array before
+running `bus gx compile`.
+
+`bus gx compile` must stop on source diagnostics and must report the same file,
 line, column, code, severity, and message shape as the source tools.
 
 <!-- busdk-docs-nav start -->

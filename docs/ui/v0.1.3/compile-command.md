@@ -1,24 +1,24 @@
 ---
 title: Compile command
-description: BusDK UI v0.1.3 bus-gx compile command contract.
+description: BusDK UI v0.1.3 bus gx compile command contract.
 ---
 
 ## Contract
 
-`bus-gx compile` lowers `.gx` source into generated Go without rendering it.
+`bus gx compile` lowers `.gx` source into generated Go without rendering it.
 
 Usage:
 
 ```sh
-bus-gx compile <file.gx> --output <file_gx.go>
+bus gx compile <file.gx> --output <file_gx.go>
 ```
 
 The command accepts one explicit `.gx` input file and one explicit output path.
 It exits `0` after writing canonical generated Go. It exits non-zero without
 writing output when source parsing, linting, or generation fails.
 
-The module binary may also accept `bus-gx gx compile` as a local alias for the
-same command shape.
+Module-local tests may call `./bin/bus-gx gx compile` after `make build`, but
+user-facing commands go through the `bus` dispatcher.
 
 ## Boundary
 

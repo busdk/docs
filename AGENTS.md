@@ -105,6 +105,11 @@ Public `.gx` documentation should also mention the intended source tools:
   `bus gx lint` for source-only GX diagnostics, `bus gx compile` for lowering
   `.gx` to pure `.go`, `bus gx inspect` for template inventory, and
   `bus gx validate` for template plus controller validation.
+  Public end-user command examples must use the dispatcher form `bus gx ...`
+  instead of invoking `bus-gx ...` directly. It is fine to mention the
+  `bus-gx` module or binary when describing implementation details, local
+  module builds, or test aliases, but copyable user commands should go through
+  `bus`.
   The future `bus-gx` module owns the `bus gx` command surface and the core GX
   libraries; optional submodules such as `bus-gx-fmt` or `bus-gx-lint` may own
   implementation internals later, but do not document them as initialized

@@ -13,12 +13,11 @@ in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting
 helpers in `github.com/busdk/bus-gx/pkg/gx/source`, and a static compiler that
 lowers checked `.gx` entries into ordinary Go.
 
-The module now builds `./bin/bus-gx`. It implements `fmt`, `fmt --check`,
-`lint`, `lint --format json`, `compile`, and `render` for `.gx` files. The
-binary also accepts `gx ...` aliases so module tests can exercise the future
-`bus gx` dispatch shape. Custom tag registry resolution, controllers,
-bindings, events, lifecycle hooks, browser mounting, hydration, data loading,
-and runtime resources belong to later UI roadmap versions.
+The module installs as the `bus gx` command family through the BusDK
+dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
+`compile`, and `render` for `.gx` files. Custom tag registry resolution,
+controllers, bindings, events, lifecycle hooks, browser mounting, hydration,
+data loading, and runtime resources belong to later UI roadmap versions.
 
 ## Import
 
@@ -93,14 +92,13 @@ package notesui
 var hello = <p><Text value={"Hello Bus"}></Text></p>
 ```
 
-From the `bus-gx` module root:
+With BusDK commands on `PATH`:
 
 ```sh
-make build
-./bin/bus-gx fmt --check hello.gx
-./bin/bus-gx lint --format json hello.gx
-./bin/bus-gx compile hello.gx --output hello_gx.go
-./bin/bus-gx render hello.gx --entry hello --format html
+bus gx fmt --check hello.gx
+bus gx lint --format json hello.gx
+bus gx compile hello.gx --output hello_gx.go
+bus gx render hello.gx --entry hello --format html
 ```
 
 Valid source prints an empty JSON diagnostics array for `lint --format json`.

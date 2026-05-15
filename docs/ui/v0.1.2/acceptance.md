@@ -16,26 +16,21 @@ package notesui
 var hello = <p><Text value={"Hello Bus"}></Text></p>
 ```
 
-From the `bus-gx` module root, the expected public checks are:
+With BusDK commands on `PATH`, the expected public checks are:
 
 ```sh
-make build
+bus gx fmt --check hello.gx
 
-bus-gx fmt --check hello.gx
-
-bus-gx lint --format json hello.gx
+bus gx lint --format json hello.gx
 ```
 
-Run those commands with `bus-gx` on `PATH`, or replace `bus-gx` with
-`./bin/bus-gx` after `make build`.
-
-`bus-gx fmt --check` accepts canonical source. `bus-gx fmt` rewrites
-non-canonical whitespace without changing meaning. `bus-gx lint --format json`
+`bus gx fmt --check` accepts canonical source. `bus gx fmt` rewrites
+non-canonical whitespace without changing meaning. `bus gx lint --format json`
 returns stable empty diagnostics for valid source and stable source locations
 for invalid source.
 
-The module binary also accepts the local aliases `bus-gx gx fmt` and
-`bus-gx gx lint` so e2e tests can exercise the future `bus gx` dispatch shape.
+Module-local tests may call `./bin/bus-gx gx fmt` and `./bin/bus-gx gx lint`
+after `make build`, but user-facing commands go through the `bus` dispatcher.
 
 Raw text content is invalid in this patch:
 

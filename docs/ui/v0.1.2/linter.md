@@ -1,39 +1,39 @@
 ---
 title: GX linter
-description: BusDK UI v0.1.2 bus-gx lint command contract.
+description: BusDK UI v0.1.2 bus gx lint command contract.
 ---
 
 ## Contract
 
-`bus-gx lint` validates `.gx` source without writing files. It rejects
+`bus gx lint` validates `.gx` source without writing files. It rejects
 malformed GX, raw text content, duplicate declarations in the same file,
 unsafe lowercase attributes, inline JavaScript handlers, invalid tag casing,
 and unsupported syntax.
 
-`bus-gx lint --format json` emits machine-readable diagnostics for agent
+`bus gx lint --format json` emits machine-readable diagnostics for agent
 workflows. Valid source returns an empty diagnostics array. Source diagnostics
 that block use in CI make the command exit non-zero.
 
 Usage:
 
 ```sh
-bus-gx lint [--format text|json] <file.gx>...
+bus gx lint [--format text|json] <file.gx>...
 ```
 
 The command accepts one or more explicit `.gx` file paths. It does not read
 stdin and does not expand directories. Shell globs are handled by the shell
-before `bus-gx` starts; after expansion, every operand must be a readable file.
+before `bus gx` starts; after expansion, every operand must be a readable file.
 
 The linter does not render, compile generated Go, load data, evaluate bindings,
 run controller code, or validate browser behavior.
 
-The module binary also accepts `bus-gx gx lint` as a local alias for the future
-`bus gx lint` dispatch shape.
+Module-local tests may call `./bin/bus-gx gx lint` after `make build`, but
+user-facing commands go through the `bus` dispatcher.
 
 ## Example
 
 ```sh
-bus-gx lint --format json hello.gx
+bus gx lint --format json hello.gx
 ```
 
 The same source coordinate rules are used by human output and JSON output, so
