@@ -1,20 +1,21 @@
 ---
 title: bus-gx — GX core render tree, source tools, and WASM runtime
-description: End-user reference for the bus-gx module and the currently implemented v0.1.9 browser API boundary patch.
+description: End-user reference for the bus-gx module and the currently implemented v0.1.10 core test helper patch.
 ---
 
 ## `bus-gx` — GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.9 browser API boundaries**.
+Current implemented UI roadmap version: **v0.1.10 core test helpers**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.9`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.10`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
 in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
 checked `.gx` expressions into ordinary Go, and
 `github.com/busdk/bus-gx/pkg/gx/wasm` for mounting a GX root from Go
 WebAssembly with redacted post-mount diagnostics behind a narrow browser API
-boundary.
+boundary. It also provides `github.com/busdk/bus-gx/pkg/gxtest` for
+deterministic render, compiler, and WASM callback tests.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
@@ -35,6 +36,7 @@ import (
 	"github.com/busdk/bus-gx/pkg/gx"
 	"github.com/busdk/bus-gx/pkg/gx/source"
 	gxwasm "github.com/busdk/bus-gx/pkg/gx/wasm"
+	"github.com/busdk/bus-gx/pkg/gxtest"
 )
 ```
 
@@ -65,6 +67,11 @@ import (
 | `gxwasm.Update` | Rerun the current root and replace the mounted DOM subtree. |
 | `gxwasm.Unmount` | Clear the current mount and release retained callbacks. |
 | `gxwasm.Handle` | Explicit mount handle with `RequestUpdate` and `Unmount`. |
+| `gxtest.RenderHTML` | Test helper for deterministic escaped HTML. |
+| `gxtest.VNode` | Test helper for normalized render-tree assertions. |
+| `gxtest.RequireProp` | Typed test helper for scalar and callback props. |
+| `gxtest.CompileGX` | Test helper for generated Go fixture output. |
+| `gxtest.MountWASM` | Browser-backed Go WebAssembly test harness. |
 
 ## Example
 
@@ -123,6 +130,12 @@ does not expose `window.BusGX`-style framework globals, inline JavaScript
 handler strings, secret-bearing runtime configuration in DOM attributes, raw
 HTML passthrough, local storage helpers, file drop APIs, streaming readers,
 close guards, product logging helpers, or a client log transport.
+
+`v0.1.10` adds `pkg/gxtest` for tests only. The helpers fail through
+`testing.TB`, make no network calls, read no host credentials, and do not add
+product-specific harness behavior. The WASM harness installs a scoped test DOM
+fixture, uses the real `gxwasm.Mount` path, and supports tag, `#id`, and
+simple `tag[attr=value]` selectors.
 
 ## Source Tools
 
@@ -261,6 +274,42 @@ mount succeeds use stable redacted categories such as `runtime-render-failed`
 and `runtime-callback-failed`; raw panic values and raw node validation details
 are not included.
 
+## Test Helpers
+
+`pkg/gxtest` keeps component, generated-output, and WASM callback tests small:
+
+```go
+html := gxtest.RenderHTML(t,
+	gx.Element("p", gx.Props{"class": "message"}, gx.Text("Hello")),
+)
+vnode := gxtest.VNode(t,
+	gx.Element("button", gx.Props{"click": save}, gx.Text("Save")),
+)
+click := gxtest.RequireProp[func()](t, vnode, "click")
+click()
+generated := gxtest.CompileGX(t, "hello.gx",
+	"package demo\n\nvar hello = <p><Text value={\"Hello\"}></Text></p>\n",
+)
+```
+
+Browser-backed tests run through `make test-wasm`:
+
+```sh
+make test-wasm
+```
+
+```go
+h := gxtest.MountWASM(t, "#app", view)
+h.Input("input[name=title]", "Draft")
+h.Submit("form")
+if got := h.HTML(); got == "" {
+	t.Fatal("empty mounted HTML")
+}
+if diagnostics := h.Diagnostics(); len(diagnostics) != 0 {
+	t.Fatalf("diagnostics = %v", diagnostics)
+}
+```
+
 ## Verify Installed Command
 
 With BusDK commands on `PATH`, the installed dispatcher should report the
@@ -273,7 +322,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.9
+bus-gx v0.1.10
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
@@ -301,3 +350,5 @@ Use `bus gx fmt --check`, `bus gx lint --format json`, and
 - [UI v0.1.6 GX callbacks and intrinsic interactivity](../ui/v0.1.6/)
 - [UI v0.1.7 GX Go WebAssembly runtime](../ui/v0.1.7/)
 - [UI v0.1.8 GX Go WebAssembly runtime diagnostics](../ui/v0.1.8/)
+- [UI v0.1.9 GX browser API boundaries](../ui/v0.1.9/)
+- [UI v0.1.10 Core test helpers](../ui/v0.1.10/)

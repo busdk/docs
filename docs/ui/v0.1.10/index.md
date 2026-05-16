@@ -5,5 +5,4 @@ description: BusDK UI v0.1.10 documentation index.
 
 ## Pages
 
-- [UI rendering model](./rendering-model) - BusDK UI rendering targets, node APIs, templates, mounting, runtime errors, and browser boundaries.
-- [Core test helpers](./test-helpers) - BusDK UI core test helpers for fake resources, fixtures, and renderer assertions.
+- [Core test helpers](./test-helpers) - Focused helpers for nodes, generated templates, and WASM callback tests.

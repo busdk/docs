@@ -1,56 +1,57 @@
 ---
 title: Core test helpers
-description: BusDK UI core test helpers for fake resources, fixtures, and renderer assertions.
+description: BusDK UI core test helpers for nodes, generated templates, and WASM callbacks.
 ---
-
-## Design References
-
-- [Render tree contract](../v0.1.1/render-tree-contract)
-- [Core foundation](../v0.1.1/foundation)
 
 ## Contract
 
 Import shared helpers from `github.com/busdk/bus-gx/pkg/gxtest`. The
-signatures below use `gx` for `github.com/busdk/bus-gx/pkg/gx`, `testing` for
-the Go standard library `testing` package, and `js` for `syscall/js`.
+signatures below use `gx` for `github.com/busdk/bus-gx/pkg/gx` and `testing`
+for the Go standard library `testing` package.
 
 | Helper | Signature | Use |
 | --- | --- | --- |
-| `NewRenderHarness` | `func NewRenderHarness(t testing.TB) *RenderHarness` | Component and template tests. |
-| `RenderHarness.FakeResource` | `func (h *RenderHarness) FakeResource(name string, response gx.ResourceResponse)` | Resource/effect tests without network calls. |
-| `RenderHarness.FakeEvent` | `func (h *RenderHarness) FakeEvent(name string, handler gx.EventHandler[any])` | Button, form, approval, and terminal event tests. |
-| `RenderHarness.RenderNode` | `func (h *RenderHarness) RenderNode(node gx.Node) string` | Deterministic HTML fixture rendering. |
-| `AssertHTMLContains` | `func AssertHTMLContains(t testing.TB, html string, selector string)` | Stable labels, roles, classes, and attributes. |
-| `AssertNoUnsafeHTML` | `func AssertNoUnsafeHTML(t testing.TB, html string)` | Safety regression coverage. |
-| `NewWASMValue` | `func NewWASMValue(t testing.TB, value any) js.Value` | Callback and retained-value tests. |
+| `RenderHTML` | `func RenderHTML(t testing.TB, node gx.Node) string` | Deterministic escaped HTML fixture rendering. |
+| `VNode` | `func VNode(t testing.TB, node gx.Node) gx.VNode` | Render-tree assertions without string parsing. |
+| `RequireProp` | `func RequireProp[T any](t testing.TB, vnode gx.VNode, name string) T` | Typed scalar and callback prop assertions. |
+| `CompileGX` | `func CompileGX(t testing.TB, filename string, src string) string` | Generated Go golden tests. |
+| `MountWASM` | `func MountWASM(t testing.TB, selector string, root func() gx.Node) *WASMHarness` | Browser-backed runtime tests. |
+| `WASMHarness.Click` | `func (h *WASMHarness) Click(selector string)` | Button callback tests. |
+| `WASMHarness.Input` | `func (h *WASMHarness) Input(selector string, value string)` | Input and change callback tests. |
+| `WASMHarness.Submit` | `func (h *WASMHarness) Submit(selector string)` | Form submit callback tests. |
+| `WASMHarness.HTML` | `func (h *WASMHarness) HTML() string` | Post-update DOM assertions. |
+| `WASMHarness.Diagnostics` | `func (h *WASMHarness) Diagnostics() []error` | Redacted runtime diagnostic assertions. |
 
-Tests create a harness, register fake events/resources, render one focused
-fixture, then assert semantic output and diagnostics. Helpers must not make
-network calls or read host credentials.
+Helpers must not make network calls, read host credentials, or register global
+browser functions outside the mounted test scope.
 
-`NewWASMValue` is only for Go WebAssembly tests that run under the module's
-browser-backed test target, such as `make test-e2e` or a documented
-`GOOS=js GOARCH=wasm` harness. Ordinary host `go test` suites use render
-harness helpers and avoid `js.Value`.
+`MountWASM` runs under the module's browser-backed Go WebAssembly test target:
 
-Renderer tests should verify semantic states: escaped output, stable event
-names, visible labels, accessibility attributes, expected classes, safe links,
-and absence of inline scripts or unsafe HTML where the product contract forbids
-them.
+```sh
+make test-wasm
+```
+
+Host-only `go test ./...` may build packages that import `gxtest`, but it must
+not try to run browser callbacks. When the browser runtime is unavailable,
+WASM helper tests must skip with a clear message instead of passing silently or
+failing with an unrelated JavaScript error.
 
 ## Consequence
 
-Product modules should depend on shared fakes instead of hand-writing local
-copies for every event flow.
+Product modules can test generated templates, component functions, and browser
+callback behavior without hand-writing local harnesses. `MountWASM` supports
+tag selectors, `#id`, and simple `tag[attr=value]` selectors such as
+`input[name=title]` and `button[type=submit]`.
 
 ## Example
 
 ```go
-h := gxtest.NewRenderHarness(t)
-h.FakeEvent("save-note", saveHandler)
-html := h.RenderNode(buttonNode)
-gxtest.AssertHTMLContains(t, html, `button[data-ui-event="save-note"]`)
-gxtest.AssertNoUnsafeHTML(t, html)
+h := gxtest.MountWASM(t, "#app", app.View)
+h.Input("input[name=title]", "Draft")
+h.Submit("form")
+if app.SavedTitle != "Draft" {
+	t.Fatalf("SavedTitle = %q", app.SavedTitle)
+}
 ```
 
 <!-- busdk-docs-nav start -->
@@ -61,5 +62,5 @@ gxtest.AssertNoUnsafeHTML(t, html)
 
 ### Sources
 
-- Testing UI apps
-- UI component reference
+- [Mounting and updates](../v0.1.7/mounting-updates)
+- [Intrinsic interactive elements](../v0.1.6/intrinsic-elements)
