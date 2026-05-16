@@ -28,13 +28,16 @@ string as the resolved endpoint; the resolver does not fetch data itself.
 
 ## Example
 
-```yaml
-kind: APIURLResolver
-props:
-  base: module
-  path: /api/notes
-  query:
-    q: evidence
+```gx
+package notesui
+
+var notesURL = (
+  <APIURLResolver
+    base="module"
+    path="/api/notes"
+    query={map[string]string{"q": "evidence"}}>
+  </APIURLResolver>
+)
 ```
 
 ## Runtime Terms

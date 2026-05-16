@@ -28,11 +28,12 @@ current host origin supplied by the local app launcher.
 
 ## Example
 
-```yaml
-kind: BrowserOpen
-props:
-  url: http://127.0.0.1:8080/
-  mode: local
+```gx
+package localui
+
+var browserOpen = (
+  <BrowserOpen url="http://127.0.0.1:8080/" mode="local"></BrowserOpen>
+)
 ```
 
 <!-- busdk-docs-nav start -->

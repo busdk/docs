@@ -5,26 +5,38 @@ description: Dedicated BusDK UI reference for CSSBundle.
 
 ## Purpose
 
-`CSSBundle` is a CLI/tooling runtime block. Shared CSS token bundle. Use to serve framework styles consistently.
+`CSSBundle` is added to a GX view or build entrypoint to emit the shared Bus UI
+CSS once for that rendered page or generated bundle.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `theme` | no | `default`, `compact`, or token object | Default `default`. Token objects may set `colorPrimary`, `colorText`, `colorSurface`, `spaceUnit`, and `radius`; colors use CSS color strings, spacing/radius use CSS lengths. |
+| `theme` | no | `default`, `compact`, or `ThemeTokens` | Default `default`. `ThemeTokens` may set `ColorPrimary`, `ColorText`, `ColorSurface`, `SpaceUnit`, and `Radius`; omitted fields inherit from `default`. Colors use CSS color strings, spacing/radius use CSS lengths, and invalid CSS values fail validation. |
 
 ## Boundary
 
 Shared design classes are emitted once per page render or build output. Duplicate
 `CSSBundle` declarations with the same theme are ignored; conflicting themes
-fail validation so a page cannot silently mix token sets.
+fail `bus gx validate` with a theme-conflict diagnostic so a page cannot
+silently mix token sets.
 
 ## Example
 
-```yaml
-kind: CSSBundle
-props:
-  theme: default
+```gx
+package localui
+
+import . "github.com/busdk/bus-ui/pkg/uistyle"
+
+var rootView = (
+  <main>
+    <CSSBundle theme={ThemeTokens{
+      ColorPrimary: "#0057d8",
+      SpaceUnit: "0.25rem",
+    }}></CSSBundle>
+    <section class="bus-panel">Ready</section>
+  </main>
+)
 ```
 
 <!-- busdk-docs-nav start -->

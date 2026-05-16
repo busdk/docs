@@ -24,11 +24,12 @@ tree.
 
 ## Example
 
-```yaml
-kind: Session
-props:
-  authenticated: true
-  identityLabel: user@example.com
+```gx
+package notesui
+
+var sessionSummary = (
+  <Session authenticated={true} identityLabel="user@example.com"></Session>
+)
 ```
 
 <!-- busdk-docs-nav start -->

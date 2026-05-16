@@ -26,12 +26,12 @@ stay in the host API or product module.
 
 ## Example
 
-```yaml
-resources:
-  notes:
-    method: GET
-    base: module
-    path: /api/notes
+```gx
+package notesui
+
+var notesResource = (
+  <Resource name="notes" method="GET" base="module" path="/api/notes"></Resource>
+)
 ```
 
 ## Runtime Terms

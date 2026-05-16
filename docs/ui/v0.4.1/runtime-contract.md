@@ -11,7 +11,9 @@ description: BusDK UI runtime contract for resources and Go callback helpers.
 ## Contract
 
 Runtime helpers are small and composable. The runtime accepts typed Go callback
-props and resource declarations from application code or fixture runtime config.
+props and [resource declarations](resource) from application code. Browser and
+e2e fixtures may also declare the same resource records in
+`testdata/runtime.yaml` next to the test that uses them.
 
 - Callback props call Go functions directly. A callback may update Go state,
   request a resource, navigate through a host helper, or call another product
@@ -20,10 +22,26 @@ props and resource declarations from application code or fixture runtime config.
   payload or decode settings. `base` is `module`, `portal`, or a named host
   resolver. `path` begins with `/` and contains no `..`.
 
+```gx
+package notesui
+
+var notesResource = (
+  <Resource name="notes" method="GET" base="module" path="/api/notes"></Resource>
+)
+```
+
 Named host resolvers are declared by the host before fixture validation. A
 resolver name is lower-case kebab-case, maps to a same-origin base path or an
 explicitly allowlisted HTTPS origin, and rejects generated URLs with
 `javascript:`, `data:`, `..`, or an unallowlisted origin.
+
+```go
+type HostResolver interface {
+	Resolve(base string, path string) (string, error)
+}
+
+func RegisterHostResolver(name string, resolver HostResolver) error
+```
 
 Callback helper object forms are mutually exclusive when fixtures need a
 portable shape:
@@ -34,23 +52,55 @@ portable shape:
 | `resource` | `resource` string | Executes a named resource. The payload comes from the callback's current Go state or fixture data. |
 | `navigate` | `navigate` string or object | Requests host navigation. Strings are same-origin absolute paths beginning with `/`. Object form uses `base` and `path`; `base` defaults to `module` and is `module`, `portal`, or a named host resolver. Unsafe paths and external origins without allowlist fail validation. |
 
-Examples:
+Examples use ordinary GX callback props:
 
-```yaml
-onClick:
-  handler: saveDraft
+```gx
+package notesui
+
+var saveAction = (
+  <Button id="save-button" onClick={saveDraft} variant="primary">
+    Save
+  </Button>
+)
 ```
 
-```yaml
-onSubmit:
-  resource: notes
+```gx
+package notesui
+
+var noteForm = (
+  <Form id="note-editor" method="POST" onSubmit={submitNotes}>
+    <Button id="save-note" type="submit" variant="primary">
+      Save
+    </Button>
+  </Form>
+)
 ```
 
-```yaml
-onClick:
-  navigate:
-    base: module
-    path: /notes
+```gx
+package notesui
+
+var notesNavigation = (
+  <Button id="open-notes" onClick={openNotes}>
+    Open notes
+  </Button>
+)
+```
+
+The referenced callbacks are ordinary Go functions. `onClick` callbacks do not
+receive browser state. `onSubmit` callbacks receive the submitted form state.
+
+```go
+func saveDraft() gx.Result {
+	return gx.Noop()
+}
+
+func submitNotes(event gx.SubmitEvent) gx.Result {
+	return gx.Success(map[string]string{"id": event.FormID})
+}
+
+func openNotes() gx.Result {
+	return gx.Navigate("/notes")
+}
 ```
 
 Resource declarations use these constraints:
@@ -64,15 +114,28 @@ Resource declarations use these constraints:
 | `payload` | Optional data map supplied by the callback or fixture. `GET` and `DELETE` serialize it as query values, `POST`, `PUT`, and `PATCH` as JSON, `UPLOAD` as multipart file fields, and `kind: link` rejects payload. |
 | `decode` | Optional response decoder name; unknown decoders fail validation and decode failures return provider errors. |
 
-Callback results are typed when a helper returns a structured result:
+Callback results use one canonical Go value. Fixture encoders serialize the
+`Kind` field as `type` and omit zero-value optional fields.
 
-| Result | Required Shape | Handling |
-| --- | --- | --- |
-| success | `{type:"success"}` plus optional public result data | Controller applies state updates or refreshes resources. |
-| validation error | `{type:"validation-error", fields:[...]}` | Field errors are projected into the view model. |
-| provider error | `{type:"provider-error", title}` plus optional `summary`, `status`, `requestID`, and `fields` | Render through provider-safe error state. |
-| navigation request | `{type:"navigate", path}` or host resolver object | Host performs safe navigation. |
-| no-op | `{type:"noop"}` | No state change beyond clearing pending event state. |
+```go
+type Result struct {
+	Kind      string
+	Data      any
+	Fields    []FieldError
+	Title     string
+	Summary   string
+	Status    int
+	RequestID string
+	Path      string
+	Base      string
+}
+```
+
+Allowed `Kind` values are `success`, `validation-error`, `provider-error`,
+`navigate`, and `noop`. Success may carry public result data. Validation errors
+use `Fields`. Provider errors use `Title` plus optional `Summary`, `Status`,
+`RequestID`, and `Fields`. Navigation uses `Path` and optional resolver `Base`.
+No-op clears pending event state without changing application state.
 
 Provider errors must not expose secrets, bearer tokens, raw credentials, stack
 traces, SQL, or raw provider payloads.

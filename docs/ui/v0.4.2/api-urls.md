@@ -20,31 +20,35 @@ With module mount `/modules/notes`, `base: module` and `path: /api/notes`
 resolves to `/modules/notes/api/notes`. With portal root `/portal`,
 `base: portal` and `path: /session` resolves to `/portal/session`.
 
-```yaml
-kind: APIURLResolver
-props:
-  base: module
-  path: /api/notes
+```gx
+package notesui
+
+var notesURL = (
+  <APIURLResolver base="module" path="/api/notes"></APIURLResolver>
+)
 ```
 
 Absolute URLs keep the full URL in `path` and require an exact origin in
 runtime config:
 
-```yaml
-kind: RuntimeConfig
-props:
-  config:
-    moduleBase: /modules/notes/
-    apiBase: /modules/notes/api
-    externalAPIOrigins:
-      - https://api.example.com
+```gx
+package notesui
+
+var runtimeConfig = (
+  <RuntimeConfig config={map[string]any{
+    "moduleBase": "/modules/notes/",
+    "apiBase": "/modules/notes/api",
+    "externalAPIOrigins": []string{"https://api.example.com"},
+  }}></RuntimeConfig>
+)
 ```
 
-```yaml
-kind: APIURLResolver
-props:
-  base: absolute
-  path: https://api.example.com/v1/notes
+```gx
+package notesui
+
+var externalNotesURL = (
+  <APIURLResolver base="absolute" path="https://api.example.com/v1/notes"></APIURLResolver>
+)
 ```
 
 ## Consequence

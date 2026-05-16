@@ -23,14 +23,18 @@ being silently omitted.
 
 ## Example
 
-```yaml
-kind: RuntimeConfig
-props:
-  config:
-    moduleBase: /modules/notes/
-    apiBase: /modules/notes/api
-  featureFlags:
-    reviewMode: true
+```gx
+package notesui
+
+var runtimeConfig = (
+  <RuntimeConfig
+    config={map[string]any{
+      "moduleBase": "/modules/notes/",
+      "apiBase": "/modules/notes/api",
+    }}
+    featureFlags={map[string]bool{"reviewMode": true}}>
+  </RuntimeConfig>
+)
 ```
 
 <!-- busdk-docs-nav start -->

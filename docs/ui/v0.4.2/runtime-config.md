@@ -32,31 +32,36 @@ The host validates runtime config before mounting the template and `bus gx
 validate` validates checked-in examples. Invalid config fails before render with a
 diagnostic that names the rejected key path.
 
-```yaml
-kind: RuntimeConfig
-props:
-  config:
-    moduleBase: /modules/notes/
-    apiBase: /modules/notes/api
-    assetBase: /modules/notes/assets/
-    environment: local
-    externalAPIOrigins:
-      - https://api.example.com
-    imageOrigins:
-      - https://images.example.com
-  featureFlags:
-    reviewMode: true
+```gx
+package notesui
+
+var runtimeConfig = (
+  <RuntimeConfig
+    config={map[string]any{
+      "moduleBase": "/modules/notes/",
+      "apiBase": "/modules/notes/api",
+      "assetBase": "/modules/notes/assets/",
+      "environment": "local",
+      "externalAPIOrigins": []string{"https://api.example.com"},
+      "imageOrigins": []string{"https://images.example.com"},
+    }}
+    featureFlags={map[string]bool{"reviewMode": true}}>
+  </RuntimeConfig>
+)
 ```
 
 This is invalid because authority-bearing data is not public runtime config:
 
-```yaml
-kind: RuntimeConfig
-props:
-  config:
-    moduleBase: /modules/notes/
-    apiBase: /modules/notes/api
-    accessToken: eyJ...
+```gx
+package notesui
+
+var invalidRuntimeConfig = (
+  <RuntimeConfig config={map[string]any{
+    "moduleBase": "/modules/notes/",
+    "apiBase": "/modules/notes/api",
+    "accessToken": "eyJ...",
+  }}></RuntimeConfig>
+)
 ```
 
 ## Consequence

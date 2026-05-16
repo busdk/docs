@@ -12,9 +12,9 @@ Use for `bus gx` tools and related commands.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `args` | yes | string array | Subcommand and arguments after `bus gx`; do not include `bus` or `gx`. Supported UI-tool subcommands include `fmt`, `lint`, `render`, `validate`, and `inspect`. |
-| `output` | no | path | Default omitted, which writes normal command output to stdout. When set, writes normal output to that file. With `quiet: true`, normal output and file writes are suppressed. |
-| `format` | no | html, json, inventory, diagnostics | `render` accepts `html` or `json` and defaults to `html`; `inspect` accepts `inventory`, `diagnostics`, or `json` and defaults to `inventory`; `lint` and `validate` accept human diagnostics by default and machine-readable `json`; `fmt` rejects `format`. |
+| `args` | yes | string array | Subcommand and arguments after `bus gx`; do not include `bus` or `gx`. Supported UI-tool subcommands include `fmt`, `lint`, `validate`, and `inspect`. |
+| `output` | no | path | Default omitted, which writes normal command output to stdout. When set, writes normal output to that file. With `quiet: true`, normal stdout and `--output` writes are suppressed; input file rewrites still follow the subcommand contract. |
+| `format` | no | json, inventory, diagnostics | `inspect` accepts `inventory`, `diagnostics`, or `json` and defaults to `inventory`; `lint` and `validate` accept human diagnostics by default and machine-readable `json`; `fmt` rejects `format`. |
 | `check` | no | boolean | Applies only to `fmt`. Default false rewrites files in place; true exits non-zero when any GX file is not canonical and does not write files. |
 | `quiet` | no | boolean | Default false. When true, suppresses normal output; conflicts with non-zero `verbose`. |
 | `verbose` | no | integer 0-3 or boolean | Default `0`; `true` equals `1`. Values above `3` fail validation. |
@@ -29,13 +29,12 @@ Results go to stdout/output; diagnostics go to stderr.
 
 ## Example
 
-```yaml
-kind: CLIRuntimeFlags
-props:
-  args:
-    - fmt
-    - notes.gx
-  check: true
+```gx
+package localui
+
+var fmtFlags = (
+  <CLIRuntimeFlags args={[]string{"fmt", "notes.gx"}} check={true}></CLIRuntimeFlags>
+)
 ```
 
 <!-- busdk-docs-nav start -->

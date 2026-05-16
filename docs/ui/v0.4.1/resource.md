@@ -35,22 +35,24 @@ explicitly authorizes and proxies them.
 
 ## Example
 
-```yaml
-resources:
-  notes:
-    method: GET
-    base: module
-    path: /api/notes
+```gx
+package notesui
+
+var notesResource = (
+  <Resource name="notes" method="GET" base="module" path="/api/notes"></Resource>
+)
 ```
 
 This declares a read resource named `notes`. Components and effects can refer
 to `notes`; the host resolves `/api/notes`, attaches credentials, and decodes
 the response.
 
-`method` is required and is one of `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, or
-`UPLOAD`. `base` is required and is one of `module`, `portal`, or a named host
-resolver. `path` is required and must be a same-origin absolute path beginning
-with `/`.
+`name` is required. It uses the same identifier form as a Go exported or
+unexported field name, must be unique within the resource document, and is the
+stable handle that components and effects use to request the resource. `method`
+is required and is one of `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, or `UPLOAD`.
+`base` is required and is one of `module`, `portal`, or a named host resolver.
+`path` is required and must be a same-origin absolute path beginning with `/`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
