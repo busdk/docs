@@ -5,21 +5,22 @@ description: Dedicated BusDK UI reference for AIThreadList.
 
 ## Purpose
 
-`AIThreadList` is an assistant component. Assistant thread list. Use when multiple assistant sessions are visible.
+`AIThreadList` renders selectable assistant thread summaries when a product
+view shows more than one assistant conversation.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `threads` | yes | `[]AIThreadSummary` | `ID` and `Title` are required strings; `Working` defaults false and shows active-work state. |
-| `onSelect` | yes | `func(AIThreadEvent) gx.Result` | Runs when a thread row is selected. `ThreadID` identifies the selected thread. |
+| `onSelect` | no | `func(AIThreadEvent) gx.Result` | Runs when a thread row is selected. Omit for a read-only list with inert rows. `ThreadID` identifies the selected thread. |
 | `onArchive` | no | `func(AIThreadEvent) gx.Result` | Runs when an archive control is activated. `ThreadID` identifies the archived thread; omit to hide archive. |
 
 ## Boundary
 
-Selecting or archiving identifies the activated `ThreadID`. Controllers must
+Selecting or archiving identifies the activated `ThreadID`. Product views must
 resolve that id against the current thread list and reject missing or stale
-items.
+items before changing conversation state.
 
 ## Example
 

@@ -16,7 +16,7 @@ configured `onSelect` callback with the selected `ThreadID`.
 
 | Thread field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `ID` | yes | string | Stable controller-owned thread id. |
+| `ID` | yes | string | Stable product thread id. |
 | `Title` | yes | string | Escaped display title. |
 | `Working` | no | bool | Item field, not a component prop. Defaults false; true marks that row as busy and exposes the busy state to assistive technology. |
 
@@ -34,8 +34,8 @@ type AIThreadEvent struct {
 }
 ```
 
-Thread ownership, branch/worktree details, and provider run state stay in the
-product view model.
+Thread ownership, branch or worktree details, and provider run state stay in
+the product view model.
 
 ## Consequence
 

@@ -15,14 +15,14 @@ messages. [`AIMarkdown`](./ai-markdown) renders safe assistant
 Markdown. Raw provider text is escaped. Trusted HTML must identify the
 sanitizer before it reaches rendering.
 
-Messages need role plus text or trusted HTML.
+Messages need a role plus escaped text or sanitized HTML.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
 | `role` | yes | `user`, `assistant`, `system`, or `tool`. Unknown roles fail validation. |
-| `text` | no | Escaped message text. Used when `trustedHTML` is absent. |
-| `trustedHTML` | no | Sanitized HTML fragment. Takes precedence over `text` only when `sanitizer` is present. |
-| `sanitizer` | required with `trustedHTML` | Stable sanitizer id and version, for example `bus-markdown/v1`. |
+| `text` | yes unless `html` is present | Escaped message text. |
+| `html` | yes unless `text` is present | Sanitized HTML fragment. Accepted only when `sanitizer` is present. |
+| `sanitizer` | required with `html` | Stable sanitizer id and version, for example `bus-markdown/v1`. |
 
 The product view model owns redaction, ordering, and visibility.
 
