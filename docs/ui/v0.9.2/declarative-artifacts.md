@@ -23,7 +23,7 @@ version page where each artifact first appears.
 | Render tree library | [v0.1.1 Core foundation](../v0.1.1/) |
 | GX source files, formatter, linter, and source diagnostics | [v0.1.2 GX source tools](../v0.1.2/) |
 | Generated Go output | [v0.1.3 GX compiler](../v0.1.3/) |
-| Trusted HTML render command | [v0.1.11 HTML render command](../v0.1.11/) |
+| Go WebAssembly app acceptance | [v0.1.11 WASM app acceptance](../v0.1.11/) |
 | Uppercase component calls and typed props | [v0.1.4 component calls](../v0.1.4/) |
 | Component body markup and children | [v0.1.5 Component composition](../v0.1.5/) |
 | Function callback props | [v0.1.6 callback props](../v0.1.6/) |

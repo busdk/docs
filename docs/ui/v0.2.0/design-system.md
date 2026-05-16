@@ -1,27 +1,29 @@
 ---
-title: UI design system
-description: BusDK UI visual, interaction, and content design rules.
+title: Bus UI module baseline
+description: Bus UI common library boundaries and shared design rules.
 ---
 
 ## Design Layers
 
-The design system turns BusDK's operational product character into layout,
-control, content, and safety rules for reusable UI components and product
-screens.
+The `bus-ui` module starts as a set of small reusable libraries built on the
+completed `bus-gx` Core patches. The first libraries cover common functional
+parts before assistant, terminal, evidence, portal-host, or product-module
+concepts.
 
-This is the first `bus-ui` library patch. `bus-ui` owns reusable product-facing
-components that are composed from the completed `bus-gx` Core patches. It
-should not take provider authority, product-specific workflows, portal hosting,
-or low-level source/compiler/runtime primitives from their owning layers.
+`bus-ui` is not one monolithic UI library. It can contain independent common
+component libraries, runtime helper libraries, assistant UI, terminal UI,
+evidence UI, and host integration libraries when those layers become concrete.
+Each library should depend on lower layers and keep provider authority,
+product-specific workflow policy, and portal hosting in their owning modules.
 
-1. [Product character](./product-character) defines the operational tone.
-2. Layout defines shells, panels, cards, and fixed-format surfaces.
-3. Density and typography defines text scale and fit.
-4. Color and status defines semantic status meaning.
-5. Controls defines control choice and event-name behavior.
-6. [Content style](./content-style) defines app copy and error wording.
-7. [Accessibility and safety](./accessibility-safety) defines accessible names,
+1. [Product character](./product-character) defines the operational tone that
+   higher product surfaces may apply.
+2. [Content style](./content-style) defines app copy and error wording.
+3. [Accessibility and safety](./accessibility-safety) defines accessible names,
    safe links, and raw-content boundaries.
+4. Common component patches then add icons, buttons, links, menus, tabs,
+   panels, cards, layout helpers, shells, forms, inputs, tables, lists,
+   timelines, and status surfaces.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -32,4 +34,3 @@ or low-level source/compiler/runtime primitives from their owning layers.
 ### Sources
 
 - [bus-ui module reference](../../modules/bus-ui)
-- [bus-portal module reference](../../modules/bus-portal)

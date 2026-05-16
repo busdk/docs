@@ -1,6 +1,6 @@
 ---
 title: UI layout
-description: BusDK UI design rule for application layouts and surfaces.
+description: BusDK UI rule for common layout helpers and stable surfaces.
 ---
 
 ## Design References
@@ -16,8 +16,9 @@ Do not nest UI cards inside other cards. Prefer full-width bands or split
 panes for page sections. Reserve cards for repeated items, modals, summaries,
 and genuinely framed tool surfaces.
 
-Common layouts are sidebar shells, module navigation, split list/detail views,
-assistant shells, terminal panels, and data tables with filter toolbars.
+Common layouts are split list/detail views, sidebar navigation, data tables
+with filter toolbars, and bounded panels. Assistant shells, terminal panels,
+and portal-host frames belong to later higher-level libraries.
 
 ## Consequence
 

@@ -74,4 +74,4 @@ a higher-level `DataTable`; an ordered event view can build upward toward
 ### Sources
 
 - [UI framework](../)
-- [Shell concept](../v0.2.1/shell)
+- [Shell concept](../v0.2.6/shell)

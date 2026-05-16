@@ -6,7 +6,6 @@ description: BusDK UI library icon rendering contract.
 ## Design References
 
 - [Render tree contract](../v0.1.1/render-tree-contract)
-- [UI controls](../v0.2.5/controls)
 
 ## Contract
 
@@ -14,9 +13,9 @@ description: BusDK UI library icon rendering contract.
 in the `bus-ui` icon registry. Authors discover valid names with
 `bus ui inspect icons --format json` or from the generated icon registry
 published by the host. Unknown icon names fail validation before render,
-including when they are passed through [`IconButton`](../v0.2.5/icon-button).
-Components that use an icon must still provide visible text or an accessible
-label when the control has meaning beyond decoration.
+including when a later control component passes through an icon name. Components
+that use an icon must still provide visible text or an accessible label when
+the control has meaning beyond decoration.
 
 Icons are presentational. They do not define events, status meaning, provider
 state, permissions, or navigation.
@@ -34,4 +33,3 @@ Icon selection improves scannability without becoming a product-state contract.
 ### Sources
 
 - [Icon](./icon)
-- [IconButton](../v0.2.5/icon-button)

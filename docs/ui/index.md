@@ -1,6 +1,6 @@
 ---
 title: UI framework
-description: BusDK UI framework patch roadmap.
+description: BusDK UI framework patch roadmap from GX core to Bus UI libraries.
 ---
 
 ## Versions
@@ -24,13 +24,13 @@ with `v0.1.1`; later patches assume the earlier patch contracts exist.
 - [v0.1.14 Expanded intrinsic elements](v0.1.14/)
 - [v0.1.15 Typed event payloads](v0.1.15/)
 - [v0.1.16 Minimal browser adapters](v0.1.16/)
-- [v0.2.0 Library design baseline](v0.2.0/)
-- [v0.2.1 Shells](v0.2.1/)
-- [v0.2.2 Layouts](v0.2.2/)
-- [v0.2.3 Surfaces](v0.2.3/)
-- [v0.2.4 Navigation](v0.2.4/)
-- [v0.2.5 Event controls](v0.2.5/)
-- [v0.2.6 Icons](v0.2.6/)
+- [v0.2.0 Bus UI module baseline](v0.2.0/)
+- [v0.2.1 Icons](v0.2.1/)
+- [v0.2.2 Buttons and links](v0.2.2/)
+- [v0.2.3 Menus and tabs](v0.2.3/)
+- [v0.2.4 Panels and cards](v0.2.4/)
+- [v0.2.5 Layout helpers](v0.2.5/)
+- [v0.2.6 Shells](v0.2.6/)
 - [v0.3.1 Forms](v0.3.1/)
 - [v0.3.2 Form fields](v0.3.2/)
 - [v0.3.3 Input controls](v0.3.3/)

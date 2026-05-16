@@ -37,7 +37,7 @@ The `interrupt` event uses the same source shape with its configured event
 name. The controller reads current draft text, active thread id, selected model,
 and attachment ids from owned view state at handling time.
 
-`AIPanel` should be used inside [`AssistantShell`](../v0.2.1/assistant-shell)
+`AIPanel` should be used inside [`AssistantShell`](../v0.5.1/assistant-shell)
 when the product screen pairs business content with assistant work.
 
 ## Example
@@ -73,4 +73,4 @@ permissions, model availability, and provider policy.
 ### Sources
 
 - [AIPanel](./ai-panel)
-- [AssistantShell](../v0.2.1/assistant-shell)
+- [AssistantShell](../v0.5.1/assistant-shell)

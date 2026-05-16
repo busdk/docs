@@ -349,10 +349,10 @@
           children:
             - label: Minimal browser adapters
               url: /ui/v0.1.16/minimal-browser-adapters
-        - label: v0.2.0 Library design baseline
+        - label: v0.2.0 Bus UI module baseline
           url: /ui/v0.2.0/
           children:
-            - label: UI design system
+            - label: Bus UI module baseline
               url: /ui/v0.2.0/design-system
             - label: UI product character
               url: /ui/v0.2.0/product-character
@@ -360,76 +360,72 @@
               url: /ui/v0.2.0/content-style
             - label: UI accessibility and safety
               url: /ui/v0.2.0/accessibility-safety
-        - label: v0.2.1 Shells
+        - label: v0.2.1 Icons
           url: /ui/v0.2.1/
           children:
-            - label: Shell UI concept
-              url: /ui/v0.2.1/shell
-            - label: Library shells
-              url: /ui/v0.2.1/shells
-            - label: AppShell UI component
-              url: /ui/v0.2.1/app-shell
-            - label: PortalShell UI component
-              url: /ui/v0.2.1/portal-shell
-            - label: SidebarShell UI component
-              url: /ui/v0.2.1/sidebar-shell
-            - label: AssistantShell UI component
-              url: /ui/v0.2.1/assistant-shell
-        - label: v0.2.2 Layouts
+            - label: Library icons
+              url: /ui/v0.2.1/icons
+            - label: Icon UI component
+              url: /ui/v0.2.1/icon
+        - label: v0.2.2 Buttons and links
           url: /ui/v0.2.2/
           children:
-            - label: UI layout
-              url: /ui/v0.2.2/layout
-            - label: Library layouts
-              url: /ui/v0.2.2/layouts
-            - label: SplitLayout UI component
-              url: /ui/v0.2.2/split-layout
-            - label: SidebarNav UI component
-              url: /ui/v0.2.2/sidebar-nav
-        - label: v0.2.3 Surfaces
+            - label: UI controls
+              url: /ui/v0.2.2/controls
+            - label: Library event controls
+              url: /ui/v0.2.2/event-controls
+            - label: Button UI component
+              url: /ui/v0.2.2/button
+            - label: IconButton UI component
+              url: /ui/v0.2.2/icon-button
+            - label: LinkButton UI component
+              url: /ui/v0.2.2/link-button
+            - label: EventBar UI component
+              url: /ui/v0.2.2/event-bar
+        - label: v0.2.3 Menus and tabs
           url: /ui/v0.2.3/
           children:
-            - label: Library surfaces
-              url: /ui/v0.2.3/surfaces
-            - label: UI density and typography
-              url: /ui/v0.2.3/density-typography
-            - label: Panel UI component
-              url: /ui/v0.2.3/panel
-            - label: SurfaceCard UI component
-              url: /ui/v0.2.3/surface-card
-            - label: MetricCard UI component
-              url: /ui/v0.2.3/metric-card
-        - label: v0.2.4 Navigation
+            - label: Library navigation
+              url: /ui/v0.2.3/navigation
+            - label: Menu UI component
+              url: /ui/v0.2.3/menu
+            - label: Tabs UI component
+              url: /ui/v0.2.3/tabs
+        - label: v0.2.4 Panels and cards
           url: /ui/v0.2.4/
           children:
-            - label: Library navigation
-              url: /ui/v0.2.4/navigation
-            - label: LinkButton UI component
-              url: /ui/v0.2.4/link-button
-            - label: Menu UI component
-              url: /ui/v0.2.4/menu
-            - label: Tabs UI component
-              url: /ui/v0.2.4/tabs
-        - label: v0.2.5 Event controls
+            - label: Library surfaces
+              url: /ui/v0.2.4/surfaces
+            - label: UI density and typography
+              url: /ui/v0.2.4/density-typography
+            - label: Panel UI component
+              url: /ui/v0.2.4/panel
+            - label: SurfaceCard UI component
+              url: /ui/v0.2.4/surface-card
+            - label: MetricCard UI component
+              url: /ui/v0.2.4/metric-card
+        - label: v0.2.5 Layout helpers
           url: /ui/v0.2.5/
           children:
-            - label: UI controls
-              url: /ui/v0.2.5/controls
-            - label: Library event controls
-              url: /ui/v0.2.5/event-controls
-            - label: Button UI component
-              url: /ui/v0.2.5/button
-            - label: IconButton UI component
-              url: /ui/v0.2.5/icon-button
-            - label: EventBar UI component
-              url: /ui/v0.2.5/event-bar
-        - label: v0.2.6 Icons
+            - label: UI layout
+              url: /ui/v0.2.5/layout
+            - label: Library layouts
+              url: /ui/v0.2.5/layouts
+            - label: SplitLayout UI component
+              url: /ui/v0.2.5/split-layout
+            - label: SidebarNav UI component
+              url: /ui/v0.2.5/sidebar-nav
+        - label: v0.2.6 Shells
           url: /ui/v0.2.6/
           children:
-            - label: Library icons
-              url: /ui/v0.2.6/icons
-            - label: Icon UI component
-              url: /ui/v0.2.6/icon
+            - label: Shell UI concept
+              url: /ui/v0.2.6/shell
+            - label: Library shells
+              url: /ui/v0.2.6/shells
+            - label: AppShell UI component
+              url: /ui/v0.2.6/app-shell
+            - label: SidebarShell UI component
+              url: /ui/v0.2.6/sidebar-shell
         - label: v0.3.1 Forms
           url: /ui/v0.3.1/
           children:
@@ -532,8 +528,6 @@
         - label: v0.4.2 Runtime config and API URLs
           url: /ui/v0.4.2/
           children:
-            - label: UI portal host contract
-              url: /ui/v0.4.2/portal-host-contract
             - label: UI renderer targets
               url: /ui/v0.4.2/renderer-targets
             - label: Library runtime config
@@ -577,6 +571,8 @@
         - label: v0.5.1 Assistant workbench shell
           url: /ui/v0.5.1/
           children:
+            - label: AssistantShell UI component
+              url: /ui/v0.5.1/assistant-shell
             - label: Library assistant workbench
               url: /ui/v0.5.1/assistant-workbench
             - label: Library assistant panel
@@ -725,6 +721,10 @@
               url: /ui/v0.9.3/product-module-shape
             - label: Portal UI modules
               url: /ui/v0.9.3/portal-modules
+            - label: UI portal host contract
+              url: /ui/v0.9.3/portal-host-contract
+            - label: PortalShell UI component
+              url: /ui/v0.9.3/portal-shell
         - label: v0.9.4 Examples, testing, and release review
           url: /ui/v0.9.4/
           children:

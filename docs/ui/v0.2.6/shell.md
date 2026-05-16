@@ -5,7 +5,8 @@ description: Dedicated BusDK UI framework concept page for Shell.
 
 ## Purpose
 
-A shell owns durable page slots such as navigation, body, assistant, and footer. It frames content but does not decide product policy.
+A shell owns durable page slots such as navigation, body, and footer. It frames
+content but does not decide product policy.
 
 ## Design References
 
@@ -14,12 +15,10 @@ A shell owns durable page slots such as navigation, body, assistant, and footer.
 
 ## Boundary
 
-Use shells for app or portal chrome. Choose the host shell outside the UI
-template: portal modules receive it from the portal mount configuration, local
-Go WebAssembly apps choose it in their app host setup, and static/sample rendering
-chooses it with the renderer command or test harness options described in
-[Rendering](../v0.1.10/rendering-model). The template should describe content
-and Go value references, not deployment shell selection.
+Use shells for app chrome. Choose the shell outside the lower-level content
+template: local Go WebAssembly apps choose it in their app host setup, and
+tests can mount content into a shell fixture. The template should describe
+content and Go value references, not deployment shell selection.
 
 ## Template
 
@@ -35,7 +34,7 @@ var notesContent = (
 )
 ```
 
-The portal or app host mounts this template into the shell body slot.
+The app host or test harness mounts this template into the shell body slot.
 
 ## Fixture Data
 

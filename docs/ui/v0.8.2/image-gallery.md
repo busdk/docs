@@ -6,7 +6,7 @@ description: BusDK UI library linked image gallery contract.
 ## Design References
 
 - [Render tree contract](../v0.1.1/render-tree-contract)
-- [UI layout](../v0.2.2/layout)
+- [UI layout](../v0.2.5/layout)
 
 ## Contract
 

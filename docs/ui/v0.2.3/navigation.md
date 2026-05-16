@@ -11,7 +11,7 @@ description: BusDK UI library links, menus, tabs, and navigation controls.
 ## Contract
 
 Navigation controls move between views or select one view from a bounded set.
-[`LinkButton`](./link-button) is for safe navigation or artifact
+[`LinkButton`](../v0.2.2/link-button) is for safe navigation or artifact
 open/download navigation. [`Menu`](./menu) is for bounded option
 sets. [`Tabs`](./tabs) switches sibling views.
 
@@ -36,6 +36,6 @@ meaning, permissions, and selected state.
 
 ### Sources
 
-- [LinkButton](./link-button)
+- [LinkButton](../v0.2.2/link-button)
 - [Menu](./menu)
 - [Tabs](./tabs)

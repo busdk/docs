@@ -34,5 +34,5 @@ approvals, or isolated work state.
 
 ### Sources
 
-- [AssistantShell](../v0.2.1/assistant-shell)
+- [AssistantShell](../v0.5.1/assistant-shell)
 - [AIPanel](./ai-panel)

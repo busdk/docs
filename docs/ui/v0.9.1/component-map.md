@@ -11,13 +11,15 @@ description: Compact map from Bus UI Core and Library groups to dedicated compon
 
 ## Component Groups
 
-BusDK UI components are grouped into two independently reviewable layers.
+BusDK UI components are grouped into independently reviewable layers.
 [Core](../v0.1.1/) is the `bus-gx` minimal HTML-compatible foundation used by
 [GX template entries](../v0.1.3/template-entries) and by component
 implementations.
-[Library](../v0.2.1/) is the `bus-ui` composed application component set built
-from Core. Each layer page links to the canonical [component reference](./component-reference)
-for individual component pages.
+The [Bus UI module baseline](../v0.2.0/design-system) starts `bus-ui` as a
+module that can host several libraries. Common component libraries come first,
+then runtime helpers, assistant UI, terminal UI, evidence UI, and product or
+portal integration. Each layer page links to the canonical
+[component reference](./component-reference) for individual component pages.
 
 Core:
 
@@ -32,15 +34,15 @@ Core:
 9. `v0.1.9` [Browser API boundaries](../v0.1.9/)
 10. `v0.1.10` [Test helpers](../v0.1.10/)
 
-Library:
+Common component libraries:
 
-1. `v0.2.0` [Design baseline](../v0.2.0/)
-2. `v0.2.1` [Shells](../v0.2.1/)
-3. `v0.2.2` [Layouts](../v0.2.2/)
-4. `v0.2.3` [Surfaces](../v0.2.3/)
-5. `v0.2.4` [Navigation](../v0.2.4/)
-6. `v0.2.5` [Event controls](../v0.2.5/)
-7. `v0.2.6` [Icons](../v0.2.6/)
+1. `v0.2.0` [Bus UI module baseline](../v0.2.0/)
+2. `v0.2.1` [Icons](../v0.2.1/)
+3. `v0.2.2` [Buttons and links](../v0.2.2/)
+4. `v0.2.3` [Menus and tabs](../v0.2.3/)
+5. `v0.2.4` [Panels and cards](../v0.2.4/)
+6. `v0.2.5` [Layout helpers](../v0.2.5/)
+7. `v0.2.6` [Shells](../v0.2.6/)
 8. `v0.3.1` [Forms](../v0.3.1/)
 9. `v0.3.2` [Form fields](../v0.3.2/)
 10. `v0.3.3` [Input controls](../v0.3.3/)
@@ -55,20 +57,23 @@ Library:
 19. `v0.4.4` [Credentials](../v0.4.4/)
 20. `v0.4.5` [Provider errors](../v0.4.5/)
 21. `v0.4.6` [Assets and host tools](../v0.4.6/)
-22. `v0.5.1` [Assistant workbench shell](../v0.5.1/)
-23. `v0.5.2` [Assistant threads and messages](../v0.5.2/)
-24. `v0.5.3` [Assistant composer and attachments](../v0.5.3/)
-25. `v0.5.4` [Assistant model selection](../v0.5.4/)
-26. `v0.5.5` [Assistant review controls](../v0.5.5/)
-27. `v0.6.1` [Terminal sessions](../v0.6.1/)
-28. `v0.6.2` [Terminal IO](../v0.6.2/)
-29. `v0.6.3` [Terminal approvals](../v0.6.3/)
-30. `v0.6.4` [Terminal adapter](../v0.6.4/)
-31. `v0.7.1` [Evidence URLs and links](../v0.7.1/)
-32. `v0.7.2` [Evidence previews](../v0.7.2/)
-33. `v0.7.3` [Projection details](../v0.7.3/)
-34. `v0.8.1` [File drops](../v0.8.1/)
-35. `v0.8.2` [Image galleries](../v0.8.2/)
+
+Higher-level Bus UI libraries:
+
+1. `v0.5.1` [Assistant workbench shell](../v0.5.1/)
+2. `v0.5.2` [Assistant threads and messages](../v0.5.2/)
+3. `v0.5.3` [Assistant composer and attachments](../v0.5.3/)
+4. `v0.5.4` [Assistant model selection](../v0.5.4/)
+5. `v0.5.5` [Assistant review controls](../v0.5.5/)
+6. `v0.6.1` [Terminal sessions](../v0.6.1/)
+7. `v0.6.2` [Terminal IO](../v0.6.2/)
+8. `v0.6.3` [Terminal approvals](../v0.6.3/)
+9. `v0.6.4` [Terminal adapter](../v0.6.4/)
+10. `v0.7.1` [Evidence URLs and links](../v0.7.1/)
+11. `v0.7.2` [Evidence previews](../v0.7.2/)
+12. `v0.7.3` [Projection details](../v0.7.3/)
+13. `v0.8.1` [File drops](../v0.8.1/)
+14. `v0.8.2` [Image galleries](../v0.8.2/)
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

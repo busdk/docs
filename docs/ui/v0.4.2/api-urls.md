@@ -5,7 +5,6 @@ description: BusDK UI library API URL resolution contract.
 
 ## Design References
 
-- [Portal host contract](../v0.4.2/portal-host-contract)
 - [Expression children](../v0.1.5/expression-children)
 
 ## Contract

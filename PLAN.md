@@ -1,5 +1,30 @@
 # Docs Refactor Plan
 
+- [ ] UI `v0.2.x` through `v0.9.x` roadmap rescope for busdk#42.1:
+  review the future public UI roadmap after the GX `v0.1.x` foundation,
+  reorder common reusable `bus-ui` libraries before assistant, terminal,
+  evidence, portal-host, and product-module concepts, clarify that `bus-ui`
+  can host multiple libraries rather than one monolithic library, update
+  `docs/ui/index.md` and `docs/_data/nav.yml`, keep internal links coherent,
+  run per-file `bus lint` on changed public UI Markdown files, run YAML parse
+  validation for `docs/_data/nav.yml`, run `make quality`, and run
+  `git diff --check`.
+
+- [ ] UI `v0.1.16` browser-adapter rescope: review and narrow the current
+  minimal browser adapter patch before treating it as reviewable public UI
+  roadmap material. The implementation evidence for `v0.1.13` through
+  `v0.1.15` indicates that `v0.1.16` is too broad as one clean patch slice.
+  Decide whether it should be split into smaller `bus-gx` and `bus-ui`
+  increments, record any unresolved implementation/design questions here, and
+  only then update `docs/ui/v0.1.16/` with public, non-meta documentation.
+
+- [ ] Docs worker lint runtime: provide a worker image or configuration where
+  `bus lint` can run the configured agent runtime from docs task worktrees.
+  Current `bus lint --agent codex <file>` attempts fail before content linting
+  because Codex session initialization hits a read-only filesystem; `codex:local`
+  also has no local OSS provider configured. Keep this as infrastructure
+  follow-up until per-file docs lint can run without changing public docs.
+
 - [x] UI `v0.1.12` GX event naming docs: add a small semver patch under
   `docs/docs/ui/v0.1.12/` that replaces bare intrinsic callback examples
   such as `click={...}`, `submit={...}`, `input={...}`, and `change={...}`

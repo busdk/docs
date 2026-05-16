@@ -28,13 +28,13 @@ under that later version instead of rewriting older version intent.
 | [v0.1.8](../v0.1.8/) | Runtime diagnostics | `bus-gx` |
 | [v0.1.9](../v0.1.9/) | Browser API boundaries | `bus-gx` |
 | [v0.1.10](../v0.1.10/) | Core test helpers | `bus-gx` |
-| [v0.2.0](../v0.2.0/) | Library design baseline | `bus-ui` |
-| [v0.2.1](../v0.2.1/) | Shells | `bus-ui` |
-| [v0.2.2](../v0.2.2/) | Layouts | `bus-ui` |
-| [v0.2.3](../v0.2.3/) | Surfaces | `bus-ui` |
-| [v0.2.4](../v0.2.4/) | Navigation | `bus-ui` |
-| [v0.2.5](../v0.2.5/) | Event controls | `bus-ui` |
-| [v0.2.6](../v0.2.6/) | Icons | `bus-ui` |
+| [v0.2.0](../v0.2.0/) | Bus UI module baseline | `bus-ui` |
+| [v0.2.1](../v0.2.1/) | Icons | `bus-ui` |
+| [v0.2.2](../v0.2.2/) | Buttons and links | `bus-ui` |
+| [v0.2.3](../v0.2.3/) | Menus and tabs | `bus-ui` |
+| [v0.2.4](../v0.2.4/) | Panels and cards | `bus-ui` |
+| [v0.2.5](../v0.2.5/) | Layout helpers | `bus-ui` |
+| [v0.2.6](../v0.2.6/) | Shells | `bus-ui` |
 | [v0.3.1](../v0.3.1/) | Forms | `bus-ui` |
 | [v0.3.2](../v0.3.2/) | Form fields | `bus-ui` |
 | [v0.3.3](../v0.3.3/) | Input controls | `bus-ui` |

@@ -6,7 +6,7 @@ description: BusDK UI library field labeling and validation message contract.
 ## Design References
 
 - [Render tree contract](../v0.1.1/render-tree-contract)
-- [UI controls](../v0.2.5/controls)
+- [UI controls](../v0.2.2/controls)
 
 ## Contract
 
