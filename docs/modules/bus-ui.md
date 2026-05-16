@@ -18,6 +18,8 @@ core controls, shared CSS tokens, generic authentication surfaces, generic form
 surfaces, shared download/link actions, reusable summary and metric cards,
 generic timeline and gallery renderers, and generic AI interface components.
 
+Current implemented UI roadmap version: **v0.4.1 Resources**.
+
 The module also provides generic assistant text rendering and generic approval-card
 formatting so module frontends can keep only workspace-specific behavior and
 action wiring in their local code. It also provides shared reusable AI runtime
