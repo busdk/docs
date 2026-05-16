@@ -1,35 +1,39 @@
 ---
 title: bus-gx - GX core render tree, source tools, and WASM runtime
-description: End-user reference for the bus-gx module and the currently implemented v0.1.12 intrinsic callback naming patch.
+description: End-user reference for the bus-gx module and the currently implemented v0.1.16 minimal browser adapter patch.
 ---
 
 ## `bus-gx` - GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.12 Intrinsic callback naming**.
+Current implemented UI roadmap version: **v0.1.16 Minimal browser adapters**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.12`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.16`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
 in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
 checked `.gx` expressions into ordinary Go, and
 `github.com/busdk/bus-gx/pkg/gx/wasm` for mounting a GX root from Go
 WebAssembly with redacted post-mount diagnostics behind a narrow browser API
-boundary. It also provides `github.com/busdk/bus-gx/pkg/gxtest` for
-deterministic render, compiler, and WASM callback tests, plus a module-owned
-WASM acceptance app under `tests/wasm-app` that proves the v0.1.x pieces work
-together from `.gx` source to generated Go to browser-mounted Go WebAssembly.
+boundary. Current browser-facing code can use handle-scoped render scheduling,
+the expanded safe intrinsic element table, typed browser event payloads, and
+minimal adapters for form values, file input readers, and explicit key-value
+browser storage. The module also provides
+`github.com/busdk/bus-gx/pkg/gxtest` for deterministic render, compiler, and
+WASM callback tests, plus a module-owned WASM acceptance app under
+`tests/wasm-app` that proves the v0.1.x pieces work together from `.gx` source
+to generated Go to browser-mounted Go WebAssembly.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
-and `compile` for `.gx` files. The WASM runtime mounts one `func() gx.Node`
-root, reruns it on explicit updates, renders directly into the DOM, wires the
-first intrinsic button/form/input callbacks, and reports redacted post-mount
-render/callback diagnostics through an optional Go hook. Browser access stays
-behind `pkg/gx/wasm`; the module does not create a global JavaScript framework
-facade, generate inline JavaScript callbacks, or serialize callback/diagnostic
-metadata into DOM attributes. Bindings, controller registries, effects,
-resources, logging transports, product logging, raw HTML, and hydration are
-outside the current module boundary.
+and `compile` for `.gx` files. The WASM runtime mounts `func() gx.Node` roots,
+reruns mounted roots through explicit handles, renders directly into the DOM,
+wires intrinsic callbacks, fills typed event payloads, and reports redacted
+post-mount render/callback diagnostics through an optional Go hook. Browser
+access stays behind `pkg/gx/wasm`; the module does not create a global
+JavaScript framework facade, generate inline JavaScript callbacks, or serialize
+callback/diagnostic metadata into DOM attributes. Bindings, controller
+registries, effects, resources, logging transports, product logging, raw HTML,
+and hydration are outside the current module boundary.
 
 ## Import
 
@@ -55,6 +59,16 @@ import (
 | `gx.Element` | Safe lowercase intrinsic element constructor. |
 | `gx.Fragment` | Child group that renders without a wrapper. |
 | `gx.Props` | Deterministic validated attribute map. |
+| `gx.Event` | Common typed browser event payload embedded by specific event structs. |
+| `gx.EventTarget` | Small DOM target snapshot exposed to typed callbacks. |
+| `gx.ClickEvent` | Typed click callback payload. |
+| `gx.SubmitEvent` | Typed submit callback payload. |
+| `gx.InputEvent` | Typed input and change callback payload with the current value. |
+| `gx.KeyboardEvent` | Typed keyboard callback payload. |
+| `gx.FocusEvent` | Typed focus callback payload. |
+| `gx.FileInputEvent` | Typed file input callback payload with safe file metadata. |
+| `gx.ChangeEvent` | Alias for file-capable change callback payloads. |
+| `gx.DragEvent` | Typed drag/drop callback payload with safe file metadata. |
 | `source.CurrentVersion` | Implemented source-tool/compiler patch version. |
 | `source.ParseFile` | Source-only `.gx` parser with stable locations. |
 | `source.FormatFile` | In-memory deterministic `.gx` formatter. |
@@ -69,6 +83,13 @@ import (
 | `gxwasm.Update` | Rerun the current root and replace the mounted DOM subtree. |
 | `gxwasm.Unmount` | Clear the current mount and release retained callbacks. |
 | `gxwasm.Handle` | Explicit mount handle with `RequestUpdate` and `Unmount`. |
+| `gxwasm.FormValues` | Read submitted form string values from a typed submit event. |
+| `gxwasm.MountedFormValues` | Read string values from a mounted form selector. |
+| `gxwasm.Files` | Read selected browser files as safe metadata and Go readers. |
+| `gxwasm.LocalStorage` | Browser local-storage adapter for explicit non-secret state. |
+| `gxwasm.SessionStorage` | Browser session-storage adapter for explicit non-secret state. |
+| `gxwasm.MemoryStorage` | In-memory storage adapter for tests and host code. |
+| `gxwasm.ErrUnavailable` | Sentinel for browser adapter calls that cannot run in the current environment. |
 | `gxtest.RenderHTML` | Test helper for deterministic escaped HTML. |
 | `gxtest.VNode` | Test helper for normalized render-tree assertions. |
 | `gxtest.RequireProp` | Typed test helper for scalar and callback props. |
@@ -95,12 +116,15 @@ The rendered HTML is:
 ## Safety Boundary
 
 Text is escaped. Static attributes are validated, sorted, and escaped. Element
-tags are limited to the safe intrinsic allowlist: the structural tags from
-`v0.1.1` plus `button`, `form`, `input`, and `label` from `v0.1.6`. Raw HTML,
-event-handler attributes such as `onclick`, URL-bearing attributes such as
-`href` and `src`, inline `style`, malformed names, unsupported scalar values,
-non-finite numbers, unsupported callback props, and callback values with the
-wrong type fail validation.
+tags are limited to the safe intrinsic allowlist. The current allowlist covers
+the structural foundation plus portal-oriented lowercase elements such as `a`,
+`button`, `form`, `iframe`, `input`, `label`, `option`, `pre`, `select`, and
+`textarea`. URL-bearing attributes such as `href`, `src`, and `action` accept
+only safe relative, same-origin, or explicitly safe external URLs. Raw HTML,
+inline JavaScript schemes, string event-handler attributes such as `onclick`,
+inline `style`, malformed names, unsupported scalar values, non-finite numbers,
+unsupported callback props, and callback values with the wrong type fail
+validation.
 
 Source tools keep the same closed boundary. Lowercase `.gx` tags are limited
 to the safe intrinsic element allowlist. Uppercase tags resolve to
@@ -112,13 +136,17 @@ spliced in source order. Raw text inside markup is rejected; authors must use
 
 Callback props are ordinary Go function values. Component callback props use
 the selected component's props struct type. Intrinsic callbacks are limited to
+the documented safe event names and signatures. Simple signatures such as
 `button onClick={func()}`, `form onSubmit={func()}`, `input
-onInput={func(string)}`, and `input onChange={func(string)}`. Those functions
-stay in `gx.Props` and normalized `gx.VNode` attributes. `gx.RenderHTML`
-validates and omits function-valued props from static HTML. `gxwasm` wires the
-supported intrinsic callbacks to browser events when rendering in Go
-WebAssembly, and `form onSubmit` callbacks prevent default browser form
-submission.
+onInput={func(string)}`, and `input onChange={func(string)}` remain supported,
+and typed payload signatures such as `func(gx.ClickEvent)`,
+`func(gx.SubmitEvent)`, `func(gx.InputEvent)`, `func(gx.KeyboardEvent)`,
+`func(gx.FocusEvent)`, `func(gx.FileInputEvent)`, and `func(gx.DragEvent)` are
+available where the intrinsic event supports them. Those functions stay in
+`gx.Props` and normalized `gx.VNode` attributes. `gx.RenderHTML` validates and
+omits function-valued props from static HTML. `gxwasm` wires the supported
+intrinsic callbacks to browser events when rendering in Go WebAssembly, and
+submit callbacks can prevent default browser form submission.
 
 `v0.1.8` runtime diagnostics stay framework-owned and redacted. Selector
 lookup, invalid root, and initial render failures are returned directly from
@@ -152,6 +180,34 @@ button `click`, and input editing flows through the input callback.
 `v0.1.12` renames public GX callback attributes to HTML/DOM-like Go names:
 `onClick`, `onSubmit`, `onInput`, and `onChange`. The old bare GX spellings are
 not compatibility aliases.
+
+`v0.1.13` makes Go WebAssembly rendering handle-scoped. `gxwasm.Mount` returns
+a `*gxwasm.Handle`; `Handle.RequestUpdate()` reruns only that handle's root,
+and `Handle.Unmount()` releases only that handle's callbacks. The package
+helpers `gxwasm.Update()` and `gxwasm.Unmount()` remain available for
+single-root compatibility, but new stateful code should keep the handle it
+receives from mount.
+
+`v0.1.14` expands the safe intrinsic table with the portal baseline:
+controlled links, text areas, selects, options, preformatted text, iframes, and
+file-capable inputs. The table remains closed and typed. New URL-bearing
+attributes are validated before static render and before browser mount, and
+`data-*` or `aria-*` remain escaped string extension points rather than script
+channels.
+
+`v0.1.15` adds typed browser event payloads without changing the callback
+ownership model. Payload structs embed `gx.Event`, which carries the event
+type, a small `gx.EventTarget` snapshot, default-prevention support when the
+browser supplies it, and an internal browser reference used by the WASM
+adapters. The runtime does not expose raw JavaScript event objects to
+application code.
+
+`v0.1.16` adds minimal browser API adapters behind `pkg/gx/wasm`. Form value
+helpers return `net/url.Values` and preserve repeated field names. File helpers
+return safe file metadata plus `io.ReadCloser` handles opened through Go.
+Storage helpers expose explicit local, session, and memory key-value adapters
+for non-secret browser state. Host builds remain importable and return errors
+matching `gxwasm.ErrUnavailable` for browser-only APIs.
 
 ## Source Tools
 
@@ -236,7 +292,8 @@ be rendered by a `gxwasm` root.
 
 ## Go WebAssembly Runtime
 
-`pkg/gx/wasm` mounts one root function into a browser element:
+`pkg/gx/wasm` mounts root functions into browser elements and returns handles
+for root-scoped updates:
 
 ```go
 package main
@@ -248,7 +305,10 @@ import (
 	gxwasm "github.com/busdk/bus-gx/pkg/gx/wasm"
 )
 
-var title string
+var (
+	title     string
+	appHandle *gxwasm.Handle
+)
 
 func App() gx.Node {
 	return gx.Element("form", gx.Props{"onSubmit": save},
@@ -260,28 +320,36 @@ func App() gx.Node {
 
 func setTitle(value string) {
 	title = value
-	gxwasm.Update()
+	if appHandle != nil {
+		appHandle.RequestUpdate()
+	}
 }
 
-func save() {}
+func save(event gx.SubmitEvent) {
+	event.PreventDefault()
+}
 
 func reportRuntime(err error) {
 	fmt.Println(err)
 }
 
 func main() {
-	if _, err := gxwasm.Mount("#app", App, gxwasm.Options{OnError: reportRuntime}); err != nil {
+	handle, err := gxwasm.Mount("#app", App, gxwasm.Options{OnError: reportRuntime})
+	if err != nil {
 		panic(err)
 	}
+	appHandle = handle
 	select {}
 }
 ```
 
 `gxwasm.Mount` renders the returned node tree directly into the matching DOM
-element. `gxwasm.Update` and `Handle.RequestUpdate` rerun the same root and
-replace the runtime-owned DOM subtree. `gxwasm.Unmount` and `Handle.Unmount`
-clear the mount and release retained JavaScript callbacks so events do not call
-Go after unmount.
+element. Each returned handle owns one mounted root. `Handle.RequestUpdate`
+reruns that root and replaces only that handle's runtime-owned DOM subtree, so
+separate mounts can update independently. `gxwasm.Update()` and
+`gxwasm.Unmount()` remain package-level compatibility helpers for the most
+recently mounted root. `Handle.Unmount()` clears the mount and releases
+retained JavaScript callbacks so events do not call Go after unmount.
 
 `gxwasm.Mount("#app", App)` remains valid when no runtime diagnostics hook is
 needed. Passing one `gxwasm.Options` value configures post-mount diagnostics.
@@ -289,6 +357,30 @@ Errors returned before mount succeeds are not sent to `OnError`. Errors after
 mount succeeds use stable redacted categories such as `runtime-render-failed`
 and `runtime-callback-failed`; raw panic values and raw node validation details
 are not included.
+
+Typed callback payloads expose browser event data as Go values. A
+`gx.SubmitEvent` can be passed to `gxwasm.FormValues` to read submitted string
+fields, and a `gx.ChangeEvent`, `gx.FileInputEvent`, `gx.InputEvent`, or
+`gx.DragEvent` can be passed to `gxwasm.Files` to read selected file metadata
+and open Go readers. Host builds and unavailable browser APIs return errors
+matching `gxwasm.ErrUnavailable`.
+
+```go
+func save(event gx.SubmitEvent) {
+	values, err := gxwasm.FormValues(event)
+	if err != nil {
+		reportRuntime(err)
+		return
+	}
+	saveDraft(values.Get("title"), values["tag"])
+}
+```
+
+Browser storage is explicit and string-only. Use `gxwasm.SessionStorage()` or
+`gxwasm.LocalStorage()` for non-secret browser state, and use
+`gxwasm.MemoryStorage(initial)` when tests or host code need a deterministic
+fake. Authentication tokens, credentials, CSRF secrets, and authority-bearing
+values remain outside this adapter boundary.
 
 ## Test Helpers
 
@@ -338,7 +430,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.12
+bus-gx v0.1.16
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
@@ -370,3 +462,7 @@ Use `bus gx fmt --check`, `bus gx lint --format json`, and
 - [UI v0.1.10 Core test helpers](../ui/v0.1.10/)
 - [UI v0.1.11 WASM app acceptance](../ui/v0.1.11/)
 - [UI v0.1.12 Intrinsic callback naming](../ui/v0.1.12/)
+- [UI v0.1.13 Handle render scheduling](../ui/v0.1.13/)
+- [UI v0.1.14 Expanded intrinsic elements](../ui/v0.1.14/)
+- [UI v0.1.15 Typed event payloads](../ui/v0.1.15/)
+- [UI v0.1.16 Minimal browser adapters](../ui/v0.1.16/)
