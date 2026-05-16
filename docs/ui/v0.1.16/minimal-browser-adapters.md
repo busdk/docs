@@ -12,66 +12,11 @@ libraries call them from ordinary Go.
 
 The minimal adapter set is:
 
-- form value extraction
-- file input access
-- browser key-value storage
+- [form value extraction](./form-values)
+- [file input access](./files)
+- [browser key-value storage](./browser-storage)
 
-## Form Values
-
-Form values are read from a submitted form or a mounted form element through a
-Go API. The adapter returns ordinary Go data and does not require string event
-names.
-
-```go
-func save(event gx.SubmitEvent) {
-	values, err := gxwasm.FormValues(event)
-	if err != nil {
-		report(err)
-		return
-	}
-	title := values.Get("title")
-	_ = title
-}
-```
-
-The form adapter should preserve repeated field names. It should expose
-string values first; multipart file content belongs to the file adapter.
-
-## Files
-
-File input access returns safe metadata and a Go reader handle for selected
-files. Product code still owns size limits, MIME validation, authorization, and
-upload policy.
-
-```go
-func attach(event gx.ChangeEvent) {
-	files, err := gxwasm.Files(event)
-	if err != nil {
-		report(err)
-		return
-	}
-	_ = files
-}
-```
-
-The adapter must not expose raw JavaScript file objects outside the browser
-package boundary.
-
-## Storage
-
-Browser storage is exposed as a small key-value interface for non-secret
-client preferences and session markers. Tokens and credentials must remain
-owned by the application security layer.
-
-```go
-store := gxwasm.SessionStorage()
-_ = store.Set("sidebar", "collapsed")
-```
-
-Storage adapters must be optional. Tests can provide in-memory fakes, and
-server-side rendering must not require browser storage.
-
-## Requirements
+## Shared Requirements
 
 - Adapters are Go APIs, not DOM attributes.
 - Browser-only implementations stay behind build tags.

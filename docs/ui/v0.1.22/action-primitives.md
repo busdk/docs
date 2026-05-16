@@ -55,6 +55,6 @@ state; resource and session primitives provide the host-facing pieces later.
 
 ### Sources
 
-- [State runtime](../v0.1.17/state-runtime)
+- [UseState](../v0.1.17/use-state)
 - [Event and form helpers](../v0.1.19/event-form-helpers)
 - [UI testkit renderer](../v0.1.20/uikittest-renderer)

@@ -29,7 +29,7 @@ attribute order, callback tokens, whitespace, and escaped text.
 - Attribute ordering and callback-token assertions are deterministic.
 - Tree comparison reports the node path, expected value, and actual value.
 - Snapshot diffs are readable without a browser.
-- Tests can assert state updates from [v0.1.17](../v0.1.17/state-runtime) and
+- Tests can assert state updates from [UseState](../v0.1.17/use-state) and
   event helpers from [v0.1.19](../v0.1.19/event-form-helpers).
 
 ## Boundary
@@ -46,5 +46,5 @@ clients, or e2e helpers. It only covers renderer and pure Go component tests.
 ### Sources
 
 - [Core test helpers](../v0.1.10/test-helpers)
-- [State runtime](../v0.1.17/state-runtime)
+- [UseState](../v0.1.17/use-state)
 - [Event and form helpers](../v0.1.19/event-form-helpers)

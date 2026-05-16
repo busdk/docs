@@ -66,4 +66,4 @@ lifecycle slot those later helpers use.
 - [Runtime diagnostics](../v0.1.8/diagnostics)
 - [Browser API boundaries](../v0.1.9/browser-api-boundaries)
 - [Minimal browser adapters](../v0.1.16/minimal-browser-adapters)
-- [State runtime](../v0.1.17/state-runtime)
+- [UseState](../v0.1.17/use-state)

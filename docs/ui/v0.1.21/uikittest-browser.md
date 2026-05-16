@@ -49,4 +49,7 @@ API tests. It keeps generic browser-bound component behavior unit-testable.
 
 - [Go WASM frontend runtime](../v0.1.7/)
 - [Minimal browser adapters](../v0.1.16/minimal-browser-adapters)
+- [Form value adapter](../v0.1.16/form-values)
+- [File adapter](../v0.1.16/files)
+- [Browser storage adapter](../v0.1.16/browser-storage)
 - [UI testkit renderer](../v0.1.20/uikittest-renderer)

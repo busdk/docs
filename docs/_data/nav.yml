@@ -392,11 +392,23 @@
           children:
             - label: Minimal browser adapters
               url: /ui/v0.1.16/minimal-browser-adapters
+            - label: Form value adapter
+              url: /ui/v0.1.16/form-values
+            - label: File adapter
+              url: /ui/v0.1.16/files
+            - label: Browser storage adapter
+              url: /ui/v0.1.16/browser-storage
         - label: v0.1.17 State runtime
           url: /ui/v0.1.17/
           children:
             - label: State runtime
               url: /ui/v0.1.17/state-runtime
+            - label: UseState
+              url: /ui/v0.1.17/use-state
+            - label: UseRef
+              url: /ui/v0.1.17/use-ref
+            - label: UseMemo
+              url: /ui/v0.1.17/use-memo
         - label: v0.1.18 Effect runtime
           url: /ui/v0.1.18/
           children:
