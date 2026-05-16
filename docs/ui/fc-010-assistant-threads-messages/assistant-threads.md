@@ -11,8 +11,15 @@ description: BusDK UI library assistant thread list contract.
 ## Contract
 
 [`AIThreadList`](./ai-thread-list) renders assistant threads with
-stable `ID` and `Title` fields. `Working` defaults false. Selection calls the
+stable records supplied through the required `threads` prop. Empty `threads`
+renders an empty-list state with no selectable rows. Selection calls the
 configured `onSelect` callback with the selected `ThreadID`.
+
+| Prop | Required | Type | Behavior |
+| --- | --- | --- | --- |
+| `threads` | yes | `[]AIThreadSummary` | Thread records to render. Empty slice renders the empty state. |
+| `activeThread` | no | string | Marks the matching row active. Unknown ids render no active row. |
+| `onSelect` | no | `func(AIThreadEvent) gx.Result` | Enables selectable rows. Omit for a read-only list with inert rows. |
 
 | Thread field | Required | Type | Behavior |
 | --- | --- | --- | --- |
@@ -21,8 +28,19 @@ configured `onSelect` callback with the selected `ThreadID`.
 | `Working` | no | bool | Item field, not a component prop. Defaults false; true marks that row as busy and exposes the busy state to assistive technology. |
 
 The `onSelect` prop is required when rows are selectable. Omit it only for a
-read-only thread list; rows then render as inert list items. The callback shape
-is:
+read-only thread list; rows then render as inert list items.
+
+```gx
+var selectableThreads = <AIThreadList
+  threads={ai.Threads}
+  activeThread={ai.ActiveThread}
+  onSelect={selectThread}>
+</AIThreadList>
+
+var readOnlyThreads = <AIThreadList threads={ai.Threads}></AIThreadList>
+```
+
+The callback shape is:
 
 ```go
 func selectThread(event AIThreadEvent) gx.Result {
