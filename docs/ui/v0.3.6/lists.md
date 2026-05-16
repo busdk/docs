@@ -15,12 +15,18 @@ naturally tabular. Each item comes from the view model and may use a supplied
 item renderer or generic summary fields.
 
 Each item requires stable `id` when it has events or when mounted updates may
-reorder items. The generic summary shape is `id`, `title`, optional `meta`,
-optional `detail`, optional `status`, and optional `events`. `title` and
-`detail` are public-safe strings. `meta` is an ordered array of public-safe
-strings. `status` is a `StatusPill` value object with `label` and semantic
-`status`. `events` uses the same item shape as `EventBar`: public `label`,
-exactly one trigger such as `click`, and optional `variant`.
+reorder items. Static lists without events may omit `id`; in that case the
+renderer uses the item index as an internal path only, and handlers must not
+depend on it as stable identity. The generic summary shape is optional `id`,
+required `title`, optional `meta`, optional `detail`, optional `status`, and
+optional `events`. Public-safe strings may name user-visible records,
+statuses, and actions, but must not include secrets, bearer tokens, raw
+provider payloads, stack traces, SQL, or private customer data. `meta` is an
+ordered array of public-safe strings. `status` is a status pill value object
+with `label` and semantic `status`; allowed values are `neutral`, `working`,
+`success`, `warning`, `danger`, and `muted`. `events` uses the same item shape
+as `EventBar`: public `label`, exactly one `onClick` event name, and optional
+`variant`.
 
 Empty arrays render the configured empty state. When no empty state is
 provided, the renderer emits a neutral empty-state surface with the list label.

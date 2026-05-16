@@ -19,8 +19,8 @@ component.
 | `id` | recommended for events | string | Stable source id included in click events. If omitted, the renderer uses the component tree path as the source. |
 | `body` | yes | text or inline node | Visible button content. Use [`IconButton`](./icon-button) for icon-only controls. |
 | `ariaLabel` | no | string | Optional accessible override when visible label needs clarification. |
-| `click` | no | event name | Emits `data-ui-event` when activated; may be omitted only for submit/reset buttons or disabled display buttons. |
-| `type` | no | button, submit, reset | Default `button`; `submit` and `reset` may omit `click` because native form behavior handles them. |
+| `onClick` | no | event name | Emits `data-ui-event` when activated; may be omitted only for submit/reset buttons or disabled display buttons. |
+| `type` | no | button, submit, reset | Default `button`; `submit` and `reset` may omit `onClick` because native form behavior handles them. |
 | `variant` | no | primary, secondary, danger, ghost | Default `secondary`; `primary` is the main safe event, `danger` is destructive, and `ghost` is low-emphasis chrome. |
 | `size` | no | small, medium, large | Default medium. |
 | `disabled` | no | boolean | Suppresses event emission. |
@@ -28,7 +28,7 @@ component.
 ## Boundary
 
 Button has visible body content. Interactive buttons use a stable click event
-name; submit/reset or disabled display buttons may omit `click`.
+name; submit/reset or disabled display buttons may omit `onClick`.
 
 ## Example
 
@@ -36,7 +36,7 @@ name; submit/reset or disabled display buttons may omit `click`.
 kind: Button
 props:
   id: save-button
-  click: save-draft
+  onClick: save-draft
   variant: primary
 body: Save
 ```

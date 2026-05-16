@@ -12,7 +12,7 @@ description: BusDK UI library terminal session panel contract.
 
 [`TerminalSessionPanel`](./terminal-session-panel) renders the
 complete terminal surface for one session. It accepts `idle`, `running`,
-`waiting`, `exited`, and `error` states. `running` enables stdin when `submit`
+`waiting`, `exited`, and `error` states. `running` enables stdin when `onSubmit`
 exists. `waiting` disables stdin when approval is pending. `exited` and
 `error` disable all process controls.
 
@@ -20,12 +20,12 @@ exists. `waiting` disables stdin when approval is pending. `exited` and
 | --- | --- | --- |
 | `state` | yes | `idle`, `running`, `waiting`, `exited`, or `error`. |
 | `command` | yes | Public-safe command display string. |
-| `submit` | no | Runtime event name for stdin submit; omitted disables stdin. |
+| `onSubmit` | no | Runtime event name for stdin submit; omitted disables stdin. |
 | `stop` | no | Runtime event name for stopping active work; omitted hides stop. |
 | `error` | no | Public-safe error title or object rendered only in `error` state. |
 
 State behavior is deterministic: `idle` renders no process controls, `running`
-enables stdin when `submit` exists, `waiting` disables stdin while approval is
+enables stdin when `onSubmit` exists, `waiting` disables stdin while approval is
 pending, and `exited` or `error` disables process controls.
 
 Optional metadata fields are public-safe strings except `exitCode`, which is an

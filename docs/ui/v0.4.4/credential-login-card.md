@@ -14,8 +14,8 @@ email/password, token, or one-time-code sign-in.
 | --- | --- | --- | --- |
 | `usernameLabel` | yes | string | First field label. |
 | `passwordLabel` | yes | string | Secret/code field label. |
-| `submit` | yes | event name | Fires on form submit with this component as source. The component controller exposes `username` and `secret` state under that source id; the app controller decides what to send. |
-| `request` | no | event name | Shows a secondary request control, such as "send code"; the component controller exposes `username` state under this source id, and the control is hidden when omitted. |
+| `onSubmit` | yes | event name | Fires on form submit with this component as source. The component controller exposes `username` and `secret` state under that source id; the app controller decides what to send. |
+| `onRequest` | no | event name | Shows a secondary request control, such as "send code"; the component controller exposes `username` state under this source id, and the control is hidden when omitted. |
 
 ## Boundary
 
@@ -35,13 +35,15 @@ kind: CredentialLoginCard
 props:
   usernameLabel: Email
   passwordLabel: One-time code
-  request: request-otp
-  submit: verify-otp
+  onRequest: request-otp
+  onSubmit: verify-otp
 ```
 
 ## Runtime Terms
 
-[Callback props](../v0.1.6/callback-props) documents function callback props.
+`onSubmit` and `onRequest` are runtime event names for this library component.
+They are not string-valued GX intrinsic callbacks; the component controller
+maps them to registered handlers before dispatch.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for Tabs.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `items` | yes | array | Each item has stable string `id`, non-empty `label`, and exactly one of `href` or `click`. `href` accepts relative module routes, same-origin absolute paths, or resolver objects with `base` and `path`, where `base` is `module`, `portal`, or a named host route resolver and `path` begins with `/`. External origins require the host navigation allowlist. `click` is declared in the runtime `events` map or registered in the Go WebAssembly event handler map, and it emits when the tab is activated. Duplicate ids, missing labels, unknown event names, unsafe URLs, and mixed `href`+`click` entries fail validation. |
+| `items` | yes | array | Each item has stable string `id`, non-empty `label`, and exactly one of `href` or `onClick`. `href` accepts relative module routes, same-origin absolute paths, or resolver objects with `base` and `path`, where `base` is `module`, `portal`, or a named host route resolver and `path` begins with `/`. External origins require the host navigation allowlist. `onClick` is declared in the runtime `events` map or registered in the Go WebAssembly event handler map, and it emits when the tab is activated. Duplicate ids, missing labels, unknown event names, unsafe URLs, and mixed `href`+`onClick` entries fail validation. |
 | `active` | yes | string | Current item id. Must match one `items[].id`; unknown active ids fail validation. |
 
 ## Boundary

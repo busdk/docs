@@ -15,29 +15,29 @@ for visible text event controls. [`IconButton`](./icon-button) is
 for compact tools and requires `ariaLabel` when no visible text is rendered. [`EventBar`](./event-bar)
 groups a short ordered set of event controls.
 
-Interactive controls emit through trigger attributes in markup or the same
-trigger key in structured component data. Valid event names come from the
+Interactive controls emit through `on*` trigger attributes in markup or the
+same trigger key in structured component data. Valid event names come from the
 runtime `events` map or registered Go WebAssembly event handlers. The handler
 receives interaction identity and returns a typed result or provider error.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `<trigger>="event-name"` | required for active markup controls | The trigger is the component event hook, such as `click`, `submit`, `change`, `drop`, `select`, or `dismiss`. |
-| trigger prop | required for active structured controls | Structured-data equivalent of the trigger attribute. For example, `props.click: save-draft` matches `<Button click="save-draft">`. |
+| `<trigger>="event-name"` | required for active markup controls | The trigger is the component event hook, such as `onClick`, `onSubmit`, `onChange`, `onDrop`, `onSelect`, or `onDismiss`. |
+| trigger prop | required for active structured controls | Structured-data equivalent of the trigger attribute. For example, `props.onClick: save-draft` matches `<Button onClick="save-draft">`. |
 | `id` | recommended for handled controls | Stable component id included in the event. If omitted, the renderer uses the component tree path. |
 | `confirm` | required for destructive events | Runtime event policy object with public-safe `title`, optional public-safe `summary`, and `variant: danger`. |
 
 ```html
-<Button id="save-button" click="save-draft">Save</Button>
+<Button id="save-button" onClick="save-draft">Save</Button>
 
-<IconButton id="archive-button" icon="archive" aria-label="Archive" click="archive"></IconButton>
+<IconButton id="archive-button" icon="archive" aria-label="Archive" onClick="archive"></IconButton>
 ```
 
 ```yaml
 kind: Button
 props:
   id: save-button
-  click: save-draft
+  onClick: save-draft
 body: Save
 ```
 

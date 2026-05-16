@@ -19,6 +19,7 @@ with `v0.1.1`; later patches assume the earlier patch contracts exist.
 - [v0.1.9 Browser API boundaries](v0.1.9/)
 - [v0.1.10 Core test helpers](v0.1.10/)
 - [v0.1.11 WASM app acceptance](v0.1.11/)
+- [v0.1.12 Intrinsic callback naming](v0.1.12/)
 - [v0.2.0 Library design baseline](v0.2.0/)
 - [v0.2.1 Shells](v0.2.1/)
 - [v0.2.2 Layouts](v0.2.2/)

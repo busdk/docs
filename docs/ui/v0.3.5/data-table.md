@@ -13,7 +13,7 @@ description: Dedicated BusDK UI reference for DataTable.
 | --- | --- | --- | --- |
 | `columns` | yes | array of `{key,label,component}` | `key` and `label` required; each cell reads `row[key]`. A custom `component` receives `{value,row,column}`. |
 | `rows` | yes | array or Go value | Projected view-model records. Rows need stable `id` only when row events are present. |
-| `rowEvents` | no | event item array | Same item shape as [`EventBar`](../v0.2.5/event-bar): non-empty `label` plus exactly one of `click` or `href`. Click items run the named event; source identity identifies the row and event item, and rows need stable `id`. Link-only items may omit row `id`. Row links use Go expression such as `href.bind: row.detailURL` or template form `/notes/{row.id}`; row `id: n1` resolves to `/notes/n1`. |
+| `rowEvents` | no | event item array | Same item shape as [`EventBar`](../v0.2.5/event-bar): non-empty `label` plus exactly one of `onClick` or `href`. Click items run the named event; source identity identifies the row and event item, and rows need stable `id`. Link-only items may omit row `id`. Row links use Go expression such as `href.bind: row.detailURL` or template form `/notes/{row.id}`; row `id: n1` resolves to `/notes/n1`. |
 | `empty` | no | slot node or string | Rendered when `rows` is empty; default is no rows message. |
 
 ## Boundary
@@ -43,14 +43,15 @@ view:
         component: StatusPill
     rowEvents:
       - label: Open
-        click: open-note
+        onClick: open-note
 ```
 
 ## Runtime Terms
 
 [Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
-Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+Row link URLs must be same-origin paths or host-allowlisted `https:` URLs.
+Reject `javascript:`, `data:`, path traversal, and credential-bearing URLs.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

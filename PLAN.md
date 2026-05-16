@@ -1,5 +1,30 @@
 # Docs Refactor Plan
 
+- [x] UI `v0.1.12` GX event naming docs: add a small semver patch under
+  `docs/docs/ui/v0.1.12/` that replaces bare intrinsic callback examples
+  such as `click={...}`, `submit={...}`, `input={...}`, and `change={...}`
+  with HTML/DOM-compatible Go/GX names such as `onClick`, `onSubmit`,
+  `onInput`, and `onChange`. The page must state that GX has no legacy
+  callback aliases and must link only to already implemented earlier patches.
+  Update older public UI examples so they do not teach the removed bare names.
+- [ ] UI future state/runtime docs: add versioned pages that describe the
+  `bus-gx` handle-scoped render scheduling prerequisite and the `bus-ui`
+  React-like Go state layer (`UseState`, `UseRef`, `UseMemo`, and only
+  necessary callback memoization) as separate implementation patches.
+- [ ] UI future effects and event payload docs: add compact versioned pages for
+  `bus-ui` effect cleanup semantics and `bus-gx`/`bus-ui` typed event payloads
+  covering form submit, form data, submitter, dataset, input/change, keyboard,
+  focus/blur, file input, drag/drop, and prevent-default behavior.
+- [ ] UI future intrinsic/resource/streaming docs: add compact versioned pages
+  for the expanded safe intrinsic table, Go/WASM-first resource and session
+  adapters, multipart upload, redirects, provider errors, fetch streaming
+  browser adapters, abort signals, terminal UI integration, and portal host
+  context consumption. The docs must distinguish the `bus-ui` module from the
+  reusable GX framework/runtime packages inside it: `bus-ui` may host separate
+  higher-level libraries such as terminal UI, while the minimal framework
+  should only own framework/runtime integration. Keep JavaScript documented
+  only as a narrow browser API boundary.
+
 - [x] UI version-only documentation IA: ensure `docs/docs/ui/` contains only
   `index.md` plus semver patch directories named `v0.X.Y/`; move every current
   non-version page from `architecture/`, `components/`, `design/`,

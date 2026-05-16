@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for SubmitState.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `id` | recommended for events | string | Stable submitter id included in the parent form submit event. If omitted, the renderer uses the component tree path as the submitter. |
-| `submit` | yes | event name | Target submit event. |
+| `onSubmit` | yes | event name | Target submit event. |
 | `working` | yes | boolean or event-pending Go value | Busy flag. The caller owns this state: bind it to product state that is set true when the event starts and false on completion/failure, or bind to the host event runtime's pending-state signal. When true, submission is disabled and progress state is shown. |
 | `body` | yes | string | Normal button body. |
 | `workingBody` | no | string | Busy button body. Defaults to `body` when omitted so the control keeps a stable accessible name. |
@@ -39,7 +39,7 @@ body:
   kind: SubmitState
   props:
     id: save-button
-    submit: save
+    onSubmit: save
     working:
       bind: eventPending.save
   body: Save

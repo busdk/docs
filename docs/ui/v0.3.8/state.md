@@ -28,7 +28,7 @@ package notesui
 var blockedNotes = (
   <section role="status">
     <Text value={blockedMessage}></Text>
-    <button id="retry-notes" click="retry-load">Retry</button>
+    <button id="retry-notes" onClick="retry-load">Retry</button>
   </section>
 )
 ```
@@ -41,7 +41,7 @@ package notesui
 var emptyNotes = (
   <section aria-live="polite">
     <p><Text value={emptyMessage}></Text></p>
-    <button id="create-note" click="create-note">Create note</button>
+    <button id="create-note" onClick="create-note">Create note</button>
   </section>
 )
 ```

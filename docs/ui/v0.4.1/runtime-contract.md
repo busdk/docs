@@ -37,17 +37,17 @@ portable shape:
 Examples:
 
 ```yaml
-click:
+onClick:
   handler: saveDraft
 ```
 
 ```yaml
-submit:
+onSubmit:
   resource: notes
 ```
 
 ```yaml
-click:
+onClick:
   navigate:
     base: module
     path: /notes

@@ -15,7 +15,7 @@ A component declares callback props in its props struct:
 
 ```go
 type ButtonProps struct {
-	Click    func()
+	OnClick  func()
 	Children []gx.Node
 }
 ```
@@ -29,7 +29,7 @@ import "github.com/busdk/bus-gx/pkg/gx"
 
 func SaveButton(saveDraft func()) gx.Node {
   return (
-    <Button click={saveDraft}>
+    <Button onClick={saveDraft}>
       Save draft
     </Button>
   )
@@ -41,7 +41,7 @@ The compiler lowers the callback expression into the props struct:
 ```go
 func SaveButton(saveDraft func()) gx.Node {
 	return Button(ButtonProps{
-		Click: saveDraft,
+		OnClick: saveDraft,
 		Children: []gx.Node{
 			gx.Text("Save draft"),
 		},
@@ -50,7 +50,7 @@ func SaveButton(saveDraft func()) gx.Node {
 ```
 
 Callback props use the same attribute-to-field mapping as other component
-props. `click={saveDraft}` maps to `Click`. A callback expression must be
+props. `onClick={saveDraft}` maps to `OnClick`. A callback expression must be
 assignable to the selected field type.
 
 ## Element Props
@@ -65,7 +65,7 @@ import "github.com/busdk/bus-gx/pkg/gx"
 
 func SaveButton(saveDraft func()) gx.Node {
   return (
-    <button class="primary" click={saveDraft}>
+    <button class="primary" onClick={saveDraft}>
       Save draft
     </button>
   )
@@ -78,8 +78,8 @@ property in [Props](../v0.1.1/props):
 ```go
 func SaveButton(saveDraft func()) gx.Node {
 	return gx.Element("button", gx.Props{
-		"class": "primary",
-		"click": saveDraft,
+		"class":   "primary",
+		"onClick": saveDraft,
 	}, gx.Text("Save draft"))
 }
 ```
@@ -100,7 +100,7 @@ structs, a dispatch registry, or shared application behavior. Applications and
 component authors decide what each callback does in ordinary Go.
 
 String values are not callback handlers. A callback prop such as
-`click={saveDraft}` must not accept `click="save-draft"`.
+`onClick={saveDraft}` must not accept `onClick="save-draft"`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -70,7 +70,7 @@ func status() string {
 
 func Editor() gx.Node {
 	return (
-		<form id="editor" submit={save}><label for="title">{"Title"}</label><input id="title" input={setTitle} name="title" value={title}></input><button click={clear} type="button">{"Clear"}</button><button type="submit">{"Save"}</button><p id="status">{status()}</p></form>
+		<form id="editor" onSubmit={save}><label for="title">{"Title"}</label><input id="title" onInput={setTitle} name="title" value={title}></input><button onClick={clear} type="button">{"Clear"}</button><button type="submit">{"Save"}</button><p id="status">{status()}</p></form>
 	)
 }
 ```

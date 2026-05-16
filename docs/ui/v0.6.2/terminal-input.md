@@ -18,13 +18,13 @@ The controller owns draft input text and session state.
 | --- | --- | --- |
 | `sessionID` | yes | Public terminal session id included in emitted item identity. |
 | `value` | no | Draft stdin text; defaults empty. |
-| `change` | no | Runtime event name for draft text changes. Omitted makes the input display-only. |
-| `submit` | no | Runtime event name for stdin submit. Omitted disables send. |
+| `onChange` | no | Runtime event name for draft text changes. Omitted makes the input display-only. |
+| `onSubmit` | no | Runtime event name for stdin submit. Omitted disables send. |
 | `stop` | no | Runtime event name for stopping active work. Omitted hides stop. |
 | `state` | yes | Terminal session state: `idle`, `running`, `waiting`, `exited`, or `error`. |
 | `disabled` | no | Boolean; defaults false. |
 
-Text edits emit the `change` prop value with source identity, session id, and
+Text edits emit the `onChange` prop value with source identity, session id, and
 the current draft text. Submit payloads intentionally omit text; the controller
 uses the latest draft in its model when handling submit.
 
@@ -38,7 +38,7 @@ item:
 draft: echo hello
 ```
 
-Send emits the `submit` prop value. In this example, `submit` is
+Send emits the `onSubmit` prop value. In this example, `onSubmit` is
 `terminal-stdin`:
 
 ```yaml
@@ -51,7 +51,7 @@ item:
 ```
 
 The controller writes process stdin from its current draft model. The `event`
-value is the `submit` prop value.
+value is the `onSubmit` prop value.
 
 Stop emits the `stop` prop value with the same source and session identity:
 
@@ -65,7 +65,7 @@ item:
 ```
 
 Input is disabled when `state` is not `running`, when `disabled` is true, or
-when `submit` is omitted. Stop is enabled only during `running` state when
+when `onSubmit` is omitted. Stop is enabled only during `running` state when
 `stop` is present.
 
 ## Consequence

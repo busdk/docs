@@ -12,9 +12,9 @@ compact repeated event controls.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `icon` | yes | icon name | Visual symbol from the bus-ui icon registry documented in Icon; unknown names fail validation. |
+| `icon` | yes | icon name | One of the v0.2.5 built-in icon names: `archive`, `close`, `delete`, `edit`, `more`, `save`, or `search`. Unknown names fail validation. |
 | `ariaLabel` | yes | string | Non-empty descriptive accessible name for the icon-only control. |
-| `click` | no | event name | Event name from the runtime `events` map or a registered Go runtime handler; unresolved supplied names fail validation. Omitted renders a non-emitting icon button only when disabled or used as static chrome. |
+| `onClick` | no | event name | Event name from the runtime `events` map or a registered Go runtime handler; unresolved supplied names fail validation. Omit only when `disabled: true`; enabled IconButtons without `onClick` fail validation. |
 | `disabled` | no | boolean | Default `false`; disabled icon buttons do not emit events. |
 | `variant` | no | primary, secondary, danger, ghost | Default secondary. |
 
@@ -32,7 +32,7 @@ kind: IconButton
 props:
   icon: archive
   ariaLabel: Archive note
-  click: archive
+  onClick: archive
 ```
 
 <!-- busdk-docs-nav start -->

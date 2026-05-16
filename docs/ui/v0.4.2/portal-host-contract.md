@@ -5,7 +5,11 @@ description: BusDK UI host responsibilities for portal-mounted feature modules.
 
 ## Contract
 
-A portal module exposes this contract:
+A portal module exposes this contract through `bus-portal/pkg/portal.Module`.
+The current Go interface already provides `ID`, `Title`, `State`,
+`DefaultEnabled`, `NavItems`, and `Handler`; this UI contract documents the
+versioned shape that host metadata and future GX module descriptors must
+preserve.
 
 | Field | Required | Type | Rule |
 | --- | --- | --- | --- |
@@ -13,8 +17,8 @@ A portal module exposes this contract:
 | `title` | yes | public string | Human label for nav and metadata. |
 | `ready` | yes | `ready`, `disabled`, or `blocked` | `ready` serves routes; `disabled` hides default navigation; `blocked` shows safe status and does not serve feature routes. |
 | `defaultEnabled` | no | boolean | Defaults to `false` when omitted. |
-| `navigation` | no | ordered items | Each item is `{id,label,path}` or `{id,label,click}`. `id` is stable, `label` is public text, and exactly one of `path` or `click` is required. `path` starts with `/` relative to `moduleBasePath`; `click` names a runtime `events` entry or registered host handler. |
-| `handler` | yes | HTTP handler | Implements `ServeHTTP(w http.ResponseWriter, r *http.Request)` under the host-provided module base path. Requests arrive with the module prefix stripped or exposed as `moduleBasePath`; unmatched feature routes return `404` through the host error renderer instead of redirecting outside the module. |
+| `navigation` | no | ordered items | Each item is `{id,label,path}` or `{id,label,onClick}`. `id` is stable, `label` is public text, and exactly one of `path` or `onClick` is required. `path` starts with `/` relative to `moduleBasePath`; `onClick` names a handler registered in the module's runtime event map before render, and missing handlers fail validation instead of rendering an inert navigation item. |
+| `handler` | yes | HTTP handler | Implements `ServeHTTP(w http.ResponseWriter, r *http.Request)` under the host-provided module base path. The host strips the module prefix before calling the handler, stores the original base path in host context as `moduleBasePath`, and returns unmatched feature routes as `404` through the host error renderer instead of redirecting outside the module. |
 
 The host normalizes modules, exposes metadata, serves shared CSS, and dispatches
 mounted routes under `/modules/<id>/...` inside the token-gated portal URL.

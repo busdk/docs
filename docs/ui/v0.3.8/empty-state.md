@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for EmptyState.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `message` | yes | non-empty string | Visible explanation; empty or missing messages fail validation. |
-| `click` | no | event name | Optional recovery event such as `clear-filters`; omitted renders text-only absence, and unresolved supplied names fail validation. |
+| `onClick` | no | event name | Optional recovery event such as `clear-filters`; omitted renders text-only absence, and unresolved supplied names fail validation. |
 
 ## Boundary
 
@@ -33,10 +33,10 @@ view:
   kind: EmptyState
   props:
     message: No notes match the current filters
-    click: clear-filters
+    onClick: clear-filters
 ```
 
-Props-only text absence omits `click`:
+Props-only text absence omits `onClick`:
 
 ```yaml
 kind: EmptyState

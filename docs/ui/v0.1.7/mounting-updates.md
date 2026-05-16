@@ -11,14 +11,22 @@ The host page provides the mount element, and application startup registers
 the root function with `gxwasm.Mount`:
 
 ```go
-app, err := gxwasm.Mount("#app", app.View)
-if err != nil {
-	return err
+func run(done <-chan struct{}) error {
+	state := &App{}
+	mount, err := gxwasm.Mount("#app", state.View)
+	if err != nil {
+		return err
+	}
+	defer mount.Unmount()
+
+	<-done
+	return nil
 }
-defer app.Unmount()
 ```
 
 The selector must match an existing browser element before mounting starts.
+The Go WebAssembly program must keep running for callbacks to fire; unmount
+only during application shutdown.
 After mount succeeds, callbacks can update Go state and request a rerender.
 
 ```go
@@ -29,7 +37,7 @@ type App struct {
 func (a *App) View() gx.Node {
 	return Counter(CounterProps{
 		Value: a.Count,
-		Click: func() {
+		OnClick: func() {
 			a.Count++
 			gxwasm.Update()
 		},
@@ -49,10 +57,10 @@ small:
 
 | GX element/property | Browser event | Callback |
 | --- | --- | --- |
-| `button click` | `click` | `func()` |
-| `form submit` | `submit` with default submission prevented | `func()` |
-| `input input` | `input` | `func(string)` with the current input value |
-| `input change` | `change` | `func(string)` with the current input value |
+| `button onClick` | `click` | `func()` |
+| `form onSubmit` | `submit` with default submission prevented | `func()` |
+| `input onInput` | `input` | `func(string)` with the current input value |
+| `input onChange` | `change` | `func(string)` with the current input value |
 
 The wrapper calls the Go function. Callback functions do not receive framework
 event payload structs in this patch.

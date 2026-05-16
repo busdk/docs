@@ -13,9 +13,9 @@ properties are checked against a typed table like TSX intrinsic elements.
 
 | Tag | Scalar properties | Callback properties |
 | --- | --- | --- |
-| `button` | `class string`, `id string`, `title string`, `type string`, `disabled bool` | `click func()` |
-| `form` | `class string`, `id string`, `title string` | `submit func()` |
-| `input` | `class string`, `id string`, `title string`, `name string`, `type string`, `value string`, `placeholder string`, `disabled bool`, `required bool` | `input func(string)`, `change func(string)` |
+| `button` | `class string`, `id string`, `title string`, `type string`, `disabled bool` | `onClick func()` |
+| `form` | `class string`, `id string`, `title string` | `onSubmit func()` |
+| `input` | `class string`, `id string`, `title string`, `name string`, `type string`, `value string`, `placeholder string`, `disabled bool`, `required bool` | `onInput func(string)`, `onChange func(string)` |
 | `label` | `class string`, `id string`, `title string`, `for string` | none |
 
 Scalar properties render as escaped HTML attributes, except false boolean
@@ -32,9 +32,9 @@ import "github.com/busdk/bus-gx/pkg/gx"
 
 func NoteEditor(title string, setTitle func(string), save func()) gx.Node {
   return (
-    <form submit={save}>
+    <form onSubmit={save}>
       <label for="title">Title</label>
-      <input id="title" name="title" value={title} input={setTitle} />
+      <input id="title" name="title" value={title} onInput={setTitle} />
       <button type="submit">Save</button>
     </form>
   )
@@ -43,8 +43,8 @@ func NoteEditor(title string, setTitle func(string), save func()) gx.Node {
 
 The compiler preserves callback expressions as Go values. The browser runtime
 from [v0.1.7](../v0.1.7/) decides when to call them. A form should use one
-submission path: either `form submit={save}` with a submit button, or
-`button click={save}` on a non-submit button.
+submission path: either `form onSubmit={save}` with a submit button, or
+`button onClick={save}` on a non-submit button.
 
 ## Boundary
 

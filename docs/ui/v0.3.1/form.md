@@ -18,7 +18,7 @@ component.
 | --- | --- | --- | --- |
 | `id` | recommended for events | string | Stable source id included in submit events. If omitted, the renderer uses the component tree path as the source. |
 | `method` | yes | GET or POST | Native method. |
-| `submit` | yes | event name | Submit event. The form controller emits it after a submitter click or enter-submit passes native form rules. The runtime event chooses a handler, resource, navigation target, or effect. Unresolved event names fail validation. |
+| `onSubmit` | yes | event name | Submit event. The form controller emits it after a submitter click or enter-submit passes native form rules. The runtime event chooses a handler, resource, navigation target, or effect. Unresolved event names fail validation. |
 | `body` | yes | node list | Form body. |
 
 ## Boundary
@@ -35,7 +35,7 @@ kind: Form
 props:
   id: note-editor
   method: POST
-  submit: save-note
+  onSubmit: save-note
 body:
   - kind: Button
     props:
@@ -47,8 +47,11 @@ body:
 
 ## Runtime Terms
 
-[Callback props](../v0.1.6/callback-props) documents function callback props.
-Resource defines URL allowlist and rejection rules.
+`onSubmit` names a runtime event handler for this form component. The event
+source includes the form `id` when present, otherwise the renderer-generated
+tree path. Resource and navigation handlers must accept only same-origin paths
+or host-allowlisted `https:` URLs and must reject `javascript:`, `data:`, path
+traversal, and credential-bearing URLs.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

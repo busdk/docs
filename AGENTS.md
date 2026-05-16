@@ -160,18 +160,21 @@ Public `.gx` documentation should also mention the intended source tools:
   uppercase function components for reusable behavior.
 - Custom tags should support React-style Go callback props. A tag may expose
   callback fields such as `Click func()` or `Submit func()` in its props
-  struct, and templates pass callback functions such as `click={saveDraft}`.
-  Do not document string event names such as `click="save-draft"` or a shared
-  `gx.Controller` implementation for the core callback patch.
+  struct. Future examples should use HTML/DOM-compatible Go/GX event names
+  such as `onClick={saveDraft}` and `onSubmit={saveDraft}` rather than bare
+  event nouns. Do not document string event names such as
+  `click="save-draft"` or a shared `gx.Controller` implementation for the core
+  callback patch.
 - Lowercase GX element tags also need typed callback properties so native
-  elements such as `<button click={saveDraft}>` can carry function values in
+  elements such as `<button onClick={saveDraft}>` can carry function values in
   the node tree before the browser runtime exists. Document this as an
   intrinsic element property table owned by `bus-gx`, similar to TSX intrinsic
   element typing. The callback patch stores and validates these functions; the
-  later browser runtime wires supported properties such as `click`, `submit`,
-  `input`, and `change` to DOM events. The first interactive intrinsic table
-  should be deliberately small but must be usable: `button`, `form`, `input`,
-  and `label` are enough for button clicks and basic form input callbacks.
+  later browser runtime wires supported properties such as `onClick`,
+  `onSubmit`, `onInput`, and `onChange` to DOM events. The first interactive
+  intrinsic table should be deliberately small but must be usable: `button`,
+  `form`, `input`, and `label` are enough for button clicks and basic form
+  input callbacks.
 - Do not keep `bus gx render` in the v0.1.x roadmap unless the user explicitly
   reopens that feature. The first v0.1.x completion target is a working Go
   WebAssembly frontend that compiles `.gx` to `.go` and mounts pure Go

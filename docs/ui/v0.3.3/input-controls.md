@@ -25,7 +25,7 @@ controller/provider layer.
 | `name` | yes | Native form field name included in form state. |
 | `value` | no | `Input`, `TextInput`, `PasswordInput`, and `TextArea` accept string values; numbers must be formatted by the controller before render. `DateInput` accepts `YYYY-MM-DD` or empty string. `Select` accepts an option id string. Missing or null renders the native empty value. Invalid values fail validation before render. |
 | `disabled` | no | Boolean; defaults false and prevents user edits when true. |
-| `change` | no | Runtime event name emitted with source identity when the value changes. |
+| `onChange` | no | Runtime event name emitted with source identity when the value changes. |
 | `options` | yes for `Select` | Array of `{id,label}` objects. `id` is a unique string and `label` is public-safe text. `value` must equal one option id or be empty. |
 
 Change events use this shape:

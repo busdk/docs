@@ -11,8 +11,8 @@ description: BusDK UI library form submit event contract.
 ## Contract
 
 [`Form`](./form) wraps native form behavior with shared classes.
-Forms emit submit events through `submit="save-note"` in markup or through
-structured props with `submit: save-note`. The structured form `submit` field
+Forms emit submit events through `onSubmit="save-note"` in markup or through
+structured props with `onSubmit: save-note`. The structured form `onSubmit` field
 is required for active submits and must name a runtime event.
 
 On submit, the form controller receives the submitter click, applies native
@@ -24,7 +24,7 @@ The emitted event shape is:
 
 | Key | Type | Required | Behavior |
 | --- | --- | --- | --- |
-| `event` | string | yes | Runtime event name from the form `submit` prop. |
+| `event` | string | yes | Runtime event name from the form `onSubmit` prop. |
 | `source.id` | string | yes when the form has `id` | Stable form id authored in the template. |
 | `source.path` | string | yes | Renderer-generated component tree path such as `/Form[0]`; stable for the same rendered tree shape. |
 | `submitter.id` | string | yes when the submitter has `id` | Stable id of the clicked submit control. |
@@ -47,11 +47,11 @@ resources:
 ```
 
 ```html
-<Form id="note-editor" submit="save-note">
+<Form id="note-editor" onSubmit="save-note">
   <Field label="Title" error={titleError}>
     <TextInput name="title" value={title}></TextInput>
   </Field>
-  <SubmitState id="save-button" submit="save-note" working={submitting}>Save</SubmitState>
+  <SubmitState id="save-button" onSubmit="save-note" working={submitting}>Save</SubmitState>
 </Form>
 ```
 
@@ -59,7 +59,7 @@ resources:
 kind: Form
 props:
   method: POST
-  submit: save-note
+  onSubmit: save-note
 ```
 
 ## Consequence

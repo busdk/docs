@@ -12,10 +12,10 @@ related operations on rows, details, or results.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `events` | yes | array | Ordered items. Each item requires `label` and exactly one of `click` or `href`. |
+| `events` | yes | array | Ordered items. Each item requires `label` and exactly one of `onClick` or `href`. |
 | `events[].label` | yes | string | Visible control text; must be non-empty. |
-| `events[].click` | for emitted events | event name | Must match a key in document `events`; source identity identifies the activated event-bar item. |
-| `events[].href` | for links | safe URL/path | Same-origin paths, host-resolved resource URLs, or `https:` links allowed by the host external-link allowlist; invalid URLs fail validation. Mutually exclusive with `click`. |
+| `events[].onClick` | for emitted events | event name | Must match a key in document `events`; the emitted source includes the `EventBar` id or tree path plus the item index so handlers can distinguish items. |
+| `events[].href` | for links | safe URL/path | Same-origin paths, host-resolved resource URLs, or `https:` links allowed by the host external-link allowlist; invalid URLs fail validation. Mutually exclusive with `onClick`. |
 | `events[].variant` | no | primary, secondary, danger, ghost | Default secondary; destructive uses danger. |
 | `events[].disabled` | no | boolean | Default false; disabled items render but do not emit events. |
 | `alignment` | no | start, end, between | Default `start`; `start` aligns the flat event list to inline start, `end` aligns it to inline end, and `between` spaces the flat list evenly across the row. |
@@ -39,17 +39,18 @@ kind: EventBar
 props:
   events:
     - label: Approve
-      click: approve
+      onClick: approve
       variant: primary
     - label: Request review
-      click: review
+      onClick: review
 ```
 
 ## Runtime Terms
 
 [Callback props](../v0.1.6/callback-props) documents function callback props.
 
-Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+Link targets must be same-origin paths or host-allowlisted `https:` URLs.
+Reject `javascript:`, `data:`, path traversal, and credential-bearing URLs.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

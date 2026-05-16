@@ -14,7 +14,7 @@ event.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `trigger` | yes | string or node | Button label/content. |
-| `items` | yes | array of `{label,value,click}` | `label` is non-empty string, `click` is a stable event name, and `value` is string/number defaulting to `click`. `value` and `click` must be unique within the menu. Activating runs the named event with `{value}`. |
+| `items` | yes | array of `{label,value,onClick}` | `label` is non-empty string, `onClick` is a stable event name, and `value` is string/number defaulting to `onClick`. `value` and `onClick` must be unique within the menu. Activating runs the named event with `{value}`. |
 | `selected` | no | value | Must match `items[].value`; omitted means no item is selected, and unknown selected values fail validation. |
 
 ## Boundary
@@ -29,9 +29,9 @@ props:
   trigger: More
   items:
     - label: Rename
-      click: rename
+      onClick: rename
     - label: Archive
-      click: archive
+      onClick: archive
 ```
 
 <!-- busdk-docs-nav start -->

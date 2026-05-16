@@ -322,6 +322,11 @@
           children:
             - label: WASM app acceptance
               url: /ui/v0.1.11/wasm-app
+        - label: v0.1.12 Intrinsic callback naming
+          url: /ui/v0.1.12/
+          children:
+            - label: Intrinsic callback naming
+              url: /ui/v0.1.12/intrinsic-callback-naming
         - label: v0.2.0 Library design baseline
           url: /ui/v0.2.0/
           children:

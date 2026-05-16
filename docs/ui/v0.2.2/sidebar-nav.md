@@ -11,10 +11,10 @@ description: Dedicated BusDK UI reference for SidebarNav.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `items` | yes | array | Each item has non-empty `label` plus exactly one of `href` or `click`. Items missing both or containing both fail validation. |
+| `items` | yes | array | Each item has non-empty `label` plus exactly one of `href` or `onClick`. Items missing both or containing both fail validation. |
 | `items[].label` | yes | string | Visible and accessible navigation label. Empty labels fail validation, including compact mode where an icon is shown. |
-| `items[].href` | required when no click | path string or `{base,path}` route resolver | Navigates to a route. Strings may be same-origin absolute paths or relative module routes. Resolver objects use `base: portal`, `base: module`, or a named host route resolver plus `path` beginning with `/`. `javascript:`, `data:`, path traversal, and unallowlisted external origins fail validation. |
-| `items[].click` | required when no href | event name | Emits a declared event name from the runtime `events` map or registered Go WebAssembly handler map. Unknown event names fail validation. |
+| `items[].href` | required when no onClick | path string or `{base,path}` route resolver | Navigates to a route. Strings may be same-origin absolute paths or relative module routes. Resolver objects use `base: portal`, `base: module`, or a named host route resolver plus `path` beginning with `/`. `javascript:`, `data:`, path traversal, and unallowlisted external origins fail validation. |
+| `items[].onClick` | required when no href | event name | Emits a declared event name from the runtime `events` map or registered Go WebAssembly handler map. Unknown event names fail validation. |
 | `items[].icon` | no | icon name | Shown in compact mode. Names must come from the shared Icon catalog or host-registered icon set. Unknown icons render the text label only and report a non-fatal validation warning. |
 | `items[].active` | no | boolean | Marks active item. Omitted means false. At most one active item is allowed; multiple active items fail validation instead of being resolved implicitly. |
 

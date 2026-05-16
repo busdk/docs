@@ -1,14 +1,14 @@
 ---
 title: bus-gx - GX core render tree, source tools, and WASM runtime
-description: End-user reference for the bus-gx module and the currently implemented v0.1.11 WASM app acceptance patch.
+description: End-user reference for the bus-gx module and the currently implemented v0.1.12 intrinsic callback naming patch.
 ---
 
 ## `bus-gx` - GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.11 WASM app acceptance**.
+Current implemented UI roadmap version: **v0.1.12 Intrinsic callback naming**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.11`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.12`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
 in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
 checked `.gx` expressions into ordinary Go, and
@@ -110,14 +110,15 @@ package-scope Go functions or method values shaped as `func(P) gx.Node`, where
 spliced in source order. Raw text inside markup is rejected; authors must use
 `Text` or braced expressions so formatting cannot silently discard content.
 
-`v0.1.6` callback props are ordinary Go function values. Component callback
-props use the selected component's props struct type. Intrinsic callbacks are
-limited to `button click={func()}`, `form submit={func()}`, `input
-input={func(string)}`, and `input change={func(string)}`. Those functions stay
-in `gx.Props` and normalized `gx.VNode` attributes. `gx.RenderHTML` validates
-and omits function-valued props from static HTML. `gxwasm` wires the supported
-intrinsic callbacks to browser events when rendering in Go WebAssembly, and
-`form submit` callbacks prevent default browser form submission.
+Callback props are ordinary Go function values. Component callback props use
+the selected component's props struct type. Intrinsic callbacks are limited to
+`button onClick={func()}`, `form onSubmit={func()}`, `input
+onInput={func(string)}`, and `input onChange={func(string)}`. Those functions
+stay in `gx.Props` and normalized `gx.VNode` attributes. `gx.RenderHTML`
+validates and omits function-valued props from static HTML. `gxwasm` wires the
+supported intrinsic callbacks to browser events when rendering in Go
+WebAssembly, and `form onSubmit` callbacks prevent default browser form
+submission.
 
 `v0.1.8` runtime diagnostics stay framework-owned and redacted. Selector
 lookup, invalid root, and initial render failures are returned directly from
@@ -146,7 +147,11 @@ elements, compiles that source to checked-in Go, verifies `bus gx fmt --check`,
 `bus gx lint --format json`, and `bus gx compile`, then runs host and
 browser-backed tests through the real runtime and `gxtest` helpers. The save
 path is owned by the form `submit` callback; the separate clear button covers
-button `click`, and input editing flows through `input={func(string)}`.
+button `click`, and input editing flows through the input callback.
+
+`v0.1.12` renames public GX callback attributes to HTML/DOM-like Go names:
+`onClick`, `onSubmit`, `onInput`, and `onChange`. The old bare GX spellings are
+not compatibility aliases.
 
 ## Source Tools
 
@@ -164,8 +169,8 @@ type NoticeProps struct {
 }
 
 type ButtonProps struct {
-	Label string
-	Click func()
+	Label   string
+	OnClick func()
 }
 
 func Notice(props NoticeProps) gx.Node {
@@ -173,12 +178,12 @@ func Notice(props NoticeProps) gx.Node {
 }
 
 func Button(props ButtonProps) gx.Node {
-	return <button click={props.Click} type="button">{props.Label}</button>
+	return <button onClick={props.OnClick} type="button">{props.Label}</button>
 }
 
 func NoteEditor(save func(), setTitle func(string)) gx.Node {
 	return (
-		<form submit={save}><label for="title">{"Title"}</label><input input={setTitle} name="title"></input><Button click={save} label={"Save"}></Button></form>
+		<form onSubmit={save}><label for="title">{"Title"}</label><input onInput={setTitle} name="title"></input><Button onClick={save} label={"Save"}></Button></form>
 	)
 }
 
@@ -186,7 +191,7 @@ func saveDraft() {}
 func setTitle(value string) {}
 
 var suffix = []gx.Node{gx.Text("!")}
-var hello = <Notice message={"Hello Bus"} tone={"message"}>{gx.Text(" from GX")}{suffix}<Button click={saveDraft} label={"Save"}></Button></Notice>
+var hello = <Notice message={"Hello Bus"} tone={"message"}>{gx.Text(" from GX")}{suffix}<Button onClick={saveDraft} label={"Save"}></Button></Notice>
 ```
 
 Save the sample as `hello.gx`. With BusDK commands on `PATH`:
@@ -209,18 +214,18 @@ as Go values:
 
 ```go
 func Button(props ButtonProps) gx.Node {
-	return gx.Element("button", gx.Props{"click": props.Click, "type": "button"}, gx.Text(props.Label))
+	return gx.Element("button", gx.Props{"onClick": props.OnClick, "type": "button"}, gx.Text(props.Label))
 }
 
 func NoteEditor(save func(), setTitle func(string)) gx.Node {
-	return (gx.Element("form", gx.Props{"submit": save}, gx.Element("label", gx.Props{"for": "title"}, gx.Text("Title")), gx.Element("input", gx.Props{"input": setTitle, "name": "title"}), Button(ButtonProps{Click: save, Label: "Save"})))
+	return (gx.Element("form", gx.Props{"onSubmit": save}, gx.Element("label", gx.Props{"for": "title"}, gx.Text("Title")), gx.Element("input", gx.Props{"name": "title", "onInput": setTitle}), Button(ButtonProps{Label: "Save", OnClick: save})))
 }
 
 var hello = Notice(NoticeProps{Message: "Hello Bus", Tone: "message", Children: func() []gx.Node {
 	var __gxChildren []gx.Node
 	__gxChildren = append(__gxChildren, gx.Text(" from GX"))
 	__gxChildren = append(__gxChildren, suffix...)
-	__gxChildren = append(__gxChildren, Button(ButtonProps{Click: saveDraft, Label: "Save"}))
+	__gxChildren = append(__gxChildren, Button(ButtonProps{Label: "Save", OnClick: saveDraft}))
 	return __gxChildren
 }()})
 ```
@@ -246,8 +251,8 @@ import (
 var title string
 
 func App() gx.Node {
-	return gx.Element("form", gx.Props{"submit": save},
-		gx.Element("input", gx.Props{"input": setTitle, "name": "title"}),
+	return gx.Element("form", gx.Props{"onSubmit": save},
+		gx.Element("input", gx.Props{"name": "title", "onInput": setTitle}),
 		gx.Element("button", gx.Props{"type": "submit"}, gx.Text("Save")),
 		gx.Element("p", nil, gx.Text(title)),
 	)
@@ -294,9 +299,9 @@ html := gxtest.RenderHTML(t,
 	gx.Element("p", gx.Props{"class": "message"}, gx.Text("Hello")),
 )
 vnode := gxtest.VNode(t,
-	gx.Element("button", gx.Props{"click": save}, gx.Text("Save")),
+	gx.Element("button", gx.Props{"onClick": save}, gx.Text("Save")),
 )
-click := gxtest.RequireProp[func()](t, vnode, "click")
+click := gxtest.RequireProp[func()](t, vnode, "onClick")
 click()
 generated := gxtest.CompileGX(t, "hello.gx",
 	"package demo\n\nvar hello = <p>{\"Hello\"}</p>\n",
@@ -333,7 +338,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.11
+bus-gx v0.1.12
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
@@ -364,3 +369,4 @@ Use `bus gx fmt --check`, `bus gx lint --format json`, and
 - [UI v0.1.9 GX browser API boundaries](../ui/v0.1.9/)
 - [UI v0.1.10 Core test helpers](../ui/v0.1.10/)
 - [UI v0.1.11 WASM app acceptance](../ui/v0.1.11/)
+- [UI v0.1.12 Intrinsic callback naming](../ui/v0.1.12/)
