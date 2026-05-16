@@ -1,27 +1,27 @@
 ---
-title: bus-gx — GX core render tree and source tools
-description: End-user reference for the bus-gx module and the currently implemented v0.1.6 GX callback and intrinsic interactivity patch.
+title: bus-gx — GX core render tree, source tools, and WASM runtime
+description: End-user reference for the bus-gx module and the currently implemented v0.1.7 Go WebAssembly runtime patch.
 ---
 
-## `bus-gx` — GX core render tree and source tools
+## `bus-gx` — GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.6 GX callbacks and intrinsic
-interactivity**.
+Current implemented UI roadmap version: **v0.1.7 Go WebAssembly runtime**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.6`, it provides the safe static HTML foundation
-in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting
-helpers in `github.com/busdk/bus-gx/pkg/gx/source`, and a static compiler that
-lowers checked `.gx` expressions into ordinary Go with package-scope function
-component calls, GX markup inside Go function bodies, braced expression
-children, component body children, component callback props, and intrinsic
-callback props for the first interactive lowercase elements.
+source tooling. Through `v0.1.7`, it provides the safe static HTML foundation
+in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
+in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
+checked `.gx` expressions into ordinary Go, and
+`github.com/busdk/bus-gx/pkg/gx/wasm` for mounting a GX root from Go
+WebAssembly.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
-and `compile` for `.gx` files. Browser mounting, DOM listener wiring, bindings,
-controllers, lifecycle hooks, hydration, data loading, and runtime resources
-belong to later UI roadmap versions.
+and `compile` for `.gx` files. The WASM runtime mounts one `func() gx.Node`
+root, reruns it on explicit updates, renders directly into the DOM, and wires
+the first intrinsic button/form/input callbacks. Bindings, controller
+registries, effects, resources, logging transports, raw HTML, and hydration are
+outside the current module boundary.
 
 ## Import
 
@@ -29,6 +29,7 @@ belong to later UI roadmap versions.
 import (
 	"github.com/busdk/bus-gx/pkg/gx"
 	"github.com/busdk/bus-gx/pkg/gx/source"
+	gxwasm "github.com/busdk/bus-gx/pkg/gx/wasm"
 )
 ```
 
@@ -54,6 +55,10 @@ import (
 | `source.ExtractEntries` | Package-local template entry extractor. |
 | `source.WriteHuman` | Stable human diagnostics. |
 | `source.WriteJSON` | Stable JSON diagnostics. |
+| `gxwasm.Mount` | Mount one root `func() gx.Node` into a browser element. |
+| `gxwasm.Update` | Rerun the current root and replace the mounted DOM subtree. |
+| `gxwasm.Unmount` | Clear the current mount and release retained callbacks. |
+| `gxwasm.Handle` | Explicit mount handle with `RequestUpdate` and `Unmount`. |
 
 ## Example
 
@@ -94,9 +99,10 @@ spliced in source order. Raw text inside markup is rejected; authors must use
 props use the selected component's props struct type. Intrinsic callbacks are
 limited to `button click={func()}`, `form submit={func()}`, `input
 input={func(string)}`, and `input change={func(string)}`. Those functions stay
-in `gx.Props` and normalized `gx.VNode` attributes for future browser runtime
-consumers, while `gx.RenderHTML` validates and omits function-valued props from
-static HTML.
+in `gx.Props` and normalized `gx.VNode` attributes. `gx.RenderHTML` validates
+and omits function-valued props from static HTML. `gxwasm` wires the supported
+intrinsic callbacks to browser events when rendering in Go WebAssembly, and
+`form submit` callbacks prevent default browser form submission.
 
 ## Source Tools
 
@@ -175,9 +181,52 @@ var hello = Notice(NoticeProps{Message: "Hello Bus", Tone: "message", Children: 
 }()})
 ```
 
-Direct `.gx` to HTML rendering and browser event mounting are outside this
-version. Compile `.gx` to Go first, then use the generated Go from an ordinary
-Go program.
+Compile `.gx` to Go first, then use the generated Go from an ordinary Go
+program. In a Go WebAssembly frontend, those generated component functions can
+be rendered by a `gxwasm` root.
+
+## Go WebAssembly Runtime
+
+`pkg/gx/wasm` mounts one root function into a browser element:
+
+```go
+package main
+
+import (
+	"github.com/busdk/bus-gx/pkg/gx"
+	gxwasm "github.com/busdk/bus-gx/pkg/gx/wasm"
+)
+
+var title string
+
+func App() gx.Node {
+	return gx.Element("form", gx.Props{"submit": save},
+		gx.Element("input", gx.Props{"input": setTitle, "name": "title"}),
+		gx.Element("button", gx.Props{"type": "submit"}, gx.Text("Save")),
+		gx.Element("p", nil, gx.Text(title)),
+	)
+}
+
+func setTitle(value string) {
+	title = value
+	gxwasm.Update()
+}
+
+func save() {}
+
+func main() {
+	if _, err := gxwasm.Mount("#app", App); err != nil {
+		panic(err)
+	}
+	select {}
+}
+```
+
+`gxwasm.Mount` renders the returned node tree directly into the matching DOM
+element. `gxwasm.Update` and `Handle.RequestUpdate` rerun the same root and
+replace the runtime-owned DOM subtree. `gxwasm.Unmount` and `Handle.Unmount`
+clear the mount and release retained JavaScript callbacks so events do not call
+Go after unmount.
 
 ## Verify Installed Command
 
@@ -191,7 +240,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.6
+bus-gx v0.1.7
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
@@ -217,3 +266,4 @@ Use `bus gx fmt --check`, `bus gx lint --format json`, and
 - [GX component acceptance](../ui/v0.1.4/acceptance)
 - [UI v0.1.5 GX markup bodies](../ui/v0.1.5/)
 - [UI v0.1.6 GX callbacks and intrinsic interactivity](../ui/v0.1.6/)
+- [UI v0.1.7 GX Go WebAssembly runtime](../ui/v0.1.7/)
