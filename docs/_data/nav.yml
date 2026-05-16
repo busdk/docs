@@ -14,6 +14,8 @@
       url: /design-goals/
     - label: Cost summary
       url: /implementation/cost-summary
+    - label: Go peer review guide
+      url: /implementation/go-peer-review-guide
 
 - title: Workflows
   links:
@@ -327,6 +329,26 @@
           children:
             - label: Intrinsic callback naming
               url: /ui/v0.1.12/intrinsic-callback-naming
+        - label: v0.1.13 Handle render scheduling
+          url: /ui/v0.1.13/
+          children:
+            - label: Handle render scheduling
+              url: /ui/v0.1.13/handle-render-scheduling
+        - label: v0.1.14 Expanded intrinsic elements
+          url: /ui/v0.1.14/
+          children:
+            - label: Expanded intrinsic elements
+              url: /ui/v0.1.14/expanded-intrinsic-elements
+        - label: v0.1.15 Typed event payloads
+          url: /ui/v0.1.15/
+          children:
+            - label: Typed event payloads
+              url: /ui/v0.1.15/typed-event-payloads
+        - label: v0.1.16 Minimal browser adapters
+          url: /ui/v0.1.16/
+          children:
+            - label: Minimal browser adapters
+              url: /ui/v0.1.16/minimal-browser-adapters
         - label: v0.2.0 Library design baseline
           url: /ui/v0.2.0/
           children:
