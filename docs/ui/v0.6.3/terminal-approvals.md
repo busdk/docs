@@ -25,14 +25,16 @@ refresh.
 
 Decision events emit source identity plus request id and decision:
 
-```yaml
-event: allow-command
-source:
-  id: terminal-approval
-  path: /TerminalSessionPanel[0]/TerminalApprovalPrompt[0]
-item:
-  requestID: approve-123
-decision: allow
+```go
+decisionEvent := TerminalApprovalEvent{
+    Event: "allow-command",
+    Source: EventSource{
+        ID:   "terminal-approval",
+        Path: "/TerminalSessionPanel[0]/TerminalApprovalPrompt[0]",
+    },
+    Item:     TerminalApprovalItem{RequestID: "approve-123"},
+    Decision: "allow",
+}
 ```
 
 The emitted `event` value is the configured `allow` value for allow decisions

@@ -28,26 +28,30 @@ Text edits emit the `onChange` prop value with source identity, session id, and
 the current draft text. Submit payloads intentionally omit text; the controller
 uses the latest draft in its model when handling submit.
 
-```yaml
-event: terminal-draft
-source:
-  id: terminal-input
-  path: /TerminalSessionPanel[0]/TerminalInputBox[0]
-item:
-  sessionID: session-123
-draft: echo hello
+```go
+draftEvent := TerminalInputEvent{
+    Event: "terminal-draft",
+    Source: EventSource{
+        ID:   "terminal-input",
+        Path: "/TerminalSessionPanel[0]/TerminalInputBox[0]",
+    },
+    Item:  TerminalInputItem{SessionID: "session-123"},
+    Draft: "echo hello",
+}
 ```
 
 Send emits the `onSubmit` prop value. In this example, `onSubmit` is
 `terminal-stdin`:
 
-```yaml
-event: terminal-stdin
-source:
-  id: terminal-input
-  path: /TerminalSessionPanel[0]/TerminalInputBox[0]
-item:
-  sessionID: session-123
+```go
+submitEvent := TerminalInputEvent{
+    Event: "terminal-stdin",
+    Source: EventSource{
+        ID:   "terminal-input",
+        Path: "/TerminalSessionPanel[0]/TerminalInputBox[0]",
+    },
+    Item: TerminalInputItem{SessionID: "session-123"},
+}
 ```
 
 The controller writes process stdin from its current draft model. The `event`
@@ -55,13 +59,15 @@ value is the `onSubmit` prop value.
 
 Stop emits the `stop` prop value with the same source and session identity:
 
-```yaml
-event: stop-terminal
-source:
-  id: terminal-input
-  path: /TerminalSessionPanel[0]/TerminalInputBox[0]
-item:
-  sessionID: session-123
+```go
+stopEvent := TerminalInputEvent{
+    Event: "stop-terminal",
+    Source: EventSource{
+        ID:   "terminal-input",
+        Path: "/TerminalSessionPanel[0]/TerminalInputBox[0]",
+    },
+    Item: TerminalInputItem{SessionID: "session-123"},
+}
 ```
 
 Input is disabled when `state` is not `running`, when `disabled` is true, or

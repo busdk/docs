@@ -11,27 +11,47 @@ description: Dedicated BusDK UI reference for TerminalInputBox.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `value` | yes | string or Go value | Current input. |
-| `send` | yes | event name | Runs when the user submits input. Source identity selects this terminal input; the controller reads current input and session state. Empty values are ignored unless the controller allows empty input. |
-| `exit` | no | event name | Runs when the user requests process termination. Source identity selects the terminal session; without session metadata the control is suppressed because the host cannot safely target a process. Omitted `exit` removes the stop/exit control; it does not close the panel locally. |
+| `id` | no | string | Stable source id copied into callback events. When omitted, the renderer-generated tree path is used. |
+| `sessionID` | yes | string | Host session identifier targeted by stdin and exit callbacks. Empty string suppresses controls. |
+| `value` | yes | string | Current controlled input value. The parent updates this value through normal Go state after `onSend` succeeds or clears the draft. |
+| `onSend` | yes | `func(TerminalInputEvent) gx.Result` | Runs when the user submits input. Event includes `SessionID`, `SourceID`, and `Text`. Empty values are ignored by default; a host may enable empty stdin through terminal runtime config. |
+| `onExit` | no | `func(TerminalExitEvent) gx.Result` | Runs when the user requests process termination. Omitted `onExit` removes the stop/exit control; it does not close the panel locally. |
 | `disabled` | no | boolean | Disables controls. |
 
 ## Boundary
 
-Closed sessions disable input. `TerminalInputBox` emits interaction events only;
-the host runtime decides whether stdin is accepted, which session is targeted,
-and whether process termination is authorized.
+Parents disable input for closed sessions by setting `disabled={true}` or
+clearing `sessionID`. `TerminalInputBox` calls interaction callbacks only; the
+host runtime decides whether stdin is accepted, which session is targeted, and
+whether process termination is authorized.
 
 ## Example
 
-```yaml
-kind: TerminalInputBox
-props:
-  value:
-    bind: terminal.input
-  send: send-input
-  exit: stop
+```gx
+var inputBox = <TerminalInputBox
+    id="terminal-input"
+    sessionID="test-17"
+    value={terminalInput}
+    onSend={sendInput}
+    onExit={stopSession}>
+</TerminalInputBox>
 ```
+
+```go
+type TerminalInputEvent struct {
+	SessionID string
+	SourceID string
+	Text string
+}
+
+type TerminalExitEvent struct {
+	SessionID string
+	SourceID string
+}
+```
+
+`SourceID` comes from `id` or the generated tree path. Handlers use it only to
+distinguish multiple input boxes; `SessionID` remains the process target.
 
 ## Runtime Terms
 

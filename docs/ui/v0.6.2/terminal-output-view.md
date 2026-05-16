@@ -22,12 +22,11 @@ unknown stream labels become `system` and are reported through diagnostics.
 
 ## Example
 
-```yaml
-kind: TerminalOutputView
-props:
-  chunks:
-    bind: terminal.output
-  emptyText: No output yet
+```gx
+var outputView = <TerminalOutputView
+    chunks={terminalOutput}
+    emptyText="No output yet">
+</TerminalOutputView>
 ```
 
 ## Runtime Terms

@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for TerminalApprovalPrompt.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `title` | yes | string | Prompt title. |
-| `events` | yes | array of `{label,onClick,requestID}` | Approval decisions for one pending request. `label` is public-safe text, `onClick` is one of the declared decision tokens such as `approve-command`, `deny-command`, or a host-registered equivalent, and `requestID` is the stable string or number of the pending request. Multiple decisions for the same request share the same `requestID`; duplicate `(requestID, onClick)` pairs fail validation. Unknown event names fail validation. |
+| `decisions` | yes | `[]TerminalApprovalDecision` | Approval decisions for one pending request. `Label` is public-safe text, `Decision` is `approve` or `deny`, `RequestID` is the stable pending request id, and `OnClick` is `func(TerminalApprovalEvent) gx.Result`. Duplicate `(RequestID, Decision)` pairs fail validation. |
 | `summary` | yes | string | Public-safe command context shown before decisions. It must identify the requested command or operation, relevant working directory or target, and why approval is needed without including secrets, tokens, or private file contents. Empty or omitted summaries fail validation so hosts do not render decisions without user-visible detail. |
 
 ## Boundary
@@ -20,27 +20,55 @@ description: Dedicated BusDK UI reference for TerminalApprovalPrompt.
 Decision controls use stable source ids derived from the pending request and
 decision so the host can submit exactly one decision for the pending request.
 The component renders decisions only; command authorization policy stays in the
-host/runtime.
+host runtime.
 
-Selecting a decision runs the chosen event name with source identity. The
-component disables all decisions for that request
-after the first click until the host confirms, rejects, or refreshes the pending
-approval state; repeated clicks for the same `(requestID, onClick)` are ignored.
+Selecting a decision calls `OnClick` with `RequestID`, `Decision`, and
+`SourceID`. The component disables all decisions for that request immediately
+after the first click. A [runtime result](../v0.4.1/runtime-contract) with kind
+`success` keeps decisions disabled and the parent removes the prompt on the next
+render. Result kind `provider-error` keeps the prompt visible and re-enables
+decisions only when the parent supplies a refreshed approval state with the same
+`RequestID`. Repeated clicks for the same `(RequestID, Decision)` are ignored
+while pending.
 
 ## Example
 
-```yaml
-kind: TerminalApprovalPrompt
-props:
-  title: Approve command?
-  summary: Run `make test` in `/workspace/bus-ui` with network disabled.
-  events:
-    - label: Allow
-      onClick: approve-command
-      requestID: 17
-    - label: Deny
-      onClick: deny-command
-      requestID: 17
+```gx
+var approvalDecisions = []TerminalApprovalDecision{
+  {
+    Label: "Approve",
+    Decision: "approve",
+    RequestID: "req-123",
+    OnClick: approveCommand,
+  },
+  {
+    Label: "Deny",
+    Decision: "deny",
+    RequestID: "req-123",
+    OnClick: denyCommand,
+  },
+}
+
+var approvalPrompt = <TerminalApprovalPrompt
+    title="Approve command?"
+    summary="Run `make test` in `/workspace/bus-ui` with network disabled."
+    decisions={approvalDecisions}>
+</TerminalApprovalPrompt>
+```
+
+```go
+type TerminalApprovalDecision struct {
+	Label string
+	Decision string
+	RequestID string
+	OnClick func(TerminalApprovalEvent) gx.Result
+}
+
+type TerminalApprovalEvent struct {
+	SourceID string
+	RequestID string
+	Decision string
+}
 ```
 
 <!-- busdk-docs-nav start -->
