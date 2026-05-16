@@ -1,21 +1,23 @@
 ---
-title: bus-gx — GX core render tree, source tools, and WASM runtime
-description: End-user reference for the bus-gx module and the currently implemented v0.1.10 core test helper patch.
+title: bus-gx - GX core render tree, source tools, and WASM runtime
+description: End-user reference for the bus-gx module and the currently implemented v0.1.11 WASM app acceptance patch.
 ---
 
-## `bus-gx` — GX core render tree, source tools, and WASM runtime
+## `bus-gx` - GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.10 core test helpers**.
+Current implemented UI roadmap version: **v0.1.11 WASM app acceptance**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.10`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.11`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
 in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
 checked `.gx` expressions into ordinary Go, and
 `github.com/busdk/bus-gx/pkg/gx/wasm` for mounting a GX root from Go
 WebAssembly with redacted post-mount diagnostics behind a narrow browser API
 boundary. It also provides `github.com/busdk/bus-gx/pkg/gxtest` for
-deterministic render, compiler, and WASM callback tests.
+deterministic render, compiler, and WASM callback tests, plus a module-owned
+WASM acceptance app under `tests/wasm-app` that proves the v0.1.x pieces work
+together from `.gx` source to generated Go to browser-mounted Go WebAssembly.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
@@ -136,6 +138,15 @@ close guards, product logging helpers, or a client log transport.
 product-specific harness behavior. The WASM harness installs a scoped test DOM
 fixture, uses the real `gxwasm.Mount` path, and supports tag, `#id`, and
 simple `tag[attr=value]` selectors.
+
+`v0.1.11` adds the complete acceptance fixture for the v0.1.x line. The
+fixture keeps editor state in ordinary Go package values, renders a `.gx`
+component function with lowercase `form`, `label`, `input`, `button`, and `p`
+elements, compiles that source to checked-in Go, verifies `bus gx fmt --check`,
+`bus gx lint --format json`, and `bus gx compile`, then runs host and
+browser-backed tests through the real runtime and `gxtest` helpers. The save
+path is owned by the form `submit` callback; the separate clear button covers
+button `click`, and input editing flows through `input={func(string)}`.
 
 ## Source Tools
 
@@ -288,7 +299,7 @@ vnode := gxtest.VNode(t,
 click := gxtest.RequireProp[func()](t, vnode, "click")
 click()
 generated := gxtest.CompileGX(t, "hello.gx",
-	"package demo\n\nvar hello = <p><Text value={\"Hello\"}></Text></p>\n",
+	"package demo\n\nvar hello = <p>{\"Hello\"}</p>\n",
 )
 ```
 
@@ -322,7 +333,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.10
+bus-gx v0.1.11
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
@@ -352,3 +363,4 @@ Use `bus gx fmt --check`, `bus gx lint --format json`, and
 - [UI v0.1.8 GX Go WebAssembly runtime diagnostics](../ui/v0.1.8/)
 - [UI v0.1.9 GX browser API boundaries](../ui/v0.1.9/)
 - [UI v0.1.10 Core test helpers](../ui/v0.1.10/)
+- [UI v0.1.11 WASM app acceptance](../ui/v0.1.11/)
