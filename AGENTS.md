@@ -224,10 +224,11 @@ the owning module SDD such as `sdd/docs/modules/bus-gx.md` is complete through
 that version, and the end-user module page such as
 `docs/docs/modules/bus-gx.md` matches the actual implementation with the
 current implemented version clearly visible. When a feature candidate is
-finished, reviewed, implemented, and accepted, it receives the next actual
-semver patch number and is renamed from `docs/docs/ui/fc-<order>-<identifier>/`
-to `docs/docs/ui/v0.X.Y/` before dependent feature-candidate work is treated as
-unblocked.
+finished, implemented, reviewed, accepted, and no ordering or versioning blocker
+remains, promote it to the next actual semver patch number and rename it from
+`docs/docs/ui/fc-<order>-<identifier>/` to `docs/docs/ui/v0.X.Y/`. If promotion
+is not yet possible, record the concrete blocker in the owning module `PLAN.md`
+or docs plan rather than leaving the completed candidate status ambiguous.
 Keep concrete API names, command behavior, file formats, validation rules, and
 examples on the first version page that implements them. Higher-level design,
 architecture, design-system, rendering, and reference pages should summarize

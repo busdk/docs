@@ -62,11 +62,11 @@ Unimplemented UI work uses feature candidate directories named
 only the deterministic review order for public docs; it is not a promise that
 unrelated candidates must be implemented as one strict sequence.
 
-When a feature candidate is finished, reviewed, implemented, and accepted, it
-receives the next actual semver patch number and is renamed from
-`docs/ui/fc-<order>-<identifier>/` to `docs/ui/v0.X.Y/`. The promoted patch is
-then added to the implemented list and sidebar. Earlier implemented pages do
-not link forward to feature candidates.
+When a feature candidate is finished, implemented, reviewed, accepted, and has
+no ordering or versioning blocker, it receives the next actual semver patch
+number and is renamed from `docs/ui/fc-<order>-<identifier>/` to
+`docs/ui/v0.X.Y/`. The promoted patch is then added to the implemented list and
+sidebar. Earlier implemented pages do not link forward to feature candidates.
 
 - [fc-004 Runtime config and API URLs](fc-004-runtime-config-api-urls/)
 - [fc-005 Sessions](fc-005-sessions/)
