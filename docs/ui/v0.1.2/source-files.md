@@ -10,8 +10,8 @@ Go declarations. The file keeps the Go package boundary, so later generated
 Go, tests, and editor tooling can work with the same package.
 
 The preferred human-authored UI format is `.gx`, not a YAML or JSON component
-tree. YAML and JSON remain useful later for fixture data and fixture data,
-but template structure is written as HTML-like markup inside Go source.
+tree. YAML and JSON remain data and configuration formats; template structure
+is written as HTML-like markup inside Go source.
 
 The v0.1.2 parser preserves tag case and source locations. Lowercase tags
 resolve to safe HTML element names from the [v0.1.1 element](../v0.1.1/element)
@@ -23,8 +23,8 @@ The source language is constrained to safe structural markup and Go values. It
 does not run browser JavaScript, shell commands, provider calls, or a separate
 expression runtime.
 
-Raw text inside markup is not part of this patch. Use the `Text` source
-primitive for text content so formatting cannot drop content accidentally.
+Raw text inside markup is unsupported in v0.1.2. Use the `Text` source primitive
+for text content so formatting cannot drop content accidentally.
 
 ## Minimal File
 
@@ -34,8 +34,8 @@ package notesui
 var hello = <p><Text value={"Hello Bus"}></Text></p>
 ```
 
-This version can format and lint the file. Rendering is introduced by the
-compiler patch.
+v0.1.2 can format and lint the file. It does not compile or render `.gx`
+source.
 
 This file is intentionally invalid in `v0.1.2`:
 

@@ -23,7 +23,7 @@ package notesui
 var notesList = (
   <ul>
     <Repeat each={notes} as="note">
-      <NoteItem title={noteTitle} status={noteStatus}></NoteItem>
+      <NoteItem title={note.Title} status={note.Status}></NoteItem>
     </Repeat>
   </ul>
 )
@@ -52,12 +52,19 @@ func NoteItem(p NoteItemProps) gx.Node {
 }
 ```
 
-## Fixture Data
+## View Data
 
-```yaml
-notes:
-  - title: Evidence note
-    status: review
+```go
+package notesui
+
+type NoteView struct {
+	Title  string
+	Status string
+}
+
+var notes = []NoteView{
+	{Title: "Evidence note", Status: "review"},
+}
 ```
 
 This renders projected `notes` as repeated rows using a function component. A

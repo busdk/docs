@@ -1,5 +1,9 @@
 # Docs Refactor Plan
 
+Status: completed archive. New documentation work should be opened as fresh
+items in the owning module `PLAN.md`; UI implementation roadmap work now lives
+in the relevant `bus-gx`, `bus-ui`, or infrastructure module plan.
+
 Current unchecked items use paths relative to the `docs` module root unless an
 item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
@@ -196,7 +200,7 @@ that were used when those entries were completed.
   and failed with missing authentication, and `codex:local` had no local
   provider configured.
 
-- [ ] Audit public UI version docs for YAML/JSON component markup: scan
+- [x] Audit public UI version docs for YAML/JSON component markup: scan
   superproject-relative `docs/docs/ui/v*/` (`docs/ui/v*/` inside this module)
   for YAML or JSON examples that describe rendered
   components/templates, replace those examples with `.gx` or Go, and keep

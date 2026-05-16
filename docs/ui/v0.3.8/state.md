@@ -40,11 +40,12 @@ var emptyNotes = (
 )
 ```
 
-## Fixture Data
+## View Data
 
-```yaml
-empty:
-  message: No notes yet
+```go
+package notesui
+
+const emptyMessage = "No notes yet"
 ```
 
 This renders an explicit empty state component instead of a blank panel.
