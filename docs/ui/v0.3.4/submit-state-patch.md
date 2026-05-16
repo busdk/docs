@@ -5,7 +5,7 @@ description: BusDK UI library submit busy, disabled, and feedback state contract
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Contract

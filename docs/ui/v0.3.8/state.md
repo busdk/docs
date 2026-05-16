@@ -12,7 +12,7 @@ being fetched, `SubmitState` or another busy control while an event is in
 flight, `ResultPanel` after an operation completes, `StatusPill` for compact
 row/workflow state, `ErrorBanner` for recoverable page errors, and
 `ProviderError` for sanitized upstream failures. Blocked or warning conditions
-must include visible text and a [next event](../v0.1.6/event) when one exists. A next
+must include visible text and a [next event](../v0.1.6/callback-props) when one exists. A next
 event is the stable Go controller event name for the action that can clear or
 advance the state, such as `retry-load` or `request-access`.
 
@@ -53,13 +53,6 @@ empty:
   message: No notes yet
 ```
 
-## Fixture Bindings
-
-```yaml
-bindings:
-  emptyMessage: empty.message
-```
-
 This renders an explicit empty state from foundation elements instead of a
 blank panel.
 
@@ -73,4 +66,4 @@ blank panel.
 
 - [UI framework](../)
 - [Collection concept](../v0.3.6/collection)
-- [Event concept](../v0.1.6/event)
+- [Callback props](../v0.1.6/callback-props)

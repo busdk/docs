@@ -1,89 +1,49 @@
 ---
-title: Component UI component
-description: Dedicated BusDK UI reference for Component.
+title: Component calls
+description: BusDK UI v0.1.4 lowered component call shape.
 ---
 
 ## Purpose
 
-`Component` is a foundation component: an invocation of a reusable uppercase
-tag from validated props and slots to nodes. In `v0.1.4`, component definitions
-come from local `.gx` `component` declarations or host-registered Go component
-functions named in the package registry. The selected definition owns the prop
-and slot contract used by each invocation. The invocation may read
-provided view-model data for rendering, but it must not mutate product state,
-call providers, perform permission decisions, or infer business policy.
+An uppercase GX tag lowers to a Go callable component call. The selected
+[component function](./component-functions) owns the typed prop contract used
+by the call. The callable may read provided props for rendering, but it must
+not mutate product state, call providers, perform permission decisions, or
+infer business policy.
 
 ## Inputs
 
-| Field | Required | Type | Behavior |
-| --- | --- | --- | --- |
-| `kind` | yes | literal `Component` | Identifies this node as a reusable component invocation. Other node kinds use their own component pages and validation rules. |
-| `props.name` | yes | component identifier | Selects a registered component. Names use UpperCamelCase for template tags or lowerCamelCase/kebab-case for registry-only helpers; unknown names fail validation. |
-| `props` | yes | component-specific object | Holds `name` plus any props validated by the selected component. |
-| `slots` | no | map of slot name to child-node array | Used for structured regions. Each key must match a slot declared by the selected component, and each value is an ordered node array. Required slots must be present. Unknown slot names fail validation. May be combined with `children` only when the selected component declares both. |
-| `children` | no | child nodes | Used for simple content. If the selected component supports only slots, stray children fail validation. |
+| GX input | Go target | Behavior |
+| --- | --- | --- |
+| Uppercase tag name | Go callable | `<StatusSummary>` calls `StatusSummary`. Unknown functions or method values fail lint. |
+| Attributes | exported props fields | `status="warning"` or `status={"warning"}` fills `Status`. Missing required fields and unknown fields fail lint. |
 
 ## Boundary
 
-Business state is already projected before rendering.
+Business state is outside this patch. v0.1.4 accepts literal props, while body
+children are outside this patch. The lowered call is not a persistent
+`Component` node kind; it is a Go call that returns ordinary
+[nodes](../v0.1.1/node).
 
-## Node Shape
-
-```yaml
-kind: Component
-props:
-  name: StatusSummary
-  status: warning
-children:
-  - kind: Element
-    props:
-      tag: span
-    children:
-      - kind: Text
-        props:
-          value: Needs review
-```
-
-The selected `StatusSummary` definition validates `status` and decides whether
-the invocation accepts `children`, `slots`, both, or neither.
-
-Named slots use this node shape:
-
-```yaml
-kind: Component
-props:
-  name: Notice
-slots:
-  title:
-    - kind: Text
-      props:
-        value: Saved
-  body:
-    - kind: Element
-      props:
-        tag: p
-      children:
-        - kind: Text
-          props:
-            value: The draft is stored.
-```
-
-The selected `Notice` definition must declare `title` and `body`; otherwise
-the slot keys fail validation.
-
-## GX Example
+## Generated Expression
 
 ```gx
 package reviewui
 
-component StatusSummary(status) = (
-  <section class="bus-status-summary">
-    <span>{status}</span>
-  </section>
-)
-
 var summary = <StatusSummary status={"warning"}></StatusSummary>
 ```
+
+The compiler lowers the markup expression, not the surrounding Go declaration.
+A variable initialized with markup remains a variable initialized with a
+`gx.Node` expression:
+
+```go
+var summary = StatusSummary(StatusSummaryProps{
+	Status: "warning",
+})
+```
+
+The selected `StatusSummary` function's props type validates `Status`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -93,5 +53,5 @@ var summary = <StatusSummary status={"warning"}></StatusSummary>
 
 ### Sources
 
-- [Custom components](./custom-components)
+- [Component call patch](./custom-components)
 - [Source-tool integration](../v0.1.3/source-tool-integration)

@@ -5,7 +5,7 @@ description: BusDK UI library assistant approval and review state contract.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Contract
@@ -35,7 +35,7 @@ item:
 decision: approve
 ```
 
-[`CloseGuard`](../v0.1.9/close-guard) blocks browser close when the product
+[browser API boundaries](../v0.1.9/browser-api-boundaries) cover browser close protection when the product
 view model reports pending approvals. The controller clears the guard after all
 items become approved, rejected, expired, or removed. The user-facing result is
 a browser close warning plus visible pending approval state.
@@ -54,4 +54,4 @@ what happens after a decision.
 ### Sources
 
 - [AIApprovals](./ai-approvals)
-- [CloseGuard](../v0.1.9/close-guard)
+- [Browser API boundaries](../v0.1.9/browser-api-boundaries)

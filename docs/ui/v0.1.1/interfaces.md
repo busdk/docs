@@ -9,7 +9,7 @@ The first `pkg/gx` API defines small Go interfaces so [Text](./text),
 [Element](./element), [Fragment](./fragment), and [VNode](./v-node) can be used
 through the same [Node](./node) boundary. These interfaces are library
 contracts only; they do not introduce command-line tooling, custom components,
-bindings, controllers, or events.
+component composition, controllers, or events.
 
 ## Contracts
 

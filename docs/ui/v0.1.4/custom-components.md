@@ -1,171 +1,49 @@
 ---
-title: Bus UI v0.1.4 custom components
-description: Patch roadmap for reusable GX and registered Bus UI components.
+title: Component call patch
+description: BusDK UI v0.1.4 uppercase component call roadmap.
 ---
 
 ## Purpose
 
-`v0.1.4` adds reusable components to [GX templates](../v0.1.3/). Uppercase
-tags resolve to local or registered components, component props are validated,
-and body content becomes children or named slots.
+`v0.1.4` adds calls to reusable components from
+[GX template entries](../v0.1.3/template-entries). [Uppercase tags](./component-tags)
+resolve to typed [Go component functions](./component-functions), and
+component props are validated from Go types.
 
-Lowercase standard HTML names keep resolving through the safe element adapter
-set introduced by earlier Core patches. A template scope or host may replace a
-lowercase adapter for a name such as `button` or `form`, but the replacement
-must preserve deterministic output, safe attributes, accessible semantics, and
-event validation.
+Lowercase HTML tags keep resolving through the safe [Element](../v0.1.1/element)
+path. Reusable behavior belongs in uppercase function components such as
+`<Button>`.
 
-## Deliverables
+## Scope
 
 1. Resolve uppercase component tags deterministically.
-2. Support component props, body children, and declared slots.
-3. Reject unknown components, unknown slots, missing required props, and invalid
-   prop types before render.
-4. Allow higher-level components to be implemented from smaller GX components.
-5. Keep data bindings, controller handlers, resources, effects, lifecycle
-   hooks, and browser hydration outside this version.
+2. Compile uppercase tags to ordinary Go callable component calls that return
+   `gx.Node`.
+3. Support typed component props.
+4. Reject unknown components, missing required props, and invalid prop types
+   before render.
+5. Let template entries reuse existing Go component functions.
+6. Keep GX component body markup, body children, callback props, resources,
+   effects, lifecycle hooks, and browser hydration outside this version.
 
-## Prerequisites
+## Public Result
 
-Run the examples from the Go package directory that owns the `.gx` file. The
-package must use the v0.1.4 `bus-gx` implementation, `bus gx` must be on
-`PATH`, and the package must resolve `github.com/busdk/bus-gx` through the
-BusDK workspace or a local module `replace`.
-
-## Minimal Component
-
-```gx
-package notices
-
-component Notice(message) = (
-  <section class="bus-notice">
-    <span>{message}</span>
-  </section>
-)
-
-var noticeExample = <Notice message={"Saved"}></Notice>
-```
-
-Save the component example as `notice.gx`. `bus gx lint --format json
-notice.gx` exits `0` and emits an empty diagnostics array.
-
-## Children and Slots
-
-Body content becomes the component's default children when the declaration
-names `children`:
-
-```gx
-package notices
-
-component Notice(children) = (
-  <section class="bus-notice">
-    {children}
-  </section>
-)
-
-var noticeWithChildren = (
-  <Notice>
-    <strong>Saved</strong>
-  </Notice>
-)
-```
-
-Named slots are declared with `slot` parameters and passed with matching
-`slot` attributes:
-
-```gx
-package notices
-
-component Notice(title slot, body slot) = (
-  <section class="bus-notice">
-    <header>{title}</header>
-    <div>{body}</div>
-  </section>
-)
-
-var noticeWithSlots = (
-  <Notice>
-    <span slot="title">Saved</span>
-    <p slot="body">The draft is stored.</p>
-  </Notice>
-)
-```
-
-Save the children snippet as `notice_children.gx` before running:
+Authors can define reusable tags as Go functions, call them from a
+[template entry](../v0.1.3/template-entries), and validate them with the same
+source tools introduced in earlier patches. The `notice.gx` and
+`noticeExample` names come from the valid fixture in
+[component functions](./component-functions):
 
 ```sh
-bus gx render notice_children.gx --entry noticeWithChildren --format html
+bus gx fmt --check notice.gx
+bus gx lint --format json notice.gx
+bus gx compile notice.gx --output notice.go
 ```
 
-The command emits the same child order as the source after deterministic
-attribute sorting and text escaping. A child with an undeclared `slot` value
-fails lint with `code: unknown-slot`.
-
-## Registered Components
-
-Hosts may register Go components in the package registry before lint or
-render. Registry entries use the same validated prop and slot contract as
-local GX components:
-
-Save this Go file as `registry.go` in the same Go module package as
-`callout.gx`:
-
-```go
-package notices
-
-import "github.com/busdk/bus-gx/pkg/gx"
-
-func Register(reg *gx.Registry) {
-	reg.MustComponent("Callout", gx.ComponentSpec{
-		Props: []gx.PropSpec{
-			{Name: "tone", Type: gx.StringProp},
-		},
-		Slots: []gx.SlotSpec{
-			{Name: "body", Required: true},
-		},
-		Render: func(ctx gx.ComponentContext) (gx.Node, error) {
-			return gx.Element("aside", gx.Props{
-				"class": "bus-callout bus-callout-" + ctx.String("tone"),
-			}, ctx.Slot("body")), nil
-		},
-	})
-}
-```
-
-```gx
-package notices
-
-var registeredCallout = (
-  <Callout tone={"info"}>
-    <p slot="body">Review before sending.</p>
-  </Callout>
-)
-```
-
-Save the GX snippet as `callout.gx` beside `registry.go`. From that package
-directory, `bus gx lint --registry notices.Register callout.gx` loads the
-package registry and exits `0`. Without that registry entry, the same file
-exits non-zero with `code: unknown-component` at the `Callout` tag.
-
-This misspelled tag fixture exits non-zero and emits a JSON diagnostic with
-`code: unknown-component` at the `Notcie` tag:
-
-```gx
-package notices
-
-component Notice(message) = <span>{message}</span>
-var badTag = <Notcie message={"Saved"}></Notcie>
-```
-
-This missing prop fixture exits non-zero and emits a JSON diagnostic with
-`code: missing-prop` at the `Notice` tag:
-
-```gx
-package notices
-
-component Notice(message) = <span>{message}</span>
-var missingProp = <Notice></Notice>
-```
+The command surface remains source-oriented. This patch does not add GX
+component body markup, component body children, callback props, resources,
+effects, lifecycle hooks, browser hydration, or a separate runtime template
+document format.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -175,5 +53,8 @@ var missingProp = <Notice></Notice>
 
 ### Sources
 
-- [Component concept](./component)
-- [v0.1.3 GX compiler](../v0.1.3/)
+- [Components](./component)
+- [Component tags](./component-tags)
+- [Component functions](./component-functions)
+- [Custom component checks](./acceptance)
+- [v0.1.3 template entries](../v0.1.3/template-entries)

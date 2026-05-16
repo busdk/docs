@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for TextInput.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `name` | yes | string | Submitted field name. |
-| `value` | no | string or binding | Current input value. Omitted renders an empty input. Bindings must resolve to a string or a value that can be deterministically formatted as text; invalid objects fail validation. The rendered value is escaped. |
+| `value` | no | string or Go value | Current input value. Omitted renders an empty input. Values must resolve to a string or a value that can be deterministically formatted as text; invalid objects fail validation. The rendered value is escaped. |
 | `placeholder` | no | string | Hint, not label. |
 
 ## Boundary
@@ -36,7 +36,7 @@ props:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -21,7 +21,7 @@ only the first render-tree API surface:
 ## Consequence
 
 The API is library-only. It has no `bus gx` CLI, source parser, custom
-component registry, binding system, event dispatcher, lifecycle runtime, or
+function components, component composition, event dispatcher, lifecycle runtime, or
 browser mount API in this patch.
 
 <!-- busdk-docs-nav start -->

@@ -6,7 +6,7 @@ description: BusDK UI library text, password, date, textarea, and select input c
 ## Design References
 
 - [Render tree contract](../v0.1.1/render-tree-contract)
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 
 ## Contract
 

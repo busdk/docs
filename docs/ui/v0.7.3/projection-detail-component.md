@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for ProjectionDetail.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `detail` | yes | view model | Projected detail object with `title` string, optional `summary` string, and `lines` array. Each line has stable `id`, display `label`, display `value`, and optional `evidenceID`. Empty or missing `lines` renders the component empty state instead of failing. |
-| `evidence` | yes | array of evidence items | Evidence items use `id`, `label`, `url`, and optional `type` fields. `id`, `label`, and `url` are required; `id` is stable and unique, `label` is the visible link text, and `url` follows the safe URL rules below. `type` is optional and defaults to `link`; supplied values are display/media hints such as `pdf`, `image`, `text`, or `link`. Unknown evidence IDs referenced by lines render as unavailable links and are reported through [ErrorHost](../v0.1.9/error-host). |
+| `evidence` | yes | array of evidence items | Evidence items use `id`, `label`, `url`, and optional `type` fields. `id`, `label`, and `url` are required; `id` is stable and unique, `label` is the visible link text, and `url` is either a same-origin path string or a resolver object with `base` and `path`, matching the safe URL rules below. `type` is optional and defaults to `link`; supplied values are display/media hints such as `pdf`, `image`, `text`, or `link`. Unknown evidence IDs referenced by lines render as unavailable links and may be reported through [runtime diagnostics](../v0.1.8/). |
 | `selectedLine` | no | line id or zero-based index | Highlights the matching `detail.lines` entry. String values match line `id`; numbers match zero-based line index. Missing, out-of-range, or unknown values select nothing. |
 
 ## Boundary
@@ -43,7 +43,7 @@ props:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -1,34 +1,34 @@
 ---
-title: Core diagnostics
-description: BusDK UI core client logging and runtime error reporting contract.
+title: Runtime diagnostics
+description: BusDK UI Go WebAssembly runtime diagnostic contract.
 ---
-
-## Design References
-
-- [Render tree contract](../v0.1.1/render-tree-contract)
-- [Binding](../v0.1.5/binding)
 
 ## Contract
 
-Diagnostics turns framework failures into safe visible state or safe client
-logs. [`ClientLog`](./client-log) receives lifecycle, resource,
-event, parser, and browser-bridge diagnostics. It must not carry tokens,
-cookies, raw provider payloads, stack traces with customer data, SQL, or
-credential headers.
+`v0.1.8` adds diagnostics for the small Go WebAssembly frontend runtime from
+[v0.1.7](../v0.1.7/). Diagnostics report framework failures without defining a
+logging transport.
 
-Runtime-visible failures must have public-safe diagnostic messages. Mount
-failures, missing required event handlers, invalid resources, unsafe links,
-failed parsing, and browser bridge failures use redacted messages when they
-affect the visible app.
+The runtime returns mount errors directly from `Mount`. After mount, callback
+panics and render failures are reported through an optional Go function:
 
-`CloseGuard` reports active-work close protection
-state. The owner supplies public copy and clears the guard by rendering updated
-state; diagnostics never decide whether product work is safe to abandon.
+```go
+type Options struct {
+	OnError func(error)
+}
+```
+
+If `OnError` is nil, the runtime writes a redacted message to the browser
+console. Application code may call its own logger from `OnError`.
+
+Framework diagnostics must not contain tokens, cookies, raw provider payloads,
+stack traces with customer data, SQL, private customer data, or credential
+headers. Product modules own product error copy and product logging.
 
 ## Consequence
 
-Core reports framework and runtime problems consistently. Product modules still
-own provider error meaning and public product copy.
+Core reports mount, render, and callback-wrapper failures consistently without
+owning application logging.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -39,3 +39,4 @@ own provider error meaning and public product copy.
 ### Sources
 
 - [Core lifecycle](../v0.1.7/)
+- [Runtime errors](./runtime-errors)

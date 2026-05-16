@@ -18,13 +18,14 @@ var hello = <p><Text value={"Hello Bus"}></Text></p>
 
 The entry name is `hello`.
 
-`v0.1.3` entries may contain lowercase safe element tags, attributes accepted
-by the [v0.1.2 linter](../v0.1.2/linter), nested markup, and the built-in
-`Text` source primitive with a quoted or braced value. Entry lookup is
-case-sensitive and package-local. Duplicate names are rejected by the source
-linter before compile.
+`v0.1.3` entries may contain lowercase
+[safe element tags](../v0.1.1/element), attributes accepted by the
+[v0.1.2 linter](../v0.1.2/linter), nested markup, and the built-in `Text`
+source primitive with a quoted or braced value. Entry lookup is case-sensitive
+and package-local. Duplicate names are rejected by the source linter before
+compile.
 
-Entries that require component registry resolution are rejected in this patch:
+Entries that require function component resolution are rejected in this patch:
 
 ```gx
 package notesui

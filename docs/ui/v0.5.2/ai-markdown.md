@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for AIMarkdown.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `text` | yes | string/binding | Markdown source. |
+| `text` | yes | string or Go value | Markdown source. |
 | `links` | no | workspace-paths, external-safe, none | Default `external-safe`. `workspace-paths` allows host-resolved workspace links, `external-safe` allows `https:` links with safe target attributes, and `none` renders link text without anchors. |
 | `code` | no | boolean | Enable code blocks; default true. When false, fenced code blocks render as escaped plain text, not executable or highlighted HTML. |
 
@@ -32,7 +32,7 @@ props:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 [Resource](../v0.4.1/resource) defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 

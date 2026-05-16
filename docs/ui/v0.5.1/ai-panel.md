@@ -47,12 +47,12 @@ props:
 
 ## Runtime Terms
 
-[Event](../v0.1.6/event) defines event names, handler registration,
+[Callback props](../v0.1.6/callback-props) documents function callback props,
 validation, and confirmation policy. When `send`, `interrupt`,
 `setModel`, or `attachment` is omitted, the matching composer send,
 interrupt, model select, or attachment control is hidden.
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

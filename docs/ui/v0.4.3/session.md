@@ -6,7 +6,7 @@ description: BusDK UI library safe browser session display contract.
 ## Design References
 
 - [Portal host contract](../v0.4.2/portal-host-contract)
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 
 ## Contract
 

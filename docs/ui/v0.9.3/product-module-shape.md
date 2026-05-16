@@ -6,7 +6,7 @@ description: BusDK UI feature module structure for adapters, view models, and re
 ## Design References
 
 - [UI design system](../v0.2.0/design-system)
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 
 ## Contract
 

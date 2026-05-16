@@ -5,7 +5,7 @@ description: BusDK UI library file and path drop intake contract.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Contract
@@ -53,4 +53,4 @@ Drop UI stays reusable and safe while product modules own file policy.
 ### Sources
 
 - [DropZone](./drop-zone)
-- [Event UI concept](../v0.1.6/event)
+- [Callback props](../v0.1.6/callback-props)

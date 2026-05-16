@@ -260,77 +260,68 @@
               url: /ui/v0.1.3/generated-go
             - label: Template entries
               url: /ui/v0.1.3/template-entries
-            - label: Static render
-              url: /ui/v0.1.3/static-render
             - label: Compiler acceptance
               url: /ui/v0.1.3/acceptance
-        - label: v0.1.4 Custom components
+        - label: v0.1.4 Component calls
           url: /ui/v0.1.4/
           children:
-            - label: Bus UI v0.1.4 custom components
+            - label: Component call patch
               url: /ui/v0.1.4/custom-components
-            - label: Component UI concept
+            - label: Components
               url: /ui/v0.1.4/component
-            - label: Component UI component
+            - label: Component tags
+              url: /ui/v0.1.4/component-tags
+            - label: Component functions
+              url: /ui/v0.1.4/component-functions
+            - label: Component calls
               url: /ui/v0.1.4/component-reference
-            - label: UI templates
-              url: /ui/v0.1.4/templates
-            - label: Template UI component
-              url: /ui/v0.1.4/template
-        - label: v0.1.5 Go bindings
+            - label: Custom component checks
+              url: /ui/v0.1.4/acceptance
+        - label: v0.1.5 Component composition
           url: /ui/v0.1.5/
           children:
-            - label: Binding UI concept
-              url: /ui/v0.1.5/binding
-            - label: Bus UI v0.1.5 Go bindings
-              url: /ui/v0.1.5/go-bindings
-        - label: v0.1.6 Go controllers and events
+            - label: Component body markup
+              url: /ui/v0.1.5/component-body-markup
+            - label: Component children
+              url: /ui/v0.1.5/component-children
+            - label: Expression children
+              url: /ui/v0.1.5/expression-children
+        - label: v0.1.6 Callback props
           url: /ui/v0.1.6/
           children:
-            - label: Event UI concept
-              url: /ui/v0.1.6/event
-            - label: Bus UI v0.1.6 Go controllers and events
-              url: /ui/v0.1.6/go-controllers-events
-        - label: v0.1.7 Lifecycle
+            - label: Callback props
+              url: /ui/v0.1.6/callback-props
+            - label: Intrinsic interactive elements
+              url: /ui/v0.1.6/intrinsic-elements
+        - label: v0.1.7 Go WASM frontend runtime
           url: /ui/v0.1.7/
           children:
             - label: Core lifecycle
               url: /ui/v0.1.7/lifecycle
-            - label: Disposer UI runtime block
-              url: /ui/v0.1.7/disposer
-            - label: UI mounting and updates
+            - label: Mounting and updates
               url: /ui/v0.1.7/mounting-updates
-            - label: Effect UI concept
-              url: /ui/v0.1.7/effect
-            - label: Effect UI runtime block
-              url: /ui/v0.1.7/effect-component
-        - label: v0.1.8 Diagnostics
+        - label: v0.1.8 Runtime diagnostics
           url: /ui/v0.1.8/
           children:
-            - label: Core diagnostics
+            - label: Runtime diagnostics
               url: /ui/v0.1.8/diagnostics
-            - label: ClientLog UI runtime block
-              url: /ui/v0.1.8/client-log
-            - label: UI runtime errors
+            - label: Runtime errors
               url: /ui/v0.1.8/runtime-errors
-        - label: v0.1.9 Browser safety blocks
+        - label: v0.1.9 Browser API boundaries
           url: /ui/v0.1.9/
           children:
             - label: UI browser API boundaries
               url: /ui/v0.1.9/browser-api-boundaries
-            - label: CloseGuard UI runtime block
-              url: /ui/v0.1.9/close-guard
-            - label: ErrorHost UI component
-              url: /ui/v0.1.9/error-host
-            - label: RawHTML UI component
-              url: /ui/v0.1.9/raw-html
         - label: v0.1.10 Core test helpers
           url: /ui/v0.1.10/
           children:
-            - label: UI rendering model
-              url: /ui/v0.1.10/rendering-model
             - label: Core test helpers
               url: /ui/v0.1.10/test-helpers
+        - label: v0.1.11 WASM app acceptance
+          url: /ui/v0.1.11/
+          children:
+            - label: WASM app acceptance
+              url: /ui/v0.1.11/wasm-app
         - label: v0.2.0 Library design baseline
           url: /ui/v0.2.0/
           children:

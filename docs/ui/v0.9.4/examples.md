@@ -8,7 +8,7 @@ description: BusDK UI examples embedded in component and architecture pages.
 UI examples live with the topic they demonstrate:
 
 - [Declarative UI templates](../v0.9.2/declarative-artifacts) shows the
-  `.gx` template, generated Go, model fixture, Go binding, Go controller, and
+  `.gx` template, generated Go, Go model fixture, Go callbacks, and
   optional fixture file shapes.
 - [Assistant panel](../v0.5.1/assistant-panel) shows assistant shell and AI
   panel markup.

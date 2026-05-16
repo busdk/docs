@@ -1,50 +1,72 @@
 ---
-title: UI mounting and updates
-description: BusDK UI Go WebAssembly mount ownership and update lifecycle.
+title: Mounting and updates
+description: BusDK UI Go WebAssembly mount, callback, and rerender contract.
 ---
-
-## Design References
-
-- [Render tree contract](../v0.1.1/render-tree-contract)
-- [Binding](../v0.1.5/binding)
 
 ## Contract
 
-A mounted Go WebAssembly app owns the root element selector, current product view
-model or app state, render function, event handler registration, resource
-clients, API URL resolution, lifecycle disposers, error reporting, and logging.
-
-The default update behavior is a render from the current view model. In
-v0.1.7, state is preserved only for a registered mount scope owned by
-`gx.MountRuntime`. The scope key is the component `id` when present; otherwise
-it is the deterministic render tree path for that node. If a node has no stable
-`id` and its tree path changes, its listeners, callbacks, and local runtime
-state are disposed and recreated. Server-rendered fragments do not preserve
-state.
-
-Every listener, timer, retained JavaScript callback, and browser subscription
-registers a disposer with the mounted app runtime when it is created. The
-registration call is:
+A mounted app has one root function and one update queue. The root function
+reads ordinary Go state and returns a fresh `gx.Node` tree on each render.
+The host page provides the mount element, and application startup registers
+the root function with `gxwasm.Mount`:
 
 ```go
-mountRuntime.RegisterDisposer(ownerID, gx.Disposer(func() {
-	// release listener, timer, callback, or subscription
-}))
+app, err := gxwasm.Mount("#app", app.View)
+if err != nil {
+	return err
+}
+defer app.Unmount()
 ```
 
-`mountRuntime` is the `gx.MountRuntime` passed to the component effect or mount
-hook. `ownerID` is a non-empty stable owner key from the component `id` or from
-the runtime-provided deterministic tree path. Implementers must call
-`RegisterDisposer` immediately after acquiring the resource and before
-returning from the effect, mount hook, or callback setup that created it.
-Disposers run before the owning effect is replaced, during remount, and during
-final unmount.
+The selector must match an existing browser element before mounting starts.
+After mount succeeds, callbacks can update Go state and request a rerender.
+
+```go
+type App struct {
+	Count int
+}
+
+func (a *App) View() gx.Node {
+	return Counter(CounterProps{
+		Value: a.Count,
+		Click: func() {
+			a.Count++
+			gxwasm.Update()
+		},
+	})
+}
+```
+
+`gxwasm.Update` schedules one rerender for the current mount. Multiple update
+requests in the same browser turn may coalesce into one render. A callback may
+also return without updating; in that case no rerender is required.
+
+Callback props are ordinary Go function values from
+[v0.1.6](../v0.1.6/callback-props). The runtime wraps function properties on
+lowercase rendered elements in JavaScript callbacks when the property maps to
+a browser event. For this patch, the browser event surface is intentionally
+small:
+
+| GX element/property | Browser event | Callback |
+| --- | --- | --- |
+| `button click` | `click` | `func()` |
+| `form submit` | `submit` with default submission prevented | `func()` |
+| `input input` | `input` | `func(string)` with the current input value |
+| `input change` | `change` | `func(string)` with the current input value |
+
+The wrapper calls the Go function. Callback functions do not receive framework
+event payload structs in this patch.
+
+On rerender, the runtime replaces browser event wrappers for changed nodes and
+releases wrappers that are no longer present. It may replace DOM subtrees
+instead of diffing them. Incremental reconciliation can be added later without
+changing the component authoring model.
 
 ## Consequence
 
-The disposer chain must be safe to call more than once. A successful update or
-remount leaves no retained callbacks for effects that are no longer present in
-the rendered tree.
+The first frontend runtime is enough to build React-like interactive
+components in Go: state lives in Go, component functions return nodes, callback
+props mutate Go state, and updates rerender the root.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -54,5 +76,5 @@ the rendered tree.
 
 ### Sources
 
-- [Disposer runtime block](./disposer)
-- [Core lifecycle](./)
+- [Core lifecycle](./lifecycle)
+- [Callback props](../v0.1.6/callback-props)

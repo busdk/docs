@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for AppShell.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `title` | yes | string or binding | Sets page title. |
+| `title` | yes | string or Go value | Sets page title. |
 | `body` | yes | slot node | Main content. |
 | `nav` | no | slot node or `{label,href,active}` array | Default empty navigation; item `label` and `href` are required, `active` is optional boolean defaulting false. `href` must be same-origin path or an `https:` URL whose origin appears in host runtime config `externalNavOrigins`, an array of exact origins such as `https://docs.example.com`. |
 | `runtimeConfig` | no | public object | Default empty object. Values must be public and JSON-serializable. |
@@ -38,7 +38,7 @@ slots:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 

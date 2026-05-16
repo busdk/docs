@@ -24,27 +24,18 @@ bus gx fmt --check hello.gx
 
 bus gx lint --format json hello.gx
 
-bus gx compile hello.gx --output hello_gx.go
+bus gx compile hello.gx --output hello.go
 
 go test ./...
-
-bus gx render hello.gx --entry hello --format html
 ```
 
 Each command must exit `0`. `lint --format json` must print an empty
-diagnostics array. `compile` must write `hello_gx.go`. `go test ./...` must
+diagnostics array. `compile` must write `hello.go`. `go test ./...` must
 pass with that generated file present. After the acceptance check, remove
-`hello.gx` and `hello_gx.go` unless they are committed test fixtures.
-
-The render output is deterministic HTML:
-
-```html
-<p>Hello Bus</p>
-```
+`hello.gx` and `hello.go` unless they are committed test fixtures.
 
 Compiler tests compare generated Go against stable golden files, run Go tests
-against generated output, and compare exact render output with stable attribute
-order.
+against generated output, and verify compile failures leave no output file.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -55,4 +46,4 @@ order.
 ### Sources
 
 - [Compile command](./compile-command)
-- [Static render](./static-render)
+- [Generated Go](./generated-go)

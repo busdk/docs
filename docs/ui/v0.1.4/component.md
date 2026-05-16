@@ -1,35 +1,46 @@
 ---
-title: Component UI concept
-description: Dedicated BusDK UI framework concept page for Component.
+title: Components
+description: BusDK UI v0.1.4 reusable GX component concept.
 ---
 
 ## Purpose
 
 A component defines a reusable Bus UI tag. `bus-gx` Core components are enough
 to build safe HTML-compatible trees from completed node and GX compiler pieces.
-Uppercase tag names resolve through the component registry, so `<Notice>` is a
-component while lowercase `<section>` is a safe element name. Props are
-validated named inputs, slots are caller-supplied child regions, and nodes are
-the renderable output.
+[Uppercase tag names](./component-tags) resolve to
+[Go component functions](./component-functions), so `<Notice>` is a component
+call while lowercase `<section>` is a safe element name. Props are typed Go
+struct fields, and nodes are the renderable output.
 
 ## Boundary
 
 Use components when repeated structure can be expressed from existing Core
-nodes, props, templates, and slots. A component owns presentation defaults,
-validated props, slot placement, and emitted child nodes. Product authority,
-provider response interpretation, host routing, resources, effects, and
-controller handler selection stay outside the component definition.
+[nodes](../v0.1.1/node), [props](../v0.1.1/props),
+[template entries](../v0.1.3/template-entries), and typed Go component
+functions. A component owns presentation defaults, typed props, and emitted
+child nodes. Product authority, provider response interpretation, host routing,
+resources, effects, and callback behavior stay outside this patch.
 
 ## Example
 
 ```gx
 package reviewui
 
-component StatusSummary(label) = (
-  <section class="bus-status-summary">
-    <span>{label}</span>
-  </section>
-)
+import "github.com/busdk/bus-gx/pkg/gx"
+
+type StatusSummaryProps struct {
+	Label string
+}
+
+func StatusSummary(p StatusSummaryProps) gx.Node {
+	return gx.Element("section", gx.Props{
+		"class": "bus-status-summary",
+	}, gx.Element("span", nil, gx.Text(p.Label)))
+}
+```
+
+```gx
+package reviewui
 
 var reviewSummary = (
   <StatusSummary label={"Review status"}></StatusSummary>
@@ -45,5 +56,6 @@ var reviewSummary = (
 ### Sources
 
 - [UI framework](../)
-- [Custom components](./)
+- [Component calls](./)
+- [Component functions](./component-functions)
 - [Node concept](../v0.1.1/node)

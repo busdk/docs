@@ -12,8 +12,8 @@ and the parser support those commands need. The module binary also accepts
 
 This patch is source-only. It validates and normalizes `.gx` files before the
 compiler exists. It does not render templates, compile generated Go, resolve
-custom component declarations, load data, evaluate bindings, run controllers,
-or mount browser UI.
+custom component functions, load data, evaluate runtime values, run controllers, or
+mount browser UI.
 
 ## Deliverables
 
@@ -26,7 +26,7 @@ or mount browser UI.
 ## Result
 
 After this patch, authors can create a `.gx` file, canonicalize it, and get
-source diagnostics before any later render, binding, or runtime work exists.
+source diagnostics before any later render or runtime work exists.
 
 The public module result is:
 

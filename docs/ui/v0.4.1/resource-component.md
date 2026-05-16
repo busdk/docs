@@ -16,7 +16,7 @@ description: Dedicated BusDK UI reference for Resource.
 | `method` | no | GET, POST, PUT, PATCH, DELETE, UPLOAD | Operation type for request resources. Defaults to `GET`. `UPLOAD` sends multipart file items. |
 | `base` | no | module, portal, or named host resolver | Resolution base for `path`. Default is `module`. Named host resolvers are declared by the portal or local app host in `RuntimeConfig` as stable resolver keys mapped to same-origin prefixes or explicitly allowed API origins. Unknown bases fail validation. |
 | `path` | yes | same-origin or host-resolved path, or binding | Starts with `/` after binding resolution and must not contain `..`. `Resource.path` never accepts a direct `https:` URL; external APIs must be reached through a named `base` resolver and a path. Resolution failures, unsafe schemes, and unauthorized paths fail before request execution. |
-| `payload` | no | binding map | Request body, query, or upload fields chosen by the controller. Keys are strings; values are scalars, arrays, objects, or `{ bind: ... }` values that resolve when the resource receiver runs. `GET` and `DELETE` serialize payload as query values, `POST`, `PUT`, and `PATCH` send JSON, `UPLOAD` sends multipart file fields, and `kind: link` rejects payload. For `UPLOAD`, file fields resolve to one file item or an array of file items from DropZone or a file input; each item has string `name`, MIME `type`, byte-count `size`, and exactly one of `fileHandle`, local `path`, or `uploadToken`. |
+| `payload` | no | controller data map | Request body, query, or upload fields chosen by the controller. Keys are strings; values are scalars, arrays, objects, or `{ bind: ... }` values that resolve when the resource receiver runs. `GET` and `DELETE` serialize payload as query values, `POST`, `PUT`, and `PATCH` send JSON, `UPLOAD` sends multipart file fields, and `kind: link` rejects payload. For `UPLOAD`, file fields resolve to one file item or an array of file items from DropZone or a file input; each item has string `name`, MIME `type`, byte-count `size`, and exactly one of `fileHandle`, local `path`, or `uploadToken`. |
 
 ## Boundary
 
@@ -36,7 +36,7 @@ resources:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 `Resource.path` is always a path beginning with `/`. The selected `base`
 decides whether that path resolves under the module mount, portal root, or a

@@ -58,7 +58,7 @@ any command-line tooling.
 checks that prove this patch.
 
 No `bus gx` command is required in this version. Source parsing, `.gx` files,
-`bus gx fmt`, `bus gx lint`, compilation, custom components, bindings,
+`bus gx fmt`, `bus gx lint`, compilation, component calls, composition,
 controllers, events, lifecycle hooks, browser hydration, and generated Go
 output are outside this version. The module still has ordinary Go formatting
 and lint targets for the library code initialized in this patch.

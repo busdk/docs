@@ -5,7 +5,7 @@ description: BusDK UI design rule for choosing controls and stable event names.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Rule
@@ -35,6 +35,6 @@ switching, input collection, or navigation controls.
 
 ### Sources
 
-- [Event UI concept](../v0.1.6/event)
+- [Callback props](../v0.1.6/callback-props)
 - [Button](./button)
 - [IconButton](./icon-button)

@@ -12,20 +12,20 @@ This page is the canonical linked index for those pages.
 
 - [UI design system](../v0.2.0/design-system)
 - [GX source tools](../v0.1.2/source-tools)
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Versioned Concepts
 
 - [Node](../v0.1.1/node) - Deterministic render tree.
-- [Component](../v0.1.4/component) - Reusable Bus UI tag or invocation.
+- [Component](../v0.1.4/component) - Reusable Bus UI invocation.
 - [Shell](../v0.2.1/shell) - Page-level slot owner.
 - [Collection](../v0.3.6/collection) - Repeated data surface.
 - [State](../v0.3.8/state) - Visible UI status.
-- [Binding](../v0.1.5/binding) - Data path reference and defaulting rule.
-- [Event](../v0.1.6/event) - User or runtime signal wired by the controller.
+- [Expression children](../v0.1.5/expression-children) - Go expression children inside markup bodies.
+- [Callback props](../v0.1.6/callback-props) - Function props passed as Go values.
 - [Resource](../v0.4.1/resource) - External data or media boundary.
-- [Effect](../v0.1.7/effect) - Lifecycle behavior.
+- [Go WASM frontend runtime](../v0.1.7/lifecycle) - Go WebAssembly mount lifecycle.
 
 ## Core v0.1.1 Foundation
 
@@ -36,19 +36,19 @@ This page is the canonical linked index for those pages.
 - [`Props`](../v0.1.1/props) - Deterministic attribute map.
 - [`VNode`](../v0.1.1/v-node) - Normalized node form for deterministic HTML rendering and tests.
 
-## Core v0.1.2-v0.1.4 GX And Components
+## Core v0.1.2-v0.1.5 GX And Components
 
 - [GX source tools](../v0.1.2/) - Parser, formatter, linter, and source diagnostics.
-- [GX compiler](../v0.1.3/) - Generated Go output and static render checks.
-- [Custom components](../v0.1.4/) - Reusable tags, props, children, slots, and element adapters.
+- [GX compiler](../v0.1.3/) - Generated Go output.
+- [Component calls](../v0.1.4/) - Uppercase tags and typed props.
+- [Component composition](../v0.1.5/) - Component body markup and children.
 
 ## Later Core Contracts
 
-- [Go bindings](../v0.1.5/) - Typed binding helpers and fixture binding format.
-- [Go controllers and events](../v0.1.6/) - Event identity and controller handler registration.
-- [Lifecycle](../v0.1.7/) - Effect and cleanup contracts.
-- [Diagnostics](../v0.1.8/) - Runtime and validation diagnostic contracts.
-- [Core test helpers](../v0.1.10/) - Test support for Core render/controller contracts.
+- [Callback props](../v0.1.6/) - Function callback props.
+- [Go WASM frontend runtime](../v0.1.7/) - Go WebAssembly mount and update runtime.
+- [Runtime diagnostics](../v0.1.8/) - Mount, render, and callback diagnostics.
+- [Core test helpers](../v0.1.10/) - Test support for Core render and callback contracts.
 
 ## Library: Shells
 
@@ -181,7 +181,7 @@ This page is the canonical linked index for those pages.
 - [`CSSBundle`](../v0.4.6/css-bundle) - Shared CSS token bundle.
 - [`CLIRuntimeFlags`](../v0.4.6/cli-runtime-flags) - Standard CLI flag behavior.
 - [`BrowserOpen`](../v0.4.6/browser-open) - Open local app URL.
-- [`Static render`](../v0.1.3/static-render) - Bus UI static render check.
+- [`HTML render command`](../v0.1.11/render-command) - Trusted compile-and-run HTML render helper.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

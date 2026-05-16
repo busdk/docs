@@ -1,34 +1,26 @@
 ---
-title: UI runtime errors
-description: BusDK UI runtime error reporting and provider error projection.
+title: Runtime errors
+description: BusDK UI runtime error reporting boundary.
 ---
-
-## Design References
-
-- [Render tree contract](../v0.1.1/render-tree-contract)
-- [Core foundation](../v0.1.1/foundation)
 
 ## Contract
 
-Runtime errors flow through the versioned diagnostics contract. The diagnostic
-channel accepts safe browser diagnostics such as component name, event name,
-public error code, request ID, and redacted message. The reporter logs the
-failure, presents safe visible state, and recovers panic payloads from Go
-WebAssembly callbacks where possible.
+Runtime errors are framework errors that happen after a successful mount:
+callback panic recovery, render failure, missing mount state during update, or
+browser bridge failure.
 
-Product modules should not copy local error banner markup or panic-recovery
-wrappers.
+The runtime reports these errors to `Options.OnError` when supplied. It does
+not render an error component, retry callbacks, or own provider error
+projection. User code decides whether to log, set app state, or rerender an
+error view.
 
-Errors returned by providers should be projected into product view models
-before rendering. Generic provider-error components may show a title, summary,
-status, request ID, retry affordance, and public details such as field names or
-validation codes. They must not show bearer tokens, raw provider payloads,
-private customer data, stack traces, SQL, internal hostnames, or credential
-headers.
+Provider errors are application data. Product modules project provider errors
+into their own Go state before rendering.
 
 ## Consequence
 
-Product modules decide which provider error fields are safe to expose.
+Runtime diagnostics stay small and framework-owned. Product error handling
+stays in product Go code.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -38,5 +30,5 @@ Product modules decide which provider error fields are safe to expose.
 
 ### Sources
 
-- [Core diagnostics](../v0.1.8/)
-- ProviderError
+- [Runtime diagnostics](./diagnostics)
+- [Mounting and updates](../v0.1.7/mounting-updates)

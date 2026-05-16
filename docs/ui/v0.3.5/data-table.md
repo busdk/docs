@@ -12,8 +12,8 @@ description: Dedicated BusDK UI reference for DataTable.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `columns` | yes | array of `{key,label,component}` | `key` and `label` required; each cell reads `row[key]`. A custom `component` receives `{value,row,column}`. |
-| `rows` | yes | array or binding | Projected view-model records. Rows need stable `id` only when row events are present. |
-| `rowEvents` | no | event item array | Same item shape as [`EventBar`](../v0.2.5/event-bar): non-empty `label` plus exactly one of `click` or `href`. Click items run the named event; source identity identifies the row and event item, and rows need stable `id`. Link-only items may omit row `id`. Row links use binding form such as `href.bind: row.detailURL` or template form `/notes/{row.id}`; row `id: n1` resolves to `/notes/n1`. |
+| `rows` | yes | array or Go value | Projected view-model records. Rows need stable `id` only when row events are present. |
+| `rowEvents` | no | event item array | Same item shape as [`EventBar`](../v0.2.5/event-bar): non-empty `label` plus exactly one of `click` or `href`. Click items run the named event; source identity identifies the row and event item, and rows need stable `id`. Link-only items may omit row `id`. Row links use Go expression such as `href.bind: row.detailURL` or template form `/notes/{row.id}`; row `id: n1` resolves to `/notes/n1`. |
 | `empty` | no | slot node or string | Rendered when `rows` is empty; default is no rows message. |
 
 ## Boundary
@@ -48,7 +48,7 @@ view:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 

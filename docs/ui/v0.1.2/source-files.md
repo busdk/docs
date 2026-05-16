@@ -5,21 +5,19 @@ description: BusDK UI v0.1.2 .gx source file shape.
 
 ## Contract
 
-A `.gx` file is a Go package source file with GX markup literals in ordinary Go
-declarations, functions, or methods. The file keeps the Go package boundary, so
-later generated Go, controller code, tests, and editor tooling can work with
-the same package.
+A `.gx` file is a Go package source file with GX markup literals in top-level
+Go declarations. The file keeps the Go package boundary, so later generated
+Go, tests, and editor tooling can work with the same package.
 
 The preferred human-authored UI format is `.gx`, not a YAML or JSON component
-tree. YAML and JSON remain useful later for fixture data and fixture bindings,
+tree. YAML and JSON remain useful later for fixture data and fixture data,
 but template structure is written as HTML-like markup inside Go source.
 
 The v0.1.2 parser preserves tag case and source locations. Lowercase tags
 resolve to safe HTML element names from the [v0.1.1 element](../v0.1.1/element)
 allowlist. The built-in uppercase `Text` source primitive is allowed for text
 content. Other uppercase tags are recognized as component syntax so the linter
-can report unsupported use clearly, but reusable component declarations and
-registry resolution are introduced in a later patch.
+can report unsupported use clearly.
 
 The source language is constrained to safe structural markup and Go values. It
 does not run browser JavaScript, shell commands, provider calls, or a separate

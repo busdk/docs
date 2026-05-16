@@ -7,14 +7,14 @@ description: Unit-first testing strategy for BusDK UI framework components and p
 
 The UI framework exists so product modules can be tested mostly without broad
 browser e2e tests. A module should prove its business projection, rendered
-states, event names, provider requests, and safety rules with fast unit tests.
+states, callback behavior, provider requests, and safety rules with fast unit tests.
 E2e tests then verify that the real host, auth gate, browser runtime, and
 mounted module path work together.
 
 ## Design References
 
 - [UI design system](../v0.2.0/design-system)
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Unit Tests
@@ -27,11 +27,20 @@ events, selected rows, safe links, redaction, and error messages.
 Renderer tests are the second layer. They should render small fixture states
 through `bus-ui` components and `bus-gx` nodes, then assert deterministic HTML
 or `VNode` output.
+
+Run the default checks from the owning module root. A normal Go-backed UI
+module should make `go test ./...` pass for unit and renderer tests, should
+make `bus gx fmt --check testdata/*.gx` and `bus gx lint --format json
+testdata/*.gx` pass for committed GX fixtures, and should expose a module e2e
+target such as `make e2e` or `make test-e2e` for host wiring. Successful
+commands exit `0`; JSON lint output for valid fixtures is an empty diagnostics
+array.
+
 Useful assertions include:
 
 - user text is escaped;
 - important labels and empty states are visible;
-- event names are stable;
+- callback props are wired to the expected controls;
 - links use expected safe attributes;
 - form fields have labels and names;
 - status tags match view-model state;
@@ -39,9 +48,9 @@ Useful assertions include:
 - class names and ARIA labels are present for shared controls.
 
 Runtime tests are the third layer. They should use fake resources, fake AI
-clients, fake provider responses, and explicit app state to verify event
-handlers, polling cycles, close guards, drop handling, terminal approvals,
-error reporting, and disposer cleanup.
+clients, fake provider responses, and explicit app state to verify callback
+behavior, update scheduling, browser helper boundaries, terminal approvals,
+and error reporting.
 
 ## Snapshot Tests
 
@@ -50,22 +59,26 @@ or one compact fixture state, such as a notes list with filters, an auth login
 form, a terminal approval card, or an accounting evidence panel.
 
 Declarative template sets are preferred fixtures for reusable states. A test
-can render `testdata/notes-review.gx` with matching data, binding, and
-runtime files through `bus-gx`, with `bus-ui` components registered when the
-fixture uses Library tags, then compare the normalized component tree or
+can render `testdata/notes-review.gx` with matching Go data and callbacks
+through Bus UI test helpers, then compare the normalized component tree or
 deterministic HTML. That makes the fixture useful for humans, agents, docs, and
 tests at the same time.
+
+Keep the fixture files module-relative and explicit. For example,
+`testdata/notes-review.gx` contains the markup and component functions,
+`testdata/notes-review_data_test.go` contains typed Go fixture values and
+callbacks, and `testdata/notes-review.golden.html` contains the expected
+normalized output. Formatting and linting the `.gx` file must succeed before
+the render comparison runs.
 
 Template fixture checks should run before render assertions. Use
 `bus gx fmt --check testdata/notes-review.gx` to prove the committed GX source
 is canonical, `bus gx lint --format json testdata/notes-review.gx` to catch
-source-level GX problems with machine-readable diagnostics, then
-`bus gx validate testdata/notes-review.gx --data
-testdata/notes-review.data.yml --bindings testdata/notes-review.bindings.yml
---runtime testdata/notes-review.runtime.yml --format json` to verify the
-complete fixture contract. `bus gx inspect --format inventory` gives agents a
-stable map of entries, local components, bindings, events, and slots before
-they edit a fixture.
+source-level GX problems with machine-readable diagnostics, then run the
+module's Go fixture test that compiles the generated Go and compares the
+golden output. `bus gx inspect --format inventory` gives agents a stable map
+of entries, local components, Go values, and callbacks before they edit a
+fixture.
 
 Avoid snapshots that freeze an entire app for many unrelated states. Those
 snapshots make refactoring expensive and hide the business assertion. Prefer
@@ -75,9 +88,9 @@ shape.
 ## Go WebAssembly Tests
 
 Go WebAssembly behavior should expose pure helpers wherever possible. Parsing a route,
-building an API URL, normalizing draft input, dispatching an event, applying a
-poll response, or deriving terminal session state should be tested as normal Go
-code.
+building an API URL, normalizing draft input, running a callback, applying a
+provider response, or deriving terminal session state should be tested as
+normal Go code.
 
 Browser-bound helpers should have small adapters. Tests can use WASM test
 helpers for JavaScript values when needed, but product modules should avoid
@@ -91,7 +104,7 @@ E2e tests should stay thin but real. They should cover:
 - the module appears in deterministic metadata;
 - mounted routes work under the host path and token gate;
 - unauthorized or under-scoped access is rejected where applicable;
-- the Go WebAssembly app mounts and handles one representative event;
+- the Go WebAssembly app mounts and handles one representative callback;
 - forms or API calls reach a fake provider through the expected route;
 - browser-only bridges such as file drops, close guards, or terminal input work
   when the module depends on them.
@@ -111,10 +124,10 @@ tests cannot cover cheaply.
 UI tests should include accessibility and safety checks when the component
 touches controls, links, forms, or untrusted content. Verify labels, ARIA names,
 keyboard-friendly native controls, safe link attributes, escaped provider text,
-and absence of secrets in runtime config or logs.
+and absence of secrets in runtime config or diagnostic output.
 
 For protected APIs, UI tests do not replace API scope-matrix tests. The UI may
-hide an event, but provider/API tests must still prove that missing,
+hide a callback-driven control, but provider/API tests must still prove that missing,
 malformed, wrong-audience, insufficient-scope, and correct-scope credentials
 behave as expected.
 

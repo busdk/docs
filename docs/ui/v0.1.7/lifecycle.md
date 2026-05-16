@@ -1,58 +1,55 @@
 ---
 title: Core lifecycle
-description: BusDK UI core mounting and disposal contract.
+description: BusDK UI Go WebAssembly mount lifecycle.
 ---
-
-## Design References
-
-- [Render tree contract](../v0.1.1/render-tree-contract)
-- [Binding](../v0.1.5/binding)
 
 ## Contract
 
-`v0.1.7` lifecycle owns work that starts after mount and must stop
-deterministically.
+`v0.1.7` adds the first Go WebAssembly frontend runtime for GX. It mounts a
+root Go function component into a browser element, renders its `gx.Node` tree,
+wires callback props to browser events, and rerenders after Go state changes.
 
-`github.com/busdk/bus-gx/pkg/gx` exposes `type Disposer func()`,
-`OnceDispose(disposer Disposer) Disposer`, and
-`ChainDisposers(disposers ...Disposer) Disposer`. The creator of a listener,
-timer, retained callback, or mounted resource owns its disposer.
+The runtime stays small. It does not define effects, resources, polling,
+streaming, close guards, logging transports, or host configuration files.
+Application code owns state, side effects, API calls, and logging in ordinary
+Go.
 
-Individual `Disposer` implementations own only resource release and should be
-safe to call more than once. `OnceDispose` owns idempotence for a single
-disposer. `ChainDisposers` owns reverse acquisition order. The mounted runtime
-wrapper owns panic recovery and cleanup failure reporting through
-`gx.ClientLog`. In v0.1.7, `ClientLog` is the runtime logger interface:
+The runtime owns only:
+
+1. locating one mount element;
+2. calling the root Go function component;
+3. rendering the returned node tree into the DOM;
+4. retaining JavaScript callback wrappers for function props;
+5. rerendering when application code requests an update;
+6. releasing retained callback wrappers on unmount.
+
+The root component is an ordinary Go function:
 
 ```go
-type ClientLog interface {
-	Error(event string, fields map[string]string)
-}
+func App() gx.Node
 ```
 
-For disposer panics or cleanup failures, the runtime logs event
-`ui.disposer.failed`. `ownerID` comes from the mount scope that registered the
-disposer. `label` comes from the disposer registration label or defaults to the
-callback name. `error` holds cleanup failure text when available, and `panic`
-holds recovered panic text when available. Chained disposal continues after a
-failure and attempts every remaining disposer. Because `Disposer` has no return
-value, failures are reported only through `ClientLog`; panic values are
-recovered and converted to the same log event.
+Mounting uses a small Go API:
 
-`WASMAppScaffold` constructs a Go WebAssembly app from a mount element, runtime
-config, session provider, error reporter, logger, and root component. It owns
-retained JavaScript callbacks until unmount, registers their disposers, wraps
-async callbacks with panic recovery, and fails before mounted state when the
-mount element, session provider, or callback registration is missing.
+```go
+app, err := gxwasm.Mount("#app", App)
+if err != nil {
+	return err
+}
+defer app.Unmount()
+```
 
-Updates replace the mounted root with a new deterministic node tree and reuse
-stable keys where the renderer supports incremental updates. Unmount calls the
-root disposer once. Repeated unmounts are no-ops except for safe diagnostics.
+The host page must contain an element matching the selector before `Mount`
+runs, for example `<div id="app"></div>`. If the selector matches no element,
+`Mount` returns an error and does not retain callbacks or mounted state.
+
+`Unmount` is idempotent. After unmount, callback wrappers created by that mount
+must no longer call application code.
 
 ## Consequence
 
-Product modules and Go controllers configure resources and application
-behavior. Core owns repeatable mount, update, and cleanup behavior.
+Product modules can build browser UI mostly in Go. Core owns only predictable
+mount, callback, update, and unmount behavior.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -62,4 +59,5 @@ behavior. Core owns repeatable mount, update, and cleanup behavior.
 
 ### Sources
 
-- [Effect concept](./effect)
+- [Mounting and updates](./mounting-updates)
+- [Callback props](../v0.1.6/callback-props)

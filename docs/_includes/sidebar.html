@@ -132,7 +132,7 @@
                 {% endif %}
                 <li class="{% if child_has_children %}busdk-sidebar-sub-item--group{% endif %}">
                   <a class="busdk-sidebar-sub-link{% if child_is_current %} busdk-sidebar-sub-link--current{% endif %}" href="{{ child_url }}">{{ child.label }}</a>
-                  {% if child_has_children %}
+                  {% if child_has_children and child_is_current %}
                   <ul class="busdk-sidebar-sub-sub-links">
                     {% for grandchild in child.children %}
                     {% assign grandchild_url = grandchild.url | relative_url %}

@@ -1,38 +1,34 @@
 ---
 title: UI browser API boundaries
-description: BusDK UI browser API isolation, JavaScript boundaries, and streaming ownership.
+description: BusDK UI browser API isolation and JavaScript boundary rules.
 ---
 
 ## Contract
 
-Browser-only behavior should be isolated behind small helpers. This includes
-DOM selection, click binding, file drop access, multipart upload, beforeunload
-close guards, resize tracking, local storage access, current location parsing,
-client logging, and app-style browser opening.
+Browser-only behavior stays behind the Go-facing runtime helper introduced in
+[Mounting and updates](../v0.1.7/mounting-updates). Product modules mount a
+root Go function with `gxwasm.Mount`, request rerenders with `gxwasm.Update`,
+and express browser interactions through the intrinsic callback properties from
+[v0.1.6](../v0.1.6/intrinsic-elements).
 
-When a helper needs JavaScript because the browser API requires it, expose a
-Go-facing API and keep product modules in Go.
+The v0.1.x browser helper owns only DOM selection, DOM rendering, update
+scheduling, unmount cleanup, and callback wiring for `button click`,
+`form submit`, `input input`, and `input change`.
 
-Product modules should not expose global `window.<Module>` facades. If a
-browser API requires JavaScript, keep it in a framework-owned helper with
-content-security-policy-safe loading, no secrets in DOM data, and a Go-facing
-API.
+Product modules must not expose global `window.<Module>` facades, inline
+event-handler attributes, inline scripts, or secret-bearing DOM attributes.
+The allowed script loading pattern is a framework-owned external WebAssembly
+bootstrap plus its generated support files. CSP verification checks that the
+host page can run without inline script approval and without inline event
+handlers.
 
-A product module may add local JavaScript only for a documented browser API
-that has no `bus-gx` runtime helper yet. The product page must name the API,
-explain why the helper is missing, cover the behavior with unit tests and a
-browser e2e check, and keep provider credentials outside scripts, markup,
-fixture data, bundles, and client-visible runtime config.
-
-Streaming readers need the same ownership discipline. Provider event streams
-and SSE-like flows should expose explicit abort handles, disposer cleanup,
-typed parsers, and pure parser tests for chunk boundaries, malformed payloads,
-provider errors, and user-initiated abort.
+Any additional browser API requires a new versioned page and implementation
+patch before product code depends on it.
 
 ## Consequence
 
 Local hand-written JavaScript in a product module usually means a reusable
-helper is missing.
+Go-facing helper is missing.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -42,5 +38,5 @@ helper is missing.
 
 ### Sources
 
-- [Effect UI concept](../v0.1.7/effect)
-- [Core diagnostics](../v0.1.8/)
+- [Mounting and updates](../v0.1.7/mounting-updates)
+- [Intrinsic interactive elements](../v0.1.6/intrinsic-elements)

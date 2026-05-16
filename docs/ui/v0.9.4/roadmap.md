@@ -21,12 +21,12 @@ under that later version instead of rewriting older version intent.
 | [v0.1.1](../v0.1.1/) | Core node foundation | `bus-gx` |
 | [v0.1.2](../v0.1.2/) | GX source tools | `bus-gx` |
 | [v0.1.3](../v0.1.3/) | GX compiler | `bus-gx` |
-| [v0.1.4](../v0.1.4/) | Custom components | `bus-gx` |
-| [v0.1.5](../v0.1.5/) | Go bindings | `bus-gx` |
-| [v0.1.6](../v0.1.6/) | Go controllers and events | `bus-gx` |
-| [v0.1.7](../v0.1.7/) | Lifecycle | `bus-gx` |
-| [v0.1.8](../v0.1.8/) | Diagnostics | `bus-gx` |
-| [v0.1.9](../v0.1.9/) | Browser safety blocks | `bus-gx` |
+| [v0.1.4](../v0.1.4/) | Component calls | `bus-gx` |
+| [v0.1.5](../v0.1.5/) | Component composition | `bus-gx` |
+| [v0.1.6](../v0.1.6/) | Callback props | `bus-gx` |
+| [v0.1.7](../v0.1.7/) | Go WASM frontend runtime | `bus-gx` |
+| [v0.1.8](../v0.1.8/) | Runtime diagnostics | `bus-gx` |
+| [v0.1.9](../v0.1.9/) | Browser API boundaries | `bus-gx` |
 | [v0.1.10](../v0.1.10/) | Core test helpers | `bus-gx` |
 | [v0.2.0](../v0.2.0/) | Library design baseline | `bus-ui` |
 | [v0.2.1](../v0.2.1/) | Shells | `bus-ui` |

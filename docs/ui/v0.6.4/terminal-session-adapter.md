@@ -49,7 +49,7 @@ events:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

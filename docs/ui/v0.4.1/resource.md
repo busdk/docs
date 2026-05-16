@@ -12,7 +12,7 @@ must be faked in tests.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [UI design system](../v0.2.0/design-system)
 
 ## Boundary
@@ -27,9 +27,11 @@ resource URLs, or `https:` URLs when the component explicitly allows external
 links and the host allowlists the origin. `javascript:`, `data:`, path
 traversal, and unresolved authorization failures are rejected.
 
-Evidence preview URLs must come from `EvidenceURLResolver` or an authorized
-provider API path. External evidence previews are rejected unless a named
-evidence resolver explicitly authorizes and proxies them.
+Evidence preview URLs must come from a host-owned evidence URL resolver or an
+authorized provider API path. The resolver is the portal or product host code
+that verifies access, normalizes the evidence id, and returns a safe same-origin
+proxy URL. External evidence previews are rejected unless that resolver
+explicitly authorizes and proxies them.
 
 ## Example
 
@@ -45,6 +47,11 @@ This declares a read resource named `notes`. Components and effects can refer
 to `notes`; the host resolves `/api/notes`, attaches credentials, and decodes
 the response.
 
+`method` is required and is one of `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, or
+`UPLOAD`. `base` is required and is one of `module`, `portal`, or a named host
+resolver. `path` is required and must be a same-origin absolute path beginning
+with `/`.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-index"><a href="../">UI framework index</a></span>
@@ -54,5 +61,5 @@ the response.
 ### Sources
 
 - [UI framework](../)
-- [Event concept](../v0.1.6/event)
-- [Effect concept](../v0.1.7/effect)
+- [Callback props](../v0.1.6/callback-props)
+- [Mounting and updates](../v0.1.7/mounting-updates)

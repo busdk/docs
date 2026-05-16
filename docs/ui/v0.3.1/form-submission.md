@@ -5,7 +5,7 @@ description: BusDK UI library form submit event contract.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Contract
@@ -77,4 +77,4 @@ parameters.
 ### Sources
 
 - [Form](./form)
-- [Event UI concept](../v0.1.6/event)
+- [Callback props](../v0.1.6/callback-props)

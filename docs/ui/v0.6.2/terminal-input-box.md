@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for TerminalInputBox.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `value` | yes | string/binding | Current input. |
+| `value` | yes | string or Go value | Current input. |
 | `send` | yes | event name | Runs when the user submits input. Source identity selects this terminal input; the controller reads current input and session state. Empty values are ignored unless the controller allows empty input. |
 | `exit` | no | event name | Runs when the user requests process termination. Source identity selects the terminal session; without session metadata the control is suppressed because the host cannot safely target a process. Omitted `exit` removes the stop/exit control; it does not close the panel locally. |
 | `disabled` | no | boolean | Disables controls. |
@@ -35,9 +35,9 @@ props:
 
 ## Runtime Terms
 
-[Event](../v0.1.6/event) defines event names, handler registration, validation, and confirmation policy.
+[Callback props](../v0.1.6/callback-props) documents function callback props.
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -8,9 +8,9 @@ description: Dedicated BusDK UI reference for Button.
 `Button` is a navigation/event/form component. Native event button. Use for
 visible operations in the current workflow.
 
-In templates, `<Button>` invokes this component. A scoped lowercase `button`
-element adapter may also map native `<button>` markup to the same behavior when
-the product wants to extend the standard HTML name.
+In templates, `<Button>` invokes this component. Lowercase `<button>` remains a
+safe HTML-compatible element; reusable Bus UI behavior belongs in the uppercase
+component.
 
 ## Inputs
 
@@ -43,7 +43,7 @@ body: Save
 
 ## Runtime Terms
 
-[Event](../v0.1.6/event) defines event names, handler registration, validation, and confirmation policy.
+[Callback props](../v0.1.6/callback-props) documents function callback props.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

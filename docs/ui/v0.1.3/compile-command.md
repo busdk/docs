@@ -10,7 +10,7 @@ description: BusDK UI v0.1.3 bus gx compile command contract.
 Usage:
 
 ```sh
-bus gx compile <file.gx> --output <file_gx.go>
+bus gx compile <file.gx> --output <file.go>
 ```
 
 The command accepts one explicit `.gx` input file and one explicit output path.
@@ -22,7 +22,7 @@ user-facing commands go through the `bus` dispatcher.
 
 ## Boundary
 
-The compiler does not read data, bindings, runtime config, controllers, custom
+The compiler does not read data, runtime config, controllers, custom
 component registries, browser state, or host resources.
 
 <!-- busdk-docs-nav start -->

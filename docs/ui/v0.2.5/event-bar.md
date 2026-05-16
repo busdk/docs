@@ -47,7 +47,7 @@ props:
 
 ## Runtime Terms
 
-[Event](../v0.1.6/event) defines event names, handler registration, validation, and confirmation policy.
+[Callback props](../v0.1.6/callback-props) documents function callback props.
 
 Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 

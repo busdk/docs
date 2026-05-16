@@ -24,7 +24,7 @@ The command accepts one or more explicit `.gx` file paths. It does not read
 stdin and does not expand directories. Shell globs are handled by the shell
 before `bus gx` starts; after expansion, every operand must be a readable file.
 
-The linter does not render, compile generated Go, load data, evaluate bindings,
+The linter does not render, compile generated Go, load data, evaluate runtime values,
 run controller code, or validate browser behavior.
 
 Module-local tests may call `./bin/bus-gx gx lint` after `make build`, but

@@ -20,13 +20,6 @@ structure, not data authorization.
 ```gx
 package notesui
 
-component NoteItem(title, status) = (
-  <li>
-    <Text value={title}></Text>
-    <StatusPill label={status} status={status}></StatusPill>
-  </li>
-)
-
 var notesList = (
   <ul>
     <Repeat each={notes} as="note">
@@ -34,6 +27,29 @@ var notesList = (
     </Repeat>
   </ul>
 )
+```
+
+The repeated item is an ordinary Go function component:
+
+```go
+package notesui
+
+import "github.com/busdk/bus-gx/pkg/gx"
+
+type NoteItemProps struct {
+	Title  string
+	Status string
+}
+
+func NoteItem(p NoteItemProps) gx.Node {
+	return gx.Element("li", nil,
+		gx.Text(p.Title),
+		StatusPill(StatusPillProps{
+			Label:  p.Status,
+			Status: p.Status,
+		}),
+	)
+}
 ```
 
 ## Fixture Data
@@ -44,16 +60,7 @@ notes:
     status: review
 ```
 
-## Fixture Bindings
-
-```yaml
-bindings:
-  notes: notes
-  noteTitle: note.title
-  noteStatus: note.status
-```
-
-This renders projected `notes` as repeated rows using a local GX component. A
+This renders projected `notes` as repeated rows using a function component. A
 tabular view can build upward from the same `Repeat` foundation before choosing
 a higher-level `DataTable`; an ordered event view can build upward toward
 `Timeline`.

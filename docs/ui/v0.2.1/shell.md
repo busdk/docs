@@ -19,7 +19,7 @@ template: portal modules receive it from the portal mount configuration, local
 Go WebAssembly apps choose it in their app host setup, and static/sample rendering
 chooses it with the renderer command or test harness options described in
 [Rendering](../v0.1.10/rendering-model). The template should describe content
-and binding references, not deployment shell selection.
+and Go value references, not deployment shell selection.
 
 ## Template
 
@@ -43,14 +43,6 @@ The portal or app host mounts this template into the shell body slot.
 page:
   title: Notes
   summary: Review queue
-```
-
-## Fixture Bindings
-
-```yaml
-bindings:
-  title: page.title
-  summary: page.summary
 ```
 
 <!-- busdk-docs-nav start -->

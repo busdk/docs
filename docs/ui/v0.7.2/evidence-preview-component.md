@@ -33,8 +33,7 @@ props:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope
-resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 [Resource](../v0.4.1/resource) defines safe URL resolution and evidence
 preview URL policy.

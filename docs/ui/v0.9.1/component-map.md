@@ -13,7 +13,8 @@ description: Compact map from Bus UI Core and Library groups to dedicated compon
 
 BusDK UI components are grouped into two independently reviewable layers.
 [Core](../v0.1.1/) is the `bus-gx` minimal HTML-compatible foundation used by
-[GX templates](../v0.1.2/source-tools) and by component implementations.
+[GX template entries](../v0.1.3/template-entries) and by component
+implementations.
 [Library](../v0.2.1/) is the `bus-ui` composed application component set built
 from Core. Each layer page links to the canonical [component reference](./component-reference)
 for individual component pages.
@@ -23,12 +24,12 @@ Core:
 1. `v0.1.1` [Foundation](../v0.1.1/)
 2. `v0.1.2` [GX source tools](../v0.1.2/)
 3. `v0.1.3` [GX compiler](../v0.1.3/)
-4. `v0.1.4` [Custom components](../v0.1.4/)
-5. `v0.1.5` [Go bindings](../v0.1.5/)
-6. `v0.1.6` [Go controllers and events](../v0.1.6/)
-7. `v0.1.7` [Lifecycle](../v0.1.7/)
-8. `v0.1.8` [Diagnostics](../v0.1.8/)
-9. `v0.1.9` [Browser safety blocks](../v0.1.9/)
+4. `v0.1.4` [Component calls](../v0.1.4/)
+5. `v0.1.5` [Component composition](../v0.1.5/)
+6. `v0.1.6` [Callback props](../v0.1.6/)
+7. `v0.1.7` [Go WASM frontend runtime](../v0.1.7/)
+8. `v0.1.8` [Runtime diagnostics](../v0.1.8/)
+9. `v0.1.9` [Browser API boundaries](../v0.1.9/)
 10. `v0.1.10` [Test helpers](../v0.1.10/)
 
 Library:

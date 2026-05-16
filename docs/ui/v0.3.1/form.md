@@ -8,9 +8,9 @@ description: Dedicated BusDK UI reference for Form.
 `Form` is a navigation/event/form component. Native form wrapper. Use for
 native submit behavior while routing the submit through a runtime event.
 
-In templates, `<Form>` invokes this component. A scoped lowercase `form`
-element adapter may map native `<form>` markup to the same event-routing
-behavior when the product wants to extend the standard HTML name.
+In templates, `<Form>` invokes this component. Lowercase `<form>` remains a
+safe HTML-compatible element; reusable Bus UI behavior belongs in the uppercase
+component.
 
 ## Inputs
 
@@ -47,7 +47,7 @@ body:
 
 ## Runtime Terms
 
-[Event](../v0.1.6/event) defines event names and handler registration.
+[Callback props](../v0.1.6/callback-props) documents function callback props.
 Resource defines URL allowlist and rejection rules.
 
 <!-- busdk-docs-nav start -->

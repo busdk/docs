@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for PortalShell.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `title` | yes | string or binding | Module page title. |
+| `title` | yes | string or Go value | Module page title. |
 | `body` | yes | slot node | Feature content. |
 | `hostContext` | yes | object from portal host | Supplies base paths and assets. In portal-mounted documents the host injects this prop before validation; standalone examples must bind or provide it explicitly. The object requires `moduleBase` and `assetBase` same-origin path prefixes beginning and ending with `/`; optional `apiBase` must be a same-origin path prefix, and optional `externalNavOrigins` entries must be exact `https:` origins. Unknown sensitive-looking keys fail validation. |
 | `nav` | no | array of `{label,path,current}` | Module navigation. `label` is non-empty text, `path` is a same-origin path beginning with `/` or a host-resolved route from `hostContext`, and optional `current` marks the active item. Omitted `nav` renders no module nav. Unknown fields, empty labels, path traversal, and external URLs fail validation. |
@@ -46,7 +46,7 @@ slots:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 

@@ -5,7 +5,7 @@ description: BusDK UI library assistant draft input contract.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Contract
@@ -54,4 +54,4 @@ Assistant draft input stays reusable because it does not own provider behavior.
 ### Sources
 
 - [AIComposer](./ai-composer)
-- [Event UI concept](../v0.1.6/event)
+- [Callback props](../v0.1.6/callback-props)

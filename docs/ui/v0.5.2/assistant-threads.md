@@ -5,7 +5,7 @@ description: BusDK UI library assistant thread list contract.
 
 ## Design References
 
-- [Binding](../v0.1.5/binding)
+- [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
 
 ## Contract
@@ -49,4 +49,4 @@ the component.
 ### Sources
 
 - [AIThreadList](./ai-thread-list)
-- [Event UI concept](../v0.1.6/event)
+- [Callback props](../v0.1.6/callback-props)

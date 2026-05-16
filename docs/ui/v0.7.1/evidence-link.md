@@ -34,7 +34,7 @@ props:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 Evidence links use same-origin evidence API URLs or URLs produced by
 `EvidenceURLResolver`. External `https:` evidence links are rejected unless a

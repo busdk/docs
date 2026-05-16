@@ -11,10 +11,10 @@ description: Dedicated BusDK UI reference for SummaryItem.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `title` | yes | string or binding | Primary text. Empty or missing title fails validation. |
-| `meta` | no | string or binding | Secondary text. Omitted or missing binding renders no meta line. |
-| `detail` | no | string or binding | Description. Omitted or missing binding renders no detail text. |
-| `badge` | no | string or binding | Compact label. Omitted or missing binding renders no badge. |
+| `title` | yes | string or Go value | Primary text. Empty or missing title fails validation. |
+| `meta` | no | string or Go value | Secondary text. Omitted or missing value renders no meta line. |
+| `detail` | no | string or Go value | Description. Omitted or missing value renders no detail text. |
+| `badge` | no | string or Go value | Compact label. Omitted or missing value renders no badge. |
 
 ## Boundary
 
@@ -32,7 +32,7 @@ props:
 
 ## Runtime Terms
 
-[Binding](../v0.1.5/binding) defines object-form data references, scope resolution, and missing-value behavior.
+[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -11,12 +11,13 @@ file. It uses `github.com/busdk/bus-gx/pkg/gx` and the
 
 Generated Go contains:
 
-- one constructor or render helper for each [template entry](./template-entries)
+- the original top-level Go declarations with GX markup expressions lowered to
+  ordinary `gx.Node` expressions
 - source-location metadata needed for diagnostics
 - deterministic code formatting suitable for `gofmt`
 
 The generated file must be testable with `go test ./...` without a browser,
-controller, binding document, fixture runtime, or provider service.
+controller, fixture runtime, or provider service.
 
 ## Artifact Boundary
 

@@ -82,12 +82,13 @@ that should feel simple because the parts fit together naturally.
 
 The target design has a small `bus-gx` core with most higher-level UI built by
 dogfooding smaller Bus UI pieces. `bus-gx` owns the pure low-level GX template
-framework: source tools, parser, formatter, linter, render tree, safe elements,
-props, templates, bindings, event identity, lifecycle, diagnostics, and core
-test helpers. `bus-ui` owns the higher-level component library built on top of
-`bus-gx`, such as shells, forms, input controls, tables, assistant panels,
-terminal panes, evidence surfaces, and other reusable product-facing
-components. Raw Go, JavaScript, or host-specific code belongs only in core
+framework: source tools, parser, formatter, linter, render tree, safe
+elements, props, templates, component body markup, expression children,
+callback props, lifecycle, diagnostics, and core test helpers. `bus-ui` owns the
+higher-level component library built on top of `bus-gx`, such as shells, forms,
+input controls, tables, assistant panels, terminal panes, evidence surfaces,
+and other reusable product-facing components. Raw Go, JavaScript, or
+host-specific code belongs only in core
 primitives, renderers, host bridges, security boundaries, and browser/runtime
 integrations that cannot be expressed as Bus UI components. Every higher-level
 component should be reviewed as a candidate for composition from smaller Bus UI
@@ -104,7 +105,8 @@ Public `.gx` documentation should also mention the intended source tools:
   `bus gx fmt` / `bus gx fmt --check` for canonical formatting and
   `bus gx lint` for source-only GX diagnostics, `bus gx compile` for lowering
   `.gx` to pure `.go`, `bus gx inspect` for template inventory, and
-  `bus gx validate` for template plus controller validation.
+  `bus gx validate` for template plus callback/runtime validation. Document generated
+  output paths as normal `.go` files, such as `view.go`, not `_gx.go` files.
   Public end-user command examples must use the dispatcher form `bus gx ...`
   instead of invoking `bus-gx ...` directly. It is fine to mention the
   `bus-gx` module or binary when describing implementation details, local
@@ -121,26 +123,59 @@ Public `.gx` documentation should also mention the intended source tools:
   shape. Do not teach superproject checkout, Git submodule, or installation
   mechanics inside UI patch pages; keep patch pages focused on what the patch
   implements and what public result authors can observe.
-- Data is a separate Go value, model document, or host object and may be any
-  data shape the controller can expose through Go bindings.
-- Bindings are Go-first controller adapters that adapt arbitrary data to
-  template/component props with minimal duplication, optional fields, defaults,
-  scoped loop values, and typed helper functions. YAML and JSON bindings are
-  portable fixture/import formats, not the primary runtime path.
-- Runtime/controller code defines events, resources, effects, formatters, host
-  resolvers, and handler registration. Prefer typed Go controllers and
-  generated Go from `.gx`; keep YAML/JSON runtime files for fixtures,
-  interchange, and tests unless a small fixture explicitly combines binding
-  plus runtime config for testing.
+- Data reaches GX through ordinary Go values in lexical scope, function
+  arguments, and typed component props. Do not introduce a separate `gx.Bindings`
+  map, selector grammar, YAML binding document, or JSON binding document unless
+  a later concrete runtime owner needs it.
+- Runtime code should stay Go-first and small. The first browser runtime mounts
+  a Go function component, wires callback props to browser events, schedules
+  rerenders, and reports framework errors through Go callbacks. Do not
+  introduce YAML/JSON runtime files, effect registries, logging components,
+  or shared controller implementations unless a later concrete runtime feature
+  owns them.
 - The extension path should resemble HTML: users and agents can define new
   reusable tags using the system itself, then consume those tags like built-in
   components.
-- Custom tags should support event-based design. A tag may declare the events
-  it emits and the events or slots it consumes. Templates attach event names to
-  tags; emitted events carry interaction identity only, while
-  typed controller code decides what model/form/component state to read and
-  wires those events to handlers, effects, resources, navigation, or host
-  callbacks.
+- GX compile examples should preserve the surrounding Go shape. A `var`
+  initialized with markup lowers to a `var` initialized with a `gx.Node`
+  expression; markup inside a function lowers inside that function. Do not show
+  generated constructor functions unless the `.gx` source itself declares a
+  function.
+- Do not document `bus gx render` as part of `v0.1.3`. The first compiler
+  patch only lowers `.gx` to `.go`. A later HTML render command should compile
+  through generated Go and execute a trusted temporary Go harness in a
+  subprocess.
+- GX reusable components should be ordinary typed Go function components, not a
+  custom GX declaration syntax. Document uppercase tags as calls to Go
+  functions or method values with typed props structs, similar to React
+  function components but compiled through Go. The first component model should
+  accept `func(P) gx.Node` only; do not add `(gx.Node, error)` component
+  returns unless a later explicit patch defines how errors flow through every
+  markup expression context. Do not introduce a component registry for
+  uppercase tags; authors make components available through ordinary Go package
+  scope and imports.
+- Lowercase GX tags are safe HTML-compatible elements. Do not document
+  replacing lowercase standard element names or adding lowercase element
+  adapter registries unless the design is explicitly reopened later; prefer
+  uppercase function components for reusable behavior.
+- Custom tags should support React-style Go callback props. A tag may expose
+  callback fields such as `Click func()` or `Submit func()` in its props
+  struct, and templates pass callback functions such as `click={saveDraft}`.
+  Do not document string event names such as `click="save-draft"` or a shared
+  `gx.Controller` implementation for the core callback patch.
+- Lowercase GX element tags also need typed callback properties so native
+  elements such as `<button click={saveDraft}>` can carry function values in
+  the node tree before the browser runtime exists. Document this as an
+  intrinsic element property table owned by `bus-gx`, similar to TSX intrinsic
+  element typing. The callback patch stores and validates these functions; the
+  later browser runtime wires supported properties such as `click`, `submit`,
+  `input`, and `change` to DOM events. The first interactive intrinsic table
+  should be deliberately small but must be usable: `button`, `form`, `input`,
+  and `label` are enough for button clicks and basic form input callbacks.
+- Do not keep `bus gx render` in the v0.1.x roadmap unless the user explicitly
+  reopens that feature. The first v0.1.x completion target is a working Go
+  WebAssembly frontend that compiles `.gx` to `.go` and mounts pure Go
+  component functions in the browser.
 - Public UI examples should introduce lower-level foundations before showing
   high-level components. Treat `Form`, `TextInput`, `SubmitState`, and similar
   controls as components that should be dogfooded from GX/foundation pieces
@@ -148,9 +183,9 @@ Public `.gx` documentation should also mention the intended source tools:
 
 Apply a "click test" during review. A design does not click yet when a concept
 has two owners, a page repeats another page's rules, a component requires raw
-code even though it could be composed from existing blocks, a binding requires
-duplicate boilerplate, a template has to know provider/runtime details, or an
-event has to bypass the tag/controller contract. A design is closer when each
+code even though it could be composed from existing blocks, a data path
+requires duplicate boilerplate, a template has to know provider/runtime
+details, or callback behavior has two owners. A design is closer when each
 concept has one source of truth, each layer depends only on the layer below it,
 and an author can predict where a new concern belongs.
 
@@ -165,6 +200,8 @@ features/components should be ordered by the version where they can be
 implemented from completed lower iterations. Public implementation pages should
 live in patch-level directories such as `docs/docs/ui/v0.1.1/` and
 `docs/docs/ui/v0.3.5/`, not only grouped minor-version directories.
+In the left sidebar, keep UI version subpages collapsed except for the
+currently open `v0.X.Y` version section so the roadmap remains scannable.
 When a version page initializes a submodule or command surface, state exactly
 which repository/module files, packages, commands, tests, and development
 targets appear in that patch, and which related parts are intentionally absent.
@@ -197,7 +234,7 @@ plain-language mention to the same-version or latest earlier-version page that
 defines it.
 Do not create abstract UI roadmap versions whose only purpose is to state
 future design intent. Move each concept directly into the first patch version
-that implements or uses it, so `bus-gx`, `bus-ui`, host, controller, and
+that implements or uses it, so `bus-gx`, `bus-ui`, host, callback, and
 browser-runtime concerns appear next to the actual work that needs them.
 Do not combine two design concepts into one public page. Pages such as
 "navigation and events", "shells and layout", or "provider and session" should
@@ -209,7 +246,7 @@ independently.
 
 For each component, record or infer this composition review before changing the
 page: purpose, smaller Bus UI primitives it can use, required raw runtime
-bridge if any, props and defaults, binding/data expectations, event/resource/
+bridge if any, props and defaults, data expectations, event/resource/
 effect dependencies, emitted and consumed events, render targets, safety
 boundaries, and tests/examples that prove it works. If a component cannot be
 built from smaller pieces, the page should make the primitive or host-bridge

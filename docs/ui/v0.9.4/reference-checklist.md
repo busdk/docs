@@ -8,7 +8,7 @@ description: Compact checklist for building BusDK UI modules with the shared UI 
 The compact design decisions are:
 [layer ownership](../v0.1.1/foundation),
 [declarative authoring](../v0.1.2/source-tools),
-[controller artifacts](../v0.1.5/binding), and
+[callback props](../v0.1.6/), and
 [safety and rendering](../v0.1.1/render-tree-contract).
 
 Start with the product boundary. Provider DTOs, API route contracts,
@@ -40,11 +40,11 @@ markup.
 Capture important screens as declarative template sets when practical. Use the
 versioned [Source-tool integration](../v0.1.3/source-tool-integration) checks available for the current patch,
 starting with [v0.1.2 source formatting and linting](../v0.1.2/) and adding
-[v0.1.3 compile and static render checks](../v0.1.3/) once the compiler
+[v0.1.3 compile checks](../v0.1.3/) once the compiler
 exists.
 
 Wire interaction through stable events once the versioned event contract
-exists. Event names are part of the public UI contract, so rename them only
+exists. Callback prop names are part of the public UI contract, so rename them only
 with a deliberate contract change across templates, fixtures, tests, and
 browser behavior.
 
@@ -93,7 +93,7 @@ or other media.
 
 `bus-gx` should get a new primitive when the behavior belongs to the low-level
 template framework: parsing, formatting, linting, render trees, safe elements,
-bindings, event identity, lifecycle, diagnostics, or core test fakes. `bus-ui`
+component composition, callback props, lifecycle, diagnostics, or core test fakes. `bus-ui`
 should get a new component when two or more modules need the same higher-level
 generic control or composed surface. Either addition must be small enough to
 unit-test without a product module.
@@ -109,9 +109,9 @@ It should not absorb product rendering or provider policy.
 ## UI Work Checklist
 
 UI work is done when the product behavior is represented in view models, generic
-components render the states deterministically, browser events are wired
-through typed handlers, automated tests cover projection/render/event behavior,
-and thin e2e coverage proves the mounted host path.
+components render the states deterministically, browser interactions are wired
+through typed callbacks, automated tests cover projection, rendering, and
+callback behavior, and thin e2e coverage proves the mounted host path.
 
 Documentation should update the module README or public docs when the user
 visible contract changes. CLI help or metadata should update when a UI command,

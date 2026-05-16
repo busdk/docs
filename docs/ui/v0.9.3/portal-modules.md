@@ -29,7 +29,6 @@ receives a serialized public runtime subset, not server-only helpers.
 | `apiResolver` | yes | Resolves module and portal API paths without hard-coded roots. |
 | `runtimeConfig` | no | Public JSON object; defaults to empty and rejects secret-looking keys. |
 | `session` | no | Auth/session helper references when the deployment has a token gate. |
-| `clientLogEndpoint` | no | Same-origin diagnostics endpoint; default `/bus-ui/client-log`. |
 | `security` | yes | Security-header and `connect-src` declarations used by server tests and browser setup. |
 | `frontendAuth` | no | Frontend-auth/local-token state; absent means unauthenticated local mode. |
 
@@ -46,7 +45,6 @@ Minimal public JSON shape for Go WebAssembly:
     "module": "/modules/notes/api",
     "portal": "/api"
   },
-  "clientLogEndpoint": "/bus-ui/client-log",
   "runtimeConfig": {},
   "security": {
     "connectSrc": ["'self'"]
