@@ -1,28 +1,32 @@
 ---
 title: bus-gx — GX core render tree, source tools, and WASM runtime
-description: End-user reference for the bus-gx module and the currently implemented v0.1.8 Go WebAssembly runtime diagnostics patch.
+description: End-user reference for the bus-gx module and the currently implemented v0.1.9 browser API boundary patch.
 ---
 
 ## `bus-gx` — GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.8 Go WebAssembly runtime diagnostics**.
+Current implemented UI roadmap version: **v0.1.9 browser API boundaries**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.8`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.9`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
 in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
 checked `.gx` expressions into ordinary Go, and
 `github.com/busdk/bus-gx/pkg/gx/wasm` for mounting a GX root from Go
-WebAssembly with redacted post-mount diagnostics.
+WebAssembly with redacted post-mount diagnostics behind a narrow browser API
+boundary.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
 and `compile` for `.gx` files. The WASM runtime mounts one `func() gx.Node`
 root, reruns it on explicit updates, renders directly into the DOM, wires the
 first intrinsic button/form/input callbacks, and reports redacted post-mount
-render/callback diagnostics through an optional Go hook. Bindings, controller
-registries, effects, resources, logging transports, product logging, raw HTML,
-and hydration are outside the current module boundary.
+render/callback diagnostics through an optional Go hook. Browser access stays
+behind `pkg/gx/wasm`; the module does not create a global JavaScript framework
+facade, generate inline JavaScript callbacks, or serialize callback/diagnostic
+metadata into DOM attributes. Bindings, controller registries, effects,
+resources, logging transports, product logging, raw HTML, and hydration are
+outside the current module boundary.
 
 ## Import
 
@@ -112,6 +116,13 @@ lookup, invalid root, and initial render failures are returned directly from
 are reported through `gxwasm.Options{OnError: func(error)}`. If no handler is
 configured, the runtime writes the same redacted diagnostic to browser
 `console.error` when available.
+
+`v0.1.9` keeps browser API use limited to the Go-facing runtime helpers:
+mount, update, unmount, and the intrinsic callback wiring above. The runtime
+does not expose `window.BusGX`-style framework globals, inline JavaScript
+handler strings, secret-bearing runtime configuration in DOM attributes, raw
+HTML passthrough, local storage helpers, file drop APIs, streaming readers,
+close guards, product logging helpers, or a client log transport.
 
 ## Source Tools
 
@@ -262,7 +273,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.8
+bus-gx v0.1.9
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
