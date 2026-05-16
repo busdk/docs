@@ -1,27 +1,28 @@
 ---
 title: bus-gx — GX core render tree, source tools, and WASM runtime
-description: End-user reference for the bus-gx module and the currently implemented v0.1.7 Go WebAssembly runtime patch.
+description: End-user reference for the bus-gx module and the currently implemented v0.1.8 Go WebAssembly runtime diagnostics patch.
 ---
 
 ## `bus-gx` — GX core render tree, source tools, and WASM runtime
 
-Current implemented UI roadmap version: **v0.1.7 Go WebAssembly runtime**.
+Current implemented UI roadmap version: **v0.1.8 Go WebAssembly runtime diagnostics**.
 
 `bus-gx` is the low-level Go module for BusDK GX render-tree code and `.gx`
-source tooling. Through `v0.1.7`, it provides the safe static HTML foundation
+source tooling. Through `v0.1.8`, it provides the safe static HTML foundation
 in `github.com/busdk/bus-gx/pkg/gx`, source-only formatting and linting helpers
 in `github.com/busdk/bus-gx/pkg/gx/source`, a static compiler that lowers
 checked `.gx` expressions into ordinary Go, and
 `github.com/busdk/bus-gx/pkg/gx/wasm` for mounting a GX root from Go
-WebAssembly.
+WebAssembly with redacted post-mount diagnostics.
 
 The module installs as the `bus gx` command family through the BusDK
 dispatcher. It implements `fmt`, `fmt --check`, `lint`, `lint --format json`,
 and `compile` for `.gx` files. The WASM runtime mounts one `func() gx.Node`
-root, reruns it on explicit updates, renders directly into the DOM, and wires
-the first intrinsic button/form/input callbacks. Bindings, controller
-registries, effects, resources, logging transports, raw HTML, and hydration are
-outside the current module boundary.
+root, reruns it on explicit updates, renders directly into the DOM, wires the
+first intrinsic button/form/input callbacks, and reports redacted post-mount
+render/callback diagnostics through an optional Go hook. Bindings, controller
+registries, effects, resources, logging transports, product logging, raw HTML,
+and hydration are outside the current module boundary.
 
 ## Import
 
@@ -56,6 +57,7 @@ import (
 | `source.WriteHuman` | Stable human diagnostics. |
 | `source.WriteJSON` | Stable JSON diagnostics. |
 | `gxwasm.Mount` | Mount one root `func() gx.Node` into a browser element. |
+| `gxwasm.Options` | Optional runtime hooks, currently `OnError func(error)`. |
 | `gxwasm.Update` | Rerun the current root and replace the mounted DOM subtree. |
 | `gxwasm.Unmount` | Clear the current mount and release retained callbacks. |
 | `gxwasm.Handle` | Explicit mount handle with `RequestUpdate` and `Unmount`. |
@@ -103,6 +105,13 @@ in `gx.Props` and normalized `gx.VNode` attributes. `gx.RenderHTML` validates
 and omits function-valued props from static HTML. `gxwasm` wires the supported
 intrinsic callbacks to browser events when rendering in Go WebAssembly, and
 `form submit` callbacks prevent default browser form submission.
+
+`v0.1.8` runtime diagnostics stay framework-owned and redacted. Selector
+lookup, invalid root, and initial render failures are returned directly from
+`gxwasm.Mount`. After a successful mount, render failures and callback panics
+are reported through `gxwasm.Options{OnError: func(error)}`. If no handler is
+configured, the runtime writes the same redacted diagnostic to browser
+`console.error` when available.
 
 ## Source Tools
 
@@ -193,6 +202,8 @@ be rendered by a `gxwasm` root.
 package main
 
 import (
+	"fmt"
+
 	"github.com/busdk/bus-gx/pkg/gx"
 	gxwasm "github.com/busdk/bus-gx/pkg/gx/wasm"
 )
@@ -214,8 +225,12 @@ func setTitle(value string) {
 
 func save() {}
 
+func reportRuntime(err error) {
+	fmt.Println(err)
+}
+
 func main() {
-	if _, err := gxwasm.Mount("#app", App); err != nil {
+	if _, err := gxwasm.Mount("#app", App, gxwasm.Options{OnError: reportRuntime}); err != nil {
 		panic(err)
 	}
 	select {}
@@ -227,6 +242,13 @@ element. `gxwasm.Update` and `Handle.RequestUpdate` rerun the same root and
 replace the runtime-owned DOM subtree. `gxwasm.Unmount` and `Handle.Unmount`
 clear the mount and release retained JavaScript callbacks so events do not call
 Go after unmount.
+
+`gxwasm.Mount("#app", App)` remains valid when no runtime diagnostics hook is
+needed. Passing one `gxwasm.Options` value configures post-mount diagnostics.
+Errors returned before mount succeeds are not sent to `OnError`. Errors after
+mount succeeds use stable redacted categories such as `runtime-render-failed`
+and `runtime-callback-failed`; raw panic values and raw node validation details
+are not included.
 
 ## Verify Installed Command
 
@@ -240,7 +262,7 @@ bus gx version
 Expected output:
 
 ```text
-bus-gx v0.1.7
+bus-gx v0.1.8
 ```
 
 Use `bus gx fmt --check`, `bus gx lint --format json`, and
@@ -267,3 +289,4 @@ Use `bus gx fmt --check`, `bus gx lint --format json`, and
 - [UI v0.1.5 GX markup bodies](../ui/v0.1.5/)
 - [UI v0.1.6 GX callbacks and intrinsic interactivity](../ui/v0.1.6/)
 - [UI v0.1.7 GX Go WebAssembly runtime](../ui/v0.1.7/)
+- [UI v0.1.8 GX Go WebAssembly runtime diagnostics](../ui/v0.1.8/)
