@@ -5,16 +5,15 @@ description: Dedicated BusDK UI reference for IconButton.
 
 ## Purpose
 
-`IconButton` is a navigation/event/form component. Icon-only button. Use for
-compact repeated event controls.
+`IconButton` is an icon-only button for compact repeated controls.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `icon` | yes | icon name | One of the v0.2.5 built-in icon names: `archive`, `close`, `delete`, `edit`, `more`, `save`, or `search`. Unknown names fail validation. |
+| `icon` | yes | icon name | One of the shared names from the [v0.2.1 icon registry](../v0.2.1/icon), which remains the required registry for this patch. Unknown names fail validation. |
 | `ariaLabel` | yes | string | Non-empty descriptive accessible name for the icon-only control. |
-| `onClick` | no | event name | Event name from the runtime `events` map or a registered Go runtime handler; unresolved supplied names fail validation. Omit only when `disabled: true`; enabled IconButtons without `onClick` fail validation. |
+| `onClick` | no | function | Go callback invoked when the enabled control is clicked. Omit only when `disabled: true`; enabled IconButtons without `onClick` fail validation. |
 | `disabled` | no | boolean | Default `false`; disabled icon buttons do not emit events. |
 | `variant` | no | primary, secondary, danger, ghost | Default secondary. |
 
@@ -24,15 +23,10 @@ Icon-only controls remain accessible.
 
 ## Example
 
-This component-only example assumes `archive` is already declared in the
-runtime `events` map or registered by Go code.
-
-```yaml
-kind: IconButton
-props:
-  icon: archive
-  ariaLabel: Archive note
-  onClick: archive
+```gx
+var archiveAction = (
+  <IconButton icon="archive" ariaLabel="Archive note" onClick={archiveNote}></IconButton>
+)
 ```
 
 <!-- busdk-docs-nav start -->

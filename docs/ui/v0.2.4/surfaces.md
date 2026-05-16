@@ -14,8 +14,7 @@ Surface components frame or summarize already-projected content.
 [`Panel`](./panel) frames bounded tool regions.
 [`SurfaceCard`](./surface-card) is for repeated records or grouped
 summaries, not page sections. [`MetricCard`](./metric-card) is for
-compact dashboard numbers. `SummaryItem` is for
-title/meta/detail rows with optional badges.
+compact dashboard numbers.
 
 Surfaces may own spacing, title placement, density, and collapse behavior. They
 must not own provider semantics, authorization, or product status meaning.

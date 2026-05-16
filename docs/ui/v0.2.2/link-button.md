@@ -5,40 +5,39 @@ description: Dedicated BusDK UI reference for LinkButton.
 
 ## Purpose
 
-`LinkButton` is a navigation component. Safe link with button styling. Use for
-navigation and artifact open/download links.
+`LinkButton` is a safe link with button styling. Use it for same-origin
+navigation and static external links that are known at render time.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `href` | yes | same-origin path, authorized resource URL, or binding | Navigation target. External `https:` links are allowed only when the host external-link policy allowlists the origin; invalid targets fail validation. |
-| `label` | yes | string | Visible label. |
+| `href` | yes | string | Same-origin path, relative path, fragment, or `https:` URL. Unsafe schemes such as `javascript:` fail validation. |
+| body | yes | text or nodes | Visible label content. |
 | `target` | no | _self or _blank | Default _self. |
 | `rel` | for _blank | string | Use `noopener noreferrer`. |
 | `variant` | no | primary, secondary, danger, ghost | Default secondary. |
 
 ## Boundary
 
-External links use safe target and rel attributes.
+External links use safe target and rel attributes. Resource URL resolution,
+download authorization, and dynamic URL construction are runtime-helper work and
+are not part of this component patch.
 
 ## Example
 
-```yaml
-kind: LinkButton
-props:
-  label: Open evidence
-  href:
-    bind: document.preview
-  target: _blank
-  rel: noopener noreferrer
+```gx
+var evidenceLink = (
+  <LinkButton href="/evidence/current" target="_blank" rel="noopener noreferrer">
+    Open evidence
+  </LinkButton>
+)
 ```
 
 ## Runtime Terms
 
-[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
-
-Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+[Expression children](../v0.1.5/expression-children) document ordinary Go
+expressions inside markup bodies.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -10,52 +10,37 @@ description: BusDK UI library buttons, event bars, and event trigger attributes.
 
 ## Contract
 
-Event controls emit interaction identity. [`Button`](./button) is
-for visible text event controls. [`IconButton`](./icon-button) is
-for compact tools and requires `ariaLabel` when no visible text is rendered. [`EventBar`](./event-bar)
-groups a short ordered set of event controls.
-
-Interactive controls emit through `on*` trigger attributes in markup or the
-same trigger key in structured component data. Valid event names come from the
-runtime `events` map or registered Go WebAssembly event handlers. The handler
-receives interaction identity and returns a typed result or provider error.
+Event controls receive Go callback props. [`Button`](./button) is for visible
+text controls. [`IconButton`](./icon-button) is for compact tools and requires
+the component prop `ariaLabel` when no visible text is rendered; when the
+component renders a native HTML button, that prop becomes the HTML
+`aria-label` attribute. [`EventBar`](./event-bar) groups a short ordered set of
+event controls.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `<trigger>="event-name"` | required for active markup controls | The trigger is the component event hook, such as `onClick`, `onSubmit`, `onChange`, `onDrop`, `onSelect`, or `onDismiss`. |
-| trigger prop | required for active structured controls | Structured-data equivalent of the trigger attribute. For example, `props.onClick: save-draft` matches `<Button onClick="save-draft">`. |
-| `id` | recommended for handled controls | Stable component id included in the event. If omitted, the renderer uses the component tree path. |
-| `confirm` | required for destructive events | Runtime event policy object with public-safe `title`, optional public-safe `summary`, and `variant: danger`. |
+| `onClick` | required for active controls | Go callback function invoked by the component. |
+| `id` | recommended for handled controls | Stable component id for tests, labels, and event payload target data. |
+| `confirm` | required for destructive controls | Public-safe confirmation policy with `title`, optional `summary`, and `variant: danger`. |
 
-```html
-<Button id="save-button" onClick="save-draft">Save</Button>
-
-<IconButton id="archive-button" icon="archive" aria-label="Archive" onClick="archive"></IconButton>
+```gx
+var actions = (
+  <EventBar>
+    <Button id="save-button" onClick={saveDraft}>Save</Button>
+    <IconButton id="archive-button" icon="archive" ariaLabel="Archive" onClick={archive}></IconButton>
+  </EventBar>
+)
 ```
 
-```yaml
-kind: Button
-props:
-  id: save-button
-  onClick: save-draft
-body: Save
-```
-
-```yaml
-events:
-  archive:
-    handler: notes.archive
-    confirm:
-      title: Archive note?
-      summary: This removes the note from the active review queue.
-      variant: danger
-```
+Destructive controls delete data, revoke access, submit irreversible state, or
+start work that is hard to undo. If a destructive control omits `confirm`,
+component validation fails before rendering.
 
 ## Consequence
 
 Product modules should not attach inline JavaScript for ordinary events.
 Destructive events use the danger variant and require confirmation policy in
-the runtime event.
+the component props.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

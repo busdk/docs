@@ -9,15 +9,17 @@ description: BusDK UI design rule for compact operational typography.
 
 ## Rule
 
-Use compact text inside operational surfaces. Hero-scale type belongs only to
-true public entry pages, not forms, sidebars, dashboards, panels, or workbench
+Use compact text inside operational surfaces. Compact text uses the `text-sm`
+or `text-base` token with `line-height` between `1.25` and `1.5`. Hero-scale
+type means headings larger than the `text-2xl` token; it belongs only to true
+public entry pages, not forms, sidebars, dashboards, panels, or workbench
 views.
 
 Labels should be short and precise. Long explanations belong in documentation,
 not inside the main app flow.
 
-Letter spacing should be normal. Do not scale font size directly with viewport
-width.
+Letter spacing uses the `tracking-normal` token, meaning `letter-spacing: 0`.
+Do not scale font size directly with viewport width.
 
 ## Consequence
 
