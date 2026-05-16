@@ -44,7 +44,7 @@ that were used when those entries were completed.
   `bus-gx` browser-adapter checkpoint and split the post-GX `bus-ui` runtime
   work into `v0.1.17` through `v0.1.26`.
 
-- [ ] Docs worker lint runtime: provide a worker image or configuration where
+- [x] Docs worker lint runtime: provide a worker image or configuration where
   `bus lint` can run the configured agent runtime from docs task worktrees.
   Current `bus lint --agent codex <file>` attempts fail before content linting
   because Codex session initialization hits a read-only filesystem; `codex:local`
@@ -55,7 +55,15 @@ that were used when those entries were completed.
   system (os error 30)`, `Failed to create session: Read-only file system (os
   error 30)`, and `Fatal error: Failed to initialize session: Read-only file
   system (os error 30)`. Keep this as infrastructure follow-up until per-file
-  docs lint can run without changing public docs.
+  docs lint can run without changing public docs. Fixed by the
+  `bus-integration-dev-task` App Server environment change that seeds a
+  task-scoped writable `CODEX_HOME` and defaults nested lint invocations to
+  `BUS_LINT_AGENT=codex` while preserving explicit operator runtime choices.
+  Verification: live dev-task container `bus lint` found `/usr/local/bin/bus-lint`,
+  printed `BUS_LINT_AGENT=codex`, reached the agent runtime, and returned a
+  content finding instead of an authentication or read-only-session failure;
+  `bus-integration-dev-task` module gates and root `make test`/`make e2e`
+  passed.
 
 - [x] UI `v0.1.12` GX event naming docs: add a small semver patch under
   `docs/docs/ui/v0.1.12/` that replaces bare intrinsic callback examples
