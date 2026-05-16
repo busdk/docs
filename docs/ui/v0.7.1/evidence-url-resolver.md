@@ -11,11 +11,11 @@ the evidence by itself.
 
 ## Inputs
 
-| Field | Required | Type | Behavior |
+| GX attribute / Go field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `endpoint` | yes | same-origin path | Evidence API endpoint beginning with `/` and without the artifact path; query strings are not allowed here. The resolver combines it with the raw `path` after escaping path segments. |
-| `path` | yes | raw artifact path | Caller passes the raw provider artifact path; the resolver escapes each segment exactly once. |
-| `apiResolver` | no | module, portal, or named resolver | Default `module`; external HTTPS evidence is allowed only through a named host resolver registered in host runtime config `externalEvidenceOrigins` as exact origins. |
+| `endpoint` / `Endpoint` | yes | same-origin path | Evidence API endpoint beginning with `/` and without the artifact path; query strings are not allowed here. The resolver combines it with the raw `path` after escaping path segments. |
+| `path` / `Path` | yes | raw artifact path | Caller passes the raw provider artifact path; the resolver escapes each segment exactly once. |
+| `api-resolver` / `APIResolver` | no | module, portal, or named resolver | Default `module`. `module` resolves against the current module base path; `portal` resolves against the portal host base; a named resolver resolves through host runtime config and is required for allowlisted external HTTPS evidence origins. |
 
 ## Boundary
 
@@ -24,13 +24,20 @@ scope produce an authorization error state; unknown artifacts produce a
 not-found state. Callers render those through `ProviderError`, `ErrorBanner`,
 or disabled evidence controls rather than exposing a raw path.
 
+The resolver returns `(string, error)`. A nil error means the string is a safe URL
+for a link or preview. Failures return an empty URL plus one of these typed error
+codes for the caller to project into UI state: `unauthorized` for missing or
+insufficient credentials, `not_found` for unknown artifacts, `unsafe_path` for
+path traversal or rejected schemes, and `unregistered_resolver` for unknown
+named resolvers.
+
 ## Example
 
-```yaml
-kind: EvidenceURLResolver
-props:
-  endpoint: /api/evidence
-  path: invoice.pdf
+```go
+var previewURL, err = EvidenceURLResolver(EvidenceURLResolverProps{
+	Endpoint: "/api/evidence",
+	Path:     "invoice.pdf",
+})
 ```
 
 ## Runtime Terms

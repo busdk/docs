@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for EvidencePreview.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `previewURL` | yes | same-origin evidence API URL, `EvidenceURLResolver` result, or `{ bind: path }` | Authorized preview URL. Embeds `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, and `text/plain` responses when the provider returns an approved content type and either no `Content-Disposition` or `inline`; `attachment` or filename values with path separators render fallback. |
+| `previewURL` | yes | same-origin evidence API URL, `EvidenceURLResolver` result, or Go expression | Authorized preview URL. Embeds `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, and `text/plain` responses when the provider returns an approved content type and either no `Content-Disposition` or `inline`; `attachment` or filename values with path separators render fallback. |
 | `title` | yes | string | Accessible title. |
 | `fallback` | no | string | Shown when type, policy, or authorization prevents embedding. Default is a generic unavailable preview message. |
 
@@ -23,12 +23,15 @@ the portal origin.
 
 ## Example
 
-```yaml
-kind: EvidencePreview
-props:
-  previewURL:
-    bind: document.preview
-  title: Invoice 2026-04
+```gx
+package evidenceui
+
+var invoicePreview = (
+  <EvidencePreview
+    previewURL={document.Preview}
+    title="Invoice 2026-04"
+  ></EvidencePreview>
+)
 ```
 
 ## Runtime Terms

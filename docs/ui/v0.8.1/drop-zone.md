@@ -11,10 +11,11 @@ description: Dedicated BusDK UI reference for DropZone.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
+| `id` | no | string | Source identifier passed to callbacks. When omitted, the component creates a stable local id for this mounted drop zone. |
 | `title` | yes | string | Visible label. |
-| `drop` | yes | event name | Must match a runtime event or registered handler. The source id identifies this drop zone; the controller reads accepted items from component-owned drop state. Each item has string `name`, MIME `type`, byte-count `size`, and exactly one of `fileHandle`, local `path`, or `uploadToken`. |
-| `input` | no | slot | Augments the default file input. Custom content must call `dropzone.accept({items})`, where `items` is the item array described above; the controller invokes `drop`. It must not call upload APIs directly. |
-| `acceptedTypes` | no | MIME types or extensions array | Examples: `image/png`, `application/pdf`, `.csv`. Omitted means the UI accepts any type, but product validation still enforces limits. |
+| `onDrop` | yes | `func(DropEvent)` | Go callback invoked after local type filtering accepts at least one item. `DropEvent.SourceID` is the `id` prop or generated local id. `DropEvent.Items` contains accepted `DropItem` values. |
+| `input` | no | slot | Augments the default file input. The slot receives `DropZoneContext`; custom content calls `dropzone.Accept(items)` and must not call upload APIs directly. |
+| `acceptedTypes` | no | `[]string` | Examples: `image/png`, `application/pdf`, `.csv`. Omitted means the UI accepts any type, but product validation still enforces limits. MIME entries match exact MIME type strings; extension entries start with `.` and match case-insensitive item name suffixes. |
 
 ## Boundary
 
@@ -22,20 +23,64 @@ Validation and limits stay product-owned. The UI filters obvious rejected
 types, but the event handler must still enforce file count, size, content,
 authorization, and storage rules.
 
-The `input` slot receives a context object named `dropzone` with
-`accept({items})` and `openPicker()` functions. Custom slots should call those
-functions instead of bypassing the controller.
+Drop callbacks and slots use these Go shapes:
+
+```go
+type DropEvent struct {
+	SourceID string
+	Items    []DropItem
+}
+
+type DropItem struct {
+	Name        string
+	Type        string
+	Size        int64
+	File        gxwasm.File
+	Path        string
+	UploadToken string
+}
+
+type DropAcceptResult struct {
+	Accepted []DropItem
+	Rejected []DropReject
+}
+
+type DropReject struct {
+	Item   DropItem
+	Reason string
+}
+```
+
+`DropEvent.SourceID` is always non-empty. Component code sets exactly one of
+`DropItem.File`, `DropItem.Path`, or `DropItem.UploadToken` before calling
+`Accept`; the component rejects items that have none or more than one source
+field. The `input` slot receives a context object named `dropzone`:
+
+```go
+type DropZoneContext struct {
+	SourceID   string
+	Accept     func([]DropItem) DropAcceptResult
+	OpenPicker func()
+}
+```
+
+`Accept` returns accepted and rejected items. The component invokes `onDrop`
+only when the accepted list is non-empty; rejected items stay in local component
+state for accessible error text.
 
 ## Example
 
-This component-only example assumes `upload` is already declared in the
-runtime `events` map or registered by Go code.
+This component-only example assumes `upload` is already in Go lexical scope.
 
-```yaml
-kind: DropZone
-props:
-  title: Drop files here
-  drop: upload
+```gx
+package intakeui
+
+var evidenceDrop = (
+  <DropZone
+    title="Drop files here"
+    onDrop={upload}
+  ></DropZone>
+)
 ```
 
 ## Runtime Terms

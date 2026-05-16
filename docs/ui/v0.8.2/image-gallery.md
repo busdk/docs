@@ -11,30 +11,51 @@ description: BusDK UI library linked image gallery contract.
 ## Contract
 
 [`ImageGallery`](./image-gallery-component) renders linked image items with
-safe URLs and labels. Missing labels use item title or filename. Unsafe URLs
-are rejected before render.
+safe URLs and explicit alt labels. Unsafe URLs are rejected before render.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `url` | yes | Same-origin path or external `https:` URL whose origin appears in `RuntimeConfig.config.imageOrigins`. Unlisted external origins fail validation. |
-| `label` | no | Public-safe accessible label. |
-| `title` | no | Public-safe title used when `label` is omitted. |
-| `filename` | no | Public-safe filename used when `label` and `title` are omitted. |
+| `Src` | yes | Root-relative same-origin path or external `https:` URL whose origin appears in `RuntimeSettings.ImageOrigins`. Unlisted external origins fail validation. |
+| `Alt` | yes | Public-safe accessible label. |
+| `Caption` | no | Public-safe title/caption shown with the image. |
+| `Href` | no | Optional URL for opening the source item. Validation matches `Src`: root-relative same-origin path with no `..`, or external `https:` URL whose origin appears in `RuntimeSettings.ImageOrigins`. |
 
-Public-safe labels, titles, and filenames are escaped strings with no secrets,
-credential headers, raw provider payloads, stack traces, SQL, or private
-customer data. Label fallback order is `label`, then `title`, then `filename`,
-then a validation error. Unsafe URLs reject the item and report diagnostics
-instead of rendering a broken image.
+Public-safe labels and captions are escaped strings with no secrets, credential
+headers, raw provider payloads, stack traces, SQL, or private customer data.
+`Alt` is required; missing alt text is a validation error. Unsafe `Src` or
+`Href` values reject the item and report diagnostics instead of rendering a
+broken image. Rejected URLs emit `image_url_rejected` with the item index and
+rejected origin or path class. Missing alt text emits `image_alt_required` with
+the item index.
 
-```yaml
-kind: RuntimeConfig
-props:
-  config:
-    moduleBase: /modules/notes/
-    apiBase: /modules/notes/api
-    imageOrigins:
-      - https://images.example.com
+```gx
+package mediaui
+
+import . "github.com/busdk/bus-ui/pkg/uimedia"
+
+var pages = []ImageItem{
+  {Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
+}
+
+var gallery = (
+  <ImageGallery items={pages}></ImageGallery>
+)
+```
+
+```gx
+package mediaui
+
+import . "github.com/busdk/bus-ui/pkg/uiruntime"
+
+var notesRuntime = (
+  <RuntimeConfig
+    config={RuntimeSettings{
+      ModuleBase: "/modules/notes/",
+      APIBase: "/modules/notes/api",
+      ImageOrigins: []string{"https://images.example.com"},
+    }}
+  ></RuntimeConfig>
+)
 ```
 
 Image galleries are visual repeated media. They do not own evidence

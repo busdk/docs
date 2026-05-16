@@ -11,10 +11,10 @@ description: Dedicated BusDK UI reference for EvidenceLink.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `href` | yes | safe URL or `{ bind: path }` | Authorized URL produced by the evidence API or resolver; missing authorization renders disabled text instead of a link. |
+| `href` | yes | safe URL or Go expression | Authorized URL produced by the evidence API or resolver; missing authorization renders disabled text instead of a link. |
 | `label` | yes | string | Visible link. |
 | `target` | no | _self/_blank | Default _self. |
-| `download` | no | boolean or filename string | Omitted or `false` renders a normal link; `true` keeps the server filename; a string sets the suggested filename. |
+| `download` | no | bool | Omitted or `false` renders a normal link; `true` keeps the provider filename. |
 
 ## Boundary
 
@@ -23,14 +23,27 @@ still require provider authorization; the browser hint does not grant access.
 
 ## Example
 
-```yaml
-kind: EvidenceLink
-props:
-  label: Download invoice
-  href:
-    bind: document.download
-  download: true
+```gx
+package evidenceui
+
+import (
+  "github.com/busdk/bus-gx/pkg/gx"
+  . "github.com/busdk/bus-ui/pkg/uievidence"
+)
+
+func InvoiceDownload(invoiceDownloadURL string) gx.Node {
+  return (
+    <EvidenceLink
+      label="Download invoice"
+      href={invoiceDownloadURL}
+      download={true}
+    ></EvidenceLink>
+  )
+}
 ```
+
+`invoiceDownloadURL` is a same-origin URL returned by `EvidenceURLResolver` or
+the evidence API.
 
 ## Runtime Terms
 

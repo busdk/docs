@@ -11,9 +11,9 @@ description: Dedicated BusDK UI reference for ProjectionDetail.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `detail` | yes | view model | Projected detail object with `title` string, optional `summary` string, and `lines` array. Each line has stable `id`, display `label`, display `value`, and optional `evidenceID`. Empty or missing `lines` renders the component empty state instead of failing. |
-| `evidence` | yes | array of evidence items | Evidence items use `id`, `label`, `url`, and optional `type` fields. `id`, `label`, and `url` are required; `id` is stable and unique, `label` is the visible link text, and `url` is either a same-origin path string or a resolver object with `base` and `path`, matching the safe URL rules below. `type` is optional and defaults to `link`; supplied values are display/media hints such as `pdf`, `image`, `text`, or `link`. Unknown evidence IDs referenced by lines render as unavailable links and may be reported through [runtime diagnostics](../v0.1.8/). |
-| `selectedLine` | no | line id or zero-based index | Highlights the matching `detail.lines` entry. String values match line `id`; numbers match zero-based line index. Missing, out-of-range, or unknown values select nothing. |
+| `detail` | yes | `ProjectionDetailModel` | Projected detail object with `Title`, optional `Summary`, and `Lines`. Each line has stable `ID`, display `Label`, display `Value`, and optional `EvidenceID`. Empty or missing `Lines` renders the component empty state instead of failing. |
+| `evidence` | yes | `[]ProjectionEvidence` | Evidence items use `ID`, `Label`, `URL`, and optional `Type` fields. `ID`, `Label`, and `URL` are required; `ID` is stable and unique, `Label` is the visible link text, and `URL` is a same-origin path or host-resolved artifact URL. `Type` is optional and defaults to `link`; supplied values are display/media hints such as `pdf`, `image`, `text`, or `link`. Unknown evidence IDs referenced by lines render as unavailable links and may be reported through [runtime diagnostics](../v0.1.8/). |
+| `selectedLine` | no | string | Highlights the matching `detail.Lines` entry by line `ID`. Empty, out-of-range, or unknown values select nothing. |
 
 ## Boundary
 
@@ -22,23 +22,50 @@ already-projected view model and evidence links; it does not compute balances,
 classify accounts, or infer accounting meaning from labels.
 
 Evidence URLs must be same-origin paths beginning with `/` and containing no
-`..`, or host artifact resolver objects with string `base` and `path` fields.
-Resolver `base` names a host-registered artifact resolver; `path` begins with
-`/`, contains no `..`, and resolves to an authorized same-origin artifact URL
-before rendering. External origins are rejected unless the portal or local app
-host explicitly lists the origin in its artifact URL allowlist before
-rendering. `javascript:`, `data:`, path traversal, and unresolved authorization
-fail validation.
+`..`, or URLs returned by [`EvidenceURLResolver`](../v0.7.1/evidence-url-resolver).
+External origins are rejected unless the portal or local app host explicitly
+lists the origin in the resolver allowlist before rendering. `javascript:`,
+`data:`, path traversal, and unresolved authorization fail validation.
 
 ## Example
 
-```yaml
-kind: ProjectionDetail
-props:
-  detail:
-    bind: entry.detail
-  evidence:
-    bind: entry.evidence
+```gx
+package evidenceui
+
+import . "github.com/busdk/bus-ui/pkg/uievidence"
+
+var entryDetail = (
+  <ProjectionDetail
+    detail={entry.Detail}
+    evidence={entry.Evidence}
+  ></ProjectionDetail>
+)
+```
+
+When `entry.Detail.Lines` is non-empty, the component renders a title, line list,
+and safe evidence links for matching `EvidenceID` values. Empty lines render the
+component empty state.
+
+```go
+type ProjectionDetailModel struct {
+	Title string
+	Summary string
+	Lines []ProjectionLine
+}
+
+type ProjectionLine struct {
+	ID string
+	Label string
+	Value string
+	EvidenceID string
+}
+
+type ProjectionEvidence struct {
+	ID string
+	Label string
+	URL string
+	Type string
+}
 ```
 
 ## Runtime Terms

@@ -11,7 +11,7 @@ description: Dedicated BusDK UI reference for ImageGallery.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `items` | yes | array of `{src,alt,caption,href}` | `src` and `alt` required; `caption` optional text; `href` optional safe URL for opening the source. |
+| `items` | yes | `[]ImageItem` | `Src` and `Alt` required; `Caption` optional text; `Href` optional safe URL for opening the source. |
 
 ## Boundary
 
@@ -19,23 +19,35 @@ Every image has useful alt text.
 
 ## Example
 
-```yaml
-kind: ImageGallery
-props:
-  items:
-    - src: /preview/a.png
-      alt: Invoice page 1
-      caption: Page 1
+```gx
+package mediaui
+
+import . "github.com/busdk/bus-ui/pkg/uimedia"
+
+var invoicePages = []ImageItem{
+  {Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
+}
+
+var invoiceGallery = (
+  <ImageGallery items={invoicePages}></ImageGallery>
+)
 ```
+
+`ImageItem` is the exported item type from `github.com/busdk/bus-ui/pkg/uimedia`.
 
 ## Runtime Terms
 
-`src` and `href` values must be same-origin paths or provider media URLs
-returned by a named resolver registered by the portal host in
+`Src` and `Href` values must be root-relative same-origin paths such as
+`/preview/a.png`, with no `..` segments, or provider media URLs already returned
+by a named resolver registered by the portal host in
 [`RuntimeConfig`](../v0.4.2/runtime-config). External `https:` image links are rejected
 by default unless the host runtime config sets `mediaAllowedOrigins` to exact
 allowed origins such as `https://media.example.com`; rejected links fail
 validation.
+
+`ImageGallery` does not name or call a resolver. The controller resolves provider
+paths first, then passes only resolved safe URLs in `ImageItem.Src` and
+`ImageItem.Href`.
 
 Accepted examples: `/preview/a.png` and
 `https://media.example.com/invoices/a.png` when that exact origin is allowlisted.
