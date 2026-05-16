@@ -5,15 +5,17 @@ description: Dedicated BusDK UI reference for Select.
 
 ## Purpose
 
-`Select` is a form component. Native bounded option set. Use for bounded submitted values.
+`Select` is a native bounded option helper. Use it for submitted values that
+must come from a known option set.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `name` | yes | string | Submitted field name. |
-| `options` | yes | array of `{value,label,disabled}` | Each option has string or number `value` and non-empty string `label`; optional `disabled` prevents selection. Empty option lists render a disabled empty select. Duplicate values fail validation. |
-| `selected` | no | string, number, or binding | Selected value. Omitted selects no option unless the host form supplies a default. A value outside `options` fails validation. |
+| `options` | yes | Go slice of option values | Each option has a unique string `id`, public-safe `label`, and optional disabled state. Empty option lists render a disabled empty select. Duplicate ids fail validation. |
+| `selected` | no | string | Selected option id. Omitted selects no option unless the parent supplies a default. A non-empty id outside `options` fails validation. |
+| `onChange` | no | Go callback | Receives the selected id as a simple string callback or typed change event callback. |
 
 ## Boundary
 
@@ -22,19 +24,27 @@ the selected value instead of relying on browser first-option defaults.
 
 ## Example
 
-```yaml
-kind: Select
-props:
-  name: status
-  selected: review
-  options:
-    - value: review
-      label: Review
+```gx
+func StatusField(status string, setStatus func(string)) gx.Node {
+  options := []ui.Option{
+    {ID: "draft", Label: "Draft"},
+    {ID: "review", Label: "Review"},
+    {ID: "approved", Label: "Approved"},
+  }
+
+  return (
+    <Field label="Status">
+      <Select name="status" selected={status} options={options} onChange={setStatus}></Select>
+    </Field>
+  )
+}
 ```
 
 ## Runtime Terms
 
-[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
+[Expression children](../v0.1.5/expression-children) document ordinary Go
+expressions inside markup bodies. [Typed event payloads](../v0.1.15/typed-event-payloads)
+document when an `onChange` callback uses a payload instead of a plain string.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

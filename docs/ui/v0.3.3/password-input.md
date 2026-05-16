@@ -5,15 +5,19 @@ description: Dedicated BusDK UI reference for PasswordInput.
 
 ## Purpose
 
-`PasswordInput` is a navigation/event/form component. Password or token field. Use for secrets and one-time codes.
+`PasswordInput` is a password or token helper. Use it for secrets,
+confirmation codes, and one-time codes.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `name` | yes | string | Submitted field name. |
+| `value` | no | string | Current entered value for transient fields such as one-time codes. Omit when editing an existing stored secret. |
 | `placeholder` | no | string | Input hint. |
 | `autocomplete` | no | current-password, new-password, one-time-code, off | Default `current-password`; use `one-time-code` for OTP fields and `new-password` for password creation/change. |
+| `onInput` | no | Go callback | Receives the current entered value when the parent tracks edits. |
+| `onChange` | no | Go callback | Receives committed changes when the parent waits for change semantics. |
 
 ## Boundary
 
@@ -26,12 +30,20 @@ form's documented preserve marker instead of echoing the current secret.
 
 ## Example
 
-```yaml
-kind: PasswordInput
-props:
-  name: otp
-  placeholder: One-time code
-  autocomplete: one-time-code
+```gx
+func OneTimeCodeField(code string, setCode func(string)) gx.Node {
+  return (
+    <Field label="One-time code">
+      <PasswordInput
+        name="otp"
+        placeholder="One-time code"
+        autocomplete="one-time-code"
+        value={code}
+        onInput={setCode}>
+      </PasswordInput>
+    </Field>
+  )
+}
 ```
 
 <!-- busdk-docs-nav start -->

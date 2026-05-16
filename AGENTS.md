@@ -70,9 +70,12 @@ content structure, not as instructions to reviewers or agents. Keep guidance
 such as "review these pages first" or "search links after changing a decision"
 in this non-published `AGENTS.md` file only.
 
-In public UI framework YAML examples, prefer expanded YAML mappings over inline
-JSON/YAML object shorthand. For example, write `target:` with nested `base` and
-`path` keys on separate lines instead of `target: { base: module, path: / }`.
+In public UI framework docs, component and template examples must use `.gx` or
+Go, not YAML/JSON object markup. YAML/JSON examples are acceptable only for
+data or configuration documents where the format itself is the subject. When
+YAML examples are appropriate, prefer expanded mappings over inline JSON/YAML
+object shorthand. For example, write `target:` with nested `base` and `path`
+keys on separate lines instead of `target: { base: module, path: / }`.
 
 ## UI framework design review instructions
 

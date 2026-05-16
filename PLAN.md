@@ -176,6 +176,25 @@ that were used when those entries were completed.
   date input, text area, and select material here; make `index.md` a link-only
   page.
 
+- [x] UI `v0.3.3` input controls GX example correction: replace YAML
+  component markup and string event-name language in the input controls,
+  input, text input, password input, date input, text area, and select pages
+  with `.gx`/Go examples, DOM-compatible `onInput`/`onChange` callback
+  language, checked input helper language, and no v0.3.3 file input/upload
+  behavior. Verification: `make quality` and `git diff --check` passed.
+  Per-file `bus lint` was run for each changed Markdown file, but content
+  linting could not complete because the `codex` runtime failed session
+  creation on the read-only filesystem; a writable-home retry reached the API
+  and failed with missing authentication, and `codex:local` had no local
+  provider configured.
+
+- [ ] Audit public UI version docs for YAML/JSON component markup: scan
+  superproject-relative `docs/docs/ui/v*/` (`docs/ui/v*/` inside this module)
+  for YAML or JSON examples that describe rendered
+  components/templates, replace those examples with `.gx` or Go, and keep
+  YAML/JSON only on pages that specifically document data or configuration
+  formats.
+
 - [x] UI `v0.3.4` submit state: keep submit state material here; make
   `index.md` a link-only page.
 

@@ -5,35 +5,51 @@ description: Dedicated BusDK UI reference for Input.
 
 ## Purpose
 
-`Input` is a navigation/event/form component. Generic typed input. Use when no named input helper exists, and pair visible inputs with a `Field` label or an explicit accessible label supplied by the surrounding form.
+`Input` is the generic typed input component. Use it when no named helper fits,
+and pair visible inputs with a `Field` label or an explicit accessible label
+supplied by the surrounding form.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `type` | yes | HTML input type | Exact accepted set: `text`, `search`, `email`, `url`, `number`, `date`, `password`, `checkbox`, `radio`, `file`, `hidden`. Unsupported values fail validation. |
+| `type` | yes | HTML input type | Exact accepted set: `text`, `search`, `email`, `url`, `number`, `date`, `password`, `checkbox`, `radio`, `hidden`. Unsupported values fail validation. |
 | `name` | yes | string | Submitted field name. |
-| `value` | no | scalar | Current value; omitted for file. Required for each `radio` option so options sharing a `name` submit distinct values instead of browser default `on`. |
+| `value` | no | scalar | Current value. Required for each `radio` option so options sharing a `name` submit distinct values instead of browser default `on`. |
 | `checked` | no | boolean | Applies only to checkbox/radio controls. Default `false`; checked checkbox controls submit `value` or `on` when value is omitted, checked radio controls submit their explicit `value`, and unchecked controls submit nothing. |
+| `onInput` | no | `func(string)` or `func(gx.InputEvent)` | Applies to text-like controls when the parent wants live edits. The string form receives the current value. |
+| `onChange` | no | `func(string)`, `func(bool)`, `func()`, or `func(gx.ChangeEvent)` | Applies to committed changes and checked controls. Text-like controls pass the current value to `func(string)`. Checkbox and radio controls pass checked state to `func(bool)` or may use `func()` when the parent already knows which control changed. |
 | `labelledBy` | no | element id | Associates a bare input with external visible label text when it is not wrapped by `Field`. Either `Field` or `labelledBy` must provide the accessible name for visible inputs. |
 
 ## Boundary
 
-File inputs do not echo file values. Bare visible inputs must have an accessible
-name through `Field` or `labelledBy`; hidden inputs do not need a visible label.
+This patch covers scalar form controls. Bare visible inputs must have an
+accessible name through `Field` or `labelledBy`; hidden inputs do not need a
+visible label.
 
 ## Example
 
-```yaml
-kind: Field
-props:
-  label: Quantity
-children:
-  - kind: Input
-    props:
-      type: number
-      name: quantity
-      value: 3
+```gx
+func QuantityField(quantity string, setQuantity func(string)) gx.Node {
+  return (
+    <Field label="Quantity">
+      <Input type="number" name="quantity" value={quantity} onInput={setQuantity}></Input>
+    </Field>
+  )
+}
+```
+
+Checked controls use the same component with explicit `checked` state. A simple
+toggle callback is acceptable when the parent component owns the previous state:
+
+```gx
+func IncludeArchivedField(includeArchived bool, toggleArchived func()) gx.Node {
+  return (
+    <Field label="Include archived records">
+      <Input type="checkbox" name="include_archived" value="yes" checked={includeArchived} onChange={toggleArchived}></Input>
+    </Field>
+  )
+}
 ```
 
 <!-- busdk-docs-nav start -->

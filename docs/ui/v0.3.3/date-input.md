@@ -13,6 +13,8 @@ description: Dedicated BusDK UI reference for DateInput.
 | --- | --- | --- | --- |
 | `name` | yes | string | Submitted field name. |
 | `value` | no | YYYY-MM-DD string | Empty when omitted. Invalid dates fail validation instead of being normalized. |
+| `onInput` | no | Go callback | Receives live string edits when the parent tracks partial edits. |
+| `onChange` | no | Go callback | Receives committed date string changes. |
 
 ## Boundary
 
@@ -22,11 +24,14 @@ An empty value submits an empty string for the named field.
 
 ## Example
 
-```yaml
-kind: DateInput
-props:
-  name: due_date
-  value: '2026-05-10'
+```gx
+func DueDateField(dueDate string, setDueDate func(string)) gx.Node {
+  return (
+    <Field label="Due date">
+      <DateInput name="due_date" value={dueDate} onChange={setDueDate}></DateInput>
+    </Field>
+  )
+}
 ```
 
 <!-- busdk-docs-nav start -->

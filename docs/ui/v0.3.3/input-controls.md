@@ -14,31 +14,46 @@ Input controls render editable values supplied by the view model.
 [`Input`](./input), [`TextInput`](./text-input),
 [`PasswordInput`](./password-input), [`DateInput`](./date-input),
 [`TextArea`](./text-area), and [`Select`](./select)
-provide generic input surfaces.
+provide reusable `bus-ui` form controls built from the lower-level GX form
+elements.
 
-Controls receive `name`, current value, disabled state, and optional change
-event names. Provider validation, normalization, and persistence stay in the
-controller/provider layer.
+Controls receive `name`, current value, disabled state, and optional Go
+callbacks. Provider validation, normalization, and persistence stay in the
+parent component and provider layer. Data reaches the control through ordinary
+Go props and lexical scope, not through a YAML binding map or string event
+registry.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
 | `name` | yes | Native form field name included in form state. |
-| `value` | no | `Input`, `TextInput`, `PasswordInput`, and `TextArea` accept string values; numbers must be formatted by the controller before render. `DateInput` accepts `YYYY-MM-DD` or empty string. `Select` accepts an option id string. Missing or null renders the native empty value. Invalid values fail validation before render. |
+| `value` | no | `Input`, `TextInput`, `PasswordInput`, and `TextArea` accept string values; numbers must be formatted by the parent before render. `DateInput` accepts `YYYY-MM-DD` or empty string. Missing values render the native empty value. Invalid values fail validation before render. |
+| `selected` | no | `Select` accepts a selected option id string or an empty string. A non-empty value must match an option. |
+| `checked` | no | `Input` accepts checked state for checkbox and radio controls. Named text helpers do not use `checked`. |
 | `disabled` | no | Boolean; defaults false and prevents user edits when true. |
-| `onChange` | no | Runtime event name emitted with source identity when the value changes. |
-| `options` | yes for `Select` | Array of `{id,label}` objects. `id` is a unique string and `label` is public-safe text. `value` must equal one option id or be empty. |
+| `onInput` | no | Go callback for live text-like edits. Simple callbacks may accept the current string value. |
+| `onChange` | no | Go callback for committed value changes, checkbox/radio changes, and select changes. |
+| `options` | yes for `Select` | Array of `{id,label}` objects. `id` is a unique string and `label` is public-safe text. `selected` must equal one option id or be empty. |
 
-Change events use this shape:
+Callbacks use the DOM-compatible names defined by
+[intrinsic callback naming](../v0.1.12/intrinsic-callback-naming) and the typed
+payloads from [v0.1.15](../v0.1.15/typed-event-payloads). Parent components may
+keep form state in Go and pass simple value setters when source identity is not
+needed:
 
-```yaml
-event: title-changed
-source:
-  id: title
-  path: /Form[0]/TextInput[0]
+```gx
+func NoteFields(p NoteFieldsProps) gx.Node {
+  return (
+    <Form id="note-fields" onSubmit={p.Save}>
+      <Field label="Title">
+        <TextInput name="title" value={p.Title} onInput={p.SetTitle}></TextInput>
+      </Field>
+      <Field label="Status">
+        <Select name="status" selected={p.Status} options={p.StatusOptions} onChange={p.SetStatus}></Select>
+      </Field>
+    </Form>
+  )
+}
 ```
-
-The controller reads current model/form state after receiving the event. The
-event does not carry provider payloads or a request body.
 
 ## Consequence
 
@@ -56,3 +71,5 @@ meaning.
 - [Input](./input)
 - [TextInput](./text-input)
 - [Select](./select)
+- [Intrinsic callback naming](../v0.1.12/intrinsic-callback-naming)
+- [Typed event payloads](../v0.1.15/typed-event-payloads)

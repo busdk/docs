@@ -5,16 +5,18 @@ description: Dedicated BusDK UI reference for TextArea.
 
 ## Purpose
 
-`TextArea` is a form component. Multiline text field. Use for notes, comments,
-prompts, and drafts.
+`TextArea` is a multiline text helper. Use it for notes, comments, prompts,
+and drafts.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `name` | yes | string | Submitted field name. |
-| `value` | no | string or Go value | Current multiline content. Omitted renders an empty text area. Values must resolve to text or a value that can be deterministically formatted as text. |
+| `value` | no | string | Current multiline content. Omitted renders an empty text area. |
 | `rows` | no | integer | Visible row count. Defaults to `4`; valid values are positive integers from `1` through `40`. |
+| `onInput` | no | Go callback | Receives live edits as a simple string callback or typed input event callback. |
+| `onChange` | no | Go callback | Receives committed changes when the parent needs change semantics. |
 
 ## Boundary
 
@@ -24,18 +26,21 @@ validation instead of being stringified unpredictably.
 
 ## Example
 
-```yaml
-kind: TextArea
-props:
-  name: body
-  rows: 8
-  value:
-    bind: draft.body
+```gx
+func BodyField(draft Draft, setBody func(string)) gx.Node {
+  return (
+    <Field label="Body">
+      <TextArea name="body" rows={8} value={draft.Body} onInput={setBody}></TextArea>
+    </Field>
+  )
+}
 ```
 
 ## Runtime Terms
 
-[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
+[Expression children](../v0.1.5/expression-children) document ordinary Go
+expressions inside markup bodies. [Typed event payloads](../v0.1.15/typed-event-payloads)
+document when an `onInput` callback uses a payload instead of a plain string.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
