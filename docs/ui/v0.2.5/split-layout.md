@@ -26,18 +26,15 @@ pixel-exact values.
 
 ## Example
 
-```yaml
-kind: SplitLayout
-slots:
-  left:
-    kind: RecordList
-    props:
-      items:
-        bind: notes
-  right:
-    kind: Panel
-    props:
-      title: Detail
+```gx
+package reviewui
+
+var reviewSplit = (
+  <SplitLayout resize="horizontal">
+    <RecordList slot="left" items={notes}></RecordList>
+    <Panel slot="right" title="Detail"></Panel>
+  </SplitLayout>
+)
 ```
 
 ## Runtime Terms

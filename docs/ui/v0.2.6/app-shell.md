@@ -25,22 +25,22 @@ in provider/API modules and product view models.
 
 ## Example
 
-```yaml
-kind: AppShell
-props:
-  title: Local workspace
-slots:
-  body:
-    kind: Panel
-    props:
-      title: Workspace
+```gx
+package workspaceui
+
+var workspaceShell = (
+  <AppShell title="Local workspace">
+    <Panel slot="body" title="Workspace"></Panel>
+  </AppShell>
+)
 ```
 
 ## Runtime Terms
 
-[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
-
-Resource defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+[Expression children](../v0.1.5/expression-children) document ordinary Go
+expressions inside markup bodies. In this patch, `AppShell` accepts only
+already-validated navigation and asset URLs from its parent component or host
+runtime config.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

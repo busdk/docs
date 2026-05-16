@@ -26,15 +26,15 @@ Decorative icons omit titles when text already labels the event.
 
 ## Example
 
-```yaml
-kind: Fragment
-children:
-  - kind: Icon
-    props:
-      name: download
-  - kind: Text
-    props:
-      value: Download report
+```gx
+package reportui
+
+var downloadLabel = (
+  <span>
+    <Icon name="download"></Icon>
+    Download report
+  </span>
+)
 ```
 
 <!-- busdk-docs-nav start -->

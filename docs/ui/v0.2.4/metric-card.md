@@ -24,12 +24,12 @@ product layer has applied its normal authorization and data-shaping rules.
 
 ## Example
 
-```yaml
-kind: MetricCard
-props:
-  title: Open tasks
-  value: 12
-  detail: 3 blocked
+```gx
+package dashboardui
+
+var openTaskMetric = (
+  <MetricCard title="Open tasks" value={12} detail="3 blocked"></MetricCard>
+)
 ```
 
 <!-- busdk-docs-nav start -->

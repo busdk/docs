@@ -23,24 +23,21 @@ Collapsed mode keeps accessible labels.
 
 ## Example
 
-```yaml
-kind: SidebarShell
-props:
-  collapsed: false
-slots:
-  header:
-    kind: Text
-    props:
-      text: Notes
-  nav:
-    kind: SidebarNav
-    props:
-      items:
-        bind: nav.items
-  body:
-    kind: Panel
-    props:
-      title: Current view
+```gx
+package notesui
+
+import "github.com/busdk/bus-ui/pkg/ui"
+
+var notesShell = (
+  <SidebarShell collapsed={false}>
+    <span slot="header">Notes</span>
+    <SidebarNav slot="nav" items={[]ui.SidebarNavItem{
+      {Label: "Notes", Href: "./", Active: true},
+      {Label: "Review", Href: "./review"},
+    }}></SidebarNav>
+    <Panel slot="body" title="Current view"></Panel>
+  </SidebarShell>
+)
 ```
 
 ## Runtime Terms

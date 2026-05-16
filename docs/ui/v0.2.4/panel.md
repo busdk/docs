@@ -22,14 +22,14 @@ Title and body render in stable order.
 
 ## Example
 
-```yaml
-kind: Panel
-props:
-  title: Draft
-children:
-  - kind: Text
-    props:
-      value: Ready to review
+```gx
+package reviewui
+
+var draftPanel = (
+  <Panel title="Draft">
+    <p>Ready to review</p>
+  </Panel>
+)
 ```
 
 ## Runtime Terms

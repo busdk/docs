@@ -14,7 +14,7 @@ related operations on rows, details, or results.
 | --- | --- | --- | --- |
 | `events` | yes | array | Ordered items. Each item requires `label` and exactly one of `onClick` or `href`. |
 | `events[].label` | yes | string | Visible control text; must be non-empty. |
-| `events[].onClick` | for emitted events | event name | Must match a key in document `events`; the emitted source includes the `EventBar` id or tree path plus the item index so handlers can distinguish items. |
+| `events[].onClick` | for emitted events | function | Go callback invoked when the item is activated. |
 | `events[].href` | for links | safe URL/path | Same-origin paths, host-resolved resource URLs, or `https:` links allowed by the host external-link allowlist; invalid URLs fail validation. Mutually exclusive with `onClick`. |
 | `events[].variant` | no | primary, secondary, danger, ghost | Default secondary; destructive uses danger. |
 | `events[].disabled` | no | boolean | Default false; disabled items render but do not emit events. |
@@ -24,25 +24,27 @@ related operations on rows, details, or results.
 ## Boundary
 
 Destructive events use the danger variant and must be backed by product-owned
-permission state. If confirmation is required, the referenced event carries
+permission state. If confirmation is required, the product action carries
 that confirmation policy; if the user lacks permission, set
-`events[].disabled: true` or omit the entire event item instead of emitting an
-event that will fail late.
+`events[].disabled: true` or omit the entire event item instead of rendering an
+enabled control that will fail late.
 
 ## Example
 
-This component-only example assumes `approve` and `review` are already declared
-in the runtime `events` map or registered by Go code.
+```gx
+package reviewui
 
-```yaml
-kind: EventBar
-props:
-  events:
-    - label: Approve
-      onClick: approve
-      variant: primary
-    - label: Request review
-      onClick: review
+import (
+  "github.com/busdk/bus-gx/pkg/gx"
+  "github.com/busdk/bus-ui/pkg/ui"
+)
+
+func ReviewActions(approve func(), requestReview func()) gx.Node {
+  return <EventBar events={[]ui.EventItem{
+    {Label: "Approve", OnClick: approve, Variant: "primary"},
+    {Label: "Request review", OnClick: requestReview},
+  }}></EventBar>
+}
 ```
 
 ## Runtime Terms

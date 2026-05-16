@@ -36,12 +36,11 @@ var notesContent = (
 
 The app host or test harness mounts this template into the shell body slot.
 
-## Fixture Data
+## Fixture Values
 
-```yaml
-page:
-  title: Notes
-  summary: Review queue
+```go
+title := "Notes"
+summary := "Review queue"
 ```
 
 <!-- busdk-docs-nav start -->

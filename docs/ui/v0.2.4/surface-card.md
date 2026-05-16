@@ -26,12 +26,14 @@ instead.
 
 ## Example
 
-```yaml
-kind: SurfaceCard
-children:
-  - kind: SummaryItem
-    props:
-      title: Evidence note
+```gx
+package evidenceui
+
+var evidenceCard = (
+  <SurfaceCard>
+    <p>Evidence note</p>
+  </SurfaceCard>
+)
 ```
 
 <!-- busdk-docs-nav start -->

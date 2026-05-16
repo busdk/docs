@@ -14,7 +14,7 @@ description: Dedicated BusDK UI reference for SidebarNav.
 | `items` | yes | array | Each item has non-empty `label` plus exactly one of `href` or `onClick`. Items missing both or containing both fail validation. |
 | `items[].label` | yes | string | Visible and accessible navigation label. Empty labels fail validation, including compact mode where an icon is shown. |
 | `items[].href` | required when no onClick | path string or `{base,path}` route resolver | Navigates to a route. Strings may be same-origin absolute paths or relative module routes. Resolver objects use `base: portal`, `base: module`, or a named host route resolver plus `path` beginning with `/`. `javascript:`, `data:`, path traversal, and unallowlisted external origins fail validation. |
-| `items[].onClick` | required when no href | event name | Emits a declared event name from the runtime `events` map or registered Go WebAssembly handler map. Unknown event names fail validation. |
+| `items[].onClick` | required when no href | function | Go callback invoked when the navigation item is activated. |
 | `items[].icon` | no | icon name | Shown in compact mode. Names must come from the shared Icon catalog or host-registered icon set. Unknown icons render the text label only and report a non-fatal validation warning. |
 | `items[].active` | no | boolean | Marks active item. Omitted means false. At most one active item is allowed; multiple active items fail validation instead of being resolved implicitly. |
 
@@ -24,24 +24,27 @@ Every item has a visible or accessible label.
 
 ## Example
 
-```yaml
-kind: SidebarNav
-props:
-  items:
-    - label: Notes
-      href: ./
-      active: true
-    - label: Review
-      href: ./review
+```gx
+package notesui
+
+import "github.com/busdk/bus-ui/pkg/ui"
+
+var notesNav = (
+  <SidebarNav items={[]ui.SidebarNavItem{
+    {Label: "Notes", Href: "./", Active: true},
+    {Label: "Review", Href: "./review"},
+  }}></SidebarNav>
+)
 ```
 
 ## Runtime Terms
 
 Sidebar links accept relative module routes, same-origin absolute paths
 beginning with `/`, or host route resolver objects supplied through the portal
-context. External `https:` links are rejected unless the host explicitly enables
-the origin in its navigation URL allowlist before rendering. `javascript:`,
-`data:`, path traversal, and unresolved authorization failures are rejected.
+context. Callback items use Go function values. External `https:` links are
+rejected unless the host explicitly enables the origin in its navigation URL
+allowlist before rendering. `javascript:`, `data:`, path traversal, and
+unresolved authorization failures are rejected.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
