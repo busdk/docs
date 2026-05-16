@@ -16,10 +16,11 @@ output chunks with required `text`, optional `stream`, and optional numeric
 Supported streams are `stdout`, `stderr`, `stdin`, and `system`; unknown
 streams fail validation before render.
 
-Chunks render in array order. When `sequence` is present, every chunk in the
-array must have a unique monotonic integer sequence and the array must already
+Chunks render in array order. When `Sequence` is present, every chunk in the
+slice must have a unique monotonic integer sequence and the slice must already
 be sorted by it; the component validates order but does not reorder. The
-controller owns chunk ordering, truncation, redaction, and retention.
+component caller owns chunk ordering, truncation, redaction, and retention
+through ordinary Go state and callbacks in the [UI runtime contract](../fc-003-resources/runtime-contract).
 
 ## Consequence
 

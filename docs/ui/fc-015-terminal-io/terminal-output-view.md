@@ -11,22 +11,38 @@ description: Dedicated BusDK UI reference for TerminalOutputView.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `chunks` | yes | array of `{stream,text,sequence}` | Output chunks in display order. Each chunk requires non-empty string `text`. `stream` is optional and defaults to `system`; when present it accepts `stdout`, `stderr`, `stdin`, `system`, or aliases normalized below. Optional `sequence` must be a number and is used to stabilize ordering when chunks arrive out of order. Missing text, non-string text, or non-numeric sequence values fail validation. |
+| `chunks` | yes | `[]TerminalOutputChunk` | Output chunks in display order. Each chunk requires non-empty `Text`. `Stream` is optional and defaults to `system`; when present it accepts `stdout`, `stderr`, `stdin`, `system`, or aliases normalized below. Optional `Sequence` is `*int`; when present it must be non-negative and unique. When any chunk has `Sequence`, all chunks must have `Sequence` and the slice must already be sorted by ascending sequence. The component validates order but does not reorder. Missing text, invalid stream values, duplicate sequence values, mixed sequence presence, or descending sequence order fail validation before render. |
 | `emptyText` | no | string | Shown when `chunks` is empty. Defaults to no visible empty text. Empty string is allowed and renders no text. |
 
 ## Boundary
 
 Stream labels are normalized before display: `out` and `standard-output` become
 `stdout`; `err` and `standard-error` become `stderr`; `input` becomes `stdin`;
-unknown stream labels become `system` and are reported through diagnostics.
+unknown stream labels fail validation before render.
 
 ## Example
 
 ```gx
+var seq1 = 1
+var seq2 = 2
+
+var terminalOutput = []TerminalOutputChunk{
+  {Stream: "stdout", Text: "build started", Sequence: &seq1},
+  {Stream: "stderr", Text: "warning: retrying", Sequence: &seq2},
+}
+
 var outputView = <TerminalOutputView
     chunks={terminalOutput}
     emptyText="No output yet">
 </TerminalOutputView>
+```
+
+```go
+type TerminalOutputChunk struct {
+	Stream   string
+	Text     string
+	Sequence *int
+}
 ```
 
 ## Runtime Terms

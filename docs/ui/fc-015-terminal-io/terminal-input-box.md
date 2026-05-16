@@ -14,6 +14,7 @@ description: Dedicated BusDK UI reference for TerminalInputBox.
 | `id` | no | string | Stable source id copied into callback events. When omitted, the renderer-generated tree path is used. |
 | `sessionID` | yes | string | Host session identifier targeted by stdin and exit callbacks. Empty string suppresses controls. |
 | `value` | yes | string | Current controlled input value. The parent updates this value through normal Go state after `onSend` succeeds or clears the draft. |
+| `onChange` | no | `func(TerminalInputChangeEvent) gx.Result` | Runs when typed text changes. Omit only when the input is read-only or the host owns an internal draft buffer. |
 | `onSend` | yes | `func(TerminalInputEvent) gx.Result` | Runs when the user submits input. Event includes `SessionID`, `SourceID`, and `Text`. Empty values are ignored by default; a host may enable empty stdin through terminal runtime config. |
 | `onExit` | no | `func(TerminalExitEvent) gx.Result` | Runs when the user requests process termination. Omitted `onExit` removes the stop/exit control; it does not close the panel locally. |
 | `disabled` | no | boolean | Disables controls. |
@@ -32,6 +33,7 @@ var inputBox = <TerminalInputBox
     id="terminal-input"
     sessionID="test-17"
     value={terminalInput}
+    onChange={setTerminalInput}
     onSend={sendInput}
     onExit={stopSession}>
 </TerminalInputBox>
@@ -44,9 +46,28 @@ type TerminalInputEvent struct {
 	Text string
 }
 
+type TerminalInputChangeEvent struct {
+	SessionID string
+	SourceID string
+	Text string
+}
+
 type TerminalExitEvent struct {
 	SessionID string
 	SourceID string
+}
+
+func setTerminalInput(event TerminalInputChangeEvent) gx.Result {
+	terminalInput = event.Text
+	return gx.Noop()
+}
+
+func sendInput(event TerminalInputEvent) gx.Result {
+	return terminal.Send(event.SessionID, event.Text)
+}
+
+func stopSession(event TerminalExitEvent) gx.Result {
+	return terminal.Stop(event.SessionID)
 }
 ```
 
