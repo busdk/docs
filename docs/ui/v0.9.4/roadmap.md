@@ -28,6 +28,22 @@ under that later version instead of rewriting older version intent.
 | [v0.1.8](../v0.1.8/) | Runtime diagnostics | `bus-gx` |
 | [v0.1.9](../v0.1.9/) | Browser API boundaries | `bus-gx` |
 | [v0.1.10](../v0.1.10/) | Core test helpers | `bus-gx` |
+| [v0.1.11](../v0.1.11/) | WASM app acceptance | `bus-gx` |
+| [v0.1.12](../v0.1.12/) | Intrinsic callback naming | `bus-gx` |
+| [v0.1.13](../v0.1.13/) | Handle render scheduling | `bus-gx` |
+| [v0.1.14](../v0.1.14/) | Expanded intrinsic elements | `bus-gx` |
+| [v0.1.15](../v0.1.15/) | Typed event payloads | `bus-gx` |
+| [v0.1.16](../v0.1.16/) | Minimal browser adapters | `bus-gx` |
+| [v0.1.17](../v0.1.17/) | State runtime | `bus-ui` |
+| [v0.1.18](../v0.1.18/) | Effect runtime | `bus-ui` |
+| [v0.1.19](../v0.1.19/) | Event and form helpers | `bus-ui` |
+| [v0.1.20](../v0.1.20/) | UI testkit renderer | `bus-ui` |
+| [v0.1.21](../v0.1.21/) | UI testkit browser parity | `bus-ui` |
+| [v0.1.22](../v0.1.22/) | Action primitives | `bus-ui` |
+| [v0.1.23](../v0.1.23/) | Resource primitives | `bus-ui` |
+| [v0.1.24](../v0.1.24/) | Session primitives | `bus-ui` |
+| [v0.1.25](../v0.1.25/) | Portal context consumption | `bus-ui` |
+| [v0.1.26](../v0.1.26/) | Streaming ownership | `bus-ui` |
 | [v0.2.0](../v0.2.0/) | Bus UI module baseline | `bus-ui` |
 | [v0.2.1](../v0.2.1/) | Icons | `bus-ui` |
 | [v0.2.2](../v0.2.2/) | Buttons and links | `bus-ui` |

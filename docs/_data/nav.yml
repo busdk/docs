@@ -392,6 +392,56 @@
           children:
             - label: Minimal browser adapters
               url: /ui/v0.1.16/minimal-browser-adapters
+        - label: v0.1.17 State runtime
+          url: /ui/v0.1.17/
+          children:
+            - label: State runtime
+              url: /ui/v0.1.17/state-runtime
+        - label: v0.1.18 Effect runtime
+          url: /ui/v0.1.18/
+          children:
+            - label: Effect runtime
+              url: /ui/v0.1.18/effect-runtime
+        - label: v0.1.19 Event and form helpers
+          url: /ui/v0.1.19/
+          children:
+            - label: Event and form helpers
+              url: /ui/v0.1.19/event-form-helpers
+        - label: v0.1.20 UI testkit renderer
+          url: /ui/v0.1.20/
+          children:
+            - label: UI testkit renderer
+              url: /ui/v0.1.20/uikittest-renderer
+        - label: v0.1.21 UI testkit browser parity
+          url: /ui/v0.1.21/
+          children:
+            - label: UI testkit browser parity
+              url: /ui/v0.1.21/uikittest-browser
+        - label: v0.1.22 Action primitives
+          url: /ui/v0.1.22/
+          children:
+            - label: Action primitives
+              url: /ui/v0.1.22/action-primitives
+        - label: v0.1.23 Resource primitives
+          url: /ui/v0.1.23/
+          children:
+            - label: Resource primitives
+              url: /ui/v0.1.23/resource-primitives
+        - label: v0.1.24 Session primitives
+          url: /ui/v0.1.24/
+          children:
+            - label: Session primitives
+              url: /ui/v0.1.24/session-primitives
+        - label: v0.1.25 Portal context consumption
+          url: /ui/v0.1.25/
+          children:
+            - label: Portal context consumption
+              url: /ui/v0.1.25/portal-context-consumption
+        - label: v0.1.26 Streaming ownership
+          url: /ui/v0.1.26/
+          children:
+            - label: Streaming and terminal ownership
+              url: /ui/v0.1.26/streaming-terminal-ownership
         - label: v0.2.0 Bus UI module baseline
           url: /ui/v0.2.0/
           children:

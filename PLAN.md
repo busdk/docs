@@ -15,7 +15,7 @@ that were used when those entries were completed.
   host-side supervisor pass completed the per-file `bus lint` verification
   after the worker runtime blocker was recorded separately below.
 
-- [ ] UI `v0.2.x` through `v0.9.x` roadmap rescope for busdk#42.1:
+- [x] UI `v0.2.x` through `v0.9.x` roadmap rescope for busdk#42.1:
   review the future public UI roadmap after the GX `v0.1.x` foundation,
   reorder common reusable `bus-ui` libraries before assistant, terminal,
   evidence, portal-host, and product-module concepts, clarify that `bus-ui`
@@ -23,22 +23,39 @@ that were used when those entries were completed.
   `docs/ui/index.md` and `docs/_data/nav.yml`, keep internal links coherent,
   run per-file `bus lint` on changed public UI Markdown files, run YAML parse
   validation for `docs/_data/nav.yml`, run `make quality`, and run
-  `git diff --check`.
+  `git diff --check`. Verified during busdk#46.1 docs mapping: the existing
+  `v0.2.x` through `v0.9.x` sequence was already promoted, the `v0.9.4`
+  roadmap table was brought up to date with the full `v0.1.11` through
+  `v0.1.26` sequence, and `v0.2.3` menu/tab examples were normalized to
+  GX/Go callback examples instead of YAML event-name examples. Standard YAML
+  parsers were absent in the worker (`ruby` missing, PyYAML unavailable, Node
+  `yaml` module missing), so YAML parse validation used a temporary `/tmp`
+  `yq` binary only for this run; do not treat that as a durable project check
+  or vendor it.
 
-- [ ] UI `v0.1.16` browser-adapter rescope: review and narrow the current
+- [x] UI `v0.1.16` browser-adapter rescope: review and narrow the current
   minimal browser adapter patch before treating it as reviewable public UI
   roadmap material. The implementation evidence for `v0.1.13` through
   `v0.1.15` indicates that `v0.1.16` is too broad as one clean patch slice.
   Decide whether it should be split into smaller `bus-gx` and `bus-ui`
   increments, record any unresolved implementation/design questions here, and
   only then update `docs/ui/v0.1.16/` with public, non-meta documentation.
+  Resolved during busdk#46.1 docs mapping: keep `v0.1.16` as the minimal
+  `bus-gx` browser-adapter checkpoint and split the post-GX `bus-ui` runtime
+  work into `v0.1.17` through `v0.1.26`.
 
 - [ ] Docs worker lint runtime: provide a worker image or configuration where
   `bus lint` can run the configured agent runtime from docs task worktrees.
   Current `bus lint --agent codex <file>` attempts fail before content linting
   because Codex session initialization hits a read-only filesystem; `codex:local`
-  also has no local OSS provider configured. Keep this as infrastructure
-  follow-up until per-file docs lint can run without changing public docs.
+  also has no local OSS provider configured. During busdk#46.1,
+  `bus lint --agent codex --timeout 1m <file>` was run individually for each
+  changed public UI Markdown file and failed before content linting with:
+  `WARNING: proceeding, even though we could not update PATH: Read-only file
+  system (os error 30)`, `Failed to create session: Read-only file system (os
+  error 30)`, and `Fatal error: Failed to initialize session: Read-only file
+  system (os error 30)`. Keep this as infrastructure follow-up until per-file
+  docs lint can run without changing public docs.
 
 - [x] UI `v0.1.12` GX event naming docs: add a small semver patch under
   `docs/docs/ui/v0.1.12/` that replaces bare intrinsic callback examples
@@ -47,15 +64,17 @@ that were used when those entries were completed.
   `onInput`, and `onChange`. The page must state that GX has no legacy
   callback aliases and must link only to already implemented earlier patches.
   Update older public UI examples so they do not teach the removed bare names.
-- [ ] UI future state/runtime docs: add versioned pages that describe the
+- [x] UI future state/runtime docs: add versioned pages that describe the
   `bus-gx` handle-scoped render scheduling prerequisite and the `bus-ui`
   React-like Go state layer (`UseState`, `UseRef`, `UseMemo`, and only
   necessary callback memoization) as separate implementation patches.
-- [ ] UI future effects and event payload docs: add compact versioned pages for
+  Implemented by `docs/ui/v0.1.17/`.
+- [x] UI future effects and event payload docs: add compact versioned pages for
   `bus-ui` effect cleanup semantics and `bus-gx`/`bus-ui` typed event payloads
   covering form submit, form data, submitter, dataset, input/change, keyboard,
-  focus/blur, file input, drag/drop, and prevent-default behavior.
-- [ ] UI future intrinsic/resource/streaming docs: add compact versioned pages
+  focus/blur, file input, drag/drop, and prevent-default behavior. Implemented
+  by `docs/ui/v0.1.18/` and `docs/ui/v0.1.19/`.
+- [x] UI future intrinsic/resource/streaming docs: add compact versioned pages
   for the expanded safe intrinsic table, Go/WASM-first resource and session
   adapters, multipart upload, redirects, provider errors, fetch streaming
   browser adapters, abort signals, terminal UI integration, and portal host
@@ -63,7 +82,10 @@ that were used when those entries were completed.
   reusable GX framework/runtime packages inside it: `bus-ui` may host separate
   higher-level libraries such as terminal UI, while the minimal framework
   should only own framework/runtime integration. Keep JavaScript documented
-  only as a narrow browser API boundary.
+  only as a narrow browser API boundary. Implemented by `docs/ui/v0.1.20/`
+  through `docs/ui/v0.1.26/`, with `docs/ui/v0.1.14/` and
+  `docs/ui/v0.1.16/` retained as the earlier `bus-gx` safe-intrinsic and
+  browser-adapter prerequisites.
 
 - [x] UI version-only documentation IA: ensure `docs/docs/ui/` contains only
   `index.md` plus semver patch directories named `v0.X.Y/`; move every current

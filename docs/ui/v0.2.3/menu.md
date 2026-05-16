@@ -14,24 +14,23 @@ event.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `trigger` | yes | string or node | Button label/content. |
-| `items` | yes | array of `{label,value,onClick}` | `label` is non-empty string, `onClick` is a stable event name, and `value` is string/number defaulting to `onClick`. `value` and `onClick` must be unique within the menu. Activating runs the named event with `{value}`. |
+| `items` | yes | item slice | Each item has a non-empty `Label`, optional `Value`, and `OnClick` Go callback. `Value` defaults to the label when omitted and must be unique within the menu. Activating an item calls its callback with the selected item value. |
 | `selected` | no | value | Must match `items[].value`; omitted means no item is selected, and unknown selected values fail validation. |
 
 ## Boundary
 
-Menu items expose stable events.
+Menu items expose typed Go callbacks. Product modules own the command meaning,
+authorization checks, and resulting state updates.
 
 ## Example
 
-```yaml
-kind: Menu
-props:
-  trigger: More
-  items:
-    - label: Rename
-      onClick: rename
-    - label: Archive
-      onClick: archive
+```gx
+func RecordMenu(rename func(string), archive func(string)) gx.Node {
+	return <Menu trigger={"More"} items={[]ui.MenuItem{
+		{Label: "Rename", Value: "rename", OnClick: rename},
+		{Label: "Archive", Value: "archive", OnClick: archive},
+	}}></Menu>
+}
 ```
 
 <!-- busdk-docs-nav start -->
