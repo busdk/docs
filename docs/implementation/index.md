@@ -9,7 +9,12 @@ This section contains public project references that help end-users understand d
 
 [Developer module workflow](./developer-module-workflow) describes how BusDK maintainers operate development tooling in module repositories.
 
-[Go peer review guide](./go-peer-review-guide) describes human review criteria for Go source code that complement normal formatters and static analyzers.
+[Go peer review guide](./go-peer-review-guide) is a compact index for focused
+Go review topics, including
+[ownership](./go-peer-review-guide/ownership-and-architecture),
+[diagnostics](./go-peer-review-guide/errors-and-cli-diagnostics),
+[service boundaries](./go-peer-review-guide/http-and-service-boundaries), and
+[LLM finding patterns](./go-peer-review-guide/llm-finding-patterns).
 
 [Bus project cost summary](./cost-summary), [BusDK source package pricing](./module-pricing), and [FSL modules](./fsl-modules) provide project-cost and source-access context.
 

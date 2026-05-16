@@ -16,6 +16,49 @@
       url: /implementation/cost-summary
     - label: Go peer review guide
       url: /implementation/go-peer-review-guide
+      children:
+        - label: Review order
+          url: /implementation/go-peer-review-guide/review-order
+        - label: Ownership and architecture
+          url: /implementation/go-peer-review-guide/ownership-and-architecture
+        - label: API and type design
+          url: /implementation/go-peer-review-guide/api-and-type-design
+        - label: Source transforms and evaluators
+          url: /implementation/go-peer-review-guide/source-transforms-and-evaluators
+        - label: Data mapping
+          url: /implementation/go-peer-review-guide/data-mapping
+        - label: Control flow and mutation
+          url: /implementation/go-peer-review-guide/control-flow-and-mutation
+        - label: Destructive and batch operations
+          url: /implementation/go-peer-review-guide/destructive-and-batch-operations
+        - label: Errors and CLI diagnostics
+          url: /implementation/go-peer-review-guide/errors-and-cli-diagnostics
+        - label: Context, resources, and concurrency
+          url: /implementation/go-peer-review-guide/context-resources-and-concurrency
+        - label: Determinism and side effects
+          url: /implementation/go-peer-review-guide/determinism-and-side-effects
+        - label: Workflows and backends
+          url: /implementation/go-peer-review-guide/workflows-and-backends
+        - label: HTTP and service boundaries
+          url: /implementation/go-peer-review-guide/http-and-service-boundaries
+        - label: Browser and UI boundaries
+          url: /implementation/go-peer-review-guide/browser-and-ui-boundaries
+        - label: Validation and domain safety
+          url: /implementation/go-peer-review-guide/validation-and-domain-safety
+        - label: Authentication and credentials
+          url: /implementation/go-peer-review-guide/authentication-and-credentials
+        - label: External runners
+          url: /implementation/go-peer-review-guide/external-runners
+        - label: Performance review
+          url: /implementation/go-peer-review-guide/performance-review
+        - label: Tests and evidence
+          url: /implementation/go-peer-review-guide/tests-and-evidence
+        - label: Documentation and traceability
+          url: /implementation/go-peer-review-guide/documentation-and-traceability
+        - label: LLM finding patterns
+          url: /implementation/go-peer-review-guide/llm-finding-patterns
+        - label: Compact checklist
+          url: /implementation/go-peer-review-guide/compact-checklist
 
 - title: Workflows
   links:

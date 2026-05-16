@@ -1,5 +1,20 @@
 # Docs Refactor Plan
 
+Current unchecked items use paths relative to the `docs` module root unless an
+item explicitly names a superproject command such as `make -C docs quality`.
+Older checked entries may preserve the superproject-relative paths and commands
+that were used when those entries were completed.
+
+- [x] Split public Go peer review guide for busdk#44.1: refactor
+  `docs/implementation/go-peer-review-guide.md` into a compact index and
+  focused subpages under `docs/implementation/go-peer-review-guide/`; preserve
+  current examples, bad/better snippets, LLM review finding shapes, and stable
+  internal links; update implementation navigation as needed; run per-file
+  `bus lint` on every changed Markdown file, YAML structural validation if
+  `docs/_data/nav.yml` changes, `make quality`, and `git diff --check`. The
+  host-side supervisor pass completed the per-file `bus lint` verification
+  after the worker runtime blocker was recorded separately below.
+
 - [ ] UI `v0.2.x` through `v0.9.x` roadmap rescope for busdk#42.1:
   review the future public UI roadmap after the GX `v0.1.x` foundation,
   reorder common reusable `bus-ui` libraries before assistant, terminal,
