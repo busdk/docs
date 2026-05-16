@@ -22,11 +22,12 @@ semantics when `busy` is true.
 
 ## Example
 
-```yaml
-kind: LoadingState
-props:
-  message: Loading notes
-  busy: true
+```gx
+package notesui
+
+var loadingNotes = (
+  <LoadingState message="Loading notes" busy={true}></LoadingState>
+)
 ```
 
 <!-- busdk-docs-nav start -->

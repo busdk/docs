@@ -19,16 +19,12 @@ Rows require stable ids when they emit events. Row links use same-origin paths,
 host-resolved resource URLs, or allowlisted `https:` URLs. Invalid links fail
 validation before render.
 
-```yaml
-kind: DataTable
-props:
-  columns:
-    - key: title
-      label: Title
-    - key: status
-      label: Status
-  rows:
-    bind: notes
+```gx
+package notesui
+
+var notesTable = (
+  <DataTable rows={notes} columns={noteColumns}></DataTable>
+)
 ```
 
 ## Consequence

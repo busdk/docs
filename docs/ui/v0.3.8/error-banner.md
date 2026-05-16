@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for ErrorBanner.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `message` | yes | string | Visible error. |
-| `dismiss` | no | event name | Optional event emitted by the close control. The parent clears the error state after the handler succeeds; omitted keeps the banner visible until parent state changes. |
+| `dismiss` | no | callback | Optional callback invoked by the close control. The parent clears the error state after the handler succeeds; omitted keeps the banner visible until parent state changes. |
 
 ## Boundary
 
@@ -20,15 +20,15 @@ Error text is escaped.
 
 ## Example
 
-```yaml
-events:
-  dismiss-error:
-    handler: clearCurrentError
-body:
-  kind: ErrorBanner
-  props:
-    message: Upload failed
-    dismiss: dismiss-error
+```gx
+package notesui
+
+var uploadError = (
+  <ErrorBanner
+    message="Upload failed"
+    dismiss={clearCurrentError}
+  ></ErrorBanner>
+)
 ```
 
 ## Runtime Terms

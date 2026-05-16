@@ -22,12 +22,16 @@ All text is escaped.
 
 ## Example
 
-```yaml
-kind: SummaryItem
-props:
-  title: Evidence note
-  meta: bus-ui
-  detail: Needs review
+```gx
+package notesui
+
+var noteSummary = (
+  <SummaryItem
+    title="Evidence note"
+    meta="bus-ui"
+    detail="Needs review"
+  ></SummaryItem>
+)
 ```
 
 ## Runtime Terms

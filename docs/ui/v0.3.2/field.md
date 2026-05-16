@@ -25,14 +25,14 @@ neither `id` nor `name` fails validation because the label would be inaccessible
 
 ## Example
 
-```yaml
-kind: Field
-props:
-  label: Search
-children:
-  - kind: TextInput
-    props:
-      name: q
+```gx
+package notesui
+
+var searchField = (
+  <Field label="Search">
+    <TextInput name="q"></TextInput>
+  </Field>
+)
 ```
 
 <!-- busdk-docs-nav start -->

@@ -13,7 +13,7 @@ description: Dedicated BusDK UI reference for DataTable.
 | --- | --- | --- | --- |
 | `columns` | yes | array of `{key,label,component}` | `key` and `label` required; each cell reads `row[key]`. A custom `component` receives `{value,row,column}`. |
 | `rows` | yes | array or Go value | Projected view-model records. Rows need stable `id` only when row events are present. |
-| `rowEvents` | no | event item array | Same item shape as [`EventBar`](../v0.2.2/event-bar): non-empty `label` plus exactly one of `onClick` or `href`. Click items run the named event; source identity identifies the row and event item, and rows need stable `id`. Link-only items may omit row `id`. Row links use Go expression such as `href.bind: row.detailURL` or template form `/notes/{row.id}`; row `id: n1` resolves to `/notes/n1`. |
+| `rowEvents` | no | event item array | Same item shape as [`EventBar`](../v0.2.2/event-bar): non-empty `label` plus exactly one of `onClick` or `href`. Click items run the callback; source identity identifies the row and event item, and rows need stable `id`. Link-only items may omit row `id`. Row links use Go expressions or template forms such as `/notes/{row.id}`; row `id: n1` resolves to `/notes/n1`. |
 | `empty` | no | slot node or string | Rendered when `rows` is empty; default is no rows message. |
 
 ## Boundary
@@ -24,26 +24,29 @@ and permission details stay outside the table.
 
 ## Example
 
-```yaml
-data:
-  notes:
-    - id: note-1
-      title: Evidence note
-      status: review
-view:
-  kind: DataTable
-  props:
-    rows:
-      bind: notes
-    columns:
-      - key: title
-        label: Note
-      - key: status
-        label: Status
-        component: StatusPill
-    rowEvents:
-      - label: Open
-        onClick: open-note
+```gx
+package notesui
+
+var notes = []NoteRow{
+  {ID: "note-1", Title: "Evidence note", Status: "review"},
+}
+
+var noteColumns = []DataColumn{
+  {Key: "title", Label: "Note"},
+  {Key: "status", Label: "Status", Component: StatusPill},
+}
+
+var noteRowEvents = []EventItem{
+  {Label: "Open", OnClick: openNote},
+}
+
+var notesTable = (
+  <DataTable
+    rows={notes}
+    columns={noteColumns}
+    rowEvents={noteRowEvents}
+  ></DataTable>
+)
 ```
 
 ## Runtime Terms

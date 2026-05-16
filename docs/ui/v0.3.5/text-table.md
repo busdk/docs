@@ -21,15 +21,15 @@ hide extra cells, because that would make table meaning ambiguous.
 
 ## Example
 
-```yaml
-kind: TextTable
-props:
-  headers:
-    - Module
-    - Status
-  rows:
-    - - bus-ui
-      - review
+```gx
+package notesui
+
+var moduleStatus = (
+  <TextTable
+    headers={[]string{"Module", "Status"}}
+    rows={[][]string{{"bus-ui", "review"}}}
+  ></TextTable>
+)
 ```
 
 <!-- busdk-docs-nav start -->

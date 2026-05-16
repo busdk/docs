@@ -20,12 +20,16 @@ models must supply the intended order.
 
 ## Example
 
-```yaml
-kind: Timeline
-props:
-  items:
-    - status: success
-      body: Tests passed
+```gx
+package notesui
+
+var taskTimeline = []TimelineItem{
+  {Status: "success", Body: "Tests passed"},
+}
+
+var taskHistory = (
+  <Timeline items={taskTimeline}></Timeline>
+)
 ```
 
 <!-- busdk-docs-nav start -->

@@ -28,11 +28,12 @@ color alone to communicate the value; the label must remain meaningful.
 
 ## Example
 
-```yaml
-kind: StatusPill
-props:
-  label: Review
-  status: warning
+```gx
+package notesui
+
+var reviewStatus = (
+  <StatusPill label="Review" status="warning"></StatusPill>
+)
 ```
 
 <!-- busdk-docs-nav start -->

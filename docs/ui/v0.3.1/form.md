@@ -18,7 +18,7 @@ component.
 | --- | --- | --- | --- |
 | `id` | recommended for events | string | Stable source id included in submit events. If omitted, the renderer uses the component tree path as the source. |
 | `method` | yes | GET or POST | Native method. |
-| `onSubmit` | yes | event name | Submit event. The form controller emits it after a submitter click or enter-submit passes native form rules. The runtime event chooses a handler, resource, navigation target, or effect. Unresolved event names fail validation. |
+| `onSubmit` | yes | `func()` or `func(gx.SubmitEvent)` | Submit callback. The form controller calls it after a submitter click or enter-submit passes native form rules. `gx.SubmitEvent` carries form id, submitter id/name/value, dataset values, and explicit prevent-default state from [typed event payloads](../v0.1.15/typed-event-payloads). |
 | `body` | yes | node list | Form body. |
 
 ## Boundary
@@ -30,28 +30,27 @@ submitter; app controllers decide what model or form state to read.
 
 ## Example
 
-```yaml
-kind: Form
-props:
-  id: note-editor
-  method: POST
-  onSubmit: save-note
-body:
-  - kind: Button
-    props:
-      id: save-button
-      type: submit
-      variant: primary
-    body: Save
+```gx
+package notesui
+
+var noteForm = (
+  <Form id="note-editor" method="POST" onSubmit={saveNote}>
+    <Button id="save-button" type="submit" variant="primary">
+      Save
+    </Button>
+  </Form>
+)
 ```
 
 ## Runtime Terms
 
-`onSubmit` names a runtime event handler for this form component. The event
-source includes the form `id` when present, otherwise the renderer-generated
-tree path. Resource and navigation handlers must accept only same-origin paths
-or host-allowlisted `https:` URLs and must reject `javascript:`, `data:`, path
-traversal, and credential-bearing URLs.
+`onSubmit` has no return value. Validation failures, pending state, and
+provider errors are ordinary Go state owned by the parent component. The typed
+payload source includes the form `id` when present, otherwise the
+renderer-generated tree path. Resource and navigation helpers called by the
+callback must accept only same-origin paths or host-allowlisted `https:` URLs
+and must reject `javascript:`, `data:`, path traversal, and credential-bearing
+URLs.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

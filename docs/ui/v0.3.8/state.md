@@ -13,8 +13,8 @@ flight, `ResultPanel` after an operation completes, `StatusPill` for compact
 row/workflow state, `ErrorBanner` for recoverable page errors, and
 `ProviderError` for sanitized upstream failures. Blocked or warning conditions
 must include visible text and a [next event](../v0.1.6/callback-props) when one exists. A next
-event is the stable Go controller event name for the action that can clear or
-advance the state, such as `retry-load` or `request-access`.
+event is the Go callback for the action that can clear or advance the state,
+such as `retryLoad` or `requestAccess`.
 
 ## Boundary
 
@@ -26,10 +26,7 @@ A blocked state with an available retry action should expose the event:
 package notesui
 
 var blockedNotes = (
-  <section role="status">
-    <Text value={blockedMessage}></Text>
-    <button id="retry-notes" onClick="retry-load">Retry</button>
-  </section>
+  <ErrorBanner message={blockedMessage} onClick={retryLoad}></ErrorBanner>
 )
 ```
 
@@ -39,10 +36,7 @@ var blockedNotes = (
 package notesui
 
 var emptyNotes = (
-  <section aria-live="polite">
-    <p><Text value={emptyMessage}></Text></p>
-    <button id="create-note" onClick="create-note">Create note</button>
-  </section>
+  <EmptyState message={emptyMessage} onClick={createNote}></EmptyState>
 )
 ```
 
@@ -53,8 +47,7 @@ empty:
   message: No notes yet
 ```
 
-This renders an explicit empty state from foundation elements instead of a
-blank panel.
+This renders an explicit empty state component instead of a blank panel.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

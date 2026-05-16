@@ -12,9 +12,9 @@ description: Dedicated BusDK UI reference for FilterToolbar.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `id` | recommended for events | string | Stable source id included in submit and reset events. If omitted, the renderer uses the component tree path as the source. |
-| `onSubmit` | yes | event name | Runs when the toolbar form is submitted. The event identifies the toolbar source; the app controller decides what filter state to read. |
+| `onSubmit` | yes | callback | Runs when the toolbar form is submitted. The event identifies the toolbar source; the app controller decides what filter state to read. |
 | `body` | yes | Field nodes | Contains `Field` nodes and form controls. Named child controls may update controller-owned filter state, but their values are not copied into the event. |
-| `reset` | no | event name | Omitted hides reset. When present, emits the reset event; the handler should clear filter state, and the UI may also clear local draft inputs after success. |
+| `reset` | no | callback | Omitted hides reset. When present, the handler should clear filter state, and the UI may also clear local draft inputs after success. |
 
 ## Boundary
 
@@ -22,18 +22,16 @@ Toolbar wraps without changing field names.
 
 ## Example
 
-This component-only example assumes `search` is already declared in the
-runtime `events` map or registered by Go code.
+```gx
+package notesui
 
-```yaml
-kind: FilterToolbar
-props:
-  onSubmit: search
-body:
-  - kind: Field
-    props:
-      name: query
-      label: Search
+var noteFilters = (
+  <FilterToolbar id="note-filters" onSubmit={searchNotes}>
+    <Field label="Search">
+      <TextInput name="query"></TextInput>
+    </Field>
+  </FilterToolbar>
+)
 ```
 
 ## Runtime Terms

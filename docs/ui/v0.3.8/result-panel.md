@@ -14,7 +14,7 @@ description: Dedicated BusDK UI reference for ResultPanel.
 | `status` | yes | success, warning, danger, neutral | Result semantic. Use `success` only when the operation completed, `warning` when it completed with follow-up risk, `danger` when it failed or needs corrective event, and `neutral` for informational results without success/failure meaning. |
 | `title` | yes | string | Result heading. |
 | `summary` | no | string | Short detail. |
-| `events` | no | array | Follow-up controls using the [`EventBar`](../v0.2.2/event-bar) item shape. Each item has public-safe `label`, `onClick` naming a runtime `events` entry or registered Go handler, and optional `variant` of `primary`, `secondary`, or `danger`. Unknown event names fail validation. Keep the list short enough for the host layout, usually no more than three events. |
+| `events` | no | array | Follow-up controls using the [`EventBar`](../v0.2.2/event-bar) item shape. Each item has public-safe `label`, `onClick` as a Go callback, and optional `variant` of `primary`, `secondary`, or `danger`. Keep the list short enough for the host layout, usually no more than three events. |
 
 ## Boundary
 
@@ -26,12 +26,16 @@ sanitized provider failures, or convert a provider failure into a public
 
 ## Example
 
-```yaml
-kind: ResultPanel
-props:
-  status: success
-  title: Draft saved
-  summary: Ready for review
+```gx
+package notesui
+
+var draftSaved = (
+  <ResultPanel
+    status="success"
+    title="Draft saved"
+    summary="Ready for review"
+  ></ResultPanel>
+)
 ```
 
 <!-- busdk-docs-nav start -->

@@ -12,7 +12,7 @@ description: Dedicated BusDK UI reference for RecordList.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `items` | yes | array or Go value | Projected items in display order. Missing required value fails validation; an empty array renders `empty` when supplied or the default empty state when omitted. |
-| `itemComponent` | yes | registered component name | Renderer for each item. The runtime invokes it with props `{item,index,count}` where `item` is the current array item, `index` is zero-based, and `count` is total item count. Unknown component names fail validation. |
+| `itemComponent` | yes | function component | Renderer for each item. The runtime invokes it with props `{item,index,count}` where `item` is the current array item, `index` is zero-based, and `count` is total item count. Incompatible component signatures fail validation. |
 | `empty` | no | slot node | Empty state shown only when `items` resolves to an empty array. |
 
 ## Boundary
@@ -22,12 +22,12 @@ the product view model owns ordering and visibility.
 
 ## Example
 
-```yaml
-kind: RecordList
-props:
-  items:
-    bind: notes
-  itemComponent: SummaryItem
+```gx
+package notesui
+
+var noteList = (
+  <RecordList items={notes} itemComponent={SummaryItem}></RecordList>
+)
 ```
 
 ## Runtime Terms
