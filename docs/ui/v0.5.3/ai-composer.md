@@ -11,30 +11,45 @@ description: Dedicated BusDK UI reference for AIComposer.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `value` | no | string or `{ bind: path }` | Draft text; omitted values render as an empty draft. Non-string resolved values fail validation. |
-| `send` | yes | event name | Must reference document `events`; identifies the composer source. The controller reads the current draft text. |
-| `interrupt` | no | event name | Identifies the composer source for stopping the active turn; omitted hides the stop control. |
+| `id` | yes | string | Stable source id used as `AIComposeEvent.SourceID` and as the controller state key for this composer. |
+| `value` | no | string | Draft text; omitted values render as an empty draft. |
+| `onInput` | no | `func(string) gx.Result` | Receives the edited draft text. Omit for read-only draft display. |
+| `onSend` | yes | `func(AIComposeEvent) gx.Result` | Identifies the composer source. The controller reads the current draft text. |
+| `onInterrupt` | no | `func(AIComposeEvent) gx.Result` | Identifies the composer source for stopping the active turn; omitted hides the stop control. |
 | `disabled` | no | boolean | Default `false`; disables input and send. |
 
 ## Boundary
 
-Send and interrupt events are names in the runtime `events` map. The component
-does not call a model directly or send draft text in the event; the registered
-controller reads current composer state and owns provider selection,
-persistence, and error handling.
+Send and interrupt callbacks do not call a model directly or send draft text in
+the event. The controller stores draft text under the component `id`; `onInput`
+updates that state, and `onSend` reads it by `SourceID`. The controller owns
+provider selection, persistence, and error handling.
 
 ## Example
 
-This component-only example assumes `send` and `interrupt` are already declared
-in the runtime `events` map or registered by Go code.
+```gx
+var composer = <AIComposer
+  id="assistant-composer"
+  value={draft.Text}
+  onInput={updateDraft}
+  onSend={sendDraft}
+  onInterrupt={interruptRun}>
+</AIComposer>
+```
 
-```yaml
-kind: AIComposer
-props:
-  value:
-    bind: draft.text
-  send: send
-  interrupt: interrupt
+```go
+type AIComposeEvent struct {
+	SourceID string
+}
+
+func updateDraft(value string) gx.Result {
+	drafts.Set("assistant-composer", value)
+	return gx.Noop()
+}
+
+func sendDraft(event AIComposeEvent) gx.Result {
+	return ai.Send(drafts.Get(event.SourceID))
+}
 ```
 
 ## Runtime Terms

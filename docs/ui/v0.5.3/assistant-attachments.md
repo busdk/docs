@@ -23,13 +23,17 @@ hide matching remove, open, or inspect controls.
 
 Attachment events emit source identity plus item id:
 
-```yaml
-event: remove-attachment
-source:
-  id: attachments
-  path: /AIPanel[0]/AIAttachmentList[0]
-item:
-  id: attachment-123
+```go
+emitted := map[string]any{
+	"event": "remove-attachment",
+	"source": map[string]string{
+		"id":   "attachments",
+		"path": "/AIPanel[0]/AIAttachmentList[0]",
+	},
+	"item": map[string]string{
+		"id": "attachment-123",
+	},
+}
 ```
 
 Attachment approval, file access, upload policy, and provider transfer stay

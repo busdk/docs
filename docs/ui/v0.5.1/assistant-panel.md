@@ -10,51 +10,63 @@ description: BusDK UI library assistant panel composition contract.
 
 ## Contract
 
-[`AIPanel`](./ai-panel) is the combined assistant surface. It
-receives active thread, thread list, messages, model state, and event names for
-assistant actions. Omitted optional lists default empty. Omitted event names
-hide matching interactive controls.
+[`AIPanel`](./ai-panel) is the combined assistant surface. It receives active
+thread, thread list, messages, model state, and callback props for assistant
+actions. Omitted optional lists default empty. Omitted callbacks hide matching
+interactive controls.
 
 | Prop | Required | Behavior |
 | --- | --- | --- |
 | `activeThread` | no | Selected thread id; omitted renders no active thread selection. |
-| `threads` | no | Array of thread summaries; newest or controller-sorted order is preserved; defaults empty and renders the empty thread state. |
-| `messages` | no | Array of assistant messages; oldest-to-newest order is preserved; defaults empty and renders the empty transcript state. |
+| `threads` | no | `[]AIThreadSummary`; newest or controller-sorted order is preserved; defaults empty and renders the empty thread state. |
+| `messages` | no | `[]AIMessage`; oldest-to-newest order is preserved; defaults empty and renders the empty transcript state. |
 | `model` | no | Selected model id or label supplied by the controller. |
-| `send` | no | Runtime event name for submitting the draft; omitted hides send. |
-| `interrupt` | no | Runtime event name for stopping active work; omitted hides interrupt. |
+| `onSend` | no | `func(AISendEvent) gx.Result`; omitted hides send. |
+| `onInterrupt` | no | `func(AIInterruptEvent) gx.Result`; omitted hides interrupt. |
 
-The `send` event emits source identity only:
+The prop structures are:
 
-```yaml
-event: send-message
-source:
-  id: assistant-panel
-  path: /AssistantShell[0]/AIPanel[0]
+```go
+type AIThreadSummary struct {
+	ID      string
+	Title   string
+	Working bool
+}
+
+type AIMessage struct {
+	Role string
+	Text string
+	HTML string
+	Trusted string
+}
 ```
 
-The `interrupt` event uses the same source shape with its configured event
-name. The controller reads current draft text, active thread id, selected model,
-and attachment ids from owned view state at handling time.
+`ID` and `Title` are required for each thread. `Role` is `user`, `assistant`, or
+`system`; each message has exactly one of `Text` or sanitized `HTML`. `Trusted`
+must be `ai-markdown` when `HTML` is set.
+
+`AISendEvent` and `AIInterruptEvent` carry `ThreadID string` only. The
+controller reads current draft text, selected model, and attachment ids from
+owned view state at handling time.
 
 `AIPanel` should be used inside [`AssistantShell`](../v0.5.1/assistant-shell)
 when the product screen pairs business content with assistant work.
 
 ## Example
 
-```html
-<AssistantShell>
+```gx
+var panel = <AssistantShell>
   <Panel slot="business" title="Work item">
     <Text value={workSummary}></Text>
   </Panel>
   <AIPanel
     slot="assistant"
-    active-thread={activeThread}
+    activeThread={activeThread}
     model={model}
     threads={threads}
     messages={messages}
-    send="send-message"
-    interrupt="interrupt-run">
+    onSend={sendMessage}
+    onInterrupt={interruptRun}>
   </AIPanel>
 </AssistantShell>
 ```

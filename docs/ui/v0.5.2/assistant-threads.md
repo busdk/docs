@@ -11,25 +11,27 @@ description: BusDK UI library assistant thread list contract.
 ## Contract
 
 [`AIThreadList`](./ai-thread-list) renders assistant threads with
-stable `id` and `title` fields. `working` defaults false. Selection emits the
-configured event with source identity for the selected row.
+stable `ID` and `Title` fields. `Working` defaults false. Selection calls the
+configured `onSelect` callback with the selected `ThreadID`.
 
 | Thread field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `id` | yes | string | Stable controller-owned thread id. |
-| `title` | yes | string | Escaped display title. |
-| `working` | no | boolean | Item field, not a component prop. Defaults false; true marks that row as busy and exposes the busy state to assistive technology. |
+| `ID` | yes | string | Stable controller-owned thread id. |
+| `Title` | yes | string | Escaped display title. |
+| `Working` | no | bool | Item field, not a component prop. Defaults false; true marks that row as busy and exposes the busy state to assistive technology. |
 
-The selection event name comes from the component `select` prop and must exist
-in the runtime `events` map or Go event router. The emitted event shape is:
+The `onSelect` prop is required when rows are selectable. Omit it only for a
+read-only thread list; rows then render as inert list items. The callback shape
+is:
 
-```yaml
-event: select-thread
-source:
-  id: thread-list
-  path: /AIPanel[0]/AIThreadList[0]
-item:
-  id: thread-123
+```go
+func selectThread(event AIThreadEvent) gx.Result {
+	return openThread(event.ThreadID)
+}
+
+type AIThreadEvent struct {
+	ThreadID string
+}
 ```
 
 Thread ownership, branch/worktree details, and provider run state stay in the

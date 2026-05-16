@@ -24,11 +24,8 @@ default.
 
 ## Example
 
-```yaml
-kind: AIMessage
-props:
-  role: assistant
-  text: Tests passed
+```gx
+var message = <AIMessage role="assistant" text="Tests passed"></AIMessage>
 ```
 
 <!-- busdk-docs-nav start -->

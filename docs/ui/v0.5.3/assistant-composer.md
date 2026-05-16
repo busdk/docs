@@ -26,15 +26,22 @@ Send and interrupt events emit source identity only. No draft text, model id,
 attachments, provider request, or command payload is included. The controller
 reads draft state from its model after receiving the event:
 
-```yaml
-event: send-message
-source:
-  id: assistant-composer
-  path: /AIPanel[0]/AIComposer[0]
+```go
+emitted := map[string]any{
+	"event": "send-message",
+	"source": map[string]string{
+		"id":   "assistant-composer",
+		"path": "/AIPanel[0]/AIComposer[0]",
+	},
+}
 ```
 
-```html
-<AIComposer draft={draft} send="send-message" interrupt="interrupt-run"></AIComposer>
+```gx
+var composer = <AIComposer
+  draft={draft}
+  send="send-message"
+  interrupt="interrupt-run">
+</AIComposer>
 ```
 
 The composer emits intent and source identity. Prompt validation, provider

@@ -13,27 +13,29 @@ description: Dedicated BusDK UI reference for AssistantShell.
 | --- | --- | --- | --- |
 | `slots.business` | yes | slot node | Primary workflow. |
 | `slots.assistant` | yes | slot node | Assistant pane. |
-| `props.width` | no | CSS length | Default `24rem`; accepts `rem`, `px`, or `%`. The built-in bounds are `18rem` to `40rem` unless the host runtime config overrides `assistantMinWidth` and `assistantMaxWidth` with the same units. |
+| `width` | no | CSS length | Default `24rem`; accepts `rem`, `px`, or `%`. The built-in bounds are `18rem` to `40rem` unless [runtime config](../v0.4.2/runtime-config) sets `assistantMinWidth` and `assistantMaxWidth` with the same units. |
+| `collapsed` | no | bool | Default false. When true, the assistant pane is hidden and business content remains mounted. |
+| `onToggle` | no | `func(AssistantToggleEvent) gx.Result` | Enables the shell toggle control. Omitted means the host may still collapse the pane, but the shell renders no local toggle button. |
 | `slots.header` | no | slot node | Optional shell header. |
 
 ## Boundary
 
-Toggling the assistant preserves business content.
+Toggling the assistant preserves business content. `AssistantToggleEvent`
+contains `Collapsed bool` with the next requested state; the parent controller
+owns whether that state is accepted and passed back through `collapsed`.
 
 ## Example
 
-```yaml
-kind: AssistantShell
-slots:
-  business:
-    kind: Panel
-    props:
-      title: Workspace
-  assistant:
-    kind: AIPanel
-    props:
-      threads:
-        bind: ai.threads
+```gx
+var shell = <AssistantShell collapsed={assistantCollapsed} onToggle={toggleAssistant}>
+  <Panel slot="business" title="Workspace"></Panel>
+  <AIPanel
+    slot="assistant"
+    activeThread={ai.ActiveThread}
+    threads={ai.Threads}
+    messages={ai.Messages}>
+  </AIPanel>
+</AssistantShell>
 ```
 
 ## Runtime Terms

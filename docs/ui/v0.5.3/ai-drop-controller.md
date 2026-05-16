@@ -11,10 +11,13 @@ description: Dedicated BusDK UI reference for AIDropController.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `drop` | yes | event name | Handles an accepted drop. The source id identifies this drop controller; the controller reads accepted items from component-owned drop state. Each item has `name`, `type`, `size`, and exactly one of `fileHandle` or `uploadToken`. |
-| `activeThread` | yes | thread id | Attachment target. |
+| `id` | yes | string | Stable source id for drop state. |
+| `onDrop` | yes | `func(AIDropEvent) gx.Result` | Handles an accepted drop. `SourceID` identifies this drop controller, and `Items` contains accepted items. Each item has `Name`, `Type`, `Size`, and exactly one of `FileHandle` or `UploadToken`. |
+| `activeThread` | yes | string | Controller-owned thread id. Empty string disables dropping and shows no drop target because there is no attachment target. |
 | `acceptedTypes` | no | array of MIME types or extensions | Default accepts any type allowed by product validation; examples include `text/plain` and `.md`. |
-| `onError` | no | event name or log channel | Event names use the runtime `events` map and identify this drop controller source. Stable reason codes are `type-rejected`, `too-large`, `too-many`, `read-failed`, and `policy-rejected`. Size/count checks come from product validation settings `drop.maxBytes` and `drop.maxItems`; the component has no standalone default limits. Log channels use `log:<channel>` and send diagnostics only; omitted renders the default visible error. |
+| `maxBytes` | no | int64 | Per-item size limit. Omitted means the product allows no browser drop until a parent supplies a policy. |
+| `maxItems` | no | int | Per-drop count limit. Omitted means the product allows no browser drop until a parent supplies a policy. |
+| `onError` | no | `func(AIDropErrorEvent) gx.Result` | Handles rejected drops. Stable reason codes are `type-rejected`, `too-large`, `too-many`, `read-failed`, and `policy-rejected`. Omitted renders the default visible error. |
 
 ## Boundary
 
@@ -23,17 +26,37 @@ diagnostics and does not replace the visible error.
 
 ## Example
 
-This component-only example assumes `attach-drop` is already declared in the
-runtime `events` map or registered by Go code.
+```gx
+var dropController = <AIDropController
+  id="assistant-drop"
+  activeThread={ai.ActiveThread}
+  onDrop={attachDrop}
+  maxBytes={1048576}
+  maxItems={4}
+  acceptedTypes={[]string{"text/plain"}}>
+</AIDropController>
+```
 
-```yaml
-kind: AIDropController
-props:
-  activeThread:
-    bind: ai.activeThread
-  drop: attach-drop
-  acceptedTypes:
-    - text/plain
+```go
+type AIDropEvent struct {
+	SourceID string
+	ThreadID string
+	Items []AIDropItem
+}
+
+type AIDropErrorEvent struct {
+	SourceID string
+	Reason string
+	ItemName string
+	ItemType string
+	ItemSize int64
+	Limit int64
+	Count int
+}
+
+func attachDrop(event AIDropEvent) gx.Result {
+	return ai.Attach(event.ThreadID, event.Items)
+}
 ```
 
 ## Runtime Terms

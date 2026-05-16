@@ -22,12 +22,8 @@ remains readable without creating unsafe navigation.
 
 ## Example
 
-```yaml
-kind: AIMarkdown
-props:
-  text:
-    bind: message.text
-  links: workspace-paths
+```gx
+var rendered = <AIMarkdown text={message.Text} links="workspace-paths"></AIMarkdown>
 ```
 
 ## Runtime Terms

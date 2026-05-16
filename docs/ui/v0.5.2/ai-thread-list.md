@@ -11,25 +11,36 @@ description: Dedicated BusDK UI reference for AIThreadList.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `threads` | yes | array of `{id,title,working}` | `id` and `title` are required strings; `working` defaults false and shows active-work state. |
-| `select` | yes | event name | Runs when a thread row is selected. The source id identifies the selected thread. |
-| `archive` | no | event name | Runs when an archive control is activated. The source id identifies the archived thread; omit to hide archive. |
+| `threads` | yes | `[]AIThreadSummary` | `ID` and `Title` are required strings; `Working` defaults false and shows active-work state. |
+| `onSelect` | yes | `func(AIThreadEvent) gx.Result` | Runs when a thread row is selected. `ThreadID` identifies the selected thread. |
+| `onArchive` | no | `func(AIThreadEvent) gx.Result` | Runs when an archive control is activated. `ThreadID` identifies the archived thread; omit to hide archive. |
 
 ## Boundary
 
-Selecting or archiving identifies the activated item source. Controllers must
-resolve that source against the current thread list and reject missing or stale
+Selecting or archiving identifies the activated `ThreadID`. Controllers must
+resolve that id against the current thread list and reject missing or stale
 items.
 
 ## Example
 
-```yaml
-kind: AIThreadList
-props:
-  threads:
-    bind: ai.threads
-  select: select-thread
-  archive: archive-thread
+```gx
+var threadList = <AIThreadList
+  threads={ai.Threads}
+  onSelect={selectThread}
+  onArchive={archiveThread}>
+</AIThreadList>
+```
+
+```go
+type AIThreadEvent struct {
+	ThreadID string
+}
+
+type AIThreadSummary struct {
+	ID      string
+	Title   string
+	Working bool
+}
 ```
 
 ## Runtime Terms

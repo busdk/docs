@@ -13,7 +13,7 @@ description: BusDK UI library assistant work ownership and drop intake contract.
 [`AIThreadIsolation`](./ai-thread-isolation) renders work ownership,
 branch, worktree, conflict, and active-work state supplied by the controller.
 [`AIDropController`](../v0.5.3/ai-drop-controller) renders assistant drop
-intake state and emits accepted drop identity.
+intake state and calls a drop callback with accepted drop identity.
 
 `AIThreadIsolation` receives these controller-owned fields:
 
@@ -33,22 +33,19 @@ object.
 | Prop | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `id` | yes | string | Stable source id used in emitted events. |
-| `accept` | no | string array | Accepted public object kinds such as `file`, `url`, or `evidence`; omitted accepts the host default set. |
+| `accept` | no | string array | Accepted public object kinds. Valid values are `file`, `url`, `evidence`, `image`, and `text`; omitted accepts the host default set `file`, `url`, and `text`. |
 | `disabled` | no | boolean | Defaults false; true rejects new drops visually and does not emit events. |
-| `drop` | no | event name string | Runtime event emitted after a drop is accepted; omitted renders drop state without emitting. |
+| `onDrop` | no | `func(AIDropEvent) gx.Result` | Callback after a drop is accepted; omitted renders drop state without callback behavior. |
 
-The emitted `drop` object has string `id`, enum string `kind`, and string
-`name`. It emits the configured drop event with this identity:
+The callback receives accepted drop identity:
 
-```yaml
-event: attach-drop
-source:
-  id: assistant-drop
-  path: /AIPanel[0]/AIDropController[0]
-drop:
-  id: drop-123
-  kind: file
-  name: notes.txt
+```go
+type AIDropEvent struct {
+	SourceID string
+	DropID string
+	Kind string
+	Name string
+}
 ```
 
 Conflict states other than `none` render blocking: submit/apply controls inside

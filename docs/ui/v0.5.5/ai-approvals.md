@@ -11,27 +11,43 @@ description: Dedicated BusDK UI reference for AIApprovals.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `items` | yes | array of `{requestID,title,summary}` | `requestID` and `title` are required strings; `requestID` values must be unique, and duplicates fail validation. `summary` is optional display text. |
-| `approve` | yes | event name | Runs when an approve control is activated. Source id format is `<component-id>/<requestID>/approve`; decision value is `approve`. |
-| `reject` | yes | event name | Runs when a reject control is activated. Source id format is `<component-id>/<requestID>/reject`; decision value is `reject`. |
+| `id` | yes | string | Stable component id used in diagnostics and control ids. |
+| `items` | yes | `[]AIApprovalItem` | `RequestID` and `Title` are required strings; `RequestID` values must be unique, and duplicates fail validation. `Summary` is optional display text. |
+| `onApprove` | yes | `func(AIApprovalEvent) gx.Result` | Runs when an approve control is activated. Event `Decision` is `"approve"`. |
+| `onReject` | yes | `func(AIApprovalEvent) gx.Result` | Runs when a reject control is activated. Event `Decision` is `"reject"`. |
 
 ## Boundary
 
-If the provider/controller rejects the decision before it is applied, render
-`ProviderError` with the provider-safe error. If the decision is accepted but
-produces a normal workflow result, render `ResultPanel` with that result state.
-The event itself does not carry the request payload; the controller resolves
-the approval request from the activated source id.
+If product callback code rejects the decision before it is applied, the parent
+view should render [`ProviderError`](../v0.4.5/provider-error-component) with the
+provider-safe error. If the decision is accepted and produces normal workflow
+state, the parent view renders its own result component. The callback event does
+not carry the request payload; the controller resolves the approval request from
+`RequestID`.
 
 ## Example
 
-```yaml
-kind: AIApprovals
-props:
-  items:
-    bind: ai.approvals
-  approve: approve
-  reject: reject
+```gx
+var approvals = <AIApprovals
+  id="approval-list"
+  items={ai.Approvals}
+  onApprove={approveWork}
+  onReject={rejectWork}>
+</AIApprovals>
+```
+
+```go
+type AIApprovalItem struct {
+	RequestID string
+	Title string
+	Summary string
+}
+
+type AIApprovalEvent struct {
+	SourceID string
+	RequestID string
+	Decision string
+}
 ```
 
 ## Runtime Terms

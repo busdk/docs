@@ -24,13 +24,17 @@ Selection emits source identity and selected item id. The `event` value is the
 component `select` prop value; `select-model` is only the example event name
 below.
 
-```yaml
-event: select-model
-source:
-  id: model-picker
-  path: /AIPanel[0]/AIModelSelect[0]
-item:
-  id: gpt-example
+```go
+emitted := map[string]any{
+	"event": "select-model",
+	"source": map[string]string{
+		"id":   "model-picker",
+		"path": "/AIPanel[0]/AIModelSelect[0]",
+	},
+	"item": map[string]string{
+		"id": "gpt-example",
+	},
+}
 ```
 
 Provider availability, model policy, account entitlements, and fallback

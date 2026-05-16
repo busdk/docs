@@ -11,10 +11,10 @@ description: Dedicated BusDK UI reference for AIModelSelect.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `id` | recommended | string | Stable selector id included in the emitted source. If omitted, the renderer-generated tree path identifies the selector. |
+| `id` | recommended | string | Stable selector id included in `AIModelChangeEvent.SourceID`. If omitted, the renderer-generated tree path identifies the selector. |
 | `current` | yes | string | Current model id. Must equal an `options[].id` or render with `fallback`. |
-| `options` | yes | array of `{id,label,disabled,reason}` | `id` is required; `label` defaults to `id`; disabled choices render but cannot be selected. |
-| `onChange` | yes | event name | Runs when model selection changes. The emitted event includes `source.id` or `source.path` plus `value.modelID` containing the selected option id; the controller validates and stores the model choice. |
+| `options` | yes | `[]AIModelOption` | `ID` is required; `Label` defaults to `ID`; disabled choices render but cannot be selected, and `Reason` is required when `Disabled` is true. |
+| `onChange` | yes | `func(AIModelChangeEvent) gx.Result` | Runs when model selection changes. The event includes `SourceID` and `ModelID`; `AIModelSelect` stores nothing itself, so the caller must validate and persist the selected `ModelID`. |
 | `fallback` | no | string | Display label for unavailable `current`; default is `current`. |
 
 ## Boundary
@@ -25,20 +25,35 @@ short `reason` string for visible guidance.
 
 ## Example
 
-This component-only example assumes `set-model` is already declared in the
-runtime `events` map or registered by Go code.
+```gx
+var modelSelect = <AIModelSelect
+  id="model-selector"
+  current="gpt-5.4"
+  options={modelOptions}
+  onChange={setModel}>
+</AIModelSelect>
+```
 
-```yaml
-kind: AIModelSelect
-props:
-  id: model-selector
-  current: gpt-5.4
-  options:
-    - id: gpt-5.4
-      label: GPT-5.4
-    - id: gpt-5.4-mini
-      label: GPT-5.4 Mini
-  onChange: set-model
+```go
+var modelOptions = []AIModelOption{
+	{ID: "gpt-5.4", Label: "GPT-5.4"},
+}
+
+type AIModelChangeEvent struct {
+	SourceID string
+	ModelID string
+}
+
+type AIModelOption struct {
+	ID string
+	Label string
+	Disabled bool
+	Reason string
+}
+
+func setModel(event AIModelChangeEvent) gx.Result {
+	return ai.SetModel(event.ModelID)
+}
 ```
 
 ## Runtime Terms

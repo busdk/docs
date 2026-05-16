@@ -11,8 +11,8 @@ description: BusDK UI library assistant approval and review state contract.
 ## Contract
 
 [`AIApprovals`](./ai-approvals) renders pending approval items.
-Approval items require stable request ids and public titles. Decision events
-identify the decision source and disable repeated decisions until state refresh.
+Approval items require stable request ids and public titles. Decision callbacks
+identify the request id and disable repeated decisions until state refresh.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
@@ -20,19 +20,17 @@ identify the decision source and disable repeated decisions until state refresh.
 | `title` | yes | Public-safe summary of the requested action. |
 | `summary` | no | Public-safe detail text. |
 | `state` | no | `pending`, `approved`, `rejected`, or `expired`; defaults to `pending`. |
-| `approve` | no | Runtime event name for approving a pending item; omitted hides approve. |
-| `reject` | no | Runtime event name for rejecting a pending item; omitted hides reject. |
+| `onApprove` | no | `func(AIApprovalEvent) gx.Result` for approving a pending item; omitted hides approve. |
+| `onReject` | no | `func(AIApprovalEvent) gx.Result` for rejecting a pending item; omitted hides reject. |
 
-Decision events emit source identity plus request id:
+Decision callbacks receive source identity plus request id:
 
-```yaml
-event: approve-request
-source:
-  id: approvals
-  path: /AIPanel[0]/AIApprovals[0]
-item:
-  requestID: req-123
-decision: approve
+```go
+type AIApprovalEvent struct {
+	SourceID string
+	RequestID string
+	Decision string
+}
 ```
 
 [browser API boundaries](../v0.1.9/browser-api-boundaries) cover browser close protection when the product

@@ -17,16 +17,19 @@ description: Dedicated BusDK UI reference for AIReviewStatus.
 
 ## Boundary
 
-Actual apply/approval uses `AIApprovals` or provider events.
+Actual apply/approval uses [`AIApprovals`](./ai-approvals) with `onApprove` and
+`onReject` callback props. Provider callbacks return the
+[runtime result](../v0.4.1/runtime-contract) that the parent view projects into
+review state or a safe provider error.
 
 ## Example
 
-```yaml
-kind: AIReviewStatus
-props:
-  files:
-    bind: review.files
-  status: pending
+```gx
+var reviewFiles = []AIReviewFile{
+  {Path: "notes.gx", Status: "modified", Summary: "Updates composer state."},
+}
+
+var review = <AIReviewStatus files={reviewFiles} status="pending"></AIReviewStatus>
 ```
 
 ## Runtime Terms

@@ -22,12 +22,12 @@ Infrastructure enforces isolation; this component displays it.
 
 ## Example
 
-```yaml
-kind: AIThreadIsolation
-props:
-  owner: bus-ui
-  branch: ui-framework
-  worktree: /workspace/bus-ui
+```gx
+var isolation = <AIThreadIsolation
+  owner="bus-ui"
+  branch="ui-framework"
+  worktree="/workspace/bus-ui">
+</AIThreadIsolation>
 ```
 
 ## Runtime Terms

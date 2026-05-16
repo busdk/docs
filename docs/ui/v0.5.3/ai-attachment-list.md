@@ -11,26 +11,34 @@ description: Dedicated BusDK UI reference for AIAttachmentList.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `attachments` | yes | array of `{label,size}` | `label` is required display text; `size` is optional string or byte count rendered as the chip subtitle. |
-| `remove` | no | event name | Runs when an attachment remove control is activated. Source identity identifies the attachment chip. Omit to render read-only chips. |
-| `size` | no | small, medium | List density override; default `medium`. Item file sizes stay in `attachments[].size`. |
+| `attachments` | yes | `[]AIAttachment` | `ID` and `Label` are required; `Size` is an optional already-formatted string rendered as the chip subtitle. `ID` is stable within the current draft and is passed to removal callbacks. |
+| `onRemove` | no | `func(AIAttachmentEvent) gx.Result` | Runs when an attachment remove control is activated. `AttachmentID` identifies the chip. Omit to render read-only chips. |
+| `size` | no | small, medium | List density override; default `medium`. Item file sizes stay in `attachments[].Size`. |
 
 ## Boundary
 
-Remove events identify the activated chip source. The handler resolves the
-attachment from current draft state so stale labels are not trusted.
+Remove callbacks identify the activated chip by `AttachmentID`. The handler
+resolves the attachment from current draft state so stale labels are not trusted.
 
 ## Example
 
-This component-only example assumes `remove-attachment` is already declared in
-the runtime `events` map or registered by Go code.
+```gx
+var attachments = <AIAttachmentList
+  attachments={draft.Attachments}
+  onRemove={removeAttachment}>
+</AIAttachmentList>
+```
 
-```yaml
-kind: AIAttachmentList
-props:
-  attachments:
-    bind: draft.attachments
-  remove: remove-attachment
+```go
+type AIAttachment struct {
+	ID    string
+	Label string
+	Size  string
+}
+
+type AIAttachmentEvent struct {
+	AttachmentID string
+}
 ```
 
 ## Runtime Terms
