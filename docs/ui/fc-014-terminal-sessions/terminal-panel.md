@@ -46,4 +46,4 @@ execution stay outside the component.
 ### Sources
 
 - [TerminalSessionPanel](./terminal-session-panel)
-- [State UI concept](../fc-002-status-surfaces/state)
+- [State UI concept](../v0.3.8/state)

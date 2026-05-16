@@ -24,7 +24,7 @@ host runtime.
 
 Selecting a decision calls `OnClick` with `RequestID`, `Decision`, and
 `SourceID`. The component disables all decisions for that request immediately
-after the first click. A [runtime result](../fc-003-resources/runtime-contract) with kind
+after the first click. A [runtime result](../v0.4.1/runtime-contract) with kind
 `success` keeps decisions disabled and the parent removes the prompt on the next
 render. Result kind `provider-error` keeps the prompt visible and re-enables
 decisions only when the parent supplies a refreshed approval state with the same

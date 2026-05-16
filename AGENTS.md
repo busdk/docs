@@ -226,7 +226,8 @@ that version, and the end-user module page such as
 current implemented version clearly visible. When a feature candidate is
 finished, reviewed, implemented, and accepted, it receives the next actual
 semver patch number and is renamed from `docs/docs/ui/fc-<order>-<identifier>/`
-to `docs/docs/ui/v0.X.Y/`.
+to `docs/docs/ui/v0.X.Y/` before dependent feature-candidate work is treated as
+unblocked.
 Keep concrete API names, command behavior, file formats, validation rules, and
 examples on the first version page that implements them. Higher-level design,
 architecture, design-system, rendering, and reference pages should summarize

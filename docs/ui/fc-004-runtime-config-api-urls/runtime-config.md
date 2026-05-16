@@ -78,4 +78,4 @@ private state to templates.
 ### Sources
 
 - [RuntimeConfig](./runtime-config-component)
-- [Runtime contract](../fc-003-resources/runtime-contract)
+- [Runtime contract](../v0.4.1/runtime-contract)

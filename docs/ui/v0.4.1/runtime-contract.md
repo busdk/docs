@@ -166,5 +166,5 @@ one representative browser workflow for helpers that depend on browser APIs.
 ### Sources
 
 - [Callback props](../v0.1.6/callback-props)
-- [Resource UI concept](../fc-003-resources/resource)
+- [Resource UI concept](../v0.4.1/resource)
 - [Mounting and updates](../v0.1.7/mounting-updates)

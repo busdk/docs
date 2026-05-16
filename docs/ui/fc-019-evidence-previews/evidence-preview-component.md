@@ -38,7 +38,7 @@ var invoicePreview = (
 
 [Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
-[Resource](../fc-003-resources/resource) defines safe URL resolution and evidence
+[Resource](../v0.4.1/resource) defines safe URL resolution and evidence
 preview URL policy.
 
 <!-- busdk-docs-nav start -->

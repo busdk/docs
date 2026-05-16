@@ -24,4 +24,4 @@ description: BusDK UI library evidence component map.
 ### Sources
 
 - EvidencePreview
-- [Resource UI concept](../fc-003-resources/resource)
+- [Resource UI concept](../v0.4.1/resource)

@@ -9,7 +9,7 @@ Implemented UI framework patches use semver directories. The current cutoff is
 derived from module implementation evidence and module docs; at this point the
 implemented sequence includes the `bus-gx` foundation through `v0.1.16`, then
 the shared `bus-ui` runtime and library patches from `v0.1.17` through
-`v0.3.6`. Each listed version has its own compact index and keeps links inside
+`v0.4.1`. Each listed version has its own compact index and keeps links inside
 that version or to earlier prerequisites.
 
 - [v0.1.1 Core node foundation](v0.1.1/)
@@ -51,6 +51,9 @@ that version or to earlier prerequisites.
 - [v0.3.4 Submit state](v0.3.4/)
 - [v0.3.5 Tables](v0.3.5/)
 - [v0.3.6 Lists](v0.3.6/)
+- [v0.3.7 Timelines](v0.3.7/)
+- [v0.3.8 Status surfaces](v0.3.8/)
+- [v0.4.1 Resources](v0.4.1/)
 
 ## Feature candidates
 
@@ -65,9 +68,6 @@ receives the next actual semver patch number and is renamed from
 then added to the implemented list and sidebar. Earlier implemented pages do
 not link forward to feature candidates.
 
-- [fc-001 Timelines](fc-001-timelines/)
-- [fc-002 Status surfaces](fc-002-status-surfaces/)
-- [fc-003 Resources](fc-003-resources/)
 - [fc-004 Runtime config and API URLs](fc-004-runtime-config-api-urls/)
 - [fc-005 Sessions](fc-005-sessions/)
 - [fc-006 Credentials](fc-006-credentials/)

@@ -41,4 +41,4 @@ and controller handlers.
 ### Sources
 
 - [AIReviewStatus](./ai-review-status)
-- [State UI concept](../fc-002-status-surfaces/state)
+- [State UI concept](../v0.3.8/state)

@@ -27,7 +27,7 @@ account identifiers, customer-private data, file contents, or prompt text.
 | `code` | no | Public provider/application error code string; omitted when unavailable. |
 | `status` | no | HTTP or provider status code as string or number. |
 | `requestID` | no | Public support identifier. |
-| `retry` | no | `func() gx.Result` callback for a retry control. The callback repeats the safe product action and returns the [runtime result](../fc-003-resources/runtime-contract); success clears or refreshes the error, provider failure renders another safe error, and no-op leaves state unchanged. It does not receive raw provider payloads. |
+| `retry` | no | `func() gx.Result` callback for a retry control. The callback repeats the safe product action and returns the [runtime result](../v0.4.1/runtime-contract); success clears or refreshes the error, provider failure renders another safe error, and no-op leaves state unchanged. It does not receive raw provider payloads. |
 | `fields` | no | Map of field name to public-safe validation string. |
 
 Missing `title` or unsafe text fails validation before render.

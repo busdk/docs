@@ -51,4 +51,4 @@ Evidence URL resolution is deterministic and controller-owned.
 ### Sources
 
 - [EvidenceURLResolver](./evidence-url-resolver)
-- [Resource UI concept](../fc-003-resources/resource)
+- [Resource UI concept](../v0.4.1/resource)

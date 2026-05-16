@@ -57,7 +57,7 @@ The portal host passes `hostContext` when it mounts the module.
 
 [Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
-[`Resource`](../fc-003-resources/resource) defines safe URL resolution,
+[`Resource`](../v0.4.1/resource) defines safe URL resolution,
 external-origin allowlists, and rejected URL forms.
 
 <!-- busdk-docs-nav start -->

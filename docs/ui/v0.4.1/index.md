@@ -1,6 +1,6 @@
 ---
-title: fc-003 Resources
-description: BusDK UI fc-003 documentation index.
+title: v0.4.1 Resources
+description: BusDK UI v0.4.1 documentation index.
 ---
 
 ## Pages

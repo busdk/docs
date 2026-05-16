@@ -19,7 +19,7 @@ description: Dedicated BusDK UI reference for AIReviewStatus.
 
 Actual apply/approval uses [`AIApprovals`](./ai-approvals) with `onApprove` and
 `onReject` callback props. Provider callbacks return the
-[runtime result](../fc-003-resources/runtime-contract) that the parent view projects into
+[runtime result](../v0.4.1/runtime-contract) that the parent view projects into
 review state or a safe provider error.
 
 ## Example
@@ -36,7 +36,7 @@ var review = <AIReviewStatus files={reviewFiles} status="pending"></AIReviewStat
 
 [Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
-[Resource](../fc-003-resources/resource) defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+[Resource](../v0.4.1/resource) defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

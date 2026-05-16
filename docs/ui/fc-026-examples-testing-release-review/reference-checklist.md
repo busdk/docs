@@ -65,11 +65,11 @@ filters data, submits credentials, configures settings, or collects workflow
 decisions.
 
 Use [table components](../v0.3.5/tables), [list components](../v0.3.6/lists),
-or [timeline components](../fc-001-timelines/timelines) when the module shows rows,
+or [timeline components](../v0.3.7/timelines) when the module shows rows,
 records, notes, files, ledger entries, usage events, plans, invoices, or other
 repeatable data.
 
-Use [status surfaces](../fc-002-status-surfaces/status-surfaces) for empty, loading, working,
+Use [status surfaces](../v0.3.8/status-surfaces) for empty, loading, working,
 success, warning, blocked, and error states.
 
 Use [runtime config](../fc-004-runtime-config-api-urls/runtime-config), [API URLs](../fc-004-runtime-config-api-urls/api-urls),

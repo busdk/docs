@@ -31,7 +31,7 @@ version page where each artifact first appears.
 | Runtime diagnostics | [v0.1.8 runtime diagnostics](../v0.1.8/) |
 | Browser API boundaries | [v0.1.9 browser API boundaries](../v0.1.9/) |
 | Core test helpers | [v0.1.10 test helpers](../v0.1.10/) |
-| Host resources and runtime config | [fc-003 runtime config](../fc-003-resources/) |
+| Host resources and runtime config | [v0.4.1 resources](../v0.4.1/) |
 
 ## Artifact Split
 

@@ -595,41 +595,41 @@
               url: /ui/v0.3.6/summary-item
             - label: RecordList UI component
               url: /ui/v0.3.6/record-list
-        - label: fc-001 Timelines
-          url: /ui/fc-001-timelines/
+        - label: v0.3.7 Timelines
+          url: /ui/v0.3.7/
           children:
             - label: Library timelines
-              url: /ui/fc-001-timelines/timelines
+              url: /ui/v0.3.7/timelines
             - label: Timeline UI component
-              url: /ui/fc-001-timelines/timeline
-        - label: fc-002 Status surfaces
-          url: /ui/fc-002-status-surfaces/
+              url: /ui/v0.3.7/timeline
+        - label: v0.3.8 Status surfaces
+          url: /ui/v0.3.8/
           children:
             - label: State UI concept
-              url: /ui/fc-002-status-surfaces/state
+              url: /ui/v0.3.8/state
             - label: UI color and status
-              url: /ui/fc-002-status-surfaces/color-status
+              url: /ui/v0.3.8/color-status
             - label: Library status surfaces
-              url: /ui/fc-002-status-surfaces/status-surfaces
+              url: /ui/v0.3.8/status-surfaces
             - label: StatusPill UI component
-              url: /ui/fc-002-status-surfaces/status-pill
+              url: /ui/v0.3.8/status-pill
             - label: EmptyState UI component
-              url: /ui/fc-002-status-surfaces/empty-state
+              url: /ui/v0.3.8/empty-state
             - label: LoadingState UI component
-              url: /ui/fc-002-status-surfaces/loading-state
+              url: /ui/v0.3.8/loading-state
             - label: ErrorBanner UI component
-              url: /ui/fc-002-status-surfaces/error-banner
+              url: /ui/v0.3.8/error-banner
             - label: ResultPanel UI component
-              url: /ui/fc-002-status-surfaces/result-panel
-        - label: fc-003 Resources
-          url: /ui/fc-003-resources/
+              url: /ui/v0.3.8/result-panel
+        - label: v0.4.1 Resources
+          url: /ui/v0.4.1/
           children:
             - label: Resource UI concept
-              url: /ui/fc-003-resources/resource
+              url: /ui/v0.4.1/resource
             - label: UI runtime contract
-              url: /ui/fc-003-resources/runtime-contract
+              url: /ui/v0.4.1/runtime-contract
             - label: Resource UI runtime block
-              url: /ui/fc-003-resources/resource-component
+              url: /ui/v0.4.1/resource-component
         - label: fc-004 Runtime config and API URLs
           url: /ui/fc-004-runtime-config-api-urls/
           children:

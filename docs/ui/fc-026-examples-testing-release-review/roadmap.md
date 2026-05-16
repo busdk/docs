@@ -54,12 +54,15 @@ order, and promotion rule.
 | [v0.3.4](../v0.3.4/) | Submit state | `bus-ui` |
 | [v0.3.5](../v0.3.5/) | Tables | `bus-ui` |
 | [v0.3.6](../v0.3.6/) | Lists | `bus-ui` |
+| [v0.3.7](../v0.3.7/) | Timelines | `bus-ui` |
+| [v0.3.8](../v0.3.8/) | Status surfaces | `bus-ui` |
+| [v0.4.1](../v0.4.1/) | Resources | `bus-ui` |
 
 ## Feature candidates
 
 | Candidate | Review focus |
 | --- | --- |
-| `fc-001` through `fc-008` | Bus UI foundation and host-adjacent runtime surfaces. |
+| `fc-004` through `fc-008` | Host-adjacent runtime surfaces. |
 | `fc-009` through `fc-017` | Assistant and terminal product surfaces. |
 | `fc-018` through `fc-026` | Evidence, media, product integration, references, and release review. |
 

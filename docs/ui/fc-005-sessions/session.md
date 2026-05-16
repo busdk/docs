@@ -30,4 +30,4 @@ The session component can render user context without becoming an auth layer.
 ### Sources
 
 - [Session](./session-component)
-- [Runtime contract](../fc-003-resources/runtime-contract)
+- [Runtime contract](../v0.4.1/runtime-contract)

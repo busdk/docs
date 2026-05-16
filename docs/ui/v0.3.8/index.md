@@ -1,6 +1,6 @@
 ---
-title: fc-002 Status surfaces
-description: BusDK UI fc-002 documentation index.
+title: v0.3.8 Status surfaces
+description: BusDK UI v0.3.8 documentation index.
 ---
 
 ## Pages

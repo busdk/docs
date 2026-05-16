@@ -87,7 +87,7 @@ var evidenceDrop = (
 
 [Callback props](../v0.1.6/callback-props) documents function callback props.
 
-[Resource](../fc-003-resources/resource) defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+[Resource](../v0.4.1/resource) defines safe URL resolution, external-origin allowlists, and rejected URL forms.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

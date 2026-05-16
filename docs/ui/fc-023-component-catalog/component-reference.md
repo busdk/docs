@@ -21,10 +21,10 @@ This page is the canonical linked index for those pages.
 - [Component](../v0.1.4/component) - Reusable Bus UI invocation.
 - [Shell](../v0.2.6/shell) - Page-level slot owner.
 - [Collection](../v0.3.6/collection) - Repeated data surface.
-- [State](../fc-002-status-surfaces/state) - Visible UI status.
+- [State](../v0.3.8/state) - Visible UI status.
 - [Expression children](../v0.1.5/expression-children) - Go expression children inside markup bodies.
 - [Callback props](../v0.1.6/callback-props) - Function props passed as Go values.
-- [Resource](../fc-003-resources/resource) - External data or media boundary.
+- [Resource](../v0.4.1/resource) - External data or media boundary.
 - [Go WASM frontend runtime](../v0.1.7/lifecycle) - Go WebAssembly mount lifecycle.
 
 ## Core v0.1.1 Foundation
@@ -107,15 +107,15 @@ This page is the canonical linked index for those pages.
 
 ## Library: Timelines
 
-- [`Timeline`](../fc-001-timelines/timeline) - Ordered event history.
+- [`Timeline`](../v0.3.7/timeline) - Ordered event history.
 
 ## Library: Status Surfaces
 
-- [`StatusPill`](../fc-002-status-surfaces/status-pill) - Compact semantic status.
-- [`EmptyState`](../fc-002-status-surfaces/empty-state) - Visible absence state.
-- [`LoadingState`](../fc-002-status-surfaces/loading-state) - Visible loading state.
-- [`ResultPanel`](../fc-002-status-surfaces/result-panel) - Operation result surface.
-- [`ErrorBanner`](../fc-002-status-surfaces/error-banner) - Recoverable error alert.
+- [`StatusPill`](../v0.3.8/status-pill) - Compact semantic status.
+- [`EmptyState`](../v0.3.8/empty-state) - Visible absence state.
+- [`LoadingState`](../v0.3.8/loading-state) - Visible loading state.
+- [`ResultPanel`](../v0.3.8/result-panel) - Operation result surface.
+- [`ErrorBanner`](../v0.3.8/error-banner) - Recoverable error alert.
 
 ## Library: Runtime Config
 

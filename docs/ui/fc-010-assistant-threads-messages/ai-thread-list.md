@@ -14,8 +14,8 @@ view shows more than one assistant conversation.
 | --- | --- | --- | --- |
 | `threads` | yes | `[]AIThreadSummary` | `ID` and `Title` are required strings; `Working` defaults false and shows active-work state. |
 | `activeThread` | no | string | Marks the matching row with active state. Empty or unknown ids render no active row. |
-| `onSelect` | no | `func(AIThreadEvent) gx.Result` | Runs when a thread row is selected. Omit for a read-only list with inert rows. `ThreadID` identifies the selected thread. Success lets the caller update `activeThread`; rejection leaves selection unchanged; errors render through the [runtime result](../fc-003-resources/runtime-contract). |
-| `onArchive` | no | `func(AIThreadEvent) gx.Result` | Runs when an archive control is activated. `ThreadID` identifies the archived thread; omit to hide archive. Success lets the caller remove or mark the row; rejection leaves the list unchanged; errors render through the [runtime result](../fc-003-resources/runtime-contract). |
+| `onSelect` | no | `func(AIThreadEvent) gx.Result` | Runs when a thread row is selected. Omit for a read-only list with inert rows. `ThreadID` identifies the selected thread. Success lets the caller update `activeThread`; rejection leaves selection unchanged; errors render through the [runtime result](../v0.4.1/runtime-contract). |
+| `onArchive` | no | `func(AIThreadEvent) gx.Result` | Runs when an archive control is activated. `ThreadID` identifies the archived thread; omit to hide archive. Success lets the caller remove or mark the row; rejection leaves the list unchanged; errors render through the [runtime result](../v0.4.1/runtime-contract). |
 
 ## Boundary
 
