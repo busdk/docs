@@ -1,12 +1,16 @@
 ---
 title: UI framework
-description: BusDK UI framework patch roadmap from GX core to Bus UI libraries.
+description: BusDK UI framework implemented patches and feature candidate review order.
 ---
 
-## Versions
+## Implemented patches
 
-Follow these patch directories in order when implementing the framework. Start
-with `v0.1.1`; later patches assume the earlier patch contracts exist.
+Implemented UI framework patches use semver directories. The current cutoff is
+derived from module implementation evidence and module docs; at this point the
+implemented sequence includes the `bus-gx` foundation through `v0.1.16`, then
+the shared `bus-ui` runtime and library patches from `v0.1.17` through
+`v0.3.6`. Each listed version has its own compact index and keeps links inside
+that version or to earlier prerequisites.
 
 - [v0.1.1 Core node foundation](v0.1.1/)
 - [v0.1.2 GX source tools](v0.1.2/)
@@ -47,29 +51,54 @@ with `v0.1.1`; later patches assume the earlier patch contracts exist.
 - [v0.3.4 Submit state](v0.3.4/)
 - [v0.3.5 Tables](v0.3.5/)
 - [v0.3.6 Lists](v0.3.6/)
-- [v0.3.7 Timelines](v0.3.7/)
-- [v0.3.8 Status surfaces](v0.3.8/)
-- [v0.4.1 Resources](v0.4.1/)
-- [v0.4.2 Runtime config and API URLs](v0.4.2/)
-- [v0.4.3 Sessions](v0.4.3/)
-- [v0.4.4 Credentials](v0.4.4/)
-- [v0.4.5 Provider errors](v0.4.5/)
-- [v0.4.6 Assets and host tools](v0.4.6/)
-- [v0.5.1 Assistant workbench shell](v0.5.1/)
-- [v0.5.2 Assistant threads and messages](v0.5.2/)
-- [v0.5.3 Assistant composer and attachments](v0.5.3/)
-- [v0.5.4 Assistant model selection](v0.5.4/)
-- [v0.5.5 Assistant review controls](v0.5.5/)
-- [v0.6.1 Terminal sessions](v0.6.1/)
-- [v0.6.2 Terminal IO](v0.6.2/)
-- [v0.6.3 Terminal approvals](v0.6.3/)
-- [v0.6.4 Terminal adapter](v0.6.4/)
-- [v0.7.1 Evidence URLs and links](v0.7.1/)
-- [v0.7.2 Evidence previews](v0.7.2/)
-- [v0.7.3 Projection details](v0.7.3/)
-- [v0.8.1 File drops](v0.8.1/)
-- [v0.8.2 Image galleries](v0.8.2/)
-- [v0.9.1 Component catalog](v0.9.1/)
-- [v0.9.2 Declarative artifacts](v0.9.2/)
-- [v0.9.3 Product module integration](v0.9.3/)
-- [v0.9.4 Examples, testing, and release review](v0.9.4/)
+
+## Feature candidates
+
+Unimplemented UI work uses feature candidate directories named
+`fc-<order>-<identifier>`, such as `fc-001-runtime-state`. The numeric order is
+only the deterministic review order for public docs; it is not a promise that
+unrelated candidates must be implemented as one strict sequence.
+
+When a feature candidate is finished, reviewed, implemented, and accepted, it
+receives the next actual semver patch number and is renamed from
+`docs/ui/fc-<order>-<identifier>/` to `docs/ui/v0.X.Y/`. The promoted patch is
+then added to the implemented list and sidebar. Earlier implemented pages do
+not link forward to feature candidates.
+
+- [fc-001 Timelines](fc-001-timelines/)
+- [fc-002 Status surfaces](fc-002-status-surfaces/)
+- [fc-003 Resources](fc-003-resources/)
+- [fc-004 Runtime config and API URLs](fc-004-runtime-config-api-urls/)
+- [fc-005 Sessions](fc-005-sessions/)
+- [fc-006 Credentials](fc-006-credentials/)
+- [fc-007 Provider errors](fc-007-provider-errors/)
+- [fc-008 Assets and host tools](fc-008-assets-host-tools/)
+- [fc-009 Assistant workbench shell](fc-009-assistant-workbench-shell/)
+- [fc-010 Assistant threads and messages](fc-010-assistant-threads-messages/)
+- [fc-011 Assistant composer and attachments](fc-011-assistant-composer-attachments/)
+- [fc-012 Assistant model selection](fc-012-assistant-model-selection/)
+- [fc-013 Assistant review controls](fc-013-assistant-review-controls/)
+- [fc-014 Terminal sessions](fc-014-terminal-sessions/)
+- [fc-015 Terminal IO](fc-015-terminal-io/)
+- [fc-016 Terminal approvals](fc-016-terminal-approvals/)
+- [fc-017 Terminal adapter](fc-017-terminal-adapter/)
+- [fc-018 Evidence URLs and links](fc-018-evidence-urls-links/)
+- [fc-019 Evidence previews](fc-019-evidence-previews/)
+- [fc-020 Projection details](fc-020-projection-details/)
+- [fc-021 File drops](fc-021-file-drops/)
+- [fc-022 Image galleries](fc-022-image-galleries/)
+- [fc-023 Component catalog](fc-023-component-catalog/)
+- [fc-024 Declarative artifacts](fc-024-declarative-artifacts/)
+- [fc-025 Product module integration](fc-025-product-module-integration/)
+- [fc-026 Examples, testing, and release review](fc-026-examples-testing-release-review/)
+
+<!-- busdk-docs-nav start -->
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-index"><a href="../">Documentation index</a></span>
+</p>
+<!-- busdk-docs-nav end -->
+
+### Sources
+
+- [bus-gx module reference](../modules/bus-gx)
+- [bus-ui module reference](../modules/bus-ui)

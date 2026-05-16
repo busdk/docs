@@ -200,48 +200,64 @@ the design decisions, then the independent Core section, then the Library
 section built from Core, then architecture/detail contracts, core concepts,
 individual component pages, references, and guides. Higher-level components
 such as forms belong under Library, preferably as their own focused pages.
-Preserve the UI implementation roadmap order in public docs and sidebar labels:
-Core starts with the smallest independent `v0.1.x` patches, and later Library
-features/components should be ordered by the version where they can be
-implemented from completed lower iterations. Public implementation pages should
-live in patch-level directories such as `docs/docs/ui/v0.1.1/` and
-`docs/docs/ui/v0.3.5/`, not only grouped minor-version directories.
+Preserve the implemented UI patch order in public docs and sidebar labels:
+Core starts with the smallest independent `v0.1.x` patches, and implemented
+Library features/components are ordered by the version where they were
+implemented from completed lower iterations. Public pages for implemented
+patches live in patch-level semver directories such as
+`docs/docs/ui/v0.1.1/` and `docs/docs/ui/v0.3.5/`, not only grouped
+minor-version directories. Unfinished future patch docs live outside the
+semver sequence in feature-candidate directories named
+`docs/docs/ui/fc-<order>-<identifier>/`, where `<order>` is a deterministic
+zero-padded review order such as `fc-001-runtime-state`.
 In the left sidebar, keep UI version subpages collapsed except for the
 currently open `v0.X.Y` version section so the roadmap remains scannable.
 When a version page initializes a submodule or command surface, state exactly
 which repository/module files, packages, commands, tests, and development
 targets appear in that patch, and which related parts are intentionally absent.
-Default DoD for implementing any UI roadmap patch under `docs/docs/ui/v*/`:
+Default DoD for promoting any UI feature candidate to an implemented patch
+under `docs/docs/ui/v*/`:
 the implementation for that patch is complete, unit tests are complete for the
 implemented public contract, public UI docs for that version are updated when
 implementation or testing changes the original spec or needs clarification,
 the owning module SDD such as `sdd/docs/modules/bus-gx.md` is complete through
 that version, and the end-user module page such as
 `docs/docs/modules/bus-gx.md` matches the actual implementation with the
-current implemented version clearly visible.
+current implemented version clearly visible. When a feature candidate is
+finished, reviewed, implemented, and accepted, it receives the next actual
+semver patch number and is renamed from `docs/docs/ui/fc-<order>-<identifier>/`
+to `docs/docs/ui/v0.X.Y/`.
 Keep concrete API names, command behavior, file formats, validation rules, and
 examples on the first version page that implements them. Higher-level design,
 architecture, design-system, rendering, and reference pages should summarize
 the intent and link to those version pages instead of repeating version-specific
 contracts.
-Public UI framework documentation under `docs/docs/ui/` must use version-only
-information architecture: the directory may contain only a minimal `index.md`
-and semver patch directories named `v0.X.Y/`. Do not add public UI docs under
-non-version directories such as `architecture/`, `components/`, `design/`,
-`examples/`, `guides/`, `reference/`, or `roadmap/`. Every version directory
+Public UI framework documentation under `docs/docs/ui/` must use implemented
+versions plus feature candidates: the directory may contain a minimal
+`index.md`, implemented semver patch directories named `v0.X.Y/`, and
+unfinished future candidate directories named `fc-<order>-<identifier>/`. Do
+not add public UI docs under non-version/non-candidate directories such as
+`architecture/`, `components/`, `design/`, `examples/`, `guides/`,
+`reference/`, or `roadmap/`. Every version and feature-candidate directory
 must have a compact `index.md` that only links to inner pages. Put the actual
 documentation in uniquely named inner pages such as
-`docs/docs/ui/v0.1.2/source-tools.md` so roadmap refactors can move pages
-without splitting index content. Each patch version should be the smallest
-complete implementation increment that can be reviewed and implemented in
-order. Later versions may link to earlier versions; earlier versions must not
-link to later versions. When a page uses a UI framework term, link the first
-plain-language mention to the same-version or latest earlier-version page that
+`docs/docs/ui/v0.1.2/source-tools.md` or
+`docs/docs/ui/fc-001-runtime-state/state-runtime.md` so roadmap refactors can
+move pages without splitting index content. Each implemented patch version
+should be the smallest complete implementation increment accepted into the
+main sequence. Each feature candidate should be independently reviewable and
+may be implemented when its prerequisites exist; unrelated candidates do not
+need to form one strict future sequence. Later implemented versions and
+feature candidates may link to implemented prerequisites or earlier candidates
+they depend on; implemented pages must not link forward to feature candidates.
+When a page uses a UI framework term, link the first plain-language mention to
+the same-version, same-candidate, or latest earlier implemented page that
 defines it.
 Do not create abstract UI roadmap versions whose only purpose is to state
-future design intent. Move each concept directly into the first patch version
-that implements or uses it, so `bus-gx`, `bus-ui`, host, callback, and
-browser-runtime concerns appear next to the actual work that needs them.
+future design intent. Put unfinished future design material in feature
+candidates, and promote it into the first semver patch version that implements
+or uses it, so `bus-gx`, `bus-ui`, host, callback, and browser-runtime
+concerns appear next to the actual work that needs them.
 Do not combine two design concepts into one public page. Pages such as
 "navigation and events", "shells and layout", or "provider and session" should
 be split into one page per concept, with any group page reduced to a compact

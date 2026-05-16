@@ -9,6 +9,13 @@ item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
 that were used when those entries were completed.
 
+- [x] UI future roadmap feature-candidate model for busdk#80.1: keep
+  implemented public UI patch directories as semver `v0.X.Y` entries through
+  the current implementation cutoff, move unfinished future UI docs into
+  deterministic `fc-<order>-<identifier>` directories, update the UI index and
+  navigation, document candidate promotion into the next accepted semver patch,
+  and verify changed Markdown/YAML docs with available lint and quality gates.
+
 - [x] Split public Go peer review guide for busdk#44.1: refactor
   `docs/implementation/go-peer-review-guide.md` into a compact index and
   focused subpages under `docs/implementation/go-peer-review-guide/`; preserve

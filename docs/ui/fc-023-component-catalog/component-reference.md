@@ -1,0 +1,197 @@
+---
+title: UI component reference
+description: Index of dedicated BusDK UI concept, component, and runtime block reference pages.
+---
+
+## Reference Index
+
+Every reusable UI concept, component, and runtime block has a dedicated page.
+This page is the canonical linked index for those pages.
+
+## Design References
+
+- [UI design system](../v0.2.0/design-system)
+- [GX source tools](../v0.1.2/source-tools)
+- [Expression children](../v0.1.5/expression-children)
+- [Render tree contract](../v0.1.1/render-tree-contract)
+
+## Versioned Concepts
+
+- [Node](../v0.1.1/node) - Deterministic render tree.
+- [Component](../v0.1.4/component) - Reusable Bus UI invocation.
+- [Shell](../v0.2.6/shell) - Page-level slot owner.
+- [Collection](../v0.3.6/collection) - Repeated data surface.
+- [State](../fc-002-status-surfaces/state) - Visible UI status.
+- [Expression children](../v0.1.5/expression-children) - Go expression children inside markup bodies.
+- [Callback props](../v0.1.6/callback-props) - Function props passed as Go values.
+- [Resource](../fc-003-resources/resource) - External data or media boundary.
+- [Go WASM frontend runtime](../v0.1.7/lifecycle) - Go WebAssembly mount lifecycle.
+
+## Core v0.1.1 Foundation
+
+- [`Shared interfaces`](../v0.1.1/interfaces) - Go `Node`, `Renderer`, and default render function contracts.
+- [`Text`](../v0.1.1/text) - Escaped scalar text node.
+- [`Element`](../v0.1.1/element) - Generic HTML element.
+- [`Fragment`](../v0.1.1/fragment) - Child group without a wrapper element.
+- [`Props`](../v0.1.1/props) - Deterministic attribute map.
+- [`VNode`](../v0.1.1/v-node) - Normalized node form for deterministic HTML rendering and tests.
+
+## Core v0.1.2-v0.1.5 GX And Components
+
+- [GX source tools](../v0.1.2/) - Parser, formatter, linter, and source diagnostics.
+- [GX compiler](../v0.1.3/) - Generated Go output.
+- [Component calls](../v0.1.4/) - Uppercase tags and typed props.
+- [Component composition](../v0.1.5/) - Component body markup and children.
+
+## Later Core Contracts
+
+- [Callback props](../v0.1.6/) - Function callback props.
+- [Go WASM frontend runtime](../v0.1.7/) - Go WebAssembly mount and update runtime.
+- [Runtime diagnostics](../v0.1.8/) - Mount, render, and callback diagnostics.
+- [Core test helpers](../v0.1.10/) - Test support for Core render and callback contracts.
+
+## Library: Common Shells
+
+- [`AppShell`](../v0.2.6/app-shell) - Standard local application frame.
+- [`SidebarShell`](../v0.2.6/sidebar-shell) - Collapsible multi-view shell.
+
+## Library: Layouts
+
+- [`SidebarNav`](../v0.2.5/sidebar-nav) - Sidebar navigation list.
+- [`SplitLayout`](../v0.2.5/split-layout) - Resizable pane layout.
+
+## Library: Surfaces
+
+- [`Panel`](../v0.2.4/panel) - Bounded titled work surface.
+- [`SurfaceCard`](../v0.2.4/surface-card) - Repeated or grouped card surface.
+- [`MetricCard`](../v0.2.4/metric-card) - Compact dashboard metric.
+
+## Library: Navigation
+
+- [`LinkButton`](../v0.2.2/link-button) - Safe link with button styling.
+- [`Menu`](../v0.2.3/menu) - Bounded option menu.
+- [`Tabs`](../v0.2.3/tabs) - Sibling view switcher.
+
+## Library: Event Controls
+
+- [`Button`](../v0.2.2/button) - Native event button.
+- [`IconButton`](../v0.2.2/icon-button) - Icon-only event button.
+- [`EventBar`](../v0.2.2/event-bar) - Ordered event group.
+
+## Library: Icons
+
+- [`Icon`](../v0.2.1/icon) - Shared SVG icon.
+
+## Library: Forms
+
+- [`Form`](../v0.3.1/form) - Native form wrapper.
+- [`Field`](../v0.3.2/field) - Labeled form control wrapper.
+- [`Input`](../v0.3.3/input) - Generic typed input.
+- [`TextInput`](../v0.3.3/text-input) - Single-line text field.
+- [`PasswordInput`](../v0.3.3/password-input) - Password or token field.
+- [`DateInput`](../v0.3.3/date-input) - Date input field.
+- [`TextArea`](../v0.3.3/text-area) - Multiline text field.
+- [`Select`](../v0.3.3/select) - Native bounded option set.
+- [`FilterToolbar`](../v0.3.2/filter-toolbar) - Compact filter surface.
+- [`SubmitState`](../v0.3.4/submit-state) - Busy submit feedback.
+
+## Library: Tables
+
+- [`TextTable`](../v0.3.5/text-table) - Simple deterministic table.
+- [`DataTable`](../v0.3.5/data-table) - Dense records table.
+
+## Library: Lists
+
+- [`RecordList`](../v0.3.6/record-list) - Repeated non-tabular records.
+- [`SummaryItem`](../v0.3.6/summary-item) - Title/meta/detail summary row.
+
+## Library: Timelines
+
+- [`Timeline`](../fc-001-timelines/timeline) - Ordered event history.
+
+## Library: Status Surfaces
+
+- [`StatusPill`](../fc-002-status-surfaces/status-pill) - Compact semantic status.
+- [`EmptyState`](../fc-002-status-surfaces/empty-state) - Visible absence state.
+- [`LoadingState`](../fc-002-status-surfaces/loading-state) - Visible loading state.
+- [`ResultPanel`](../fc-002-status-surfaces/result-panel) - Operation result surface.
+- [`ErrorBanner`](../fc-002-status-surfaces/error-banner) - Recoverable error alert.
+
+## Library: Runtime Config
+
+- [`RuntimeConfig`](../fc-004-runtime-config-api-urls/runtime-config-component) - Safe public runtime config.
+
+## Library: API URLs
+
+- [`APIURLResolver`](../fc-004-runtime-config-api-urls/apiurl-resolver) - Mounted API path resolver.
+
+## Library: Session
+
+- [`Session`](../fc-005-sessions/session-component) - Safe browser session view.
+
+## Library: Credentials
+
+- [`CredentialLoginCard`](../fc-006-credentials/credential-login-card) - Generic credential entry surface.
+
+## Library: Provider Errors
+
+- [`ProviderError`](../fc-007-provider-errors/provider-error-component) - Safe provider failure surface.
+
+## Library: Assistant
+
+- [`AssistantShell`](../fc-009-assistant-workbench-shell/assistant-shell) - Business surface with assistant pane.
+- [`AIPanel`](../fc-009-assistant-workbench-shell/ai-panel) - Assistant workbench surface.
+- [`AIThreadList`](../fc-010-assistant-threads-messages/ai-thread-list) - Assistant thread list.
+- [`AIMessage`](../fc-010-assistant-threads-messages/ai-message) - Role-specific assistant message.
+- [`AIMarkdown`](../fc-010-assistant-threads-messages/ai-markdown) - Safe assistant Markdown renderer.
+- [`AIModelSelect`](../fc-012-assistant-model-selection/ai-model-select) - Assistant model picker.
+- [`AIAttachmentList`](../fc-011-assistant-composer-attachments/ai-attachment-list) - Assistant attachment chips.
+- [`AIComposer`](../fc-011-assistant-composer-attachments/ai-composer) - Assistant draft input.
+- [`AIApprovals`](../fc-013-assistant-review-controls/ai-approvals) - Pending approval list.
+- [`AIReviewStatus`](../fc-013-assistant-review-controls/ai-review-status) - Review-before-apply status.
+- [`AIThreadIsolation`](../fc-013-assistant-review-controls/ai-thread-isolation) - Assistant work isolation display.
+- [`AIDropController`](../fc-011-assistant-composer-attachments/ai-drop-controller) - Assistant drop intake controller.
+
+## Library: Terminal
+
+- [`TerminalSessionPanel`](../fc-014-terminal-sessions/terminal-session-panel) - Complete terminal surface.
+- [`TerminalOutputView`](../fc-015-terminal-io/terminal-output-view) - Streamed output view.
+- [`TerminalInputBox`](../fc-015-terminal-io/terminal-input-box) - Terminal stdin controls.
+- [`TerminalApprovalPrompt`](../fc-016-terminal-approvals/terminal-approval-prompt) - Command approval prompt.
+- [`TerminalSessionAdapter`](../fc-017-terminal-adapter/terminal-session-adapter) - Event-to-terminal adapter.
+
+## Library: Evidence
+
+- [`EvidenceURLResolver`](../fc-018-evidence-urls-links/evidence-url-resolver) - Safe evidence URL builder.
+- [`EvidenceLink`](../fc-018-evidence-urls-links/evidence-link) - Evidence open/download link.
+- [`EvidencePreview`](../fc-019-evidence-previews/evidence-preview-component) - Safe evidence preview.
+- [`ProjectionDetail`](../fc-020-projection-details/projection-detail-component) - Ledger-like evidence detail.
+
+## Library: File Drops
+
+- [`DropZone`](../fc-021-file-drops/drop-zone) - File/path intake surface.
+
+## Library: Image Gallery
+
+- [`ImageGallery`](../fc-022-image-galleries/image-gallery-component) - Linked image gallery.
+
+## CLI And Tooling
+
+- [`CSSBundle`](../fc-008-assets-host-tools/css-bundle) - Shared CSS token bundle.
+- [`CLIRuntimeFlags`](../fc-008-assets-host-tools/cli-runtime-flags) - Standard CLI flag behavior.
+- [`BrowserOpen`](../fc-008-assets-host-tools/browser-open) - Open local app URL.
+- [`WASM app acceptance`](../v0.1.11/wasm-app) - Trusted Go WebAssembly app acceptance path.
+
+<!-- busdk-docs-nav start -->
+<p class="busdk-prev-next">
+  <span class="busdk-prev-next-item busdk-index"><a href="../">UI framework index</a></span>
+</p>
+<!-- busdk-docs-nav end -->
+
+### Sources
+
+- [Core](../v0.1.1/)
+- [Bus UI module baseline](../v0.2.0/)
+- [UI implementation roadmap](../)
+- [UI component map](./component-map)
+- [bus-ui module reference](../../modules/bus-ui)

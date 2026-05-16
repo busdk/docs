@@ -595,252 +595,252 @@
               url: /ui/v0.3.6/summary-item
             - label: RecordList UI component
               url: /ui/v0.3.6/record-list
-        - label: v0.3.7 Timelines
-          url: /ui/v0.3.7/
+        - label: fc-001 Timelines
+          url: /ui/fc-001-timelines/
           children:
             - label: Library timelines
-              url: /ui/v0.3.7/timelines
+              url: /ui/fc-001-timelines/timelines
             - label: Timeline UI component
-              url: /ui/v0.3.7/timeline
-        - label: v0.3.8 Status surfaces
-          url: /ui/v0.3.8/
+              url: /ui/fc-001-timelines/timeline
+        - label: fc-002 Status surfaces
+          url: /ui/fc-002-status-surfaces/
           children:
             - label: State UI concept
-              url: /ui/v0.3.8/state
+              url: /ui/fc-002-status-surfaces/state
             - label: UI color and status
-              url: /ui/v0.3.8/color-status
+              url: /ui/fc-002-status-surfaces/color-status
             - label: Library status surfaces
-              url: /ui/v0.3.8/status-surfaces
+              url: /ui/fc-002-status-surfaces/status-surfaces
             - label: StatusPill UI component
-              url: /ui/v0.3.8/status-pill
+              url: /ui/fc-002-status-surfaces/status-pill
             - label: EmptyState UI component
-              url: /ui/v0.3.8/empty-state
+              url: /ui/fc-002-status-surfaces/empty-state
             - label: LoadingState UI component
-              url: /ui/v0.3.8/loading-state
+              url: /ui/fc-002-status-surfaces/loading-state
             - label: ErrorBanner UI component
-              url: /ui/v0.3.8/error-banner
+              url: /ui/fc-002-status-surfaces/error-banner
             - label: ResultPanel UI component
-              url: /ui/v0.3.8/result-panel
-        - label: v0.4.1 Resources
-          url: /ui/v0.4.1/
+              url: /ui/fc-002-status-surfaces/result-panel
+        - label: fc-003 Resources
+          url: /ui/fc-003-resources/
           children:
             - label: Resource UI concept
-              url: /ui/v0.4.1/resource
+              url: /ui/fc-003-resources/resource
             - label: UI runtime contract
-              url: /ui/v0.4.1/runtime-contract
+              url: /ui/fc-003-resources/runtime-contract
             - label: Resource UI runtime block
-              url: /ui/v0.4.1/resource-component
-        - label: v0.4.2 Runtime config and API URLs
-          url: /ui/v0.4.2/
+              url: /ui/fc-003-resources/resource-component
+        - label: fc-004 Runtime config and API URLs
+          url: /ui/fc-004-runtime-config-api-urls/
           children:
             - label: UI renderer targets
-              url: /ui/v0.4.2/renderer-targets
+              url: /ui/fc-004-runtime-config-api-urls/renderer-targets
             - label: Library runtime config
-              url: /ui/v0.4.2/runtime-config
+              url: /ui/fc-004-runtime-config-api-urls/runtime-config
             - label: RuntimeConfig UI runtime block
-              url: /ui/v0.4.2/runtime-config-component
+              url: /ui/fc-004-runtime-config-api-urls/runtime-config-component
             - label: Library API URLs
-              url: /ui/v0.4.2/api-urls
+              url: /ui/fc-004-runtime-config-api-urls/api-urls
             - label: APIURLResolver UI runtime block
-              url: /ui/v0.4.2/apiurl-resolver
-        - label: v0.4.3 Sessions
-          url: /ui/v0.4.3/
+              url: /ui/fc-004-runtime-config-api-urls/apiurl-resolver
+        - label: fc-005 Sessions
+          url: /ui/fc-005-sessions/
           children:
             - label: Library session
-              url: /ui/v0.4.3/session
+              url: /ui/fc-005-sessions/session
             - label: Session UI runtime block
-              url: /ui/v0.4.3/session-component
-        - label: v0.4.4 Credentials
-          url: /ui/v0.4.4/
+              url: /ui/fc-005-sessions/session-component
+        - label: fc-006 Credentials
+          url: /ui/fc-006-credentials/
           children:
             - label: Library credentials
-              url: /ui/v0.4.4/credentials
+              url: /ui/fc-006-credentials/credentials
             - label: CredentialLoginCard UI component
-              url: /ui/v0.4.4/credential-login-card
-        - label: v0.4.5 Provider errors
-          url: /ui/v0.4.5/
+              url: /ui/fc-006-credentials/credential-login-card
+        - label: fc-007 Provider errors
+          url: /ui/fc-007-provider-errors/
           children:
             - label: Library provider errors
-              url: /ui/v0.4.5/provider-errors
+              url: /ui/fc-007-provider-errors/provider-errors
             - label: ProviderError UI component
-              url: /ui/v0.4.5/provider-error-component
-        - label: v0.4.6 Assets and host tools
-          url: /ui/v0.4.6/
+              url: /ui/fc-007-provider-errors/provider-error-component
+        - label: fc-008 Assets and host tools
+          url: /ui/fc-008-assets-host-tools/
           children:
             - label: CSSBundle UI runtime block
-              url: /ui/v0.4.6/css-bundle
+              url: /ui/fc-008-assets-host-tools/css-bundle
             - label: CLIRuntimeFlags UI runtime block
-              url: /ui/v0.4.6/cli-runtime-flags
+              url: /ui/fc-008-assets-host-tools/cli-runtime-flags
             - label: BrowserOpen UI runtime block
-              url: /ui/v0.4.6/browser-open
-        - label: v0.5.1 Assistant workbench shell
-          url: /ui/v0.5.1/
+              url: /ui/fc-008-assets-host-tools/browser-open
+        - label: fc-009 Assistant workbench shell
+          url: /ui/fc-009-assistant-workbench-shell/
           children:
             - label: AssistantShell UI component
-              url: /ui/v0.5.1/assistant-shell
+              url: /ui/fc-009-assistant-workbench-shell/assistant-shell
             - label: Library assistant workbench
-              url: /ui/v0.5.1/assistant-workbench
+              url: /ui/fc-009-assistant-workbench-shell/assistant-workbench
             - label: Library assistant panel
-              url: /ui/v0.5.1/assistant-panel
+              url: /ui/fc-009-assistant-workbench-shell/assistant-panel
             - label: AIPanel UI component
-              url: /ui/v0.5.1/ai-panel
-        - label: v0.5.2 Assistant threads and messages
-          url: /ui/v0.5.2/
+              url: /ui/fc-009-assistant-workbench-shell/ai-panel
+        - label: fc-010 Assistant threads and messages
+          url: /ui/fc-010-assistant-threads-messages/
           children:
             - label: Library assistant threads
-              url: /ui/v0.5.2/assistant-threads
+              url: /ui/fc-010-assistant-threads-messages/assistant-threads
             - label: AIThreadList UI component
-              url: /ui/v0.5.2/ai-thread-list
+              url: /ui/fc-010-assistant-threads-messages/ai-thread-list
             - label: Library assistant messages
-              url: /ui/v0.5.2/assistant-messages
+              url: /ui/fc-010-assistant-threads-messages/assistant-messages
             - label: AIMessage UI component
-              url: /ui/v0.5.2/ai-message
+              url: /ui/fc-010-assistant-threads-messages/ai-message
             - label: AIMarkdown UI component
-              url: /ui/v0.5.2/ai-markdown
-        - label: v0.5.3 Assistant composer and attachments
-          url: /ui/v0.5.3/
+              url: /ui/fc-010-assistant-threads-messages/ai-markdown
+        - label: fc-011 Assistant composer and attachments
+          url: /ui/fc-011-assistant-composer-attachments/
           children:
             - label: Library assistant composer
-              url: /ui/v0.5.3/assistant-composer
+              url: /ui/fc-011-assistant-composer-attachments/assistant-composer
             - label: AIComposer UI component
-              url: /ui/v0.5.3/ai-composer
+              url: /ui/fc-011-assistant-composer-attachments/ai-composer
             - label: Library assistant attachments
-              url: /ui/v0.5.3/assistant-attachments
+              url: /ui/fc-011-assistant-composer-attachments/assistant-attachments
             - label: AIAttachmentList UI component
-              url: /ui/v0.5.3/ai-attachment-list
+              url: /ui/fc-011-assistant-composer-attachments/ai-attachment-list
             - label: AIDropController UI component
-              url: /ui/v0.5.3/ai-drop-controller
-        - label: v0.5.4 Assistant model selection
-          url: /ui/v0.5.4/
+              url: /ui/fc-011-assistant-composer-attachments/ai-drop-controller
+        - label: fc-012 Assistant model selection
+          url: /ui/fc-012-assistant-model-selection/
           children:
             - label: AIModelSelect UI component
-              url: /ui/v0.5.4/ai-model-select
+              url: /ui/fc-012-assistant-model-selection/ai-model-select
             - label: Library assistant models
-              url: /ui/v0.5.4/assistant-models
-        - label: v0.5.5 Assistant review controls
-          url: /ui/v0.5.5/
+              url: /ui/fc-012-assistant-model-selection/assistant-models
+        - label: fc-013 Assistant review controls
+          url: /ui/fc-013-assistant-review-controls/
           children:
             - label: Library assistant work isolation
-              url: /ui/v0.5.5/assistant-work-isolation
+              url: /ui/fc-013-assistant-review-controls/assistant-work-isolation
             - label: AIThreadIsolation UI component
-              url: /ui/v0.5.5/ai-thread-isolation
+              url: /ui/fc-013-assistant-review-controls/ai-thread-isolation
             - label: Library assistant approvals
-              url: /ui/v0.5.5/assistant-approvals
+              url: /ui/fc-013-assistant-review-controls/assistant-approvals
             - label: AIApprovals UI component
-              url: /ui/v0.5.5/ai-approvals
+              url: /ui/fc-013-assistant-review-controls/ai-approvals
             - label: Library assistant review status
-              url: /ui/v0.5.5/assistant-review-status
+              url: /ui/fc-013-assistant-review-controls/assistant-review-status
             - label: AIReviewStatus UI component
-              url: /ui/v0.5.5/ai-review-status
-        - label: v0.6.1 Terminal sessions
-          url: /ui/v0.6.1/
+              url: /ui/fc-013-assistant-review-controls/ai-review-status
+        - label: fc-014 Terminal sessions
+          url: /ui/fc-014-terminal-sessions/
           children:
             - label: Library terminal sessions
-              url: /ui/v0.6.1/terminal-sessions
+              url: /ui/fc-014-terminal-sessions/terminal-sessions
             - label: Library terminal panel
-              url: /ui/v0.6.1/terminal-panel
+              url: /ui/fc-014-terminal-sessions/terminal-panel
             - label: TerminalSessionPanel UI component
-              url: /ui/v0.6.1/terminal-session-panel
-        - label: v0.6.2 Terminal IO
-          url: /ui/v0.6.2/
+              url: /ui/fc-014-terminal-sessions/terminal-session-panel
+        - label: fc-015 Terminal IO
+          url: /ui/fc-015-terminal-io/
           children:
             - label: Library terminal output
-              url: /ui/v0.6.2/terminal-output
+              url: /ui/fc-015-terminal-io/terminal-output
             - label: TerminalOutputView UI component
-              url: /ui/v0.6.2/terminal-output-view
+              url: /ui/fc-015-terminal-io/terminal-output-view
             - label: Library terminal input
-              url: /ui/v0.6.2/terminal-input
+              url: /ui/fc-015-terminal-io/terminal-input
             - label: TerminalInputBox UI component
-              url: /ui/v0.6.2/terminal-input-box
-        - label: v0.6.3 Terminal approvals
-          url: /ui/v0.6.3/
+              url: /ui/fc-015-terminal-io/terminal-input-box
+        - label: fc-016 Terminal approvals
+          url: /ui/fc-016-terminal-approvals/
           children:
             - label: Library terminal approvals
-              url: /ui/v0.6.3/terminal-approvals
+              url: /ui/fc-016-terminal-approvals/terminal-approvals
             - label: TerminalApprovalPrompt UI component
-              url: /ui/v0.6.3/terminal-approval-prompt
-        - label: v0.6.4 Terminal adapter
-          url: /ui/v0.6.4/
+              url: /ui/fc-016-terminal-approvals/terminal-approval-prompt
+        - label: fc-017 Terminal adapter
+          url: /ui/fc-017-terminal-adapter/
           children:
             - label: Library terminal adapter
-              url: /ui/v0.6.4/terminal-adapter
+              url: /ui/fc-017-terminal-adapter/terminal-adapter
             - label: TerminalSessionAdapter UI component
-              url: /ui/v0.6.4/terminal-session-adapter
-        - label: v0.7.1 Evidence URLs and links
-          url: /ui/v0.7.1/
+              url: /ui/fc-017-terminal-adapter/terminal-session-adapter
+        - label: fc-018 Evidence URLs and links
+          url: /ui/fc-018-evidence-urls-links/
           children:
             - label: Library evidence
-              url: /ui/v0.7.1/evidence
+              url: /ui/fc-018-evidence-urls-links/evidence
             - label: Library evidence URLs
-              url: /ui/v0.7.1/evidence-urls
+              url: /ui/fc-018-evidence-urls-links/evidence-urls
             - label: EvidenceURLResolver UI component
-              url: /ui/v0.7.1/evidence-url-resolver
+              url: /ui/fc-018-evidence-urls-links/evidence-url-resolver
             - label: Library evidence links
-              url: /ui/v0.7.1/evidence-links
+              url: /ui/fc-018-evidence-urls-links/evidence-links
             - label: EvidenceLink UI component
-              url: /ui/v0.7.1/evidence-link
-        - label: v0.7.2 Evidence previews
-          url: /ui/v0.7.2/
+              url: /ui/fc-018-evidence-urls-links/evidence-link
+        - label: fc-019 Evidence previews
+          url: /ui/fc-019-evidence-previews/
           children:
             - label: Library evidence preview
-              url: /ui/v0.7.2/evidence-preview
+              url: /ui/fc-019-evidence-previews/evidence-preview
             - label: EvidencePreview UI component
-              url: /ui/v0.7.2/evidence-preview-component
-        - label: v0.7.3 Projection details
-          url: /ui/v0.7.3/
+              url: /ui/fc-019-evidence-previews/evidence-preview-component
+        - label: fc-020 Projection details
+          url: /ui/fc-020-projection-details/
           children:
             - label: Library projection detail
-              url: /ui/v0.7.3/projection-detail
+              url: /ui/fc-020-projection-details/projection-detail
             - label: ProjectionDetail UI component
-              url: /ui/v0.7.3/projection-detail-component
-        - label: v0.8.1 File drops
-          url: /ui/v0.8.1/
+              url: /ui/fc-020-projection-details/projection-detail-component
+        - label: fc-021 File drops
+          url: /ui/fc-021-file-drops/
           children:
             - label: Library file drops
-              url: /ui/v0.8.1/file-drops
+              url: /ui/fc-021-file-drops/file-drops
             - label: DropZone UI component
-              url: /ui/v0.8.1/drop-zone
-        - label: v0.8.2 Image galleries
-          url: /ui/v0.8.2/
+              url: /ui/fc-021-file-drops/drop-zone
+        - label: fc-022 Image galleries
+          url: /ui/fc-022-image-galleries/
           children:
             - label: Library image gallery
-              url: /ui/v0.8.2/image-gallery
+              url: /ui/fc-022-image-galleries/image-gallery
             - label: ImageGallery UI component
-              url: /ui/v0.8.2/image-gallery-component
-        - label: v0.9.1 Component catalog
-          url: /ui/v0.9.1/
+              url: /ui/fc-022-image-galleries/image-gallery-component
+        - label: fc-023 Component catalog
+          url: /ui/fc-023-component-catalog/
           children:
             - label: UI component map
-              url: /ui/v0.9.1/component-map
+              url: /ui/fc-023-component-catalog/component-map
             - label: UI component reference
-              url: /ui/v0.9.1/component-reference
-        - label: v0.9.2 Declarative artifacts
-          url: /ui/v0.9.2/
+              url: /ui/fc-023-component-catalog/component-reference
+        - label: fc-024 Declarative artifacts
+          url: /ui/fc-024-declarative-artifacts/
           children:
             - label: Declarative UI templates
-              url: /ui/v0.9.2/declarative-artifacts
-        - label: v0.9.3 Product module integration
-          url: /ui/v0.9.3/
+              url: /ui/fc-024-declarative-artifacts/declarative-artifacts
+        - label: fc-025 Product module integration
+          url: /ui/fc-025-product-module-integration/
           children:
             - label: UI product module shape
-              url: /ui/v0.9.3/product-module-shape
+              url: /ui/fc-025-product-module-integration/product-module-shape
             - label: Portal UI modules
-              url: /ui/v0.9.3/portal-modules
+              url: /ui/fc-025-product-module-integration/portal-modules
             - label: UI portal host contract
-              url: /ui/v0.9.3/portal-host-contract
+              url: /ui/fc-025-product-module-integration/portal-host-contract
             - label: PortalShell UI component
-              url: /ui/v0.9.3/portal-shell
-        - label: v0.9.4 Examples, testing, and release review
-          url: /ui/v0.9.4/
+              url: /ui/fc-025-product-module-integration/portal-shell
+        - label: fc-026 Examples, testing, and release review
+          url: /ui/fc-026-examples-testing-release-review/
           children:
             - label: UI examples
-              url: /ui/v0.9.4/examples
+              url: /ui/fc-026-examples-testing-release-review/examples
             - label: Testing UI apps
-              url: /ui/v0.9.4/testing-guide
+              url: /ui/fc-026-examples-testing-release-review/testing-guide
             - label: UI framework reference checklist
-              url: /ui/v0.9.4/reference-checklist
-            - label: UI implementation roadmap
-              url: /ui/v0.9.4/roadmap
+              url: /ui/fc-026-examples-testing-release-review/reference-checklist
+            - label: Feature candidate model
+              url: /ui/fc-026-examples-testing-release-review/roadmap
     - label: API JWT audiences and scopes
       url: /architecture/api-jwt-audiences-and-scopes
     - label: Data formats and storage
