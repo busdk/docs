@@ -9,6 +9,16 @@ item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
 that were used when those entries were completed.
 
+- [ ] UI roadmap GX/Go example audit: review `docs/docs/ui/` for remaining
+  YAML/JSON examples or declarative-template wording that conflicts with the
+  current GX/Go, React-like component direction. Preserve JSON only where it is
+  genuinely CLI machine output, public runtime metadata, or HTTP/resource data;
+  preserve YAML only where it is a test fixture or external operator config
+  with a clearly documented boundary. Convert component/template examples to
+  `.gx` or Go, remove obsolete legacy/declarative binding language, verify
+  internal links, run `bus lint` individually on every changed Markdown file,
+  run docs quality where available, and keep changes compact.
+
 - [x] UI future roadmap feature-candidate model for busdk#80.1: keep
   implemented public UI patch directories as semver `v0.X.Y` entries through
   the current implementation cutoff, move unfinished future UI docs into
