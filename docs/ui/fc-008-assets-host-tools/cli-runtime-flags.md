@@ -1,18 +1,19 @@
 ---
-title: CLIRuntimeFlags UI runtime block
-description: Dedicated BusDK UI reference for CLIRuntimeFlags.
+title: CLIRuntimeFlags
+description: Shared Bus UI host-tool flag behavior for GX commands.
 ---
 
 ## Purpose
 
-`CLIRuntimeFlags` is a CLI/tooling runtime block. Standard CLI flag behavior.
-Use for `bus gx` tools and related commands.
+`CLIRuntimeFlags` describes the shared host-tool flag behavior used by `bus gx`
+commands. A tool can accept these props when it exposes formatting, linting,
+inspection, or validation from a GX-backed local workflow.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `args` | yes | string array | Subcommand and arguments after `bus gx`; do not include `bus` or `gx`. Supported UI-tool subcommands include `fmt`, `lint`, `validate`, and `inspect`. |
+| `args` | yes | `[]string` | Subcommand and arguments after `bus gx`; do not include `bus` or `gx`. Supported UI-tool subcommands include `fmt`, `lint`, `validate`, and `inspect`. |
 | `output` | no | path | Default omitted, which writes normal command output to stdout. When set, writes normal output to that file. With `quiet: true`, normal stdout and `--output` writes are suppressed; input file rewrites still follow the subcommand contract. |
 | `format` | no | json, inventory, diagnostics | `inspect` accepts `inventory`, `diagnostics`, or `json` and defaults to `inventory`; `lint` and `validate` accept human diagnostics by default and machine-readable `json`; `fmt` rejects `format`. |
 | `check` | no | boolean | Applies only to `fmt`. Default false rewrites files in place; true exits non-zero when any GX file is not canonical and does not write files. |
@@ -23,17 +24,20 @@ Use for `bus gx` tools and related commands.
 
 ## Boundary
 
-Results go to stdout/output; diagnostics go to stderr.
-`fmt` writes changed GX files unless `check` is true. `lint`, `inspect`, and
-`validate` write diagnostics or inventory and do not modify inputs.
+Results go to stdout or the requested output file. Diagnostics go to stderr.
+`fmt` may rewrite GX files unless `check` is true. `lint`, `inspect`, and
+`validate` report diagnostics or inventory and leave inputs unchanged.
 
 ## Example
 
 ```gx
 package localui
 
-var fmtFlags = (
-  <CLIRuntimeFlags args={[]string{"fmt", "notes.gx"}} check={true}></CLIRuntimeFlags>
+var formatCheck = (
+  <CLIRuntimeFlags
+    args={[]string{"fmt", "views/summary.gx"}}
+    check={true}>
+  </CLIRuntimeFlags>
 )
 ```
 
@@ -45,5 +49,4 @@ var fmtFlags = (
 
 ### Sources
 
-- UI component reference
 - [Source-tool integration](../v0.1.3/source-tool-integration)

@@ -1,12 +1,13 @@
 ---
-title: CSSBundle UI runtime block
-description: Dedicated BusDK UI reference for CSSBundle.
+title: CSSBundle
+description: Shared Bus UI CSS bundle inclusion for GX pages.
 ---
 
 ## Purpose
 
-`CSSBundle` is added to a GX view or build entrypoint to emit the shared Bus UI
-CSS once for that rendered page or generated bundle.
+`CSSBundle` lets a GX page include the shared Bus UI CSS once for the rendered
+page or generated asset bundle. It belongs near the page shell or build
+entrypoint, not inside each repeated component.
 
 ## Inputs
 
@@ -16,9 +17,9 @@ CSS once for that rendered page or generated bundle.
 
 ## Boundary
 
-Shared design classes are emitted once per page render or build output. Duplicate
-`CSSBundle` declarations with the same theme are ignored; conflicting themes
-fail `bus gx validate` with a theme-conflict diagnostic so a page cannot
+Shared design classes are emitted once per page render or build output.
+Duplicate `CSSBundle` declarations with the same theme are ignored. Conflicting
+themes fail `bus gx validate` with a theme-conflict diagnostic so a page cannot
 silently mix token sets.
 
 ## Example
@@ -47,5 +48,4 @@ var rootView = (
 
 ### Sources
 
-- UI component reference
 - [bus-ui module reference](../../modules/bus-ui)

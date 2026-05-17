@@ -1,10 +1,10 @@
 ---
 title: fc-008 Assets and host tools
-description: BusDK UI fc-008 documentation index.
+description: Candidate Bus UI asset and local host-tool documentation.
 ---
 
 ## Pages
 
-- [CSSBundle UI runtime block](./css-bundle) - Dedicated BusDK UI reference for CSSBundle.
-- [CLIRuntimeFlags UI runtime block](./cli-runtime-flags) - Dedicated BusDK UI reference for CLIRuntimeFlags.
-- [BrowserOpen UI runtime block](./browser-open) - Dedicated BusDK UI reference for BrowserOpen.
+- [CSSBundle](./css-bundle) defines how a GX page includes the shared Bus UI CSS bundle.
+- [CLIRuntimeFlags](./cli-runtime-flags) defines common host-tool flags for `bus gx` commands.
+- [BrowserOpen](./browser-open) defines the local-browser launch boundary for development servers.
