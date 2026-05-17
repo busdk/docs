@@ -5,89 +5,151 @@ description: Dedicated BusDK UI reference for DropZone.
 
 ## Purpose
 
-`DropZone` is an evidence/media component. File/path intake surface. Use for upload, import, or attachment intake.
+`DropZone` is a shared intake surface for files, local paths, or trusted staged
+upload tokens. Use it where a product module needs upload, import, evidence, or
+attachment intake without giving the component ownership of storage policy.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `id` | no | string | Source identifier passed to callbacks. When omitted, the component creates a stable local id for this mounted drop zone. |
-| `title` | yes | string | Visible label. |
-| `onDrop` | yes | `func(DropEvent)` | Go callback invoked after local type filtering accepts at least one item. `DropEvent.SourceID` is the `id` prop or generated local id. `DropEvent.Items` contains accepted `DropItem` values. |
-| `input` | no | slot | Augments the default file input. The slot receives `DropZoneContext`; custom content calls `dropzone.Accept(items)` and must not call upload APIs directly. |
-| `acceptedTypes` | no | `[]string` | Examples: `image/png`, `application/pdf`, `.csv`. Omitted means the UI accepts any type, but product validation still enforces limits. MIME entries match exact MIME type strings; extension entries start with `.` and match case-insensitive item name suffixes. |
+| `ID` | no | string | Source identifier rendered into the drop zone and copied into `DropSource.ID`. When omitted, the component derives a deterministic local id from visible text. |
+| `SourcePath` | no | string | Render-tree path copied into `DropSource.Path`; this is not a local filesystem path. |
+| `Title` | no | string | Visible label. The default file input uses it as its accessible label when present. |
+| `Copy` | no | string | Short visible help text. |
+| `InputHTML` | no | string | Trusted, pre-rendered component markup for a custom file input or adapter. Omitted renders the built-in multiple file input. |
+| `ActionsHTML` | no | string | Trusted, pre-rendered action controls rendered below the input. |
+| `ErrorHTML` | no | string | Trusted, pre-rendered accessible status text for rejected items or adapter failures. |
+| `AcceptedTypes` | no | `[]string` | Examples: `image/png`, `application/pdf`, `.csv`. MIME entries match exact strings; extension entries match case-insensitive item name suffixes; wildcard tokens are ignored. |
+| `MaxBytes` | no | `int64` | Positive UI byte limit rendered for adapters and reused by `DropPolicy`. Product validation still enforces authoritative limits. |
+| `AllowLocalPath` | no | bool | Defaults false. When true, path adapters may pass local paths through policy to trusted controllers. |
+| `Attrs` | no | `map[string]string` | Additional root attributes merged with the standard drop-zone classes and data attributes. |
 
 ## Boundary
 
-Validation and limits stay product-owned. The UI filters obvious rejected
-types, but the event handler must still enforce file count, size, content,
-authorization, and storage rules.
+Validation and limits stay product-owned. The current `DropZone` API renders
+markup and source metadata; browser adapters or controller code call
+`AcceptDropItems` with the same source and policy values. The shared policy
+filters exact accepted types, optional byte limits, and the
+single-source-handle rule, but the event handler must still enforce file count,
+content, authorization, upload, and storage rules.
 
-Drop callbacks and slots use these Go shapes:
+`InputHTML`, `ActionsHTML`, and `ErrorHTML` are raw HTML insertion points for
+trusted Bus UI output. Do not pass user-controlled strings into those fields;
+escape user text before composing the trusted markup.
+
+Drop adapters and controllers use these Go shapes:
 
 ```go
 type DropEvent struct {
+	Source   DropSource
 	SourceID string
 	Items    []DropItem
+}
+
+type DropSource struct {
+	ID   string
+	Path string
 }
 
 type DropItem struct {
 	Name        string
 	Type        string
 	Size        int64
-	File        gxwasm.File
 	Path        string
 	UploadToken string
+	File        any
 }
 
 type DropAcceptResult struct {
 	Accepted []DropItem
 	Rejected []DropReject
+	Event    DropEvent
+	Reject   DropRejectEvent
 }
 
 type DropReject struct {
-	Item   DropItem
+	Name   string
+	Type   string
+	Size   int64
 	Reason string
+}
+
+type DropRejectEvent struct {
+	Source   DropSource
+	SourceID string
+	Rejected []DropReject
+}
+
+type DropPolicy struct {
+	AcceptedTypes  []string
+	MaxBytes       int64
+	AllowLocalPath bool
+	Log            func(level string, msg string)
 }
 ```
 
-`DropEvent.SourceID` is always non-empty. Component code sets exactly one of
+`DropEvent.SourceID` is always non-empty. Adapter code sets exactly one of
 `DropItem.File`, `DropItem.Path`, or `DropItem.UploadToken` before calling
-`Accept`; the component rejects items that have none or more than one source
-field. The `input` slot receives a context object named `dropzone`:
+`Accept`; policy rejects items that have none or more than one source field.
+Custom input/action adapters can use the same context shape returned by
+`NewDropZoneContext`:
 
 ```go
 type DropZoneContext struct {
 	SourceID   string
+	Source     DropSource
+	Policy     DropPolicy
 	Accept     func([]DropItem) DropAcceptResult
 	OpenPicker func()
 }
 ```
 
-`Accept` returns accepted and rejected items. The component invokes `onDrop`
-only when the accepted list is non-empty; rejected items stay in local component
-state for accessible error text.
+`Accept` returns accepted and rejected items. Controllers handle
+`DropAcceptResult.Event` only when the accepted list is non-empty. Rejected
+items can be rendered through `ErrorHTML` or logged through `DropPolicy.Log`
+without exposing source handles.
 
 ## Example
 
-This component-only example assumes `upload` is already in Go lexical scope.
+This Go example renders the shared drop zone. The controller-side callback uses
+the same source and policy values through ordinary Go lexical scope.
 
-```gx
+```go
 package intakeui
 
-var evidenceDrop = (
-  <DropZone
-    title="Drop files here"
-    onDrop={upload}
-  ></DropZone>
-)
+import "github.com/busdk/bus-ui/pkg/uikit"
+
+func renderReceiptDrop() string {
+	return uikit.DropZone(uikit.DropZoneProps{
+		ID:            "receipt-drop",
+		SourcePath:    "/DropZone[0]",
+		Title:         "Drop receipts",
+		Copy:          "PDF and CSV files up to 10 MB",
+		AcceptedTypes: []string{"application/pdf", ".csv"},
+		MaxBytes:      10 << 20,
+	})
+}
+
+func acceptReceiptDrop(items []uikit.DropItem) uikit.DropAcceptResult {
+	return uikit.AcceptDropItems(
+		uikit.DropSource{ID: "receipt-drop", Path: "/DropZone[0]"},
+		items,
+		uikit.DropPolicy{
+			AcceptedTypes: []string{"application/pdf", ".csv"},
+			MaxBytes:      10 << 20,
+		},
+	)
+}
 ```
 
 ## Runtime Terms
 
 [Callback props](../v0.1.6/callback-props) documents function callback props.
 
-[Resource](../v0.4.1/resource) defines safe URL resolution, external-origin allowlists, and rejected URL forms.
+[Resource](../v0.4.1/resource) defines safe URL resolution. Upload endpoints,
+storage targets, provider paths, and file authorization remain host and product
+controller boundaries, not `DropZone` behavior.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

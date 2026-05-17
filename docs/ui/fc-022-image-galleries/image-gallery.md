@@ -10,56 +10,51 @@ description: BusDK UI library linked image gallery contract.
 
 ## Contract
 
-[`ImageGallery`](./image-gallery-component) renders linked image items with
-safe URLs and explicit alt labels. Unsafe URLs are rejected before render.
+[`ImageGalleryChecked`](./image-gallery-component) renders linked image items
+with safe URLs and explicit alt labels. Unsafe URLs and unsafe root or item
+attributes are rejected before render. `ImageGallery` remains a string-returning
+compatibility wrapper for callers that do not need diagnostics.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `Src` | yes | Root-relative same-origin path or external `https:` URL whose origin appears in `RuntimeSettings.ImageOrigins`. Unlisted external origins fail validation. |
+| `Src` | yes | Root-relative same-origin path or external `https:` URL whose exact origin appears in `ImageGalleryProps.ImageOrigins`. Unlisted external origins fail validation. |
 | `Alt` | yes | Public-safe accessible label. |
 | `Caption` | no | Public-safe title/caption shown with the image. |
-| `Href` | no | Optional URL for opening the source item. Validation matches `Src`: root-relative same-origin path with no `..`, or external `https:` URL whose origin appears in `RuntimeSettings.ImageOrigins`. |
+| `Href` | no | Optional URL for opening the source item. Validation matches `Src`: root-relative same-origin path with no `..`, or external `https:` URL whose origin appears in `ImageGalleryProps.ImageOrigins`. |
+| `Attrs` | no | Root or item attributes limited to inert `id`, `class`, `role`, `title`, `aria-*`, and non-`data-ai-*` `data-*` attributes. |
 
 Public-safe labels and captions are escaped strings with no secrets, credential
 headers, raw provider payloads, stack traces, SQL, or private customer data.
 `Alt` is required; missing alt text is a validation error. Unsafe `Src` or
 `Href` values reject the item and report diagnostics instead of rendering a
-broken image. Rejected URLs emit `image_url_rejected` with the item index and
-rejected origin or path class. Missing alt text emits `image_alt_required` with
-the item index.
+broken image. Rejected URLs emit `image_url_rejected` with the item index,
+field, and rejected origin or path class. Missing alt text emits
+`image_alt_required` with the item index. Attribute rejection emits an unsafe
+attribute diagnostic without rendering the item.
 
-```gx
+```go
 package mediaui
 
-import . "github.com/busdk/bus-ui/pkg/uimedia"
+import "github.com/busdk/bus-ui/pkg/uikit"
 
-var pages = []ImageItem{
-  {Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
+var pages = []uikit.ImageGalleryItem{
+	{Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
 }
 
-var gallery = (
-  <ImageGallery items={pages}></ImageGallery>
-)
-```
-
-```gx
-package mediaui
-
-import . "github.com/busdk/bus-ui/pkg/uiruntime"
-
-var notesRuntime = (
-  <RuntimeConfig
-    config={RuntimeSettings{
-      ModuleBase: "/modules/notes/",
-      APIBase: "/modules/notes/api",
-      ImageOrigins: []string{"https://images.example.com"},
-    }}
-  ></RuntimeConfig>
-)
+func renderInvoicePages() (uikit.ImageGalleryResult, error) {
+	return uikit.ImageGalleryChecked(uikit.ImageGalleryProps{
+		Items:        pages,
+		ImageOrigins: []string{"https://media.example.com"},
+		Attrs:        map[string]string{"aria-label": "Invoice page previews"},
+	})
+}
 ```
 
 Image galleries are visual repeated media. They do not own evidence
-authorization, upload policy, or provider path resolution.
+authorization, upload policy, runtime config sourcing, or provider path
+resolution. The host or product controller resolves provider paths first, then
+passes only root-relative URLs or allowlisted external `https:` URLs to the
+gallery.
 
 ## Consequence
 

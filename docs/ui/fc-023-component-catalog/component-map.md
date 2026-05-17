@@ -20,6 +20,9 @@ module that can host several libraries. Common component libraries come first,
 then runtime helpers, assistant UI, terminal UI, evidence UI, and product or
 portal integration. Each layer page links to the canonical
 [component reference](./component-reference) for individual component pages.
+The implemented catalog is also available through `ComponentCatalog`,
+`WriteComponentCatalog`, and `bus-ui catalog --format json` for docs-owned
+generation jobs.
 
 Core:
 
@@ -74,6 +77,17 @@ Higher-level Bus UI libraries:
 12. `fc-020` [Projection details](../fc-020-projection-details/)
 13. `fc-021` [File drops](../fc-021-file-drops/)
 14. `fc-022` [Image galleries](../fc-022-image-galleries/)
+
+Catalog and tooling:
+
+1. `fc-023` [Component catalog](./)
+2. `fc-024` [Declarative artifacts](../fc-024-declarative-artifacts/)
+
+The catalog groups entries as concepts, components, runtime helpers, or tools
+and marks each entry as implemented, external, or compatibility-only. It records
+the public docs path and the `pkg/uikit` or adjacent package symbols that back
+implemented entries. JSON output is limited to catalog metadata; public
+component examples remain Go or `.gx`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -6,7 +6,10 @@ description: Index of dedicated BusDK UI concept, component, and runtime block r
 ## Reference Index
 
 Every reusable UI concept, component, and runtime block has a dedicated page.
-This page is the canonical linked index for those pages.
+This page is the canonical linked index for those pages. The implemented
+`ComponentCatalog` API exposes the same inventory as deterministic Go data, and
+`WriteComponentCatalog` plus `bus-ui catalog --format json` emit the
+machine-readable JSON form for docs-owned catalog generation.
 
 ## Design References
 
@@ -177,10 +180,34 @@ This page is the canonical linked index for those pages.
 
 ## CLI And Tooling
 
+- [`ComponentCatalog`](./component-map) - Machine-readable component catalog inventory.
 - [`CSSBundle`](../fc-008-assets-host-tools/css-bundle) - Shared CSS token bundle.
 - [`CLIRuntimeFlags`](../fc-008-assets-host-tools/cli-runtime-flags) - Standard CLI flag behavior.
 - [`BrowserOpen`](../fc-008-assets-host-tools/browser-open) - Open local app URL.
 - [`WASM app acceptance`](../v0.1.11/wasm-app) - Trusted Go WebAssembly app acceptance path.
+
+The catalog API is Go-first:
+
+```go
+package catalogui
+
+import (
+	"os"
+
+	"github.com/busdk/bus-ui/pkg/uikit"
+)
+
+var catalog = uikit.ComponentCatalog()
+
+func writeCatalogJSON() error {
+	return uikit.WriteComponentCatalog(os.Stdout, "json")
+}
+```
+
+The JSON output is justified here because it is machine-readable tooling
+metadata, not component or template markup. The schema version is
+`bus-ui.component_catalog/v1`, and each entry records its docs path, roadmap id,
+implementation status, package, and exported symbols.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -10,19 +10,19 @@ description: BusDK UI library file and path drop intake contract.
 
 ## Contract
 
-[`DropZone`](./drop-zone) renders file or path intake state and
-emits drop identity. Accepted item types and size limits come from the
-controller. Rejected drops emit diagnostics and never expose local paths.
+[`DropZone`](./drop-zone) renders file, path, or staged-token intake state and
+emits a stable source identity. Accepted item types and size limits come from
+the controller through `DropPolicy`. Rejected drops emit diagnostics that omit
+local paths and upload tokens.
 
 Drop policy is controller/runtime configuration:
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `acceptedTypes` | no | Array of MIME strings such as `application/pdf` or extension strings with leading dot such as `.csv`; MIME wildcards are not allowed. Omitted accepts any type before product validation. |
-| `maxBytes` | no | Positive integer byte limit. Omitted means no UI size limit before product validation. Oversized drops emit diagnostics. |
-| `allowLocalPath` | no | Boolean; defaults false. When false, emitted events omit local paths. |
-| `onDrop` | yes | `func(DropEvent)` invoked with the accepted source identity and redacted item summaries. |
-| `onReject` | no | `func(DropRejectEvent)` invoked when local type, size, or source validation rejects items. Omitted renders the same diagnostics in the component error state. |
+| `AcceptedTypes` | no | MIME strings such as `application/pdf` or extension strings with leading dot such as `.csv`; MIME wildcards are ignored. Omitted accepts any type before product validation. |
+| `MaxBytes` | no | Positive byte limit. Omitted means no UI size limit before product validation. Oversized drops emit `size-exceeds-limit`. |
+| `AllowLocalPath` | no | Defaults false. When false, path-only items are rejected and decoded path metadata is redacted. |
+| `Log` | no | `func(level string, msg string)` receives redacted rejection, decode, and adapter diagnostics. |
 
 Accepted drops emit source identity plus redacted item summaries:
 
@@ -36,14 +36,15 @@ type DropItem struct {
 	Name        string
 	Type        string
 	Size        int64
-	File        gxwasm.File
 	Path        string
 	UploadToken string
+	File        any
 }
 
 type DropEvent struct {
-	Source DropSource
-	Items  []DropItem
+	Source   DropSource
+	SourceID string
+	Items    []DropItem
 }
 
 type DropReject struct {
@@ -55,36 +56,62 @@ type DropReject struct {
 
 type DropRejectEvent struct {
 	Source   DropSource
+	SourceID string
 	Rejected []DropReject
 }
 
-var event = DropEvent{
-	Source: DropSource{
-		ID:   "evidence-drop",
-		Path: "/DropZone[0]",
-	},
-	Items: []DropItem{
-		{Name: "receipt.pdf", Type: "application/pdf", Size: 12345},
-	},
+type DropAcceptResult struct {
+	Accepted []DropItem
+	Rejected []DropReject
+	Event    DropEvent
+	Reject   DropRejectEvent
 }
+
+type DropPolicy struct {
+	AcceptedTypes  []string
+	MaxBytes       int64
+	AllowLocalPath bool
+	Log            func(level string, msg string)
+}
+
+func handleDrop(items []DropItem) DropAcceptResult {
+	return AcceptDropItems(
+		DropSource{ID: "evidence-drop", Path: "/DropZone[0]"},
+		items,
+		DropPolicy{
+			AcceptedTypes: []string{"application/pdf", ".csv"},
+			MaxBytes:      10 << 20,
+		},
+	)
+}
+
+var accepted = handleDrop([]DropItem{
+	{
+		Name:        "receipt.pdf",
+		Type:        "application/pdf",
+		Size:        12345,
+		UploadToken: "staged-upload-123",
+	},
+}).Event
 ```
 
-`DropSource.ID` is the explicit component `id` or the generated mounted id.
-`DropSource.Path` is the component path inside the rendered tree, not a local
-filesystem path. `DropItem.Path` is empty unless `allowLocalPath` is true and
-the runtime policy allows path disclosure. Rejection diagnostics include only
-`Name`, `Type`, `Size`, and `Reason`; they must not expose local paths.
+`DropSource.ID` is the explicit component `ID` or the deterministic fallback
+from the rendered drop-zone text. `DropSource.Path` is the component path inside
+the rendered tree, not a local filesystem path. `DropEvent.SourceID` and
+`DropRejectEvent.SourceID` mirror `DropSource.ID` for callers that only need the
+short source key. Product drop zones that route callbacks, persist source
+identity, or appear in localized UI must set an explicit `ID`; the text-derived
+fallback is only a deterministic last resort for simple local surfaces.
 
-`gxwasm.File` is the browser runtime wrapper for a JavaScript `File` object. It
-is populated only for browser file picker or drag/drop items and is empty for
-server-side rendering, local path drops, and already-staged upload references.
-`UploadToken` is set only by a trusted host intake adapter after it stages the
-drop into temporary storage; it authorizes the controller to claim that staged
-object and must be treated as sensitive. Rendered UI and diagnostics omit
-`UploadToken` unless the product controller explicitly consumes it.
+Each accepted `DropItem` has exactly one source handle: `File`, `Path`, or
+`UploadToken`. Browser adapters can put the JavaScript file wrapper in `File`,
+path adapters can use `DropItemFromPath`, and trusted host intake adapters can
+set `UploadToken` after staging a temporary object. `UploadToken` authorizes the
+controller to claim that staged object and must be treated as sensitive.
+Rendered UI, logs, and rejection diagnostics omit local paths and upload tokens.
 
 Drop handling must not upload, mutate, or persist data by itself. The
-controller decides what to read, validate, upload, or reject.
+controller and host decide what to read, validate, upload, store, or reject.
 
 ## Consequence
 
