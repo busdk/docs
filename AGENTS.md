@@ -208,8 +208,11 @@ patches live in patch-level semver directories such as
 `docs/docs/ui/v0.1.1/` and `docs/docs/ui/v0.3.5/`, not only grouped
 minor-version directories. Unfinished future patch docs live outside the
 semver sequence in feature-candidate directories named
-`docs/docs/ui/fc-<order>-<identifier>/`, where `<order>` is a deterministic
-zero-padded review order such as `fc-001-runtime-state`.
+`docs/docs/ui/fc-<id>-<identifier>/`, where `<id>` is a deterministic
+zero-padded candidate identifier such as `fc-001-runtime-state`. The candidate
+identifier is for stable links and review grouping only; it is not a required
+implementation order. Process multiple feature candidates in parallel when
+their real prerequisites and write scopes are independent.
 In the left sidebar, keep UI version subpages collapsed except for the
 currently open `v0.X.Y` version section so the roadmap remains scannable.
 When a version page initializes a submodule or command surface, state exactly
