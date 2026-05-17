@@ -11,18 +11,18 @@ description: Dedicated BusDK UI reference for TerminalSessionPanel.
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `state` | yes | idle, running, waiting, exited, error | Session state. `idle` shows no active process, `running` shows output plus stdin controls when `onSubmit` exists, `waiting` shows output plus approval/input waiting state, `exited` shows final output plus the latest `system` output chunk as the exit summary, and `error` shows terminal error state. |
-| `sessionID` | no | string | Stable host session identifier. When omitted, handlers must identify the active session from route or host context. |
+| `state` | yes | idle, running, waiting, exited, error | Session state. `idle` shows no active process, `running` shows output plus stdin controls when `onSubmit` exists, `waiting` shows output plus the fixed `Waiting` status label, `exited` shows final output plus the latest `system` output chunk as the exit summary, and `error` shows terminal error state. |
+| `sessionID` | no | string | Stable host session identifier. When omitted, the host runtime resolves the active session from route or host context before calling callbacks. |
 | `command` | yes | string | Displayed command. |
-| `output` | yes | `[]TerminalChunk` | Ordered chunks with required `Stream` and `Text`, plus optional non-negative integer `Sequence`. `Stream` is one of `stdout`, `stderr`, `stdin`, or `system`. Chunks render in supplied order unless every chunk has `Sequence`, in which case ascending `Sequence` order is used. Missing `Sequence` is treated as unset, not zero. |
+| `output` | yes | `[]TerminalChunk` | Ordered chunks with required `Stream` and `Text`, plus optional non-negative integer `Sequence`. `Stream` is one of `stdout`, `stderr`, `stdin`, or `system`. Chunks render in supplied order unless every chunk has `Sequence`, in which case ascending `Sequence` order is used with supplied order as the stable tie-breaker. Missing `Sequence` is treated as unset, not zero. |
 | `onSubmit` | no | `func(TerminalSubmitEvent) gx.Result` | Sends stdin when state is `running` or `waiting`. The input control appears only in those two states and only when this callback is present. |
-| `onExit` | no | `func(TerminalExitEvent) gx.Result` | Requests external process termination through the host runtime. It does not close the panel by itself. The host runtime reads session identity and applies confirmation/authorization before terminating. |
+| `onExit` | no | `func(TerminalExitEvent) gx.Result` | Requests external process termination through the host runtime. The exit control appears only in `running` and `waiting` states when this callback exists; it is hidden otherwise. It does not close the panel by itself. The host runtime reads session identity and applies authorization before terminating. |
 
 ## Boundary
 
-The component only renders terminal state and calls callbacks. The host runtime
-must authorize command start, stdin submission, and exit requests before callback
-handlers run.
+The component only renders terminal state, deterministic output order, and
+callback entry points. Process transport, command protocols, retry behavior,
+and termination authorization stay in the host runtime.
 
 ## Example
 
@@ -58,8 +58,9 @@ type TerminalExitEvent struct {
 
 `SourceID` is the component id or generated tree path. `SessionID` is copied
 from the `sessionID` prop when present; otherwise the host runtime resolves the
-active session from route or host context before calling the callback. `Text` is
-the submitted stdin value for `TerminalSubmitEvent`.
+active session from route or host context before calling the callback. If no
+active session can be resolved, the host does not call the callback. `Text` is the
+submitted stdin value for `TerminalSubmitEvent`.
 
 ## Runtime Terms
 
