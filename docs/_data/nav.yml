@@ -164,6 +164,8 @@
       url: /modules/bus-agent
     - label: bus run
       url: /modules/bus-run
+    - label: bus remote-control
+      url: /modules/bus-remote-control
     - label: bus work
       url: /modules/bus-work
     - label: bus secrets
