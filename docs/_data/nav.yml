@@ -814,10 +814,10 @@
               url: /ui/fc-023-component-catalog/component-map
             - label: UI component reference
               url: /ui/fc-023-component-catalog/component-reference
-        - label: fc-024 GX and Go artifact inventory
+        - label: fc-024 GX and Go artifact metadata
           url: /ui/fc-024-declarative-artifacts/
           children:
-            - label: GX and Go UI artifact inventory
+            - label: GX and Go UI artifact metadata
               url: /ui/fc-024-declarative-artifacts/declarative-artifacts
         - label: fc-025 Product module integration
           url: /ui/fc-025-product-module-integration/

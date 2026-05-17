@@ -1,25 +1,26 @@
 ---
-title: GX and Go UI artifact inventory
-description: Go-first Bus UI artifact inventory for GX source, generated Go, components, runtime inputs, and tests.
+title: GX and Go UI artifact metadata
+description: Go-first Bus UI artifact metadata for GX source, generated Go, components, runtime inputs, and tests.
 ---
 
 ## Purpose
 
-Bus UI authoring is Go-first. GX template source, generated Go, component
-composition, callback code, runtime configuration, and fixture files remain
-separate artifacts. The concrete syntax and validation rules live in the
-version or feature-candidate page that owns each artifact.
+Bus UI authoring is Go-first. [GX source files](../v0.1.2/source-files),
+generated Go, component composition, callback code, runtime configuration, and
+fixture files remain separate artifacts. The concrete syntax and validation
+rules live in the version or feature-candidate page that owns each artifact.
 
-FC-024 gives `bus-ui` a compact artifact inventory for those existing
-contracts. The inventory helps a module, documentation page, or test fixture
-name the artifacts that make up a UI package without introducing another
-template language.
+FC-024 gives `bus-ui` compact typed metadata for those existing contracts. The
+metadata helps a module, documentation page, or test fixture name the artifacts
+that make up a UI package without introducing another template language,
+renderer, or descriptor file.
 
 ## Design References
 
 - [GX source tools](../v0.1.2/source-tools)
 - [Expression children](../v0.1.5/expression-children)
 - [Render tree contract](../v0.1.1/render-tree-contract)
+- [UI component map](../fc-023-component-catalog/component-map)
 
 ## Owner Boundary
 
@@ -29,12 +30,31 @@ intrinsic elements, component calls, callback props, lifecycle, diagnostics,
 and core test helpers. `bus-ui` consumes those contracts through ordinary Go
 packages.
 
-The smallest FC-024 `bus-ui` code patch is an artifact inventory, not a
-renderer. It can expose typed Go records for artifact kind, module owner,
-source path, generated path, component references, validation command, and
-fixture path. The records may be produced by Go package tests, examples, or a
-local inspection helper, and they should be stable enough for docs and fixture
-checks to compare.
+The smallest FC-024 `bus-ui` code patch is local typed artifact metadata plus
+validation. It builds on [FC-023 component catalog](../fc-023-component-catalog/)
+metadata by referencing known component names or catalog entries instead of
+redeclaring component props, groups, or rendering behavior. The `bus-ui`
+metadata may record artifact kind, module owner, source path, generated path,
+component references, validation command, and fixture path.
+
+The metadata can be produced by Go package tests, examples, or a local
+inspection helper. The small validation API is
+`uiartifact.ValidateArtifacts`, where `uicatalog.Catalog` is the FC-023
+component catalog metadata for the package or module:
+
+```go
+package uiartifact
+
+import "github.com/busdk/bus-ui/pkg/uicatalog"
+
+func ValidateArtifacts(artifacts []Artifact, catalog uicatalog.Catalog) error
+```
+
+The function returns `nil` when every artifact is internally consistent and
+returns diagnostic errors when paths use the wrong artifact kind, generated Go
+lacks a matching GX source, component references do not resolve through the
+FC-023 catalog, or declared validation commands do not match the artifact
+owner.
 
 The FC-024 patch does not parse GX, lower markup, render HTML, add a
 `bus ui render` command, define a YAML or JSON schema for UI trees, or read a
@@ -64,12 +84,32 @@ Go values, function arguments, and typed component props.
 | Resource declarations | [Resource UI runtime block](../v0.4.1/resource-component) |
 | Runtime fixture documents | [v0.4.1 runtime contract](../v0.4.1/runtime-contract) |
 
-## Go Inventory Shape
+## Go Metadata Shape
 
 A production UI package may contain `.gx` source, generated `.go` files,
-ordinary Go callback code, typed view-model fixtures, and tests. The inventory
+ordinary Go callback code, typed view-model fixtures, and tests. The metadata
 describes those files so humans and tools can see which versioned contract owns
 each artifact.
+
+| Artifact label | `uiartifact.Kind` |
+| --- | --- |
+| GX source files | `GXSource` |
+| Generated Go output | `GeneratedGo` |
+| Go callback or view-model code | `GoSource` |
+| Runtime configuration | `RuntimeConfig` |
+| Resource declarations | `ResourceDeclaration` |
+| Runtime fixture documents | `RuntimeFixture` |
+| Renderer test helpers | `RenderFixture` |
+
+| Field | Required | Constraint |
+| --- | --- | --- |
+| `Kind` | yes | One of the `uiartifact.Kind` constants implemented by FC-024. |
+| `Owner` | yes | Bus module or Go package owner for the artifact. |
+| `Source` | yes | Repository-local path with an extension that matches `Kind`, such as `.gx`, `.go`, or a test fixture extension owned by the linked contract. |
+| `Generated` | kind-specific | Required for `GXSource` that compiles to Go and for `RenderFixture` with golden output; omitted for `GeneratedGo`, `GoSource`, `RuntimeConfig`, and `ResourceDeclaration`. |
+| `Components` | no | Uppercase component names that resolve through the FC-023 component catalog metadata available to validation. |
+| `ValidationCommand` | no | Copyable repository-local command for this artifact, such as `bus gx lint internal/ui/notes_page.gx`; validation rejects commands outside the artifact owner or commands that use another module's path. |
+| `Contracts` | yes | UI version or feature-candidate contract paths that define the artifact syntax and validation expectations. |
 
 ```go
 package notesui
@@ -82,10 +122,16 @@ var Artifacts = []uiartifact.Artifact{
         Owner:     "bus-notes",
         Source:    "internal/ui/notes_page.gx",
         Generated: "internal/ui/notes_page.go",
+        Components: []string{
+            "NoteTable",
+            "NoteForm",
+        },
+        ValidationCommand: "bus gx lint internal/ui/notes_page.gx",
         Contracts: []string{
             "ui/v0.1.2/source-files",
             "ui/v0.1.3/generated-go",
             "ui/v0.1.4/component-functions",
+            "ui/fc-023-component-catalog/component-map",
         },
     },
     {
@@ -93,6 +139,7 @@ var Artifacts = []uiartifact.Artifact{
         Owner:     "bus-notes",
         Source:    "internal/ui/testdata/notes-review_data_test.go",
         Generated: "internal/ui/testdata/notes-review.golden.html",
+        ValidationCommand: "go test ./internal/ui",
         Contracts: []string{
             "ui/v0.1.20/uikittest-renderer",
         },
@@ -100,8 +147,9 @@ var Artifacts = []uiartifact.Artifact{
 }
 ```
 
-A product module can keep the inventory near its UI package and assert it in
-tests without changing how the module renders.
+A product module can keep the metadata near its UI package and assert it in
+tests without changing how the module renders. The record is metadata about
+GX/Go artifacts that already exist; it is not the source of the UI tree.
 
 ## Example Package
 
@@ -148,10 +196,11 @@ not a YAML-first or JSON-first UI renderer.
 
 ## Result
 
-FC-024 is the small `bus-ui` surface that records and validates artifact
-inventory for existing GX/Go packages. More capable import/export formats can
-be added only when a later contract names the data format, owner, validation
-rules, and runtime behavior.
+FC-024 is the small `bus-ui` surface that records and validates local typed
+artifact metadata for existing GX/Go packages. Public examples should use GX or
+Go unless the page is specifically documenting data or configuration in another
+format. More capable import/export formats can be added only when a later
+contract names the data format, owner, validation rules, and runtime behavior.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

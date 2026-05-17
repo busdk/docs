@@ -1,8 +1,8 @@
 ---
-title: fc-024 GX and Go artifact inventory
-description: BusDK UI fc-024 documentation index for Go-first UI artifact inventory.
+title: fc-024 GX and Go artifact metadata
+description: BusDK UI fc-024 documentation index for Go-first UI artifact metadata.
 ---
 
 ## Pages
 
-- [GX and Go UI artifact inventory](./declarative-artifacts) - Go-first inventory for Bus UI source, generated Go, component, and test artifacts.
+- [GX and Go UI artifact metadata](./declarative-artifacts) - Go-first typed metadata for Bus UI source, generated Go, component, and test artifacts.
