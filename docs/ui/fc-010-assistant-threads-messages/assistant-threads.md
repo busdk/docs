@@ -55,6 +55,9 @@ type AIThreadEvent struct {
 Thread ownership, branch or worktree details, and provider run state stay in
 the product view model.
 
+Use the list as a child of the FC-009 [`AIPanel`](../fc-009-assistant-workbench-shell/ai-panel)
+when an assistant pane needs thread selection.
+
 ## Consequence
 
 Thread selection is reusable without moving assistant workflow ownership into

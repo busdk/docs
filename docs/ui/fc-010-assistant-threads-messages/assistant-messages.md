@@ -18,7 +18,8 @@ sanitizer before it reaches rendering.
 Messages need a role plus raw public text or sanitized HTML. Callers pass raw
 text in `text`; `AIMessage` escapes it during rendering. Callers pass
 pre-sanitized markup only through `html`, and only with the sanitizer identity
-that produced it.
+that produced it. `text` and `html` are mutually exclusive; passing both fails
+validation instead of choosing one value to render.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
@@ -28,6 +29,9 @@ that produced it.
 | `sanitizer` | required with `html` | Stable sanitizer id and version, for example `bus-markdown/v1`. |
 
 The product view model owns redaction, ordering, and visibility.
+
+Assistant panes can render a transcript by passing `AIMessage` nodes as
+children of the FC-009 [`AIPanel`](../fc-009-assistant-workbench-shell/ai-panel).
 
 ## Consequence
 
