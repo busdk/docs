@@ -7,7 +7,7 @@ description: Compact checklist for building BusDK UI modules with the shared UI 
 
 The compact design decisions are:
 [layer ownership](../v0.1.1/foundation),
-[declarative authoring](../v0.1.2/source-tools),
+[GX authoring](../v0.1.2/source-tools),
 [callback props](../v0.1.6/), and
 [safety and rendering](../v0.1.1/render-tree-contract).
 
@@ -38,11 +38,11 @@ status surfaces before adding product-local markup. Use higher-level
 assistant, terminal, evidence, file, and portal libraries only when the product
 needs those concerns.
 
-Capture important screens as declarative template sets when practical. Use the
-versioned [Source-tool integration](../v0.1.3/source-tool-integration) checks available for the current patch,
-starting with [v0.1.2 source formatting and linting](../v0.1.2/) and adding
-[v0.1.3 compile checks](../v0.1.3/) once the compiler
-exists.
+Capture important screens as `.gx` fixtures when practical. Use the versioned
+[Source-tool integration](../v0.1.3/source-tool-integration) checks available
+for the current patch, starting with
+[v0.1.2 source formatting and linting](../v0.1.2/) and adding
+[v0.1.3 compile checks](../v0.1.3/) once the compiler exists.
 
 Wire interaction through stable events once the versioned event contract
 exists. Callback prop names are part of the public UI contract, so rename them only

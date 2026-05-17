@@ -58,7 +58,7 @@ internal/ui/               Go/GX framework pages, handlers, and event helpers
 
 Framework pages should take ordinary Go inputs. Data reaches GX through Go
 values, function arguments, typed props, and host context; it does not require a
-YAML descriptor, JSON binding document, or string selector grammar.
+separate descriptor or string selector grammar.
 
 ```gx
 package notesui

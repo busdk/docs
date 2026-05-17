@@ -19,7 +19,7 @@ segments, or CSP additions.
 ## Module Metadata
 
 The public module metadata is derived from Go interfaces, not from an
-operator-authored YAML descriptor. Stable IDs use lowercase letters, digits, and
+operator-authored descriptor. Stable IDs use lowercase letters, digits, and
 hyphens. Readiness is `stable` for normal opt-in modules or `experimental` for
 modules that require explicit experimental enablement. The default-enabled flag
 controls the module set mounted when the operator does not request a specific
@@ -54,6 +54,16 @@ without paths, queries, or fragments.
 `ModuleContractFor` returns the deterministic live metadata snapshot. It sorts
 valid entries and omits unsafe optional entries so `/v1/modules` remains stable
 and browser-safe.
+
+Invalid required module fields reject mounting: empty or unsafe module IDs,
+empty titles, unsafe base routes, invalid mount IDs for declared render roots,
+and unreadable framework contracts fail validation before the module is
+published. `State()` is the only normalized required value; unsupported states
+become `stable` so older modules stay visible. Unsafe optional framework
+entries such as bad asset paths, rejected provider origins, unsafe runtime
+config keys, or malformed browser-effect fields are omitted from the metadata
+snapshot and reported through validation diagnostics, so missing routes,
+assets, or runtime metadata can be traced to the rejected field.
 
 ## Host Context
 

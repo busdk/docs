@@ -21,7 +21,7 @@ The acceptance fixture must include:
    `bus gx compile <file.gx> --output <file.go>`;
 5. a host test that verifies generated Go matches the checked-in output;
 6. a browser-backed e2e test run by `make test-wasm`;
-7. no YAML binding files, controller registry, component registry, custom
+7. no external binding files, controller registry, component registry, custom
    event names, global JavaScript facade, or raw HTML.
 
 Run `make test-wasm` from the `bus-gx` module checkout. The target needs

@@ -9,7 +9,7 @@ item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
 that were used when those entries were completed.
 
-- [ ] UI roadmap GX/Go example audit: review `docs/docs/ui/` for remaining
+- [x] UI roadmap GX/Go example audit: review `docs/docs/ui/` for remaining
   YAML/JSON examples or declarative-template wording that conflicts with the
   current GX/Go, React-like component direction. Preserve JSON only where it is
   genuinely CLI machine output, public runtime metadata, or HTTP/resource data;

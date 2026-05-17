@@ -58,11 +58,11 @@ Snapshots are useful when they are narrow. A good snapshot covers one component
 or one compact fixture state, such as a notes list with filters, an auth login
 form, a terminal approval card, or an accounting evidence panel.
 
-Declarative template sets are preferred fixtures for reusable states. A test
-can render `testdata/notes-review.gx` with matching Go data and callbacks
-through Bus UI test helpers, then compare the normalized component tree or
-deterministic HTML. That makes the fixture useful for humans, agents, docs, and
-tests at the same time.
+GX template fixtures are preferred for reusable states. A test can render
+`testdata/notes-review.gx` with matching Go data and callbacks through Bus UI
+test helpers, then compare the normalized component tree or deterministic HTML.
+That makes the fixture useful for humans, agents, docs, and tests at the same
+time.
 
 Keep the fixture files module-relative and explicit. For example,
 `testdata/notes-review.gx` contains the markup and component functions,
