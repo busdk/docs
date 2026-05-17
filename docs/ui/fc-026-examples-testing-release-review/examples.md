@@ -7,9 +7,9 @@ description: BusDK UI examples embedded in component and architecture pages.
 
 UI examples live with the topic they demonstrate:
 
-- [GX and Go UI artifacts](../fc-024-declarative-artifacts/declarative-artifacts) shows the
-  `.gx` template, generated Go, Go model fixture, Go callbacks, and
-  optional fixture file shapes.
+- [GX and Go UI artifact inventory](../fc-024-declarative-artifacts/declarative-artifacts) shows the
+  `.gx` template, generated Go, Go model fixture, Go callbacks, and artifact
+  inventory shape.
 - [Assistant panel](../fc-009-assistant-workbench-shell/assistant-panel) shows assistant shell and AI
   panel markup.
 - [Evidence preview](../fc-019-evidence-previews/evidence-preview) shows
@@ -27,4 +27,4 @@ UI examples live with the topic they demonstrate:
 ### Sources
 
 - [UI component reference](../fc-023-component-catalog/component-reference)
-- [GX and Go UI artifacts](../fc-024-declarative-artifacts/declarative-artifacts)
+- [GX and Go UI artifact inventory](../fc-024-declarative-artifacts/declarative-artifacts)

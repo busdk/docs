@@ -88,7 +88,7 @@ sidebar. Earlier implemented pages do not link forward to feature candidates.
 - [fc-021 File drops](fc-021-file-drops/)
 - [fc-022 Image galleries](fc-022-image-galleries/)
 - [fc-023 Component catalog](fc-023-component-catalog/)
-- [fc-024 GX and Go artifacts](fc-024-declarative-artifacts/)
+- [fc-024 GX and Go artifact inventory](fc-024-declarative-artifacts/)
 - [fc-025 Product module integration](fc-025-product-module-integration/)
 - [fc-026 Examples, testing, and release review](fc-026-examples-testing-release-review/)
 
