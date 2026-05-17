@@ -22,6 +22,12 @@ bus portal serve --print-url --enable-module auth
 bus portal serve --print-url --enable-module ai
 ```
 
+Mounted modules publish deterministic metadata at `/v1/modules`. The response
+contains each module's stable `id`, public `title`, readiness `state`,
+`default_enabled` flag, navigation items, token-aware host context, and any
+validated page/runtime metadata that the module exposes. Browser launchers use
+that metadata instead of guessing paths or assets.
+
 The portal host is frontend infrastructure. Server-side behavior such as
 registration, billing, LLM access, container lifecycle, terminal sessions,
 workspace reads, uploads, report generation, and artifact access is provided by
@@ -132,6 +138,35 @@ rather than exposing local files from the portal host.
 
 ### Module Configuration
 
+Configured portal modules must satisfy the validated module descriptor contract
+before `bus-portal` mounts them. This validation is strict and operator-facing:
+an invalid descriptor fails startup or module selection instead of silently
+serving a partial module.
+
+The required descriptor shape includes a canonical lowercase module ID, a
+non-empty title, readiness `state` of `stable` or `experimental`, and a
+`default_enabled` value. Default-enabled modules must be stable. A module must
+provide a handler, at least one navigation item, and at least one declared page
+entry point. Navigation paths must be under `/modules/<id>/...` and must match
+a declared page route.
+
+Page specs declare deterministic server-rendered entry points with a stable
+page name, route path, and HTML mount ID. GX-ready modules may also declare a
+Go/WASM runtime asset, browser behavior hooks, public runtime config keys,
+required provider API origins, and module assets. Runtime config keys are
+public browser data only; names that look like secrets, tokens, passwords,
+credentials, private values, or JWTs are rejected. Provider API origins must
+be `'self'` or HTTP(S) origins without paths, queries, or fragments. Runtime
+and module asset paths must be same-origin paths, not external URLs or path
+traversal values.
+
+This strict configured-module validation is separate from defensive metadata
+normalization. The live `/v1/modules` metadata snapshot trims, sorts,
+deduplicates, and omits unsafe optional fields from already mounted modules so
+browser clients and CSP generation stay stable. Operators should still treat
+descriptor validation failures as configuration errors to fix at the module or
+distribution boundary.
+
 `bus-portal-auth` provides registration, OTP login, logout, session discovery,
 and account status UI. It calls `bus-api-provider-auth`.
 
@@ -179,3 +214,4 @@ portal serve --print-url --enable-module auth --enable-module ai
 - [bus-portal-auth](./bus-portal-auth)
 - [bus-portal-ai](./bus-portal-ai)
 - [bus-portal-accounting](./bus-portal-accounting)
+- [Portal host contract](../ui/fc-025-product-module-integration/portal-host-contract)
