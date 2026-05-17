@@ -5,41 +5,56 @@ description: Dedicated BusDK UI reference for EvidencePreview.
 
 ## Purpose
 
-`EvidencePreview` is an evidence/media component. Safe evidence preview. Use for inline approved preview types.
+`EvidencePreview` renders one checked inline evidence preview or a public-safe
+fallback. It consumes an already-authorized preview URL, optional open/download
+URLs, provider-verified metadata, and a public title.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `previewURL` | yes | same-origin evidence API URL, `EvidenceURLResolver` result, or Go expression | Authorized preview URL. Embeds `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, and `text/plain` responses when the provider returns an approved content type and either no `Content-Disposition` or `inline`; `attachment` or filename values with path separators render fallback. |
-| `title` | yes | string | Accessible title. |
-| `fallback` | no | string | Shown when type, policy, or authorization prevents embedding. Default is a generic unavailable preview message. |
+| `PreviewURL` | yes for inline preview | string | Same-origin or host-resolved HTTPS preview URL. Empty or unsafe URLs render fallback. |
+| `OpenURL` | no | string | Optional checked URL for the Open control. Defaults to `PreviewURL`. |
+| `DownloadURL` | no | string | Optional checked URL for the Download control. Defaults to `PreviewURL`. |
+| `Title` | yes | string | Public-safe accessible title. |
+| `ContentType` | yes for inline preview | string | Provider-verified MIME type. Inline types are `image/png`, `image/jpeg`, `image/webp`, `application/pdf`, and `text/plain`. |
+| `ContentDisposition` | no | string | `attachment` or filenames containing path separators block inline preview. |
+| `Fallback` | no | string | Public-safe fallback copy. |
+| `Reason` | no | `EvidenceDenialReason` | Resolver denial reason. Any reason renders fallback. |
+| `Attrs` | no | `map[string]string` | Root attributes limited to safe identity, class, role, `data-*`, and `aria-*` keys. |
+| `Log` | no | `ControlLogSink` | Receives preview policy and render events. |
 
 ## Boundary
 
 Active HTML and SVG previews are rejected by default and render fallback. A
 host may proxy them from a sandboxed evidence origin, but they never execute in
-the portal origin.
+the portal origin. Authorization, provider fetches, content-type verification,
+content-disposition policy at the storage boundary, and filesystem access stay
+outside `bus-ui`.
 
 ## Example
 
-```gx
+```go
 package evidenceui
 
-var invoicePreview = (
-  <EvidencePreview
-    previewURL={document.Preview}
-    title="Invoice 2026-04"
-  ></EvidencePreview>
-)
+import "github.com/busdk/bus-ui/pkg/uikit"
+
+func InvoicePreview(previewURL string) (string, error) {
+	return uikit.EvidencePreviewChecked(uikit.EvidencePreviewProps{
+		PreviewURL:  previewURL,
+		Title:       "Invoice 2026-04",
+		ContentType: "application/pdf",
+	})
+}
 ```
 
 ## Runtime Terms
 
 [Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
 
-[Resource](../v0.4.1/resource) defines safe URL resolution and evidence
-preview URL policy.
+`EvaluateEvidencePreviewPolicy` exposes the inline-or-fallback decision without
+rendering HTML. `IsEmbeddableEvidenceContentType` lets hosts preflight whether a
+provider-verified MIME type can be offered for inline preview.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

@@ -11,23 +11,38 @@ description: BusDK UI library evidence open and download link contract.
 ## Contract
 
 [`EvidenceLink`](./evidence-link) renders authorized open or
-download links. Missing or expired URLs render disabled text. External URLs
-must come from a named host resolver configured in [runtime config](../fc-004-runtime-config-api-urls/runtime-config)
-or from an origin accepted by [API URL resolution](../fc-004-runtime-config-api-urls/api-urls).
+download links. Missing URLs and resolver denial reasons render disabled text
+without an active `href`. External HTTPS URLs are accepted only as already
+resolved host input; host runtime configuration and named resolvers own exact
+origin policy before the URL reaches this component.
 
 Link labels are public-safe text supplied by the product view model.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `href` | yes for enabled links | Authorized URL from [evidence URLs](./evidence-urls). |
-| `label` | yes | Public-safe link text. |
-| `operation` | yes | `open` or `download`. |
-| `reason` | no | Denial reason from evidence URL resolution. |
+| `Href` | yes for enabled links | Authorized URL from [evidence URLs](./evidence-urls). |
+| `Label` | yes | Public-safe link text. |
+| `Operation` | yes | `open` or `download`. |
+| `Reason` | no | Denial reason from evidence URL resolution. |
+| `Target` | no | `_self` or `_blank`. |
+| `Download` | no | Adds the boolean download attribute. |
 
 Open links navigate or open a preview target. Download links set download
 intent. Missing, expired, unauthorized, unsupported, or disallowed external
 URLs render disabled text with public-safe reason copy. The provider/controller
 supplies `href`; the component does not authorize documents.
+
+```go
+html, err := uikit.EvidenceLinkChecked(uikit.EvidenceLinkProps{
+	Href:      resolved.URL,
+	Label:     "Open receipt 2026-04-18",
+	Operation: uikit.EvidenceOperationOpen,
+	Target:    "_blank",
+})
+if err != nil {
+	return "", err
+}
+```
 
 ## Consequence
 

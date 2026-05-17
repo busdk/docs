@@ -12,7 +12,10 @@ description: BusDK UI library projected evidence detail contract.
 
 [`ProjectionDetail`](./projection-detail-component) renders public-safe
 projection summary and evidence references. Provider payloads are projected
-before render; raw private payloads are rejected.
+before render; raw private payloads are not valid input for this component.
+Required unsafe title input fails closed, while unsafe optional fields and
+evidence actions are omitted or disabled with diagnostics so the remaining safe
+detail can still render.
 
 Public-safe text may include labels, totals, public request ids, and evidence
 names. It must not include credentials, bearer tokens, raw provider responses,
@@ -21,11 +24,15 @@ SQL, stack traces, private customer data, file contents, or prompt text.
 `ProjectionDetail` receives one props value:
 
 ```go
+type ControlLogSink func(level string, msg string)
+
 type ProjectionDetailProps struct {
-	Title string
-	Summary string
-	Fields []ProjectionField
+	Title    string
+	Summary  string
+	Fields   []ProjectionField
 	Evidence []ProjectionEvidenceAction
+	Attrs    map[string]string
+	Log      ControlLogSink
 }
 
 type ProjectionField struct {
@@ -34,29 +41,32 @@ type ProjectionField struct {
 }
 ```
 
-The table names the GX attributes; they map to the exported Go fields shown
-above.
+The table names the exported Go fields shown above.
 
-| GX attribute | Required | Behavior |
+| Field | Required | Behavior |
 | --- | --- | --- |
-| `title` | yes | Non-empty public-safe string. |
-| `summary` | no | Public-safe string; omitted when unavailable. |
-| `fields` | no | Array of `{label,value}` strings. `label` is non-empty public-safe text; `value` is public-safe text or number formatted by the controller. |
-| `evidence` | no | `[]ProjectionEvidenceAction`. `ID` is non-empty provider evidence id, `Label` is public-safe text, and `Operation` is `open`, `download`, or `preview`. `URL` is required for all operations and must be same-origin beginning with `/` or returned by [`EvidenceURLResolver`](../fc-018-evidence-urls-links/evidence-url-resolver). External URLs are accepted only when they were produced by a named evidence resolver whose exact origin is present in host runtime config `externalEvidenceOrigins`; `javascript:`, `data:`, path traversal, and other external origins are rejected. `Filename` is required for `download`. `MediaType` is required for `preview` and must be `application/pdf`, `image/png`, `image/jpeg`, or `text/plain`. |
+| `Title` | yes | Non-empty public-safe string. Missing title makes `ProjectionDetailChecked` return `ErrProjectionDetailTitleRequired` without HTML; unsafe title returns `ErrProjectionDetailUnsafeTitle` with a title diagnostic. |
+| `Summary` | no | Public-safe string; unsafe summaries are omitted with diagnostics. |
+| `Fields` | no | Public-safe label/value rows. `Value` is already formatted by the controller. |
+| `Evidence` | no | `[]ProjectionEvidenceAction`. Each action has a stable `ID`, public-safe `Label`, `Operation` of `open`, `download`, or `preview`, and a host-authorized `URL`. `Filename` is required for `download`. `MediaType` is required for `preview` and must be `application/pdf`, `image/png`, `image/jpeg`, or `text/plain`. |
+| `Attrs` | no | Root attributes limited to `id`, `class`, `role`, `title`, `data-*`, and `aria-*`. Event handlers, `style`, `href`, and other attributes are rejected with `ErrProjectionDetailUnsafeAttrs`. |
+| `Log` | no | Optional sink for error, warning, and info validation/render events. `nil` is allowed, and logging does not change render output or validation results. |
 
 `open` navigates to the safe URL in the current browsing context. `download`
-uses the safe URL with the provided `Filename` and requires host permission to
-start a download. `preview` renders an embedded or linked preview only for the
-allowed `MediaType` values. `externalEvidenceOrigins` is a host runtime config
-list of exact origins, for example `https://evidence.example.test`.
+uses the safe URL with the provided `Filename`. `preview` delegates to
+[`EvidencePreview`](../fc-019-evidence-previews/evidence-preview-component) for
+the allowed `MediaType` values. Same-origin relative URLs and HTTPS URLs that a
+host resolver has already authorized are accepted by href validation. The host
+owns exact external-origin allowlists and download policy before the action is
+constructed.
 
 ```go
 type ProjectionEvidenceAction struct {
-	ID string
-	Label string
+	ID        string
+	Label     string
 	Operation string
-	URL string
-	Filename string
+	URL       string
+	Filename  string
 	MediaType string
 }
 ```
@@ -64,11 +74,11 @@ type ProjectionEvidenceAction struct {
 Validation produces a sanitized render model before output. Raw provider
 payloads, private customer data, tokens, SQL, stack traces, credential headers,
 and other unsafe field values are omitted from the rendered detail. Unsafe
-evidence actions render as unavailable links. The component still renders the
-remaining safe detail and reports diagnostics through the runtime error path:
+evidence actions render as unavailable links. The checked helper still renders
+the remaining safe detail and returns diagnostics with the result:
 
 ```go
-var diagnostic = RuntimeDiagnostic{
+var diagnostic = uikit.ProjectionDetailDiagnostic{
 	Type:      "validation",
 	Component: "ProjectionDetail",
 	Field:     "fields[0].value",

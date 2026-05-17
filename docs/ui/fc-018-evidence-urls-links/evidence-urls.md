@@ -11,36 +11,54 @@ description: BusDK UI library evidence URL resolution contract.
 ## Contract
 
 [`EvidenceURLResolver`](./evidence-url-resolver) resolves evidence
-ids for `open`, `download`, or `preview` operations. Resolver output is an
-authorized same-origin or host-resolved URL plus optional expiry and
-content-type hint.
+artifact paths for `open`, `download`, or `preview` operations. Resolver output
+is a safe same-origin or host-resolved URL plus optional expiry and content-type
+metadata. Evidence IDs, provider path lookup, authorization, and filesystem
+access belong to the product module or host adapter that calls the helper.
 
 Input fields:
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `evidenceID` | yes | Stable evidence id owned by the provider/controller. |
-| `operation` | yes | `open`, `download`, or `preview`. |
-| `contentType` | no | MIME hint used for `preview` eligibility. |
+| `Endpoint` | yes for built-in resolvers | Safe same-origin evidence endpoint. |
+| `Path` | yes | Raw relative artifact path; segments are escaped by the helper. |
+| `Operation` | no | `open`, `download`, or `preview`; defaults to `open`. |
+| `ContentType` | no | MIME hint carried as metadata. |
+| `ExpiresAt` | no | Optional RFC 3339 expiry metadata. |
+| `APIResolver` | no | `module`, `portal`, `same-origin`, or a host-named resolver. |
 
 Output fields:
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `url` | yes on success | Same-origin path or URL produced by a named host resolver from [runtime config](../fc-004-runtime-config-api-urls/runtime-config). |
-| `expiresAt` | no | RFC 3339 expiry timestamp. |
-| `contentType` | no | MIME type returned by the resolver. |
-| `reason` | yes on denial | `unauthorized`, `expired`, `missing`, or `unsupported`. |
+| `URL` | yes on success | Same-origin path or host-resolved HTTPS URL. |
+| `ExpiresAt` | no | RFC 3339 expiry timestamp. |
+| `ContentType` | no | Normalized MIME type returned by the resolver. |
+| `Reason` | yes on denial | Public denial reason such as `unauthorized`, `expired`, `missing`, `not_found`, `unsafe_path`, `unsupported`, or `unregistered_resolver`. |
 
-Denial returns no `url` and one `reason`: `unauthorized` when the user lacks
-access, `expired` when a previously issued URL can no longer be used, `missing`
-when the evidence id is unknown, and `unsupported` when the requested operation
-or content type cannot be rendered. Product modules own document authorization
-and provider path semantics.
+Denial returns no `URL` and one `Reason`. Named resolvers are the boundary for
+external evidence origins and provider-specific authorization decisions. The
+shared helper validates endpoint shape, artifact path shape, operation tokens,
+metadata, and returned href safety.
+
+```go
+resolved, err := uikit.ResolveEvidenceURL(uikit.EvidenceURLResolverProps{
+	Endpoint:  "/api/evidence",
+	Path:      "receipts/2026-04-18.pdf",
+	Operation: uikit.EvidenceOperationOpen,
+})
+if err != nil {
+	return uikit.EvidenceURLResult{}, err
+}
+if resolved.Reason != "" || resolved.URL == "" {
+	return resolved, nil
+}
+```
 
 ## Consequence
 
-Evidence URL resolution is deterministic and controller-owned.
+Evidence URL resolution is deterministic in `bus-ui` while provider authority
+stays with the host or product module.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

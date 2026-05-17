@@ -17,21 +17,38 @@ Other content types, attachments, unauthorized URLs, and active content render
 fallback.
 
 An authorized preview URL is a same-origin URL or host-resolved URL returned by
-[evidence URL resolution](../fc-018-evidence-urls-links/evidence-urls). Non-HTTPS external URLs, unlisted
-origins, expired URLs, and resolver denials render fallback instead of inline
-content. Fallback renders public-safe title plus reason copy and never embeds
-the blocked URL as active content.
+[evidence URL resolution](../fc-018-evidence-urls-links/evidence-urls).
+Non-HTTPS external URLs, expired URLs, resolver denials, missing content type,
+and unsupported media render fallback instead of inline content. Fallback
+renders public-safe title plus reason copy and never embeds the blocked URL as
+active content.
 
 | Prop | Required | Behavior |
 | --- | --- | --- |
-| `preview-url` | yes for inline preview | Authorized URL string; omitted renders fallback. |
-| `title` | yes | Public-safe preview title. |
-| `content-type` | no | MIME hint; unknown values render fallback until verified by resolver. |
-| `reason` | no | Public-safe resolver denial reason. |
+| `PreviewURL` | yes for inline preview | Authorized URL string; omitted renders fallback. |
+| `OpenURL` | no | Checked URL for the Open control. Omitted defaults to `PreviewURL`; missing, denied, or unsafe URLs render the control disabled. |
+| `DownloadURL` | no | Checked URL for the Download control. Omitted defaults to `PreviewURL`; missing, denied, or unsafe URLs render the control disabled. |
+| `Title` | yes | Public-safe preview title. |
+| `ContentType` | yes for inline preview | Provider-verified MIME type. |
+| `ContentDisposition` | no | `attachment` and unsafe filenames block inline preview. |
+| `Reason` | no | Public-safe resolver denial reason. |
 
-```html
-<EvidencePreview preview-url={previewURL} title={documentTitle}></EvidencePreview>
+```go
+html, err := uikit.EvidencePreviewChecked(uikit.EvidencePreviewProps{
+	PreviewURL:  resolved.URL,
+	OpenURL:     resolved.URL,
+	DownloadURL: resolved.URL,
+	Title:       "Receipt 2026-04-18",
+	ContentType: resolved.ContentType,
+})
+if err != nil {
+	return "", err
+}
 ```
+
+The preview component calls the checked evidence-link helper for its open and
+download controls. Hosts still own authorization, provider transport, exact
+external-origin allowlists, and storage policy before URLs reach the props.
 
 ## Consequence
 
