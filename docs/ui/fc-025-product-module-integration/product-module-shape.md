@@ -21,10 +21,10 @@ declare the browser hooks that may project events back into Go.
 
 The module still implements the host-facing `portal.Module` interface from the
 `bus-portal/pkg/portal` package. A GX-ready module also implements
-`portal.FrameworkModule` when it can publish framework pages, deterministic
-render roots, optional Go/WASM runtime metadata, public runtime configuration,
-provider origins, same-origin assets, and browser event hooks through the
-[`UIFramework`](./portal-modules) contract.
+`portal.FrameworkModule` when it can publish Go-first framework pages,
+deterministic render roots, optional Go/WASM runtime metadata, public runtime
+configuration, provider origins, same-origin assets, and browser event hooks
+through the [`UIFramework`](./portal-modules) contract.
 
 ```go
 // Excerpt from package portal.
@@ -53,12 +53,12 @@ The module layout can be compact:
 ```text
 internal/provideradapter/  provider DTO and public error projection
 internal/viewmodel/        screen-ready state, permission display, and copy
-internal/ui/               Go/GX framework pages, handlers, and event helpers
+internal/ui/               Go and GX framework pages, handlers, and event helpers
 ```
 
 Framework pages should take ordinary Go inputs. Data reaches GX through Go
 values, function arguments, typed props, and host context; it does not require a
-separate descriptor or string selector grammar.
+YAML/JSON descriptor, binding map, or string selector grammar.
 
 ```gx
 package notesui

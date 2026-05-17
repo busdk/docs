@@ -1,6 +1,6 @@
 ---
 title: Portal modules
-description: How BusDK product UI modules expose deterministic Go/GX pages through the portal framework contract.
+description: How BusDK product UI modules expose deterministic Go-first GX pages through the portal framework contract.
 ---
 
 ## Overview
@@ -14,13 +14,14 @@ The integration point is Go. Existing modules implement `portal.Module`; modules
 that render through shared Bus UI primitives can also implement
 `portal.FrameworkModule`. The framework contract lets a product module declare
 server-rendered pages and matching browser hooks without moving product policy
-into the host.
+into the host or into a separate descriptor language.
 
 ## Framework Pages
 
-`portal.UIFramework` is the compact declaration for GX-ready pages. Each
+`portal.UIFramework` is the compact Go declaration for GX-ready pages. Each
 `UIPage` has a stable name, module-relative path, mount ID, deterministic Go
-renderer, and optional browser hooks.
+renderer, and optional typed browser hooks. The declaration is metadata about
+Go renderers and Go/WASM event projection; it is not a YAML or JSON UI tree.
 
 ```go
 func (ReportsModule) UIFramework() portal.UIFramework {
@@ -70,7 +71,7 @@ func renderReportsPage(ctx portal.UIRenderContext) uikit.Node {
 
 When a module still has legacy string HTML during migration, keep that adapter
 small and feed it only trusted or sanitized fragments. New framework pages
-should prefer typed Go/GX components over `BodyHTML` assembly.
+should use typed Go components and `.gx` source over `BodyHTML` assembly.
 
 GX source can wrap the same shape with typed props when a module page is written
 as `.gx`. Data still arrives as ordinary Go values.
@@ -87,7 +88,7 @@ func ReportsPage(props ReportsPageProps) gx.Node {
 
 ## Event Projection
 
-Browser behavior is declared as Go hooks and projected through fixture-tested
+Browser behavior is declared as typed Go hooks and projected through fixture-tested
 helpers. `portal.ProjectFrameworkEvent` selects a declared page and hook,
 checks that the observed browser event and action match the declaration, and
 returns only the fields named by the hook.

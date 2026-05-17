@@ -32,9 +32,10 @@ Run the default checks from the owning module root. A normal Go-backed UI
 module should make `go test ./...` pass for unit and renderer tests, should
 make `bus gx fmt --check testdata/*.gx` and `bus gx lint --format json
 testdata/*.gx` pass for committed GX fixtures, and should expose a module e2e
-target such as `make e2e` or `make test-e2e` for host wiring. Successful
-commands exit `0`; JSON lint output for valid fixtures is an empty diagnostics
-array.
+target such as `make e2e` or `make test-e2e` for host wiring. The `--format
+json` flag is for machine-readable diagnostics from GX tools; it is not a UI
+source format. Successful commands exit `0`; JSON lint output for valid
+fixtures is an empty diagnostics array.
 
 Useful assertions include:
 
@@ -71,14 +72,14 @@ callbacks, and `testdata/notes-review.golden.html` contains the expected
 normalized output. Formatting and linting the `.gx` file must succeed before
 the render comparison runs.
 
-Template fixture checks should run before render assertions. Use
+GX fixture checks should run before render assertions. Use
 `bus gx fmt --check testdata/notes-review.gx` to prove the committed GX source
 is canonical, `bus gx lint --format json testdata/notes-review.gx` to catch
 source-level GX problems with machine-readable diagnostics, then run the
 module's Go fixture test that compiles the generated Go and compares the
 golden output. `bus gx inspect --format inventory` gives agents a stable map
 of entries, local components, Go values, and callbacks before they edit a
-fixture.
+fixture; it does not replace the `.gx` source or the Go fixture code.
 
 Avoid snapshots that freeze an entire app for many unrelated states. Those
 snapshots make refactoring expensive and hide the business assertion. Prefer

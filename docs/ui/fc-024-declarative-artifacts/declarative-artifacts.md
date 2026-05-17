@@ -13,7 +13,7 @@ rules live in the version or feature-candidate page that owns each artifact.
 FC-024 gives `bus-ui` compact typed metadata for those existing contracts. The
 metadata helps a module, documentation page, or test fixture name the artifacts
 that make up a UI package without introducing another template language,
-renderer, or descriptor file.
+renderer, descriptor file, or YAML/JSON UI format.
 
 ## Design References
 
@@ -57,9 +57,9 @@ FC-023 catalog, or declared validation commands do not match the artifact
 owner.
 
 The FC-024 patch does not parse GX, lower markup, render HTML, add a
-`bus ui render` command, define a YAML or JSON schema for UI trees, or read a
-descriptor file before an app can run. Data still reaches GX through ordinary
-Go values, function arguments, and typed component props.
+`bus ui render` command, define a YAML or JSON schema for UI trees, or load a
+descriptor before an app can run. Data still reaches GX through ordinary Go
+values, function arguments, and typed component props.
 
 ## Artifact Kinds
 
@@ -98,14 +98,14 @@ each artifact.
 | Go callback or view-model code | `GoSource` |
 | Runtime configuration | `RuntimeConfig` |
 | Resource declarations | `ResourceDeclaration` |
-| Runtime fixture documents | `RuntimeFixture` |
+| Typed runtime metadata | `RuntimeFixture` |
 | Renderer test helpers | `RenderFixture` |
 
 | Field | Required | Constraint |
 | --- | --- | --- |
 | `Kind` | yes | One of the `uiartifact.Kind` constants implemented by FC-024. |
 | `Owner` | yes | Bus module or Go package owner for the artifact. |
-| `Source` | yes | Repository-local path with an extension that matches `Kind`, such as `.gx`, `.go`, or a test fixture extension owned by the linked contract. |
+| `Source` | yes | Repository-local path with an extension that matches `Kind`, such as `.gx`, `.go`, or a typed metadata fixture extension owned by the linked contract. |
 | `Generated` | kind-specific | Required for `GXSource` that compiles to Go and for `RenderFixture` with golden output; omitted for `GeneratedGo`, `GoSource`, `RuntimeConfig`, and `ResourceDeclaration`. |
 | `Components` | no | Uppercase component names that resolve through the FC-023 component catalog metadata available to validation. |
 | `ValidationCommand` | no | Copyable repository-local command for this artifact, such as `bus gx lint internal/ui/notes_page.gx`; validation rejects commands outside the artifact owner or commands that use another module's path. |
@@ -193,6 +193,12 @@ Runtime configuration may be JSON-serializable when the runtime contract
 requires browser delivery, and fixture documents may use data formats owned by
 their specific contract. Those files carry data or configuration only; they are
 not a YAML-first or JSON-first UI renderer.
+
+When a later contract needs portable artifact metadata outside a Go package, it
+should still describe existing typed artifacts rather than becoming an
+alternate template surface. The owner of that later contract must define the
+file format, allowed fields, validation command, and runtime behavior next to
+the feature that consumes it.
 
 ## Result
 

@@ -91,8 +91,8 @@ downloads, accepts, or lists attached files, artifacts, documents, PDFs, photos,
 or other media.
 
 Use [portal modules](../fc-025-product-module-integration/portal-modules) when the UI must be mounted by a
-portal host with module descriptors, host context, shared assets, and route
-resolution.
+portal host with Go-derived module metadata, host context, shared assets, and
+route resolution.
 
 ## What Belongs Where
 

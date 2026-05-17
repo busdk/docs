@@ -9,8 +9,8 @@ description: BusDK UI feature-candidate index for product modules mounted throug
   boundary for provider adapters, view models, framework pages, and event
   projection.
 - [Portal modules](./portal-modules) describes how product modules expose
-  deterministic UI pages through the portal framework contract.
+  deterministic Go-first GX pages through the portal framework contract.
 - [Portal host contract](./portal-host-contract) records the host context,
   metadata, and routing responsibilities that product modules can rely on.
 - [Portal shell](./portal-shell) shows the shell component shape that modules
-  compose from Go/GX and shared Bus UI primitives.
+  compose from `.gx`, Go, and shared Bus UI primitives.

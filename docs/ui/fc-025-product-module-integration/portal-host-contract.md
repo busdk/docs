@@ -32,7 +32,7 @@ module list.
 | `State()` | `state` | `stable` or `experimental`; unsupported values normalize to `stable`. |
 | `DefaultEnabled()` | `default_enabled` | Included in the implicit module set when true. |
 | `NavItems()` | `nav_items` | Public labels and same-origin route paths. |
-| `UIFramework()` or `ModuleContract()` | `gx_render_roots`, `wasm_runtime`, `required_browser_effects`, `public_runtime_config`, `provider_api_origins`, `assets` | Additive framework metadata derived from Go declarations. |
+| `UIFramework()` or `ModuleContract()` | render roots, WASM runtime, required browser effects, public runtime config, provider API origins, assets | Additive framework metadata derived from Go declarations. |
 
 `ValidateModuleContract` and `ValidateFrameworkContract` enforce the mount-time
 rules. A safe name is non-empty and may contain letters, digits, hyphens,
@@ -40,15 +40,15 @@ underscores, dots, and colons. Safe route paths start with `/`, do not start
 with `//`, and do not contain backslashes, `..`, tabs, or newlines. Safe HTML
 mount IDs use the safe-name character set but cannot start with a digit.
 
-`gx_render_roots` entries use safe names, safe route paths, and safe HTML mount
-IDs. `wasm_runtime.asset_path` and `assets[].path` are same-origin asset paths:
-they cannot be empty, absolute URLs, host-qualified paths, query-only values,
+Render root entries use safe names, safe route paths, and safe HTML mount IDs.
+WASM runtime asset paths and module asset paths are same-origin paths: they
+cannot be empty, absolute URLs, host-qualified paths, query-only values,
 fragment-only values, traversal paths, or paths with backslashes, tabs, or
-newlines. `required_browser_effects` entries use safe names for `name`, `kind`,
-optional `event`, optional `action`, and projected `fields`; `target_id` uses a
-safe HTML mount ID when present. `public_runtime_config` keys use safe names and
-must not contain terms such as `secret`, `token`, `password`, `credential`,
-`private`, or `jwt`. `provider_api_origins` accepts `'self'` or HTTP(S) origins
+newlines. Required browser effects use safe names for their name, kind,
+optional event, optional action, and projected fields; target IDs use a safe
+HTML mount ID when present. Public runtime config keys use safe names and must
+not contain terms such as `secret`, `token`, `password`, `credential`,
+`private`, or `jwt`. Provider API origins accept `'self'` or HTTP(S) origins
 without paths, queries, or fragments.
 
 `ModuleContractFor` returns the deterministic live metadata snapshot. It sorts
