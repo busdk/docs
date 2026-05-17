@@ -1,167 +1,132 @@
 ---
-title: Portal UI modules
-description: How BusDK portal feature modules use the shared UI framework and host contract.
+title: Portal modules
+description: How BusDK product UI modules expose deterministic Go/GX pages through the portal framework contract.
 ---
 
-## Module Contract
+## Overview
 
-A portal feature module is a pluggable UI module mounted by `bus-portal`. It
-has a stable ID, title, readiness state, default-enabled flag, navigation
-items, and an HTTP handler. The host normalizes module IDs, deduplicates
-modules, sorts metadata deterministically, and routes requests to the mounted
-handler.
+A portal module is a product UI surface mounted by `bus-portal`. The host owns
+module launch, shared assets, security headers, token-aware routing, and
+metadata. The product module owns DTO projection, view models, page renderers,
+event hooks, copy, permission display, provider clients, and product routes.
 
-Feature modules should expose product routes beneath their mounted module path.
-They should not assume they are served at the web root. All links, form events,
-API calls, asset references, and redirects should resolve through the host
-context.
+The integration point is Go. Existing modules implement `portal.Module`; modules
+that render through shared Bus UI primitives can also implement
+`portal.FrameworkModule`. The framework contract lets a product module declare
+server-rendered pages and matching browser hooks without moving product policy
+into the host.
 
-## Host Context
+## Framework Pages
 
-Modules receive host context as a Go value before rendering. Go WebAssembly mounting
-receives a serialized public runtime subset, not server-only helpers.
+`portal.UIFramework` is the compact declaration for GX-ready pages. Each
+`UIPage` has a stable name, module-relative path, mount ID, deterministic Go
+renderer, and optional browser hooks.
 
-| Field | Required | Behavior |
-| --- | --- | --- |
-| `moduleBasePath` | yes | Canonical same-origin mount path such as `/modules/notes`; invalid or empty paths fail module registration. |
-| `urlBuilder` | server only | Server-only helper that builds token-aware links under `moduleBasePath`. Go WebAssembly receives serialized base fields instead of a callable function. |
-| `assetURLs` | yes | Supplies shared CSS/WASM asset paths; missing optional assets fall back to host defaults. |
-| `apiResolver` | yes | Resolves module and portal API paths without hard-coded roots. |
-| `runtimeConfig` | no | Public JSON object; defaults to empty and rejects secret-looking keys. |
-| `session` | no | Auth/session helper references when the deployment has a token gate. |
-| `security` | yes | Security-header and `connect-src` declarations used by server tests and browser setup. |
-| `frontendAuth` | no | Frontend-auth/local-token state; absent means unauthenticated local mode. |
-
-Minimal public JSON shape for Go WebAssembly:
-
-```json
-{
-  "moduleBasePath": "/modules/notes",
-  "assetURLs": {
-    "css": "/assets/bus-ui.css",
-    "wasm": "/assets/notes.wasm"
-  },
-  "apiResolver": {
-    "module": "/modules/notes/api",
-    "portal": "/api"
-  },
-  "runtimeConfig": {},
-  "security": {
-    "connectSrc": ["'self'"]
-  }
+```go
+func (ReportsModule) UIFramework() portal.UIFramework {
+    return portal.UIFramework{
+        DefaultRenderPageName: "main",
+        PublicRuntimeConfig: map[string]string{
+            "api_base": "/api/v1/reports",
+        },
+        ProviderAPIOrigins: []string{"https://api.example"},
+        Pages: []portal.UIPage{
+            {
+                Name:    "main",
+                Path:    "/",
+                MountID: "reports-root",
+                Render:  renderReportsPage,
+                Hooks: []portal.BrowserEffect{
+                    {
+                        Name:     "save",
+                        Kind:     "form",
+                        Event:    "submit",
+                        Action:   "save-report",
+                        TargetID: "reports-form",
+                        Fields:   []string{"title", "amount"},
+                    },
+                },
+            },
+        },
+    }
 }
 ```
 
-The purpose is to remove hard-coded relative paths from feature modules. A
-module should render the same route correctly when mounted locally, under a
-token URL, or behind a portal distribution wrapper.
+The renderer receives `portal.UIRenderContext`, including
+[`HostContext`](./portal-host-contract), the selected page, and a Bus UI render
+runtime. Its output must be deterministic for the same inputs so module tests
+can compare server HTML directly.
 
-The same host context must be available to HTTP handlers, deterministic Go
-render tests, and Go WebAssembly runtime setup. Tests should be able to assert the
-same base path, asset URL, API resolver, runtime config, and security metadata
-that the browser app receives.
-
-## Module Descriptor
-
-The portal module descriptor should be strict at the operator-facing boundary.
-It should validate stable ID, title, readiness, default enablement, navigation
-items, route/page specs, deterministic server-render entry points, WASM assets
-and hooks, public runtime config keys, declared provider API origins, and asset
-declarations. Stable IDs use lower-case kebab-case such as `notes` or
-`ai-review`. Readiness is one of `stable`, `experimental`, or `hidden`. Nav
-paths must be same-origin module-relative paths. Public config keys use
-lowerCamelCase and must not contain `secret`, `token`, `password`, `key`, or
-`credential`. Provider origins must be declared by symbolic provider id plus
-allowed same-origin API base path or HTTPS origin. Descriptor `nav.path` and
-`routes.path` values are module-relative paths: `/` means the module root under
-`moduleBasePath`, not the web root.
-
-Minimal descriptor shape:
-
-```yaml
-id: notes
-title: Notes
-readiness: experimental
-defaultEnabled: false
-nav:
-  - label: Notes
-    path: /
-routes:
-  - path: /
-    render: notes.index
-runtime:
-  wasm: /assets/notes.wasm
-assets:
-  css: /assets/bus-ui.css
-publicConfig: {}
-providerOrigins:
-  notes: /api/notes
+```go
+func renderReportsPage(ctx portal.UIRenderContext) uikit.Node {
+    props := ReportsPageProps{
+        Host: uiportal.HostContextFromPortal(ctx.HostContext),
+        Rows: reportRows(ctx),
+        Save: saveReportDraft,
+    }
+    return ReportsPage(props)
+}
 ```
 
-`id`, `title`, `readiness`, and at least one route are required.
-`defaultEnabled` is optional and defaults to `false`. `runtime` is required
-only for Go WebAssembly mounting; server-rendered-only modules may omit it. `nav`,
-`assets`, `publicConfig`, and `providerOrigins` default to empty values.
+When a module still has legacy string HTML during migration, keep that adapter
+small and feed it only trusted or sanitized fragments. New framework pages
+should prefer typed Go/GX components over `BodyHTML` assembly.
 
-Validation should fail loudly for invalid IDs, duplicate IDs, bad nav paths,
-missing titles, unsupported readiness, nil handlers or pages, missing render
-declarations, missing `runtime` only when the module declares Go WebAssembly mounting,
-unsafe public config keys, and undeclared provider origins. Defensive metadata
-normalization can still exist for internal robustness, but it should not hide
-invalid operator configuration.
+GX source can wrap the same shape with typed props when a module page is written
+as `.gx`. Data still arrives as ordinary Go values.
 
-## Product Module Responsibilities
+```gx
+func ReportsPage(props ReportsPageProps) gx.Node {
+    return (
+        <PortalShell title="Reports" hostContext={props.Host}>
+            <ReportForm rows={props.Rows} onSubmit={props.Save}></ReportForm>
+        </PortalShell>
+    )
+}
+```
 
-A product module owns its DTO adapters, view models, provider clients, copy,
-permissions display, route handlers, and event registration. It decides which
-provider fields are safe to display and which operations are available for a
-state.
+## Event Projection
 
-The module should render through shared `bus-ui` components backed by `bus-gx`
-templates and nodes. For example, an auth module configures credential fields
-and scopes; `bus-ui` renders the form and session request mechanics. A notes
-module configures note filters, note rows, review events, visibility, and
-safety labels; `bus-ui` renders filters, tables, status tags, event bars,
-reader surfaces, and safe links.
+Browser behavior is declared as Go hooks and projected through fixture-tested
+helpers. `portal.ProjectFrameworkEvent` selects a declared page and hook,
+checks that the observed browser event and action match the declaration, and
+returns only the fields named by the hook.
 
-Auth policy remains outside the portal renderer. Session validation, CSRF
-enforcement, account or waitlist state, approval and billing state, token
-eligibility, and authorization are provider/API responsibilities; portal
-modules project safe state and dispatch events.
+```go
+projected, err := portal.ProjectFrameworkEvent(module, portal.BrowserEvent{
+    Page:   "main",
+    Hook:   "save",
+    Event:  "submit",
+    Action: "save-report",
+    Values: map[string]string{
+        "title":      "Q2",
+        "amount":     "42",
+        "csrf_token": "not-projected",
+    },
+})
+if err != nil {
+    return err
+}
+```
 
-## Registration And Distribution
+The projected payload contains `title` and `amount`; undeclared fields are not
+part of the public event payload. This keeps broad browser e2e focused on host
+startup and mounted module navigation while module unit fixtures prove render
+output and event projection.
 
-The generic portal server should stay focused on hosting behavior. Product
-module registration belongs to distribution or CLI wiring. This keeps the host
-small and lets different deployments mount different module sets without
-changing core server behavior.
+## Local And Hosted Apps
 
-Module readiness state controls normal enablement. Stable modules may be
-enabled for normal opt-in use. Experimental modules require explicit opt-in.
-Default-enabled modules are included when the user does not request a specific
-module set.
+Local app-style UIs and portal-mounted modules should share the same Bus UI
+building blocks where the behavior is reusable. A local app may own its shell
+and browser startup, while a portal module receives host context and route
+mounting from `bus-portal`. Forms, tables, assistant panels, terminal panes,
+evidence links, event routing, and runtime helpers should stay in shared Bus UI
+or product module packages according to ownership.
 
-## Security
-
-The portal host applies the outer token gate and security headers. Provider APIs
-remain authoritative for data access and business permissions. Browser code can
-hide unavailable events for usability, but the API must still reject
-unauthorized requests.
-
-Public runtime config must not contain secrets. Client logs must not include
-tokens, passwords, provider credentials, private customer data, or raw sensitive
-payloads. If a module needs to show diagnostic detail, it should project the
-provider error into safe public fields first.
-
-## Local Apps And Portal Apps
-
-Some BusDK UIs run as local app-style servers with Go WebAssembly clients. Others run
-as portal modules. They should still use the same building blocks. A local app
-may own its own shell, but form controls, tables, assistant panels, terminal
-panes, evidence links, event routing, and runtime helpers should be shared.
-
-This makes local server plus WASM apps and portal-mounted apps easier to test
-with the same component fixtures.
+The host does not become a provider facade. Auth, billing, LLM access,
+container lifecycle, terminal sessions, uploads, accounting workspace reads,
+report generation, and artifact access stay behind provider APIs and their
+product modules.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -171,8 +136,8 @@ with the same component fixtures.
 
 ### Sources
 
+- [Product module shape](./product-module-shape)
+- [Portal host contract](./portal-host-contract)
+- [Portal shell](./portal-shell)
 - [bus-portal module reference](../../modules/bus-portal)
-- [bus-portal-auth module reference](../../modules/bus-portal-auth)
-- [bus-portal-ai module reference](../../modules/bus-portal-ai)
-- [bus-portal-accounting module reference](../../modules/bus-portal-accounting)
-- [bus-portal-notes module reference](../../modules/bus-portal-notes)
+- [bus-ui module reference](../../modules/bus-ui)

@@ -1,11 +1,16 @@
 ---
 title: fc-025 Product module integration
-description: BusDK UI fc-025 documentation index.
+description: BusDK UI feature-candidate index for product modules mounted through the portal host contract.
 ---
 
 ## Pages
 
-- [UI product module shape](./product-module-shape) - BusDK UI feature module structure for adapters, view models, and renderers.
-- [Portal UI modules](./portal-modules) - How BusDK portal feature modules use the shared UI framework and host contract.
-- [UI portal host contract](./portal-host-contract) - BusDK UI host responsibilities for portal-mounted feature modules.
-- [PortalShell UI component](./portal-shell) - Dedicated BusDK UI reference for PortalShell.
+- [Product module shape](./product-module-shape) explains the Go package
+  boundary for provider adapters, view models, framework pages, and event
+  projection.
+- [Portal modules](./portal-modules) describes how product modules expose
+  deterministic UI pages through the portal framework contract.
+- [Portal host contract](./portal-host-contract) records the host context,
+  metadata, and routing responsibilities that product modules can rely on.
+- [Portal shell](./portal-shell) shows the shell component shape that modules
+  compose from Go/GX and shared Bus UI primitives.

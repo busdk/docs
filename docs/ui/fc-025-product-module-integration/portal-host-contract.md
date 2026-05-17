@@ -1,50 +1,88 @@
 ---
-title: UI portal host contract
-description: BusDK UI host responsibilities for portal-mounted feature modules.
+title: Portal host contract
+description: BusDK UI host responsibilities for Go product modules mounted through bus-portal.
 ---
 
-## Contract
+## Overview
 
-A portal module exposes this contract through `bus-portal/pkg/portal.Module`.
-The current Go interface already provides `ID`, `Title`, `State`,
-`DefaultEnabled`, `NavItems`, and `Handler`; this UI contract documents the
-versioned shape that host metadata and future GX module descriptors must
-preserve.
+The portal host is the stable mounting boundary for product UI modules. A
+module implements `portal.Module`; a module that needs canonical host URLs may
+also implement `portal.ContextModule`; a GX-ready module can implement
+`portal.FrameworkModule` or expose a lower-level `portal.ModuleContract`.
 
-| Field | Required | Type | Rule |
-| --- | --- | --- | --- |
-| `id` | yes | stable slug | Lowercase module ID used in mounted paths; changing it is a routing break. |
-| `title` | yes | public string | Human label for nav and metadata. |
-| `ready` | yes | `ready`, `disabled`, or `blocked` | `ready` serves routes; `disabled` hides default navigation; `blocked` shows safe status and does not serve feature routes. |
-| `defaultEnabled` | no | boolean | Defaults to `false` when omitted. |
-| `navigation` | no | ordered items | Each item is `{id,label,path}` or `{id,label,onClick}`. `id` is stable, `label` is public text, and exactly one of `path` or `onClick` is required. `path` starts with `/` relative to `moduleBasePath`; `onClick` names a handler registered in the module's runtime event map before render, and missing handlers fail validation instead of rendering an inert navigation item. |
-| `handler` | yes | HTTP handler | Implements `ServeHTTP(w http.ResponseWriter, r *http.Request)` under the host-provided module base path. The host strips the module prefix before calling the handler, stores the original base path in host context as `moduleBasePath`, and returns unmatched feature routes as `404` through the host error renderer instead of redirecting outside the module. |
+The host normalizes modules, publishes deterministic metadata at `/v1/modules`,
+serves shared CSS assets, applies browser security headers, and dispatches
+mounted routes under token-aware `/modules/<id>/...` URLs. Product modules use
+the host contract instead of hard-coding standalone roots, asset paths, token
+segments, or CSP additions.
 
-The host normalizes modules, exposes metadata, serves shared CSS, and dispatches
-mounted routes under `/modules/<id>/...` inside the token-gated portal URL.
+## Module Metadata
 
-`bus-portal` or the embedding app owns routes, assets, public runtime config,
-sessions, security headers, client/server logging, and browser artifact
-delivery. Feature modules should depend on this host contract instead of
-duplicating path resolution, token handling, or asset loading.
+The public module metadata is derived from Go interfaces, not from an
+operator-authored YAML descriptor. Stable IDs use lowercase letters, digits, and
+hyphens. Readiness is `stable` for normal opt-in modules or `experimental` for
+modules that require explicit experimental enablement. The default-enabled flag
+controls the module set mounted when the operator does not request a specific
+module list.
 
-The host context provides these values:
+| Go value | Metadata | Rule |
+| --- | --- | --- |
+| `ID()` | `id` | Stable route slug. Changing it changes mounted URLs. |
+| `Title()` | `title` | Public label for launchers and navigation. |
+| `State()` | `state` | `stable` or `experimental`; unsupported values normalize to `stable`. |
+| `DefaultEnabled()` | `default_enabled` | Included in the implicit module set when true. |
+| `NavItems()` | `nav_items` | Public labels and same-origin route paths. |
+| `UIFramework()` or `ModuleContract()` | `gx_render_roots`, `wasm_runtime`, `required_browser_effects`, `public_runtime_config`, `provider_api_origins`, `assets` | Additive framework metadata derived from Go declarations. |
 
-| Value | Semantics |
+`ValidateModuleContract` and `ValidateFrameworkContract` enforce the mount-time
+rules. A safe name is non-empty and may contain letters, digits, hyphens,
+underscores, dots, and colons. Safe route paths start with `/`, do not start
+with `//`, and do not contain backslashes, `..`, tabs, or newlines. Safe HTML
+mount IDs use the safe-name character set but cannot start with a digit.
+
+`gx_render_roots` entries use safe names, safe route paths, and safe HTML mount
+IDs. `wasm_runtime.asset_path` and `assets[].path` are same-origin asset paths:
+they cannot be empty, absolute URLs, host-qualified paths, query-only values,
+fragment-only values, traversal paths, or paths with backslashes, tabs, or
+newlines. `required_browser_effects` entries use safe names for `name`, `kind`,
+optional `event`, optional `action`, and projected `fields`; `target_id` uses a
+safe HTML mount ID when present. `public_runtime_config` keys use safe names and
+must not contain terms such as `secret`, `token`, `password`, `credential`,
+`private`, or `jwt`. `provider_api_origins` accepts `'self'` or HTTP(S) origins
+without paths, queries, or fragments.
+
+`ModuleContractFor` returns the deterministic live metadata snapshot. It sorts
+valid entries and omits unsafe optional entries so `/v1/modules` remains stable
+and browser-safe.
+
+## Host Context
+
+`portal.HostContext` is the request and render context passed by the host. It is
+available through `HandlerWithContext`, through `portal.HostContextFromRequest`,
+and through `portal.UIRenderContext` when a framework page is rendered in a
+unit fixture.
+
+| Go field | Semantics |
 | --- | --- |
-| `moduleBasePath` | Canonical mounted path such as `/modules/notes`; modules join relative routes to it. |
-| `assetBaseURL` | Shared CSS, JavaScript, and image asset base controlled by the host. |
-| `resolveAPI(path)` | Accepts `/`-prefixed paths plus optional query values and returns a same-origin URL under the mounted module route. It rejects external origins and path traversal. |
-| `publicRuntimeConfig` | JSON-safe public config only; secrets and bearer tokens are excluded. |
-| `session` | Auth/session view with `state`, `user`, `withBearer(req)`, and `withCSRF(req)` helpers. `withBearer` applies only to host-approved API routes that require bearer auth; `withCSRF` applies only to same-origin unsafe methods such as `POST`, `PUT`, `PATCH`, and `DELETE`. Neither helper exposes token values to templates. |
-| `log` | Structured client/server diagnostic channel with redaction. |
-| `connectSrc` | Exact `https:` origins required by resources or effects for content security policy. Wildcards and credential-bearing URLs are invalid. |
+| `ModuleID` | Normalized module ID used by host routing and metadata. |
+| `BasePath` | Canonical token-aware module path such as `/tok/modules/notes/`. |
+| `ThemeAssetURL` | Host-served `portal-theme.css` URL. |
+| `UIKitAssetURL` | Host-served `uikit.css` URL. |
+| `PublicRuntimeConfig` | Public string configuration after secret-looking keys have been filtered. |
+| `ProviderAPIOrigins` | Declared provider origins that extend the host `connect-src` policy. |
+
+Modules build same-origin links with `HostContext.ModuleURL(path)` or with
+typed Bus UI props that receive host context. Go WebAssembly receives only the
+JSON-safe runtime subset published through metadata or injected by the host; it
+does not receive server-only helpers or secret token values.
 
 ## Consequence
 
-Feature modules should not hard-code standalone `/modules/<id>/...` paths,
-relative asset paths, or duplicated runtime config scripts when the host can
-provide them.
+Feature modules remain portable across local token URLs, hosted portal routes,
+and distribution-specific module sets. Provider APIs continue to enforce
+authentication, authorization, CSRF/session policy, account scope, and business
+rules; the portal host provides routing and browser delivery, not product
+authority.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -55,4 +93,5 @@ provide them.
 ### Sources
 
 - [bus-portal module reference](../../modules/bus-portal)
-- [Portal UI modules](./portal-modules)
+- [Portal modules](./portal-modules)
+- [Product module shape](./product-module-shape)

@@ -1,47 +1,97 @@
 ---
-title: UI product module shape
-description: BusDK UI feature module structure for adapters, view models, and renderers.
+title: Product module shape
+description: BusDK UI product module structure for Go contracts, view models, deterministic rendering, and event projection.
 ---
 
-## Design References
+## Overview
 
-- [UI design system](../v0.2.0/design-system)
-- [Expression children](../v0.1.5/expression-children)
+A product module owns product-specific data projection and browser behavior. It
+does not own the portal host, provider authorization, token handling, shared
+assets, or security headers. The module exposes its UI through Go contracts so
+the host can mount it, pass runtime context, publish metadata, and run
+deterministic fixture tests.
 
 ## Contract
 
-A portal feature module should have three small parts:
+A compact module keeps three concerns separate. Provider adapters convert API
+DTOs and provider errors into safe product facts. View-model builders derive
+visible state from those facts, permissions, route input, and request context.
+UI framework pages compose shared Bus UI primitives from the view model and
+declare the browser hooks that may project events back into Go.
 
-1. Data transfer object (DTO) adapters read provider responses and normalize
-   error payloads.
-2. View-model builders derive visible UI state from DTOs, permissions, request
-   context, and route/query input.
-3. Renderers compose `bus-ui` blocks from those view models and expose route
-   handlers or Go WebAssembly mount functions.
+The module still implements the host-facing `portal.Module` interface from the
+`bus-portal/pkg/portal` package. A GX-ready module also implements
+`portal.FrameworkModule` when it can publish framework pages, deterministic
+render roots, optional Go/WASM runtime metadata, public runtime configuration,
+provider origins, same-origin assets, and browser event hooks through the
+[`UIFramework`](./portal-modules) contract.
 
-Use route handlers when the screen can render from request data and ordinary
-form/event submissions. Use a Go WebAssembly mount only when the screen needs
-browser-owned state, retained callbacks, streaming updates, file drops,
-terminal input, or other live behavior that cannot be expressed as a
-server-rendered route plus events.
+```go
+// Excerpt from package portal.
+type Module interface {
+    ID() string
+    Title() string
+    State() ModuleState
+    DefaultEnabled() bool
+    NavItems() []NavItem
+    Handler() http.Handler
+}
+
+type FrameworkModule interface {
+    UIFramework() UIFramework
+}
+```
+
+Use an HTTP handler when the page can render from request data and ordinary
+form submissions. Add a Go WebAssembly runtime only when the page needs
+browser-owned state, retained callbacks, streaming updates, drag-and-drop,
+terminal input, or another live behavior that cannot be expressed as
+deterministic server render plus projected events.
 
 The module layout can be compact:
 
 ```text
-internal/provideradapter/  provider DTO and error normalization
-internal/viewmodel/        screen-ready state and permission display
-internal/ui/               bus-ui component composition and handlers
+internal/provideradapter/  provider DTO and public error projection
+internal/viewmodel/        screen-ready state, permission display, and copy
+internal/ui/               Go/GX framework pages, handlers, and event helpers
+```
+
+Framework pages should take ordinary Go inputs. Data reaches GX through Go
+values, function arguments, typed props, and host context; it does not require a
+YAML descriptor, JSON binding document, or string selector grammar.
+
+```gx
+package notesui
+
+import (
+    "github.com/busdk/bus-gx/pkg/gx"
+    . "github.com/busdk/bus-ui/pkg/uiportal"
+)
+
+type NotesPageProps struct {
+    Host  HostContext
+    Notes []NoteRow
+}
+
+func NotesPage(props NotesPageProps) gx.Node {
+    return (
+        <PortalShell title="Notes" hostContext={props.Host}>
+            <NoteTable rows={props.Notes}></NoteTable>
+        </PortalShell>
+    )
+}
 ```
 
 ## Consequence
 
-Projection tests, component composition, and host routing can evolve in
-separate layers. Product modules should not mix provider authority, rendering,
-and browser runtime wiring in one layer.
+Projection tests, component composition, and host routing can evolve in separate
+layers. Product modules should not mix provider authority, rendering, and
+browser runtime wiring in one package.
 
 The separation is correct when provider authorization is asserted in provider
-or API tests, view-model tests can run without rendering HTML, and renderer
-tests can run with a fixed view model and fake runtime handlers.
+or API tests, view-model tests run without rendering HTML, `RenderFrameworkPage`
+can compare stable server HTML from a fixed model, and `ProjectFrameworkEvent`
+can prove that only declared event fields are projected.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -51,5 +101,7 @@ tests can run with a fixed view model and fake runtime handlers.
 
 ### Sources
 
+- [Portal modules](./portal-modules)
 - [UI layer ownership](../v0.1.1/foundation)
 - [bus-ui module reference](../../modules/bus-ui)
+- [bus-portal module reference](../../modules/bus-portal)

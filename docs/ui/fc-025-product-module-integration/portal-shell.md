@@ -1,64 +1,85 @@
 ---
-title: PortalShell UI component
-description: Dedicated BusDK UI reference for PortalShell.
+title: Portal shell
+description: BusDK UI shell component shape for portal-mounted Go/GX product pages.
 ---
 
 ## Purpose
 
-`PortalShell` is a shell/layout component. Portal-mounted feature frame. Use for feature modules mounted by `bus-portal`.
+`PortalShell` is the product-page frame for modules mounted by `bus-portal`. It
+is a Bus UI composition target, not a replacement for the portal host. The host
+serves the outer application, assets, security headers, module launcher, and
+runtime context; `PortalShell` renders the page-level title, local navigation,
+and module body inside the mounted feature route.
 
-## Inputs
+## Props
 
-| Field | Required | Type | Behavior |
+The shell uses typed Go props. It should not read global browser state or infer
+deployment paths from literals. GX attributes use the lower-camel form of the
+exported Go prop name, so `Title` is written as `title` and `HostContext` is
+written as `hostContext` in markup.
+
+| Go prop | GX attribute | Required | Behavior |
 | --- | --- | --- | --- |
-| `title` | yes | string or Go value | Module page title. |
-| `body` | yes | slot node | Feature content. In GX, child markup inside `<PortalShell>...</PortalShell>` fills this slot. |
-| `hostContext` | yes | object from portal host | Supplies base paths and assets. In portal-mounted documents the host injects this prop before validation; standalone examples must bind or provide it explicitly. The object requires `moduleBase` and `assetBase` same-origin path prefixes beginning and ending with `/`; optional `apiBase` must be a same-origin path prefix, and optional `externalNavOrigins` entries must be exact `https:` origins. Unknown sensitive-looking keys fail validation. |
-| `nav` | no | `[]NavItem` | Module navigation. `NavItem.Label` is non-empty text, `NavItem.Path` is a same-origin path beginning with `/` or a host-resolved route from `hostContext`, and `NavItem.Current` marks the active item. Omitted `nav` renders no module nav. Unknown fields, empty labels, path traversal, and external URLs fail validation. |
+| `Title` | `title` | yes | Public page title rendered inside the module frame. |
+| `HostContext` | `hostContext` | yes | Portal host context used for same-origin links and shared asset references. |
+| `Nav` | `nav` | no | Ordered module-local navigation entries with public labels and host-resolved paths. |
+| `Body` | child markup | yes | Child node or component body supplied by the product page. |
 
-## Boundary
+Navigation paths are module-relative before rendering and become host-resolved
+URLs through `HostContext.ModuleURL`. A valid path starts with `/`, does not
+start with `//`, and does not contain backslashes, `..`, tabs, or newlines.
+External URLs, path traversal, empty labels, and deployment-specific token
+prefixes fail shell validation instead of rendering a partially active nav
+entry.
 
-Assets and deployment-specific base paths come from `hostContext`, not
-hard-coded strings. Literal same-origin module routes such as `/notes` are valid
-for stable portal paths owned by the mounted module; generated asset URLs,
-tenant/account prefixes, and externally mounted base paths must be resolved
-through the host context.
+## GX Example
 
-## Example
+GX authors use `PortalShell` as a normal typed component. Child markup fills the
+body slot, and callback props remain Go function values.
 
 ```gx
-package notesui
+package reportsui
 
 import (
-  "github.com/busdk/bus-gx/pkg/gx"
-  . "github.com/busdk/bus-ui/pkg/uiportal"
+    "github.com/busdk/bus-gx/pkg/gx"
+    . "github.com/busdk/bus-ui/pkg/uiportal"
 )
 
-var notesNav = []NavItem{
-  {Label: "Notes", Path: "/notes", Current: true},
+type ReportsPageProps struct {
+    Host HostContext
+    Rows []ReportRow
+    Save func(ReportDraft)
 }
 
-func NotesShell(hostContext HostContext) gx.Node {
-  return (
-    <PortalShell
-      title="Notes"
-      hostContext={hostContext}
-      nav={notesNav}
-    >
-      <p>Notes</p>
-    </PortalShell>
-  )
+func ReportsPage(props ReportsPageProps) gx.Node {
+    return (
+        <PortalShell
+            title="Reports"
+            hostContext={props.Host}
+            nav={[]NavItem{{Label: "Reports", Path: "/"}}}
+        >
+            <ReportForm rows={props.Rows} onSubmit={props.Save}></ReportForm>
+        </PortalShell>
+    )
 }
 ```
 
-The portal host passes `hostContext` when it mounts the module.
+The same page can be exposed through `portal.UIFramework` by wrapping the GX
+function in a deterministic Go renderer. The renderer receives host context
+from `portal.UIRenderContext`, so tests and live module dispatch use the same
+base paths.
 
-## Runtime Terms
+## Boundary
 
-[Expression children](../v0.1.5/expression-children) document ordinary Go expressions inside markup bodies.
+`PortalShell` may compose shared lower-level Bus UI pieces such as panels,
+buttons, nav items, forms, and status tags. It should not perform provider API
+calls, session validation, CSRF checks, logging transport, CSP construction, or
+asset delivery. Those responsibilities belong to provider APIs, product module
+handlers, or the portal host.
 
-[`Resource`](../v0.4.1/resource) defines safe URL resolution,
-external-origin allowlists, and rejected URL forms.
+Browser actions originating inside the shell should be declared by the product
+page as framework hooks. The module then projects observed Go/WASM events with
+`ProjectFrameworkEvent` and only forwards the declared public fields.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -68,5 +89,7 @@ external-origin allowlists, and rejected URL forms.
 
 ### Sources
 
-- UI component reference
+- [Portal modules](./portal-modules)
+- [Portal host contract](./portal-host-contract)
+- [Expression children](../v0.1.5/expression-children)
 - [bus-ui module reference](../../modules/bus-ui)
