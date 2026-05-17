@@ -1,49 +1,56 @@
 ---
 title: Library provider errors
-description: BusDK UI library safe provider failure display contract.
+description: BusDK UI provider error projection and public-safety boundary.
 ---
 
-## Design References
+## Foundations
 
-- [UI design system](../v0.2.0/design-system)
-- [Render tree contract](../v0.1.1/render-tree-contract)
+[ProviderError](./provider-error-component) gives products a shared display
+surface for provider failures after the owning module has projected raw
+provider data into public-safe facts.
 
 ## Contract
 
-[`ProviderError`](../fc-007-provider-errors/provider-error-component) renders public-safe provider
-failure display. Request id, status, retry event, and validation fields are
-optional. Raw payloads, tokens, SQL, stack traces, and private customer data
-fail validation.
+`ProviderErrorChecked` renders `ProviderErrorProps` after validation. Missing
+titles, invalid status values, unsafe request ids, invalid field paths,
+duplicate field projections, and unsafe text fail before render.
 
 Public-safe text may include the failed action, a short user action, a status
 code, a public request id, and field-level validation messages. It must not
 include credentials, bearer tokens, raw provider responses, SQL, stack traces,
-account identifiers, customer-private data, file contents, or prompt text.
+account identifiers, customer-private data, file contents, prompt text, cookies,
+private keys, or secret-bearing key/value fragments.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `title` | yes | Public-safe string shown as the error heading. |
-| `message` | no | Public-safe string; omitted when no user action is available. |
-| `code` | no | Public provider/application error code string; omitted when unavailable. |
-| `status` | no | HTTP or provider status code as string or number. |
-| `requestID` | no | Public support identifier. |
-| `retry` | no | `func() gx.Result` callback for a retry control. The callback repeats the safe product action and returns the [runtime result](../v0.4.1/runtime-contract); success clears or refreshes the error, provider failure renders another safe error, and no-op leaves state unchanged. It does not receive raw provider payloads. |
-| `fields` | no | Map of field name to public-safe validation string. |
-
-Missing `title` or unsafe text fails validation before render.
+| `Title` | yes | Public-safe string shown as the error heading. |
+| `Summary` or `Message` | no | Public-safe user-facing explanation. |
+| `Code` | no | Public provider or application error code. |
+| `Status` | no | Numeric HTTP status, numeric string, or `unauthenticated`, `unauthorized`, `forbidden`, `quota_exceeded`, `rate_limited`, `conflict`, `unavailable`, or `unknown`. |
+| `RequestID` | no | Support-safe trace identifier. It must start with a letter or digit and then use only letters, digits, `.`, `_`, `:`, or `-`, up to 128 characters. Omit or redact provider ids that do not match. |
+| `Fields` | no | Map of field path to public-safe validation string. Field paths use dot-separated identifiers or non-negative indexes, such as `title` or `items.0.name`. |
+| `FieldErrors` | no | Structured field errors with public path, lower-kebab code, and public-safe message. A path may appear only once across `Fields` and `FieldErrors`. |
+| `RetryLabel`, `DismissLabel` | no | Visible labels for optional retry and dismiss controls. A control renders when its label or `ControlProps` is configured. |
+| `Retry`, `Dismiss` | no | `ControlProps` carrying public action metadata for retry and dismiss controls. |
 
 Provider modules own error meaning. Product modules project provider errors
-into safe title, message, code, request id, retry state, and field validation
-before rendering.
+into safe title, summary, code, status, request id, controls, and field
+validation before rendering.
 
 ```go
-safeError := ProviderErrorProps{
+safeError := uikit.ProviderErrorProps{
 	Title:     "Could not save note",
-	Message:   "Check the title and try again.",
+	Summary:   "Check the title and try again.",
+	Code:      "validation.failed",
 	Status:    422,
 	RequestID: "req_123",
 	Fields: map[string]string{
 		"title": "Title is required.",
+	},
+	RetryLabel: "Try again",
+	Retry: uikit.ControlProps{
+		Action:   "provider.retry",
+		SourceID: "note-save",
 	},
 }
 ```
@@ -51,9 +58,9 @@ safeError := ProviderErrorProps{
 This raw payload is rejected:
 
 ```go
-unsafeError := ProviderErrorProps{
+unsafeError := uikit.ProviderErrorProps{
 	Title:   "SQL failed",
-	Message: "token=secret SELECT * FROM customers",
+	Summary: "token=secret SELECT * FROM customers",
 }
 ```
 
@@ -69,5 +76,6 @@ Users see actionable errors without exposing provider internals or credentials.
 
 ### Sources
 
-- [ProviderError](../fc-007-provider-errors/provider-error-component)
+- [ProviderError](./provider-error-component)
 - [Render tree contract](../v0.1.1/render-tree-contract)
+- [bus-ui module reference](../../modules/bus-ui)

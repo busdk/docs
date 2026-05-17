@@ -1,9 +1,9 @@
 ---
 title: fc-007 Provider errors
-description: BusDK UI fc-007 documentation index.
+description: BusDK UI candidate pages for safe provider error display.
 ---
 
 ## Pages
 
-- [Library provider errors](./provider-errors) - BusDK UI library safe provider failure display contract.
-- [ProviderError UI component](./provider-error-component) - Dedicated BusDK UI reference for ProviderError.
+- [Library provider errors](./provider-errors) - Provider error projection and public-safety boundary.
+- [ProviderError UI component](./provider-error-component) - Shared provider error props, validation, and rendering.

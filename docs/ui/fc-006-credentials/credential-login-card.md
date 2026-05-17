@@ -1,43 +1,60 @@
 ---
 title: CredentialLoginCard UI component
-description: Dedicated BusDK UI reference for CredentialLoginCard.
+description: Shared BusDK UI credential card props and callbacks.
 ---
 
 ## Purpose
 
-`CredentialLoginCard` renders a reusable credential entry workflow for
-email/password, token, or one-time-code sign-in.
+`CredentialLoginCardChecked` renders a reusable credential entry card for
+email/password, token, or one-time-code sign-in. `CredentialLoginCard` remains
+the string-returning compatibility wrapper for existing callers.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `id` | yes | string | Stable source identifier used as `SourceID` in callbacks and as the key for controller-owned credential state. |
-| `usernameLabel` | yes | string | First field label. |
-| `passwordLabel` | yes | string | Secret/code field label. |
-| `onSubmit` | yes | `func(CredentialSubmitEvent) gx.Result` | Fires on form submit with this component as source. |
-| `onRequest` | no | `func(CredentialRequestEvent) gx.Result` | Shows a secondary request control. The default label is `Send code`; override it with `requestLabel`. The control is hidden when omitted. |
-| `requestLabel` | no | string | Visible label for the secondary request control. |
+| `ID` | yes | `string` | Stable source identifier used as `SourceID` in callbacks and for derived field ids. |
+| `Title` | no | `string` | Panel heading; defaults to `Sign in`. |
+| `Copy` | no | `string` | Escaped public helper text above the form. |
+| `FormMethod` | no | `FormMethod` | Must be `FormMethodPost`; empty normalizes to POST. |
+| `FormAction` | no | `string` | Optional app-relative or same-origin action; schemes, protocol-relative URLs, backslashes, navigation whitespace, and `..` path segments are rejected. |
+| `FormTarget` | no | `string` | Optional safe target; `_self`, `_blank`, `_parent`, `_top`, or named targets using letters, digits, `-`, `.`, or `:` are accepted. |
+| `FormAttrs` | no | `map[string]string` | Extra form attributes; `method`, `action`, `target`, and `data-ui-action` are normalized with the explicit form props taking precedence. |
+| `SubmitAction` | no | `string` | Submit routing token; defaults to `credential.submit` when `OnSubmit` is set and no form `data-ui-action` is supplied. |
+| `RequestAction` | no | `string` | Secondary request routing token; defaults to `credential.request` when `OnRequest` is set and no request control action is supplied. |
+| `OnSubmit` | yes for interactive submit | `func(CredentialSubmitEvent)` | Receives source and submit routing metadata without credential values. |
+| `OnRequest` | no | `func(CredentialRequestEvent)` | Enables a secondary request-code control. |
+| `RequestLabel` | no | `string` | Secondary control label; defaults to `Send code`. |
+| `Request` | no | `ButtonProps` | Secondary control props; `Request.Control.Action` or `Request.Attrs["data-ui-action"]` can override `RequestAction`. |
+| `UsernameLabel` | yes | `string` | Public label for the username field. |
+| `UsernameName` | no | `string` | Submitted username field name; defaults to `username`. |
+| `UsernameType` | no | `string` | Input type such as `email`; defaults to text. |
+| `UsernameAutocomplete` | no | `string` | Browser autocomplete token such as `username` or `email`; defaults to `username`. |
+| `PasswordLabel` | yes | `string` | Public label for the secret/code field. |
+| `PasswordName` | no | `string` | Submitted secret field name; defaults to `password`. |
+| `PasswordAutocomplete` | no | `string` | Autocomplete token such as `one-time-code`. |
+| `Submit` | no | `ButtonProps` | Submit button props; the button is rendered as native `type="submit"`. |
+| `Busy`, `ErrorText`, `ErrorID` | no | mixed | Shared form busy and safe error display state. |
 
 ## Boundary
 
 The component only collects credentials and dispatches events. Auth APIs must
 perform credential validation, OTP/token checks, rate limiting, session
 creation, and authorization policy.
-Events identify the card source; credential values stay in component/controller
-state and are never copied into public markup or diagnostics.
+
+Events identify the card source and public routing metadata. Credential values
+stay in browser form controls and host-owned controller state; they are never
+copied into callback payloads, public markup, logs, or diagnostics.
 
 ## Example
-
-These snippets are embedded in one `.gx` file where the callbacks are declared
-before the component value.
 
 ```go
 package loginui
 
 import (
-	"github.com/busdk/bus-gx/pkg/gx"
-	. "github.com/busdk/bus-ui/pkg/uiauth"
+	"context"
+
+	"github.com/busdk/bus-ui/pkg/uikit"
 )
 
 type CredentialState interface {
@@ -46,56 +63,74 @@ type CredentialState interface {
 }
 
 type AuthClient interface {
-	SendCode(username string) gx.Result
-	VerifyCode(username string, secret string) gx.Result
+	SendCode(ctx context.Context, username string) error
+	VerifyCode(ctx context.Context, username string, secret string) error
+}
+
+type ErrorSink interface {
+	ShowProviderError(sourceID string, err error)
 }
 
 var loginState CredentialState
 var authClient AuthClient
+var loginErrors ErrorSink
+var requestContext func(sourceID string) context.Context
 
-func bindLoginController(controller *CredentialController) {
-	loginState = controller.CredentialState()
-}
-
-func requestOTP(event CredentialRequestEvent) gx.Result {
+func requestOTP(event uikit.CredentialRequestEvent) {
+	ctx := requestContext(event.SourceID)
 	username := loginState.Username(event.SourceID)
-	return authClient.SendCode(username)
+	if err := authClient.SendCode(ctx, username); err != nil {
+		loginErrors.ShowProviderError(event.SourceID, err)
+	}
 }
 
-func verifyOTP(event CredentialSubmitEvent) gx.Result {
+func verifyOTP(event uikit.CredentialSubmitEvent) {
+	ctx := requestContext(event.SourceID)
 	username := loginState.Username(event.SourceID)
 	secret := loginState.Secret(event.SourceID)
-	return authClient.VerifyCode(username, secret)
+	if err := authClient.VerifyCode(ctx, username, secret); err != nil {
+		loginErrors.ShowProviderError(event.SourceID, err)
+	}
+}
+
+func OTPLoginCard() (string, error) {
+	return uikit.CredentialLoginCardChecked(uikit.CredentialLoginCardProps{
+		ID:                   "otp-login",
+		Title:                "Sign in",
+		Copy:                 "Use your work email and one-time code.",
+		FormAction:           "/auth/login",
+		OnRequest:            requestOTP,
+		OnSubmit:             verifyOTP,
+		RequestLabel:         "Send one-time code",
+		UsernameLabel:        "Email",
+		UsernameName:         "email",
+		UsernameType:         string(uikit.InputTypeEmail),
+		UsernameAutocomplete: "email",
+		PasswordLabel:        "One-time code",
+		PasswordName:         "code",
+		PasswordAutocomplete: "one-time-code",
+		Submit: uikit.ButtonProps{
+			Label: "Continue",
+		},
+	})
 }
 ```
 
-`authClient` is application-owned. `loginState` is initialized from the
-`CredentialController` that mounts this component through `bindLoginController`;
-applications do not pass credential state as a prop. The component package
-supplies `CredentialSubmitEvent` and `CredentialRequestEvent`; each event has a
-`SourceID string` field.
+`authClient` and `loginState` are application-owned. Callback code uses the
+event `SourceID` to read host-owned credential state for that card, then sends
+the provider request outside `bus-ui`.
 
-```gx
-var otpLogin = (
-  <CredentialLoginCard
-    id="otp-login"
-    usernameLabel="Email"
-    passwordLabel="One-time code"
-    requestLabel="Send one-time code"
-    onRequest={requestOTP}
-    onSubmit={verifyOTP}>
-  </CredentialLoginCard>
-)
-```
+## Rendering Terms
 
-## Runtime Terms
-
-`onSubmit` and `onRequest` are Go callback props for this library component.
-The event contains only the `SourceID`, which is copied from the required `id`
-prop. The component controller initializes credential state for that id when the
-card mounts. Callback code reads `username` and `secret` from controller-owned
-state for that source at handling time. Credential values must not be copied into
-event payloads, public markup, logs, or diagnostics.
+`CredentialLoginCardChecked` fails before render when required labels are
+missing, the card id is unsafe, the form method is not POST, the action or
+target is unsafe, or an action token is invalid. Submit action tokens come from
+`SubmitAction` first, then `FormAttrs["data-ui-action"]`; request action
+tokens come from `RequestAction`, then `Request.Control.Action`, then
+`Request.Attrs["data-ui-action"]`. A valid token is a non-empty string using
+letters, digits, `-`, `_`, `.`, `/`, or `:`. The compatibility
+`CredentialLoginCard` wrapper keeps historical defaults for callers that still
+need a string-only render path.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -105,5 +140,5 @@ event payloads, public markup, logs, or diagnostics.
 
 ### Sources
 
-- UI component reference
+- [Library credentials](./credentials)
 - [bus-ui module reference](../../modules/bus-ui)

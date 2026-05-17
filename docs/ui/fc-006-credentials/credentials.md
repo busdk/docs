@@ -1,40 +1,53 @@
 ---
 title: Library credentials
-description: BusDK UI library credential entry contract.
+description: BusDK UI credential entry boundary and identity-only event model.
 ---
 
-## Design References
+## Foundations
 
-- [Expression children](../v0.1.5/expression-children)
-- [Render tree contract](../v0.1.1/render-tree-contract)
+[CredentialLoginCard](./credential-login-card) builds on checked form,
+field, input, password-input, and button primitives. The card gives products a
+shared credential surface without moving authentication authority into
+`bus-ui`.
 
 ## Contract
 
-[`CredentialLoginCard`](./credential-login-card) renders generic
-credential entry fields and a submit event. Submit emits interaction identity;
-the controller decides which credential state to send and how provider errors
-map to public-safe validation text.
+[`CredentialLoginCard`](./credential-login-card) renders escaped public copy,
+a required username field, a required secret field, a native POST form, a
+submit button, and an optional secondary request-code button. Checked rendering
+uses `CredentialLoginCardProps` and `CredentialLoginCardChecked`.
 
-Credential submit uses the same identity shape as form submission:
+Credential callbacks are identity-only. `CredentialSubmitEvent` carries source
+and submit routing metadata; `CredentialRequestEvent` identifies a secondary
+request action. Neither event carries username, password, token, one-time code,
+or other credential values.
 
-| Key | Type | Required |
+| Event | Field | Behavior |
 | --- | --- | --- |
-| `event` | string | yes |
-| `source.id` | string | yes when the card has `id` |
-| `source.path` | string | yes |
-| `submitter.id` | string | yes when the submitter has `id` |
-| `submitter.path` | string | yes |
+| `CredentialSubmitEvent` | `SourceID` | Card id used to look up host-owned credential state. |
+| `CredentialSubmitEvent` | `Action` | Public routing token; defaults to `credential.submit` when a submit callback is configured. |
+| `CredentialSubmitEvent` | `Method`, `FormAction`, `Target` | Normalized POST submit metadata from the checked form. |
+| `CredentialSubmitEvent` | `SubmitterID`, `SubmitterName`, `SubmitterValue` | Public submit button identity for hosts that route multiple controls through one handler. |
+| `CredentialSubmitEvent` | `DefaultPrevented` | Records whether an adapter prevented the browser default; it does not carry field values. |
+| `CredentialRequestEvent` | `SourceID` | Card id used to look up the username before requesting a code or token. |
+| `CredentialRequestEvent` | `Action` | Public routing token; defaults to `credential.request` when a request callback is configured. |
+| `CredentialRequestEvent` | `RequestID` | Derived request-control id, normally `<card-id>-request`. |
+| `CredentialRequestEvent` | `DefaultPrevented` | Records adapter default-prevention state without carrying credential values. |
 
-The controller reads credential field state from its model and sends the
-provider request. The event must not carry secret values.
+Host controllers read field state from their own model at handling time, send
+provider requests, apply rate limits, create sessions, mutate CSRF state, and
+project provider errors into public-safe UI. The card validates presentation
+configuration only: id, labels, POST method, safe form action and target, and
+safe action tokens.
 
 Credential components must not log, echo, or expose secrets in runtime config,
-client logs, HTML attributes, or diagnostics.
+client logs, HTML attributes, callback payloads, or diagnostics.
 
 ## Consequence
 
-Credential entry stays reusable while authority, scopes, and provider policy
-remain outside the component.
+Credential entry stays reusable while authentication policy, token handling,
+provider errors, route ownership, credential storage, and session creation stay
+in the product or host module.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
@@ -46,3 +59,4 @@ remain outside the component.
 
 - [CredentialLoginCard](./credential-login-card)
 - [Form submission](../v0.3.1/form-submission)
+- [bus-ui module reference](../../modules/bus-ui)
