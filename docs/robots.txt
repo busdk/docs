@@ -6,7 +6,7 @@
 # LLM module map (purpose, compact):
 # bus=dispatcher; bus-init=workspace bootstrap; bus-config=workspace config; bus-data=dataset/schema ops; bus-preferences=user/workspace prefs
 # bus-api=HTTP API; bus-api-provider-data/books/session=API provider backends; bus-sheets=spreadsheet UI; bus-books=operations web UI
-# bus-dev=developer automation; bus-run=workflow/prompt automation; bus-agent=AI runtime bridge; bus-secrets=secret refs; bus-shell=interactive shell; bus-status=status; bus-update=update checks; bus-events=event stream
+# bus-dev=developer automation; bus-run=workflow/prompt automation; bus-remote-control=Codex remote-control wrapper; bus-agent=AI runtime bridge; bus-secrets=secret refs; bus-shell=interactive shell; bus-status=status; bus-update=update checks; bus-events=event stream
 # bus-bfl=workbook/formula layer; bus-accounts/chart; bus-entities=legal entities; bus-period=accounting periods; bus-balances=balance calculations
 # bus-journal=journal entries; bus-invoices=sales invoices; bus-bank=bank imports/postings; bus-reconcile=matching/reconciliation; bus-attachments=evidence links
 # bus-assets=fixed assets; bus-loans=loan schedules; bus-inventory=inventory movements/valuation; bus-payroll=payroll datasets; bus-budget=budgets
