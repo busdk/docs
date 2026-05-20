@@ -168,6 +168,16 @@ Use `sslmode=disable` only for trusted local development networks.
 When configured with Events, the provider maps HTTP requests to billing events
 and waits for correlated responses.
 
+The Events backend uses `BUS_API_TOKEN` when it calls the Events API named by
+`--events-url` or `BUS_EVENTS_API_URL`. This token authorizes event
+publish/listen access, so it uses the normal Events API audience
+`ai.hg.fi/api`, not the billing provider's internal HTTP audience. Give the
+token only the billing event scopes needed by this provider: `billing:read` for
+status and portal session events, `billing:setup` for checkout session events,
+and `billing:entitlement:check` for entitlement-check events. If the same
+provider instance serves all billing endpoints in Events mode, the token needs
+all three scopes.
+
 Public status/setup requests use `bus.billing.status.request`,
 `bus.billing.checkout_session.request`, and
 `bus.billing.portal_session.request`.
@@ -215,7 +225,7 @@ bus operator token \
   issue \
   --subject billing-provider \
   --audience ai.hg.fi/api \
-  --scope "billing:read billing:setup billing:entitlement:check billing:subscription:write billing:usage:export billing:provider" \
+  --scope "billing:read billing:setup billing:entitlement:check" \
   --ttl 1h > /run/secrets/bus-billing-provider.token
 
 BUS_BILLING_JWT_SECRET="$(cat /run/secrets/bus-api-jwt-secret)" \
