@@ -59,10 +59,34 @@ Submit these payloads through `POST $BUS_EVENTS_API_BASE_URL/api/v1/events` on
 [bus operator inference](./bus-operator-inference) for the operator CLI path.
 Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider base URL, for example
 `https://example.test`, and set `$BUS_EVENTS_TOKEN` to a bearer token with
-`events:write` for publish and `events:read` for streaming. The request must
-use `Content-Type: application/json`. The event envelope uses `name` for the
-event type and the request payload under `payload`. Save the envelope to
-`./deploy/inference-model-event.json` before posting it:
+the scope required by the concrete event name. Unprotected event names use
+`events:send` for publishing and `events:listen` for streaming. The protected
+`bus.inference.*` namespace uses domain scopes on the default Events provider:
+`inference:admin` for `install` and `model.ensure` requests and responses, and
+`inference:read` for `status` and `verify` requests and responses. When a Bus
+Events client, worker, or router command is used instead of raw `curl`, export
+the same token as `$BUS_API_TOKEN` because Bus command clients read that
+variable for authenticated API calls.
+
+Store the token in an untracked operator secret file or service secret, then
+load it before running the copyable commands:
+
+```sh
+install -m 700 -d ./local
+test -s ./local/inference-events.token
+export BUS_EVENTS_API_BASE_URL="https://example.test"
+export BUS_EVENTS_TOKEN="$(tr -d '\r\n' < ./local/inference-events.token)"
+export BUS_API_TOKEN="$BUS_EVENTS_TOKEN"
+test -n "$BUS_EVENTS_TOKEN"
+test -n "$BUS_API_TOKEN"
+```
+
+The model ensure example requires a token with `inference:admin` because it
+publishes and listens on the protected `bus.inference.model.ensure.*`
+namespace. The request must use `Content-Type: application/json`. The event
+envelope uses `name` for the event type and the request payload under
+`payload`. Save the envelope to `./deploy/inference-model-event.json` before
+posting it:
 
 ```sh
 install -m 700 -d ./deploy
