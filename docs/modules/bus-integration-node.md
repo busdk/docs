@@ -36,19 +36,32 @@ internal `bus-api-provider-node` route. Direct event publishers send the JSON
 payload to the Bus Events API with the matching event type, for example
 `POST /api/v1/events` on `bus-api-provider-events` with a bearer token that has
 event publish scope. Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider
-base URL, for example `https://example.test`, and set `$BUS_EVENTS_TOKEN` to a
-token with `events:write` for publish and `events:read` for streaming. Include
-a `correlation_id` field in the event envelope. A `bus-integration-node`
-worker or `bus-api-provider-node` route must already be running and subscribed;
-otherwise the event can be stored but no node action or response event appears.
+base URL, for example `https://example.test`, and set `$BUS_API_TOKEN` to a
+normal Bus API token. Local unprotected Events API setups need `events:send` to
+publish node request events and `events:listen` to stream response events.
+Protected deployments may instead require node domain scopes such as
+`node:admin` for bootstrap and hardening requests or `node:read` for status and
+verification requests.
+
+Include a `correlationId` field in the event envelope. A
+`bus-integration-node` worker or `bus-api-provider-node` route must already be
+running and subscribed; otherwise the event can be stored but no node action or
+response event appears. Every Events API client process in that path needs its
+own `BUS_API_TOKEN`: the publisher shell, any worker or router process that
+streams requests and publishes responses, and the SSH runner when it calls
+SSH-runner events. The SSH runner token must include `ssh:run` in deployments
+where SSH runner events are protected.
+
 The node inventory must be configured where that worker or provider resolves
 `target_ref`; exporting `BUS_NODE_TARGETS_FILE` in the publisher shell is only
 valid when the same shell starts the local worker. For a service-managed worker,
-install the inventory on the worker host and restart the worker with that
+install the inventory on the worker host, provide `BUS_API_TOKEN` through the
+worker's service environment or secret manager, and restart the worker with that
 environment before publishing:
 
 ```sh
-sudo install -m 700 -d /etc/bus
+test -s ./local/bus-node-worker.token
+sudo install -o bus -g bus -m 750 -d /etc/bus
 sudo tee /etc/bus/nodes.json >/dev/null <<'EOF'
 {
   "proxy": {
@@ -58,9 +71,14 @@ sudo tee /etc/bus/nodes.json >/dev/null <<'EOF'
   }
 }
 EOF
+sudo chown bus:bus /etc/bus/nodes.json
+sudo chmod 640 /etc/bus/nodes.json
 sudo systemctl set-environment BUS_NODE_TARGETS_FILE=/etc/bus/nodes.json
-sudo systemctl set-environment BUS_SSH_PRIVATE_KEY_SECRET=secret://deployment/proxy-ssh-key
+sudo systemctl set-environment BUS_API_TOKEN="$(tr -d '\r\n' < ./local/bus-node-worker.token)"
 sudo systemctl restart bus-integration-node
+
+sudo systemctl set-environment BUS_SSH_PRIVATE_KEY_SECRET=secret://deployment/proxy-ssh-key
+sudo systemctl restart bus-integration-ssh-runner
 ```
 
 The `secret://deployment/proxy-ssh-key` secret must already resolve on the
@@ -68,12 +86,13 @@ The `secret://deployment/proxy-ssh-key` secret must already resolve on the
 Then publish from the operator shell:
 
 ```sh
+test -n "$BUS_EVENTS_API_BASE_URL"
+test -n "$BUS_API_TOKEN"
 install -m 700 -d ./deploy
 cat > ./deploy/node-bootstrap-event.json <<'EOF'
 {
   "name": "bus.node.bootstrap.request",
-  "correlation_id": "deploy-001-node-proxy",
-  "delivery": "broadcast",
+  "correlationId": "deploy-001-node-proxy",
   "payload": {
     "node_id": "proxy",
     "transport": "ssh-runner",
@@ -87,7 +106,7 @@ cat > ./deploy/node-bootstrap-event.json <<'EOF'
 }
 EOF
 curl -fsS -X POST "$BUS_EVENTS_API_BASE_URL/api/v1/events" \
-  -H "Authorization: Bearer $BUS_EVENTS_TOKEN" \
+  -H "Authorization: Bearer $BUS_API_TOKEN" \
   -H "Content-Type: application/json" \
   --data @./deploy/node-bootstrap-event.json
 ```
@@ -97,9 +116,11 @@ metadata. Consume the matching response event with the same correlation id
 through the Events stream endpoint:
 
 ```sh
+test -n "$BUS_EVENTS_API_BASE_URL"
+test -n "$BUS_API_TOKEN"
 curl -fsS -N "$BUS_EVENTS_API_BASE_URL/api/v1/events/stream?name=bus.node.bootstrap.response&delivery=broadcast" \
-  -H "Authorization: Bearer $BUS_EVENTS_TOKEN" |
-  grep '"correlation_id":"deploy-001-node-proxy"'
+  -H "Authorization: Bearer $BUS_API_TOKEN" |
+  grep '"correlationId":"deploy-001-node-proxy"'
 ```
 
 `target_ref` is resolved by `bus-integration-node` from deployment inventory.
