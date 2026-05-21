@@ -25,23 +25,31 @@ commands are long-running workers.
 For a local memory-backed Events API, start:
 
 ```sh
+BUS_EVENTS_JWT_SECRET=not-a-secret-local-development-hs256-key \
 bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
 ```
 
-For local testing, mint a token with:
+For local testing, mint a reusable service token file with:
 
 ```sh
-export BUS_API_TOKEN="$(bus operator token issue --local \
+mkdir -p ./local
+BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key \
+bus operator token issue --local \
+  --subject container-router-local \
   --audience ai.hg.fi/api \
-  --scope 'container:read container:run container:delete container:admin' \
+  --scope 'container:read container:run container:delete container:admin events:send events:listen' \
   --ttl 12h \
-  --format token)"
+  --format token > ./local/container-router.token
 ```
 
-Production deployments should use the normal service-token flow with the same
-container scopes. Export the resulting `BUS_API_TOKEN` in every terminal or
-service that runs an Events API client: backend worker, router, and test
-command.
+The container scopes authorize protected `bus.containers.*` and default
+`bus.docker.*` events. The broad `events:send` and `events:listen` scopes are
+needed only for unprotected backend prefixes such as the default `bus.podman.*`
+example below, or for custom backend prefixes without an Events API ACL rule.
+Production deployments should use the normal service-token flow, grant only the
+scopes required by the selected backend prefix, and expose the resulting
+`BUS_API_TOKEN` to every Events API client process: backend worker, router,
+containers API provider, and test command.
 
 In the first terminal or service, run the matching Docker worker with the same
 backend prefix. `bus-integration-docker` must be installed or run from its
@@ -49,6 +57,7 @@ module checkout, and the process must have permission to access the Docker
 daemon through `DOCKER_HOST` or `/var/run/docker.sock`:
 
 ```sh
+export BUS_API_TOKEN="$(cat ./local/container-router.token)"
 bus-integration-docker \
   --provider docker \
   --events-url http://127.0.0.1:8081 \
@@ -58,6 +67,7 @@ bus-integration-docker \
 For Podman, use the same pattern with a Podman backend prefix:
 
 ```sh
+export BUS_API_TOKEN="$(cat ./local/container-router.token)"
 bus-integration-podman \
   --provider podman \
   --events-url http://127.0.0.1:8081 \
@@ -70,6 +80,7 @@ Then set the router `--backend-event-prefix` to `bus.podman` instead of
 In the second terminal or service, run the router:
 
 ```sh
+export BUS_API_TOKEN="$(cat ./local/container-router.token)"
 bus-integration-containers \
   --provider events \
   --events-url http://127.0.0.1:8081 \
@@ -81,6 +92,7 @@ In a third terminal with the same token, start the containers API provider
 against the same Events API:
 
 ```sh
+export BUS_API_TOKEN="$(cat ./local/container-router.token)"
 bus-api-provider-containers \
   --addr 127.0.0.1:8080 \
   --backend events \
@@ -91,7 +103,7 @@ Then verify routing from a fourth terminal:
 
 ```sh
 export BUS_AI_API_URL=http://127.0.0.1:8080
-# Reuse the BUS_API_TOKEN exported for the worker, router, and provider.
+export BUS_API_TOKEN="$(cat ./local/container-router.token)"
 bus-containers run --profile codex -- sh -lc 'printf OK'
 ```
 
@@ -109,6 +121,7 @@ the backend response with the original correlation ID.
 |------------------------------------------|----------------------------|
 | `bus.containers.status.request`          | `status.request`           |
 | `bus.containers.run.request`             | `run.request`              |
+| `bus.containers.input.request`           | `input.request`            |
 | `bus.containers.delete.request`          | `delete.request`           |
 | `bus.containers.runner.status.request`   | `runner.status.request`    |
 | `bus.containers.runner.start.request`    | `runner.start.request`     |
@@ -119,6 +132,12 @@ With `--backend-event-prefix bus.docker`, a public
 `bus.docker.run.request`, and the router waits for
 `bus.docker.run.response` before publishing
 `bus.containers.run.response`.
+
+Live task input follows the same pattern. A public
+`bus.containers.input.request` becomes
+`bus.docker.input.request`, and the router returns
+`bus.containers.input.response` after the backend publishes the correlated
+backend response.
 
 When this router is active, backend workers consume backend-prefixed events
 such as `bus.docker.*` or `bus.podman.*`. The public `bus.containers.*` events
@@ -168,6 +187,9 @@ Inside a `.bus` file, write the module target without the `bus` prefix:
 # same as: bus integration containers --events-url "$BUS_EVENTS_API_URL" --backend-event-prefix bus.docker
 integration containers --events-url "$BUS_EVENTS_API_URL" --backend-event-prefix bus.docker
 ```
+
+The shell or service that runs the `.bus` file still needs `BUS_API_TOKEN` with
+the same Events permissions as the equivalent CLI command.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
