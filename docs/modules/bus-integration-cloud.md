@@ -55,10 +55,26 @@ contracts. Operator commands and API providers call the provider-neutral
 contract first so a Bus deployment can add another cloud provider without
 changing the deployment controller.
 
-This is a minimal `bus.cloud.plan.request` schema example. Submit it through
-the Bus Events `POST $BUS_EVENTS_API_BASE_URL/api/v1/events` API using
-`Content-Type: application/json` and a bearer token with `events:write`, or use
-[bus operator cloud](./bus-operator-cloud) for the operator CLI path. The
+This is a minimal `bus.cloud.plan.request` schema example. For direct Events
+API checks, export the remote Events API URL and a Bus API token before
+publishing. The token is supplied through `BUS_API_TOKEN`; it needs
+`events:send` to publish request events and `events:listen` when the same shell
+also waits for response events. Long-running cloud workers or routers that
+connect to the same Events API need their own service `BUS_API_TOKEN` with the
+same Events scopes in the environment used to start those processes.
+
+```sh
+export BUS_EVENTS_API_BASE_URL="https://events.example.invalid"
+export BUS_API_TOKEN="$(bus operator token --format token issue \
+  --subject cloud-operator \
+  --audience ai.hg.fi/api \
+  --scope 'events:send events:listen' \
+  --ttl 1h)"
+```
+
+Submit the event through `POST $BUS_EVENTS_API_BASE_URL/api/v1/events` using
+`Content-Type: application/json` and `Authorization: Bearer $BUS_API_TOKEN`, or
+use [bus operator cloud](./bus-operator-cloud) for the operator CLI path. The
 Events API envelope uses this outer shape:
 
 ```json
@@ -86,6 +102,37 @@ Put the cloud request fields below inside `payload`.
     "nodes": ["proxy", "gpu"]
   }
 }
+```
+
+For a direct publish check, combine the envelope and payload in one file and
+publish it with the exported token:
+
+```sh
+install -m 700 -d ./deploy
+cat > ./deploy/cloud-plan-event.json <<'EOF'
+{
+  "name": "bus.cloud.plan.request",
+  "correlation_id": "deploy-001-cloud-plan",
+  "delivery": "broadcast",
+  "payload": {
+    "deployment_id": "example-dev",
+    "provider": "upcloud",
+    "environment": "dev",
+    "dry_run": true,
+    "credentials": {
+      "token_secret": "secret://deployment/upcloud-token"
+    },
+    "resources": {
+      "network": "example-dev-private",
+      "nodes": ["proxy", "gpu"]
+    }
+  }
+}
+EOF
+curl -fsS -X POST "$BUS_EVENTS_API_BASE_URL/api/v1/events" \
+  -H "Authorization: Bearer $BUS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data @./deploy/cloud-plan-event.json
 ```
 
 Minimal cloud response payloads use this shape:
