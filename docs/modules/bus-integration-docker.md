@@ -22,9 +22,14 @@ only in trusted local environments and do not expose it to untrusted tenants.
 
 ## Usage
 
-Before starting this worker, run a Bus Events API, provide `BUS_API_TOKEN` with
-`container:read`, `container:run`, `container:delete`, and `container:admin`,
-and make the Docker Engine socket available through `DOCKER_HOST` or
+Before starting this worker, run a Bus Events API and export `BUS_API_TOKEN`
+for every long-running process in the path. The Docker worker and
+provider-neutral router both listen for request events and publish response
+events, so the token must include `events:send` and `events:listen`. For
+container runs, include `container:read`, `container:run`, `container:delete`,
+and `container:admin` as needed by the container API.
+
+Make the Docker Engine socket available through `DOCKER_HOST` or
 `/var/run/docker.sock`. The configured image, such as
 `docker.io/library/alpine:3.20`, must be pullable or already present locally.
 When using `--event-prefix bus.docker`, also run
@@ -38,11 +43,13 @@ BUS_EVENTS_JWT_SECRET=not-a-secret-local-development-hs256-key \
 bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
 ```
 
-Mint `BUS_API_TOKEN` with the same HS256 secret and container scopes, or use
-the deployment's normal service-token flow:
+Mint `BUS_API_TOKEN` with the same HS256 secret plus Events and container
+scopes, or use the deployment's normal service-token flow. Reuse this token for
+the Docker worker, provider-neutral router, containers API provider, and
+client:
 
 ```sh
-export BUS_API_TOKEN="$(BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key bus operator token --format token issue --local --audience ai.hg.fi/api --scope 'container:read container:run container:delete container:admin')"
+export BUS_API_TOKEN="$(BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key bus operator token --format token issue --local --audience ai.hg.fi/api --scope 'events:send events:listen container:read container:run container:delete container:admin')"
 bus-integration-docker \
   --provider docker \
   --events-url http://127.0.0.1:8081 \
@@ -54,7 +61,7 @@ In a second terminal, start the provider-neutral router with the same backend
 prefix:
 
 ```sh
-export BUS_API_TOKEN="<token-with-container-scopes>"
+export BUS_API_TOKEN="<token-with-events-and-container-scopes>"
 bus-integration-containers \
   --provider events \
   --events-url http://127.0.0.1:8081 \
@@ -66,7 +73,7 @@ Events authentication errors. To verify it manually, start the containers API
 provider in a third terminal:
 
 ```sh
-BUS_API_TOKEN="<token-with-container-scopes>" \
+BUS_API_TOKEN="<token-with-events-and-container-scopes>" \
 bus-api-provider-containers \
   --addr 127.0.0.1:8080 \
   --backend events \
@@ -77,7 +84,7 @@ Then run the client in a fourth terminal:
 
 ```sh
 export BUS_AI_API_URL=http://127.0.0.1:8080
-export BUS_API_TOKEN="$(BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key bus operator token --format token issue --local --audience ai.hg.fi/api --scope 'container:read container:run container:delete container:admin')"
+export BUS_API_TOKEN="$(BUS_AUTH_HS256_SECRET=not-a-secret-local-development-hs256-key bus operator token --format token issue --local --audience ai.hg.fi/api --scope 'events:send events:listen container:read container:run container:delete container:admin')"
 bus containers run --profile codex -- sh -lc 'printf OK'
 ```
 
