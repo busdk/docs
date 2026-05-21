@@ -31,7 +31,7 @@ Contractual data processing is not a command-line feature. It is an agreement ab
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./index">Integration and runtime interfaces</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Integration and runtime interfaces</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./external-system-integration">External system integration patterns</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./no-spend-multi-remote-worker-test">Test multi-remote workers without paid provisioning</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 
@@ -45,4 +45,5 @@ Contractual data processing is not a command-line feature. It is an agreement ab
 - [bus-integration-billing module](../modules/bus-integration-billing)
 - [bus-integration-stripe module](../modules/bus-integration-stripe)
 - [bus-integration-usage module](../modules/bus-integration-usage)
+- [Test multi-remote workers without paid provisioning](./no-spend-multi-remote-worker-test)
 - [UpCloud Cloud Servers availability](https://upcloud.com/docs/products/cloud-servers/availability/)

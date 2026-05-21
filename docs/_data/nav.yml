@@ -8,6 +8,8 @@
       url: /overview/
     - label: Deployment and data control
       url: /integration/deployment-and-data-control
+    - label: No-spend worker testing
+      url: /integration/no-spend-multi-remote-worker-test
     - label: UpCloud and Stripe setup
       url: /integration/upcloud-stripe-setup
     - label: Design goals and requirements

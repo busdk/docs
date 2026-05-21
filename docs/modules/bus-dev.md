@@ -233,6 +233,13 @@ worker throughput and external-agent wait across live task streams. It is not a
 substitute for accepted backlog productivity; measure that by comparing
 `PLAN.md` checked/unchecked item counts before and after review.
 
+Operators can test worker placement without paid provisioning by dry-running
+`bus dev work --remote localhost start --dry-run ...` and by using
+`--remote eligible` as a no-config negative control before any external runner
+test. The [no-spend multi-remote worker test checklist](../integration/no-spend-multi-remote-worker-test)
+shows the localhost dry-run, an externally prepared Events runner path, the
+evidence to collect, and the pass/fail criteria.
+
 `next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; configured workers decide how to perform the work, so the task protocol stays generic across Codex, container, and human-driven execution paths.
 
 The command uses development-specific `bus.dev.task.*` events and requires Bus Events transport scopes such as `events:send` and `events:listen` plus task scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. Token precedence is explicit flag, `BUS_API_TOKEN`, an explicit `BUS_CONFIG_DIR` token, the BusDK local compose token when present, then the normal Bus auth session token. Use [`bus work`](./bus-work) separately for generic non-development work streams.
@@ -468,7 +475,11 @@ bus dev -C ./bus-books set model gpt-5-codex
 bus dev -C ./bus-books set timeout 45m
 bus dev pipeline set repo release-ready plan work e2e stage commit
 bus dev action set release-note < ./release-note.prompt.txt
+bus dev action set fix-tests < ./fix-tests.prompt.txt
+bus dev action set fix-tests-2 < ./fix-tests-2.prompt.txt
 bus dev script set verify-local --platform=unix < ./verify-local.sh
+bus dev script set test --platform=unix < ./test.sh
+bus dev script set test_2 --platform=unix < ./test_2.sh
 bus dev pipeline preview release-ready
 bus dev release-ready
 bus dev each context
@@ -554,6 +565,7 @@ dev -C .. each --skip bus-docs context
 - [Module reference: bus-events](../modules/bus-events)
 - [Module reference: bus-work](../modules/bus-work)
 - [Module reference: bus-api-provider-events](../modules/bus-api-provider-events)
+- [Test multi-remote workers without paid provisioning](../integration/no-spend-multi-remote-worker-test)
 - [Module reference: bus-preferences](../modules/bus-preferences)
 - [Module reference: bus-dev](../modules/bus-dev)
 - [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started)

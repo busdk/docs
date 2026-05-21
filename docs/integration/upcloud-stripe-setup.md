@@ -92,6 +92,11 @@ The `catalog get` response should include the plan and meter IDs that the billin
 
 ## Start Billing, Stripe, And Usage Workers
 
+The commands in this section start foreground workers. Keep each worker running
+in its own terminal, process supervisor, or service unit before continuing to
+the next command, so billing, Stripe, and usage events can be handled at the
+same time.
+
 Run the billing integration with durable storage and the Events API:
 
 ```sh
@@ -231,7 +236,7 @@ Use PostgreSQL for production event, billing, usage, and auth state when restart
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./deployment-and-data-control">Deployment and data control</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./no-spend-multi-remote-worker-test">Test multi-remote workers without paid provisioning</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Integration and runtime interfaces</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="../modules/bus-integration-upcloud">bus integration upcloud</a> &rarr;</span>
 </p>
@@ -240,6 +245,7 @@ Use PostgreSQL for production event, billing, usage, and auth state when restart
 ### Sources
 
 - [Deployment and data control](./deployment-and-data-control)
+- [Test multi-remote workers without paid provisioning](./no-spend-multi-remote-worker-test)
 - [bus-api-provider-billing](../modules/bus-api-provider-billing)
 - [bus-integration-billing](../modules/bus-integration-billing)
 - [bus-integration-stripe](../modules/bus-integration-stripe)
