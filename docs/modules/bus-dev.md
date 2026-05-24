@@ -98,10 +98,11 @@ The tool does not operate on workspace accounting datasets. End-user accounting 
 In a BusDK superproject checkout, after `docker compose up --build -d`, the
 local stack writes a non-secret development token to
 `tmp/local-ai-platform/bus-config/auth/api-token`. If no explicit
-`--token-file`, `BUS_API_TOKEN`, or `BUS_CONFIG_DIR` token is configured,
+`--token-file` or selected remote `credential_source` token-file is configured,
 `bus dev work <controller-command>` and `bus dev task` use that source-checkout token automatically before falling
-back to `~/.config/bus/auth/api-token`, so an unrelated production token does
-not break host-side local compose tasks at `http://127.0.0.1:8080`.
+back to `BUS_API_TOKEN`, `BUS_CONFIG_DIR`, and
+`~/.config/bus/auth/api-token`, so an unrelated or expired production token
+does not break host-side local compose tasks at `http://127.0.0.1:8080`.
 
 The primary command creates a task for the current repository unless a recipient is provided:
 
