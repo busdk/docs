@@ -1,6 +1,6 @@
 ---
 title: "Development retrospective, 2026-05-20 to 2026-05-27"
-description: "Evidence-based retrospective for the BusDK remote worker, GPU-host offload, remote review host, task automation, service readiness, and release-preparation work from 2026-05-20 to 2026-05-27."
+description: "Evidence-based retrospective for BusDK remote worker environments, GPU worker environments, task automation, service readiness, and release-preparation work from 2026-05-20 to 2026-05-27."
 ---
 
 ## Scope
@@ -23,14 +23,16 @@ belong in the owning module plans, SDD documents, and module `AGENTS.md` files.
 ## Executive summary
 
 The week proved that remote workers can perform real BusDK development work.
-The project reached App Server based worker execution on a GPU host, ran local
-model workers with Gemma 4 31B and GPT-OSS 120B experiments, accepted useful
-remote-produced changes after review and repair, improved local and remote
-review-host worker substrates, and added tooling around task metadata, terminal evidence,
-credential selection, event relay, worktree cleanup, and worker guidance.
+The project reached App Server based worker execution in a GPU worker
+environment, ran local model workers with Gemma 4 31B and GPT-OSS 120B
+experiments, accepted useful remote-produced changes after review and repair,
+improved local and remote worker substrates, and added tooling around task
+metadata, terminal evidence, credential selection, event relay, worktree
+cleanup, and worker guidance.
 
 The goal was not fully complete by 2026-05-27 because the end-to-end loop still
-depended too much on supervisor correction and host-specific launch knowledge.
+depended too much on supervisor correction and environment-specific launch
+knowledge.
 The bottlenecks were mostly not model inference. The repeated blockers were
 service readiness, queue consumption, stale source/tool state, ambiguous
 credential selection, worker status replay, missing first-class file transfer,
@@ -58,27 +60,27 @@ The target loop was:
    accepts, reopens, or repairs the work.
 7. Accepted work is promoted into the owning submodule and pinned in the
    superproject.
-8. The same loop repeats after a fresh host or non-persistent environment start
-   without manual per-service shepherding.
+8. The same loop repeats after a fresh worker environment or non-persistent
+   environment start without manual per-service shepherding.
 
 The intended MVP did not require private image delivery. Source checkout,
 build/install, and App Server workers were sufficient for this milestone.
 
 ## Actual outcome
 
-The project achieved substantial parts of the loop. H100-style remote workers
+The project achieved substantial parts of the loop. GPU-backed remote workers
 were no longer theoretical: they could run App Server workers, use local models,
-produce real commits, and expose reviewable results. Dev-hg and local workers
-also became important repair and infrastructure lanes. Several worker-produced
-changes were accepted only after iteration, which is the correct flow: the goal
-is not a perfect first attempt, but a repeatable path from task to accepted
-work.
+produce real commits, and expose reviewable results. Remote and local worker
+environments also became important repair and infrastructure lanes. Several
+worker-produced changes were accepted only after iteration, which is the
+correct flow: the goal is not a perfect first attempt, but a repeatable path
+from task to accepted work.
 
 The remaining gap was automation maturity. Launching, refreshing, collecting,
 and reviewing work still required too much human-supervisor memory. The project
-therefore paused costly GPU use and shifted priority to local and remote review host
+therefore paused costly GPU use and shifted priority to local and remote
 implementation work that improves remote productivity without requiring the GPU
-host to stay online.
+worker environment to stay online.
 
 ## Evidence reviewed
 
@@ -98,7 +100,7 @@ week include:
 | Skill and guideline work | `skills` pinned at `241eef1` |
 
 The root Git history for the period contained hundreds of commits and pins. The
-commit stream clustered around remote worker execution, GPU and remote-review-host offload,
+commit stream clustered around remote worker execution, GPU worker offload,
 Events relay/sync, credential handling, worker scheduler and App Server
 corrections, worktree pruning, terminal evidence, task attachments, guidance,
 and release preparation.
@@ -121,50 +123,53 @@ review.
 ### 2026-05-21
 
 Work continued on scalable remote execution and development productivity.
-Memos show local and remote review host probing, worker task maintenance, remote selection
-work, and repeated attention to release-quality gates. The system was becoming
-usable, but still had too many host-specific assumptions.
+Memos show local and remote worker environment probing, worker task
+maintenance, remote selection work, and repeated attention to release-quality
+gates. The system was becoming usable, but still had too many environment-specific
+assumptions.
 
 ### 2026-05-22
 
 The team focused on SSH-Docker and external worker substrates. Image-backed
-workers, App Server smoke tests, writable substrate checks, H100 gateway/root
-shell safety, and event import/export workflows were tested. The important
-learning was that remote workers need first-class service and evidence
+workers, App Server smoke tests, writable substrate checks, GPU worker gateway
+and privileged-shell safety, and event import/export workflows were tested. The
+important learning was that remote workers need first-class service and evidence
 plumbing; manual sync can prove a path but should not be the product flow.
 
 ### 2026-05-23
 
-H100 readiness and local model experiments advanced. Events export/import
-proved that evidence could move between systems, but local-supervisor-to-H100
-routing remained too manual. H100 was close enough to run work, but not yet
-repeatable after a fresh start.
+GPU worker environment readiness and local model experiments advanced. Events
+export/import proved that evidence could move between systems, but
+local-supervisor-to-GPU-worker-environment routing remained too manual. The GPU
+worker environment was close enough to run work, but not yet repeatable after a
+fresh start.
 
 ### 2026-05-24
 
-Gemma and GPT-OSS smoke tests, H100 worker launch scripts, and event sync work
+Gemma and GPT-OSS smoke tests, GPU worker launch scripts, and event sync work
 made remote work more concrete. A release was published during this period.
-The project also found drift between local, remote-review-host, and GPU-host tool versions,
-which reinforced the need for remote freshness automation.
+The project also found drift between local, remote, and GPU worker environment
+tool versions, which reinforced the need for remote freshness automation.
 
 ### 2026-05-25
 
-H100 App Server based work became real. The system produced useful remote
-commits and one accepted/pinned documentation-style result. At the same time,
-several defects surfaced: service readiness was fragile, model/profile switching
-on resumed App Server threads was confusing, and one-shot runner patterns
-created architectural mismatch with the intended App Server design.
+GPU worker App Server based work became real. The system produced useful
+remote commits and one accepted/pinned documentation-style result. At the same
+time, several defects surfaced: service readiness was fragile, model/profile
+switching on resumed App Server threads was confusing, and one-shot runner
+patterns created architectural mismatch with the intended App Server design.
 
 ### 2026-05-26
 
 The week peaked in parallel remote-worker experimentation. Multiple Gemma
 workers ran, some work was salvaged after review, and the supervisor learned
 that iteration plus review is the expected success path. The project also
-identified and worked on local and remote-review-host issues: deterministic scheduler behavior,
-credentials without process-global tokens, service-owned event relay, first-class
-task attachments, terminal evidence, worktree pruning, and worker status/stats.
-Cost concerns led to pausing H100 use and collecting work rather than continuing
-to spend on an underused GPU host.
+identified and worked on local and remote worker environment issues:
+deterministic scheduler behavior, credentials without process-global tokens,
+service-owned event relay, first-class task attachments, terminal evidence,
+worktree pruning, and worker status/stats.
+Cost concerns led to pausing GPU worker environment use and collecting work
+rather than continuing to spend on underused GPU capacity.
 
 ### 2026-05-27
 
@@ -189,7 +194,7 @@ supervisor.
 ### App Server worker model
 
 The team converged on App Server workers as the normal runner pattern across
-local, remote-review-host, and GPU-host environments. One-shot `codex exec` style flows
+local, remote, and GPU worker environments. One-shot `codex exec` style flows
 were found to be the wrong default because they split behavior from the App
 Server supervision and live-guidance path.
 
@@ -234,7 +239,7 @@ supervisor's short-term memory.
 The strongest architectural correction was choosing a consistent runner model:
 App Server workers everywhere, with environment-specific model profiles and
 service-managed launch behavior. This reduces special cases between local,
-remote-review-host, and GPU-host execution.
+remote, and GPU worker execution.
 
 The second strong correction was moving toward one or a few user-level systemd
 services for Bus infrastructure. A single-process or small-service deployment
@@ -273,7 +278,7 @@ measured consistently. Parallel work was effective in bursts, especially around
 the high-concurrency experiments, but the operating mode was not sustained.
 
 The user feedback materially improved the plan. Important corrections included:
-use App Server workers everywhere, stop spending on an underused GPU host, avoid
+use App Server workers everywhere, stop spending on underused GPU capacity, avoid
 manual lock-file deletion, make tasks asynchronous and queue-backed, avoid
 one-shot runner upkeep, split vague items into clear definitions of done, and
 write lessons into durable guidance.
@@ -288,9 +293,10 @@ guidance through the task event interface.
 
 ### Finding 1: Remote workers can produce real BusDK work
 
-Evidence: H100-style workers ran App Server based tasks, used local models,
+Evidence: GPU-backed workers ran App Server based tasks, used local models,
 produced branches and commits, and some results were accepted after review or
-repair. Dev-hg and local workers also produced accepted infrastructure work.
+repair. Remote and local worker environments also produced accepted
+infrastructure work.
 
 Impact: The development model is viable. The remaining problem is not whether
 remote work can happen, but whether it happens repeatably with less human
@@ -313,7 +319,7 @@ Confidence: High.
 ### Finding 3: One-shot runner paths created product confusion
 
 Evidence: The team repeatedly had to clarify that App Server workers should be
-the normal path on local, remote-review-host, and GPU-host systems. One-shot runner
+the normal path on local, remote, and GPU worker environments. One-shot runner
 debugging did not match the desired live-guided worker flow.
 
 Impact: Keeping unused runner paths increases maintenance and causes workers to
@@ -360,7 +366,7 @@ Confidence: High.
 
 | Issue | Immediate cause | Systemic cause | Preventive action |
 | --- | --- | --- | --- |
-| Manual H100 shepherding | Services and launchers needed task-specific correction | Remote readiness was not yet productized as services | Build deterministic service/scheduler and systemd user setup |
+| Manual GPU worker shepherding | Services and launchers needed task-specific correction | Remote readiness was not yet productized as services | Build deterministic service/scheduler and systemd user setup |
 | Stale remote state | Remote tools and checkouts drifted from reviewed local state | Freshness was not automatic or recorded clearly | Add refresh/build/install/image identity recording |
 | Ambiguous credentials | Different parts of the loop relied on shell environment or token files | Multi-remote credential model was not first-class enough | Use per-remote config and explicit token sources |
 | Weak closeout evidence | Workers did not always report the same metadata | Evidence schema was implicit | Require attempt id, remote id, model, commit, logs, terminal status |
@@ -371,12 +377,12 @@ Confidence: High.
 
 The week produced several durable operating rules:
 
-- Use App Server workers as the normal worker path across local, remote-review-host, and
-  GPU-host environments.
+- Use App Server workers as the normal worker path across local, remote, and
+  GPU worker environments.
 - Treat one-shot runner flows as legacy or exceptional unless a specific
   current task proves they are needed.
-- Keep costly GPU hosts paused unless they are actively needed and workers are
-  ready to use them.
+- Keep costly GPU worker environments paused unless they are actively needed
+  and workers are ready to use them.
 - Do not manually remove lock files as a normal workflow; first verify whether
   the lock is active and wait when appropriate.
 - Keep a steady queue of bounded tasks; the supervisor should review, guide,
@@ -394,11 +400,11 @@ deliverables rather than broad themes.
 | Priority | Work item | Definition of done |
 | --- | --- | --- |
 | High | Service-owned task scheduler for remote workers | A service consumes queued `bus dev task` work, starts App Server workers up to configured capacity, avoids replaying stale claims, and exposes current queue/worker status. |
-| High | Systemd user deployment for Bus infrastructure | A local or remote-review host can start the required Bus API, Events, integration, and provider handlers as one or a few user services without manually launching each handler. |
+| High | Systemd user deployment for Bus infrastructure | A local or remote worker environment can start the required Bus API, Events, integration, and provider handlers as one or a few user services without manually launching each handler. |
 | High | Remote credential source selection | Controller, remote Events, and worker runtime credentials are selected from explicit remote config or token files, not from a process-global token as the normal path. Expired or missing credentials fail with actionable diagnostics. |
 | High | First-class task file and artifact transfer | `bus dev task` can attach and retrieve patches, log bundles, and evidence files without `scp` or ad hoc side channels. |
-| High | Dev-hg trustworthy worker lane | Dev-hg can launch App Server workers through the same service pattern, run queued tasks, and return evidence without manual host-specific correction. |
-| High | Remote freshness command | A development host can update root/submodules, build/install changed tools, rebuild/reload worker images only when needed, and record source, tool, and image identity. |
+| High | Trustworthy remote worker lane | A remote worker environment can launch App Server workers through the same service pattern, run queued tasks, and return evidence without manual environment-specific correction. |
+| High | Remote freshness command | A worker environment can update root/submodules, build/install changed tools, rebuild/reload worker images only when needed, and record source, tool, and image identity. |
 | Medium | Service-owned Events relay | Event sync between local and remote systems runs as a bounded service with clear checkpoints and no manual import/export loop for normal work. |
 | Medium | Deterministic task evidence | Every worker attempt reports terminal status, remote id, model/reasoning, attempt id, worker log pointer, branch, commit hash, validation commands, and closeout state. |
 | Medium | Model/profile switching semantics | App Server retries and resumed threads expose and honor the requested model/profile, or fail clearly when a thread cannot switch models. |
@@ -408,16 +414,16 @@ deliverables rather than broad themes.
 
 ## Recommendations
 
-The next development push should prioritize local and remote-review-host work that removes
+The next development push should prioritize local and remote work that removes
 remote friction before spending on GPU capacity again. The best order is:
 service-owned scheduler, systemd user service packaging, remote credential
 selection, task attachments, remote freshness, and bounded event relay.
 
-H100 or another GPU host should return only after the service path can keep it
+A GPU worker environment should return only after the service path can keep it
 busy. At that point, the proof should be ordinary: queue multiple bounded
 tasks, let the configured scheduler launch workers, review and reopen through
 task events, promote accepted work, and confirm the same loop repeats after a
-fresh host start.
+fresh worker-environment start.
 
 ## Open questions
 

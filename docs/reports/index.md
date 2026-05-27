@@ -11,7 +11,7 @@ understand what changed, what was validated, what remains risky, and what the
 project learned from the work.
 
 [Development retrospective for 2026-05-20 to 2026-05-27](./2026-05-20-27-development-retrospective)
-reviews the remote worker, GPU-host, remote review host, task automation,
+reviews remote worker environments, GPU worker environments, task automation,
 service readiness, and release-preparation work from the last development week.
 
 <!-- busdk-docs-nav start -->
