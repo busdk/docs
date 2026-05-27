@@ -51,6 +51,7 @@ partially active nav entry.
 GX authors use `PortalShell` as a normal typed component. Child markup fills the
 body slot, and callback props remain Go function values.
 
+{% raw %}
 ```gx
 package reportsui
 
@@ -77,6 +78,7 @@ func ReportsPage(props ReportsPageProps) gx.Node {
     )
 }
 ```
+{% endraw %}
 
 The same page can be exposed through `portal.UIFramework` by wrapping the GX
 function in a deterministic Go renderer. The renderer receives host context

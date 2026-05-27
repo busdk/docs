@@ -46,6 +46,7 @@ unsupported preview media render unavailable evidence actions.
 
 ## Example
 
+{% raw %}
 ```go
 package evidenceui
 
@@ -69,6 +70,7 @@ func ReceiptDetail(url string) (uikit.ProjectionDetailResult, error) {
 	})
 }
 ```
+{% endraw %}
 
 ## Runtime Terms
 

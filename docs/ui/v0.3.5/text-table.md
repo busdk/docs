@@ -21,6 +21,7 @@ hide extra cells, because that would make table meaning ambiguous.
 
 ## Example
 
+{% raw %}
 ```gx
 package notesui
 
@@ -31,6 +32,7 @@ var moduleStatus = (
   ></TextTable>
 )
 ```
+{% endraw %}
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
