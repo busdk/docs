@@ -82,33 +82,125 @@ therefore paused costly GPU use and shifted priority to local and remote
 implementation work that improves remote productivity without requiring the GPU
 worker environment to stay online.
 
+A second remaining gap is evidence durability. The week produced a large amount
+of useful task and note evidence, but too much of it lived in hourly memos,
+memory-backed task services, retained worker directories, or environment-local
+process state. The current visible task ledger is enough to validate the major
+patterns, not enough to be treated as the canonical archive of every task
+conversation from the week.
+
 ## Evidence reviewed
 
 The primary evidence was the hourly memo series from `logs/20260520-*` through
 `logs/20260527-*`, the root superproject Git history for the same date range,
-and submodule pins in the superproject. Representative current pins after the
-week include:
+submodule histories for the worker/runtime modules, current task statistics
+from the still-live local task Events API, Bus Notes evidence recorded in
+memos, and a current remote worker environment inspection. Representative
+current pins after the week include:
 
 | Area | Evidence |
 | --- | --- |
-| Worker task tooling | `bus-dev` pinned at `a120e08` |
-| Events relay and sync | `bus-events` pinned at `79b8f72` |
+| Worker task tooling | `bus-dev` pinned at `2192849` |
+| Events relay and sync | `bus-events` pinned at `3e7adf3` |
 | Integration services | `bus-integration` pinned at `eb14e34` |
-| Dev task integration | `bus-integration-dev-task` pinned at `4618af9` |
+| Dev task integration | `bus-integration-dev-task` pinned at `e59c404` |
 | SSH runner integration | `bus-integration-ssh-runner` pinned at `cf0f7bb` |
 | Deploy operator | `bus-operator-deploy` pinned at `4c36645` |
-| Skill and guideline work | `skills` pinned at `241eef1` |
+| Notes integration | `bus-integration-notes` pinned at `8830eb0` |
+| Skill and guideline work | `skills` pinned at `0c89c79` |
+
+## Metrics snapshot
+
+These numbers are git and task-ledger measurements for 2026-05-20 through
+2026-05-27. Commit totals should be read as evidence volume, not as a
+deduplicated feature count, because superproject pin commits often correspond
+to separately counted submodule commits.
+
+| Metric | Count | Notes |
+| --- | ---: | --- |
+| Visible task streams | 89 | Current local task ledger; all terminal at review time. |
+| Done task streams | 37 | All 37 were promoted or accepted-or-promoted in task metadata. |
+| Failed task streams | 6 | Terminal task result, not including recovered attempts. |
+| Blocked task streams | 3 | Terminal task result, not including recovered attempts. |
+| Canceled task streams | 43 | Mostly stale, false-active, superseded, or hygiene closeouts. |
+| Handoffs | 31 | Reopen/repair or cross-attempt handoff evidence in task stats. |
+| Recovered tasks | 10 | Tasks that had failed/blocked attempts before final success. |
+| Root superproject commits | 379 | Mostly pins, memos, planning, scripts, and orchestration. |
+| Submodule commits | 542 | Across 25 submodules with commits in the date range. |
+| Combined observed commits | 921 | Root plus submodule histories, not deduplicated. |
+| Root git churn | +7,662 / -3,482 | 80 root-level paths, mostly orchestration and pins. |
+| Submodule git churn | +58,260 / -4,658 | 277 per-module file paths; includes logs/docs/skills. |
+| Submodule churn excluding logs/docs/sdd/skills | +43,300 / -4,223 | Closer to product and developer-tooling code/docs churn. |
+
+The largest submodule commit counts were concentrated in the development
+system:
+
+| Submodule | Commits | Git churn |
+| --- | ---: | ---: |
+| `logs` | 254 | +10,980 / -221 |
+| `bus-dev` | 89 | +15,753 / -2,041 |
+| `bus-integration-dev-task` | 48 | +6,265 / -668 |
+| `bus-operator-deploy` | 32 | +7,887 / -447 |
+| `bus-integration-ssh-runner` | 17 | +2,312 / -180 |
+| `bus-events` | 15 | +3,345 / -189 |
+| `docs` | 14 | +980 / -145 |
+| `bus-integration` | 13 | +1,862 / -88 |
+| `bus-remote` | 12 | +2,166 / -167 |
+| `skills` | 9 | +2,435 / -25 |
+| `bus-lint` | 8 | +1,680 / -173 |
+| `bus-integration-upcloud` | 5 | +1,264 / -129 |
+
+Measured as capability clusters rather than commits, the week produced or
+substantially advanced about 15 features or operating surfaces:
+
+| Capability cluster | Evidence shape |
+| --- | --- |
+| Remote task routing and selection | `bus-dev` remote/environment commits and task stats. |
+| SSH-Docker worker substrate | `bus-dev`, `bus-integration-ssh-runner`, and smoke-script commits. |
+| App Server worker execution | `bus-integration-dev-task` lifecycle and closeout commits. |
+| GPU worker local-model proof | Worker memos, task attempts, and remote-launch commits. |
+| Model/reasoning metadata | Task metadata, stats, and closeout changes. |
+| Per-remote credential selection | Token-file and credential-source commits. |
+| Events sync and relay | `bus-events` sync, relay, and service commits. |
+| Terminal evidence relay | Task status/evidence commits and memos. |
+| Task attachments | `bus-dev` attachment commits and extraction help. |
+| Worker scheduler/service planning | Scheduler/service repair and PLAN commits. |
+| User-level service deployment | `bus-operator-deploy` service install and status slices. |
+| Same-process integration host | `bus-integration` run/config/health work. |
+| Worktree pruning | Safe dry-run prune command and cleanup evidence. |
+| Durable Notes evidence path | Notes metadata search and Notes-over-Events sync planning. |
+| Supervisor/worker guidance | Root `AGENTS.md`, skills, and worker contract updates. |
 
 The root Git history for the period contained hundreds of commits and pins. The
 commit stream clustered around remote worker execution, GPU worker offload,
 Events relay/sync, credential handling, worker scheduler and App Server
 corrections, worktree pruning, terminal evidence, task attachments, guidance,
-and release preparation.
+Notes evidence, and release preparation. The highest-change modules matched
+the retrospective themes: `bus-dev` added remote routing, credentials, stats,
+attachments, pruning, and Compose defaults; `bus-integration-dev-task` added
+App Server lifecycle, sandbox, closeout, remote metadata, and worker evidence
+controls; `bus-events` added sync, relay, and Notes-operation event support;
+and `bus-integration-notes` added metadata/tag search.
 
-One live validation command still showed a remaining issue: a task statistics
-query could not run with the local token file because the token was expired.
-That is useful evidence that credential freshness and per-remote credential
-selection are still active development concerns.
+The visible local task ledger is useful but incomplete. With the correct local
+development token, `bus dev task stats --all` reported 89 visible terminal
+tasks: 37 done, 6 failed, 3 blocked, and 43 canceled, with 37 promoted or
+accepted-or-promoted results. The same statistics showed 31 handoffs and 10
+recovered tasks, which supports the finding that reopen/review/repair became a
+normal success path. The task ledger also showed 81 local worker-environment
+streams, 5 remote worker-environment streams, 3 GPU worker-environment streams,
+and 5 legacy/API-url streams.
+
+Those task numbers are not a durable full-week archive. The local and remote
+task services inspected during the evidence pass were still backed by in-memory
+Events stores; a remote worker environment also had running Events, Docker,
+container, and Notes-related services, but its current task CLI view returned
+zero visible tasks, and its Notes API endpoint did not answer the current Notes
+CLI path. Bus Notes evidence is therefore available mainly through recorded
+memo queries and note IDs, plus later local smoke evidence, not as a complete
+queryable cross-environment notes corpus. This is itself one of the major
+findings: the development system needs durable Events and Notes storage before
+future retrospectives can rely less on hourly memos.
 
 ## Timeline
 
@@ -174,8 +266,15 @@ rather than continuing to spend on underused GPU capacity.
 ### 2026-05-27
 
 The focus shifted to release closeout, guidance, skills, and retrospective
-capture. The project updated persistent guidance and skill documentation so the
-lessons from the week are not lost between worker sessions.
+capture. New development was paused while active work was drained, queued or
+false-active remote work was canceled, and remote checkouts were checked for
+unretrieved accepted commits. The project updated persistent guidance and skill
+documentation so the lessons from the week are not lost between worker
+sessions. It also found that the task and Notes evidence path itself needed
+repair: current task Events services were still memory-backed, the local task
+ledger required the correct development-account token to reveal its 89 visible
+terminal streams, and remote Notes/task evidence was not yet uniformly
+queryable from the current CLI.
 
 ## Task-to-code mapping
 
@@ -220,6 +319,25 @@ SSH side channels are not enough. The right product shape is service-owned,
 bounded relay with clear attempt identity, terminal status, commit hash, remote
 identity, model/reasoning data, and worker log pointers.
 
+The current task statistics implementation is valuable because it can separate
+terminal outcomes, promoted work, handoffs, recovered attempts, remote ids, and
+recipient-level throughput. It also exposed a product gap: statistics are only
+as reliable as the Events store behind them. Memory-backed task services made
+the numbers useful for this report but not sufficient as a permanent audit log.
+
+### Bus Notes evidence
+
+Workers began recording searchable Bus Notes evidence, and memos preserved
+queries such as `module:<module> task:<work-ref> tag:agent-work-log` plus
+specific note IDs. Later work added metadata and tag search to the Notes
+integration and taught the retrospective skill to require Notes evidence.
+
+The remaining gap is runtime integration. Notes need durable operation events,
+projection into the Notes API, and cross-environment sync through Events before
+agent work logs can be queried consistently after a remote service restart or
+release pause. Until that exists, hourly memos remain the canonical narrative
+evidence for this week.
+
 ### Worktree cleanup
 
 The project accumulated local and submodule worktrees quickly. Worktree pruning
@@ -254,6 +372,14 @@ acceptance criteria, they became difficult to finish. Future tasks should name
 the feature, owning module, expected command or service behavior, validation
 command, and evidence that marks the work complete.
 
+The biggest operations risk found during the renewed evidence pass is using
+memory-backed Events services for development worker lanes. That backend is
+appropriate for tests and disposable smokes, but it is the wrong default for
+task conversations, Notes evidence, release closeout, or remote-worker history.
+The follow-up commits already moved guidance and Compose defaults toward
+Postgres-backed Events and Notes, but existing in-memory service history still
+needs export before those services are restarted.
+
 ## Agent-worker review
 
 Remote workers performed useful work when tasks were small, explicit, and
@@ -270,6 +396,14 @@ not deterministic enough. Every task attempt should leave the same minimum
 evidence shape: task id, attempt id, remote id, model, reasoning effort, worker
 log pointer, terminal status, branch, commit, validation commands, and explicit
 follow-up state.
+
+The local task ledger reinforces that distinction. Its visible 89 terminal
+streams included 37 promoted results and 43 canceled streams. Many cancellations
+were useful hygiene rather than failure: they retired stale, false-active, or
+superseded task streams so they stopped masquerading as active capacity. The 10
+recovered tasks and 31 handoffs are also positive evidence for the
+review-reopen-repair loop, but only when the final promoted diff and supervisor
+checks agreed with the task closeout.
 
 ## Human orchestration review
 
@@ -362,6 +496,24 @@ runbooks.
 
 Confidence: High.
 
+### Finding 7: Retrospective evidence is still too dependent on live memory and memos
+
+Evidence: The local task ledger could show 89 terminal streams only when queried
+with the correct development-account token, and that ledger came from a
+still-live in-memory Events service. The remote worker environment had running
+Events and Notes-related services, but the current task CLI view returned zero
+visible tasks and the Notes CLI did not reach a compatible Notes API endpoint.
+Memos preserved worker-note queries and note IDs, and later local smoke tests
+proved Notes search, but the cross-environment Notes/event path was not yet a
+durable retrospective source.
+
+Impact: The report can make high-confidence claims about repeated patterns, but
+future reviews should not have to reconstruct task history from hourly memos
+and retained process state. Durable Events and Notes storage are part of the
+development platform, not optional reporting polish.
+
+Confidence: High.
+
 ## Root causes
 
 | Issue | Immediate cause | Systemic cause | Preventive action |
@@ -370,6 +522,7 @@ Confidence: High.
 | Stale remote state | Remote tools and checkouts drifted from reviewed local state | Freshness was not automatic or recorded clearly | Add refresh/build/install/image identity recording |
 | Ambiguous credentials | Different parts of the loop relied on shell environment or token files | Multi-remote credential model was not first-class enough | Use per-remote config and explicit token sources |
 | Weak closeout evidence | Workers did not always report the same metadata | Evidence schema was implicit | Require attempt id, remote id, model, commit, logs, terminal status |
+| Non-durable task and note evidence | Development services still used memory-backed Events or unqueryable Notes endpoints | Evidence storage was treated as launch plumbing instead of product state | Export visible history, run development Events/Notes on durable storage, and make Notes-over-Events projection routine |
 | Inconsistent parallelism | Supervisor manually decided when to feed workers | No deterministic queue/capacity scheduler | Keep work queued and let services launch up to configured capacity |
 | Vague unfinished items | Some work items described themes instead of deliverables | Planning did not enforce definition of done | Write tasks with owner module, command behavior, validation, and evidence |
 
@@ -387,6 +540,9 @@ The week produced several durable operating rules:
   the lock is active and wait when appropriate.
 - Keep a steady queue of bounded tasks; the supervisor should review, guide,
   and measure rather than manually schedule every worker.
+- Treat development task Events and Bus Notes as durable product evidence.
+  Memory backends are acceptable for tests and disposable smokes, not for
+  normal local or remote worker lanes.
 - Write unfinished work items with concrete scope, module ownership,
   acceptance criteria, and validation evidence.
 - Convert repeated mistakes into `AGENTS.md`, skill, plan, SDD, test, or CI
@@ -402,6 +558,7 @@ deliverables rather than broad themes.
 | High | Service-owned task scheduler for remote workers | A service consumes queued `bus dev task` work, starts App Server workers up to configured capacity, avoids replaying stale claims, and exposes current queue/worker status. |
 | High | Systemd user deployment for Bus infrastructure | A local or remote worker environment can start the required Bus API, Events, integration, and provider handlers as one or a few user services without manually launching each handler. |
 | High | Remote credential source selection | Controller, remote Events, and worker runtime credentials are selected from explicit remote config or token files, not from a process-global token as the normal path. Expired or missing credentials fail with actionable diagnostics. |
+| High | Durable task and Notes evidence | Visible task Events are exported before memory-backed services restart, normal development services use durable Events storage, and worker Notes can be queried by module, task, session, tag, and origin after remote sync. |
 | High | First-class task file and artifact transfer | `bus dev task` can attach and retrieve patches, log bundles, and evidence files without `scp` or ad hoc side channels. |
 | High | Trustworthy remote worker lane | A remote worker environment can launch App Server workers through the same service pattern, run queued tasks, and return evidence without manual environment-specific correction. |
 | High | Remote freshness command | A worker environment can update root/submodules, build/install changed tools, rebuild/reload worker images only when needed, and record source, tool, and image identity. |
@@ -416,8 +573,9 @@ deliverables rather than broad themes.
 
 The next development push should prioritize local and remote work that removes
 remote friction before spending on GPU capacity again. The best order is:
-service-owned scheduler, systemd user service packaging, remote credential
-selection, task attachments, remote freshness, and bounded event relay.
+durable task and Notes evidence export/storage, service-owned scheduler,
+systemd user service packaging, remote credential selection, task attachments,
+remote freshness, and bounded event relay.
 
 A GPU worker environment should return only after the service path can keep it
 busy. At that point, the proof should be ordinary: queue multiple bounded
@@ -447,7 +605,15 @@ fresh worker-environment start.
 
 - Hourly development memos for 2026-05-20 through 2026-05-27.
 - Root superproject Git history for 2026-05-20 through 2026-05-27.
+- Submodule Git histories for `bus-dev`, `bus-integration-dev-task`,
+  `bus-events`, and `bus-integration-notes`.
 - Current superproject submodule pins after the release-preparation and
   guidance updates.
-- Current validation evidence, including the expired-token task statistics
-  failure observed during retrospective preparation.
+- Current local task statistics from the still-live task Events API: 89
+  visible terminal streams, 37 done, 6 failed, 3 blocked, 43 canceled, and 37
+  promoted or accepted-or-promoted results.
+- Bus Notes evidence recorded in memos, including worker-note query strings and
+  note IDs, plus later local Notes smoke evidence.
+- Current remote worker environment inspection: running Bus service containers
+  were present, but the current task CLI view returned zero visible tasks and
+  the Notes CLI endpoint check returned a compatibility failure.
