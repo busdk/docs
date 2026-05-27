@@ -118,13 +118,13 @@ docker compose exec -T testing-agent sh -lc \
   'cd /workspace/bus-containers && go run ./cmd/bus-containers run --profile codex -- sh -lc "printf OK"'
 ```
 
-For developer-task Docker checks, `compose.dev-task-docker.yaml` builds the
+For developer-task Docker checks, `compose.yaml` builds the
 local Codex image and runs `bus containers run --profile codex -- codex
 --version` from `/workspace/bus-containers`:
 
 ```sh
-docker compose -f compose.dev-task-docker.yaml up --build -d
-docker compose -f compose.dev-task-docker.yaml exec -T testing-agent sh -lc \
+docker compose -f compose.yaml --profile dev-task up --build -d
+docker compose -f compose.yaml --profile dev-task exec -T testing-agent sh -lc \
   'cd /workspace/bus-containers && go run ./cmd/bus-containers run --profile codex -- codex --version'
 ```
 

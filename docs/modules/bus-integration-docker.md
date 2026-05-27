@@ -117,13 +117,13 @@ router.
 
 ## Local Compose
 
-The BusDK superproject includes `compose.dev-task-docker.yaml` for local
+The BusDK superproject includes `compose.yaml` for local
 developer-task testing. Run these commands from the superproject root:
 
 ```sh
 cd /path/to/busdk
-docker compose -f compose.dev-task-docker.yaml up --build -d
-docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
+docker compose -f compose.yaml --profile dev-task up --build -d
+docker compose -f compose.yaml --profile dev-task exec testing-agent sh
 ```
 
 Inside the testing shell, `bus containers run --profile codex` reaches the

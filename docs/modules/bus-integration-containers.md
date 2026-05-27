@@ -145,7 +145,7 @@ stay on the provider-neutral side of the router.
 
 ## Local Compose
 
-The superproject `compose.dev-task-docker.yaml` uses this routing layout:
+The superproject `compose.yaml` uses this routing layout:
 
 ```text
 bus-api-provider-containers
@@ -158,9 +158,9 @@ bus-api-provider-containers
 Start it from the superproject root:
 
 ```sh
-docker compose -f compose.dev-task-docker.yaml up --build -d
-docker compose -f compose.dev-task-docker.yaml ps
-docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
+docker compose -f compose.yaml --profile dev-task up --build -d
+docker compose -f compose.yaml --profile dev-task ps
+docker compose -f compose.yaml --profile dev-task exec testing-agent sh
 ```
 
 Inside the testing shell, run a direct Codex-profile container check:

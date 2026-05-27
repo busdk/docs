@@ -28,7 +28,7 @@ bus remote resolve
 With no config, the default is `ai.hg.fi`, which resolves to
 `https://ai.hg.fi` as a `bus-events` remote. Local development has two common
 forms: `localhost` is a `compose` remote using
-`compose.dev-task-docker.yaml` and `http://localhost:8081`, while
+`compose.yaml` and `http://localhost:8081`, while
 `localhost:8081` resolves directly to a `bus-events` remote at
 `http://localhost:8081`.
 
@@ -49,7 +49,7 @@ bus remote list
 bus remote show ai.hg.fi
 bus remote resolve https://events.example.invalid
 bus remote add --id upcloud-gpu --url https://events.example.invalid --default
-bus remote add --id localhost --kind compose --compose-file compose.dev-task-docker.yaml
+bus remote add --id localhost --kind compose --compose-file compose.yaml
 bus remote default localhost
 bus remote remove upcloud-gpu
 ```
@@ -72,7 +72,7 @@ the values are ordinary endpoint names, URLs, and Compose file paths.
       "id": "localhost",
       "kind": "compose",
       "url": "http://localhost:8081",
-      "compose_file": "compose.dev-task-docker.yaml"
+      "compose_file": "compose.yaml"
     },
     {
       "id": "upcloud-gpu",

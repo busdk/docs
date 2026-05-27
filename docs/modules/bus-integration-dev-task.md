@@ -155,7 +155,7 @@ bridge and does not push.
 
 ## Local Compose
 
-The BusDK superproject includes `compose.dev-task-docker.yaml` for local
+The BusDK superproject includes `compose.yaml` for local
 testing with Docker Desktop:
 
 The default compose command for real local use runs the Codex App Server backend
@@ -172,8 +172,8 @@ goal is plumbing verification rather than real LLM work.
 ```sh
 BUS_DEV_TASK_COMMAND_JSON='["codex","--version"]' \
 BUS_DEV_TASK_COMMIT=false \
-docker compose -f compose.dev-task-docker.yaml up --build -d
-docker compose -f compose.dev-task-docker.yaml exec testing-agent sh
+docker compose -f compose.yaml --profile dev-task up --build -d
+docker compose -f compose.yaml --profile dev-task exec testing-agent sh
 ```
 
 Inside the testing shell, create a task and watch the task reference printed by
