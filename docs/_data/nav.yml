@@ -62,6 +62,13 @@
         - label: Compact checklist
           url: /implementation/go-peer-review-guide/compact-checklist
 
+- title: Reports
+  links:
+    - label: Project reports
+      url: /reports/
+    - label: Development retrospective, 2026-05-20 to 2026-05-27
+      url: /reports/2026-05-20-27-development-retrospective
+
 - title: Workflows
   links:
     - label: Accounting workflow overview

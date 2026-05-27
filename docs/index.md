@@ -30,6 +30,7 @@ description: Documentation hub for humans and AI agents using BusDK to build, ho
 
 - [Module capabilities](modules/features)
 - [Development cost summary](implementation/cost-summary)
+- [Development retrospective, 2026-05-20 to 2026-05-27](reports/2026-05-20-27-development-retrospective)
 - [Source package estimates](implementation/module-pricing)
 - [Module CLI quickstart](modules/index)
 
