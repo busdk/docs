@@ -113,5 +113,17 @@ bus task status --watch
 bus task monitor --format json
 ```
 
+For the common `dev-hg` SSH-Docker readiness check in this superproject, use
+the reusable operator-gated wrapper:
+
+```bash
+scripts/test-ssh-docker-spark-smoke.sh
+```
+
+The wrapper defaults to `codex-spark`, `GPT-5.3-Codex-Spark`,
+`chatgpt-subscription`, and a read-only prompt, while still allowing explicit
+`--profile`, `--model`, `--sandbox`, and lower-level SSH-Docker smoke options
+after `--`.
+
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
 the shorter worker-context name.
