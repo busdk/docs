@@ -48,7 +48,7 @@ source and are not serialized through task Events.
 
 ```sh
 export BUS_API_TOKEN="<token-with-dev-task-and-container-scopes>"
-bus-integration-dev-task \
+bus-integration-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
   --agent-backend codex-appserver \
@@ -137,7 +137,7 @@ worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
 the current Git branch when possible.
 
 ```sh
-bus-integration-dev-task \
+bus-integration-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
   --agent-backend container \
@@ -152,7 +152,7 @@ path so task containers edit files only and the bridge handles Git metadata,
 staging, and commit creation:
 
 ```sh
-bus-integration-dev-task \
+bus-integration-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \
   --agent-backend container \

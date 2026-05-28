@@ -103,7 +103,7 @@ current pins after the week include:
 | Worker task tooling | `bus-dev` pinned at `2192849` |
 | Events relay and sync | `bus-events` pinned at `3e7adf3` |
 | Integration services | `bus-integration` pinned at `eb14e34` |
-| Dev task integration | `bus-integration-dev-task` pinned at `e59c404` |
+| Dev task integration | `bus-integration-task` pinned at `e59c404` |
 | SSH runner integration | `bus-integration-ssh-runner` pinned at `cf0f7bb` |
 | Deploy operator | `bus-operator-deploy` pinned at `4c36645` |
 | Notes integration | `bus-integration-notes` pinned at `8830eb0` |
@@ -139,7 +139,7 @@ system:
 | --- | ---: | ---: |
 | `logs` | 254 | +10,980 / -221 |
 | `bus-dev` | 89 | +15,753 / -2,041 |
-| `bus-integration-dev-task` | 48 | +6,265 / -668 |
+| `bus-integration-task` | 48 | +6,265 / -668 |
 | `bus-operator-deploy` | 32 | +7,887 / -447 |
 | `bus-integration-ssh-runner` | 17 | +2,312 / -180 |
 | `bus-events` | 15 | +3,345 / -189 |
@@ -157,7 +157,7 @@ substantially advanced about 15 features or operating surfaces:
 | --- | --- |
 | Remote task routing and selection | `bus-dev` remote/environment commits and task stats. |
 | SSH-Docker worker substrate | `bus-dev`, `bus-integration-ssh-runner`, and smoke-script commits. |
-| App Server worker execution | `bus-integration-dev-task` lifecycle and closeout commits. |
+| App Server worker execution | `bus-integration-task` lifecycle and closeout commits. |
 | GPU worker local-model proof | Worker memos, task attempts, and remote-launch commits. |
 | Model/reasoning metadata | Task metadata, stats, and closeout changes. |
 | Per-remote credential selection | Token-file and credential-source commits. |
@@ -177,7 +177,7 @@ Events relay/sync, credential handling, worker scheduler and App Server
 corrections, worktree pruning, terminal evidence, task attachments, guidance,
 Notes evidence, and release preparation. The highest-change modules matched
 the retrospective themes: `bus-dev` added remote routing, credentials, stats,
-attachments, pruning, and Compose defaults; `bus-integration-dev-task` added
+attachments, pruning, and Compose defaults; `bus-integration-task` added
 App Server lifecycle, sandbox, closeout, remote metadata, and worker evidence
 controls; `bus-events` added sync, relay, and Notes-operation event support;
 and `bus-integration-notes` added metadata/tag search.
@@ -605,7 +605,7 @@ fresh worker-environment start.
 
 - Hourly development memos for 2026-05-20 through 2026-05-27.
 - Root superproject Git history for 2026-05-20 through 2026-05-27.
-- Submodule Git histories for `bus-dev`, `bus-integration-dev-task`,
+- Submodule Git histories for `bus-dev`, `bus-integration-task`,
   `bus-events`, and `bus-integration-notes`.
 - Current superproject submodule pins after the release-preparation and
   guidance updates.

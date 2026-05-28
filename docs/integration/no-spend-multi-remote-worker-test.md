@@ -113,5 +113,5 @@ For localhost-only tests, the required evidence is the successful `localhost` dr
 
 - [bus-dev module reference](../modules/bus-dev)
 - [bus remote module reference](../modules/bus-remote)
-- [bus integration dev task module reference](../modules/bus-integration-dev-task)
+- [bus integration dev task module reference](../modules/bus-integration-task)
 - [Deployment and data control](./deployment-and-data-control)
