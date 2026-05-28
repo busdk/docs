@@ -64,7 +64,7 @@ With global **`--check`**, bus-dev validates token expansion and script runnabil
 `bus dev pipeline set prefs NAME TOKEN...` — write preference `bus-dev.pipeline.NAME` as a JSON array of strings (via bus-preferences library, no shell-out).
 `bus dev pipeline unset prefs NAME` — remove the preference key if present; exit 0 if absent.
 `bus dev pipeline list [all|repo|prefs|builtin]` — print a deterministic listing of pipelines and their source; output to stdout, lexicographic by name then source.
-`bus dev pipeline preview TOKEN...` — resolve and expand tokens, apply the same normalization used by runnable invocations (merge only repeated direct base-operation steps; no merge across pipeline invocations), print one step name per line to stdout, and exit without running any step.
+`bus dev pipeline preview TOKEN...` — resolve and expand tokens, apply the same normalization used by runnable invocations (merge repeated base-operation steps within one direct invocation or one pipeline expansion; no merge across repeated pipeline invocations), print one step name per line to stdout, and exit without running any step.
 `bus dev action set NAME` — read content from stdin and write `.bus/dev/NAME.txt`; stdin must be non-empty (empty stdin → exit 2).
 `bus dev action unset NAME` — remove `.bus/dev/NAME.txt` if present; exit 0 if absent.
 `bus dev action list` — print available repository actions to stdout.
@@ -99,10 +99,15 @@ In a BusDK superproject checkout, after `docker compose up --build -d`, the
 local stack writes a non-secret development token to
 `tmp/local-ai-platform/bus-config/auth/api-token`. If no explicit
 `--token-file` or selected remote `credential_source` token-file is configured,
-`bus dev work <controller-command>` and `bus dev task` use that source-checkout token automatically before falling
-back to `BUS_API_TOKEN`, `BUS_CONFIG_DIR`, and
-`~/.config/bus/auth/api-token`, so an unrelated or expired production token
+`bus dev work <controller-command>` and `bus dev task` use that source-checkout
+token automatically before falling back to `BUS_CONFIG_DIR`, `BUS_API_TOKEN`,
+and `~/.config/bus/auth/api-token`, so an unrelated or expired production token
 does not break host-side local compose tasks at `http://127.0.0.1:8080`.
+
+Before creating tasks, make sure the selected Events token grants
+`events:send`, `events:listen`, and `dev:task:*`; token precedence is explicit
+`--token-file`, selected remote `credential_source`, the local compose token
+above, `BUS_CONFIG_DIR`, `BUS_API_TOKEN`, then user Bus config.
 
 The primary command creates a task for the current repository unless a recipient is provided:
 
@@ -119,11 +124,32 @@ bus dev task new @bus-ledger --file work.md
 bus dev task new @bus-ledger "Fix this; details attached" --attach repro.log
 ```
 
+Task streams can carry non-secret worker selection metadata directly. The
+same flags work through `bus dev task` and `bus dev work start`, including
+`--remote`, `--environment`, `--worker-profile`, `--codex-model`,
+`--reasoning-effort`, `--codex-args-json`, `--worker-sandbox`, and
+`--agent-backend`. Remote config
+owns named `worker_profiles`, so a single environment can run local model
+workers and hosted Codex workers together. For example, a supervisor can start
+Spark-quota workers with `--worker-profile codex-spark`, while API-key workers
+use a credential source reference instead of serializing an API key through
+task Events.
+
+`--worker-sandbox` uses short Bus terms rather than backend-specific names.
+`read` means the worker may inspect but not write through the agent runtime,
+`write` means the worker may write the declared task workspace, and `full` means
+Bus treats the disposable worker container as the isolation boundary. For Codex
+App Server workers those values map to Codex `read-only`, `workspace-write`,
+and `danger-full-access`. SSH-Docker image workers using `codex-appserver`
+default to `full`, which is the normal mode for dedicated Spark worker
+containers.
+
 The `bus dev work` controller exposes the same stream behavior through a command
 surface intended for interactive supervision:
 
 ```bash
 bus dev work start @bus-ledger @docs "Fix behavior and update docs"
+bus dev work --remote cloud-codex start --worker-profile codex-spark @bus-dev "Use Spark quota"
 bus dev work drain --jobs 4
 bus dev work status
 bus dev work watch bus-ledger#1.1 --timeout 5m
@@ -243,7 +269,7 @@ evidence to collect, and the pass/fail criteria.
 
 `next` returns and claims the next available work item for the current repository or explicit recipient. Bus provides the inbox and event stream; configured workers decide how to perform the work, so the task protocol stays generic across Codex, container, and human-driven execution paths.
 
-The command uses development-specific `bus.dev.task.*` events and requires Bus Events transport scopes such as `events:send` and `events:listen` plus task scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. Token precedence is explicit flag, `BUS_API_TOKEN`, an explicit `BUS_CONFIG_DIR` token, the BusDK local compose token when present, then the normal Bus auth session token. Use [`bus work`](./bus-work) separately for generic non-development work streams.
+The command uses development-specific `bus.dev.task.*` events and requires Bus Events transport scopes such as `events:send` and `events:listen` plus task scopes such as `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`. Token precedence is explicit flag, selected remote `credential_source` token-file, the BusDK local compose token when present, an explicit `BUS_CONFIG_DIR` token, `BUS_API_TOKEN`, then the normal Bus auth session token. Use [`bus work`](./bus-work) separately for generic non-development work streams.
 
 For a practical `.bus` file that runs `dev`, `agent`, and `run` commands together in one sequence, see [`.bus` getting started — multiple commands together](../cli/bus-script-files-multi-command-getting-started).
 
@@ -422,7 +448,7 @@ Command results are written to stdout when a subcommand produces them. Diagnosti
 
 Subcommands that invoke an external agent (`plan`, `work`, `spec`, `e2e`, `triage`, and `stage`, including when plan/spec/work/e2e are requested after `init`) use the [bus-agent](../modules/bus-agent) library and one of its supported runtimes: **Cursor CLI**, **Codex**, **Gemini CLI**, and **Claude CLI**. The runtime token `codex:local` selects Codex in local mode (`--oss`). At the start of each such step, the tool prints to stderr which internal agent and which model are in use so that logs and scripts can see the active runtime and model.
 
-The active runtime is chosen in this order: (1) **`--agent <runtime>`** for that invocation; (2) **`BUS_DEV_AGENT`** (bus-dev-only session default; when set, used for every `bus dev` command in that session until unset or overridden); (3) **`BUS_AGENT`** (shared session default, used when `BUS_DEV_AGENT` is not set); (4) **bus-dev persistent preference** (e.g. `bus-dev.agent` via [bus-preferences](./bus-preferences), affects only bus-dev); (5) **bus-agent persistent preference** (`bus-agent.runtime`). Bus does not silently choose the first detected runtime. Set bus-dev’s default with `bus dev set agent <runtime>` or `bus preferences set bus-dev.agent <runtime>`, and set the shared default with `bus agent set runtime <runtime>` or `bus preferences set bus-agent.runtime <runtime>`.
+The active runtime is chosen in this order: (1) **`--agent <runtime>`** for that invocation; (2) **`BUS_DEV_AGENT`** (bus-dev-only session default; when set, used for every `bus dev` command in that session until unset or overridden); (3) **`BUS_AGENT`** (shared session default, used when `BUS_DEV_AGENT` is not set); (4) per-step `bus-dev.agent_for.*` selectors (`@token` then `token` for built-in steps, `token` only for user-defined steps); (5) **bus-dev persistent preference** (e.g. `bus-dev.agent` via [bus-preferences](./bus-preferences), affects only bus-dev); (6) **bus-agent persistent preference** (`bus-agent.runtime`). Bus does not silently choose the first detected runtime. Set bus-dev’s default with `bus dev set agent <runtime>` or `bus preferences set bus-dev.agent <runtime>`, and set the shared default with `bus agent set runtime <runtime>` or `bus preferences set bus-agent.runtime <runtime>`.
 
 Invalid runtime names (e.g. `--agent unknown` or an invalid value in `BUS_DEV_AGENT` or `BUS_AGENT`) produce a clear usage error and exit 2. If the user has selected an agent and that agent’s CLI is not installed or not in PATH, the tool reports that on stderr, directs you to the canonical installation URL for that runtime, and exits with code 1. When no runtime is selected, the tool exits with a clear diagnostic that lists detected runtimes, supported runtimes that were not detected, and example commands to set a default. Model, output format, and timeout follow the same resolution logic as agent (see Preference settings below): bus-dev session env (`BUS_DEV_MODEL`, `BUS_DEV_TIMEOUT`, `BUS_DEV_OUTPUT_FORMAT`), then bus-dev persistent preferences (`bus-dev.model`, `bus-dev.timeout`, `bus-dev.output_format`), then bus-agent preferences as fallback, then bus-agent defaults (e.g. model `auto`, output format `text`).
 

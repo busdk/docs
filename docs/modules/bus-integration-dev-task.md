@@ -37,6 +37,15 @@ authentication/configuration must be available in the worker environment. For
 requested profile and grant `container:run`; local testing can use
 `bus-integration-docker` for the `codex` profile.
 
+When `bus dev task` or `bus dev work start` resolves a worker profile from
+`bus-remote`, the task stream carries non-secret labels such as
+`worker_profile`, requested model, reasoning effort, auth mode, and credential
+source kind. This bridge propagates those labels into worker-start requests,
+attempt evidence, lifecycle metrics, and status output while continuing to run
+Codex through `bus-agent/appserver`. API keys, ChatGPT auth files, and
+credential source refs stay in the configured worker or deployment secret
+source and are not serialized through task Events.
+
 ```sh
 export BUS_API_TOKEN="<token-with-dev-task-and-container-scopes>"
 bus-integration-dev-task \
@@ -69,11 +78,12 @@ repository.
 reference. Use `bus dev work say <ref> <message...>` while the turn is active
 to steer it directly. Use `bus dev work reopen <ref> <message...>` after a
 terminal state to publish a new open task event that resumes stored App Server
-thread state when present. Use `bus dev work watch <ref>` to see approval request ids, then
-answer with:
+thread state when present. Use `bus dev work watch <ref>` to see approval
+request ids, then answer with the task ref and approval request id printed by
+that watch output:
 
 ```sh
-bus dev work approve bus-dev#1.1 7 accept_for_session
+bus dev work approve <ref> <approval-id> accept_for_session
 ```
 
 The approval decision must be `accept`, `accept_for_session`, `decline`, or
@@ -93,6 +103,11 @@ concurrent tasks addressed to the same module.
 For Codex App Server tasks, a completed LLM turn is not enough to mark work
 done: no worktree changes, no tests run, an unclosed PLAN item, or explicit
 blocked evidence is recorded as a blocked task stream.
+When a Codex worker uses `auth_mode=openai-api-key`, the worker can resolve a
+local deployment secret by reading `/run/secrets/<ref>` or
+`$BUS_DEV_TASK_DEPLOYMENT_SECRETS_DIR/<ref>` and setting `OPENAI_API_KEY`
+inside the worker process. The key value is never written to task Events or
+repo config, and an already-set `OPENAI_API_KEY` takes precedence.
 Workers also publish concise non-secret hourly engineering notes through
 `bus notes add`, so the notes become Bus ecosystem data rather than hidden local
 files. The logical `agent_id` is the recipient module/AGENTS.md identity, while
@@ -170,6 +185,7 @@ and `BUS_DEV_TASK_COMMAND_JSON` to use a deterministic command backend when the
 goal is plumbing verification rather than real LLM work.
 
 ```sh
+BUS_DEV_TASK_AGENT_BACKEND=container \
 BUS_DEV_TASK_COMMAND_JSON='["codex","--version"]' \
 BUS_DEV_TASK_COMMIT=false \
 docker compose -f compose.yaml --profile dev-task up --build -d
