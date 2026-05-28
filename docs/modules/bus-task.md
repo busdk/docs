@@ -123,8 +123,17 @@ scripts/test-ssh-docker-spark-smoke.sh
 The wrapper defaults to `codex-spark`, `GPT-5.3-Codex-Spark`,
 `chatgpt-subscription`, the pullable worker image
 `ghcr.io/busdk/bus-integration-task:latest`, and a read-only prompt. Use
-`--image`, `--install-image`, or `--build-image` when the smoke should prove a
-specific local worker image instead of the default published image.
+`--image`, `--local-tag`, `--install-image`, or `--build-image` when the smoke
+should prove a specific local image or recover from remote registry pull
+failure. The common recovery path is:
+
+```bash
+scripts/test-ssh-docker-spark-smoke.sh --install-image
+```
+
+That keeps the remote runtime image as
+`ghcr.io/busdk/bus-integration-task:latest`, but ships the local source tag
+`bus-integration-task:local-image-smoke` unless `--local-tag` overrides it.
 
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
 the shorter worker-context name.
