@@ -57,9 +57,13 @@ references to those workers, but it does not own the worker identity lifecycle.
 ### Codex Spark Workers
 
 For the common Spark-quota path, create a profile such as `codex-spark` in the
-selected remote/environment by adding a non-secret `worker_profiles` entry to
+selected remote by adding a non-secret `worker_profiles` entry to
 `.bus/remote/config.json` or the user `remote/config.json` read by
-[`bus remote`](./bus-remote):
+[`bus remote`](./bus-remote). If one environment should prefer that profile by
+default, add `default_worker_profile` to the matching `environments` entry.
+Before using the profile, make sure the referenced credential label or source
+already exists on the worker host, for example the Codex ChatGPT subscription
+auth source behind `codex-chatgpt-subscription`:
 
 ```json
 {
@@ -80,6 +84,14 @@ selected remote/environment by adding a non-secret `worker_profiles` entry to
         }
       }
     }
+  ],
+  "environments": [
+    {
+      "id": "env-dev-hg-codex",
+      "name": "dev-hg",
+      "remote_id": "hosted-codex",
+      "default_worker_profile": "codex-spark"
+    }
   ]
 }
 ```
@@ -89,7 +101,16 @@ dedicated disposable worker containers where the container is the isolation
 boundary:
 
 ```bash
+bus task start --environment dev-hg @bus-dev "Implement the change"
 bus task start --profile codex-spark --model GPT-5.3-Codex-Spark --reasoning-effort high --sandbox full @bus-dev "Implement the change"
+```
+
+Then confirm the worker lane picked up the task and kept the Spark profile in
+its metadata:
+
+```bash
+bus task status --watch
+bus task monitor --format json
 ```
 
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
