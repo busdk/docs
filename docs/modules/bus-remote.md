@@ -69,7 +69,7 @@ tags. `bus remote` does not open SSH or Docker itself; downstream tools verify
 the worker host, for example:
 
 ```bash
-bus dev work --remote lab-host check
+bus task --remote lab-host check
 ```
 
 ### Config file
@@ -145,12 +145,13 @@ only as a non-secret reference: its `kind` names a resolver boundary such as
 and its `ref` is a key, label, secret name, or token-file path that the caller
 or remote worker resolves outside the repository.
 
-Worker defaults and profiles let tools such as `bus dev task` and
-`bus dev work start` select a local model worker, a ChatGPT subscription Codex
-worker, or an API-key Codex worker without hard-coding model names in
-`bus-dev`. Model strings are opaque provider/App Server identifiers, so local
-profiles may use names like `gpt-oss:120b` or `gemma4:31b`, while hosted Codex
-profiles can use `gpt-5.3-codex-spark` or API model ids such as
+Worker defaults and profiles let tools such as `bus task start`,
+`bus task status`, and related worker/supervisor flows select a local model
+worker, a ChatGPT subscription Codex worker, or an API-key Codex worker
+without hard-coding model names in higher-level task tooling. Model strings are
+opaque provider/App Server identifiers, so local profiles may use names like
+`gpt-oss:120b` or `gemma4:31b`, while hosted Codex profiles can use
+`gpt-5.3-codex-spark` or API model ids such as
 `gpt-5.3-codex`.
 
 ### Using from `.bus` files
@@ -186,7 +187,7 @@ non-secret platform location that another command should use.
 ### Sources
 
 - [Module reference: bus-events](./bus-events)
-- [Module reference: bus-work](./bus-work)
+- [Module reference: bus-task](./bus-task)
 - [Module reference: bus-dev](./bus-dev)
 - [Module reference: bus-secrets](./bus-secrets)
 - [Standard global flags](../cli/global-flags)
