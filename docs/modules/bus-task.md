@@ -13,7 +13,7 @@ services, and AI agents; the protocol itself is not strictly AI-related.
 Common commands:
 
 ```bash
-bus task start --profile codex-spark --model GPT-5.3-Codex-Spark --reasoning-effort high --sandbox full @bus-dev "Fix the scheduler"
+bus task start --profile codex-spark --model GPT-5.3-Codex-Spark --reasoning-effort high --sandbox write @bus-dev "Fix the scheduler"
 bus task new @support "Investigate this issue"
 bus task status --watch
 bus task monitor --format json
@@ -45,23 +45,52 @@ metadata.
 Secrets are never stored in task Events or repository remote config. Worker
 profiles carry only non-secret credential source references and labels.
 
-Durable AI worker identity, specialization, long-lived notes/memo behavior, and
-agent-specific context files belong outside the task/thread protocol.
-`bus-agent` is the candidate owner because it already owns provider-neutral
-runtime and App Server helpers, but persistent worker identity needs an
-explicit `bus-agent` contract extension or a dedicated agent-identity module.
-`bus-task` records assignment and claim references to those workers, but it
-does not own the AI agent identity lifecycle.
+Durable worker identity, specialization, long-lived notes/memo behavior, and
+worker-specific context files belong outside the task/thread protocol.
+`bus-agent` owns provider-neutral runtime and App Server helpers, not durable
+human or AI worker identity. If Bus exposes worker identity UX such as listing
+configured workers, active work, profiles, and statistics, that should be a
+first-class worker-facing module/API contract that follows the normal Bus CLI
+and integration architecture. `bus-task` records assignment and claim
+references to those workers, but it does not own the worker identity lifecycle.
 
 ### Codex Spark Workers
 
 For the common Spark-quota path, create a profile such as `codex-spark` in the
-selected remote/environment and start work with:
+selected remote/environment by adding a non-secret `worker_profiles` entry to
+`.bus/remote/config.json` or the user `remote/config.json` read by
+[`bus remote`](./bus-remote):
+
+```json
+{
+  "remotes": [
+    {
+      "id": "hosted-codex",
+      "kind": "bus-events",
+      "url": "https://events.example.invalid",
+      "worker_profiles": {
+        "codex-spark": {
+          "model": "GPT-5.3-Codex-Spark",
+          "reasoning_effort": "high",
+          "auth_mode": "chatgpt-subscription",
+          "credential_source": {
+            "kind": "os-credential-label",
+            "ref": "codex-chatgpt-subscription"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+Then start the task against that profile. Use `--sandbox full` only for
+dedicated disposable worker containers where the container is the isolation
+boundary:
 
 ```bash
 bus task start --profile codex-spark --model GPT-5.3-Codex-Spark --reasoning-effort high --sandbox full @bus-dev "Implement the change"
 ```
 
-`--sandbox full` is appropriate for dedicated disposable worker containers
-where the container is the isolation boundary. In Codex terms it maps to
-`danger-full-access`; the Bus CLI uses the shorter worker-context name.
+In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
+the shorter worker-context name.
