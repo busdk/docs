@@ -1,11 +1,17 @@
 ---
 title: "Test multi-remote workers without paid provisioning"
-description: Operator checklist for validating Bus dev-task worker placement with localhost dry-runs and an externally prepared Events runner.
+description: Operator checklist for validating Bus task worker placement with localhost dry-runs and an externally prepared Events runner.
 ---
 
 ## Operator Goal
 
-Use this checklist when you need to prove that `bus dev work` can plan or run recipient work across worker systems without asking BusDK to create cloud resources. The no-spend path starts with `--dry-run` against the built-in `localhost` remote, then uses `--remote eligible` as a negative control when no repository or user worker remotes are configured. A live external test is optional and uses an Events endpoint and worker fleet that the operator has already prepared.
+Use this checklist when you need to prove that `bus task` can plan or run
+recipient work across worker systems without asking BusDK to create cloud
+resources. The no-spend path starts with `--dry-run` against the built-in
+`localhost` remote, then uses `--remote eligible` as a negative control when
+no repository or user worker remotes are configured. A live external test is
+optional and uses an Events endpoint and worker fleet that the operator has
+already prepared.
 
 This page does not describe cloud creation, VM sizing, image builds, or paid provisioning. If an UpCloud or other external runner is part of the test, it must already exist, have its own spending limit and shutdown policy, and expose a Bus Events endpoint plus a development-task worker that can claim the intended recipients.
 
@@ -22,7 +28,7 @@ The built-in `localhost` remote is a `compose` remote for the local Docker Compo
 Run the first test from the BusDK checkout or module repository where the recipients are visible:
 
 ```sh
-bus dev work --remote localhost start --dry-run \
+bus task --remote localhost start --dry-run \
   @bus-ledger @docs \
   "Test multi-remote worker execution without paid provisioning."
 ```
@@ -32,7 +38,7 @@ The pass condition is an exit code of `0` and a plan that names one work stream 
 Use `eligible` as the negative control before any live runner test:
 
 ```sh
-bus dev work --remote eligible start --dry-run \
+bus task --remote eligible start --dry-run \
   @bus-ledger @docs \
   "Test multi-remote worker execution without paid provisioning."
 ```
@@ -58,7 +64,7 @@ The runner side must already be operating before the live test. It should have a
 Dry-run the external placement before creating task streams:
 
 ```sh
-bus dev work --remote upcloud-devtask start --dry-run \
+bus task --remote upcloud-devtask start --dry-run \
   @bus-ledger @docs \
   "Test external dev-task worker routing without provisioning."
 ```
@@ -68,7 +74,7 @@ The pass condition is a dry-run plan that names `upcloud-devtask` as the remote 
 Run a live external test only after the dry-run output is accepted:
 
 ```sh
-bus dev work --remote upcloud-devtask start \
+bus task --remote upcloud-devtask start \
   @bus-ledger @docs \
   "Read-only remote smoke: inspect the recipient checkout, run git status --short, report the remote id/kind and work ref, and exit without editing files."
 ```
@@ -76,8 +82,8 @@ bus dev work --remote upcloud-devtask start \
 Record the task group ref and child work refs printed by `start`. Then watch the task group and collect stats from the same remote:
 
 ```sh
-bus dev work --remote upcloud-devtask watch <task-group-ref> --timeout 30m
-bus dev work --remote upcloud-devtask stats --all
+bus task --remote upcloud-devtask watch <task-group-ref> --timeout 30m
+bus task --remote upcloud-devtask stats --all
 ```
 
 The test passes when each child stream reaches a terminal state that matches the planned smoke scope, the stream events include the expected remote id and kind, and `stats --all` groups the work under that remote and recipient. A blocked result can still be a valid infrastructure pass when the block message is about the task content and the worker clearly claimed, ran, and reported through the external Events endpoint.
@@ -90,14 +96,19 @@ eligible` planning:
 
 ```sh
 bus remote remove upcloud-devtask
-bus dev work --remote eligible start --dry-run \
+bus task --remote eligible start --dry-run \
   @bus-ledger @docs \
   "Verify the temporary external test remote was removed."
 ```
 
 ## Evidence To Keep
 
-Keep the command lines, timestamps, operator, Git branch or commit, selected remote id, selected remote kind, and task refs. For live runs, also keep `bus dev work show <ref>` or `watch` output for the task group, `bus dev work stats --all`, worker identifiers, Bus Notes ids or a notes query, and a short statement that no cloud creation or paid provisioning was performed by the test.
+Keep the command lines, timestamps, operator, Git branch or commit, selected
+remote id, selected remote kind, and task refs. For live runs, also keep
+`bus task show <ref>` or `watch` output for the task group, `bus task stats
+--all`, worker identifiers, Bus Notes ids or a notes query, and a short
+statement that no cloud creation or paid provisioning was performed by the
+test.
 
 For localhost-only tests, the required evidence is the successful `localhost` dry-run and the negative `eligible` dry-run. For external-runner tests, add the external dry-run, the live task refs, and the `stats --all` grouping by remote id/kind.
 
@@ -113,5 +124,5 @@ For localhost-only tests, the required evidence is the successful `localhost` dr
 
 - [bus-dev module reference](../modules/bus-dev)
 - [bus remote module reference](../modules/bus-remote)
-- [bus integration dev task module reference](../modules/bus-integration-task)
+- [bus integration task module reference](../modules/bus-integration-task)
 - [Deployment and data control](./deployment-and-data-control)

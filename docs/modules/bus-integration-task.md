@@ -1,24 +1,24 @@
 ---
-title: bus integration dev task
-description: Bridge Bus development task events to steerable development workers.
+title: bus integration task
+description: Bridge Bus task events to steerable worker execution.
 ---
 
 ## Overview
 
-`bus integration dev task` connects `bus dev work` / `bus dev task` streams to development
-workers. The worker claims `bus.dev.task.created` and
-`bus.dev.task.reopened` events for one recipient, publishes task progress, and
+`bus integration task` connects `bus task` streams to worker execution. The
+worker claims `bus.task.created`, `bus.task.approved`, `bus.task.assigned`, and
+`bus.task.reopened` events for one recipient, publishes task progress, and
 closes or fails the task from the selected backend result.
 
 The default local backend is `codex-appserver`, which runs Codex through the
 shared [bus agent](./bus-agent) App Server integration. While the child Codex
-session runs, the task stream is the parent control plane: `bus dev work say`
+session runs, the task stream is the parent control plane: `bus task say`
 steers the active turn, approval requests are emitted as
-`bus.dev.task.approval.requested`, and `bus dev work approve` sends decisions
-back to the pending app-server request. The `container` backend is still
+`bus.task.approval.requested`, and `bus task approve` sends decisions back to
+the pending app-server request. The `container` backend is still
 available for provider-neutral one-shot execution through [bus containers](./bus-containers).
 Completed or blocked App Server work can be reopened with
-`bus dev work reopen` / `bus dev task reopen`; the worker resumes the stored
+`bus task reopen`; the worker resumes the stored
 Codex App Server thread when the task stream contains `app_server_thread_id`.
 Local Docker App Server workers default to Codex `danger-full-access` mode
 because the local image does not include Codex's Linux workspace sandbox
@@ -37,8 +37,8 @@ authentication/configuration must be available in the worker environment. For
 requested profile and grant `container:run`; local testing can use
 `bus-integration-docker` for the `codex` profile.
 
-When `bus dev task` or `bus dev work start` resolves a worker profile from
-`bus-remote`, the task stream carries non-secret labels such as
+When `bus task` resolves a worker profile from `bus-remote`, the task stream
+carries non-secret labels such as
 `worker_profile`, requested model, reasoning effort, auth mode, and credential
 source kind. This bridge propagates those labels into worker-start requests,
 attempt evidence, lifecycle metrics, and status output while continuing to run
@@ -75,15 +75,15 @@ superproject root while normal module tasks keep their own recipient
 repository.
 
 `--agent-backend codex-appserver` keeps a running session addressable by task
-reference. Use `bus dev work say <ref> <message...>` while the turn is active
-to steer it directly. Use `bus dev work reopen <ref> <message...>` after a
-terminal state to publish a new open task event that resumes stored App Server
-thread state when present. Use `bus dev work watch <ref>` to see approval
+reference. Use `bus task say <ref> <message...>` while the turn is active to
+steer it directly. Use `bus task reopen <ref> <message...>` after a terminal
+state to publish a new open task event that resumes stored App Server thread
+state when present. Use `bus task watch <ref>` to see approval
 request ids, then answer with the task ref and approval request id printed by
 that watch output:
 
 ```sh
-bus dev work approve <ref> <approval-id> accept_for_session
+bus task approve <ref> <approval-id> accept_for_session
 ```
 
 The approval decision must be `accept`, `accept_for_session`, `decline`, or
@@ -105,7 +105,7 @@ done: no worktree changes, no tests run, an unclosed PLAN item, or explicit
 blocked evidence is recorded as a blocked task stream.
 When a Codex worker uses `auth_mode=openai-api-key`, the worker can resolve a
 local deployment secret by reading `/run/secrets/<ref>` or
-`$BUS_DEV_TASK_DEPLOYMENT_SECRETS_DIR/<ref>` and setting `OPENAI_API_KEY`
+`$BUS_TASK_DEPLOYMENT_SECRETS_DIR/<ref>` and setting `OPENAI_API_KEY`
 inside the worker process. The key value is never written to task Events or
 repo config, and an already-set `OPENAI_API_KEY` takes precedence.
 Workers also publish concise non-secret hourly engineering notes through
@@ -117,7 +117,7 @@ AGENTS.md path, and Bus Notes IDs or query metadata so later review can group
 work by agent and inspect the notes for a specific attempt.
 
 Lifecycle behavior is configured through a JSON policy file rather than hidden
-process-global modes. `--policy-file` / `BUS_DEV_TASK_POLICY_FILE` load the
+process-global modes. `--policy-file` / `BUS_TASK_POLICY_FILE` load the
 module-owned policy schema for worker count, one-worker-per-recipient behavior,
 disposable versus persistent workers, idle timeout, safe App Server crash retry,
 backend selection, isolated worktrees, read-only dependency worktrees,
@@ -133,7 +133,7 @@ worker expands `{prompt}`, `{text}`, `{body}`, `{work_ref}`, `{recipient}`,
 `{module}`, `{main_repo_path}`, `{repo_path}`, `{worktree_path}`, `{branch}`,
 `{worktree_branch}`, `{base_branch}`, and `{create_branch}` placeholders.
 `{repo_path}` points at the isolated worktree when `--worktree` is enabled.
-`{branch}` comes from task metadata and is defaulted by `bus dev work start` or `bus dev task new` to
+`{branch}` comes from task metadata and is defaulted by `bus task start` to
 the current Git branch when possible.
 
 ```sh
@@ -180,14 +180,14 @@ the read-only dependency view, while the addressed repository worktree is the
 only writable mount for the task container. The same stack starts Bus Events,
 provider-neutral container routing, PostgreSQL, and the local Notes API so
 worker `bus notes add` calls are stored as Bus Notes data. This consumes
-ChatGPT-backed Codex quota. Smoke tests can override `BUS_DEV_TASK_AGENT_BACKEND`
-and `BUS_DEV_TASK_COMMAND_JSON` to use a deterministic command backend when the
+ChatGPT-backed Codex quota. Smoke tests can override `BUS_TASK_AGENT_BACKEND`
+and `BUS_TASK_COMMAND_JSON` to use a deterministic command backend when the
 goal is plumbing verification rather than real LLM work.
 
 ```sh
-BUS_DEV_TASK_AGENT_BACKEND=container \
-BUS_DEV_TASK_COMMAND_JSON='["codex","--version"]' \
-BUS_DEV_TASK_COMMIT=false \
+BUS_TASK_AGENT_BACKEND=container \
+BUS_TASK_COMMAND_JSON='["codex","--version"]' \
+BUS_TASK_COMMIT=false \
 docker compose -f compose.yaml --profile dev-task up --build -d
 docker compose -f compose.yaml --profile dev-task exec testing-agent sh
 ```
@@ -196,9 +196,8 @@ Inside the testing shell, create a task and watch the task reference printed by
 the `task new` command:
 
 ```sh
-cd /workspace/bus-dev
-go run ./cmd/bus-dev task new --new-branch work/codex-version @bus-dev "Show the Codex CLI version."
-go run ./cmd/bus-dev task watch <printed-task-ref> --timeout 5m
+bus task new --new-branch work/codex-version @bus-dev "Show the Codex CLI version."
+bus task watch <printed-task-ref> --timeout 5m
 ```
 
 Successful smoke output includes the container stdout from `codex --version`
