@@ -107,7 +107,7 @@ non-secret worker selection metadata.
       "url": "https://events.example.invalid",
       "worker_defaults": {
         "agent_backend": "codex-appserver",
-        "model": "gpt-5.5-codex",
+        "model": "gpt-5.4",
         "reasoning_effort": "high",
         "auth_mode": "chatgpt-subscription"
       },
