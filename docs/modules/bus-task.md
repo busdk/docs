@@ -121,9 +121,10 @@ scripts/test-ssh-docker-spark-smoke.sh
 ```
 
 The wrapper defaults to `codex-spark`, `GPT-5.3-Codex-Spark`,
-`chatgpt-subscription`, and a read-only prompt, while still allowing explicit
-`--profile`, `--model`, `--sandbox`, and lower-level SSH-Docker smoke options
-after `--`.
+`chatgpt-subscription`, the pullable worker image
+`ghcr.io/busdk/bus-integration-task:latest`, and a read-only prompt. Use
+`--image`, `--install-image`, or `--build-image` when the smoke should prove a
+specific local worker image instead of the default published image.
 
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
 the shorter worker-context name.
