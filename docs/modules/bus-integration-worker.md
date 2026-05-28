@@ -16,6 +16,12 @@ environment filters. That logic is generic worker integration behavior even
 when the surrounding task stream is still owned by
 [`bus-integration-task`](./bus-integration-task).
 
+The next extraction underway is the worker-start request contract used by
+task-side supervisors to request disposable or persistent workers. Even while
+the current event name remains `bus.task.worker.start.request` for
+compatibility, the request payload and launcher helpers are moving under worker
+integration ownership.
+
 Current status: there is no supported end-user command yet, but the module is
 starting to host small reusable Go packages for worker integration helpers. Do
 not treat it as a stable operator-facing surface yet.

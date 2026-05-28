@@ -21,8 +21,8 @@ serves two related Bus use cases:
   such as a shared Markdown wiki
 
 The likely future substrate for that repository infrastructure is a dedicated
-Git module family such as `bus-git`, `bus-api-provider-git`, and
-`bus-integration-git`, while `bus-worker` remains focused on worker identity
+repository module family such as `bus-repos`, `bus-api-provider-repos`, and
+`bus-integration-repos`, while `bus-worker` remains focused on worker identity
 and worker-home ownership.
 
 This module is still a skeleton. The current architecture direction is:
