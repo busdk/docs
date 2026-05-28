@@ -10,8 +10,15 @@ is intended to own generic worker lifecycle projection, status reconciliation,
 metrics/evidence plumbing, and other worker integration behavior that should
 not stay embedded inside task-only integration modules.
 
-Current status: there is no supported end-user command, API, or event contract
-in this module yet. Do not depend on `bus-integration-worker` directly today.
+The first concrete extraction underway is worker claim eligibility:
+worker-specific routing based on assigned worker id, worker group, and eligible
+environment filters. That logic is generic worker integration behavior even
+when the surrounding task stream is still owned by
+[`bus-integration-task`](./bus-integration-task).
+
+Current status: there is no supported end-user command yet, but the module is
+starting to host small reusable Go packages for worker integration helpers. Do
+not treat it as a stable operator-facing surface yet.
 For current task-worker launch/orchestration behavior, use
 [`bus-integration-task`](./bus-integration-task). For current task UX, use
 [`bus-task`](./bus-task).
