@@ -68,19 +68,25 @@ required before promotion: worker-produced diffs are not accepted merely
 because a worker reports passing tests.
 
 Accepted parallel worker implementation update on 2026-05-29: the first
-unit-test-only implementation phase has now accepted and pinned four worker
+unit-test-only implementation phase has now accepted and pinned seven worker
 lanes. `bus-worker` has the API-backed `bus workers` CLI path for list/show,
 create, pause/resume/status, assignment, and token/API URL handling.
 `bus-task` surfaces worker assignment metadata and claimability contracts.
 `bus-integration-worker` aligns the App Server lifecycle plan/exec boundary
-with the manual worker shape. `bus-api-provider-worker` now has a file-backed
-durable workers projection selected by `--projection-file` or
+with the manual worker shape and now exposes deterministic worker claim
+evaluation reasons that downstream queue selection consumes for skip
+accounting. `bus-api-provider-worker` has a file-backed durable workers
+projection selected by `--projection-file` or
 `BUS_WORKERS_PROJECTION_FILE`, while keeping the memory projection default for
-ephemeral tests. Focused and full unit tests passed for each accepted lane.
-This closes the first parallel implementation slice, but it does not complete
-the product goal: bus-api mounting, service-owned local/remote Events relay,
-remote container lifecycle proof through `bus.workers.*`, proactive task
-claiming, and integration/e2e testing remain open.
+ephemeral tests. `bus-api` can mount the workers provider behind explicit
+`--provider workers --enable-module workers` configuration, and `bus-events`
+relay status now exposes a route id, worker-route profile, and active
+forward/import filter sets for multi-environment worker traffic. Focused and
+full unit tests passed for each accepted lane. This closes the first parallel
+implementation slice, but it does not complete the product goal:
+service-owned local/remote Events relay, remote container lifecycle proof
+through `bus.workers.*`, proactive task claiming, and integration/e2e testing
+remain open.
 
 Launcher correction from that proof: live worker sessions must start with
 `-C /workspace/projects/busdk/$module` so code lands inside the assigned
@@ -331,9 +337,11 @@ file-backed durable mode selected by `--projection-file` or
 `BUS_WORKERS_PROJECTION_FILE`, with unit coverage for persistence, deterministic
 ordering, merge behavior, malformed files, and command selection. This is
 useful forward motion toward the local API-provider path, but it is not the
-finished provider: the checkout path is still singular, bus-api provider
-registration/mounting is not done, and only the first remote
-`bus-integration-workers` list-response consumer exists so far.
+finished provider: the checkout path is still singular, the first explicit
+`bus-api` workers provider mount is present, and only the first remote
+`bus-integration-workers` list-response consumer exists so far. The remaining
+provider work is service ownership, configuration, and end-to-end control
+through relayed Events rather than route registration alone.
 
 `bus-integration-worker` is now also a scaffold for the target plural
 `bus-integration-workers` service. The current dirty checkout builds a
@@ -670,7 +678,7 @@ also has the first request-to-Events provider scaffold for the plural
   `bus-api`; the current scaffold can emit list/create/pause/resume/assign
   `bus.workers.*` request Events and merge multi-environment list/status
   responses from the Events stream through memory or file-backed durable
-  projections, but still needs bus-api mounting
+  projections, and the first explicit `bus-api` mount is now implemented
 - a remote `bus-integration-workers` service on `coding-agent@dev.hg.fi`
   consuming proxied worker Events; the current scaffold can answer
   `bus.workers.list.request` from a static environment catalog and can apply
