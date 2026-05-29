@@ -19,7 +19,14 @@ This page does not describe cloud creation, VM sizing, image builds, or paid pro
 
 `--dry-run` is the hard boundary for planning tests. It prints the deterministic worker-placement plan without creating Events tasks, launching workers, provisioning systems, or resizing infrastructure. Use it before every live run and keep the dry-run output with the test evidence.
 
-The built-in `localhost` remote is a `compose` remote for the local Docker Compose worker platform and the local Events endpoint. A dry-run against `localhost` does not start Compose by itself. A non-dry-run local test may launch local containers and may consume local agent quota if the selected worker backend uses Codex or another paid agent runtime.
+The built-in `localhost` remote is a `compose` remote for the current local
+Docker Compose worker platform and the local Events endpoint. In this
+superproject that means the root `compose.yaml` project
+`bus-local-ai-platform`, not older removed dev-task compose experiments such as
+the historical `busdk` project. A dry-run against `localhost` does not start
+Compose by itself. A non-dry-run local test may launch local containers and may
+consume local agent quota if the selected worker backend uses Codex or another
+paid agent runtime.
 
 `--remote eligible` is intentionally conservative. When no repository or user worker remotes are configured, it should report that there are no eligible configured remotes instead of silently selecting a hosted or paid target.
 
