@@ -67,6 +67,21 @@ manual lane is usable for parallel implementation. Supervisor review is still
 required before promotion: worker-produced diffs are not accepted merely
 because a worker reports passing tests.
 
+Accepted parallel worker implementation update on 2026-05-29: the first
+unit-test-only implementation phase has now accepted and pinned four worker
+lanes. `bus-worker` has the API-backed `bus workers` CLI path for list/show,
+create, pause/resume/status, assignment, and token/API URL handling.
+`bus-task` surfaces worker assignment metadata and claimability contracts.
+`bus-integration-worker` aligns the App Server lifecycle plan/exec boundary
+with the manual worker shape. `bus-api-provider-worker` now has a file-backed
+durable workers projection selected by `--projection-file` or
+`BUS_WORKERS_PROJECTION_FILE`, while keeping the memory projection default for
+ephemeral tests. Focused and full unit tests passed for each accepted lane.
+This closes the first parallel implementation slice, but it does not complete
+the product goal: bus-api mounting, service-owned local/remote Events relay,
+remote container lifecycle proof through `bus.workers.*`, proactive task
+claiming, and integration/e2e testing remain open.
+
 Launcher correction from that proof: live worker sessions must start with
 `-C /workspace/projects/busdk/$module` so code lands inside the assigned
 module. The first proof also showed why the supervisor must inspect both the
@@ -300,21 +315,24 @@ text and JSON output. This is now classified as an interim local identity
 scaffold, not the final `bus workers` product path.
 
 `bus-api-provider-worker` is also now a scaffold for the target plural
-`bus-api-provider-workers` surface. The current dirty checkout builds a
+`bus-api-provider-workers` surface. The accepted checkout builds a
 `bus-api-provider-workers` binary and has a narrow `pkg/workersapi` HTTP
 handler that maps local API requests to canonical `bus.workers.*` Events:
 list, create, pause, resume, and assign requests publish through the Events
-API using the supplied token. The list request is now shaped for multiple
-worker environments: it carries a correlation id, names
+API using the supplied token. The list request is shaped for multiple worker
+environments: it carries a correlation id, names
 `bus.workers.list.response` as the response event, and the provider scaffold
 can merge returned worker list/status Events from more than one environment
-into a bounded read projection. The standalone provider now also has an Events
+into a bounded read projection. The standalone provider also has an Events
 stream listener that replays/follows `bus.workers.list.response` and
 `bus.workers.status.snapshot` from `bus-api-provider-events` into that
-projection. This is useful forward motion toward the local API-provider path,
-but it is not the finished provider: the checkout path is still singular,
-bus-api provider registration/mounting is not done, the projection is still
-in-process rather than durable, and only the first remote
+projection. The projection now has both an in-memory default and a compact
+file-backed durable mode selected by `--projection-file` or
+`BUS_WORKERS_PROJECTION_FILE`, with unit coverage for persistence, deterministic
+ordering, merge behavior, malformed files, and command selection. This is
+useful forward motion toward the local API-provider path, but it is not the
+finished provider: the checkout path is still singular, bus-api provider
+registration/mounting is not done, and only the first remote
 `bus-integration-workers` list-response consumer exists so far.
 
 `bus-integration-worker` is now also a scaffold for the target plural
@@ -651,8 +669,8 @@ also has the first request-to-Events provider scaffold for the plural
 - a local `bus-api-provider-workers` API/controller service registered through
   `bus-api`; the current scaffold can emit list/create/pause/resume/assign
   `bus.workers.*` request Events and merge multi-environment list/status
-  responses from the Events stream in memory, but still needs durable read
-  projections and bus-api mounting
+  responses from the Events stream through memory or file-backed durable
+  projections, but still needs bus-api mounting
 - a remote `bus-integration-workers` service on `coding-agent@dev.hg.fi`
   consuming proxied worker Events; the current scaffold can answer
   `bus.workers.list.request` from a static environment catalog and can apply
