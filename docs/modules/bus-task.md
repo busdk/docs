@@ -13,7 +13,7 @@ services, and AI agents; the protocol itself is not strictly AI-related.
 Common commands:
 
 ```bash
-bus task start --profile codex-spark --model GPT-5.3-Codex-Spark --reasoning-effort high --sandbox write @bus-dev "Fix the scheduler"
+bus task start --profile codex-spark --model gpt-5.3-codex-spark --reasoning-effort high --sandbox write @bus-dev "Fix the scheduler"
 bus task new @support "Investigate this issue"
 bus task status --watch
 bus task monitor --format json
@@ -26,7 +26,7 @@ Worker selection uses Bus-level names:
 - `--profile NAME` selects a non-secret worker profile from the selected
   remote or environment.
 - `--model MODEL` requests the provider/App Server model. Local names such as
-  `gpt-oss:120b` and hosted names such as `GPT-5.3-Codex-Spark` are accepted as
+  `gpt-oss:120b` and hosted names such as `gpt-5.3-codex-spark` are accepted as
   strings and interpreted by the selected backend/profile.
 - `--reasoning-effort VALUE` requests model effort such as `high`.
 - `--sandbox read|write|full` selects the Bus worker sandbox. For Codex App
@@ -74,7 +74,7 @@ auth source behind `codex-chatgpt-subscription`:
       "url": "https://events.example.invalid",
       "worker_profiles": {
         "codex-spark": {
-          "model": "GPT-5.3-Codex-Spark",
+          "model": "gpt-5.3-codex-spark",
           "reasoning_effort": "high",
           "auth_mode": "chatgpt-subscription",
           "credential_source": {
@@ -102,7 +102,7 @@ boundary:
 
 ```bash
 bus task start --environment dev-hg @bus-dev "Implement the change"
-bus task start --profile codex-spark --model GPT-5.3-Codex-Spark --reasoning-effort high --sandbox full @bus-dev "Implement the change"
+bus task start --profile codex-spark --model gpt-5.3-codex-spark --reasoning-effort high --sandbox full @bus-dev "Implement the change"
 ```
 
 Then confirm the worker lane picked up the task and kept the Spark profile in
@@ -120,7 +120,7 @@ the reusable operator-gated wrapper:
 scripts/test-ssh-docker-spark-smoke.sh
 ```
 
-The wrapper defaults to `codex-spark`, `GPT-5.3-Codex-Spark`,
+The wrapper defaults to `codex-spark`, `gpt-5.3-codex-spark`,
 `chatgpt-subscription`, the pullable worker image
 `ghcr.io/busdk/bus-integration-task:latest`, and a read-only prompt. Use
 `--image`, `--local-tag`, `--install-image`, or `--build-image` when the smoke
@@ -134,6 +134,18 @@ scripts/test-ssh-docker-spark-smoke.sh --install-image
 That keeps the remote runtime image as
 `ghcr.io/busdk/bus-integration-task:latest`, but ships the local source tag
 `bus-integration-task:local-image-smoke` unless `--local-tag` overrides it.
+
+For a disposable ground-up local proof that avoids the full local Compose
+stack, use:
+
+```bash
+scripts/test-local-task-events-proof.sh
+```
+
+That script starts `bus-api-provider-events` directly from source with the
+memory backend, creates one task, marks it ready, and prints list/show/monitor
+evidence. Treat it as explicit disposable proof, not as the durable local
+worker environment used for normal development.
 
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
 the shorter worker-context name.
