@@ -177,6 +177,32 @@ goal: continuously running local/remote Events services, Bus-driven remote
 container lifecycle proof, proactive task claiming, plural module naming, and
 integration/e2e tests remain open.
 
+Accepted parallel worker implementation update on 2026-05-30: a third
+unit-test-only Spark worker batch has been reviewed and locally verified.
+`bus-events` now enforces configured `lockBehavior: "simple"` as a real
+per-route state-file lock, emits a deterministic route error when the lock is
+already held, releases the lock after normal or failed relay runs, and keeps
+other configured routes running when one route is locked. `bus-integration-worker`
+now extends the App Server lifecycle launch recipe so the executable
+path initializes sibling Go modules referenced by `replace ../...`, including
+normal `replace (...)` blocks, using safe single-segment sibling names and the
+same canonical-repo/submodule fallback shape as the manual launcher.
+`bus-api-provider-worker` now keys its memory and file projections by
+worker id plus environment id so multiple environments can report the same
+worker id without overwriting each other; list output remains deterministic
+and status snapshots can merge into the correct environment-scoped entry.
+`bus-worker` now decodes the provider's `{"workers":[...]}` list envelope for
+API-backed list/status commands, preserves legacy raw-array decoding, and
+surfaces environment, model, active task, lifecycle phase, and last error in
+API-backed status output. Local focused verification passed for `go test
+./internal/cli`, `go test ./pkg/workersintegration
+./cmd/bus-integration-workers`, `go test ./pkg/workersapi
+./cmd/bus-api-provider-workers`, and `go test ./internal/cli` in the relevant
+modules. This still does not complete the product goal: continuously running
+local/remote Events services, Bus-driven remote container lifecycle proof,
+proactive idle worker task claiming, pluralized final module surfaces, and
+integration/e2e verification remain open.
+
 Remote worker image update on 2026-05-29: the actual
 `bus-integration-task:local-image-smoke` image on `coding-agent@dev.hg.fi` was
 rebuilt with Codex CLI `0.135.0` using checksum-pinned Linux musl release
