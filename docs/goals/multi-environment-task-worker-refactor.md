@@ -253,6 +253,33 @@ Codex/App Server lifecycle proof through `bus.workers.*`, proactive idle
 worker task claiming, pluralized final module surfaces, and integration/e2e
 verification remain open.
 
+Accepted parallel worker implementation update on 2026-05-30: a sixth
+unit-test-only Spark worker batch has been reviewed and locally verified.
+`bus-integration-worker` now exposes service command flags and
+`BUS_WORKERS_APPSERVER_*` environment variables for the App Server lifecycle
+host settings: remote repo, remote root, image, model, sandbox, auth home,
+starting port, and container prefix. Both `appserver-plan` and
+`appserver-exec` use the same config, while exec mode still adds its local
+port allocator. Defaults remain available when config is omitted, including
+the raw `gpt-5.3-codex-spark` model id. `bus-api-provider-worker` now supports
+an Events token-file path for its standalone provider service, with
+`--events-token-file`, `BUS_API_PROVIDER_WORKERS_EVENTS_TOKEN_FILE`, and
+`BUS_EVENTS_TOKEN_FILE` fallback; a direct token still wins, and the resolved
+token is used consistently for publisher and listener clients.
+`bus-api` now gives the in-process workers backend its own
+`BUS_WORKERS_EVENTS_URL` override plus token-file fallback through
+`BUS_WORKERS_EVENTS_TOKEN_FILE` and `BUS_EVENTS_TOKEN_FILE`, while preserving
+`BUS_API_TOKEN` precedence. Local focused verification passed for `go test
+./pkg/workersintegration ./cmd/bus-integration-workers`, `go test
+./pkg/workersapi ./cmd/bus-api-provider-workers`, and `go test
+./internal/backends ./internal/server`; the `bus-api` check needed an
+outside-sandbox rerun because the macOS sandbox could not fetch missing module
+cache entries. This still does not complete the product goal: continuously
+running local/remote Events services, Bus-driven remote Codex/App Server
+lifecycle proof through `bus.workers.*`, proactive idle worker task claiming,
+pluralized final module surfaces, and integration/e2e verification remain
+open.
+
 Remote worker image update on 2026-05-29: the actual
 `bus-integration-task:local-image-smoke` image on `coding-agent@dev.hg.fi` was
 rebuilt with Codex CLI `0.135.0` using checksum-pinned Linux musl release
