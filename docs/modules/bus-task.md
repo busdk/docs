@@ -147,5 +147,18 @@ memory backend, creates one task, marks it ready, and prints list/show/monitor
 evidence. Treat it as explicit disposable proof, not as the durable local
 worker environment used for normal development.
 
+For the next ground-up rung, use:
+
+```bash
+scripts/test-local-host-worker-smoke.sh
+```
+
+That smoke keeps the disposable source-run Events API but launches the worker
+directly on the host through `BUS_DEV_WORKER_LAUNCHER` and
+`scripts/local-task-host-worker-launcher.sh` instead of depending on
+`docker compose run`. Its default backend is `self-test`, so it validates
+local worker claim and terminal flow deterministically before a real local
+Spark attempt with `gpt-5.3-codex-spark`.
+
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
 the shorter worker-context name.
