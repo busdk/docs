@@ -155,6 +155,28 @@ for protected worker names. The same slice also protects canonical
 `go test ./pkg/eventsapi ./cmd/bus-api-provider-events` with sandbox-local Go
 caches after downloading the missing PostgreSQL driver dependency.
 
+Accepted parallel worker implementation update on 2026-05-30: a second
+unit-test-only Spark worker batch has been reviewed, locally verified, and
+committed. `bus-events` now has JSON relay config parsing for one or more
+routes, config-sourced local/destination API URLs and token files, per-route
+forward/import event filters, redacted multi-route relay status output, and
+focused `go test ./internal/cli` coverage. `bus-integration-worker` now
+publishes failure status snapshots when worker lifecycle create/pause/resume
+/assign hooks fail, including sanitized `lifecycle_phase` and `last_error`
+evidence, and its worker route evaluation exposes stable reason codes for
+matches, non-claim events, unclaimable statuses, invalid payloads, task
+identity gaps, worker identity gaps, assignment mismatches, and environment
+mismatches. `bus-api-provider-worker` now projects and persists the new
+`lifecycle_phase` and `last_error` fields so local `bus workers` API reads can
+see remote lifecycle failure evidence. Local focused verification passed for
+`go test ./internal/cli`, `go test ./pkg/workersintegration ./pkg/workerclaim
+./pkg/workerroute ./pkg/workerqueue ./pkg/workerscheduler
+./cmd/bus-integration-workers`, and `go test ./pkg/workersapi
+./cmd/bus-api-provider-workers`. This still does not complete the product
+goal: continuously running local/remote Events services, Bus-driven remote
+container lifecycle proof, proactive task claiming, plural module naming, and
+integration/e2e tests remain open.
+
 Remote worker image update on 2026-05-29: the actual
 `bus-integration-task:local-image-smoke` image on `coding-agent@dev.hg.fi` was
 rebuilt with Codex CLI `0.135.0` using checksum-pinned Linux musl release
