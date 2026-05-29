@@ -230,6 +230,29 @@ services, Bus-driven remote Codex/App Server lifecycle proof through
 `bus.workers.*`, proactive idle worker task claiming, pluralized final module
 surfaces, and integration/e2e verification remain open.
 
+Accepted parallel worker implementation update on 2026-05-30: a fifth
+unit-test-only Spark worker batch has been reviewed and locally verified.
+`bus-api-provider-worker` create requests now accept optional runtime launch
+fields shaped for the remote Codex/App Server worker path:
+`environment_id`, `model`, `module`, `branch`, `prompt_file`, `prompt`,
+`image`, and `sandbox`. The provider publishes only non-empty runtime fields
+onto the canonical `bus.workers.create.request` payload, preserving the
+previous identity-only create behavior when they are omitted. Its single-worker
+status endpoint now returns the existing non-secret `WorkerView` projection so
+callers can see environment, model, active task, lifecycle phase, last error,
+and lifecycle metadata returned by the remote integration service.
+`bus-worker` now accepts the matching API-backed create flags and sends the
+identity plus non-empty runtime fields to the workers API provider, while
+keeping local registry-backed create behavior unchanged. Local focused
+verification passed for `go test ./pkg/workersapi
+./cmd/bus-api-provider-workers` and `go test ./internal/cli`; the `bus-worker`
+focused test was rerun outside the macOS sandbox because local `httptest`
+loopback binding is blocked there. This still does not complete the product
+goal: continuously running local/remote Events services, Bus-driven remote
+Codex/App Server lifecycle proof through `bus.workers.*`, proactive idle
+worker task claiming, pluralized final module surfaces, and integration/e2e
+verification remain open.
+
 Remote worker image update on 2026-05-29: the actual
 `bus-integration-task:local-image-smoke` image on `coding-agent@dev.hg.fi` was
 rebuilt with Codex CLI `0.135.0` using checksum-pinned Linux musl release
