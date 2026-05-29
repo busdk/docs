@@ -19,10 +19,19 @@ The current design direction is:
 
 Repository kinds expected by the current task/worker refactor include:
 
-- mirrored source repositories for third-party development sources
-- worker-home repositories
-- task-context repositories
-- shared wiki/content repositories
+- `source` repos for mirrored third-party or project source repositories
+- `worker-home` repos for per-worker `AGENTS.md`, memo logs, memory, and links
+  to source/task repos
+- `task-context` repos for task-local notes, artifacts, and links back to
+  source and worker-home repos
+- `shared-content` repos for shared wiki/content stores
+
+The provisional non-secret logical reference shape is
+`repos://<collection>/<id>`. The current collections are `sources`, `workers`,
+`tasks`, and `content`. Product modules can store these references, but local
+path allocation, remotes, credentials, provisioning, and sync stay in the repo
+module family rather than in task or worker metadata.
 
 Current status: skeleton module. No stable `bus repos` command contract is
-implemented yet.
+implemented yet, but the repo-kind contract above is the current
+task/worker-refactor contract.

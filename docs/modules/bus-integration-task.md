@@ -29,8 +29,8 @@ incomplete evidence.
 ## Usage
 
 Before starting this worker, run a Bus Events API and provide `BUS_API_TOKEN`
-with `events:send`, `events:listen`, `dev:task:read`, `dev:task:send`,
-`dev:task:reply`, and `dev:task:claim`. For the default
+with `events:send`, `events:listen`, `task:read`, `task:send`, `task:reply`,
+and `task:claim`. For the default
 `--agent-backend codex-appserver`, `codex app-server` and Codex
 authentication/configuration must be available in the worker environment. For
 `--agent-backend container`, also start a container integration that accepts the
@@ -47,7 +47,7 @@ credential source refs stay in the configured worker or deployment secret
 source and are not serialized through task Events.
 
 ```sh
-export BUS_API_TOKEN="<token-with-dev-task-and-container-scopes>"
+export BUS_API_TOKEN="<token-with-task-and-container-scopes>"
 bus-integration-task \
   --events-url http://127.0.0.1:8081 \
   --recipient bus-dev \

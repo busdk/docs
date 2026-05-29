@@ -15,5 +15,9 @@ It is expected to expose:
 - API/controller request handling for repo creation and sync actions
 - bridges to `bus-repos` and `bus-integration-repos`
 
+The first API contract should follow the `bus-repos` repo kinds: `source`,
+`worker-home`, `task-context`, and `shared-content`, using non-secret logical
+refs such as `repos://workers/<worker-id>`.
+
 Current status: skeleton module. This page is a scope marker; no stable API
 contract is implemented yet.

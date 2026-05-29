@@ -66,7 +66,12 @@ bus remote add \
 bus remote resolve upcloud-devtask
 ```
 
-The runner side must already be operating before the live test. It should have a development-task worker for each recipient or an agreed recipient-routing rule, a token with `events:send events:listen dev:task:send dev:task:read dev:task:reply dev:task:claim` scopes, a policy for worker concurrency, and a cleanup plan for any local worktrees or containers it owns. This checklist only verifies that BusDK can address and observe that prepared runner.
+The runner side must already be operating before the live test. It should have
+a task worker for each recipient or an agreed recipient-routing rule, a token
+with `events:send events:listen task:send task:read task:reply task:claim`
+scopes, a policy for worker concurrency, and a cleanup plan for any local
+worktrees or containers it owns. This checklist only verifies that BusDK can
+address and observe that prepared runner.
 
 Dry-run the external placement before creating task streams:
 

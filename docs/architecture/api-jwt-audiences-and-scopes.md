@@ -77,13 +77,29 @@ Production deployments should prefer domain scopes for protected events and shou
 
 Event streams are account-filtered from JWT `sub`. A user listener must not receive events for another account.
 
-### Scopes `work:send`, `work:read`, `work:reply`, and `work:claim`
+### Scopes `task:send`, `task:read`, `task:reply`, `task:claim`, and `task:admin`
+
+These scopes apply to the canonical `bus.task.*` event namespace. They protect
+task creation, approval, assignment, worker claiming, task conversation,
+approval request/response, terminal status, and task administration. They
+follow account-isolation rules for stream delivery, and shared operator queues
+should use internal service tokens rather than end-user tokens.
+
+### Scopes `workers:read`, `workers:write`, `workers:control`, and `workers:admin`
+
+These scopes apply to the canonical `bus.workers.*` event namespace used for
+worker lifecycle and control. `workers:read` observes worker inventory and
+status, `workers:write` creates or updates worker records, `workers:control`
+pauses, resumes, or assigns workers, and `workers:admin` is reserved for
+unknown or administrative worker operations.
+
+### Legacy scopes `work:send`, `work:read`, `work:reply`, and `work:claim`
 
 These scopes apply to the generic `bus.work.*` event namespace. They are end-user or application scopes only when the work queue itself is account-scoped and safe for the caller. They do not imply platform administrator access.
 
 `work:send` creates work items, `work:read` observes work events, `work:reply` publishes worker responses, and `work:claim` claims work. Deployments that use cross-account or operator work queues should protect those queues with internal tokens instead.
 
-### Scopes `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`
+### Legacy scopes `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`
 
 These scopes apply to the development task event namespace `bus.dev.task.*`. They follow the same account-isolation rules as work events. They are not AI Platform customer scopes unless a deployment intentionally exposes a development task feature to that customer.
 

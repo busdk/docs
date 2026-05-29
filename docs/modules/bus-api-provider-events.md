@@ -71,14 +71,15 @@ Deploy/bootstrap events use `cloud:read`, `cloud:write`, `cloud:destroy`,
 Wildcard streams are rejected by default because the provider cannot safely
 prove that one token may receive every future protected event.
 
-`bus work` events use the protected `bus.work.*` namespace. Those events are
-generic durable work streams and require dedicated scopes such as `work:send`,
-`work:read`, `work:reply`, `work:claim`, and `work:admin` instead of broad
-event scopes. Development task events use the separate `bus.dev.task.*`
-namespace with concrete scopes such as `dev:task:send`, `dev:task:read`,
-`dev:task:reply`, and `dev:task:claim`. Future deployments may further qualify
-these scopes by owner or repository, for example `work:claim:acme/payroll` or
-`dev:task:claim:busdk/bus-ledger`.
+Canonical task events use the protected `bus.task.*` namespace with concrete
+scopes such as `task:send`, `task:read`, `task:reply`, `task:claim`, and
+`task:admin`. Canonical worker lifecycle and control events use
+`bus.workers.*` with `workers:read`, `workers:write`, `workers:control`, and
+`workers:admin`. Legacy generic work streams under `bus.work.*` and legacy
+development task streams under `bus.dev.task.*` remain protected compatibility
+namespaces with their existing `work:*` and `dev:task:*` scopes. Future
+deployments may further qualify these scopes by owner or repository, for
+example `task:claim:busdk/bus-ledger` or `workers:control:dev-hg`.
 
 The internal event backend is selectable. `memory` is non-durable and intended
 for local development. Redis is available through Redis Streams with
