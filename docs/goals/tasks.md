@@ -9,6 +9,61 @@ surfaces.
 `bus-task` should be the user-facing generic task/thread product. It should
 not be Codex-only, development-only, or tied to one worker environment.
 
+## 2026-05-30 Review Addendum
+
+This goal was reviewed against the neighboring goal files and current Bus
+module checkouts on 2026-05-30. The goal direction remains right, but the
+implementation should be sequenced around the current split between task,
+worker, repository, and relay ownership.
+
+Current implementation state:
+
+- `bus-task` is the current `bus task` CLI owner and already publishes and
+  replays canonical `bus.task.*` events, with assignment, priority, blocker,
+  dependency, and monitor/status fields present in the code path. It still
+  carries internal `devTask` names and worker-controller commands as migration
+  residue, so the public contract is not accepted merely because the command
+  exists.
+- `bus-api-provider-task` is still a skeleton. It has no service binary, HTTP
+  handlers, durable projection, or `bus.task.*` publisher yet.
+- `bus-integration-task` consumes canonical `bus.task.*` streams today, but it
+  still owns App Server worker execution, start-request consumption, isolated
+  worktree preparation, scheduler bridge behavior, and task closeout evidence.
+  Those pieces should be treated as transitional until worker-owned lifecycle,
+  repository/worktree primitives, and scheduler/service-loop contracts are
+  accepted.
+- `bus-integration-worker` and `bus-api-provider-worker` already contain
+  plural worker scaffolding and reusable claim/routing/scheduler packages, but
+  their plans still have open productization items before task integrations can
+  stop carrying worker launch and routing glue.
+- `bus-events` has canonical `bus.task.*` helper code, while some lower-level
+  append-key prefixes, tests, and relay fixtures still mention historical
+  `dev-task` or `bus.dev.task.*` names. Treat those as compatibility/audit
+  work unless a migration slice explicitly removes them.
+
+Dependencies for full acceptance:
+
+- Finish the worker goal enough that `bus-integration-worker` owns worker
+  identity, lifecycle, claim matching, start requests, capacity, and the
+  service loop. Until then, `bus-integration-task` cannot be fully slimmed to
+  task-specific bridge/review semantics.
+- Finish the repos goal enough that task and worker callers use repos-owned
+  branch/worktree creation, status, dirty/locked/active detection, and
+  conservative cleanup primitives instead of duplicating Git policy in task
+  integration code.
+- Finish the service-owned Events relay before treating remote task routing or
+  returned claim/progress/terminal evidence as normal product proof.
+- Finish or update the service-owned task scheduler goal against the current
+  `bus.task.*` / `bus-integration-task` / worker-family naming before using it
+  as implementation guidance; older `bus.dev.task.*` and
+  `bus-integration-dev-task` wording in that handoff is historical.
+- Finish the multi-environment task/worker coordination goal before calling
+  cross-environment assignment, claim, status, and terminal evidence complete.
+
+No product implementation worktree or feature branch was created for this
+review. The operator requested review-only work and allowed this goal file to
+be updated in the main checkout.
+
 ## Module Boundary
 
 `bus-task` owns task/thread UX, task references, approval, assignment,

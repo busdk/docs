@@ -34,6 +34,60 @@ The existing singular `bus-worker`, `bus-api-provider-worker`, and
 renamed, wrapped, or promoted into the plural product surface. Do not treat the
 singular names as the final user-facing architecture.
 
+## 2026-05-30 Review Notes
+
+This file was reviewed against the neighboring goal files and the current
+`bus-worker`, `bus-api-provider-worker`, `bus-integration-worker`, `bus-api`,
+`bus-events`, `bus-task`, `bus-repos`, and `bus-agent` checkouts on
+2026-05-30. No product implementation worktree or feature branch was created
+for this review; the operator requested review-only work and allowed the goal
+file itself to be updated in the main checkout.
+
+The current code already has accepted bootstrap slices that should not be
+rediscovered as absent:
+
+- `bus-worker` provides the current singular implementation module and direct
+  binary for local non-secret identity records and API-mode
+  list/show/create/pause/resume/assign/status calls. The product CLI target in
+  this goal remains plural: `bus workers ...`.
+- `bus-api-provider-worker` builds the plural `bus-api-provider-workers`
+  service, publishes canonical `bus.workers.*` request Events, listens to
+  list/status response Events, and maintains memory or file-backed projections.
+- `bus-api` can mount the workers provider through the `worker` or `workers`
+  module alias when the module is enabled.
+- `bus-integration-worker` builds the plural `bus-integration-workers`
+  command, handles list/create/pause/resume/assign requests, publishes
+  list/status responses, and has App Server plan/exec lifecycle scaffolding.
+
+The remaining work is therefore contract normalization, durable/lived
+projection behavior, real App Server lifecycle proof, repository/worktree
+integration, stop support, service-owned relay, and product hardening.
+
+## Dependencies
+
+The workers product can continue in parallel on API shape, projection tests,
+and integration lifecycle planning, but this goal cannot be fully accepted
+until these neighboring goals are complete enough to supply their contracts:
+
+- `docs/goals/repos.md` must be accepted, or explicitly accepted for the
+  worker-needed slice, before this goal can claim automatic isolated worktree
+  and branch creation as product behavior.
+- `docs/goals/service-owned-events-relay.md` and
+  `docs/goals/multi-environment-task-worker-refactor.md` must be accepted for
+  the live remote proof that local worker requests reach dev-hg and remote
+  worker status returns locally without manual import/export.
+- `docs/goals/tasks.md` and `docs/goals/service-owned-task-scheduler.md` must
+  be accepted for idle worker claiming, queue/capacity behavior, and
+  scheduler-owned status.
+- The completed `docs/goals/remote-credential-source-selection.md` work needs
+  a current `bus task` / worker-provider credential-source proof before the
+  dev-hg acceptance proof is treated as final evidence, because the old
+  `bus-dev` proof does not by itself cover the current user-facing path.
+- Explicit `bus workers assign` can be implemented and tested before idle
+  claiming is complete. Task-side assignment remains owned by `bus-task`; both
+  entry points should publish or route to the same `bus.workers.assign.request`
+  contract when the target is a specific worker.
+
 ## Required Behavior
 
 `bus workers list` should list all visible workers and include enough
@@ -75,40 +129,67 @@ The normal path is:
 6. The integration service publishes `bus.workers.status.snapshot`,
    `bus.workers.list.response`, and task-related evidence back through Events.
 
-The first interoperable event contract must include these names and fields:
+The first interoperable event contract must align with the Bus Events envelope
+that is already implemented. Correlation belongs in the message envelope as
+`correlationId`, and source environment identity belongs in Events metadata,
+normally `bus.origin.environment.id`, with `bus.environment.id` accepted only
+as legacy/current compatibility. Do not add duplicate payload fields such as
+`correlation_id` or `source_environment_id` unless a compatibility adapter is
+explicitly documented.
 
-- `bus.workers.create.request`: required string fields `correlation_id`,
-  `source_environment_id`, and `worker_id`; optional string fields
-  `target_environment_id`, `model`, `module`, `branch`, `image`, `sandbox`,
-  `prompt_file`, and `task_ref`; optional object field `labels`.
-- `bus.workers.list.request`: required string fields `correlation_id` and
-  `source_environment_id`; optional string field `target_environment_id`;
-  optional string array `worker_ids` for narrowing a request.
+The canonical worker payload identity field is `id`, matching the current
+`bus-worker`, API-provider, and integration-provider code. If a future schema
+wants `worker_id`, it must be introduced as an explicit migration or alias
+rather than silently replacing `id`. The canonical status field is `status`,
+not `state`, for the current product slice.
+
+The first interoperable payload contract must include these names and fields:
+
+- `bus.workers.create.request`: required string fields `id`, `label`, `type`,
+  and `profile`; optional string fields `environment_id`, `model`, `module`,
+  `branch`, `image`, `sandbox`, `prompt_file`, `prompt`, `worker_home_ref`,
+  and `task_ref`; optional string arrays `capability_tags`,
+  `eligible_environments`, and `group_ids`; optional object field `labels`.
+  Allowed `type` values are `human`, `automaton`, and `agent`, matching the
+  current `bus-worker` identity contract. `profile` is a non-secret
+  operator/config-selected profile name with no whitespace, `@`, or `#`;
+  examples include `default-agent` and `codex-spark`.
+- `bus.workers.list.request`: envelope `correlationId` required for correlated
+  responses; optional string field `environment_id`; optional string array
+  `worker_ids` for narrowing a request.
 - `bus.workers.pause.request` and `bus.workers.resume.request`: required
-  string fields `correlation_id`, `source_environment_id`, and `worker_id`;
-  optional string fields `target_environment_id` and `reason`.
-- `bus.workers.stop.request`: required string fields `correlation_id`,
-  `source_environment_id`, and `worker_id`; optional string fields
-  `target_environment_id` and `reason`; optional boolean field
-  `preserve_worktree`, defaulting to `true` for the first product slice.
-- `bus.workers.assign.request`: required string fields `correlation_id`,
-  `source_environment_id`, `worker_id`, and `task_ref`; optional string fields
-  `target_environment_id`, `assignment_id`, and `reason`.
-- `bus.workers.list.response`: required string fields `correlation_id` and
-  `environment_id`; required array field `workers`, where each entry uses the
-  same non-secret worker view as `bus.workers.status.snapshot`.
+  string field `id`; optional string fields `environment_id` and `reason`.
+- `bus.workers.stop.request`: required string field `id`; optional string
+  fields `environment_id` and `reason`; optional boolean field
+  `preserve_worktree`, defaulting to `true` for the first product slice. The
+  current bootstrap code has pause/resume/assign but not stop; stop support is
+  remaining required work before this goal can be accepted.
+- `bus.workers.assign.request`: required string fields `id` and `task_ref`;
+  optional string fields `environment_id`, `assignment_id`, and `reason`.
+- `bus.workers.list.response`: envelope `correlationId` matching the request;
+  required string field `environment_id`; required array field `workers`,
+  where each entry uses the same non-secret worker view as
+  `bus.workers.status.snapshot`.
 - `bus.workers.status.snapshot`: required string fields `environment_id`,
-  `worker_id`, `state`, and `lifecycle_phase`; optional string fields
-  `model`, `module`, `branch`, `active_task_ref`, `app_server_url`,
-  `logical_endpoint`, `container_id`, `worktree_ref`, `logs_ref`, and
-  `last_error`; optional object field `metadata` for bounded non-secret
-  lifecycle details.
+  `id`, `status`, and `lifecycle_phase`; optional string fields `model`,
+  `module`, `branch`, `active_task_ref`, `app_server_url`,
+  `logical_endpoint`, `container_id`, `worktree_ref`, `worktree_path`,
+  `logs_ref`, `logs_path`, and `last_error`; optional object field `metadata`
+  for bounded non-secret lifecycle details. `worktree_path` and `logs_path`
+  are current bootstrap fields; `worktree_ref` and `logs_ref` are the preferred
+  durable-reference direction once repos/artifact ownership is ready.
 
-Defaults: absent `target_environment_id` means any listening worker
-environment may respond; absent optional runtime fields mean the integration
+Defaults: absent `environment_id` on request Events means any listening worker
+environment may respond; `environment_id` on response/snapshot Events means
+the reporting environment. Absent optional runtime fields mean the integration
 provider uses its configured defaults. Redaction rule: tokens, credential
 values, raw auth paths, private prompt contents, absolute secret file paths,
 and unbounded command output must not appear in Events or projections.
+`prompt` is allowed only for bounded non-secret inline bootstrap text, no more
+than 8 KiB, that is safe to store in Events. Private or long task prompts must
+use a non-secret `prompt_file` source label or a later `prompt_ref` contract
+resolved inside the worker environment, rather than embedding the prompt body
+in the Event.
 `labels` and `metadata` are string-to-string maps only. Keys must be lowercase
 ASCII identifiers using letters, digits, `_`, `.`, or `-`, and values must be
 non-secret UTF-8 strings no longer than 512 bytes each. A single event should
@@ -116,7 +197,7 @@ carry at most 32 label keys and 64 metadata keys. Later snapshots replace the
 stored value for the same key and must not preserve a removed key unless the
 projection owner explicitly documents tombstone behavior.
 
-Allowed `state` values for the first product slice are `creating`, `running`,
+Allowed `status` values for the first product slice are `creating`, `running`,
 `paused`, `stopping`, `stopped`, `failed`, and `unknown`. Allowed
 `lifecycle_phase` values are `requested`, `prepared`, `starting`, `ready`,
 `pausing`, `paused`, `resuming`, `assigning`, `stopping`, `stopped`, and
@@ -139,11 +220,15 @@ product owns identity, control, assignment, state, lifecycle policy, and
 projection. Runtime/provider protocol details remain in `bus-agent` and the
 App Server integration layer.
 
-Workers may be assigned explicitly through `bus task ...`, or may claim an
-approved available task when idle only after `docs/goals/tasks.md` has accepted
-the canonical task claimability/queue contract and
-`docs/goals/multi-environment-task-worker-refactor.md` has accepted bidirectional
-relay for task claim, progress, and terminal evidence.
+Workers may be assigned explicitly through `bus workers assign <worker>
+<task-ref>` when the operator is controlling a specific worker, or through
+`bus task ...` when the operator is assigning from the task/thread side.
+`bus-task` remains the owner of task/thread UX and task status. Both paths
+should map to the same worker assignment event once they cross the API/Event
+boundary. Idle workers may claim an approved available task only after
+`docs/goals/tasks.md` has accepted the canonical task claimability/queue
+contract and `docs/goals/multi-environment-task-worker-refactor.md` has
+accepted bidirectional relay for task claim, progress, and terminal evidence.
 
 ## Acceptance Criteria
 
@@ -157,7 +242,7 @@ This goal is accepted when:
 - each created worker gets an isolated worktree and branch automatically;
 - list/status reads preserve environment identity and can merge responses from
   multiple environments;
-- pause/resume/assign create observable state transitions;
+- pause/resume/assign/stop create observable state transitions;
 - at least one worker in the configured remote environment whose operator host
   is `coding-agent@dev.hg.fi` is created and controlled through the product
   path using `gpt-5.3-codex-spark`; the environment id and credential-source

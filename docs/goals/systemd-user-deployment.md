@@ -68,10 +68,21 @@ bus-operator-deploy/bin/bus-operator-deploy service user-systemd status \
   --service bus-events,bus-container-router,bus-integration-dev-task
 ```
 
+That was the service name used in the original remote evidence. Current
+`bus-operator-deploy` implementation and plans use `bus-integration-task` for
+the task integration unit, so future reruns should use the current service
+name unless intentionally checking historical compatibility:
+
+```bash
+bus-operator-deploy/bin/bus-operator-deploy service user-systemd status \
+  --ssh-url coding-agent@dev.hg.fi \
+  --service bus-events,bus-container-router,bus-integration-task
+```
+
 That command returned `ok: true`, classified the host as `linger-enabled`, and
 reported `user_manager_active=yes` and `rootless_docker=yes`.
 
-The same command reported that the currently allowlisted Bus units are not yet
+The same historical command reported that the old-name Bus units were not yet
 installed:
 
 ```text
@@ -116,6 +127,17 @@ The integration side is mostly ahead of the deployment surface. `bus-integration
 already has a completed combined-host plan item: `cmd/bus-integration` can load
 an explicit runtime config, start selected compiled integration registrations,
 share an Events client and token source, and expose health readiness.
+The stock `bus-integration` binary contains no provider registrations by
+itself; a deployable combined worker-host profile still needs a concrete host
+binary or registration set that imports the selected `bus-integration-*`
+modules.
+
+Review update on 2026-05-30: newer remote-worker planning has shifted task and
+worker ownership from older `bus-integration-dev-task` wording toward
+`bus-integration-task`, `bus-integration-worker`, and the plural workers
+surface. Treat root `PLAN.md`, `bus-integration-task/PLAN.md`, and
+`bus-integration-worker/PLAN.md` as the current authority for task scheduler
+and worker-service ownership before implementing this goal.
 
 ## Current Implementation Baseline
 
@@ -124,7 +146,7 @@ allowlisted services. The current allowlisted definitions include:
 
 - `bus-events.service`
 - `bus-container-router.service`
-- `bus-integration-dev-task.service`
+- `bus-integration-task.service`
 
 The existing command family is:
 
@@ -227,14 +249,22 @@ This goal depends on and reinforces several adjacent remote-worker goals.
 
 ### Service-Owned Task Scheduler
 
-The user-systemd profile should eventually start the service-owned scheduler
-that consumes queued task work and launches Codex App Server workers up to
-configured capacity. That scheduler is described separately in
-`docs/docs/goals/service-owned-task-scheduler.md`.
+The user-systemd profile should eventually start or depend on the
+service-owned scheduler that consumes queued task work and launches Codex App
+Server workers up to configured capacity. That scheduler is described
+separately in `docs/docs/goals/service-owned-task-scheduler.md`, but the
+current module owner is `bus-integration-task` with worker-side behavior moving
+into `bus-integration-worker`.
 
 The important boundary is that `bus-dev` should submit work and display status,
 but the long-running environment-local service owns scheduling, capacity, stale
 claim handling, and worker launch.
+
+Dependency: a profile-rendering implementation in `bus-operator-deploy` can
+start before the scheduler is complete, but the live proof that a worker task
+starts without manual handler launches depends on the service-owned scheduler,
+exact-ref worker safety, and worker App Server lifecycle being complete enough
+for the selected remote.
 
 ### Remote Credential Source Selection
 
@@ -256,6 +286,11 @@ tools, not the normal daily path.
 The user-systemd profile should eventually install or supervise the relay
 service path when the selected environment requires local-to-remote task and
 evidence synchronization.
+
+Dependency: the live remote-worker proof for this goal depends on the
+service-owned Events relay goal being complete enough that local task Events and
+remote claim/progress/terminal evidence move without manual import/export,
+SSH sync loops, or `bus-dev --sync-now` as the normal path.
 
 ### Remote Freshness
 
@@ -314,6 +349,8 @@ git status --short
 git -C bus-operator-deploy status --short
 git -C bus-api status --short
 git -C bus-integration status --short
+git -C bus-integration-task status --short
+git -C bus-integration-worker status --short
 ```
 
 Recheck the remote user-systemd capability:
@@ -327,7 +364,7 @@ Recheck through the Bus deploy surface:
 ```bash
 bus-operator-deploy/bin/bus-operator-deploy service user-systemd status \
   --ssh-url coding-agent@dev.hg.fi \
-  --service bus-events,bus-container-router,bus-integration-dev-task
+  --service bus-events,bus-container-router,bus-integration-task
 ```
 
 Before running an actual install, verify the remote home/config paths and token
@@ -340,7 +377,7 @@ the combined profile exists:
 bus-operator-deploy/bin/bus-operator-deploy service user-systemd install \
   --dry-run=false \
   --ssh-url coding-agent@dev.hg.fi \
-  --service bus-events,bus-container-router,bus-integration-dev-task \
+  --service bus-events,bus-container-router,bus-integration-task \
   --config-dir /absolute/path/to/.config/bus \
   --unit-dir /absolute/path/to/.config/systemd/user
 ```
@@ -392,6 +429,10 @@ The first implementation target is `bus-operator-deploy`: add profile-driven
 user-systemd rendering, install/update, and status for a combined-runtime
 worker-host profile. `bus-integration` already has the combined host foundation.
 `bus-api` still needs the provider-host side for optional API provider services.
+The remote-worker task proof also depends on the current `bus-integration-task`
+and `bus-integration-worker` scheduler/lifecycle work, plus service-owned
+Events relay, before the systemd profile can be accepted as the normal
+no-manual-handler launch path.
 
 Do not mark the product goal complete until the repository has code, tests,
 docs/help, and live or equivalent fixture proof that a local or remote worker

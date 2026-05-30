@@ -22,6 +22,49 @@ The requested end state was:
 This handoff exists so a later conversation can resume from the completed
 state without relying on chat history.
 
+## 2026-05-30 Review Addendum
+
+This file was reviewed against the neighboring goal files and the current Bus
+module checkouts on 2026-05-30. The credential-source goal remains a completed
+historical goal, but some implementation owners named below are now historical.
+
+Current adjacent goals and the root `PLAN.md` use `bus-integration-task`,
+`bus-task`, `bus.task.*`, and future worker/task ownership for new work.
+Earlier handoffs, including this one, still mention `bus-integration-dev-task`,
+`bus-dev task`, and `bus-dev work` in places because that was the active shape
+when the credential-source work was completed. In the current checkout,
+`bus-integration-dev-task` is no longer a present submodule, and `bus-dev`
+redirects `bus dev task` to `bus task` while reporting `bus dev work` as
+removed. Treat references to those old command/module names below as historical
+evidence, not as the path for new implementation.
+
+The current affected implementation surfaces are:
+
+- `bus-remote`, for non-secret `credential_source` metadata and validation;
+- `bus-task`, for the migrated controller/task command path that resolves
+  selected remote credential sources, configured token files, user/config token
+  files, local Compose token files, and inherited `BUS_API_TOKEN` fallback;
+- `bus-events`, for sync/relay token-file boundaries and safe credential-source
+  labels;
+- `bus-integration-task`, for worker runtime `--events-token-file` /
+  `BUS_EVENTS_TOKEN_FILE` precedence before inherited `BUS_API_TOKEN`;
+- `bus-integration-ssh-runner`, for managed SSH runner `--api-token-file` /
+  `BUS_API_TOKEN_FILE` precedence before inherited `BUS_API_TOKEN`.
+
+Dependency for future work: before using this handoff as acceptance evidence
+for a new remote-worker or service deployment implementation, first finish or
+create a focused `bus-task` controller credential-source proof that matches the
+old `bus-dev` proof: two configured remotes with distinct credential sources,
+stale inherited `BUS_API_TOKEN`, ssh-docker remote-side token-file refs not
+opened locally, sync argument construction preserving token-file boundaries,
+and no token or token-file reference leakage into task Events. That dependency
+exists because the old `bus-dev` controller proof no longer covers the current
+user-facing `bus task` path by itself.
+
+No product implementation worktree or feature branch was created for this
+review. The operator requested review-only work and allowed this goal file to
+be updated in the main checkout.
+
 ## Operator Direction Captured
 
 During this goal the operator tightened the execution model:

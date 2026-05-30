@@ -7,13 +7,13 @@ development systems a normal service-owned capability.
 
 The intended end state is that local-to-remote development work does not depend
 on a supervisor manually running `bus events export`, `bus events import`,
-SSH sync scripts, or `bus-dev --sync-now` as the daily path. A configured
+SSH sync scripts, or `bus task --sync-now` as the daily path. A configured
 environment such as local Docker, dev-hg, H100, or an UpCloud-style worker host
 should run a bounded Events relay service with durable checkpoints. That relay
 forwards target-marked local task and Notes operation events to the remote
 Events API, imports remote-originated claim, progress, terminal, and lifecycle
-evidence back, and reports status clearly enough that `bus-dev` and a supervisor
-can trust the route.
+evidence back, and reports status clearly enough that `bus task` and a
+supervisor can trust the route.
 
 The operator clarified that this is high priority. Treat it as a gating
 dependency for a trustworthy remote worker lane, not as medium-priority
@@ -78,15 +78,41 @@ Deploy service-owned Events relay for live remote worker routes end to end.
 Use current Git state as authoritative before continuing, because these plan
 files were edited during an active dirty worktree.
 
+## Current Naming And Dependencies
+
+Review on 2026-05-30 found that this goal was partly written against the older
+`bus dev task` / `bus dev work` transition state. The current implementations
+make `bus-task` the generic task/thread CLI owner, and `bus-dev` now tombstones
+`bus dev task` and `bus dev work` in favor of `bus task`. Future implementation
+work should use `bus task` and `bus.task.*` as the primary operator and event
+surface unless a current plan explicitly requires legacy compatibility.
+
+`bus-integration-task` is the current worker integration module. Do not use the
+historical `bus-integration-dev-task` name for new work.
+
+The `bus-events` relay implementation has also moved beyond a bare local test
+command. Current source includes relay config-file parsing, source/destination
+credential-source labels, route ids, durable state files, route locks, bounded
+once/loop modes, and text/JSON relay status. The open work is service
+deployment, route configuration from environment metadata, status consumption by
+the current task surface, and live dev-hg/H100 proof.
+
+Dependency: the `bus-events` service route/config/status work can proceed
+first, but this goal cannot be fully accepted until the generic `bus task` state
+machine and CLI contract is accepted enough for remote start/status/stats proof,
+and until the remote worker scheduler/worker service can consume the relayed
+`bus.task.*` stream and publish claim/progress/terminal evidence. Those are
+tracked in the neighboring `bus-task` and `service-owned-task-scheduler` goals.
+
 ## Required Behavior
 
 The normal remote task path should look like this from the operator's point of
 view:
 
 ```bash
-bus dev work --environment h100-weekend start @bus-module "Do real product work"
-bus dev work status
-bus dev work stats --all
+bus task start --environment h100-weekend @bus-module "Do real product work"
+bus task status
+bus task stats --all
 ```
 
 The operator should not have to run a separate import/export loop. The relay
@@ -158,7 +184,7 @@ Expose script-friendly JSON and human text status with:
 - last error
 - whether another relay instance owns the route lock
 
-`bus-dev` should use this relay status in normal remote status/start flows. A
+`bus-task` should use this relay status in normal remote status/start flows. A
 route with missing or stale relay checkpoints should be visible before work is
 dispatched or before a worker is trusted as active.
 
@@ -197,7 +223,7 @@ dev-hg or H100 when available:
 6. Observe the relay import claim/progress/terminal evidence.
 7. Restart the relay service.
 8. Repeat or continue without replaying unrelated history.
-9. Confirm `bus dev work status` and `bus dev work stats --all` show the remote
+9. Confirm `bus task status` and `bus task stats --all` show the remote
    identity and terminal result locally.
 
 The proof should record task ref, route id, local and remote environment ids,
@@ -250,10 +276,11 @@ Notes replication layer.
 
 ### First-Class Task Artifact Transfer
 
-`bus dev task` already has bounded small-file attachment and extraction
-primitives for patches, logs, and evidence files. Remote review should use
-task attachments rather than `scp` or shared filesystem paths. The relay path
-must move those task Events reliably so attached evidence is available locally.
+Task attachment support already has bounded small-file attachment and
+extraction primitives for patches, logs, and evidence files. Remote review
+should use task attachments rather than `scp` or shared filesystem paths. The
+relay path must move those task Events reliably so attached evidence is
+available locally.
 
 ### Trustworthy Remote Worker Lane
 
@@ -287,8 +314,8 @@ This goal is complete only when all of these are true:
 - Duplicate imports and remote-origin loop prevention are covered by tests.
 - Token values are absent from relay output, state summaries, and forwarded
   event payloads.
-- `bus-dev` normal remote status/start paths can consume relay status instead
-  of requiring `--sync-now` as the primary operator path.
+- The current `bus task` remote status/start paths can consume relay status
+  instead of requiring `--sync-now` as the primary operator path.
 - A live dev-hg or H100 proof shows local task creation, service relay to
   remote, remote worker evidence, relay back to local, and local status/stats
   without manual import/export.
@@ -304,13 +331,15 @@ Start with these files:
 3. `bus-events/internal/cli/sync.go`
 4. `bus-events/internal/cli/cli.go`
 5. `bus-events/README.md`
-6. `bus-dev/PLAN.md`
-7. `bus-dev/run/sync.go`
-8. `bus-remote/PLAN.md`
-9. `bus-operator-deploy/PLAN.md`
-10. `bus-integration-dev-task/PLAN.md`
-11. `logs/20260527-17-agent-memo.md`
-12. `logs/20260529-14-agent-memo.md`
+6. `bus-events/internal/cli/relay_config.go`
+7. `bus-task/PLAN.md`
+8. `bus-task/run/sync.go`
+9. `bus-integration-task/PLAN.md`
+10. `bus-remote/PLAN.md`
+11. `bus-operator-deploy/PLAN.md`
+12. `bus-dev/PLAN.md`
+13. `logs/20260527-17-agent-memo.md`
+14. `logs/20260529-14-agent-memo.md`
 
 Use the current worktree and current remote state as authoritative. The memo
 files are supporting context, not proof by themselves.
@@ -323,8 +352,8 @@ and dirty state:
 ```bash
 git status --short
 git -C bus-events status --short
-git -C bus-dev status --short
-rg -n "High-Priority Service-Owned Events Relay Goal|Deploy service-owned Events relay|bus events relay|--sync-now|state-file" PLAN.md bus-events/PLAN.md bus-events bus-dev
+git -C bus-task status --short
+rg -n "High-Priority Service-Owned Events Relay Goal|Deploy service-owned Events relay|bus events relay|--sync-now|state-file" PLAN.md bus-events/PLAN.md bus-events bus-task
 ```
 
 Inspect the current relay command and tests:
@@ -345,8 +374,8 @@ bus lint docs/docs/goals/service-owned-events-relay.md
 
 ## Known Boundaries
 
-Do not solve this by adding a new ad hoc SSH loop in `bus-dev`. `bus-dev` may
-remain a bootstrap or UX client, but routine sync ownership belongs to
+Do not solve this by adding a new ad hoc SSH loop in `bus-task` or by reviving
+`bus dev work` in `bus-dev`. Routine sync ownership belongs to
 environment-local services or `bus-events` service mode.
 
 Do not put token values in relay route config, state summaries, task Events,
@@ -375,11 +404,12 @@ proved as the normal live dev-hg/H100 service path.
 
 The next useful thread should start by checking current Git state, reading the
 root and `bus-events` plan items, and deciding whether the first implementation
-step is service configuration/status in `bus-events`, service installation in
-`bus-operator-deploy`, or `bus-dev` consumption of relay health. The safest
-sequence is usually: implement service route config and status in `bus-events`,
-prove restart/loop safety with fixtures, add service wrapper/deploy support,
-then wire `bus-dev` to prefer relay status over `--sync-now`.
+step is completing route configuration/status in `bus-events`, service
+installation in `bus-operator-deploy`, or `bus-task` consumption of relay
+health. The safest sequence is usually: finish service route config/status and
+loop safety in `bus-events`, prove restart/loop safety with fixtures, add
+service wrapper/deploy support, then wire `bus-task` to prefer relay status over
+`--sync-now` for normal remote status/start flows.
 
 No commit was requested for this handoff. Avoid staging or committing until the
 operator asks, and keep this docs handoff separate from unrelated dirty
