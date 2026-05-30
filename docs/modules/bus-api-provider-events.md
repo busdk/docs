@@ -104,8 +104,8 @@ Send `Content-Type: application/json` with an event envelope:
 }
 ```
 
-`name` is required. `payload` may be any JSON value. Work delivery is selected
-on stream URLs with `delivery=work` and `group=<group>`, not in the publish
+`name` is required. `payload` may be any JSON value. Unicast delivery is selected
+on stream URLs with `delivery=unicast` and `group=<group>`, not in the publish
 body. Success returns `202 Accepted` or `200 OK` with acceptance metadata such
 as `accepted`, `id`, and `name`. Bad JSON or invalid event names return `400`,
 missing auth returns `401`, and missing domain scope returns `403`.
@@ -149,21 +149,21 @@ scope for the requested event namespace returns `403 forbidden`. Invalid event
 names return `400 bad_request`, and wildcard names are rejected unless the
 deployment explicitly enables broad admin-only event scopes.
 
-### `GET /api/v1/events/stream?name=<event-name>&delivery=work&group=<group>&consumer=<consumer>`
+### `GET /api/v1/events/stream?name=<event-name>&delivery=unicast&group=<group>&consumer=<consumer>`
 
-Streams matching events as competing work.
+Streams matching events to one consumer in a group.
 
-Use work delivery when only one worker in a group should receive each event. If
+Use unicast delivery when only one worker in a group should receive each event. If
 `group` is omitted, the provider uses `default`. If `consumer` is omitted, the
 provider uses `default`; long-running workers should set a stable consumer name
 for logs and backend diagnostics.
-Work streams use the same newline-delimited JSON framing as broadcast streams.
+Unicast streams use the same newline-delimited JSON framing as broadcast streams.
 Only one authorized consumer in the group receives each event.
 Use short stable URL-safe `group` and `consumer` names such as
 `billing-worker` or `usage-collector-1`. Avoid spaces, slashes, control
 characters, and secrets; backend-specific invalid names return
 `400 bad_request` or a stream setup error.
-Invalid work group or consumer values return `400 bad_request`; missing or
+Invalid group or consumer values return `400 bad_request`; missing or
 underscoped authorization returns `401` or `403` before any stream is opened.
 
 ### `name=<event-name>`
@@ -183,20 +183,20 @@ the authentication section above and in
 
 Delivers each event to every authorized listener.
 
-### `delivery=work`
+### `delivery=unicast`
 
-Delivers each event to one authorized worker in the selected group.
+Delivers each event to one authorized consumer in the selected group.
 
 ### `group=<group>`
 
-Selects the work-delivery group.
+Selects the unicast delivery group.
 
 Workers in the same group compete for events. Workers in different groups each
 receive their own group delivery.
 
 ### `consumer=<consumer>`
 
-Identifies one work-delivery consumer.
+Identifies one unicast delivery consumer.
 
 Use stable consumer names for long-running workers.
 
@@ -238,7 +238,7 @@ The PostgreSQL backend is intentionally migration-free. It creates `bus_events`
 and `bus_event_group_cursors` when missing. Use PostgreSQL for production
 deployments that need restart tolerance, multiple API processes, replayable
 event history, or durable work-group cursors. Destroying the PostgreSQL
-database loses queued events, replay history, and work-delivery cursors, so do
+database loses queued events, replay history, and unicast delivery cursors, so do
 that only for disposable local or test environments. PostgreSQL uses
 `LISTEN/NOTIFY` to wake listeners quickly, with SQL polling as the fallback and
 SQL transactions as the source of truth.

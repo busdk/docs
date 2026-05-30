@@ -28,13 +28,13 @@ export BUS_API_TOKEN="$(bus auth token --scope "vm:read vm:write")"
 bus events send --name example.ping --payload '{"ok":true}'
 bus events send --name bus.vm.start.request --payload '{"runtime":"default"}'
 bus events listen --name example.ping
-bus events listen --name example.job --delivery work --group workers --consumer worker-a
+bus events listen --name example.job --delivery unicast --group workers --consumer worker-a
 bus events listen --name example.history --replay --no-follow
 ```
 
 `send` publishes one event. `listen` streams newline-delimited JSON event
 envelopes. The default `broadcast` delivery mode sends each event to every
-matching listener. Use `--delivery work --group <name>` when matching listeners
+matching listener. Use `--delivery unicast --group <name>` when matching listeners
 are competing workers and only one of them should receive each event.
 By default `listen` follows new events. Use `--replay` to include existing
 matching events and `--no-follow` to return after replaying the current
