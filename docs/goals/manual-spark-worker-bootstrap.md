@@ -3,12 +3,13 @@
 ## Goal
 
 Provide a minimal manual worker launcher that lets the supervisor run parallel
-Codex/App Server workers on `coding-agent@dev.hg.fi` while the full Bus
+Codex agent workers on macOS or another configured host while the full Bus
 workers product control plane is still under construction.
 
 This is a bootstrap development tool, not the final product architecture. It
 should be kept small and should not depend on `bus-task`, Bus Events,
-workerroute, provider services, or service-owned relay.
+workerroute, provider services, service-owned relay, Docker, or
+virtualization.
 
 ## 2026-05-30 Review Addendum
 
@@ -28,7 +29,7 @@ remain compatible with the lifecycle shape those goals are converging on.
 
 Current implementation baseline: `projects/busdk/scripts/manual-dev-hg-spark-worker.sh`
 already exists in the BusDK superproject, not in a supervisor-root `scripts/`
-directory. It starts Docker-hosted Codex App Server workers on
+directory. It currently starts Docker-hosted Codex App Server workers on
 `coding-agent@dev.hg.fi` using `BUS_MANUAL_SPARK_*` configuration variables,
 with defaults for the remote BusDK superproject checkout at
 `/home/coding-agent/coding-agent/git/busdk/busdk` and worker scratch data under
@@ -44,10 +45,12 @@ selection, `prompt`, `attach`, `logs`, `status`, and `stop` commands. Remaining
 acceptance gaps to preserve in this goal: tighten worker slug validation to the
 documented lowercase slug contract, validate module and branch names before any
 remote side effects, refuse cross-worker ownership conflicts instead of
-force-removing containers, persist canonical metadata keys such as
-`worker`, `worktree_path`, `logs_path`, `codex_home`, `container_name`, and
-`app_server_port`, and make branch/base reuse checks explicitly match the
-reviewed BusDK module pin or prior metadata for the same worker.
+force-removing containers, persist canonical metadata keys for the worker,
+worktree, logs, `CODEX_HOME`, model, sandbox, and live process/session, and
+make branch/base reuse checks explicitly match the reviewed BusDK module pin or
+prior metadata for the same worker. The old `container_name` and
+`app_server_port` metadata shape is historical-only after the host sandbox
+refinement below.
 
 ## 2026-05-31 Worker Identity Refinement
 
@@ -64,6 +67,30 @@ worker may edit its own `AGENTS.md`, add small durable memory notes, and write
 hourly memo logs under that identity worktree. Product/module code changes
 still belong in the assigned module worktree and implementation branch.
 
+## 2026-05-31 Host Sandbox Refinement
+
+The bootstrap target is host-run Codex workers, not Docker-hosted App Server
+containers. The launcher should run on macOS without nested virtualization and
+should also be able to target another configured host over SSH when useful.
+Each worker should be an ordinary Codex agent process or terminal session
+started with an explicit sandbox policy, isolated `CODEX_HOME`, product
+worktree, worker identity worktree, logs directory, and scratch directory.
+
+This refinement supersedes the earlier container/image/port acceptance shape.
+Docker can remain useful for later product integration tests, but it is not a
+dependency of this manual bootstrap. The manual script should not inspect
+Docker images, reserve container ports, start containers, mount directories
+into containers, or use container names as worker identity. Its isolation
+comes from Git worktrees, worker-specific branches, worker-specific
+`CODEX_HOME`, process/session ownership metadata, and the Codex sandbox.
+
+Implementation lane for this refinement: product script work is isolated in
+the BusDK superproject worktree
+`/Users/jhh/git/busdk/agent-supervisor/worktrees/manual-go-worker-script/busdk`
+on branch `codex/manual-go-worker-script`. The primary file under change is
+`scripts/manual-dev-hg-spark-worker.sh`. Do not merge this branch or promote
+its BusDK pointer until the operator explicitly confirms the work.
+
 ## Required Behavior
 
 The concrete launcher contract is:
@@ -79,16 +106,16 @@ scripts/manual-dev-hg-spark-worker.sh stop WORKER
 ```
 
 `start` prepares the remote product worktree, the worker identity repository
-worktree, metadata, container, and App Server session, then prints the worker
+worktree, metadata, and Codex agent session, then prints the worker
 slug, implementation branch, product worktree path, worker identity branch,
-worker identity worktree path, logs path, container name, port, and attach
+worker identity worktree path, logs path, process or session id, and attach
 instructions. `prompt` sends or refreshes the task prompt for an existing
-worker without changing either worktree. `attach` opens the live guided App
-Server/TUI control path. `logs` prints or follows the worker-local log files
-without exposing secrets. `status` reports the metadata record plus live
-container/process state. `stop` stops the container but preserves the product
-worktree, worker identity worktree, and logs unless a later explicit cleanup
-command owns removal.
+worker without changing either worktree. `attach` opens the live terminal or
+Codex agent session for that worker. `logs` prints or follows the worker-local
+log files without exposing secrets. `status` reports the metadata record plus
+live process/session state. `stop` stops the worker process or terminal
+session but preserves the product worktree, worker identity worktree, and logs
+unless a later explicit cleanup command owns removal.
 
 Arguments:
 
@@ -106,48 +133,66 @@ Arguments:
   branch already exists, validate that it points at that same reviewed module
   base or at the previous recorded worker metadata for the same `WORKER`;
   otherwise refuse and require an explicit recovery action.
-- `PROMPT_FILE`: local supervisor-host file containing the worker task. The
-  launcher copies it into the worker metadata directory on the remote host.
+- `PROMPT_FILE`: supervisor-host file containing the worker task. For a local
+  worker, the launcher copies it into the worker metadata directory directly.
+  For a remote SSH worker, the launcher copies it to the configured host.
 
-The supervisor must have SSH access to `coding-agent@dev.hg.fi`, the remote
-host must have Docker or a compatible container runtime, the configured Codex
-App Server worker image must be available on that host, and the remote BusDK
-checkout must be clean enough to create a worktree for the requested module
-and for `agents/worker`.
-The expected remote checkout root is
-`/home/coding-agent/coding-agent/git/busdk/busdk` unless overridden by the
-launcher configuration. The expected remote worker root is
-`/home/coding-agent/coding-agent/git/busdk/tmp/workers` unless overridden.
-Image, sandbox, worker root, auth home, base ref, and starting port are read
-from manual launcher environment/config variables such as
-`BUS_MANUAL_SPARK_IMAGE`, `BUS_MANUAL_SPARK_SANDBOX`,
-`BUS_MANUAL_SPARK_REMOTE_ROOT`, `BUS_MANUAL_SPARK_AUTH_HOME`,
-`BUS_MANUAL_SPARK_BASE_REF`, and `BUS_MANUAL_SPARK_PORT_START`. For acceptance,
-the model must resolve to the raw model id `gpt-5.3-codex-spark`; the existing
-`BUS_MANUAL_SPARK_MODEL` override is only for explicit recovery or diagnostic
-runs and should not be used for the normal proof. The later product integration
-path uses `BUS_WORKERS_APPSERVER_*` names. The remote `coding-agent` user must
-be able to run the container runtime without an interactive password prompt.
+The host running the worker must have the Codex CLI available, Codex
+authentication/configuration available to the worker account, and a BusDK
+checkout clean enough to create worktrees for the requested module and for
+`agents/worker`. The default host should be the local macOS supervisor host.
+Remote SSH hosts such as `coding-agent@dev.hg.fi` are optional targets, not the
+only supported environment.
+
+The expected local checkout root is
+`/Users/jhh/git/busdk/agent-supervisor/projects/busdk` unless overridden by
+the launcher configuration. The expected worker root is a host-local scratch
+directory under the BusDK checkout, such as `tmp/workers/{worker}`, unless
+overridden. Host, worker root, Codex command, model, sandbox, auth home,
+session backend, and base ref should be read from manual launcher flags or
+environment/config variables such as `BUS_MANUAL_SPARK_HOST`,
+`BUS_MANUAL_SPARK_WORKER_ROOT`, `BUS_MANUAL_SPARK_CODEX`,
+`BUS_MANUAL_SPARK_MODEL`, `BUS_MANUAL_SPARK_SANDBOX`,
+`BUS_MANUAL_SPARK_AUTH_HOME`, `BUS_MANUAL_SPARK_SESSION_BACKEND`, and
+`BUS_MANUAL_SPARK_BASE_REF`. For acceptance, the model must resolve to the raw
+model id `gpt-5.3-codex-spark`; overrides are only for explicit recovery or
+diagnostic runs and should not be used for the normal proof.
+
+The worker session must also be a usable development environment. The launcher
+should preserve or explicitly construct a safe tool environment that exposes
+the expected host development tools to Codex, including `git`, `go`, `make`,
+module-local scripts, and Bus binaries or tool paths needed by the assigned
+module. This should be done with explicit `PATH`, working-directory, and
+environment setup rather than by hiding the worker inside a container image.
+The sandbox limits where the worker can write; it should not prevent ordinary
+read/execute access to installed compilers, test tools, and project scripts
+needed for focused implementation and unit tests.
 
 Before `start`, the supervisor should be able to run focused preflight checks
 equivalent to:
 
 ```bash
-ssh coding-agent@dev.hg.fi git -C /home/coding-agent/coding-agent/git/busdk/busdk status --short
-IMAGE="${BUS_MANUAL_SPARK_IMAGE:-bus-integration-task:local-image-smoke}"
-ssh coding-agent@dev.hg.fi docker image inspect "$IMAGE"
-ssh coding-agent@dev.hg.fi docker ps --format '{{.Names}}'
+git -C /Users/jhh/git/busdk/agent-supervisor/projects/busdk status --short
+git -C /Users/jhh/git/busdk/agent-supervisor/projects/busdk/agents/worker status --short
+CODEX="${BUS_MANUAL_SPARK_CODEX:-codex}"
+"$CODEX" --version
+go version
+git --version
+make --version
 ```
 
 The first command should show no conflicting dirty state for the target module
-or superproject worktree creation. The image inspect command should find the
-configured worker image. The container runtime command should complete without
-an interactive password prompt.
+or superproject worktree creation. The worker identity repository status
+should show no conflicting dirty state for worker identity worktree creation.
+The Codex and development-tool version commands should confirm the agent
+runtime and basic implementation tools are installed and usable by the account
+that will run the worker.
 
 The launcher should create a worker with:
 
 - a unique worker name;
-- an isolated remote Git worktree for the assigned BusDK product/module code;
+- an isolated product worktree on the selected host for the assigned BusDK
+  product/module code;
 - a dedicated implementation branch;
 - an isolated worker identity worktree created from the `agents/worker`
   submodule repository;
@@ -157,37 +202,39 @@ The launcher should create a worker with:
   memory;
 - worker memo logs under the worker identity worktree, normally
   `logs/{YYYYMMDD}-{HH}-agent-memo.md`;
-- the BusDK checkout mounted inside the container below
-  `/workspace/projects/busdk`;
-- the worker identity checkout mounted inside the container below a stable path
-  such as `/workspace/agent-worker`;
+- the BusDK product worktree exposed to Codex as the primary workdir;
+- the worker identity checkout exposed to Codex as an allowed writable
+  directory;
 - a worker-local logs/scratch directory under a path such as
   `tmp/workers/{worker}`;
 - an isolated `CODEX_HOME`;
-- a Codex/App Server container using the raw model id
-  `gpt-5.3-codex-spark`;
+- a host-run Codex agent process using the raw model id `gpt-5.3-codex-spark`;
+- an explicit Codex sandbox policy, normally `workspace-write`, with writable
+  roots limited to the product worktree, worker identity worktree,
+  worker-local logs, and worker-local scratch paths;
+- access to the selected host's development tools, including Go tooling, Git,
+  Make, module-local scripts, and Bus binaries needed by the assigned task;
 - a manual attach/control path so the supervisor can guide the worker live.
 
 It must support parallel workers safely. Unique names, worktrees, branches,
-containers, ports, logs, and `CODEX_HOME` directories should prevent one
+processes or terminal sessions, logs, and `CODEX_HOME` directories should prevent one
 worker from overwriting another.
 
 The uniqueness rule is mandatory: `WORKER` must be a stable slug and every
 derived path or runtime name must include it. The launcher must refuse to start
 if the worker slug, implementation branch, product worktree path, worker
 identity branch, worker identity worktree path, logs path, `CODEX_HOME`,
-container name, or App Server port is already owned by a different live worker.
-Port allocation must use a lock or probe-and-reserve step on the remote host
-before the container starts. Reusing an existing worker slug is allowed only
-for idempotent `status`, `logs`, `prompt`, `attach`, or explicit recovery
-flows. Live ownership should be recorded under the remote worker root, for
-example `tmp/workers/{worker}/meta.env` plus a small JSON metadata file. The
+or process/session name is already owned by a different live worker. Reusing
+an existing worker slug is allowed only for idempotent `status`, `logs`,
+`prompt`, `attach`, or explicit recovery flows. Live ownership should be
+recorded under the worker root, for example
+`tmp/workers/{worker}/meta.env` plus a small JSON metadata file. The
 metadata must include `worker`, `module`, `branch`, `worktree_path`,
 `worker_identity_branch`, `worker_identity_worktree_path`, `logs_path`,
-`codex_home`, `container_name`, `app_server_port`, `model`, `image`,
-`sandbox`, `created_at`, and `owner=manual-spark-worker-bootstrap`. A start
-operation may reuse a resource only when the recorded metadata matches the
-requested worker and the live container/process check agrees.
+`codex_home`, `process_id` or `session_id`, `model`, `sandbox`, `created_at`,
+and `owner=manual-spark-worker-bootstrap`. A start operation may reuse a
+resource only when the recorded metadata matches the requested worker and the
+live process/session check agrees.
 
 ## Supervisor Use
 
@@ -204,10 +251,10 @@ The minimum review path for a worker result is:
 
 ```bash
 MODULE=bus-api-provider-worker
-git -C projects/busdk status --short
-git -C "projects/busdk/$MODULE" status --short
-git -C "projects/busdk/$MODULE" diff --stat
-git -C "projects/busdk/$MODULE" diff --check
+git status --short
+git -C "$MODULE" status --short
+git -C "$MODULE" diff --stat
+git -C "$MODULE" diff --check
 ```
 
 Then run the focused unit tests named in the worker prompt. If accepted, apply
@@ -227,7 +274,7 @@ eventually drive the same concepts through `bus.workers.*` Events:
 - editable worker-local `AGENTS.md`, memory, and memo logs;
 - logs and metadata directories;
 - isolated `CODEX_HOME`;
-- App Server container image, model, sandbox, and endpoint;
+- host-run Codex process/session, model, sandbox, and control path;
 - pause/resume/assign/status operations.
 
 Once the product worker control plane can create and operate equivalent
@@ -238,12 +285,16 @@ become a recovery/debug tool instead of the main development path.
 
 This goal is accepted when:
 
-- the launcher can start more than one remote Spark worker in parallel;
+- the launcher can start more than one Spark worker in parallel on the
+  configured host;
 - each worker has its own product worktree, implementation branch, worker
-  identity branch, worker identity worktree, container, logs, and `CODEX_HOME`;
+  identity branch, worker identity worktree, process or terminal session, logs,
+  and `CODEX_HOME`;
 - each worker can edit its own operating rules, durable memory, and memo logs
   in its worker identity worktree without modifying another worker's identity
   checkout;
+- at least one worker runs on macOS without Docker, nested virtualization, or a
+  container runtime, using only the Codex agent and its explicit sandbox;
 - the supervisor can attach to and guide each worker live;
 - at least one worker completes a focused implementation plus unit-test task;
 - worker-produced diffs can be reviewed and promoted manually;
