@@ -358,17 +358,15 @@ worktree.
   command proof exist, but scheduler ownership is outside first MVP
   acceptance.
 
-Open blockers for first-scope acceptance:
+Open blockers for first-scope acceptance: none.
 
-- The Events API PostgreSQL backend is the intended durable Event history
-  source. The `bus-api-provider-events` PostgreSQL e2e now includes a provider
-  stop/start step against the same DSN and replays an event published before
-  restart, but that gated proof still needs to be run in an environment with
-  `BUS_EVENTS_POSTGRES_E2E_DSN` before final acceptance unless the operator
-  explicitly accepts the existing PostgreSQL backend evidence. The promoted
-  checkout run passed the memory-backed Events provider e2e, but it skipped
-  the PostgreSQL restart proof because `BUS_EVENTS_POSTGRES_E2E_DSN` was not
-  configured in this environment.
+The final first-scope blocker was the durable Events backend proof. After
+PostgreSQL 18 was installed through Homebrew, a disposable local PostgreSQL
+cluster was initialized under `/private/tmp`, the Events provider e2e was run
+with `BUS_EVENTS_POSTGRES_E2E_DSN` pointing at that cluster, and
+`bus-api-provider-events` completed with `e2e OK (bus-api-provider-events:
+passed 1, skipped 0)`. That run exercised the PostgreSQL provider stop/start
+step against the same DSN and replayed an Event published before restart.
 
 Container and VM runners remain extension targets behind the same internal
 `bus-integration-workers` provider interface. Remote worker hosts,
@@ -1007,10 +1005,9 @@ As of BusDK commit `a7a00be`, the first-scope local Codex-worker
 implementation has been promoted from the isolated `codex/workers-direct`
 worktrees into the parent module branches and the BusDK superproject. The
 promoted checkout has been rerun through the local product-path verification
-set. The remaining acceptance caveat is the gated PostgreSQL Events backend
-restart proof: the test exists, but this environment did not provide
-`BUS_EVENTS_POSTGRES_E2E_DSN`, so the local promoted run skipped that durable
-backend restart section.
+set. The later gated PostgreSQL Events backend restart proof also passed after
+PostgreSQL 18 was installed locally and a disposable cluster was started for
+the proof run.
 
 `bus workers` product CLI evidence is covered by `bus-worker` unit tests,
 `bash tests/e2e.sh`, README updates, plural `bus-workers` binary output, and
@@ -1135,6 +1132,14 @@ tests/e2e/071-workers-product-repos-materializer.sh`. Documentation and diff
 hygiene checks also pass after the post-promotion goal update with
 `bus lint docs/docs/goals/workers.md` and `git diff --check`.
 
+Durable Events backend proof was completed after promotion by running `make
+e2e` in `bus-api-provider-events` with
+`BUS_EVENTS_POSTGRES_E2E_DSN=postgres://bus_events@127.0.0.1:<ephemeral-port>/bus_events?sslmode=disable`
+against a disposable PostgreSQL 18 cluster. The run completed with
+`e2e OK (bus-api-provider-events: passed 1, skipped 0)`, covering PostgreSQL
+publish/listen, unicast acknowledgement, provider restart against the same
+DSN, replay of a pre-restart Event, and dead-letter behavior.
+
 Before promotion, a 2026-05-31 refresh reran the full isolated-worktree test
 set with the review-only `worktrees/workers-direct/go.work` overlay for module
 tests. That evidence is historical now, but it explains the review sequence
@@ -1178,20 +1183,11 @@ integration, worker CLI, workers API provider, workers integration provider,
 `bus-api` product wiring, and this docs goal. The BusDK superproject commit
 `a7a00be` records those submodule pointers.
 
-The remaining handoff is acceptance-oriented, not merge-oriented:
-
-- rerun `bus lint docs/docs/goals/workers.md` and `git diff --check` after
-  this post-promotion goal edit;
-- commit the updated docs goal and advance the BusDK `docs` submodule pointer;
-- advance the supervisor `projects/busdk` pointer;
-- run the gated PostgreSQL Events provider restart proof with
-  `BUS_EVENTS_POSTGRES_E2E_DSN` when a suitable DSN is available, or record an
-  explicit operator exception accepting the existing PostgreSQL backend
-  evidence.
-
-Do not mark this goal complete until that PostgreSQL restart proof is either
-run successfully or explicitly accepted as outside the local proof available
-in this environment.
+The remaining handoff is ordinary promotion bookkeeping for this goal-file
+update: rerun `bus lint docs/docs/goals/workers.md` and `git diff --check`,
+commit this accepted-status update in `docs`, advance the BusDK `docs`
+submodule pointer, and advance the supervisor `projects/busdk` pointer. No
+first-scope product blocker remains for local sandboxed Codex workers.
 
 ## Appendix: Implementation History
 
@@ -2117,8 +2113,9 @@ under this contract; real provider-private delivery into a live App Server
 turn can be refined behind the same lifecycle messenger interface without
 changing CLI, API, or Events callers.
 
-This is still not full goal acceptance. The Open blockers list in Current
-Status is authoritative for the first local sandboxed Codex worker scope.
+At the time of this historical slice, this was not full goal acceptance. The
+post-promotion acceptance audit and Current Status sections above are now
+authoritative for the accepted first local sandboxed Codex worker scope.
 
 The direct App Server message-delivery slice extends the message path into the
 `direct-exec` runner. `bus-agent` now supplies a reusable WebSocket App Server
