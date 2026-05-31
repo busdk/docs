@@ -111,6 +111,167 @@ contract and local planning slices, but this goal should not be marked fully
 accepted until current caller-owned Git/worktree code is either adapted to
 repos-owned primitives or explicitly documented as compatibility.
 
+## Active Implementation Workspace
+
+Initial implementation work started on 2026-05-31 in an isolated `bus-repos`
+module worktree:
+
+- worktree: `/private/tmp/bus-repos-workspace-mvp`
+- branch: `codex/repos-workspace-mvp`
+- base commit: `7647fd9e9454836425abdd146c4bcc511618f49a`
+- feature commit: `92063ce` (`Implement generic repos workspace MVP`)
+
+Additional repos-family implementation worktrees were created on 2026-05-31:
+
+- worktree: `/private/tmp/bus-api-provider-repos-workspace-mvp`
+- branch: `codex/repos-api-workspace-mvp`
+- base commit: `255f6a266b22db4a0191392c6fa1aa557c74831a`
+- feature commit: `cd30d38` (`Implement repos API provider MVP`)
+
+- worktree: `/private/tmp/bus-integration-repos-workspace-mvp`
+- branch: `codex/repos-integration-workspace-mvp`
+- base commit: `f1fa4da6c574894c964005999f86d2d854fe089c`
+- feature commits: `3d54aa3` (`Implement repos integration MVP`) and
+  `9d00ab8` (`Add repos remote rematerialization proof`)
+
+Do not merge or promote these branches until the operator confirms the work.
+
+Before continuing, merging, or promoting this feature work, verify the
+workspace state explicitly:
+
+- from the BusDK superproject checkout, check each worktree exists with
+  `git -C bus-repos worktree list`,
+  `git -C bus-api-provider-repos worktree list`, and
+  `git -C bus-integration-repos worktree list`;
+- check each feature branch exists in the matching module and maps to the
+  worktree path listed above;
+- run `git status --short` inside each feature worktree and review every
+  modified, deleted, or untracked file before staging;
+- if a `/private/tmp` worktree is missing, recreate it from the named feature
+  branch if the branch still exists, or stop and recover from the module's
+  main checkout before continuing;
+- rerun the module checks from the feature worktrees before any merge or
+  promotion.
+
+The implementation commits described below are intentionally not merged or
+promoted yet. Until the operator confirms promotion, recover the work from the
+feature branches and commits listed above. The `/private/tmp` worktrees are
+convenience checkouts only; they can be recreated from the named branches if
+the temporary directories disappear.
+
+Current feature-branch progress:
+
+- `bus-repos` now has a feature-branch first CLI/package slice for multiple
+  configured repositories, caller-supplied branch/base/worktree inputs,
+  branch/worktree planning, ensure/status behavior, conservative branch
+  mismatch handling, non-executing fetch/push planning, conservative cleanup
+  planning, explicitly confirmed cleanup execution for safe reviewed
+  worktrees, explicitly confirmed fetch/push execution, active-branch
+  detection for branches already checked out in another worktree, non-secret
+  submodule status reporting, explicit fetch refspecs for remote-tracking
+  refs, non-executing maintenance planning for stale local worktree caches and
+  recovery candidates, non-executing reconciliation planning for local and
+  remote-tracking branch state, README/PLAN updates, and focused
+  package/CLI/e2e tests. It validates remote names as non-secret labels,
+  rejects more Git-invalid refs, protects explicit worktree paths from
+  option-like values, validates command usage before config loading, removes
+  only the worktree while retaining the caller branch, refuses sync execution
+  without confirmation, configured remotes, and a local branch for pushes, and
+  never deletes caller branches during maintenance or reconciliation planning.
+- `bus-api-provider-repos` now has a feature-branch library HTTP handler and
+  memory projection for generic repository list/show/status/sync-status reads
+  plus `plan`, `cleanup-plan`, `cleanup`, `sync-plan`, `sync`, and `ensure`
+  request publication, plus `maintenance-plan` request publication for stale
+  cache and recovery planning and `reconcile-plan` request publication for
+  local/remote branch comparison. Cleanup and sync execution requests require
+  `confirm=true` but still do not execute Git in the API provider. It preserves
+  non-secret submodule status entries from status snapshots and non-secret sync
+  execution evidence from `bus.repos.sync.response`. `NewFileProjection(path)`
+  can persist bounded list, workspace-status, and sync-status projection views
+  across restarts without making that file authoritative for workspace
+  identity. It does not execute Git or import worker, task, wiki, or other
+  product-domain semantics.
+- `bus-integration-repos` now has a feature-branch library Event processor for
+  `bus.repos.list.request`, `bus.repos.plan.request`, and
+  `bus.repos.cleanup.plan.request`, `bus.repos.cleanup.request`,
+  `bus.repos.maintenance.plan.request`, `bus.repos.sync.plan.request`,
+  `bus.repos.reconcile.plan.request`, `bus.repos.sync.request`, and
+  `bus.repos.ensure.request`. It delegates actual repository/worktree
+  mechanics to an injected generic manager and emits list response, plan
+  response, cleanup-plan response, cleanup response, maintenance-plan response,
+  reconcile-plan response, sync-plan response, sync response, status snapshot,
+  or stable error Events. It also has a Git-backed `NewReposManager` adapter
+  that connects those Events to the generic `bus-repos/pkg/repos` primitives
+  for configured repository listing, branch/worktree planning, worktree
+  materialization, cleanup planning, confirmed safe cleanup execution,
+  maintenance planning, reconciliation planning, sync planning, confirmed
+  fetch/push execution, status snapshots, and conservative branch-mismatch,
+  branch-active, and submodule-status handling. The integration feature branch
+  also proves caller-owned metadata portability by committing a caller file on
+  a repos-managed branch, pushing it to a remote, fetching it into a fresh
+  clone, and rematerializing the workspace from the fetched remote-tracking
+  branch without using API projection or single-environment state as the
+  source of truth.
+
+Remaining dependency inside this goal: caller modules such as workers, tasks,
+and future wikis still need to become callers of the generic repos
+request/status contract where they currently duplicate reusable Git/worktree
+policy, or those compatibility paths need to be explicitly documented before
+full goal acceptance. Mirror refresh/reconciliation execution policy and
+caller migration also remain future repos-family work. Repos should remain
+generic and those caller modules should remain the owners of their domain
+identifiers and metadata.
+
+## Caller Compatibility Status
+
+The current worker and task implementations are compatibility callers rather
+than final repos clients. They may keep running while the repos MVP contract is
+reviewed, but their generic Git/worktree behavior should not be treated as the
+long-term owner.
+
+The worker identity path is partly metadata-only today. `bus-worker` accepts
+and displays `worker_home_ref`, while `bus-api-provider-worker` and
+`bus-integration-worker` pass worker home references, branches, and
+`worktree_path` values through worker Events and projections. Those modules
+own worker ids, labels, profiles, capability tags, prompts, environment
+eligibility, and worker lifecycle metadata. A future worker migration should
+translate a worker-owned identity into a generic repos workspace request:
+`repo_id`, caller-chosen branch, base ref, and worktree name or path. Repos
+should materialize and report the branch/worktree; worker modules should commit
+worker-owned metadata files and interpret them.
+
+The App Server worker launcher in `bus-integration-worker` still contains
+direct Git worktree creation and branch reuse logic in its lifecycle executor
+path. That logic is compatibility code for the worker runtime path. Its future
+repos boundary should use `bus.repos.plan.request`,
+`bus.repos.ensure.request`, `bus.repos.status.snapshot`, and
+`bus.repos.cleanup.plan.request` instead of shelling out to worktree commands
+directly. The worker module should still own process launch, model/runtime
+configuration, environment selection, log paths, scratch paths, and worker
+status.
+
+The task bridge in `bus-integration-task` still owns isolated task worktree
+preparation, task branch naming, task-local Git metadata repair, promotion,
+and removal for the current task-worker bridge. That remains compatibility
+behavior until the task bridge is wired to generic repos requests. A future
+task migration should ask repos to plan, ensure, status, sync-plan, and
+cleanup-plan the branch/worktree, while task modules keep owning task refs,
+write scopes, closeout rules, promotion semantics, and scheduler decisions.
+
+`bus-task work verify` and `bus-task work prune` still contain legacy
+worktree verification and dry-run-first pruning behavior. Those commands are
+compatibility evidence for conservative cleanup, not the final generic repos
+cleanup owner. The detailed pruning product goal remains
+`worktree-pruning-normal-operations.md`; this repos goal owns the generic
+repository/worktree surface that pruning can later call.
+
+This compatibility documentation does not make the caller migrations complete.
+Full acceptance still requires either wiring the active caller paths to repos
+or explicitly accepting these compatibility paths as temporary for the MVP
+handoff. In both cases, the ownership boundary remains the same: product
+modules own domain identifiers and metadata; repos owns generic repository,
+branch, worktree, status, sync-planning, and safety mechanics.
+
 ## Worktree Support
 
 Bus modules need isolated worktrees and branches. The repos surface should
