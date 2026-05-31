@@ -163,15 +163,35 @@ Supporting Bus modules are touched only through their boundaries:
 
 ## Current Status
 
-This goal is partially implemented on isolated `codex/workers-direct` module
-branches, but it is not accepted. The current direction is the Initial MVP
-User Story above: a real long-running `direct` / `codex-direct` Codex App
+This goal is implemented and promoted from the isolated
+`codex/workers-direct` worktrees into the parent module branches, then into
+the BusDK superproject. The promoted BusDK commit is `a7a00be` (`Promote
+local Codex workers MVP`). The current direction remains the Initial MVP User
+Story above: a real long-running `direct` / `codex-direct` Codex App
 Server/runtime instance, using `gpt-5.3-codex-spark` for the first proof, this
 environment's Codex runtime and sandbox, an `agents/worker` branch/worktree,
 and bidirectional guidance through `bus-worker` / `bus-workers`.
 
 Accepted evidence so far:
 
+- The module feature branches have been fast-forwarded into their parent
+  branches and the BusDK superproject pointer has been committed. Promoted
+  module commits are: `bus-events` `ccfcfe5`, `bus-api-provider-events`
+  `84a59da`, `bus-integration-repos` `1fc8253`, `bus-worker` `a93427f`,
+  `bus-api-provider-worker` `0366d3c`, `bus-integration-worker` `0a688c6`,
+  `bus-api` `669ba77`, and `docs` `b5e6add`.
+- Promoted-checkout verification passed from the normal `projects/busdk`
+  checkout. Unit tests passed with `go test ./...` in `bus-events`,
+  `bus-api-provider-events`, `bus-integration-repos`, `bus-worker`,
+  `bus-api-provider-worker`, `bus-integration-worker`, and `bus-api`.
+  Product and provider e2es passed in `bus-api-provider-events`,
+  `bus-worker`, `bus-api-provider-worker`, `bus-integration-worker`, and the
+  worker product e2es `068-workers-provider-direct-events.sh`,
+  `069-workers-product-direct-integration.sh`,
+  `071-workers-product-repos-materializer.sh`, and the gated real Codex proof
+  `070-workers-product-real-codex.sh` with
+  `BUS_WORKERS_REAL_CODEX_PRODUCT_E2E=1`. The real Codex proof completed with
+  `real codex product e2e OK`.
 - `bus-worker` / `bus-workers` must issue create, message,
   message-projection reads through the existing `bus-workers messages` path,
   and stop requests for the MVP story while remaining API-client-only, with no
@@ -340,14 +360,15 @@ worktree.
 
 Open blockers for first-scope acceptance:
 
-- The first-scope implementation remains on isolated feature worktrees and
-  still needs final review/promotion before this goal can be marked accepted.
 - The Events API PostgreSQL backend is the intended durable Event history
   source. The `bus-api-provider-events` PostgreSQL e2e now includes a provider
   stop/start step against the same DSN and replays an event published before
   restart, but that gated proof still needs to be run in an environment with
   `BUS_EVENTS_POSTGRES_E2E_DSN` before final acceptance unless the operator
-  explicitly accepts existing PostgreSQL backend evidence.
+  explicitly accepts the existing PostgreSQL backend evidence. The promoted
+  checkout run passed the memory-backed Events provider e2e, but it skipped
+  the PostgreSQL restart proof because `BUS_EVENTS_POSTGRES_E2E_DSN` was not
+  configured in this environment.
 
 Container and VM runners remain extension targets behind the same internal
 `bus-integration-workers` provider interface. Remote worker hosts,
@@ -363,21 +384,20 @@ until these neighboring goals are complete enough to supply their local worker
 contracts:
 
 - The worker-needed `bus-events` / `bus-api-provider-events` slice now exists
-  on the isolated feature branches: Events can be replayed with bounded
+  on the promoted parent branches: Events can be replayed with bounded
   generic metadata filters for environment, service, recipient, parent
   recipient, and event time range, with PostgreSQL indexes for the durable
   provider path. Broader Events relay/sync/provider hardening remains
   neighboring work, but it is not a local MVP blocker once this generic
-  addressing slice is reviewed and promoted. A worker UUID remains only one
+  addressing slice is promoted. A worker UUID remains only one
   ordinary recipient/resource id under that generic Events contract; Events API
   must not hardcode worker semantics.
 - The worker-needed repos slice now has product-path proof through
   `bus-integration-repos`: worker create materializes the product and
   worker-identity worktrees through repos Events and reaches
   create/message/respond/stop. The full `docs/docs/goals/repos.md` goal may
-  continue independently, but workers acceptance depends on reviewing and
-  promoting this local repos slice, or explicitly accepting it as available for
-  workers.
+  continue independently, but the local repos slice needed by workers has been
+  reviewed, promoted, and included in the promoted-checkout proof.
 - Explicit `bus workers assign` can be implemented and tested before idle
   claiming is complete. Task-side assignment remains owned by `bus-task`; both
   entry points should publish or route to the same `bus.workers.assign.request`
@@ -981,14 +1001,16 @@ This goal is accepted when:
   message delivery for task details and worker response evidence, supplemental
   logs/attach evidence, status projection, stop, and non-secret evidence.
 
-## Promotion Readiness Audit
+## Post-Promotion Acceptance Audit
 
-As of the isolated `codex/workers-direct` worktrees, the first-scope local
-Codex-worker acceptance criteria are review-ready but not yet promoted.
-Remaining gates are final review, operator-confirmed promotion of the feature
-worktrees, BusDK submodule pointer updates, and a product-path verification
-rerun from the promoted checkout unless the operator explicitly accepts the
-isolated-worktree proof as the final exception.
+As of BusDK commit `a7a00be`, the first-scope local Codex-worker
+implementation has been promoted from the isolated `codex/workers-direct`
+worktrees into the parent module branches and the BusDK superproject. The
+promoted checkout has been rerun through the local product-path verification
+set. The remaining acceptance caveat is the gated PostgreSQL Events backend
+restart proof: the test exists, but this environment did not provide
+`BUS_EVENTS_POSTGRES_E2E_DSN`, so the local promoted run skipped that durable
+backend restart section.
 
 `bus workers` product CLI evidence is covered by `bus-worker` unit tests,
 `bash tests/e2e.sh`, README updates, plural `bus-workers` binary output, and
@@ -1000,9 +1022,10 @@ module. The dispatcher already resolves the first command word to a
 `bus-<command>` executable on `PATH`, so `bus workers ...` resolves to
 `bus-workers ...` when the plural worker binary is installed. This has been
 checked with the current `bus` dispatcher and the isolated feature
-`bus-workers` binary by running `bus workers --help` with the feature binary
-on `PATH`; the rendered help advertises the `bus workers` product command
-shape.
+`bus-workers` binary before promotion, and with the promoted `bus-workers`
+binary after promotion. The worker CLI e2e now discovers the real public
+dispatcher when available and proves create/message/messages/stop through
+`bus workers ...`.
 
 Canonical local API/provider/Event projection evidence is covered by
 `bus-api-provider-worker` tests and the product e2es. The API provider
@@ -1098,21 +1121,24 @@ MVP-required stop path against a live worker. List/status/read paths preserve
 `environment_id`, and worker ids are environment-qualified in projection
 storage where needed.
 
-Test evidence before promotion includes:
-`go test ./...` in `bus-events-contract`, `bus-api-provider-events`,
-`bus-integration-repos`, `bus-worker`, `bus-api-provider-worker`,
-`bus-integration-worker`, and `bus-api`; `bash tests/e2e.sh` in `bus-worker`;
-`bash tests/e2e/068-workers-provider-direct-events.sh`;
-`bash tests/e2e/069-workers-product-direct-integration.sh`;
+Promoted-checkout test evidence includes `go test ./...` in `bus-events`,
+`bus-api-provider-events`, `bus-integration-repos`, `bus-worker`,
+`bus-api-provider-worker`, `bus-integration-worker`, and `bus-api`; `bash
+tests/e2e.sh` in `bus-worker`, `bus-api-provider-worker`, and
+`bus-integration-worker`; `bash tests/e2e.sh` in
+`bus-api-provider-events` with the memory backend; `bash
+tests/e2e/068-workers-provider-direct-events.sh`; `bash
+tests/e2e/069-workers-product-direct-integration.sh`;
 `BUS_WORKERS_REAL_CODEX_PRODUCT_E2E=1 bash
-tests/e2e/070-workers-product-real-codex.sh`; and
-`bash tests/e2e/071-workers-product-repos-materializer.sh`. Documentation and
-diff hygiene checks also pass with `bus lint docs/docs/goals/workers.md` and
-`git diff --check` in the touched worktrees.
+tests/e2e/070-workers-product-real-codex.sh`; and `bash
+tests/e2e/071-workers-product-repos-materializer.sh`. Documentation and diff
+hygiene checks also pass after the post-promotion goal update with
+`bus lint docs/docs/goals/workers.md` and `git diff --check`.
 
-A pre-promotion refresh on 2026-05-31 reran that full isolated-worktree test
+Before promotion, a 2026-05-31 refresh reran the full isolated-worktree test
 set with the review-only `worktrees/workers-direct/go.work` overlay for module
-tests. The gated real-Codex product proof passed with
+tests. That evidence is historical now, but it explains the review sequence
+that led to the promoted commits. The gated real-Codex product proof passed with
 `BUS_WORKERS_REAL_CODEX_PRODUCT_E2E=1`, exercising the local Codex runtime
 through create, ready status, logs/attach, bidirectional guidance, Events
 recipient replay after `bus-api` restart, and stop. A follow-up
@@ -1144,56 +1170,28 @@ tests/e2e.sh` passed with that dispatcher lifecycle proof. The
 restart the Events API provider against the same DSN, then replay an event
 published before restart; this proof is gated by `BUS_EVENTS_POSTGRES_E2E_DSN`.
 
-## Promotion Handoff
+## Post-Promotion Handoff
 
-When the operator confirms promotion, merge the isolated feature worktrees in
-dependency order rather than as one undifferentiated patch. The implementation
-worktrees are all on branch `codex/workers-direct` under
-`worktrees/workers-direct/`.
+Promotion has already happened in dependency order. The parent module branches
+now include the worker-needed Events contract, Events provider, repos
+integration, worker CLI, workers API provider, workers integration provider,
+`bus-api` product wiring, and this docs goal. The BusDK superproject commit
+`a7a00be` records those submodule pointers.
 
-Promote the Events contract first:
+The remaining handoff is acceptance-oriented, not merge-oriented:
 
-- `bus-events-contract`: platform metadata constants and Events API client
-  listen options for generic metadata, range, and limit filters.
-- `bus-api-provider-events`: Events API provider storage, query, ACL, and
-  indexed PostgreSQL support for generic addressing metadata and timestamp
-  ranges.
+- rerun `bus lint docs/docs/goals/workers.md` and `git diff --check` after
+  this post-promotion goal edit;
+- commit the updated docs goal and advance the BusDK `docs` submodule pointer;
+- advance the supervisor `projects/busdk` pointer;
+- run the gated PostgreSQL Events provider restart proof with
+  `BUS_EVENTS_POSTGRES_E2E_DSN` when a suitable DSN is available, or record an
+  explicit operator exception accepting the existing PostgreSQL backend
+  evidence.
 
-Promote local materialization and worker surfaces next:
-
-- `bus-integration-repos`: command wrapper used by the worker repos-events
-  materializer proof.
-- `bus-worker`: plural `bus-workers` product CLI, API-backed create/list/show/
-  status/logs/attach/message/messages/control behavior, and text-output
-  redaction/metadata evidence.
-
-Promote the worker control plane and runtime implementation after those
-contracts are available:
-
-- `bus-integration-worker`: direct/codex-direct runner provider interface,
-  local Codex App Server lifecycle, Events-backed hydration, repos-events
-  materializer client, message delivery, service-instance metadata, and
-  scheduler launch adapter proof kept outside first acceptance.
-- `bus-api-provider-worker`: API/controller projection surface, validation,
-  UUID worker identity generation, request-aware Events refresh, projected
-  message history, logs/attach, labels, and service-instance metadata.
-
-Promote the product gateway and documentation last:
-
-- `bus-api`: mounted workers provider wiring and full product-path e2es.
-- `docs`: this goal file and review/promotion audit.
-
-The local workspace file `worktrees/workers-direct/go.work` is review-only. It
-lets isolated worktrees test against `bus-events-contract` before promotion,
-but it should not be promoted into module repositories. Mergeable module
-`go.mod` files should keep normal sibling `../bus-events` replace paths so the
-BusDK superproject works after submodule pointers advance.
-
-After module commits are reviewed and accepted, update the BusDK superproject
-submodule pointers for the promoted modules, then update the supervisor
-`projects/busdk` pointer. Do not mark this goal complete until those promotions
-are confirmed and the product-path verification is rerun from the promoted
-checkout or an explicit operator exception accepts the isolated-worktree proof.
+Do not mark this goal complete until that PostgreSQL restart proof is either
+run successfully or explicitly accepted as outside the local proof available
+in this environment.
 
 ## Appendix: Implementation History
 
