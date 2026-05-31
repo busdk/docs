@@ -63,7 +63,7 @@ superproject and submodule checkouts: never assume a dirty nested submodule is
 accidental, and never delete or reset worktrees without explicit reviewed
 intent.
 
-## Current Implementation Baseline
+## Pre-Feature Mainline Baseline
 
 As of the 2026-05-30 review, the repos module family is still a skeleton:
 `bus-repos`, `bus-api-provider-repos`, and `bus-integration-repos` build only
@@ -120,7 +120,8 @@ module worktree:
 - branch: `codex/repos-workspace-mvp`
 - base commit: `7647fd9e9454836425abdd146c4bcc511618f49a`
 - feature commits: `92063ce` (`Implement generic repos workspace MVP`) and
-  `7681148` (`Add reviewed repository refresh policy`)
+  `7681148` (`Add reviewed repository refresh policy`) and
+  `597d91b` (`Clarify repos CLI workspace examples`)
 
 Additional repos-family implementation worktrees were created on 2026-05-31:
 
@@ -137,7 +138,8 @@ Additional repos-family implementation worktrees were created on 2026-05-31:
 - feature commits: `3d54aa3` (`Implement repos integration MVP`) and
   `9d00ab8` (`Add repos remote rematerialization proof`) and
   `c9360de` (`Handle repos refresh events`) and
-  `21aea72` (`Clarify repos refresh execution docs`)
+  `21aea72` (`Clarify repos refresh execution docs`) and
+  `8ceb036` (`Clarify repos integration handoff docs`)
 
 Do not merge or promote these branches until the operator confirms the work.
 
@@ -185,7 +187,9 @@ Current feature-branch progress:
   without confirmation, configured remotes, and a local branch for pushes,
   refuses refresh execution without confirmation or a configured remote, and
   never deletes caller branches during maintenance, reconciliation, or refresh
-  planning/execution.
+  planning/execution. Its README now uses local sample paths and documents
+  explicit worktree path scope and cleanup safety before materialization
+  examples.
 - `bus-api-provider-repos` now has a feature-branch library HTTP handler and
   memory projection for generic repository list/show/status/sync-status reads
   plus `plan`, `cleanup-plan`, `cleanup`, `sync-plan`, `sync`, and `ensure`
@@ -228,7 +232,9 @@ Current feature-branch progress:
   fetched remote-tracking branch without using API projection or
   single-environment state as the source of truth. Its README now states that
   confirmed repository refresh executes the reviewed fetch refspec and updates
-  only remote-tracking refs for the selected remote.
+  only remote-tracking refs for the selected remote, separates materializing
+  ensure requests from cleanup/sync/planning behavior, and names the status
+  fields required before handing a workspace to another module.
 
 Remaining dependency inside this goal: caller modules such as workers, tasks,
 and future wikis still need to become callers of the generic repos
