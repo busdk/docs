@@ -128,14 +128,16 @@ Additional repos-family implementation worktrees were created on 2026-05-31:
 - branch: `codex/repos-api-workspace-mvp`
 - base commit: `255f6a266b22db4a0191392c6fa1aa557c74831a`
 - feature commits: `cd30d38` (`Implement repos API provider MVP`) and
-  `fd5d707` (`Add repos refresh API requests`)
+  `fd5d707` (`Add repos refresh API requests`) and
+  `39847c1` (`Clarify repos API provider setup docs`)
 
 - worktree: `/private/tmp/bus-integration-repos-workspace-mvp`
 - branch: `codex/repos-integration-workspace-mvp`
 - base commit: `f1fa4da6c574894c964005999f86d2d854fe089c`
 - feature commits: `3d54aa3` (`Implement repos integration MVP`) and
   `9d00ab8` (`Add repos remote rematerialization proof`) and
-  `c9360de` (`Handle repos refresh events`)
+  `c9360de` (`Handle repos refresh events`) and
+  `21aea72` (`Clarify repos refresh execution docs`)
 
 Do not merge or promote these branches until the operator confirms the work.
 
@@ -198,6 +200,10 @@ Current feature-branch progress:
   list, workspace-status, and sync-status projection views across restarts
   without making that file authoritative for workspace identity. It does not
   execute Git or import worker, task, wiki, or other product-domain semantics.
+  Its README now documents the required host pieces, a concrete runnable
+  library mount shape, demo-only no-op limits, and plan-before-confirm mutation
+  examples. Its PLAN makes documented `bus-api` provider mount wiring the
+  default next slice and a standalone service command secondary.
 - `bus-integration-repos` now has a feature-branch library Event processor for
   `bus.repos.list.request`, `bus.repos.plan.request`, and
   `bus.repos.cleanup.plan.request`, `bus.repos.cleanup.request`,
@@ -220,7 +226,9 @@ Current feature-branch progress:
   committing a caller file on a repos-managed branch, pushing it to a remote,
   fetching it into a fresh clone, and rematerializing the workspace from the
   fetched remote-tracking branch without using API projection or
-  single-environment state as the source of truth.
+  single-environment state as the source of truth. Its README now states that
+  confirmed repository refresh executes the reviewed fetch refspec and updates
+  only remote-tracking refs for the selected remote.
 
 Remaining dependency inside this goal: caller modules such as workers, tasks,
 and future wikis still need to become callers of the generic repos
