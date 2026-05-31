@@ -225,16 +225,17 @@ Current feature-branch progress:
 Remaining dependency inside this goal: caller modules such as workers, tasks,
 and future wikis still need to become callers of the generic repos
 request/status contract where they currently duplicate reusable Git/worktree
-policy, or those compatibility paths need to be explicitly documented before
-full goal acceptance. Caller migration or explicit compatibility acceptance
-remains future repos-family work. Repos should remain generic and those caller
-modules should remain the owners of their domain identifiers and metadata.
+policy. For the initial repos MVP handoff, the current worker and task
+compatibility paths are explicitly accepted as temporary callers. Repos should
+remain generic and those caller modules should remain the owners of their
+domain identifiers and metadata.
 
 ## Caller Compatibility Status
 
 The current worker and task implementations are compatibility callers rather
 than final repos clients. They may keep running while the repos MVP contract is
-reviewed, but their generic Git/worktree behavior should not be treated as the
+reviewed, accepted, and promoted. Their generic Git/worktree behavior is
+accepted for the initial repos MVP only and should not be treated as the
 long-term owner.
 
 The worker identity path is partly metadata-only today. `bus-worker` accepts
@@ -273,12 +274,31 @@ cleanup owner. The detailed pruning product goal remains
 `worktree-pruning-normal-operations.md`; this repos goal owns the generic
 repository/worktree surface that pruning can later call.
 
+The MVP compatibility decision covers the concrete caller-owned paths reviewed
+on 2026-05-31:
+
+- `bus-worker/internal/identity/worker.go` stores and validates
+  `WorkerHomeRef` as worker-owned metadata.
+- `bus-api-provider-worker/pkg/workersapi/handler.go` and the worker
+  projection pass worker home refs, branches, and worktree paths through
+  worker Events and status.
+- `bus-integration-worker/pkg/workersintegration/lifecycle.go` and
+  `lifecycle_executor.go` still shell out for App Server worker
+  `git fetch`, `git worktree add`, branch reuse, and checkout behavior.
+- `bus-integration-task/pkg/devtaskintegration` still owns isolated task
+  worktree preparation, task branch naming, promotion, and removal.
+- `bus-task` still has legacy worktree verification and dry-run-first pruning
+  commands.
+
 This compatibility documentation does not make the caller migrations complete.
-Full acceptance still requires either wiring the active caller paths to repos
-or explicitly accepting these compatibility paths as temporary for the MVP
-handoff. In both cases, the ownership boundary remains the same: product
-modules own domain identifiers and metadata; repos owns generic repository,
-branch, worktree, status, sync-planning, and safety mechanics.
+It accepts those existing paths as temporary for the initial repos MVP handoff
+so the generic repos contract can be reviewed without a cross-module worker
+and task migration in the same slice. The ownership boundary remains the same:
+product modules own domain identifiers and metadata; repos owns generic
+repository, branch, worktree, status, sync-planning, and safety mechanics.
+Follow-up worker, task, wiki, or other file-backed modules should become
+callers of repos primitives where they currently duplicate reusable Git and
+worktree policy.
 
 ## Worktree Support
 
@@ -306,8 +326,9 @@ This goal is accepted when:
 - status output is deterministic and script-friendly;
 - dirty, locked, active, missing, and malformed repository states are handled
   conservatively;
-- caller modules can use repos-owned primitives instead of duplicating generic
-  repository/worktree policy;
+- caller modules can use repos-owned primitives for new integrations, while
+  the currently reviewed worker and task Git/worktree paths are explicitly
+  accepted as temporary compatibility for the initial MVP handoff;
 - Git refs and committed caller-owned files, not single-environment service
   storage, are enough to recreate workspace materializations on another
   environment after clone/fetch;
