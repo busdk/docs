@@ -119,20 +119,23 @@ module worktree:
 - worktree: `/private/tmp/bus-repos-workspace-mvp`
 - branch: `codex/repos-workspace-mvp`
 - base commit: `7647fd9e9454836425abdd146c4bcc511618f49a`
-- feature commit: `92063ce` (`Implement generic repos workspace MVP`)
+- feature commits: `92063ce` (`Implement generic repos workspace MVP`) and
+  `7681148` (`Add reviewed repository refresh policy`)
 
 Additional repos-family implementation worktrees were created on 2026-05-31:
 
 - worktree: `/private/tmp/bus-api-provider-repos-workspace-mvp`
 - branch: `codex/repos-api-workspace-mvp`
 - base commit: `255f6a266b22db4a0191392c6fa1aa557c74831a`
-- feature commit: `cd30d38` (`Implement repos API provider MVP`)
+- feature commits: `cd30d38` (`Implement repos API provider MVP`) and
+  `fd5d707` (`Add repos refresh API requests`)
 
 - worktree: `/private/tmp/bus-integration-repos-workspace-mvp`
 - branch: `codex/repos-integration-workspace-mvp`
 - base commit: `f1fa4da6c574894c964005999f86d2d854fe089c`
 - feature commits: `3d54aa3` (`Implement repos integration MVP`) and
-  `9d00ab8` (`Add repos remote rematerialization proof`)
+  `9d00ab8` (`Add repos remote rematerialization proof`) and
+  `c9360de` (`Handle repos refresh events`)
 
 Do not merge or promote these branches until the operator confirms the work.
 
@@ -171,56 +174,61 @@ Current feature-branch progress:
   submodule status reporting, explicit fetch refspecs for remote-tracking
   refs, non-executing maintenance planning for stale local worktree caches and
   recovery candidates, non-executing reconciliation planning for local and
-  remote-tracking branch state, README/PLAN updates, and focused
-  package/CLI/e2e tests. It validates remote names as non-secret labels,
-  rejects more Git-invalid refs, protects explicit worktree paths from
+  remote-tracking branch state, repository-wide remote-tracking refresh
+  planning, explicitly confirmed refresh execution, README/PLAN updates, and
+  focused package/CLI/e2e tests. It validates remote names as non-secret
+  labels, rejects more Git-invalid refs, protects explicit worktree paths from
   option-like values, validates command usage before config loading, removes
   only the worktree while retaining the caller branch, refuses sync execution
-  without confirmation, configured remotes, and a local branch for pushes, and
-  never deletes caller branches during maintenance or reconciliation planning.
+  without confirmation, configured remotes, and a local branch for pushes,
+  refuses refresh execution without confirmation or a configured remote, and
+  never deletes caller branches during maintenance, reconciliation, or refresh
+  planning/execution.
 - `bus-api-provider-repos` now has a feature-branch library HTTP handler and
   memory projection for generic repository list/show/status/sync-status reads
   plus `plan`, `cleanup-plan`, `cleanup`, `sync-plan`, `sync`, and `ensure`
   request publication, plus `maintenance-plan` request publication for stale
   cache and recovery planning and `reconcile-plan` request publication for
-  local/remote branch comparison. Cleanup and sync execution requests require
-  `confirm=true` but still do not execute Git in the API provider. It preserves
-  non-secret submodule status entries from status snapshots and non-secret sync
-  execution evidence from `bus.repos.sync.response`. `NewFileProjection(path)`
-  can persist bounded list, workspace-status, and sync-status projection views
-  across restarts without making that file authoritative for workspace
-  identity. It does not execute Git or import worker, task, wiki, or other
-  product-domain semantics.
+  local/remote branch comparison, plus `refresh-plan` and `refresh` request
+  publication for reviewed remote-tracking refresh. Cleanup, refresh, and sync
+  execution requests require `confirm=true` but still do not execute Git in the
+  API provider. It preserves non-secret submodule status entries from status
+  snapshots and non-secret sync execution evidence from
+  `bus.repos.sync.response`. `NewFileProjection(path)` can persist bounded
+  list, workspace-status, and sync-status projection views across restarts
+  without making that file authoritative for workspace identity. It does not
+  execute Git or import worker, task, wiki, or other product-domain semantics.
 - `bus-integration-repos` now has a feature-branch library Event processor for
   `bus.repos.list.request`, `bus.repos.plan.request`, and
   `bus.repos.cleanup.plan.request`, `bus.repos.cleanup.request`,
   `bus.repos.maintenance.plan.request`, `bus.repos.sync.plan.request`,
-  `bus.repos.reconcile.plan.request`, `bus.repos.sync.request`, and
+  `bus.repos.reconcile.plan.request`, `bus.repos.refresh.plan.request`,
+  `bus.repos.refresh.request`, `bus.repos.sync.request`, and
   `bus.repos.ensure.request`. It delegates actual repository/worktree
   mechanics to an injected generic manager and emits list response, plan
   response, cleanup-plan response, cleanup response, maintenance-plan response,
-  reconcile-plan response, sync-plan response, sync response, status snapshot,
-  or stable error Events. It also has a Git-backed `NewReposManager` adapter
-  that connects those Events to the generic `bus-repos/pkg/repos` primitives
-  for configured repository listing, branch/worktree planning, worktree
-  materialization, cleanup planning, confirmed safe cleanup execution,
-  maintenance planning, reconciliation planning, sync planning, confirmed
-  fetch/push execution, status snapshots, and conservative branch-mismatch,
-  branch-active, and submodule-status handling. The integration feature branch
-  also proves caller-owned metadata portability by committing a caller file on
-  a repos-managed branch, pushing it to a remote, fetching it into a fresh
-  clone, and rematerializing the workspace from the fetched remote-tracking
-  branch without using API projection or single-environment state as the
-  source of truth.
+  reconcile-plan response, refresh-plan response, refresh response, sync-plan
+  response, sync response, status snapshot, or stable error Events. It also has
+  a Git-backed `NewReposManager` adapter that connects those Events to the
+  generic `bus-repos/pkg/repos` primitives for configured repository listing,
+  branch/worktree planning, worktree materialization, cleanup planning,
+  confirmed safe cleanup execution, maintenance planning, reconciliation
+  planning, refresh planning, confirmed remote-tracking refresh execution, sync
+  planning, confirmed fetch/push execution, status snapshots, and conservative
+  branch-mismatch, branch-active, and submodule-status handling. The
+  integration feature branch also proves caller-owned metadata portability by
+  committing a caller file on a repos-managed branch, pushing it to a remote,
+  fetching it into a fresh clone, and rematerializing the workspace from the
+  fetched remote-tracking branch without using API projection or
+  single-environment state as the source of truth.
 
 Remaining dependency inside this goal: caller modules such as workers, tasks,
 and future wikis still need to become callers of the generic repos
 request/status contract where they currently duplicate reusable Git/worktree
 policy, or those compatibility paths need to be explicitly documented before
-full goal acceptance. Mirror refresh/reconciliation execution policy and
-caller migration also remain future repos-family work. Repos should remain
-generic and those caller modules should remain the owners of their domain
-identifiers and metadata.
+full goal acceptance. Caller migration or explicit compatibility acceptance
+remains future repos-family work. Repos should remain generic and those caller
+modules should remain the owners of their domain identifiers and metadata.
 
 ## Caller Compatibility Status
 
