@@ -27,22 +27,42 @@ importing, or copying Events between environments.
 
 Use these focused files for work that used to be mixed into this handoff:
 
-- `docs/docs/goals/repos.md`: Git repository, branch, and worktree operations.
-- `docs/docs/goals/workers.md`: the `bus workers` product/API/integration
+- `docs/goals/repos.md`: Git repository, branch, and worktree operations.
+- `docs/goals/workers.md`: the `bus workers` product/API/integration
   surface for agent worker identity and lifecycle.
-- `docs/docs/goals/tasks.md`: completing the generic task/thread system and
+- `docs/goals/tasks.md`: completing the generic task/thread system and
   removing broken legacy task behavior.
-- `docs/docs/goals/manual-spark-worker-bootstrap.md`: the temporary manual
+- `docs/goals/manual-spark-worker-bootstrap.md`: the temporary manual
   remote Spark worker launcher used to accelerate implementation before the
   product worker control plane is complete.
-- `docs/docs/goals/service-owned-events-relay.md`: detailed Events relay
+- `docs/goals/service-owned-events-relay.md`: detailed Events relay
   service ownership and deployment.
-- `docs/docs/goals/service-owned-task-scheduler.md`: scheduler/service-loop
+- `docs/goals/service-owned-task-scheduler.md`: scheduler/service-loop
   details that remain relevant while task scheduling moves behind the worker
   and integration surfaces.
+- `docs/goals/worker-runner-providers.md`: container-backed and VM-backed
+  worker runner providers. Those runners may later participate in
+  multi-environment coordination, but they are not part of the accepted local
+  native Spark worker MVP.
 
 If another scope appears during implementation, create or update a focused
 goal file instead of expanding this file back into a catch-all handoff.
+
+## Deferred From Accepted Workers MVP
+
+The accepted [workers goal](/docs/goals/workers.md) scope stops at local native Services
+and local sandboxed Codex Spark workers. The following unfinished worker work
+belongs to this goal when it involves more than one environment:
+
+- routing `bus.workers.*` create/control/message/status Events between local
+  and remote Events APIs;
+- preserving environment identity in local worker projections when multiple
+  environments report worker evidence;
+- ensuring that the destination environment's own `bus-integration-workers`
+  service creates and controls its workers, instead of a local process starting
+  remote workers directly;
+- proving local plus remote worker status and guidance through the product
+  Events/API path.
 
 ## Current Product Direction
 
@@ -104,24 +124,26 @@ Current implementation baseline:
 
 Dependencies for full acceptance:
 
-- Finish enough of `docs/docs/goals/service-owned-events-relay.md` to deploy a live
-  service-owned route that carries both `bus.task.*` and `bus.workers.*`
-  Events between the local control environment and dev-hg/H100-style worker
+- Finish enough of the
+  [service-owned Events relay goal](/docs/goals/service-owned-events-relay.md)
+  to deploy a live service-owned route that carries both `bus.task.*` and
+  `bus.workers.*` Events between the local control environment and remote worker
   environments without a supervisor import/export loop.
-- Finish enough of `docs/docs/goals/workers.md` for worker identity, lifecycle,
-  list/status projection, assignment, App Server control, and worker-owned
-  service-loop behavior through the product `bus.workers.*` path.
-- Finish enough of `docs/docs/goals/tasks.md` and
-  `docs/docs/goals/service-owned-task-scheduler.md` for the canonical task queue,
-  assignment, claimability, exact-ref worker start, capacity, stale-claim, and
-  terminal evidence contracts. The scheduler goal still contains historical
-  `bus.dev.task.*` wording, so update or reinterpret it against the current
-  `bus.task.*` and worker-family names before using it as implementation
-  guidance.
-- Finish enough of `docs/docs/goals/repos.md` before claiming automatic
-  worker/task worktree and branch creation as product behavior. Current worker
-  and task modules still contain interim Git/worktree behavior that should
-  migrate behind repos-owned primitives.
+- Finish enough of the [workers goal](/docs/goals/workers.md) for worker
+  identity, lifecycle, list/status projection, assignment, App Server control,
+  and worker-owned service-loop behavior through the product `bus.workers.*`
+  path.
+- Finish enough of the [tasks goal](/docs/goals/tasks.md) and
+  [service-owned task scheduler goal](/docs/goals/service-owned-task-scheduler.md)
+  for the canonical task queue, assignment, claimability, exact-ref worker
+  start, capacity, stale-claim, and terminal evidence contracts. The scheduler
+  goal still contains historical `bus.dev.task.*` wording, so update or
+  reinterpret it against the current `bus.task.*` and worker-family names before
+  using it as implementation guidance.
+- Finish enough of the [repos goal](/docs/goals/repos.md) before claiming
+  automatic worker/task worktree and branch creation as product behavior.
+  Current worker and task modules still contain interim Git/worktree behavior
+  that should migrate behind repos-owned primitives.
 - Restore and prove the local Events API gate in `bus-events/PLAN.md` before
   treating any remote multi-environment proof as product evidence. Remote
   routing is not trustworthy if the local Events service, append/replay,

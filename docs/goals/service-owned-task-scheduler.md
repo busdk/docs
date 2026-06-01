@@ -128,7 +128,7 @@ Relevant files touched in this goal thread:
 
 - `bus-integration-dev-task/PLAN.md`
 - `bus-dev/PLAN.md`
-- `docs/docs/goals/service-owned-task-scheduler.md`
+- `docs/goals/service-owned-task-scheduler.md`
 
 There was existing dirty repository state outside this goal. Do not assume all
 dirty state belongs to this handoff.
@@ -165,15 +165,13 @@ bus lint PLAN.md
 
 Both checks passed in both module directories.
 
-This handoff file should still be checked after creation with:
+From the docs repository checkout, this handoff file should still be checked
+after creation with:
 
 ```bash
-git -C docs diff --check -- docs/goals/service-owned-task-scheduler.md
-bus lint docs/docs/goals/service-owned-task-scheduler.md
+git diff --check -- docs/goals/service-owned-task-scheduler.md
+bus lint docs/goals/service-owned-task-scheduler.md
 ```
-
-Run those from the superproject unless current state shows a different docs
-checkout layout.
 
 ## Important Design Decisions
 
@@ -219,6 +217,25 @@ The implementation is not complete. The next thread should not mark the
 product goal done until code, tests, status output, and at least fixture/e2e
 proof satisfy the requirements in the PLAN entries.
 
+## Deferred From Accepted Workers MVP
+
+The accepted local sandboxed Codex workers MVP deliberately does not require
+workers to auto-pick tasks. It proves that an operator can create a long-running
+local `direct` / `codex-direct` Spark worker, guide it through
+`bus workers message`, observe responses/status/logs/attach evidence, and stop
+it.
+
+The next scheduler-owned worker work belongs here, not in the
+[workers goal](/docs/goals/workers.md):
+
+- idle worker task-picking;
+- atomic task claim and reopen behavior before worker creation;
+- queue and capacity ownership across workers;
+- scheduler-owned status for launch-pending, claimed, running, stale, and
+  terminal work;
+- a long-running service loop that starts or assigns workers without relying on
+  one-shot test commands.
+
 The highest-risk implementation areas are:
 
 - Correct replay projection for task lifecycle events.
@@ -236,7 +253,7 @@ The highest-risk implementation areas are:
 
 Start by reading:
 
-1. `docs/docs/goals/service-owned-task-scheduler.md`
+1. `docs/goals/service-owned-task-scheduler.md`
 2. `bus-integration-dev-task/PLAN.md`, especially the active scheduler item
 3. `bus-dev/PLAN.md`, especially the active scheduler-status item
 4. `bus-integration-dev-task/pkg/devtaskintegration/supervisor.go`
@@ -256,7 +273,7 @@ Then verify the handoff itself:
 
 ```bash
 git -C docs diff --check -- docs/goals/service-owned-task-scheduler.md
-bus lint docs/docs/goals/service-owned-task-scheduler.md
+(cd docs && bus lint docs/goals/service-owned-task-scheduler.md)
 ```
 
 The first implementation slice should be small but aligned with the real end

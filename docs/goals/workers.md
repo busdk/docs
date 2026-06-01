@@ -2,13 +2,16 @@
 
 ## Goal
 
-Build the Bus worker product surface for creating and operating agent workers
-with durable identity, state, assignment, and non-secret runtime metadata.
+This page is now the acceptance record for the first Bus workers MVP: local
+native Services plus local sandboxed Codex Spark workers. The accepted product
+surface creates and operates agent workers with durable identity, state,
+assignment, and non-secret runtime metadata through the `bus workers ...`
+product path.
 
-The target UX is `bus workers ...`. Workers should behave like a Bus-managed
-runtime resource: listable, creatable, pausable, resumable, assignable, and
-observable through the local API/controller service and local worker
-integration service.
+The target UX is `bus workers ...`. In the accepted local scope, workers behave
+like Bus-managed runtime resources: listable, creatable, pausable, resumable,
+assignable, and observable through the local API/controller service and local
+worker integration service.
 
 The first acceptance scope is local sandboxed Codex workers only. A Codex
 worker runs through the `direct` / `codex-direct` runner on the selected local
@@ -198,10 +201,10 @@ Accepted evidence so far:
   `070-workers-product-real-codex.sh` with
   `BUS_WORKERS_REAL_CODEX_PRODUCT_E2E=1`. The real Codex proof completed with
   `real codex product e2e OK`.
-- `bus-worker` / `bus-workers` must issue create, message,
-  message-projection reads through the existing `bus-workers messages` path,
-  and stop requests for the MVP story while remaining API-client-only, with no
-  persistent local worker identity store such as `.bus/worker/config.json`.
+- `bus-worker` / `bus-workers` issue create, message, message-projection reads
+  through the existing `bus-workers messages` path, and stop requests for the
+  MVP story while remaining API-client-only. The product path has no persistent
+  local worker identity store such as `.bus/worker/config.json`.
 - The `bus workers ...` dispatcher form does not require worker-specific code
   in the public `bus` dispatcher. The dispatcher already resolves the first
   word to `bus-<command>` on `PATH`; with the feature-branch `bus-workers`
@@ -399,7 +402,7 @@ blocking this accepted scope:
 - The worker-needed repos slice now has product-path proof through
   `bus-integration-repos`: worker create materializes the product and
   worker-identity worktrees through repos Events and reaches
-  create/message/respond/stop. The full `docs/docs/goals/repos.md` goal may
+  create/message/respond/stop. The full [repos goal](/docs/goals/repos.md) may
   continue independently, but the local repos slice needed by workers has been
   reviewed, promoted, and included in the promoted-checkout proof.
 - Explicit `bus workers assign` can be implemented and tested before idle
@@ -408,19 +411,19 @@ blocking this accepted scope:
   contract when the target is a specific worker.
 
 Idle worker task claiming, queue/capacity behavior, and scheduler-owned status
-belong to `docs/docs/goals/tasks.md` and
-`docs/docs/goals/service-owned-task-scheduler.md`. They may create or assign workers
-through the same canonical worker contract later, but a service-owned
-scheduler/task-claiming loop is not an acceptance requirement for the initial
-local sandboxed Codex worker product.
+belong to the [tasks goal](/docs/goals/tasks.md) and the
+[service-owned task scheduler goal](/docs/goals/service-owned-task-scheduler.md).
+They may create or assign workers through the same canonical worker contract
+later, but a service-owned scheduler/task-claiming loop is not an acceptance
+requirement for the initial local sandboxed Codex worker product.
 
 Remote worker hosts, service-owned Events relay, multi-environment worker
 reads, and remote credential-source proof are tracked by
-`docs/docs/goals/service-owned-events-relay.md`,
-`docs/docs/goals/multi-environment-task-worker-refactor.md`, and
-`docs/docs/goals/remote-credential-source-selection.md`. Those goals may reuse the
-workers Event contract, but they are not blockers for accepting the local
-sandboxed Codex worker product path.
+[service-owned Events relay](/docs/goals/service-owned-events-relay.md),
+[multi-environment task and worker coordination](/docs/goals/multi-environment-task-worker-refactor.md),
+and [remote credential source selection](/docs/goals/remote-credential-source-selection.md).
+Those goals may reuse the workers Event contract, but they are not blockers for
+accepting the local sandboxed Codex worker product path.
 When remote support is added, the local environment must not directly start a
 worker process in another environment. The expected remote model is Event
 routing: a local provider publishes canonical worker request Events, relay
@@ -432,17 +435,17 @@ equivalent stable container lifecycle boundary before a container provider can
 be accepted; that is not part of the first local sandboxed Codex acceptance
 scope.
 
-## Required Behavior
+## Accepted Worker Contract
 
-`bus workers list` should call the workers API provider and list all visible
-workers from that provider's projection. It must not read or maintain a
-`bus-worker` local identity registry. The response should include enough
-information for a supervisor to understand where each worker lives and what it
-is doing. In the first local sandboxed Codex scope, list responses must
+The accepted local MVP contract is that `bus workers list` calls the workers API
+provider and lists visible workers from that provider's projection. It does not
+read or maintain a `bus-worker` local identity registry. The response includes
+enough information for a supervisor to understand where each worker lives and
+what it is doing. In the first local sandboxed Codex scope, list responses
 preserve the reporting worker environment id; multi-environment response
 merging belongs to the remote/relay goals.
 
-The product should support:
+The accepted product surface supports:
 
 - create a worker with identity, environment, model, module, branch/worktree
   target, worker identity home, runner provider, sandbox, and prompt/task
@@ -466,42 +469,31 @@ it is an API controller and bounded read projection over worker Events.
 `--workers-file` in the current integration command is bootstrap input for
 local development and preflight only.
 
-The first accepted persistent source for worker identity, configuration,
-desired lifecycle, and audit history should be the canonical Bus Events API
-history. `bus.workers.*` Events record facts such as worker creation, display
+The accepted persistent source for worker identity, configuration, desired
+lifecycle, and audit history is the canonical Bus Events API history.
+`bus.workers.*` Events record facts such as worker creation, display
 name changes, model/profile configuration changes, desired runner provider,
 sandbox policy, task assignment, desired lifecycle transitions, and status
 snapshots. `bus-integration-workers` owns applying those Events in the
-environment that can actually run the worker, but the service should rebuild
+environment that can actually run the worker, and the service rebuilds
 its projection from Events history rather than from a private local database or
 metadata file. This keeps multi-environment sync aligned with the normal
 Events API sync path instead of requiring every worker service to implement and
 replicate its own persistent store.
 
-Because worker identity/configuration is event-sourced, the Events API must be
-usable for targeted projection replay through a generic recipient and parent
-addressing model. `bus-integration-workers` and `bus-api-provider-workers`
-need a fast way to fetch a bounded range of Events for one worker UUID, rather
-than replaying every `bus.workers.*` Event for the account and filtering in
-process, but this must be expressed as normal Events recipient querying. The
-worker goal should therefore depend on an Events API capability, or add it in
-the same acceptance slice, that can query by indexed recipient UUID, optional
-parent hierarchy, and event range without knowing what a worker is. The
-minimum shape is: account scope from the JWT, authorization that may restrict
-which Events a token is allowed to see, one or more event names or name
-prefixes, a canonical recipient UUID, optional parent/service/environment
-filters, an ordered range such as after/before event id or since/until
-timestamp, and a bounded `limit`. Service-level tokens also need an explicit,
-authorized way to request history for a specific recipient or parent subtree
-when building projections. The exact REST shape should follow the cleanest API
-contract for bounded history reads: it may extend replay/no-follow streams
-when that remains simple and standards-aligned, or add a separate query/history
-endpoint when that is clearer for range queries, limits, and indexed filters.
-PostgreSQL-backed Events should have indexes that make recipient UUID plus
-event-order queries efficient, and optionally make parent/subtree queries
-efficient. Broadcast/follow streams can remain the live delivery path, but
-restart hydration and per-recipient status, message, and configuration reads
-must have a bounded replay path for the specific recipient.
+Because worker identity/configuration is event-sourced, the accepted Events API
+path supports targeted projection replay through generic recipient and parent
+addressing metadata. `bus-integration-workers` and
+`bus-api-provider-workers` can request bounded ranges of Events for one worker
+UUID instead of replaying every `bus.workers.*` Event and filtering in process.
+This is expressed as normal Events recipient querying, not worker-specific
+transport: account scope comes from the JWT, authorization can restrict visible
+Events, requests can filter by event names or prefixes, canonical recipient
+UUID, optional parent/service/environment metadata, timestamp range, and
+bounded `limit`. PostgreSQL-backed Events store indexed addressing fields and
+event timestamps for this accepted local projection path. Broader Events relay,
+cross-environment sync, and service deployment hardening remain in the
+neighboring relay and multi-environment goals.
 
 The Events API addressing model should reflect normal Bus topology without
 becoming worker-specific. Bus deployments have environments identified by
@@ -605,7 +597,8 @@ identity field.
 Each worker should get an isolated worktree and implementation branch
 automatically. Repository and worktree policy should use the repos goal rather
 than being duplicated in the worker integration service. The canonical
-repository rules are in `docs/docs/goals/repos.md`: create a worker-owned worktree
+repository rules are in the [repos goal](/docs/goals/repos.md): create a
+worker-owned worktree
 from the configured source repository, use a unique implementation branch per
 worker/task assignment, report dirty/locked/active states conservatively, and
 never reset or delete a worker worktree as part of normal lifecycle control.
@@ -781,9 +774,10 @@ The first interoperable payload contract must include these names and fields:
 - `bus.workers.stop.request`: required string field `id`; optional string
   fields `environment_id` and `reason`; optional boolean field
   `preserve_worktree`, defaulting to `true` for the first product slice. The
-  current feature branch has local API, Event ACL, integration lifecycle, and
-  CLI coverage for stop; first-scope stop acceptance depends on local
-  product-path proof.
+  promoted local product-path proof covers stop for the first accepted MVP:
+  the operator can request stop through `bus workers`, the request is published
+  through the Workers API/Event path, `bus-integration-workers` stops the
+  direct runner, and projected status reaches `stopped`.
 - `bus.workers.assign.request`: required string fields `id` and `task_ref`;
   optional string fields `environment_id`, `assignment_id`, and `reason`.
 - `bus.workers.message.request`: required string fields `id` and `text`;
@@ -838,18 +832,17 @@ The first interoperable payload contract must include these names and fields:
   reference. If an endpoint requires auth material or would embed credentials,
   status should expose only `logical_endpoint`, `runtime_ref`, or another
   non-secret attach reference instead.
-  `worktree_path` and `logs_path` are current bootstrap fields; `worktree_ref`
-  and `logs_ref` are the preferred durable-reference direction once
-  repos/artifact ownership is ready. `container_id` is only meaningful for
-  container runners; non-container runners should use provider-neutral
-  `runtime_ref` or bounded metadata. Direct-runner metadata should include
-  `codex_home`, `scratch_path`, `sandbox`, `session_backend`, and
-  `writable_roots` when available; because `metadata` is string-to-string,
-  `writable_roots` is encoded as a comma-separated string until a later typed
-  status field exists. Later remote proofs that use `bus-remote` environment
-  configuration should carry non-secret provenance metadata such as
-  `remote_id`, `remote_host`, `remote_user`, `events_url`, `worker_root`,
-  `credential_source_kind`, and `credential_source_label`.
+  `worktree_path` and `logs_path` are accepted local direct-runner evidence
+  fields, while `worktree_ref` and `logs_ref` preserve the durable-reference
+  direction for repos/artifact-owned locations. `container_id` is future-only
+  for container runners and belongs to the worker runner providers goal;
+  non-container runners use provider-neutral `runtime_ref` or bounded metadata.
+  Accepted direct-runner metadata includes `codex_home`, `scratch_path`,
+  `sandbox`, `session_backend`, and `writable_roots` when available; because
+  `metadata` is string-to-string, `writable_roots` is encoded as a
+  comma-separated string until a later typed status field exists. Remote
+  provenance metadata belongs to the multi-environment and relay goals, not the
+  accepted local worker contract.
   Token-file paths and credential values are not valid worker status metadata.
 
 Defaults: first-scope local worker reads and mutations should target one
@@ -962,9 +955,10 @@ guiding it. Idle workers may claim an approved available task only after the
 task and service-owned scheduler goals have accepted the canonical
 claimability, queue, capacity, and scheduler-owned status contracts.
 
-## Acceptance Criteria
+## Accepted Criteria And Evidence Map
 
-This goal is accepted when:
+This goal is accepted because the promoted implementation and proof satisfy
+these criteria:
 
 - `bus workers` is the documented product CLI for worker identity and control;
 - the local API provider publishes and projects canonical `bus.workers.*`
@@ -1138,7 +1132,7 @@ tests/e2e/069-workers-product-direct-integration.sh`;
 tests/e2e/070-workers-product-real-codex.sh`; and `bash
 tests/e2e/071-workers-product-repos-materializer.sh`. Documentation and diff
 hygiene checks also pass after the post-promotion goal update with
-`bus lint docs/docs/goals/workers.md` and `git diff --check`.
+`bus lint docs/goals/workers.md` and `git diff --check`.
 
 Durable Events backend proof was completed after promotion by running `make
 e2e` in `bus-api-provider-events` with
@@ -1193,958 +1187,63 @@ integration, worker CLI, workers API provider, workers integration provider,
 added the local Services stack that can start the required worker services from
 `services.yml`.
 
-No first-scope product blocker remains for local sandboxed Codex workers. Work
-outside this accepted MVP includes automatic task-picking scheduler service
-ownership, remote environment relay/operation, container-backed worker runners,
-VM-backed worker runners, and further production hardening of multi-environment
-sync and service operations.
-
-## Appendix: Implementation History
-
-### 2026-05-31 Local Sandbox Scope Refinement
-
-The first accepted workers goal was narrowed to local sandboxed Codex workers.
-Remote worker hosts, cross-environment Events relay, remote credential-source
-proof, container runners, and VM runners are adjacent goals rather than
-acceptance requirements here.
-
-The accepted worker must be a real long-running Codex App Server/runtime
-instance using this environment's Codex runtime and sandbox, not a one-shot
-command, smoke script, or unguidable test launcher. The first proof uses
-`gpt-5.3-codex-spark` exactly, while keeping the model configurable for later
-worker profiles.
-
-The remote model was also corrected: later remote support should not make a
-local environment directly start worker processes in another environment.
-Instead, local worker APIs publish canonical `bus.workers.*` Events, relay
-routes those Events to the destination environment, and that destination
-environment's own `bus-integration-workers` service creates, controls,
-observes, and reports its workers.
-
-Service-owned scheduler/task claiming is also outside the first acceptance
-unless it is explicitly reopened. The initial worker product must support
-long-running workers that can be created, controlled, assigned, observed,
-attached to, guided with task details, and stopped; automatic idle-task
-claiming belongs to the task and scheduler goals.
-
-### 2026-05-30 Review Notes
-
-This file was reviewed against the neighboring goal files and the current
-`bus-worker`, `bus-api-provider-worker`, `bus-integration-worker`, `bus-api`,
-`bus-events`, `bus-task`, `bus-repos`, and `bus-agent` checkouts on
-2026-05-30. No product implementation worktree or feature branch was created
-for this review; the operator requested review-only work and allowed the goal
-file itself to be updated in the main checkout.
-
-The current code already has accepted bootstrap slices that should not be
-rediscovered as absent:
-
-- `bus-worker` provides the current singular implementation module and legacy
-  scaffold binary. Its earlier local non-secret identity registry is
-  superseded by the API-client-only direction in this goal; accepted product
-  behavior should use API-mode list/show/create/message/pause/resume/assign/
-  status calls. The product CLI target remains plural: `bus workers ...`.
-- `bus-api-provider-worker` builds the plural `bus-api-provider-workers`
-  service, publishes canonical `bus.workers.*` request Events, listens to
-  list/status response Events, and maintains memory or file-backed projections.
-- `bus-api` can mount the workers provider through the `worker` or `workers`
-  module alias when the module is enabled.
-- `bus-integration-worker` builds the plural `bus-integration-workers`
-  command, handles list/create/pause/resume/assign requests, publishes
-  list/status responses, and has App Server plan/exec lifecycle scaffolding.
-  That lifecycle scaffolding is currently too container-shaped in places and
-  must be moved behind a runner-provider boundary instead of becoming the
-  permanent worker architecture.
-
-The remaining work is therefore contract normalization, durable/lived
-projection behavior, real App Server lifecycle proof, repository/worktree
-integration, runner-provider abstraction, stop support, and product hardening.
-
-### 2026-05-31 Runner Provider Refinement
-
-This goal was refined against
-`docs/docs/goals/manual-spark-worker-bootstrap.md` on 2026-05-31. The manual
-bootstrap goal now deliberately targets host-run Codex workers with no Docker,
-Podman, VM, or nested virtualization dependency. The product workers goal
-should inherit that lifecycle shape for its first direct runner instead of
-treating the older container/App Server bootstrap shape as canonical.
-
-The manual bootstrap goal is not a required predecessor for this product goal:
-it is a temporary acceleration and proof path. However, the product
-implementation should reuse its accepted concepts so that operators do not
-learn two unrelated worker models. In particular, the product lifecycle should
-eventually create and report:
-
-- a product/module worktree created from the reviewed BusDK module pin;
-- a unique implementation branch for the worker or assignment;
-- a worker identity branch derived from a configurable prefix and the worker
-  UUID, defaulting to `worker/{worker_uuid}`, plus a local worktree
-  materialized from that branch in the `agents/worker` repository;
-- editable worker-local `AGENTS.md`, durable memory, and hourly memo logs
-  under the worker identity worktree;
-- worker-local logs, scratch, and isolated `CODEX_HOME` paths;
-- explicit model and sandbox settings, with `gpt-5.3-codex-spark` passed
-  through exactly for the first Codex proof;
-- a non-secret runtime reference for the live process, session, container, or
-  later VM;
-- enough metadata for `status`, `logs`, `attach` or equivalent live guidance,
-  and eventual stop/recovery flows without exposing secrets.
-
-The first product runner provider should therefore be `direct`/`codex-direct`:
-Codex runs directly on the selected environment with Bus-managed Git
-worktrees, branches, worker identity checkout, `CODEX_HOME`, logs, scratch,
-and sandbox boundaries. Container and VM providers must be additive
-implementations behind the same runner-provider interface, not reasons to
-reshape the user-facing worker contract.
-
-The manual bootstrap work is useful proof, not a second source of truth. Its
-accepted host-run shape should become the direct provider's lifecycle recipe,
-while container and VM providers translate the same canonical worker lifecycle
-into their own runtime mechanics.
-
-The related manual-script implementation lane is branch
-`codex/manual-go-worker-script`, with the session worktree recorded in the
-supervisor memo as `worktrees/manual-go-worker-script/busdk` relative to the
-supervisor checkout root. It primarily changes
-`scripts/manual-dev-hg-spark-worker.sh`. That branch is not a prerequisite for
-starting product worker work and must not be merged or promoted through this
-goal. Treat it as implementation evidence for the direct runner shape:
-`WORKER` maps to worker `id`, `MODULE` to `module`, `BRANCH` to `branch`, the
-worker identity branch to `worker_home_ref` or bounded status metadata, and
-the live process/session id to provider-neutral `runtime_ref`.
-Product Events should carry `logs_path`, `worktree_path`, `runner_kind`,
-`runner_provider`, and bounded metadata such as `codex_home`, `scratch_path`,
-`sandbox`, and `session_backend`; they should not inherit manual-only
-configuration names, shell command shapes, or the older Docker container/image
-bootstrap model.
-
-### 2026-05-31 Direct Codex Worker Implementation Worktrees
-
-Initial product work for direct Codex workers is isolated outside the main
-module checkouts. Do not merge or promote these branches until the operator
-explicitly confirms the work. Worktree locations below are session-local and
-relative to the supervisor checkout root; the branch names are the durable
-recovery handles:
-
-- `bus-worker`: branch `codex/workers-direct`, worktree
-  `worktrees/workers-direct/bus-worker`.
-- `bus-api-provider-worker`: branch `codex/workers-direct`, worktree
-  `worktrees/workers-direct/bus-api-provider-worker`.
-- `bus-integration-worker`: branch `codex/workers-direct`, worktree
-  `worktrees/workers-direct/bus-integration-worker`.
-- `bus-api-provider-events`: branch `codex/workers-direct`, worktree
-  `worktrees/workers-direct/bus-api-provider-events`.
-- `bus-api`: branch `codex/workers-direct`, worktree
-  `worktrees/workers-direct/bus-api`.
-- `bus-integration-repos`: branch `codex/workers-direct`, worktree
-  `worktrees/workers-direct/bus-integration-repos`.
-
-The first slice carries `runner_kind`, `runner_provider`, and `runtime_ref`
-through the worker CLI/client, API-provider create/projection/status path, and
-integration-provider status snapshots. It also adds a direct Codex lifecycle
-planner and command-backed executor in `bus-integration-workers` for host-run
-Codex workers using product worktree, worker identity worktree, isolated
-`CODEX_HOME`, logs, scratch, model, sandbox, non-secret runtime metadata, and
-process-backed pause/resume/stop control. A local process smoke test proves
-the executor against temporary Git repositories and a fake Codex executable:
-it creates both worktrees, starts a host process, records process runtime
-metadata, writes logs/startup evidence under the isolated `CODEX_HOME`, and
-stops the process without container tooling. The direct executor prepares the
-assigned Bus module inside the product worktree by initializing its submodule,
-checking out or creating the worker branch, and initializing safe local sibling
-module replacements discovered from the module `go.mod`.
-
-The follow-up selector slice adds the first runner-provider registry inside
-`bus-integration-workers`: empty create/control requests default to
-`direct`/`codex-direct`, explicit direct requests route to the same provider,
-and unsupported runner kinds/providers fail with a bounded lifecycle failure
-snapshot instead of leaking provider-specific behavior into callers. The
-direct command modes now return this selector with a direct provider
-registered, so future container or VM providers have an extension point below
-the workers integration boundary.
-
-The Events ACL slice adds `bus.workers.stop.*` to the protected worker control
-namespace in `bus-api-provider-events`, requiring `workers:control` to publish
-stop requests and `workers:read` to stream them. This keeps stop aligned with
-pause, resume, and assign for the first direct Codex worker control surface
-instead of forcing ordinary stop operations through `workers:admin`.
-
-The logs/attach guidance slice adds provider-neutral read endpoints and CLI
-commands in the current singular scaffolds. `bus-api-provider-workers` now
-serves `GET /api/v1/workers/{id}/logs` and
-`GET /api/v1/workers/{id}/attach` from the worker projection. The accepted
-operator-facing command shape is plural `bus workers logs <worker-id>` /
-`bus workers attach <worker-id>`; the singular `bus worker ...` binary is
-legacy scaffolding while the module is being promoted. The returned guidance is
-bounded and non-secret:
-`logs_path`, `runtime_ref`, `app_server_url`, `session_backend`, runner
-kind/provider, worktree path, and environment id. The CLI and API provider do
-not embed provider-specific terminal or filesystem access policy; the
-integration provider remains the source of truth for direct-runner metadata.
-
-The plural product CLI slice adds a real `bus-workers` executable in the
-current `bus-worker` implementation worktree while keeping `bus-worker` as a
-legacy/scaffold compatibility binary. The module build now produces both
-binaries, install/uninstall handle the plural alias, the e2e check verifies the
-plural binary can read the local registry, and README examples use the built
-`./bin/bus-workers` executable that the Bus dispatcher can resolve for the
-target `bus workers ...` UX. The e2e now also starts a local workers API stub
-and drives the plural executable through the API path for direct Codex worker
-create, list, status, logs, attach, assign, pause, resume, and stop using
-`gpt-5.3-codex-spark`, `direct`/`codex-direct`, runtime refs, logs paths, and
-session metadata. This proves the product CLI's API-mode command encoding and
-output for the direct-worker lifecycle without containers, while still leaving
-the real API provider relay and remote dev-hg path as separate acceptance
-evidence.
-
-The product CLI error-handling slice keeps that API-mode UX aligned with the
-provider read-refresh hardening. `bus-workers` now parses structured workers
-API error envelopes such as `refresh_failed` and prints the error type plus
-bounded message, while non-JSON HTTP error bodies are no longer echoed to the
-terminal. This prevents token-file paths or private relay diagnostics from a
-failed provider/relay read from leaking through the CLI, but still gives the
-operator a useful status and reason. Focused tests cover both structured
-`refresh_failed` errors and plain HTTP error bodies containing a synthetic
-private token path. The `bus-worker` `make check` gate passed for this slice,
-including the plural binary build and local API e2e stub.
-
-The API-provider product-path proof slice adds a hermetic direct-worker
-lifecycle projection test in `bus-api-provider-workers`: create, pause, resume,
-assign, list, logs, attach, and stop requests are published as canonical
-`bus.workers.*` Events, a simulated direct worker environment returns
-`bus.workers.status.snapshot` and `bus.workers.list.response` evidence, and the
-provider projection makes the direct runner status, lifecycle phase, task ref,
-runtime ref, logs path, worktree path, runner kind/provider, and
-`session_backend` metadata observable through the API. The provider module also
-now refreshes projection evidence after publishing a list request when a
-mounting service supplies a request-scoped refresh hook, so same-response list
-reads can include returned multi-environment worker evidence without requiring
-the provider package to own a hidden background listener. A focused unit test
-proves that the hook runs after `bus.workers.list.request` is published and
-before the list response is read from the projection. The provider module also
-now has a minimal e2e readiness smoke so its standard `make check` gate passes
-instead of failing on a missing `tests/e2e.sh`.
-
-The provider read-refresh hardening slice makes that same request-scoped
-refresh path fail closed. `bus-api-provider-workers` now returns a bounded
-`502 refresh_failed` response if list/show/status/logs/attach publishes its
-worker evidence request but the mounted provider or standalone refresh hook
-cannot replay returned worker Events into the projection. The response does not
-include the raw refresh error, so relay diagnostics cannot leak token-file
-paths or private transport details. Focused tests cover both multi-environment
-list and targeted status refresh failures after the canonical
-`bus.workers.list.request` has been published. This is still local product-path
-hardening rather than live service-owned relay proof, but it prevents stale or
-empty reads from being mistaken for a successful worker relay.
-
-The stronger API-provider product-path slice wires the API provider test
-harness to the actual `bus-integration-workers` handler and direct lifecycle
-through local module replacements. The in-process loopback publishes the
-provider's canonical `bus.workers.*` requests into `workersintegration.Worker`,
-uses the real direct runner selector/lifecycle with a fake process runner, and
-applies the emitted `bus.workers.status.snapshot` and
-`bus.workers.list.response` Events back into the API projection. This proves
-create, pause, resume, assign, list, logs, attach, and stop across the local
-API-provider-to-integration-provider contract without a hand-written status
-simulator, while still remaining hermetic and container-free. It is not a
-substitute for service-owned relay or remote dev-hg proof.
-
-The API-provider binary e2e slice strengthens the standalone local provider
-proof. `bus-api-provider-workers` is now started as a real binary against a
-hermetic fake Bus Events endpoint, then driven through direct-worker create,
-pause, resume, assign, and stop HTTP requests. The e2e asserts that the
-accepted create response preserves `worker_home_ref` and that the fake Events
-endpoint received canonical `bus.workers.*` Events with `gpt-5.3-codex-spark`,
-`direct`/`codex-direct`, module, branch, sandbox, create `task_ref`, control
-`reason`, assign `assignment_id`, and stop `preserve_worktree=true`. This
-proves the binary's event-publication contract for the direct Codex worker
-path without starting containers or depending on a live remote relay.
-
-The `bus-api` normal-path slice adds an isolated `bus-api` worktree to the
-same feature branch family and proves that the workers provider can be mounted
-through the local API gateway for direct Codex worker requests. A focused
-`bus-api` e2e starts a fake Bus Events endpoint, runs `bus-api serve
---provider workers --enable-module workers`, sends direct-worker create,
-pause, resume, assign, and stop requests through the printed capability URL,
-and asserts that the downstream Events are the canonical `bus.workers.*`
-payloads with `gpt-5.3-codex-spark`, `direct`/`codex-direct`, module, branch,
-sandbox, `worker_home_ref`, create `task_ref`, control reasons, assign
-`assignment_id`, and default stop `preserve_worktree=true`. This proves the
-local `bus-api` provider mount and Event publication path. The same slice now
-refreshes the mounted workers projection on read requests by replaying returned
-worker Events with `follow=false`, avoiding hidden background goroutine
-ownership inside `bus-api` while still making status/list reads observe
-returned worker snapshots. The e2e's fake worker environment publishes a
-direct-runner `bus.workers.status.snapshot`, and the test reads back
-`status=running`, `runtime_ref`, `worker_home_ref`, and the create
-`active_task_ref` through the `bus-api` capability URL. The same slice now
-mounts public provider collection roots exactly as well as their slash-ended
-subtrees, so the `bus-workers` client path `POST /api/v1/workers` reaches the
-mounted provider without relying on a redirect to `/api/v1/workers/`. When the
-sibling `bus-workers` binary is present, the focused e2e also creates, reads
-status for, and stops a direct worker through `bus-workers --api-url <bus-api
-capability-url>`, proving the local product CLI-to-gateway path against the
-same fake Events endpoint. The mounted provider now wires the request-scoped
-projection refresh hook to replay returned worker Events with `follow=false`
-after list request publication as well as before ordinary read projection
-access. The focused e2e's fake Events endpoint returns two
-`bus.workers.list.response` Events for the same worker id in `local-dev` and
-`dev-hg`, and the `bus-api` list response preserves both environments with
-their direct-runner runtime metadata. This proof is still hermetic and does
-not replace service-owned relay or remote dev-hg proof.
-
-The gateway refresh/redaction slice tightens the same mounted provider path.
-The `bus-api` workers backend no longer performs a separate best-effort
-pre-refresh before handing a request to `bus-api-provider-workers`; the
-provider's own request-scoped refresh hook is now the single owner of replay
-and `refresh_failed` responses. Provider-construction failures are also
-bounded before being returned from the public mounted route: unavailable
-responses name the relevant configuration variable, such as
-`BUS_WORKERS_EVENTS_TOKEN_FILE` or `BUS_EVENTS_URL`, but do not echo private
-token-file paths, raw URLs, or OS error strings. Focused tests cover redaction
-of a synthetic private token path and raw bad Events URL, and the full
-`bus-api` `make check` gate passed with the mounted workers provider e2e
-running rather than skipped.
-
-The durable-ref contract slice threads optional `worktree_ref` and `logs_ref`
-through the direct integration snapshot, API provider projection, logs/attach
-responses, and plural CLI output while keeping `worktree_path` and `logs_path`
-for today's bootstrap inspection. The first direct implementation emits stable
-logical refs shaped like `worker:<id>:product-worktree` and `worker:<id>:logs`;
-these are intentionally non-secret placeholders for future repos/artifact-owned
-references, so new runner providers can attach durable locations without
-changing Events, API, or CLI schemas again.
-
-The targeted read-refresh slice adds the worker-id narrowing path required by
-the Event contract. `bus-integration-workers` now honors optional
-`worker_ids` on `bus.workers.list.request` before lifecycle reconciliation, so
-a remote worker environment can answer a status-focused read without scanning
-or reconciling unrelated workers. `bus-api-provider-workers` now accepts
-`worker_id` / `worker_ids` query filters on list reads and publishes targeted
-`bus.workers.list.request` Events before single-worker show, status, logs, and
-attach reads. When mounted through `bus-api`, those read requests can refresh
-the local projection from returned worker Events before answering the operator.
-The mounted-provider e2e helper now asserts the extra targeted list request
-and synthesizes matching list responses for requested worker ids. This is
-still local and hermetic; it strengthens the product path for later
-service-owned relay and remote dev-hg proof.
-
-The direct workspace-materializer slice narrows the remaining repos ownership
-gap inside the direct Codex runner. `bus-integration-workers` now has a
-`DirectCodexWorkspaceMaterializer` boundary for product and worker-identity
-branch/worktree materialization. The default materializer preserves today's
-Git compatibility behavior, but a repos-backed materializer can now own
-preflight, base-ref refresh, and worktree ensure for those two generic
-workspaces without changing direct Codex process launch, runner selection,
-pause/resume/stop, status projection, or task assignment. A focused test proves
-that when a materializer is injected, the direct runner sends generic
-product/worker-identity workspace requests and does not run its own
-repository preflight, fetch, or `git worktree add` commands for those
-workspaces. This does not complete repos-owned materialization, but it removes
-one hard coupling that would otherwise force a larger worker refactor.
-
-The repos-materializer adapter slice adds the first concrete worker-side
-adapter for that seam without importing an unpromoted repos module directly.
-`bus-integration-workers` now has a `DirectCodexReposWorkspaceMaterializer`
-that delegates the direct runner's generic product and worker-identity
-workspace requests to a repos-owned client interface shaped like the
-`bus-integration-repos` feature branch's `EnsureWorkspace` contract:
-`repo_id`, `branch`, `base_ref`, `worktree_name`, `worktree_path`, and
-`environment_id` in, non-secret workspace status out. The adapter validates
-that repos returned the same repo, branch, worktree path, and environment the
-direct runner is about to use before Codex starts. Tests prove that direct
-Codex launch emits repos-owned ensure requests for both product and
-worker-identity workspaces and fails closed when repos returns a mismatched
-workspace. This still is not full repos-owned materialization because the
-repos feature branches are not promoted and service wiring is not attached,
-but the direct runner no longer needs another refactor to delegate workspace
-creation once repos is accepted.
-
-The repos-readiness validation slice makes that adapter fail closed on unsafe
-repos-owned workspace status. After a repos client returns non-secret workspace
-evidence, `bus-integration-workers` now requires the workspace to exist and
-rejects dirty, locked, active, missing, failed, or otherwise not-ready status
-before the direct Codex process starts. Focused tests cover missing,
-dirty, locked, and active repos results in addition to the existing mismatch
-checks. This still does not complete repos-owned materialization, because the
-repos modules remain unpromoted skeletons and there is no service wiring yet,
-but it makes the worker-side handoff conservative for the dirty/locked/active
-states called out by the repos contract.
-
-The selected-environment mutation slice makes the broadcast/read distinction
-enforceable in the API provider. `bus-api-provider-workers` now rejects create
-requests unless they carry `environment_id` or exactly one
-`eligible_environments` entry that can be selected as the create target. Pause,
-resume, assign, and stop now require a selected `environment_id` from the query
-or request body before publishing canonical `bus.workers.*` mutation Events.
-Read-style list/status refresh requests may still omit `environment_id` when
-broadcast evidence discovery is intended. This keeps mutation fan-out from
-depending on whichever worker environments happen to be listening.
-
-The remote-provenance metadata slice makes the future dev-hg direct proof more
-auditable through the normal worker status path. When `bus-integration-workers`
-is configured from `--remote-id`, the direct Codex lifecycle now threads
-non-secret Bus remote metadata into direct runner plans, worker `meta.env`, and
-canonical `bus.workers.status.snapshot` metadata: `remote_id`, `remote_host`,
-`remote_user`, `events_url`, `worker_root`, `credential_source_kind`, and a
-redacted `credential_source_label`. Profile-level credential-source metadata
-wins over the remote default when present, and token-file refs that look like
-paths collapse to a kind label rather than leaking absolute token paths into
-Events. The API-provider loopback proof now asserts that these fields survive
-the integration-provider-to-projection boundary. This still does not prove live
-remote dev-hg execution or service-owned relay, but it makes the required
-remote proof fields part of the product evidence stream.
-
-The product CLI status-surface slice exposes that evidence through the plural
-`bus-workers` API-mode status command. `bus-workers status <worker-id>` now
-prints a fixed allowlist of non-secret direct-runner metadata in text mode,
-including `remote_id`, `remote_host`, `remote_user`, `events_url`,
-`worker_root`, `credential_source_kind`, `credential_source_label`,
-`session_backend`, `sandbox`, `codex_home`, `scratch_path`, worker identity
-paths, and writable roots when present. JSON status still preserves the full
-bounded metadata map for structured callers, but text output intentionally
-does not print arbitrary metadata keys. The plural CLI e2e stub includes a
-token-file-like compatibility probe and verifies the default text status does
-not leak that path while still showing the dev-hg proof fields.
-
-The gateway provenance proof slice extends the mounted `bus-api` workers e2e
-so the same non-secret remote provenance survives the local product gateway.
-The fake worker environment now returns direct-worker status/list evidence
-with dev-hg-style `remote_host`, `remote_user`, `events_url`, `worker_root`,
-and `credential_source_label` metadata. The focused `bus-api` e2e asserts
-those fields in raw mounted provider JSON and, when the sibling `bus-workers`
-binary is available, through `bus-workers --api-url <bus-api capability-url>
-status ...`. This is still hermetic local proof, not service-owned relay or
-live dev-hg execution, but it pins the product CLI-to-gateway-to-provider
-projection path for the fields required by the later remote proof.
-
-The logs/attach operator-guidance slice extends the same metadata allowlist to
-`bus-workers logs <worker-id>` and `bus-workers attach <worker-id>` in API
-mode. Text output now shows bounded direct-runner provenance such as
-`remote_host`, `remote_user`, `events_url`, and `credential_source_label` when
-the provider returns it, while arbitrary metadata keys remain JSON-only. The
-plural CLI tests and e2e include token-file-like metadata and assert that text
-logs/attach output does not leak those paths. This keeps normal operator
-guidance aligned with status without expanding the public worker contract to
-provider-private fields.
-
-The projection metadata sanitization slice moves the same redaction boundary
-into `bus-api-provider-workers` itself. Worker status/list metadata ingested
-from Events is now bounded before entering memory or file-backed projections:
-metadata keys must be lowercase ASCII identifiers, values must be single-line
-valid UTF-8 no longer than 512 bytes, each worker view keeps at most 64
-metadata keys, and secret-shaped keys or values such as token files,
-credential values, raw auth paths, private keys, and prompt bodies are dropped.
-Useful direct-runner provenance such as `remote_host`, `remote_user`,
-`events_url`, `worker_root`, `credential_source_kind`,
-`credential_source_label`, `codex_home`, `scratch_path`, `session_backend`,
-and `sandbox` remains projectable. File-backed projections also sanitize
-metadata loaded from disk so older unsafe projection files do not reintroduce
-invalid metadata. This still depends on upstream integration providers not
-publishing secrets in the first place, but the local read model now enforces
-the goal's projection boundary instead of relying only on CLI text allowlists.
-
-The integration status metadata sanitization slice moves the same bounded
-metadata contract to the upstream Event producer. `bus-integration-workers`
-now sanitizes worker metadata while normalizing status snapshots and list
-responses, before publishing `bus.workers.status.snapshot` or
-`bus.workers.list.response` Events. Secret-shaped metadata such as token-file
-paths, credential values, auth paths, private prompt bodies, private keys,
-multiline command output, invalid keys, and oversized values is dropped at the
-integration boundary, while non-secret direct-runner provenance still
-survives. The direct-runner capability metadata now also advertises the remote
-proof metadata fields (`worker_root`, `remote_id`, `remote_host`,
-`remote_user`, `events_url`, `credential_source_kind`, and
-`credential_source_label`) alongside the local direct-runner fields. This
-keeps the API-provider projection sanitizer as defense in depth rather than
-the only redaction layer.
-
-The create-path contract slice fixes the product CLI/API response shape for
-direct worker creation. `bus-api-provider-workers` now answers
-`POST /api/v1/workers` with an accepted worker view rather than the raw
-published Event, so the plural `bus-workers` CLI can decode and report the
-created worker id through the real API-provider product path. The same slice
-threads optional `task_ref` through CLI create, API create Events, and
-`bus-integration-workers` create handling; when present, the initial direct
-worker status snapshot reports it as `active_task_ref` before later assign
-requests can replace it.
-
-The control-metadata slice threads optional non-secret operator context through
-the explicit control path. `bus-workers` now accepts `--reason` on
-pause/resume/stop/assign and `--assignment-id` on assign; the API provider
-publishes those fields on the corresponding `bus.workers.*.request` Events and
-continues to default stop requests to preserving the worktree unless an
-explicit body override is provided. The integration payload types accept and
-trim that metadata, keeping the public contract ready for scheduler/audit use
-without changing direct runner mechanics.
-
-The worker-home projection slice preserves the non-secret durable identity
-pointer after create. `worker_home_ref` now flows from `bus-workers create`,
-through API-provider accepted create responses, integration worker status/list
-snapshots, API-provider projection merges, and CLI status output. This keeps
-the worker identity/home reference visible next to live runner state while
-repos-owned worktree/home materialization remains a separate acceptance
-dependency.
-
-The capability-discovery slice makes `bus-integration-workers` advertise the
-first direct runner through Bus Events capability extensions. The capability
-document now declares the default runner `direct`/`codex-direct`, the supported
-direct runner provider with runtime `host-process` and session backend
-`process`, the canonical non-secret worker status fields, the direct-runner
-metadata fields (`worker_identity_branch`, `worker_identity_worktree_path`,
-`codex_home`, `scratch_path`, `session_backend`, `sandbox`, `writable_roots`,
-and optional `process_id`), and the extension/redaction policy for future runner
-providers. This is discovery metadata only: it does not add a container runner
-and it keeps provider mechanics below the `bus-integration-workers` boundary.
-`worker_identity_worktree_path`, `codex_home`, and `scratch_path` are
-environment-local runtime materializations, not durable identity fields.
-
-The direct-exec readiness slice moves `bus-integration-workers --check-ready`
-closer to real host-run Codex proof. In planning mode, readiness remains a
-lightweight catalog validation. In `direct-exec`, readiness now also validates
-the worker root by creating it and probing writability, the product Git
-repository, the worker identity Git repository, and the configured Codex
-command with `--version` before reporting ready. This gives operators a
-no-container preflight before allowing the integration service to create
-worktrees, write worker-local logs/scratch/`CODEX_HOME`, and start a real Codex
-process. The integration README was updated so `direct-plan` is the documented
-safe default, `direct-exec` is the documented command-backed host process
-mode, and older App Server/container modes are explicitly not the first direct
-Codex worker path. A module e2e smoke now builds the
-`bus-integration-workers` binary and proves both readiness paths
-hermetically: `direct-plan --check-ready` validates a static catalog, while
-`direct-exec --check-ready` validates temporary product and worker-identity Git
-repositories plus a fake Codex executable responding to `--version`.
-The same built binary also passed a local host preflight against the real
-`projects/busdk` checkout, the real `projects/busdk/agents/worker` identity
-repository, a temporary writable worker root, and the operator's local Codex
-binary reporting `codex-cli 0.135.0`. This is useful host evidence, but it is
-not yet the command-backed worker execution proof because it does not create a
-worker or start the real Codex process.
-
-The remote-config binding slice makes the direct integration command consume
-`bus-remote` metadata for the later dev-hg proof. `bus-integration-workers`
-now accepts `--remote-id` / `BUS_WORKERS_REMOTE_ID` and resolves that id from
-the normal Bus remote registry. When direct lifecycle mode is selected, the
-resolved remote fills missing non-secret defaults: `environment_id`, display
-name, worker Events URL, product repo root from `remote_workdir`, worker root
-under `<remote_workdir>/tmp/workers`, worker identity repo under
-`<remote_workdir>/agents/worker`, the configured Codex tool path, and the
-selected remote worker profile's model. Explicit direct flags still win. A
-focused command test writes a repo-local `dev-hg` remote config with
-`ssh_target=coding-agent@dev.hg.fi`, token-file credential-source reference,
-remote workdir, codex tool path, and `codex-spark` model
-`gpt-5.3-codex-spark`, then proves `direct-exec --check-ready` derives the
-required direct preflight configuration from that remote without embedding
-tokens. The built binary also resolves the current repository-local `dev-hg`
-remote in planning mode. This is necessary setup for the remote proof, not the
-remote proof itself.
-
-The writable-roots direct-runner implementation slice keeps the product
-worktree as the Codex process working directory and passes the worker identity
-worktree, logs directory, and scratch directory as Codex `--add-dir` writable
-roots. The direct plan/status metadata now reports all writable roots,
-including the primary product worktree, so operators can audit the sandbox
-boundary without learning provider-private command templates. Direct App Server
-ports are derived
-deterministically from the worker id and configured base port instead of
-reusing one fixed port for every direct worker, which keeps parallel direct
-workers from colliding by default. The in-memory worker catalog also rejects
-updates that try to mutate a worker id through an update path.
-
-The verified follow-up hardening slice in `bus-integration-worker` adds
-provider-neutral list/status reconciliation: the worker handler asks the
-selected lifecycle provider to reconcile listed workers before publishing a
-list response, and the direct provider checks live host-process runtime refs for
-running, paused, creating, and stopping workers. Missing direct processes are
-reported as `failed` with bounded non-secret error text, while context
-cancellation and deadlines remain real request errors. Lifecycle failure
-snapshots are persisted back to the catalog before status publication and the
-returned error is sanitized so raw runner errors, command output, and secret-ish
-strings do not leak to callers.
-
-That same slice keeps direct planning non-executing. Direct and legacy App
-Server port reservations now happen only on the command-backed create/launch
-path, probe around in-process reservations, and are released on launch failure
-or stop. Direct host processes use fingerprinted `process:<pid>:<token>`
-runtime refs, are reaped instead of detached with no wait path, and stop waits
-until the original process is gone before the worker is marked stopped. Runtime
-signals validate the fingerprint first so a reused PID is not treated as the
-same worker. Direct preparation commands may inherit the host environment when
-no explicit env is supplied for Git and credential helper behavior, but the
-Codex process itself still receives the prepared `CODEX_HOME`, model, and
-source env plus a narrow host allowlist rather than an unbounded environment
-dump.
-
-The direct runner also now separates product and worker-identity base refs:
-`BUS_WORKERS_DIRECT_BASE_REF` applies to the product worktree, while
-`BUS_WORKERS_DIRECT_WORKER_IDENTITY_BASE_REF` can point the worker identity
-worktree at a different branch/ref and defaults to the product base ref when
-omitted. Create-request model and sandbox values override process defaults for
-the specific worker, and unsafe module paths, branch refs, process ids, base
-ref parsing, and sibling-module replacements are rejected or bounded before
-they reach Git or process-control calls.
-
-The worker integration module gate is now green for this direct-runner branch.
-`pkg/workerconsumer` makes background control-listener ownership explicit by
-requiring a caller-supplied `StartControlLoop` hook when dual primary/control
-consumption is used, and its idle-timeout controller no longer owns a package
-goroutine. The full `bus-integration-worker` `make check` passed with Bus Go
-quality lint, verbose Go tests across all packages, build, and the
-direct-plan/direct-exec e2e preflight smoke.
-
-The same branch now has an optional real-Codex direct lifecycle smoke,
-`TestDirectCodexLifecycleExecutesAgainstRealCodexCommand`, gated by
-`BUS_WORKERS_REAL_CODEX_E2E=1` and `BUS_WORKERS_REAL_CODEX_COMMAND`. On this
-local host it passed with the operator's local Codex binary: the lifecycle
-created temporary product and worker-identity Git repositories, started the
-real Codex App Server on a loopback listener through the direct runner,
-observed the listener, stopped the worker, and verified the process exited.
-This proves the local command-backed direct runner against the real Codex
-binary without container tooling. It still is not the remote dev-hg product
-proof or the final service-owned API/Event path proof.
-
-The direct-exec Events product-path slice adds a command-level e2e to
-`bus-integration-workers`. The test starts a hermetic fake Bus Events API that
-streams one canonical `bus.workers.create.request`, runs the built
-`bus-integration-workers` binary in `direct-exec`, prepares temporary product
-and worker-identity Git repositories, starts a fake Codex process on the host,
-and asserts the published `bus.workers.status.snapshot` includes
-`status=running`, `lifecycle_phase=ready`, `gpt-5.3-codex-spark`,
-`direct`/`codex-direct`, `worker_home_ref`, `active_task_ref`, process
-`runtime_ref`, worktree/log refs, writable roots, isolated `CODEX_HOME`,
-scratch path, worker identity path, sandbox, and process session metadata.
-This proves the standalone integration service can consume worker Events and
-launch a direct Codex runtime without containers. It remains local and
-hermetic: it does not replace service-owned relay proof or live remote dev-hg
-execution through the full local API/gateway/relay path.
-
-The API-provider to integration round-trip slice extends the standalone
-`bus-api-provider-workers` e2e from publish-only proof to a local Events relay
-proof. Its hermetic Events stub now supports authenticated publish, replay, and
-follow streams. The e2e starts the built `bus-api-provider-workers` binary with
-its projection listener enabled, starts the real `bus-integration-workers`
-command in `direct-exec`, creates temporary product and worker-identity Git
-repositories, and uses a fake host Codex process. A create request sent to the
-provider publishes canonical `bus.workers.create.request`; the integration
-service consumes it, launches the direct runner, publishes
-`bus.workers.status.snapshot`; and the provider projects that snapshot back
-through `/api/v1/workers/{id}/status` as `running`/`ready` with
-`direct`/`codex-direct`. The same e2e then publishes pause, resume, assign, and
-stop requests, verifies the provider emits the canonical control Events, and
-waits until the provider reads back the integration's `stopped`/`stopped`
-snapshot. This proves the standalone provider and standalone integration can
-round-trip direct worker lifecycle through the shared `bus.workers.*` Events
-contract without adding provider-specific API coupling. It is still local,
-hermetic, and fake-Codex proof; it does not yet prove the service-owned relay,
-repos-owned worker persistence, or live remote dev-hg path.
-
-The mounted product-path round-trip slice adds the local gateway and plural CLI
-in front of the same real integration command. A new `bus-api` e2e starts a
-hermetic replay/follow Events relay, the real `bus-integration-workers`
-command in `direct-exec`, the built `bus-api` server with the workers provider
-mounted, temporary product and worker-identity Git repositories, and a fake
-host Codex process. It first sends raw HTTP requests through mounted
-`/{token}/v1/api/v1/workers` and verifies the mounted provider projects
-`running`/`ready`, list evidence, stop, and `stopped`/`stopped` from the
-integration service. It then runs the plural `bus-workers` CLI source against
-the mounted `bus-api` capability URL and verifies create, status, process
-runtime metadata, task ref, worker-home ref, stop, and stopped status through
-the same gateway. The assertion helper checks provider create/stop Events,
-provider read/list requests, integration list responses, and integration
-status snapshots for both the raw HTTP worker and CLI-created worker. This
-closes a local product-path proof gap between standalone provider evidence and
-the intended `bus workers -> bus-api -> bus-api-provider-workers ->
-bus-integration-workers` flow. It is still local and hermetic: it uses a fake
-Events relay and fake Codex process, so it does not replace service-owned
-relay, repos-owned persistence, scheduler/task claiming, or live remote dev-hg
-acceptance proof.
-
-The scheduler launch-contract slice in `bus-integration-workers` now preserves
-worker routing identity after queue selection. `workerqueue.SelectReconcileDecision`
-already evaluated assigned worker id, assigned worker group, and eligible
-environment selectors before choosing a launch; the selected
-`workerstart.LaunchRequest` now carries the selected worker id, worker groups,
-task assignment fields, and eligible environment ids into the deterministic
-worker-start Event and sanitized launch environment. `workerstart.TargetsWorker`
-also rejects a start request with a different explicit `worker_id`, so a
-scheduler-selected launch cannot silently drift to another worker lane after
-selection. Focused tests cover the queue-to-launch metadata handoff and
-worker-start payload/environment projection, and the full
-`bus-integration-worker` `make check` gate passed for this slice. This is
-useful scheduler-contract evidence, but it does not complete idle worker
-claiming or scheduler-owned status acceptance; those still depend on the task
-and service-owned scheduler goals.
-
-The direct App Server messaging slice closes the first bidirectional guidance
-gap for `direct-exec` workers. `bus-integration-workers` now routes message
-requests through the selected runner provider, keeps a live WebSocket App
-Server session per direct worker, starts or steers turns, records thread/turn
-state as bounded metadata, and can return quick assistant response evidence as
-a `responded` worker message response. If no assistant text arrives within the
-configured evidence window, the response remains a truthful `delivered`
-acknowledgement rather than pretending the worker answered. If the turn ends
-without assistant text, the direct messenger reports `completed` when there is
-no error evidence. If the turn ends or the evidence window expires while
-recent App Server stderr shows a runtime error such as an upstream
-authorization failure, it reports `failed` with a bounded redacted diagnostic.
-The evidence window is configurable through
-`--direct-message-evidence-timeout` /
-`BUS_WORKERS_DIRECT_MESSAGE_EVIDENCE_TIMEOUT`. The local mounted product-path
-e2e now drives `bus-workers message` through `bus-api`, the workers provider,
-Events, the integration service, and a fake WebSocket Codex App Server, then
-reads back the projected worker response through `bus-workers messages`.
-
-The worker-message projection hardening slice makes repeated Event replay
-idempotent for message responses. `bus-api-provider-workers` now upserts
-`bus.workers.message.response` projection rows by worker environment and
-`message_id` instead of appending a duplicate row every time API read-refresh
-replays the same returned Event. This matters for the mounted gateway path,
-where polling `bus-workers messages` can legitimately refresh from the same
-Events stream many times while waiting for a worker response.
-
-The live-Codex product-path proof slice adds a gated
-`bus-api` e2e, `tests/e2e/070-workers-product-real-codex.sh`, for the final
-local real-worker proof. When explicitly enabled, it uses the real Codex
-command, creates a `gpt-5.3-codex-spark` `direct`/`codex-direct` worker
-through `bus-workers -> bus-api -> bus-api-provider-workers -> Events ->
-bus-integration-workers`, waits for the real App Server listener, sends a
-marker guidance message, expects a projected `responded` message containing
-that marker, then stops the worker through the product path. The first local
-run on 2026-05-31 created the real worker and delivered the guidance, but the
-isolated worker `CODEX_HOME` had not been seeded from the host Codex auth/config
-home, so Codex's upstream Responses WebSocket returned `401 Unauthorized`.
-After aligning the direct runner with the manual Spark bootstrap auth-home
-seeding shape, the same gated e2e passed locally with the real
-`/Users/jhh/.local/bin/codex` command: `bus-workers messages` returned
-`real-msg-1` as `responded` with the marker
-`BUS_WORKERS_PRODUCT_LIVE_OK`, and status then reached `stopped` /
-`lifecycle_phase=stopped` through the product path.
-
-The direct Codex auth-home seeding slice makes the product direct runner match
-the manual bootstrap's worker-local `CODEX_HOME` behavior. `direct-exec` now
-accepts `--direct-codex-auth-home` /
-`BUS_WORKERS_DIRECT_CODEX_AUTH_HOME`, defaulting to `$CODEX_HOME` or
-`$HOME/.codex`, and copies that auth/config directory into a worker's isolated
-`CODEX_HOME` only when the worker home does not already contain `auth.json` or
-`config.toml`. This keeps runtime auth files out of Git and out of Events while
-letting local sandboxed Codex App Server workers use the same configured
-credentials as the operator's working local Codex installation.
-
-The repos-events materializer slice gives the direct Codex runner a real
-repos-owned workspace path while keeping the older Git materializer as the
-default compatibility mode. `bus-integration-workers direct-exec` now accepts
-`--direct-workspace-materializer=repos-events` /
-`BUS_WORKERS_DIRECT_WORKSPACE_MATERIALIZER=repos-events` and
-`--direct-repos-ensure-timeout` /
-`BUS_WORKERS_DIRECT_REPOS_ENSURE_TIMEOUT`. In that mode the direct runner
-publishes `bus.repos.ensure.request` for both the product workspace and the
-worker-identity workspace, waits for the correlated
-`bus.repos.status.snapshot` or `bus.repos.error`, validates that the returned
-workspace exists, is clean, is ready, and matches the requested repo, branch,
-worktree path, and environment, then starts Codex. This keeps runner process
-launch, logs, scratch, `CODEX_HOME`, model, sandbox, and worker status in
-`bus-integration-workers`, while generic branch/worktree creation and safety
-classification can be owned by `bus-integration-repos`. The default remains
-`git` until the repos feature branches are promoted and a full product-path
-proof runs with the repos integration service active.
-
-The repos-backed worker product e2e closes that proof with the current repos
-feature. `bus-integration-repos` now has a small command wrapper that loads a
-preconfigured repositories JSON file, listens to `bus.repos.*.request` Events
-with Events API unicast delivery in the shared `bus-integration-repos` service
-group, passes them through the real `reposintegration.Processor` and
-`ReposManager`, and publishes the resulting repos response/status Events with
-the process service instance UUID stamped in generic Bus metadata. The
-`bus-api` e2e
-`tests/e2e/071-workers-product-repos-materializer.sh` starts the Events relay,
-that repos integration command, `bus-integration-workers direct-exec` with
-`--direct-workspace-materializer=repos-events`, the mounted `bus-api` workers
-provider, and the `bus-workers` CLI. The passing run proves that worker create
-publishes repos ensure requests for both `product` and `worker-identity`,
-`bus-integration-repos` materializes both worktrees and returns clean
-`bus.repos.status.snapshot` Events, then the worker starts fake Codex, accepts
-guidance, projects a worker response, and stops through the product path. The
-worker-side repos client now omits `worktree_name` when it sends an explicit
-`worktree_path`, matching the repos contract that those fields are mutually
-exclusive. A follow-up product-path assertion also verifies that the expected
-Git branch refs exist in the configured product and worker identity
-repositories after materialization.
-
-The scheduler-to-workers contract slice adds a canonical workers launch
-adapter in `bus-integration-workers`. Scheduler-selected
-`workerstart.LaunchRequest` values can now be published as
-`bus.workers.create.request` Events for `direct`/`codex-direct`, carrying the
-selected worker id or a generated worker UUID, target environment id,
-module/recipient, task ref, worker groups, eligible
-environments, branch, worker-home ref, sandbox, and pending Events relay
-metadata for the destination environment. A focused scheduler test runs
-`workerscheduler.Reconcile` with this adapter as `StartLaunchBatch` and
-asserts that the refill path emits the canonical workers create Event rather
-than requiring scheduler callers to depend on runner-specific mechanics. This
-is the workers-contract bridge needed for Codex-only scheduler integration,
-but it is not a full service-owned scheduler loop, task claim verification
-proof, or live dev-hg worker execution proof.
-
-The same slice now has an in-module scheduler-to-integration proof. A focused
-test wires `workerscheduler.Reconcile` through `WorkersCreateLauncher`, feeds
-the emitted `bus.workers.create.request` into the real
-`workersintegration.Worker` handler with the direct runner selector in
-planning mode, and asserts the returned `bus.workers.status.snapshot` contains
-the selected worker id, planning-mode `paused`/`prepared` direct-runner state,
-active task ref, target environment, `direct`/`codex-direct`, model,
-worktree/log refs, and bounded direct metadata. The `paused`/`prepared` state is
-not final create acceptance; it is the non-executing planning lifecycle's
-evidence before a command-backed runner starts Codex. This proves the scheduler
-bridge reaches the actual workers integration contract without starting Codex or
-containers. It remains hermetic planning evidence, so the live scheduler loop,
-task claim race handling, and remote execution proof are still open.
-
-The command-level scheduler slice makes that bridge invokable through
-`bus-integration-workers --scheduler-once`. The command reads queued task and
-active-worker JSON snapshots, runs the existing worker queue selector, and
-publishes selected launches as canonical `bus.workers.create.request` Events to
-the configured Events API with `direct`/`codex-direct`, target environment,
-worker id/group routing, task ref, branch, worker-home ref, sandbox, and
-pending relay metadata. A focused command test drives this mode against an
-`httptest` Events endpoint and verifies the published Event and
-script-friendly scheduler result output. This is still bounded one-shot
-scheduler proof, not a service-owned loop or atomic claim acceptance, but it
-turns the Codex worker bridge into an executable command path.
-
-The command-level Events round-trip slice strengthens that proof by running
-both command modes against one fake Events API. The test first runs
-`bus-integration-workers --scheduler-once` to publish a scheduler-selected
-`bus.workers.create.request`, then runs `bus-integration-workers --once` in
-`direct-plan` listener mode against the same Events API. The listener consumes
-the replayed create request and publishes a `bus.workers.status.snapshot` with
-the selected worker id, task ref, target environment, `paused`/`prepared`,
-`direct`/`codex-direct`, model, and bounded direct metadata. The command now
-normalizes the internal processed-one sentinel as a clean `--once` exit. This
-still does not perform an atomic task claim or start Codex, but it proves the
-executable scheduler and worker listener commands interoperate through Events
-using the canonical workers contract.
-
-The local command-backed direct-exec scheduler slice takes the same two-command
-round trip through actual host-process launch with fake Codex. The test creates
-temporary product and worker-identity Git repositories, publishes a
-scheduler-selected `bus.workers.create.request`, then runs
-`bus-integration-workers --once --lifecycle direct-exec` against the same fake
-Events API. The worker listener consumes the create request, creates the
-direct worker worktrees from `HEAD`, starts the fake Codex process, publishes a
-`running`/`ready` `bus.workers.status.snapshot` with process runtime ref,
-active task ref, `direct`/`codex-direct`, and worktree/identity metadata, and
-the test cleans up the fake process. This proves the executable scheduler
-bridge can reach command-backed direct Codex launch locally without containers.
-It remains hermetic local proof; live dev-hg execution, service ownership, and
-atomic task claiming are still unaccepted.
-
-The opt-in scheduler claim slice adds the first bounded atomic task-claim proof
-to `bus-integration-workers --scheduler-once`. When
-`--scheduler-claim-tasks` is set, selected task snapshots must include the
-latest claimable source Event id and name. The command uses Events conditional
-append to publish `bus.task.claimed` for that exact task before publishing the
-canonical `bus.workers.create.request`; missing source Event identity or a
-claim conflict fails closed and does not launch a worker. If the claim
-succeeds but publishing `bus.workers.create.request` fails, the command
-attempts a conditional `bus.task.reopened` append against the claimed Event
-before returning the publish error. Focused command tests prove the claim is
-appended before the worker create request, that a failed worker-create publish
-reopens the task instead of leaving it claimed, and that a task without
-`source_event_id` / `source_event_name` does not create a worker. This is still
-a bounded command proof rather than the final service-owned scheduler loop,
-but it closes the previous scheduler bridge gap where worker creation could be
-requested from a static ready snapshot without first winning the task claim
-race.
-
-The direct status reconciliation slice now persists stale-runtime findings
-back into the mutable integration catalog. Before this slice,
-`bus.workers.list.request` could reconcile a dead direct host process and
-return a one-off `failed` worker view without updating the in-process control
-catalog. The worker list path now normalizes and upserts reconciled snapshots
-when the catalog supports control updates, so future list/status/control paths
-observe the failed lifecycle state instead of repeatedly rediscovering the
-same dead process. A focused test covers a `direct`/`codex-direct` worker with
-a missing `process:<pid>` runtime and verifies the `failed`/`failed` snapshot,
-last non-secret error, and environment id are persisted in the mutable
-catalog. This improves local stale-worker state handling for direct Codex
-workers, but it is still in-memory catalog proof rather than durable
-repos-owned persistence or remote service-owned reconciliation.
-
-The source-of-truth clarification slice rejects using `--workers-file` as
-durable worker state. The file remains bootstrap input for local development
-and preflight only. This slice originally pointed accepted worker state toward
-Events/projections or a database-backed provider, with Git used mainly as
-reconciliation evidence. Later architecture guidance narrows that direction:
-persistent worker identity/configuration should be reconstructed from Bus
-Events API history, while the configured worker identity repository remains
-the worker-editable Git workspace and branch/materialization evidence. A
-focused command regression test verifies that processing a
-`bus.workers.create.request` with `--workers-file` configured does not rewrite
-that file, while still publishing the direct-plan status snapshot through
-Events. This keeps the current direct-worker implementation from quietly
-turning a bootstrap catalog into an accidental control-plane database.
-
-The Events status hydration slice makes the integration command use canonical
-Events as projection and restart evidence. On startup, before listening for
-worker requests,
-`bus-integration-workers` replays existing `bus.workers.status.snapshot`
-Events with broadcast replay/no-follow and hydrates its mutable in-memory
-catalog from matching environment snapshots.
-Focused tests prove that later snapshots replace earlier ones for the same
-worker, snapshots from other environments are ignored, and a command started
-with an empty `--workers-file` can answer a `bus.workers.list.request` from a
-previously published direct `running`/`ready` status snapshot. This is
-Events-backed projection proof, not PostgreSQL-specific proof and not yet a
-remote service-owned relay proof, but it removes the accidental local-file
-state direction for the direct Codex worker slice.
-
-The API-provider projection cleanup applies the same source-of-truth rule to
-the local controller path. `bus-api-provider-workers` no longer exposes a
-`--projection-file` / `BUS_WORKERS_PROJECTION_FILE` path or a file-backed
-worker projection; its standalone read projection is an in-process cache fed by
-replayed/followed `bus.workers.list.response` and
-`bus.workers.status.snapshot` Events. This keeps restart recovery pointed at
-canonical Events replay, with PostgreSQL/database-backed projection still
-available as a later provider-owned backing store, rather than introducing
-another ad hoc local worker-state file.
-
-The first message-path slice adds the canonical worker guidance Event pair.
-`bus-workers message` posts a bounded operator guidance message through the
-workers API, `bus-api-provider-workers` publishes
-`bus.workers.message.request`, `bus-integration-workers` accepts the request
-for the selected environment, publishes `bus.workers.message.response`, and
-then publishes an updated status snapshot. `bus-workers messages` reads the
-provider projection of those response Events. `bus-api-provider-events` treats
-`bus.workers.message.*` as worker-control traffic guarded by
-`workers:control` for publishing and `workers:read` for streaming. The first
-direct provider implementation returns non-secret App Server handoff evidence
-under this contract; real provider-private delivery into a live App Server
-turn can be refined behind the same lifecycle messenger interface without
-changing CLI, API, or Events callers.
-
-At the time of this historical slice, this was not full goal acceptance. The
-post-promotion acceptance audit and Current Status sections above are now
-authoritative for the accepted first local sandboxed Codex worker scope.
-
-The direct App Server message-delivery slice extends the message path into the
-`direct-exec` runner. `bus-agent` now supplies a reusable WebSocket App Server
-client for already-listening Codex App Server runtimes, and
-`bus-integration-workers` uses that boundary to keep a direct worker session
-alive, start an App Server thread/turn on first guidance, steer a running turn
-when appropriate, and return quick worker-response evidence when the runtime
-emits assistant text. The runner selector delegates message requests to the
-selected provider, so callers still use the same `bus.workers.message.*`
-contract instead of learning provider mechanics.
-
-The mounted product-path e2e now starts a fake Events relay, the real
-`bus-integration-workers` command in `direct-exec`, the built `bus-api` server
-with workers mounted, the plural `bus-workers` CLI, and a fake Codex App
-Server that speaks JSON-RPC over WebSocket. The proof creates a direct worker
-with `gpt-5.3-codex-spark`, waits for running/ready status and a live App
-Server listener, sends task guidance through `bus-workers message`, observes a
-projected `responded` worker message through `bus-workers messages`, then
-stops the worker through the same product path. This is still hermetic
-fake-Codex proof, not a live real-Codex full product-path acceptance run, but
-it closes the previous gap where the gateway/product e2e did not exercise
-worker guidance at all.
+No first-scope product blocker remains for local sandboxed Codex workers.
+Unfinished work outside this accepted MVP has been routed to neighboring goals
+instead of remaining as acceptance work here:
+
+- automatic task-picking, atomic task claims, queue/capacity behavior, and
+  scheduler-owned worker launch belong to the
+  [service-owned task scheduler goal](/docs/goals/service-owned-task-scheduler.md)
+  and the task contracts in the [tasks goal](/docs/goals/tasks.md);
+- remote environment operation, multi-environment worker reads, and worker
+  request/evidence routing belong to the
+  [multi-environment task and worker coordination goal](/docs/goals/multi-environment-task-worker-refactor.md);
+- service-owned Events relay and durable relay status belong to
+  the [service-owned Events relay goal](/docs/goals/service-owned-events-relay.md);
+- remote credential-source proof belongs to
+  the [remote credential source selection goal](/docs/goals/remote-credential-source-selection.md);
+- systemd/user-service deployment and broader service operations belong to
+  the [systemd user deployment goal](/docs/goals/systemd-user-deployment.md);
+- container-backed and VM-backed worker runners belong to
+  the [worker runner providers goal](/docs/goals/worker-runner-providers.md).
+
+## Appendix: Compact Implementation History
+
+This appendix is a compact changelog for the accepted local workers MVP. Older
+implementation notes that described unaccepted remote, scheduler, container, VM,
+or relay work have been routed to the neighboring goal files named in the
+Post-Promotion Handoff.
+
+### 2026-05-31 Scope Narrowing
+
+The workers goal was narrowed to local sandboxed Codex workers. Remote worker
+hosts, cross-environment Events relay, remote credential-source proof,
+container runners, VM runners, and automatic idle-task claiming were made
+adjacent goals rather than acceptance requirements here. The accepted worker is
+a real long-running Codex App Server runtime using this environment's Codex
+runtime and sandbox with the raw model id `gpt-5.3-codex-spark`.
+
+### Direct Runner And Product Path
+
+The first accepted runner is `direct` / `codex-direct`. It creates isolated
+product and worker-identity worktrees, derives the worker identity branch from
+the worker UUID, seeds isolated `CODEX_HOME`, starts a sandboxed Codex App
+Server, accepts operator guidance through `bus workers message`, exposes
+response/status/logs/attach evidence, and stops through the product path.
+
+### Events And Repos Proof
+
+Worker state is reconstructed from canonical `bus.workers.*` Events rather than
+from local worker files. Events replay supports bounded generic addressing
+filters for worker-recipient projections, and PostgreSQL-backed Events proof
+covered provider restart and replay. Repos-owned worktree materialization is
+accepted for the local worker path through `bus-integration-repos` and
+`bus.repos.ensure.request` / `bus.repos.status.snapshot` Events.
+
+### Dispatcher And Services Stack
+
+The public dispatcher form `bus workers ...` resolves to the plural
+`bus-workers` product CLI. Later local Services work added a top-level
+`services.yml` and `profiles/` layout that can start PostgreSQL, Events API,
+repos integration, workers integration, and `bus-api` for the accepted local
+worker use case with `bus services up`.

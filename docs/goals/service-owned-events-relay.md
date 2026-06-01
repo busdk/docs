@@ -234,6 +234,14 @@ as complete.
 
 ## Related Goals Discussed In This Thread
 
+### Accepted Local Workers MVP
+
+`docs/docs/goals/workers.md` is accepted only for local native Services plus
+local sandboxed Codex Spark workers. It does not complete remote worker
+operation. Any unfinished work where worker create/control/message/status
+Events must cross environment boundaries belongs to this relay goal and the
+multi-environment coordination goal, not to the accepted local workers MVP.
+
 ### Service-Owned Task Scheduler
 
 A remote worker environment also needs a service-owned scheduler that consumes

@@ -252,9 +252,9 @@ This goal depends on and reinforces several adjacent remote-worker goals.
 The user-systemd profile should eventually start or depend on the
 service-owned scheduler that consumes queued task work and launches Codex App
 Server workers up to configured capacity. That scheduler is described
-separately in `docs/docs/goals/service-owned-task-scheduler.md`, but the
-current module owner is `bus-integration-task` with worker-side behavior moving
-into `bus-integration-worker`.
+separately in `docs/goals/service-owned-task-scheduler.md`, but the current
+module owner is `bus-integration-task` with worker-side behavior moving into
+`bus-integration-worker`.
 
 The important boundary is that `bus-dev` should submit work and display status,
 but the long-running environment-local service owns scheduling, capacity, stale
@@ -297,7 +297,7 @@ SSH sync loops, or `bus-dev --sync-now` as the normal path.
 The service profile is only useful if the remote has the right source,
 submodule pins, installed binaries, images, units, and config files. The
 remote freshness command is described separately in
-`docs/docs/goals/remote-freshness-command.md`.
+`docs/goals/remote-freshness-command.md`.
 
 The intended relationship is:
 
@@ -342,7 +342,7 @@ Start with `bus-operator-deploy`.
 
 ## Suggested Commands For A Future Thread
 
-Inspect current state first:
+From the BusDK superproject root, inspect current state first:
 
 ```bash
 git status --short
@@ -362,7 +362,7 @@ ssh coding-agent@dev.hg.fi 'printf "user=%s uid=%s\n" "$(id -un)" "$(id -u)"; sy
 Recheck through the Bus deploy surface:
 
 ```bash
-bus-operator-deploy/bin/bus-operator-deploy service user-systemd status \
+bus operator deploy service user-systemd status \
   --ssh-url coding-agent@dev.hg.fi \
   --service bus-events,bus-container-router,bus-integration-task
 ```
@@ -374,7 +374,7 @@ Current separate-unit install shape, if the operator chooses to test it before
 the combined profile exists:
 
 ```bash
-bus-operator-deploy/bin/bus-operator-deploy service user-systemd install \
+bus operator deploy service user-systemd install \
   --dry-run=false \
   --ssh-url coding-agent@dev.hg.fi \
   --service bus-events,bus-container-router,bus-integration-task \
@@ -438,3 +438,16 @@ Do not mark the product goal complete until the repository has code, tests,
 docs/help, and live or equivalent fixture proof that a local or remote worker
 environment can start required Bus infrastructure as one or a few user services
 without manual handler launches.
+
+## Deferred From Accepted Workers MVP
+
+The accepted local workers MVP now has a native local Services stack that can
+start PostgreSQL, Events API, repos integration, workers integration, and the
+Bus API gateway with `bus services up`. Broader service operations remain here:
+
+- installing and updating user-level service units;
+- making local or remote worker environments restartable without manual handler
+  launches;
+- exposing service health and deployment status;
+- binding service configuration to token files, config files, and non-secret
+  credential-source labels rather than raw secrets.
