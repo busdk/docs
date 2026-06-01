@@ -163,14 +163,20 @@ Supporting Bus modules are touched only through their boundaries:
 
 ## Current Status
 
-This goal is implemented and promoted from the isolated
-`codex/workers-direct` worktrees into the parent module branches, then into
-the BusDK superproject. The promoted BusDK commit is `a7a00be` (`Promote
-local Codex workers MVP`). The current direction remains the Initial MVP User
-Story above: a real long-running `direct` / `codex-direct` Codex App
-Server/runtime instance, using `gpt-5.3-codex-spark` for the first proof, this
-environment's Codex runtime and sandbox, an `agents/worker` branch/worktree,
-and bidirectional guidance through `bus-worker` / `bus-workers`.
+This first local sandboxed Codex workers goal is implemented, promoted, and
+accepted for the Initial MVP User Story. The worker implementation was first
+promoted from the isolated `codex/workers-direct` worktrees into the parent
+module branches and then into the BusDK superproject at commit `a7a00be`
+(`Promote local Codex workers MVP`). Later BusDK service-stack work, promoted
+through commit `971e287` (`Group Bus service profiles by role`), adds a
+top-level `services.yml` and public `profiles/` layout that can start the local
+PostgreSQL-backed Events API, repos integration, workers integration, and
+`bus-api` gateway needed for local Codex Spark workers. The accepted direction
+remains the Initial MVP User Story above: a real long-running `direct` /
+`codex-direct` Codex App Server/runtime instance, using
+`gpt-5.3-codex-spark` for the first proof, this environment's Codex runtime and
+sandbox, an `agents/worker` branch/worktree, and bidirectional guidance through
+`bus-worker` / `bus-workers`.
 
 Accepted evidence so far:
 
@@ -229,13 +235,13 @@ Accepted evidence so far:
 - Repository/worktree ownership now has an Events-level product-path proof
   through the repos contract: `bus-integration-workers` publishes
   `bus.repos.ensure.request` for both worker workspaces, a real
-`bus-integration-repos` command backed by the repos processor/manager
-materializes them and returns safe `bus.repos.status.snapshot` evidence, and
-the UUID-named worker then reaches create/message/respond/stop through the
-product path. The repos-backed product e2e now also checks the actual Git
-branch refs in the configured repositories: `codex/workers/{worker_uuid}` for
-the product worktree and `worker/{worker_uuid}` for the worker identity
-worktree.
+  `bus-integration-repos` command backed by the repos processor/manager
+  materializes them and returns safe `bus.repos.status.snapshot` evidence, and
+  the UUID-named worker then reaches create/message/respond/stop through the
+  product path. The repos-backed product e2e now also checks the actual Git
+  branch refs in the configured repositories: `codex/workers/{worker_uuid}` for
+  the product worktree and `worker/{worker_uuid}` for the worker identity
+  worktree.
 - The first generic Events addressing slice exists on the isolated feature
   branches: stream replay can be bounded with `limit` and `since` / `until`
   envelope timestamp ranges, filtered by generic platform metadata such as
@@ -376,10 +382,10 @@ initial local sandboxed Codex worker goal.
 
 ## Dependencies
 
-The workers product can continue in parallel on API shape, projection tests,
-and integration lifecycle planning, but this goal cannot be fully accepted
-until these neighboring goals are complete enough to supply their local worker
-contracts:
+The first-scope local worker dependencies are complete enough for this goal's
+accepted MVP. The following neighboring contracts supplied the slices needed by
+local sandboxed Codex workers, while their broader goals can continue without
+blocking this accepted scope:
 
 - The worker-needed `bus-events` / `bus-api-provider-events` slice now exists
   on the promoted parent branches: Events can be replayed with bounded
@@ -1002,12 +1008,14 @@ This goal is accepted when:
 ## Post-Promotion Acceptance Audit
 
 As of BusDK commit `a7a00be`, the first-scope local Codex-worker
-implementation has been promoted from the isolated `codex/workers-direct`
-worktrees into the parent module branches and the BusDK superproject. The
-promoted checkout has been rerun through the local product-path verification
-set. The later gated PostgreSQL Events backend restart proof also passed after
-PostgreSQL 18 was installed locally and a disposable cluster was started for
-the proof run.
+implementation was promoted from the isolated `codex/workers-direct` worktrees
+into the parent module branches and the BusDK superproject. The promoted
+checkout was rerun through the local product-path verification set. The later
+gated PostgreSQL Events backend restart proof also passed after PostgreSQL 18
+was installed locally and a disposable cluster was started for the proof run.
+Subsequent BusDK service-stack commits, through `971e287`, make the accepted
+worker use case easier to run locally with `bus services up`; they do not add a
+new first-MVP worker acceptance blocker.
 
 `bus workers` product CLI evidence is covered by `bus-worker` unit tests,
 `bash tests/e2e.sh`, README updates, plural `bus-workers` binary output, and
@@ -1181,13 +1189,15 @@ Promotion has already happened in dependency order. The parent module branches
 now include the worker-needed Events contract, Events provider, repos
 integration, worker CLI, workers API provider, workers integration provider,
 `bus-api` product wiring, and this docs goal. The BusDK superproject commit
-`a7a00be` records those submodule pointers.
+`a7a00be` recorded those worker submodule pointers, and later BusDK commits
+added the local Services stack that can start the required worker services from
+`services.yml`.
 
-The remaining handoff is ordinary promotion bookkeeping for this goal-file
-update: rerun `bus lint docs/docs/goals/workers.md` and `git diff --check`,
-commit this accepted-status update in `docs`, advance the BusDK `docs`
-submodule pointer, and advance the supervisor `projects/busdk` pointer. No
-first-scope product blocker remains for local sandboxed Codex workers.
+No first-scope product blocker remains for local sandboxed Codex workers. Work
+outside this accepted MVP includes automatic task-picking scheduler service
+ownership, remote environment relay/operation, container-backed worker runners,
+VM-backed worker runners, and further production hardening of multi-environment
+sync and service operations.
 
 ## Appendix: Implementation History
 
