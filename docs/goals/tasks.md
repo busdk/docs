@@ -41,15 +41,18 @@ Accepted baseline:
 
 Current task-module state:
 
-- `bus-task` is the current task CLI owner, but the main checkout still carries
-  older development-task, worker, container, runtime, and worktree residue.
-- `bus-api-provider-task` is still skeletal in the promoted main checkout.
-- `bus-integration-task` still contains historical worker/App Server/container
-  bridge behavior. It should become the task service/provider instead:
-  task business logic, persistence, projection, and task-side coordination
-  live here, while worker/runtime pieces move to worker-owned modules.
-- The older isolated `codex/task-bidi-core` worktrees were useful review
-  evidence, but they are not the promoted software baseline for this goal.
+- `bus-task` is the task CLI client over the task API controller. It supports
+  create, list, show/status, messages, message, assign, and terminal status
+  commands without worker launcher, runtime, container, or Git implementation
+  behavior.
+- `bus-api-provider-task` is the thin task HTTP/API controller. It publishes
+  canonical task request Events and serves reads from an Events-fed projection
+  of task service response/status/history Events.
+- `bus-integration-task` is the task service/provider. It owns task business
+  logic, task persistence/projection, task message handling, assignment state,
+  terminal status, and task-side worker assignment Events.
+- Worker lifecycle, runtime delivery, App Server behavior, model choice, and
+  repository worktree materialization are worker/repository-owned capabilities.
 
 ## MVP User Story
 
@@ -242,7 +245,7 @@ Before product-code work begins, create feature worktrees and branches for the
 affected modules and record their branch names and locations in this goal. No
 module merge or promotion should happen until the operator confirms the work.
 
-Current implementation isolation:
+Current implementation isolation and promotion:
 
 These worktrees are relative to the supervisor checkout root
 `/Users/jhh/git/busdk/agent-supervisor`.
@@ -269,6 +272,20 @@ The older `worktrees/task-bidi/*` worktrees remain unmerged historical
 prototype/reference material and are not the implementation branch for this
 current goal.
 
+The operator later approved promotion to primary branches during early
+development. The task MVP implementation and completion cleanup have been
+promoted to the primary module checkouts. Final completion worktrees:
+
+- `bus-task`: branch `codex/tasks-completion`, worktree
+  `worktrees/tasks-completion/bus-task`, promoted commit
+  `5c92de7` (`Allow task message flags after task ref`).
+- `bus-integration-task`: branch `codex/tasks-completion`, worktree
+  `worktrees/tasks-completion/bus-integration-task`, promoted commits
+  `e27e999` and `69dffed` for task-service e2e cleanup.
+- `bus-api-provider-task`: branch `codex/tasks-completion`, worktree
+  `worktrees/tasks-completion/bus-api-provider-task`, promoted commit
+  `8ed8441` (`Document current task API provider surface`).
+
 Current implementation status in the `codex/tasks-mvp` feature worktrees:
 
 - `bus-events` defines the shared task request, response, status snapshot,
@@ -294,7 +311,8 @@ Current implementation status in the `codex/tasks-mvp` feature worktrees:
   combined `bus/api/tasks-workers` gateway profile; `services.yml` starts the
   local tasks integration service alongside the accepted worker stack.
 
-Focused verification already run in the feature worktrees:
+Focused verification already run in the feature worktrees and promoted
+primary checkouts:
 
 - `go test ./pkg/task` in `bus-events`;
 - `go test ./pkg/eventsapi` in `bus-api-provider-events`;
@@ -310,6 +328,45 @@ Focused verification already run in the feature worktrees:
   validation env values;
 - `BUS_TASK_BIN=/private/tmp/bus-task-tasks-mvp bash tests/e2e.sh` in
   `bus-task`.
+- `GOCACHE=/private/tmp/busdk-gocache go test ./...` in promoted
+  `bus-task`.
+- `GOCACHE=/private/tmp/busdk-gocache bash tests/e2e.sh` in promoted
+  `bus-task`.
+- `GOCACHE=/private/tmp/busdk-gocache go test ./...` in promoted
+  `bus-integration-task`.
+- `GOCACHE=/private/tmp/busdk-gocache bash tests/e2e.sh` in promoted
+  `bus-integration-task`.
+- `GOCACHE=/private/tmp/busdk-gocache go test ./...` in promoted
+  `bus-api-provider-task`.
+- `make build install PREFIX=/private/tmp/busdk-install` from the promoted
+  BusDK checkout.
+
+Live MVP proof on 2026-06-02:
+
+- `bus services up --file services.yml` started `postgres`, `events`,
+  `tasks`, `repos`, `workers`, and `api`; `bus services ps --file
+  services.yml` showed all six running.
+- A live task was created, listed, shown, assigned, messaged, read back, and
+  marked `done` through the task CLI/API path. The final projection for
+  `task-1` showed status `done`, assignment to worker
+  `4b0deeb4-9868-41b9-93e2-af2e952bfc71`, task messages, and terminal status
+  history.
+- A Spark worker was created with model `gpt-5.3-codex-spark`, environment
+  `local-dev`, and `active_task_ref: task-1`. Worker status reached
+  `running` / lifecycle `ready` with no `last_error`.
+- Supervisor guidance was accepted through the worker API with
+  `task_ref: task-1` and `environment_id: local-dev`.
+- Worker monitoring surfaces were exercised with worker status, messages, and
+  logs. The worker runtime logs showed the live App Server process attempted
+  work; command execution inside that worker runtime was blocked by the
+  worker/runtime environment, which is outside the Bus Task implementation
+  boundary.
+- Parallel same-repository proof used task refs
+  `task-proof-b-20260602-2205` and `task-proof-c-20260602-2205` with Spark
+  worker identities `2d241a7c-5c4e-40b4-913b-35e497083c26` and
+  `2683b4d4-1909-4ccc-8aa5-0e4acd41ec17`. Both workers remained running with
+  distinct `active_task_ref` values and distinct worker-owned Git worktree
+  paths under `.bus/services/workers/runtime/.../product-worktree`.
 
 ## Dependencies
 
