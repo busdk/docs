@@ -2,365 +2,373 @@
 
 ## Goal
 
-Finish the generic Bus task/thread system so it is no longer split between old
-development-task names, hidden worker behavior, and partially migrated command
-surfaces.
+Finish the local Bus task/thread MVP on top of the accepted Bus Events,
+workers, and services stack.
 
-`bus-task` should be the user-facing generic task/thread product. It should
-not be Codex-only, development-only, or tied to one worker environment.
+A Bus task is a bidirectional communication thread backed by the Bus Events
+API. Task modules should let operators and supervisors create tasks, list
+tasks, send messages to a task, read the task message history, record task
+status, and connect a task reference to an existing worker identity. They
+should not know how the work is executed.
 
-## 2026-05-30 Review Addendum
+The module architecture should match the other Bus service families:
+`bus-task` is the CLI client, `bus-api-provider-task` is a thin API
+controller, and `bus-integration-task` is the task service/provider that owns
+business logic and persistence.
 
-This goal was reviewed against the neighboring goal files and current Bus
-module checkouts on 2026-05-30. The goal direction remains right, but the
-implementation should be sequenced around the current split between task,
-worker, repository, and relay ownership.
+## Current Baseline
 
-The implementation-state notes in this section are a historical baseline from
-the review date. The 2026-05-31 implementation direction and progress sections
-below supersede this baseline for the current isolated worktrees.
+This goal was refreshed on 2026-06-02 after the local workers goal was
+accepted in `docs/docs/goals/workers.md`.
 
-Current implementation state:
+Accepted baseline:
 
-- `bus-task` is the current `bus task` CLI owner and already publishes and
-  replays canonical `bus.task.*` events, with assignment, priority, blocker,
-  dependency, and monitor/status fields present in the code path. It still
-  carries internal `devTask` names and worker-controller commands as migration
-  residue, so the public contract is not accepted merely because the command
-  exists.
-- `bus-api-provider-task` is still a skeleton. It has no service binary, HTTP
-  handlers, durable projection, or `bus.task.*` publisher yet.
-- `bus-integration-task` consumes canonical `bus.task.*` streams today, but it
-  still owns App Server worker execution, start-request consumption, isolated
-  worktree preparation, scheduler bridge behavior, and task closeout evidence.
-  Those pieces should be treated as transitional until worker-owned lifecycle,
-  repository/worktree primitives, and scheduler/service-loop contracts are
-  accepted.
-- `bus-integration-worker` and `bus-api-provider-worker` already contain
-  plural worker scaffolding and reusable claim/routing/scheduler packages, but
-  their plans still have open productization items before task integrations can
-  stop carrying worker launch and routing glue.
-- `bus-events` has canonical `bus.task.*` helper code, while some lower-level
-  append-key prefixes, tests, and relay fixtures still mention historical
-  `dev-task` or `bus.dev.task.*` names. Treat those as compatibility/audit
-  work unless a migration slice explicitly removes them.
+- `bus services` now starts the local native services stack for the MVP.
+- Workers can be created with different models, including raw
+  `gpt-5.3-codex-spark`, through the worker product path.
+- `bus workers` already covers worker create, message, messages, status, logs,
+  attach, and stop flows.
+- `bus-integration-worker` accepts `bus.workers.assign.request` and records
+  the worker `active_task_ref`.
+- `bus-integration-worker` accepts `bus.workers.message.request` with an
+  optional `task_ref` and delivers supervisor guidance to the live worker when
+  runtime delivery is configured.
+- `bus-integration-repos` owns local branch and worktree materialization used
+  by worker execution.
+- `bus-api-provider-events` already protects canonical `bus.task.*` names with
+  task scopes such as `task:send`, `task:read`, `task:reply`, `task:claim`,
+  and `task:admin`.
 
-Historical dependencies for the broader pre-refactor goal:
+Current task-module state:
 
-- Finish `docs/goals/workers.md` enough that `bus-integration-worker` owns
-  worker identity, lifecycle, claim matching, start requests, capacity, and
-  the service loop. The current narrower task-only slice avoids depending on
-  this by removing worker launch and routing code from task modules rather
-  than keeping transitional ownership there.
-- Finish `docs/goals/repos.md` enough that task and worker callers use
-  repos-owned branch/worktree creation, status, dirty/locked/active detection,
-  and conservative cleanup primitives instead of duplicating Git policy in
-  task integration code.
-- Finish `docs/goals/service-owned-events-relay.md` before treating remote
-  task routing or returned claim/progress/terminal evidence as normal product
-  proof.
-- Finish or update `docs/goals/service-owned-task-scheduler.md` against the
-  current `bus.task.*` / `bus-integration-task` / worker-family naming before
-  using it as implementation guidance; older `bus.dev.task.*` and
-  `bus-integration-dev-task` wording in that handoff is historical.
-- Finish `docs/goals/multi-environment-task-worker-refactor.md` before
-  calling cross-environment assignment, claim, status, and terminal evidence
-  complete.
+- `bus-task` is the current task CLI owner, but the main checkout still carries
+  older development-task, worker, container, runtime, and worktree residue.
+- `bus-api-provider-task` is still skeletal in the promoted main checkout.
+- `bus-integration-task` still contains historical worker/App Server/container
+  bridge behavior. It should become the task service/provider instead:
+  task business logic, persistence, projection, and task-side coordination
+  live here, while worker/runtime pieces move to worker-owned modules.
+- The older isolated `codex/task-bidi-core` worktrees were useful review
+  evidence, but they are not the promoted software baseline for this goal.
 
-No product implementation worktree or feature branch was created for this
-review. The operator requested review-only work and allowed this goal file to
-be updated in the main checkout.
+## MVP User Story
 
-## 2026-05-31 Implementation Direction
-
-The operator reopened this goal for implementation with a narrower boundary:
-task modules should support the task feature BusDK already had, but without
-worker-related code. A Bus task is a bidirectional communication thread backed
-by the Bus Events API. Task code may create a thread, publish messages,
-replay/listen to messages, expose status derived from task Events, and provide
-API/controller shapes for those operations. Task code must not know who uses a
-thread or how it is executed.
-
-This implementation must use `bus-events` and the Bus Events API as the event
-transport and source of truth. Do not add a local task database, a worker
-launcher, container execution, Git worktree management, scheduler capacity
-logic, model/profile/runtime selection, or repository promotion behavior to
-the task modules. Any remaining Worker Agent, container, scheduler, runtime,
-or worktree code should move to the worker module family or another owning
-module.
-
-Implementation isolation for this slice:
-
-These worktree paths are relative to the supervisor checkout root. In this
-session that root is the current `agent-supervisor` working directory; another
-operator can set `BUSDK_SUPERVISOR_ROOT` to their equivalent checkout and use
-the same relative paths.
-
-- `bus-task`: branch `codex/task-bidi-core`, worktree
-  `worktrees/task-bidi/bus-task`.
-- `bus-api-provider-task`: branch `codex/task-bidi-core`, worktree
-  `worktrees/task-bidi/bus-api-provider-task`.
-- `bus-integration-task`: branch `codex/task-bidi-core`, worktree
-  `worktrees/task-bidi/bus-integration-task`.
-- `bus-integration-worker`: branch `codex/task-bidi-core`, worktree
-  `worktrees/task-bidi/bus-integration-worker`, used for worker-owned code
-  that must survive task-module cleanup.
-- `bus-api`: branch `codex/task-bidi-core`, worktree
-  `worktrees/task-bidi/bus-api`, used for the explicit task provider mount.
-- `bus-events`: detached dependency worktree
-  `worktrees/task-bidi/bus-events`, used only so isolated task worktrees can
-  resolve the existing `../bus-events` module replacement.
-
-No merge or promotion should happen until the operator confirms the work.
-
-## 2026-05-31 Implementation Progress
-
-Current slice status in the isolated worktrees:
-
-- `bus-task` has a task-only CLI over the Bus Events API. User-facing tests
-  now cover create, message, close, list, replay, and follow behavior. The
-  stale help/e2e assertions for worker runtime flags were replaced with
-  task-thread assertions.
-- `bus-api-provider-task` now exposes `pkg/tasksapi` with stable task request
-  and response shapes, Bus Events-backed create/message/close/list/replay
-  helpers, deterministic error envelopes, provider-owned OpenAPI/capability
-  metadata, and a mountable HTTP handler for the first task read/mutation
-  controller surface. It still has no standalone service binary; it is mounted
-  through `bus-api` when that host enables the task provider.
-- `bus-integration-task` has a task-thread replay/follow command and package.
-  Its old worker/App Server e2e script was replaced with an Events-only smoke,
-  stale disposable-worker request notes were moved into explicit
-  worker/repository-owned handoff language, and its local module dependency
-  list now matches the single `bus-events` replacement used by `go.mod`.
-- `bus-integration-worker` guidance records that worker launch, claim,
-  lifecycle, capacity, and bridge replacement work belongs to worker-owned
-  modules rather than back in task modules.
-- `bus-api` now has a focused task provider mount following the existing
-  explicit provider/enable-module pattern. The mount wires
-  `bus-api-provider-task` through Bus Events API configuration, OpenAPI path
-  aggregation, and capability discovery without adding task business logic to
-  core `bus-api`.
-- `bus-task/tests/live-events-e2e.sh` proves the cross-module flow against a
-  real `bus-api-provider-events` memory backend. The smoke signs a local
-  task-scoped JWT, creates/messages/closes/replays task threads with
-  `bus-task`, replays the same thread with `bus-integration-task`, creates a
-  second thread through the `bus-api` task provider mount, and verifies that
-  `bus-task` can replay the `bus-api`-created thread from the same Bus Events
-  API history.
-
-Recent verification:
-
-- `make check` passed in `worktrees/task-bidi/bus-task`.
-- `make check` passed in `worktrees/task-bidi/bus-api-provider-task`.
-- `go test ./pkg/tasksapi` passed in
-  `worktrees/task-bidi/bus-api-provider-task` after adding provider metadata.
-- `make check` passed in `worktrees/task-bidi/bus-integration-task`.
-- `go test ./...`, `make test`, and `make lint` passed in
-  `worktrees/task-bidi/bus-api`.
-- `go test ./internal/backends ./internal/server`, `make test`, `make lint`,
-  and `tests/e2e/068-task-provider-mount.sh` passed in
-  `worktrees/task-bidi/bus-api` after adding task OpenAPI/capability
-  aggregation.
-- `tests/live-events-e2e.sh` passed in `worktrees/task-bidi/bus-task`.
-- Focused Markdown lint has passed for changed module docs and this goal file.
-- Boundary scans show task-module Go code only imports Bus Events packages;
-  worker/runtime wording remains only in negative tests, historical handoff
-  notes, or boundary guidance.
+1. The operator starts the local stack with `bus services up`.
+2. One or more workers already exist, or are created through the accepted
+   worker path with a selected model such as `gpt-5.3-codex-spark`.
+3. The supervisor creates a task with a title, body, repository context when
+   needed, and non-secret metadata.
+4. The supervisor can list tasks and inspect a single task thread.
+5. The supervisor can send messages to the task and read messages already
+   written by the supervisor, worker, or system.
+6. The task is assigned to a worker identity by publishing/using the accepted
+   worker assignment path, or by sending worker guidance that includes the
+   task reference.
+7. The worker does the task in a repository worktree owned by the worker/repos
+   stack, so multiple tasks for the same Git repository can proceed in
+   parallel.
+8. The supervisor monitors and guides the worker through task messages plus
+   the accepted worker status, messages, logs, and attach surfaces.
+9. Completion, blockage, or failure is recorded as task Events and can be read
+   back from the task thread.
 
 ## Module Boundary
 
-`bus-task` owns task/thread UX, task references, participant labels, message
-publication, close/reopen-style thread status, and replay/listen output for
-task Events.
+`bus-task` owns the user-facing task CLI. It should expose task create, list,
+show, message, assign, status, and read/replay operations as a client of the
+task API/controller surface. It should not publish directly to every internal
+task service Event when an API/controller route exists, just as `bus workers`
+uses the worker API surface.
 
-`bus-api-provider-task` owns the task API/controller package for task requests
-and read projections. It currently has a mountable handler for `bus-api`, but
-it does not own a standalone service binary.
+`bus-api-provider-task` owns the task HTTP/API controller. It should validate
+requests, expose the route surface through `bus-api`, publish task request
+Events, and read task views through the task Events/API contract. It should
+not own task business logic, durable task storage, worker assignment policy,
+or project/worktree state. Its in-process projection is a cache of task
+service response/snapshot Events, not the task domain store.
 
-`bus-integration-task` should become the task-specific Events replay/follow
-bridge for consumers that need task-thread streams. It should not remain the
-hidden owner of worker identity, worker lifecycle, capacity, routing, runtime
-launch policy, repository state, or worktree policy.
+`bus-integration-task` owns the task service/provider. It implements task
+business logic, task persistence, task projection, task message handling,
+task-side assignment state, and terminal task status. Its durable state may be
+stored in PostgreSQL or derived directly from the Bus Events API, but it must
+remain reachable through Bus Events API contracts. It consumes task request
+Events from the API provider and emits task response/status/history Events.
 
-Worker identity and worker lifecycle belong to the workers goal. Runtime
-provider execution belongs to `bus-agent` and the App Server/runtime layer.
-Assignment, claimability, queue visibility, scheduler decisions, supervisor
-evidence, repository promotion, and execution state belong to worker,
-scheduler, repository, or runtime-owned goals rather than this task goal.
+Worker identity, model choice, worker lifecycle, runtime delivery, Codex App
+Server communication, and `active_task_ref` handling belong to the worker
+module family.
 
-## Required Behavior
+Task project data is represented as Git worktrees. Repository checkout, branch
+creation, worktree materialization, dirty-state detection, locking, cleanup,
+and promotion remain repository/worker-owned capabilities; task records should
+store and expose the resulting project/worktree references rather than
+duplicating low-level Git mechanics in the API controller.
 
-The canonical event namespace for task lifecycle is:
+Remote access is not a Bus Task implementation concern. Remote task support
+comes from using a deployed or relayed Bus Events API; task modules should keep
+using the same Events API contract locally and remotely.
+
+Containers and VMs are not part of this MVP. Native `bus services` support is
+the current execution baseline.
+
+## Service-Family Pattern
+
+Tasks should follow the same architecture as Workers, Repos, and Events:
+
+- the CLI is a product client;
+- the API provider is an HTTP controller and Events adapter;
+- the integration service owns domain behavior, persistence, and side effects;
+- the Events API is the shared transport, authorization, replay, and remote
+  boundary;
+- projected API reads are rebuilt from integration response/status Events;
+- durable service state lives in the integration service's store, not in the
+  controller.
+
+The task API provider should behave like the worker and repos providers:
+validate the HTTP request, publish a bounded canonical request Event, return a
+stable accepted/error response, and keep reads backed by an Events-fed
+projection. The task integration service should behave like the worker and
+repos integrations: listen for request Events, apply business rules, update
+its persistent state, and publish response/status/history Events that the API
+provider and other consumers can replay.
+
+## Required Event Contract
+
+The task product must use the canonical Bus Events namespace:
 
 ```text
 bus.task.*
 ```
 
-Legacy names such as `bus.dev.task.*` and `bus.work.*` should be removed from
-primary product paths or explicitly documented as compatibility.
+The first accepted MVP should define a small request/response/status contract
+that mirrors the worker and repos patterns. The exact names can be refined
+during implementation, but the expected shape is:
 
-The task product should support:
+- `bus.task.list.request` from the API provider, answered by
+  `bus.task.list.response` from `bus-integration-task`;
+- `bus.task.create.request` from the API provider, resulting in
+  `bus.task.created` and a task status snapshot;
+- `bus.task.message.request` from the API provider, resulting in
+  `bus.task.message` and updated task projection evidence;
+- `bus.task.assign.request` from the API provider, resulting in
+  `bus.task.assigned` and worker assignment through the accepted worker path;
+- task status snapshots or responses for show/status reads;
+- `bus.task.error` or stable error responses for rejected requests.
 
-- create a bidirectional task thread;
-- publish messages into a task thread;
-- close and replay a task thread;
-- list known task threads from canonical task-created Events;
-- preserve participant labels and non-secret message metadata;
-- produce script-friendly text and JSON output;
-- provide focused subcommand help instead of falling back to top-level help.
+The state/history Events should use existing canonical names where possible:
 
-Task evidence should be deterministic enough that any consumer can reconstruct
-the thread from Bus Events. Worker-owned modules may interpret task threads as
-input to assignment, queue, claim, execution, or supervisor workflows, but
-those interpretations are outside the task modules.
+- `bus.task.created` for task creation;
+- `bus.task.message` for supervisor, worker, and system messages;
+- `bus.task.assigned` when recording the task-side assignment relation;
+- `bus.task.reopened` when reopening work;
+- `bus.task.done`, `bus.task.blocked`, `bus.task.failed`, and
+  `bus.task.canceled` for terminal or paused states.
 
-## API Provider Slice
+The task service/provider should use `bus-events` and the Bus Events API as
+its integration contract and source of truth. It may maintain durable
+projections in PostgreSQL or directly over the Bus Events stream. Do not add a
+remote transport, worker scheduler, worker launcher, low-level Git
+implementation, container runner, or VM runner to task modules.
 
-`bus-api-provider-task` now has the first Events-backed package and mountable
-handler slice. Remaining provider work should grow in small focused slices:
+If new task request, response, or snapshot Event names are added, update
+`bus-events`, `bus-api-provider-events` ACL rules, capability metadata, and
+tests in the same slice so callers do not need broad administrative Events
+scopes to use the task MVP.
 
-- keep stable request/response schemas for list, show, status, and errors;
-- keep bounded read projection over canonical task Events;
-- preserve HTTP handlers suitable for mounting in `bus-api`;
-- preserve provider-owned OpenAPI route metadata, public route prefixes, and
-  Bus Events capability metadata for `bus-api` discovery;
-- preserve mutation request shapes for create, message, close, and
-  replay/listen behavior that publish or read canonical `bus.task.*` Events
-  without owning runtime execution;
-- keep published scopes aligned with `bus-api-provider-events` ACL behavior
-  (`task:send` for creation, `task:reply` for messages, `task:admin` for
-  closing, and `task:read` for replay).
+`bus-integration-task` projection must be deterministic enough that any
+consumer with task read access can reconstruct:
 
-The provider should not execute work, launch workers, assign workers, project
-worker queue state, or store credentials.
+- task identity, title, body, status, and non-secret metadata;
+- ordered task messages;
+- current worker assignment, when present;
+- repository/worktree references for task project data;
+- terminal status and bounded evidence references.
 
-## Integration Slice
+The API provider's projection should be restart-safe in the same sense as the
+worker provider: it can rebuild from replayed task response/status/history
+Events when configured to listen and replay, and it must not be treated as the
+authoritative task store.
 
-`bus-integration-task` should keep task-specific behavior: translating,
-replaying, filtering, and following task Events for task-thread consumers.
+## Worker Connection
 
-Remaining worker launch and scheduler glue should continue moving to
-worker-owned packages or the workers integration provider.
+Task assignment should use the accepted worker Events/API surface instead of
+inventing a task-owned worker bridge.
 
-## 2026-05-31 Pre-Promotion Acceptance Audit
+The expected MVP path is:
 
-This audit applies to the isolated `codex/task-bidi-core` worktrees listed
-above. It is not a merge or release acceptance; no promotion should happen
-until the operator confirms the work.
+- `bus-api-provider-task` publishes a task assignment request Event;
+- `bus-integration-task` records the task-side assignment and publishes or
+  projects `bus.task.assigned`;
+- worker control publishes `bus.workers.assign.request` with `task_ref` for a
+  specific worker identity;
+- supervisor guidance can publish `bus.workers.message.request` with the same
+  `task_ref`;
+- worker responses and status snapshots remain worker-owned evidence, while
+  task messages and task status remain task-owned history.
 
-| Requirement | Current evidence | State |
-| --- | --- | --- |
-| `bus-task` is the stable generic task/thread CLI. | `bus-task` now exposes only task-thread commands over the Bus Events API; `run/run_test.go` covers help, create, say, show/status, close, list, and watch; `make check` passed in the `bus-task` worktree. | Satisfied in the isolated worktree. |
-| Task creation, messaging, closing, listing, replay, and follow behavior are tested through user-facing paths. | `bus-task` command tests cover those paths, `tests/e2e.sh` checks the user-facing help surface, and `tests/live-events-e2e.sh` drives create/message/close/list/replay/follow through a real Events API. | Satisfied in the isolated worktree. |
-| The API provider exposes the first stable task read/mutation controller surface without executing work. | `bus-api-provider-task/pkg/tasksapi` provides create, message, close, list, replay, status, deterministic errors, strict JSON decoding, OpenAPI path metadata, public route prefixes, and Event capabilities. Tests reject worker-owned fields such as `worker_id`. | Satisfied in the isolated worktree. |
-| Task projection reconstructs thread messages and status from canonical Bus Events. | Provider and CLI tests replay `bus.task.created`, `bus.task.message`, and `bus.task.closed`; list/status tests derive open/closed state from Event history. | Satisfied in the isolated worktree. |
-| Legacy `bus dev task`, `bus dev work`, `bus.dev.task.*`, and `bus.work.*` primary references are audited, removed, or marked compatibility. | Boundary scans found legacy/worker wording only in negative tests, boundary guidance, or historical handoff notes; compiled task-module dependencies list standard library plus `bus-events` / `eventsapi` and module-local packages. | Satisfied for task-owned worktrees. |
-| `bus-integration-task` is slimmed to task-thread replay/follow semantics. | The old `pkg/devtaskintegration` execution bridge is removed; `pkg/taskintegration` consumes canonical task Events; `Makefile.local` now lists only `bus-events` as a source dependency; `make check` passed. | Satisfied in the isolated worktree. |
-| Focused unit tests cover task state machine, output contracts, help routing, projection behavior, and compatibility decisions. | `bus-task`, `bus-api-provider-task`, and `bus-integration-task` tests cover command help, event publishing, projection/replay, handler errors, metadata, and worker-field rejection. | Satisfied in the isolated worktrees. |
-| Integration/e2e proof covers accepted slices. | `bus-task/tests/live-events-e2e.sh` starts the real `bus-api-provider-events` memory backend, signs a task-scoped JWT, drives `bus-task`, `bus-integration-task`, and the `bus-api` task provider mount, and passed. | Satisfied in the isolated worktrees. |
+The implementation may choose whether `bus-integration-task` calls the worker
+provider/API, emits worker request Events, or coordinates both task-side and
+worker-side records, but the proof must show the worker receives the task
+reference through the accepted worker path.
 
-Remaining work before final acceptance is review and promotion choreography:
-commit owning modules first, then update BusDK and supervisor submodule
-pointers as appropriate. Do not merge or promote until the operator confirms.
+## Implementation Slices
 
-## Review Targets
+1. Rebaseline the task modules against this goal and remove stale active
+   guidance from the older `task-bidi` promotion slice.
+2. Implement or refresh `bus-integration-task` as the task service/provider
+   with task business logic, persistence, projection, message handling,
+   assignment state, and terminal status.
+3. Define the canonical task request, response, snapshot, history, and error
+   Events, and update `bus-events` plus Events API ACL/capability tests for
+   that contract.
+4. Implement or refresh `bus-api-provider-task` as the thin API controller for
+   create, list, show, message, assign, status, and replay/read surfaces,
+   using Events to communicate with `bus-integration-task`.
+5. Refactor `bus-task` into the product CLI over the API/controller surface,
+   with script-friendly text and JSON output.
+6. Move or remove the historical worker/App Server/container bridge code from
+   task modules; worker-owned modules keep runtime delivery and lifecycle.
+7. Wire the task API controller and task integration service into `bus-api`
+   and the local `bus services` profile when they need to be available in the
+   MVP stack.
+8. Prove task-to-worker assignment through `bus.workers.assign.request` or the
+   accepted worker API endpoint that publishes it.
+9. Prove supervisor guidance through `bus.workers.message.request` with a
+   `task_ref`.
+10. Prove parallel same-repository task execution by showing distinct
+   worker/repos-owned worktree references for distinct task refs.
 
-Start review from these isolated worktree entry points:
+Before product-code work begins, create feature worktrees and branches for the
+affected modules and record their branch names and locations in this goal. No
+module merge or promotion should happen until the operator confirms the work.
 
-- `bus-task`: review `run/run.go`, `run/run_test.go`, `internal/cli/flags.go`,
-  `tests/e2e.sh`, and the new `tests/live-events-e2e.sh`. The large deletion
-  set is expected: it removes old worker/runtime/repository execution code
-  from the task CLI.
-- `bus-api-provider-task`: review the new `pkg/tasksapi/tasks.go`,
-  `pkg/tasksapi/metadata.go`, `pkg/tasksapi/tasks_test.go`, and
-  `tests/e2e.sh`. The old package stub files were removed.
-- `bus-integration-task`: review `cmd/bus-integration-task/main.go`, the new
-  `pkg/taskintegration/taskintegration.go`,
-  `pkg/taskintegration/taskintegration_test.go`, `tests/e2e.sh`, and the
-  module docs. The large deletion set is expected: it removes the old
-  `pkg/devtaskintegration` worker/App Server/container/worktree bridge.
-- `bus-api`: review `internal/backends/module_backends_task.go`,
-  `internal/backends/module_backends_task_test.go`,
-  `internal/server/server_test.go`, and
-  `tests/e2e/068-task-provider-mount.sh`.
-- `bus-integration-worker`: review `AGENTS.md` and `PLAN.md` only if the
-  guidance-only handoff edits are accepted as part of this slice.
+Current implementation isolation:
 
-When reviewing, include both tracked diffs and untracked additions from
-`git ls-files --others --exclude-standard`; the new source and e2e files in
-this slice are intentionally not visible in plain `git diff --name-status`
-until staged.
+These worktrees are relative to the supervisor checkout root
+`/Users/jhh/git/busdk/agent-supervisor`.
 
-Current untracked additions to include in review:
+- BusDK superproject: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/busdk`.
+- `bus-events`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-events`.
+- `bus-api-provider-events`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-api-provider-events`.
+- `bus-integration-task`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-integration-task`.
+- `bus-api-provider-task`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-api-provider-task`.
+- `bus-task`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-task`.
+- `bus-api`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-api`.
+- `bus-api-provider-worker`: branch `codex/tasks-mvp`, worktree
+  `worktrees/tasks-mvp/bus-api-provider-worker`, used only if the task MVP
+  needs worker API contract tests or a narrow compatibility adjustment.
 
-- `bus-task`: `tests/live-events-e2e.sh`.
-- `bus-api-provider-task`: `pkg/tasksapi/metadata.go`,
-  `pkg/tasksapi/tasks.go`, `pkg/tasksapi/tasks_test.go`, and `tests/e2e.sh`.
-- `bus-integration-task`: `pkg/taskintegration/taskintegration.go` and
-  `pkg/taskintegration/taskintegration_test.go`.
-- `bus-api`: `internal/backends/module_backends_task.go`,
-  `internal/backends/module_backends_task_test.go`, and
-  `tests/e2e/068-task-provider-mount.sh`.
+The older `worktrees/task-bidi/*` worktrees remain unmerged historical
+prototype/reference material and are not the implementation branch for this
+current goal.
 
-Reviewers can refresh the current proof from the supervisor checkout with:
+Current implementation status in the `codex/tasks-mvp` feature worktrees:
 
-```sh
-cd worktrees/task-bidi/bus-task && make check
-cd ../bus-api-provider-task && make check
-cd ../bus-integration-task && make check
-cd ../bus-api && make test && make lint && bash tests/e2e/068-task-provider-mount.sh
-cd ../bus-task && bash tests/live-events-e2e.sh
-cd ../../../projects/busdk/docs/docs && bus lint goals/tasks.md
-```
+- `bus-events` defines the shared task request, response, status snapshot,
+  message, assignment, view, and error contract under canonical `bus.task.*`
+  names.
+- `bus-api-provider-events` grants scoped Events API ACL coverage for the new
+  task request, response, status, message, assignment, and error Events.
+- `bus-integration-task` has been cut over to a task service/provider. The old
+  development worker/App Server/container/worktree bridge was removed from the
+  feature worktree. The service consumes task request Events, persists and
+  projects task state, publishes task history/status/list/error Events, and
+  emits `bus.workers.assign.request` when task assignment links a task to a
+  worker identity.
+- `bus-api-provider-task` exposes the thin task HTTP controller and
+  Events-fed projection for create, list, show/status, messages, message,
+  assign, and status-change routes.
+- `bus-api` has a built-in `tasks`/`task` module backend that mounts the task
+  provider and communicates with the task service through the Bus Events API.
+- `bus-task` has been refactored to a task-only CLI client over the task API
+  controller. The feature worktree no longer contains the historical worker
+  launcher, runtime, container, or Git helper command code.
+- BusDK service profiles now include `bus/integration/tasks/local` and a
+  combined `bus/api/tasks-workers` gateway profile; `services.yml` starts the
+  local tasks integration service alongside the accepted worker stack.
 
-## Operator Decision Needed
+Focused verification already run in the feature worktrees:
 
-The isolated implementation slice is ready for operator review. The next
-decision is one of:
+- `go test ./pkg/task` in `bus-events`;
+- `go test ./pkg/eventsapi` in `bus-api-provider-events`;
+- `go test ./pkg/tasksapi` in `bus-api-provider-task`;
+- `go test ./...` in `bus-integration-task`;
+- `go test ./...` in `bus-task`;
+- `go test -mod=mod -modfile=/private/tmp/bus-api-tasks.mod ./internal/backends -run 'TestTask|TestTasks'`
+  in `bus-api`, using a temporary modfile to point ordinary Bus dependencies
+  at checked-out sibling modules and task/Event dependencies at the feature
+  worktrees;
+- `bus-services stack validate` against a temporary copy of the edited BusDK
+  `services.yml` and the edited `profiles` directory, using dummy non-secret
+  validation env values;
+- `BUS_TASK_BIN=/private/tmp/bus-task-tasks-mvp bash tests/e2e.sh` in
+  `bus-task`.
 
-- accept the slice and run the promotion checklist below;
-- request revisions in one or more listed worktrees, keeping the goal active;
-- reject the slice and leave the primary checkouts unchanged.
+## Dependencies
 
-Until that decision is made, keep the work unmerged and unpromoted.
+Completed dependency:
 
-## Promotion Checklist After Operator Confirmation
+- `docs/docs/goals/workers.md` is accepted for the local native workers MVP and
+  is the baseline for worker creation, model selection, worker identity,
+  worker messaging, and worker-owned task assignment.
 
-Use this sequence only after review accepts the isolated worktree diffs:
+Active dependencies for implementation:
 
-1. Re-run the focused proof commands listed in the acceptance audit, including
-   `make check` in the three task-owned modules, `make test` and `make lint`
-   in `bus-api`, the `bus-api` task provider e2e, and the live Events task
-   e2e.
-2. Commit owning module work first:
-   `bus-task`, `bus-api-provider-task`, `bus-integration-task`, and `bus-api`.
-   Commit `bus-integration-worker` only if its guidance-only edits are still
-   part of the accepted slice.
-3. Confirm no `bus-events` commit is needed for this slice; it is a detached
-   dependency worktree used for module replacement resolution only.
-4. Update the BusDK superproject submodule pointers for the accepted module
-   commits and commit the `docs/docs/goals/tasks.md` goal update in the docs
-   module.
-5. Update the supervisor repository pointer for `projects/busdk` and keep the
-   supervisor memo/log changes with the supervision commit, not with product
-   modules.
+- Use the existing Bus Events API and `bus-events` canonical task helpers.
+- Match the worker/repos request-response-snapshot architecture instead of
+  inventing a task-specific shortcut.
+- Keep task business logic and durable task state in `bus-integration-task`.
+- Keep `bus-api-provider-task` as the API controller that communicates through
+  Events.
+- Use the accepted worker assignment and message APIs/events for worker
+  connection.
+- Use repository/worker-owned worktree materialization for per-task Git
+  worktrees.
+
+This goal must not wait on container, VM, or remote-access implementation
+work. Those concerns are outside the Bus Task implementation boundary for the
+current MVP.
 
 ## Acceptance Criteria
 
-This goal is accepted when:
+This goal is accepted when all of the following are true in the promoted main
+checkouts:
 
-- `bus-task` is the stable generic task/thread CLI;
-- task creation, messaging, closing, listing, replay, and follow behavior are
-  tested through user-facing paths;
-- the API provider exposes the first stable task read/mutation controller
-  surface without executing work;
-- task projection can reconstruct thread messages and thread status from
-  canonical Bus Events;
-- old `bus dev task`, `bus dev work`, `bus.dev.task.*`, and `bus.work.*`
-  primary references are audited, removed, or marked as compatibility;
-- `bus-integration-task` is slimmed to task-thread replay/follow semantics;
-- focused unit tests cover the task state machine, output contracts, help
-  routing, projection behavior, and compatibility decisions;
-- integration/e2e proof covers the accepted slices, including the current
-  `bus-task/tests/live-events-e2e.sh` cross-module proof against a real
-  `bus-api-provider-events` memory backend.
+- `bus services up` can start the local stack needed for task and worker MVP
+  proof.
+- A worker can be created through the accepted worker path with a selected
+  model such as `gpt-5.3-codex-spark`.
+- The task product can create, list, show, message, assign, and read/replay
+  tasks through the task CLI/API controller.
+- `bus-api-provider-task` is a thin controller and communicates through Events
+  with `bus-integration-task`.
+- `bus-api-provider-task` serves reads from an Events-fed projection of task
+  service response/status/history Events, not from controller-owned task state.
+- `bus-integration-task` owns task business logic and persistence, using
+  PostgreSQL or direct Bus Events projections behind the same Events/API
+  contract.
+- The task Events contract includes request, response/status, history, and
+  error Events with Events API ACL/capability coverage.
+- Task history is reconstructed from canonical `bus.task.*` Events and any
+  durable projections remain consistent with that stream.
+- A task can be connected to a worker identity through
+  `bus.workers.assign.request` or the worker API endpoint that publishes it.
+- Supervisor guidance can be delivered to the live worker with a `task_ref`
+  through `bus.workers.message.request` or the worker API endpoint that
+  publishes it.
+- The supervisor can monitor and guide work with task history plus accepted
+  worker status, messages, logs, and attach surfaces.
+- Parallel work on the same Git repository is proved with distinct
+  Git worktree references for distinct task refs.
+- Task modules contain no worker launcher, runtime delivery, container, VM,
+  remote-transport, or Git worktree implementation logic.
+- Focused unit and e2e tests cover provider publishing/projection, CLI output,
+  assignment to worker identity, supervisor guidance, terminal task state, and
+  local services-stack proof.
