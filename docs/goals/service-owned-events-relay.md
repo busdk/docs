@@ -534,6 +534,59 @@ accepted branches. The dependent feature work currently spans
 `bus-api-provider-auth`, `bus-operator-deploy`, and dispatcher/provider
 freshness for `bus-api` plus Events provider modules.
 
+The current local feature branch bill of materials after the 2026-06-03 commit
+and verification pass is:
+
+- `bus-integration-ssh-runner` branch `codex/ssh-runner-tunnel`, commit
+  `4366694`, for reusable OpenSSH local-forward support and clarified runner
+  docs.
+- `bus-remote` branch `codex/events-relay-remote-metadata`, commit
+  `a50293a`, for SSH-issued credential timing plus route-owner/route-pair
+  remote metadata.
+- `bus-integration-services` branch `codex/services-command-healthcheck`,
+  commit `f98e339`, for service integration health/status support and clearer
+  operator versus integration-test lifecycle docs.
+- `bus-services` branch `codex/events-relay-service-profile`, commit
+  `bc02926`, for the Events relay service profile and required `PATH`, `HOME`,
+  and `SSH_AUTH_SOCK` process environment forwarding.
+- `bus-integration-events` branch `codex/integration-events-relay-service`,
+  commit `36397bd`, for the new relay integration service skeleton and named
+  remote consumption path.
+- `bus-operator-token` branch `codex/events-relay-token-issuer`, commit
+  `606ef55`, for tolerant relay issuer signing flags before `issue`.
+- `bus-api-provider-auth` branch `codex/internal-token-ttl`, commit
+  `8a84665`, for configurable internal service-token TTLs and clarified
+  internal-token docs.
+- `bus-operator-deploy` branch `codex/worker-dev-tool-install`, commit
+  `ca00dff`, for the `--events-relay-tool-bundle` remote freshness/install
+  bundle.
+- `bus-task` branch `codex/task-relay-status`, commit `c26b27f`, for local
+  task relay-status consumption.
+
+Focused verification on 2026-06-03 covered the active branch set with clean
+results:
+
+- `bus-integration-ssh-runner`: `go test ./...` with temporary Go workspace
+  `/private/tmp/bus-ssh-runner-gowork-20260603/go.work` passed when rerun
+  outside the sandbox because the local-forward test binds `127.0.0.1`;
+  `go vet ./...`, `git diff --check`, and `bus lint README.md PLAN.md`
+  passed.
+- `bus-integration-services`: `go test ./...` and `go vet ./...` passed with
+  `/private/tmp/bus-integration-services-gowork-20260603/go.work`;
+  `git diff --check` and `bus lint README.md PLAN.md` passed.
+- `bus-api-provider-auth`: `go test ./...` and `go vet ./...` passed with
+  `/private/tmp/bus-auth-provider-gowork-20260603/go.work`;
+  `git diff --check` and `bus lint README.md PLAN.md` passed.
+- `bus-task`: `go test ./...` and `go vet ./...` passed with
+  `/private/tmp/bus-task-gowork-20260603/go.work`;
+  `bus lint README.md PLAN.md` was already clean for the relay-status branch.
+- `bus-integration-events`: `go test ./...`, `go vet ./...`, and
+  `bus lint README.md PLAN.md` passed directly in the feature worktree.
+- Earlier checks in this implementation pass also showed clean test/vet/lint
+  results for `bus-remote`, `bus-services`, `bus-operator-token`, and
+  `bus-operator-deploy` using their recorded temporary workspaces where the
+  isolated worktree layout requires them.
+
 Before this goal can be closed, the remote freshness/install path should
 install the full relay proof tool bundle, including `bus-api`, into the
 dispatcher-visible `dist-bin` without hand-composing a temporary source tree.
