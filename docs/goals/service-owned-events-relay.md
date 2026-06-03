@@ -15,6 +15,14 @@ Events API, imports remote-originated claim, progress, terminal, and lifecycle
 evidence back, and reports status clearly enough that `bus task` and a
 supervisor can trust the route.
 
+The relay must be owned below the task and worker product surfaces. `bus-task`
+and `bus-worker` should continue to behave like ordinary clients of the Bus
+Events API, using stable environment properties in task and worker Events to
+target or describe remote work. They must not hard-code import/export loops,
+SSH sync, route-pair selection, cursor handling, or other cross-environment
+synchronization logic. At most, they may read non-secret route health/status
+for preflight and diagnostics before issuing ordinary Bus Events API requests.
+
 The operator clarified that this is high priority. Treat it as a gating
 dependency for a trustworthy remote worker lane, not as medium-priority
 transport cleanup.
@@ -117,17 +125,31 @@ local system then establishes the relay path to dev.hg.fi over an outbound SSH
 connection from local to `coding-agent@dev.hg.fi`; dev.hg.fi does not need to
 open an inbound control connection to the local machine.
 
-The MVP is accepted when `bus services up` starts the Events API stack and the
-configured service-owned relay route well enough that a configured remote is
-kept in sync automatically. The relay must run as a background service: either
-as a dedicated Bus Events Relay service or as a background relay capability
-inside the Bus Events API process. A standalone `bus events relay` command may
-remain the deterministic development, test, and recovery surface, but the
-normal MVP path must not be a CLI command launched as the production relay.
+The MVP is accepted only when the operator can drive one real remote-worker
+run from the local system while both environments are running their normal Bus
+service stacks. The relay must run as a background service: either as a
+dedicated Bus Events Relay service or as a background relay capability inside
+the Bus Events API process. A standalone `bus events relay` command may remain
+the deterministic development, test, and recovery surface, but the normal MVP
+path must not be a CLI command launched as the production relay.
+
+The required MVP user flow is:
+
+1. Start Bus services locally with `bus services up`.
+2. Create a task locally with `bus task ...`.
+3. Create or select a worker for the remote `dev-hg` environment locally with
+   `bus workers ...`.
+4. Assign or instruct that remote worker to work on the locally-created task
+   from the local system.
+5. Monitor and supervise the task and worker locally while the worker runs on
+   `coding-agent@dev.hg.fi`, including claim/progress/terminal task evidence,
+   worker status, messages, logs or attach handoff, and final task result.
+
 Both systems have their Bus services up, one system has the other endpoint
-configured as a remote, and live event sync happens in the background. The
-proof should use synthetic or task-shaped `bus.task.*` Events before requiring
-a real remote worker to run product code. At minimum, it should demonstrate:
+configured as a remote, and live event sync happens in the background.
+Synthetic or task-shaped relay probes are useful lower-level evidence, but
+they are no longer sufficient for MVP completion. At minimum, the MVP proof
+should demonstrate:
 
 - `bus services up` starts the local process-level Events API stack.
 - `bus services up` starts the dev.hg.fi process-level Events API stack.
@@ -159,16 +181,27 @@ a real remote worker to run product code. At minimum, it should demonstrate:
   manual export/import files;
 - a local target-marked Event is forwarded to dev.hg.fi;
 - a dev.hg.fi-originated response or evidence Event is imported back locally;
+- a task is created locally through the accepted `bus task` surface;
+- a remote dev.hg.fi worker is created, selected, or confirmed locally through
+  the accepted `bus workers` surface;
+- assigning or messaging that worker locally causes the remote dev.hg.fi
+  worker service to claim or act on the task;
+- remote worker claim, running, progress, message, log/attach, and terminal
+  evidence is relayed back and visible locally through `bus task` and
+  `bus workers` status/monitoring commands;
 - the relay can stop and restart without losing cursors or replaying broad old
   history;
 - route status reports the local and remote environment ids, cursors,
   forwarded/imported/skipped/pending counters, state file, SSH route identity,
   and non-secret credential-source labels.
 
-The MVP does not require the full service-owned task scheduler, App Server
-worker launch, Notes projection, artifact transfer, user-systemd profile, or
-remote freshness command to be complete first. Those remain follow-on proofs
-that consume the live Events sync route.
+The MVP does require enough service-owned task scheduling and worker execution
+on dev.hg.fi for that local-to-remote worker run to happen without manual
+handler launches, manual event import/export, or a production CLI relay loop.
+Notes projection, full artifact transfer, user-systemd profile, and the full
+remote freshness command can remain follow-on proof work, but any missing
+worker scheduler, worker identity/control, or worker evidence path that blocks
+the five-step local operator flow is a blocker for this goal.
 
 ### Credential Source Selection Is In Scope
 
@@ -255,11 +288,16 @@ static credential fallback for a particular proof run.
 ## Required Behavior
 
 The normal remote task path should look like this from the operator's point of
-view:
+view. Exact flags may evolve with the accepted task and worker CLIs, but the
+operator-visible ownership must remain local:
 
 ```bash
-bus task start --environment h100-weekend @bus-module "Do real product work"
-bus task status
+bus services up
+bus task new @bus-module "Do real product work on dev.hg.fi"
+bus workers create --environment dev-hg --profile codex-spark --runner-provider codex-direct
+bus workers assign <worker-id> <task-ref> --environment dev-hg
+bus workers status <worker-id> --environment dev-hg
+bus task status <task-ref>
 bus task stats --all
 ```
 
@@ -267,9 +305,21 @@ The operator should not have to run a separate import/export loop. The relay
 service should already be moving eligible events between the local/controller
 Events API and the selected remote Events API.
 
+From the perspective of `bus task` and `bus workers`, this should feel like the
+same standard Bus Events API flow used on a single system. Those commands
+publish and read canonical `bus.task.*` and `bus.workers.*` Events with
+environment ids, eligible environment ids, worker ids, task refs, and other
+non-secret routing properties. Bus Events API infrastructure, relay services,
+and remote/environment metadata decide which Events move between systems,
+which side owns the active relay, how cursors are stored, and how loops are
+prevented.
+
 The service should handle these flows:
 
 - local task creation events move to the remote Events API
+- local worker create, assign, message, status, logs, and attach requests for
+  `dev-hg` move to the remote worker environment when they target that
+  environment
 - remote worker claim/running/progress/terminal events move back locally
 - approval, guidance, and task message events move to the environment that owns
   the active worker
@@ -460,22 +510,30 @@ use the local supervisor machine plus `coding-agent@dev.hg.fi`:
    operator-approved static credential fallback for that proof run.
 5. Start or verify the local-owned relay route over SSH to
    `coding-agent@dev.hg.fi`.
-6. Publish a local target-marked task-shaped Event.
-7. Observe the relay forward the Event to the dev.hg.fi Events API.
-8. Publish or observe a dev.hg.fi-originated response/evidence Event.
-9. Observe the relay import that Event back locally.
-10. Restart the relay process or service.
-11. Repeat or continue without replaying unrelated history.
+6. Create a task locally through `bus task`.
+7. Create or select a dev.hg.fi worker locally through `bus workers`.
+8. Assign or instruct the dev.hg.fi worker to work on the local task from the
+   local system.
+9. Observe the relay forward the task and worker control Events to the dev.hg.fi
+   Events API.
+10. Observe the dev.hg.fi worker service claim or start work on the task.
+11. Observe remote worker progress, message/log/attach handoff, and terminal
+    task evidence.
+12. Observe the relay import that evidence back locally.
+13. Confirm local `bus task status <task-ref>`, `bus task stats --all`,
+    `bus workers status <worker-id> --environment dev-hg`, and at least one
+    local worker monitoring surface such as `bus workers messages`, `logs`, or
+    `attach` show the remote identity and current or terminal result.
+14. Restart the relay process or service.
+15. Repeat or continue without replaying unrelated history, duplicating worker
+    claims, or resurrecting stale task/worker state.
 
-The later full remote-worker proof should add remote worker claim/progress/
-terminal evidence and confirm `bus task status` and `bus task stats --all` show
-the remote identity and terminal result locally.
-
-The proof should record task ref, route id, local and remote environment ids,
-state-file path, before/after cursors, forwarded/imported/skipped/pending
-counters, terminal status, and any manual intervention. If manual intervention
-is needed, record it as an implementation defect rather than treating the proof
-as complete.
+The proof should record task ref, worker id, route id, local and remote
+environment ids, state-file path, before/after cursors,
+forwarded/imported/skipped/pending counters, worker status, terminal status,
+monitoring output used, and any manual intervention. If manual intervention is
+needed, record it as an implementation defect rather than treating the proof as
+complete.
 
 ### Live Capability Proof Result
 
@@ -740,13 +798,10 @@ Services-owned Events route, but the relay MVP close condition is not yet
 satisfied. The remaining close condition is to wire the normal project stack so
 `bus services up` can start the relay from durable `bus-remote` configuration
 and owned Bus credential sources, then rerun the local-to-dev.hg.fi proof from
-that root stack rather than a temporary proof stack. New follow-up work should
-still start isolated until separately accepted.
-
-Full remote task scheduler and worker execution remain follow-on acceptance
-work. They should consume the same Events route without learning special
-environment-sync behavior, but they do not have to be complete to accept this
-relay MVP once the accepted-branch relay proof is clean.
+that root stack with the real local-operator remote-worker flow. The accepted
+proof must create the task locally, create/select and assign a dev.hg.fi worker
+locally, run the worker on dev.hg.fi, and monitor task/worker evidence locally.
+New follow-up work should still start isolated until separately accepted.
 
 ## Related Goals Discussed In This Thread
 
@@ -878,13 +933,33 @@ This goal is complete only when all of these are true:
   and the dev.hg.fi Events API over an outbound SSH connection from local to
   `coding-agent@dev.hg.fi`, without manual export/import files.
 - The current `bus task` remote status/start paths can consume relay status
-  instead of requiring `--sync-now` as the primary operator path.
+  for route-health preflight and diagnostics instead of requiring `--sync-now`
+  as the primary operator path; `bus task` must not implement its own
+  synchronization/import/export loop.
+- `bus task` and `bus workers` use normal Bus Events API requests and
+  environment properties to create, assign, message, status, logs, and attach
+  remote work. Cross-environment route ownership, cursoring, dedupe, and
+  transport stay in Bus Events API/relay infrastructure, not in task or worker
+  clients.
+- The MVP live proof creates a task locally through `bus task` and the task
+  becomes visible to the dev.hg.fi worker environment through the service-owned
+  relay, not a manual import/export path.
+- The MVP live proof creates or selects a dev.hg.fi worker locally through
+  `bus workers`, and the worker identity/control Events are owned by the
+  remote worker environment while being observable from the local system.
+- The MVP live proof assigns or instructs that dev.hg.fi worker locally to work
+  on the local task, and the remote worker service claims or starts the task
+  without a manual remote handler launch.
+- Local monitoring and supervision commands prove the loop is complete:
+  `bus task status <task-ref>`, `bus task stats --all`, `bus workers status
+  <worker-id> --environment dev-hg`, and at least one of `bus workers
+  messages`, `bus workers logs`, or `bus workers attach` show remote identity,
+  claim/progress/terminal evidence, and the current or final result.
+- Restart/resume proof includes the real task/worker flow: after relay or
+  service restart, the route does not duplicate worker claims, replay unrelated
+  history, or lose the active task/worker state.
 - Any remaining manual SSH sync, import/export, or `--sync-now` usage is
   documented as bootstrap/recovery only.
-
-Follow-on remote-worker proof, outside the relay MVP close condition, should
-show local task creation, service relay to remote, remote worker evidence,
-relay back to local, and local status/stats without manual import/export.
 
 ## Files To Read First
 
@@ -956,6 +1031,11 @@ temporary-source live proof covers service deployment, status integration,
 restart resume, and the local-to-`coding-agent@dev.hg.fi` SSH route. The
 accepted-release proof repeated that same Services-owned route from promoted
 BusDK `main` release `562237e17bbc08aa0ae16e1ce6675a1f152715a8`.
+After the 2026-06-04 correction, those `main` proofs are historical capability
+evidence only. Current integration and acceptance work should use `develop`,
+and this goal is not accepted until the normal `develop` stack proves the full
+local operator flow with a locally-created task, a locally-created or selected
+dev.hg.fi worker, remote worker execution, and local task/worker monitoring.
 
 Do not implement the production MVP by running `bus events relay` as a CLI loop
 under Services. The CLI may wrap, exercise, or recover the same relay engine,
@@ -981,7 +1061,9 @@ The relay goal is defined and prioritized. The implementation lanes listed
 below were originally developed in isolated worktrees and have now been promoted
 to module primary branches as part of BusDK `main`
 `562237e17bbc08aa0ae16e1ce6675a1f152715a8`. The lane entries remain here as
-provenance for the promoted release.
+provenance for the historical release. They are not current acceptance status:
+the active integration branch is `develop`, and the stronger MVP in this file
+must be proven there.
 
 Promoted implementation lanes:
 
@@ -1311,17 +1393,23 @@ Promoted implementation lanes:
   Unhealthy relay `lastError` diagnostics redact bearer tokens and common
   query-token fields defensively before printing, even though the relay status
   snapshot itself is expected to be secret-free.
-  This is branch-local proof for the acceptance item that `bus task` status
-  can consume relay status instead of treating manual `--sync-now` as the
-  primary path; full task start/status/stats proof against a real remote worker
-  remains follow-on to this relay MVP. The branch now also has a
+  This is branch-local proof for the acceptance item that `bus task` can use
+  relay health/status as preflight evidence instead of treating manual
+  `--sync-now` as the primary path. It is not proof that `bus-task` owns
+  synchronization; the task CLI still creates and observes ordinary task
+  Events, while Bus Events API/relay infrastructure owns cross-environment
+  movement. After the 2026-06-04 operator correction, full task
+  start/status/stats proof against a real dev.hg.fi worker is part of this
+  goal's MVP, not follow-on. The branch now also has a
   hermetic CLI e2e that builds `bus-task`, starts a loopback fake task API,
   proves `bus task start --environment dev-hg --relay-status-file ...`, proves
   `bus task stats --all` against an active relay route, and proves a
   wrong-route relay status snapshot blocks `start` before the API request.
-- merge status: promoted to module `main` as part of BusDK release
-  `562237e17bbc08aa0ae16e1ce6675a1f152715a8`; future task-surface relay changes
-  should still start isolated until separately accepted
+- historical merge status: promoted to module `main` as part of BusDK release
+  `562237e17bbc08aa0ae16e1ce6675a1f152715a8`; current local integration policy
+  is `develop`, and this branch-local proof should be treated as partial
+  support for the stronger MVP rather than acceptance evidence for the full
+  local-to-dev.hg.fi worker flow
 
 Root `PLAN.md` now contains a high-priority service-owned Events relay section.
 `bus-events/PLAN.md` now contains an unchecked implementation item for deploying
@@ -1395,6 +1483,10 @@ Local branch-composition proof on 2026-06-03:
 - The same proof showed `bus services up --help` exits with an unknown flag,
   so it must not be used as the freshness smoke command.
 
-The next useful thread should start by checking current Git state, then layer
-service-owned scheduler and full remote worker evidence on top of this relay
-path. New follow-up work should still start isolated until separately accepted.
+The next useful thread should start by checking current Git state, then make
+the service-owned scheduler and full remote worker evidence work through the
+same relay path as part of the MVP. Task and worker clients should keep using
+ordinary Bus Events API requests with environment metadata; the relay and
+Events infrastructure should make the remote route behave like the same
+logical Events system from their perspective. New follow-up work should still
+start isolated until separately accepted.
