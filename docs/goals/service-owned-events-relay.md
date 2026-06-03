@@ -133,6 +133,23 @@ a real remote worker to run product code. At minimum, it should demonstrate:
 - `bus services up` starts the dev.hg.fi process-level Events API stack.
 - `bus services up` starts or supervises the local-owned background relay
   service or Events API embedded relay when the dev.hg.fi remote is configured.
+- the normal project stack does not require operators to hand-compose relay
+  route files, expose token paths in `services.yml`, choose proof-only SSH
+  forward ports, or copy secrets into service configuration;
+- the same reusable `services.yml` can run on both local and dev.hg.fi-style
+  systems. It declares local service roles and capabilities only, not remote
+  environment entries, route-pair definitions, SSH targets, token paths, or
+  proof-only ports;
+- route identity, SSH target, remote Events endpoint, owner/secondary role,
+  credential source, token issuance, refresh lifetime, and safe status labels
+  come from `bus-remote` and owned Bus configuration, with `services.yml`
+  naming only the service, remote id, local environment id, and non-secret
+  operational parameters that cannot be derived;
+- remote pairing is derived atomically from named `bus-remote` entries and
+  owned Bus configuration outside `services.yml`. If both systems configure
+  each other, both derive the same route-pair id and deterministic active owner
+  so only one background relay establishes the two-way sync while the
+  reciprocal side reports passive/covered status instead of competing;
 - the local and dev.hg.fi Events API clients use explicit token-file or
   configured credential-source references rather than depending on an inherited
   `BUS_API_TOKEN`;
@@ -319,8 +336,8 @@ pair, not as two independent routes that happen to point at each other. A route
 pair is the single sync contract for two environment ids and a route purpose,
 with one durable state namespace, one active relay owner, and exactly one
 active two-way sync session at a time. Reciprocal remote declarations should
-resolve to the same route-pair id rather than creating separate competing
-sync loops.
+resolve to the same route-pair id and the same active/passive decision rather
+than creating separate competing sync loops.
 
 The route-pair declaration should include a stable route-pair identity and an
 owner environment id, such as `relayOwnerEnvironmentId`, or an equivalent
@@ -460,14 +477,15 @@ counters, terminal status, and any manual intervention. If manual intervention
 is needed, record it as an implementation defect rather than treating the proof
 as complete.
 
-### Live MVP Proof Result
+### Live Capability Proof Result
 
-The live local-to-dev.hg.fi MVP proof succeeded on 2026-06-03 using temporary
-feature-branch binaries and process-level Services stacks on both systems.
-This means the basic product question is no longer whether a Services-owned
-relay can move Events both directions over SSH; it can. The dependent branch
-set was later promoted to module primary branches and the same proof shape was
-rerun from the accepted BusDK `main` release described below.
+The live local-to-dev.hg.fi capability proof succeeded on 2026-06-03 using
+temporary feature-branch binaries and process-level Services stacks on both
+systems. This means the basic product question is no longer whether a
+Services-owned relay can move Events both directions over SSH; it can. The
+dependent branch set was later promoted to module primary branches and the
+same proof shape was rerun from the accepted BusDK release line described
+below.
 
 The proof used the local supervisor host as `env-local` and
 `coding-agent@dev.hg.fi` as `dev-hg`. The local route owned the relay pair
@@ -538,6 +556,15 @@ with `bus services up --file services.yml` from the promoted checkout
 started a local memory Events API plus the `bus-events-relay` service with
 `bus services up --file services.yml`, with `PATH` prefixed by the local
 promoted `dist-bin` and an intentionally stale inherited `BUS_API_TOKEN`.
+
+Correction after operator review on 2026-06-04: this was valid capability and
+restart proof, but it was not enough to close the product MVP. It used a
+temporary proof-specific `services.yml` plus explicit proof route/token/port
+wiring instead of the normal root stack deriving the relay from `bus-remote`.
+The product requirement is simpler for operators: once both environments have
+`bus services up` and one side has the other configured as a Bus remote, the
+relay should establish itself without proof-only route files, proof secrets,
+manual SSH forward port choices, or token paths exposed in `services.yml`.
 
 The promoted proof kept the same deterministic route design:
 
@@ -708,9 +735,13 @@ timing metadata and `bus-integration-events` named-remote consumption of that
 metadata represent the 24-hour token lifetime and refresh-before behavior in
 config and relay status.
 
-The relay MVP close condition is now satisfied for the local-to-dev.hg.fi
-Services-owned Events route. New follow-up work should still start isolated
-until separately accepted.
+The relay capability proof is satisfied for the local-to-dev.hg.fi
+Services-owned Events route, but the relay MVP close condition is not yet
+satisfied. The remaining close condition is to wire the normal project stack so
+`bus services up` can start the relay from durable `bus-remote` configuration
+and owned Bus credential sources, then rerun the local-to-dev.hg.fi proof from
+that root stack rather than a temporary proof stack. New follow-up work should
+still start isolated until separately accepted.
 
 Full remote task scheduler and worker execution remain follow-on acceptance
 work. They should consume the same Events route without learning special
@@ -800,8 +831,9 @@ This goal is complete only when all of these are true:
   instead.
 - `bus-events` exposes or shares the reusable sync/cursor/dedupe primitives
   needed by the background relay, not only local command support.
-- Relay route config is explicit, non-secret, and driven by remote/environment
-  metadata where possible.
+- Relay route config is explicit, non-secret, and driven by `bus-remote` and
+  environment metadata outside `services.yml`; the same reusable `services.yml`
+  remains valid on both systems without embedding remote-specific route config.
 - External Events environments can be configured as named remotes, similar to
   Git remotes, with enough non-secret metadata for Services, relay, and task
   status surfaces to agree on the route.
@@ -809,9 +841,9 @@ This goal is complete only when all of these are true:
   pair with a stable route-pair id, explicit owner environment id or equivalent
   primary/secondary role, one durable state namespace, and at most one active
   two-way sync session.
-- Reciprocal remote config converges on the same route pair, and duplicate or
-  conflicting route-pair declarations fail clearly instead of starting
-  competing active relays.
+- Reciprocal remote config converges on the same route pair and deterministic
+  active/passive relay decision; duplicate or conflicting route-pair
+  declarations fail clearly instead of starting competing active relays.
 - If multiple connection candidates are configured for one route pair, Services
   selects at most one active candidate at a time and failover cannot run in
   parallel with the previous candidate.
@@ -847,11 +879,12 @@ This goal is complete only when all of these are true:
   `coding-agent@dev.hg.fi`, without manual export/import files.
 - The current `bus task` remote status/start paths can consume relay status
   instead of requiring `--sync-now` as the primary operator path.
-- Follow-on remote-worker proof, outside the relay MVP close condition, shows
-  local task creation, service relay to remote, remote worker evidence, relay
-  back to local, and local status/stats without manual import/export.
 - Any remaining manual SSH sync, import/export, or `--sync-now` usage is
   documented as bootstrap/recovery only.
+
+Follow-on remote-worker proof, outside the relay MVP close condition, should
+show local task creation, service relay to remote, remote worker evidence,
+relay back to local, and local status/stats without manual import/export.
 
 ## Files To Read First
 
