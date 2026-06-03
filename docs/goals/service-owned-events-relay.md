@@ -558,8 +558,8 @@ and verification pass is:
   `8a84665`, for configurable internal service-token TTLs and clarified
   internal-token docs.
 - `bus-operator-deploy` branch `codex/worker-dev-tool-install`, commit
-  `ca00dff`, for the `--events-relay-tool-bundle` remote freshness/install
-  bundle.
+  `e65e952`, for the `--events-relay-tool-bundle` remote freshness/install
+  bundle and executable setup preflight for missing remote module directories.
 - `bus-task` branch `codex/task-relay-status`, commit `c26b27f`, for local
   task relay-status consumption.
 
@@ -586,6 +586,42 @@ results:
   results for `bus-remote`, `bus-services`, `bus-operator-token`, and
   `bus-operator-deploy` using their recorded temporary workspaces where the
   isolated worktree layout requires them.
+
+A live dev.hg.fi freshness preflight on 2026-06-03 used local
+`bus-operator-deploy` branch `codex/worker-dev-tool-install` and the command
+shape:
+
+```sh
+bus-operator-deploy worker dev setup \
+  --remote-id dev-hg \
+  --remote-kind ssh-docker \
+  --ssh-url coding-agent@dev.hg.fi \
+  --checkout /home/coding-agent/coding-agent/git/busdk/busdk \
+  --events-relay-tool-bundle \
+  --tool-bin-dir ./dist-bin \
+  --tool-smoke-command 'bus services --help'
+```
+
+The dry run proved the named bundle expands to `bus`, `bus-api`,
+`bus-services`, `bus-integration-services`, `bus-integration-events`,
+`bus-operator-token`, `bus-api-provider-auth`, and
+`bus-api-provider-events`, with `./dist-bin` as `GOBIN` and
+`bus services --help` as the dispatcher-visibility smoke command. The
+executable SSH run did not install tools because the current dev.hg.fi BusDK
+checkout lacks `bus-services`, `bus-integration-services`, and
+`bus-integration-events` module directories. After the preflight fix, the
+command fails clearly with:
+
+```text
+worker dev setup remote checkout is missing tool modules:
+bus-services,bus-integration-services,bus-integration-events
+```
+
+This is now an accepted-shape freshness failure rather than an opaque remote
+`cd` or `go install` failure. The next install proof needs dev.hg.fi to check
+out an accepted BusDK superproject revision, or an operator-approved pin set,
+that contains those module directories before `--events-relay-tool-bundle` can
+rebuild the dispatcher-visible relay tools.
 
 Before this goal can be closed, the remote freshness/install path should
 install the full relay proof tool bundle, including `bus-api`, into the
