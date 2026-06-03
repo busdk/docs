@@ -1,11 +1,153 @@
-# Remote Credential Source Selection Handoff
+# Remote Credential Source Selection Goal
 
-## Goal
+## Current Goal
 
-This conversation thread implemented the remote credential-source selection
-goal for BusDK.
+Remote worker operation should not depend on whichever `BUS_API_TOKEN` happens
+to be inherited by an operator shell or service process. Every credential
+plane must choose credentials from explicit non-secret configuration and token
+files first, then use process-global tokens only as compatibility fallbacks
+when no configured source exists.
 
-The requested end state was:
+The current target is open again because the Bus implementation has moved since
+the historical credential-source closeout. The earlier work proved important
+behavior in the old `bus-dev` / `bus-integration-dev-task` path, but current
+task and worker operation now flows through task API, workers API, Events relay,
+and worker integration services.
+
+The required end state is:
+
+- Task API clients, worker API clients, Events relay/sync, task services,
+  worker API providers, worker integration services, and SSH runner services
+  use explicit token-file or configured credential-source inputs before
+  inherited `BUS_API_TOKEN` values.
+- `BUS_API_TOKEN` and related env-token aliases remain compatibility fallbacks,
+  not the normal remote-worker credential path.
+- Missing, unreadable, empty, unsupported, or locally detectable expired
+  credentials fail before expensive worker/model/runtime startup.
+- Diagnostics name safe source labels, selected remote id/kind, environment id,
+  service name, and remediation path when available, but never token values,
+  JWT fragments, or private token-file paths.
+- Task Events, worker Events, logs, status snapshots, API payloads, relay state,
+  and diagnostics carry non-secret credential-source kind/label metadata only.
+
+## Worktree And Branch
+
+This goal refinement is being edited in a separate docs worktree as requested:
+
+- Branch: `codex/remote-credential-source-goal-refine`
+- Worktree:
+  `/Users/jhh/git/busdk/agent-supervisor/worktrees/docs-remote-credential-source-goal-refine`
+- Repository: `projects/busdk/docs`
+
+No Bus module implementation changes are part of this goal-file refinement.
+Future product implementation must use module-owned worktrees and branches
+before changing module code.
+
+## Current Implementation Review
+
+The current module ownership is different from the historical handoff:
+
+- `bus-remote` owns non-secret remote metadata, including
+  `credential_source` references and worker-profile credential-source
+  references. It validates that config does not contain secret-looking values.
+- `bus-events` owns generic Events sync and relay. Its CLI already separates
+  local, remote, source, and destination token-file boundaries and reports
+  credential-source labels.
+- `bus-task` is now the task API client. It creates, lists, reads, messages,
+  assigns, and updates task threads through `bus-api`; it does not launch
+  workers or select runtime models. Its current API credential inputs are
+  `--token-file`, `BUS_TASK_API_TOKEN_FILE`, `BUS_API_TOKEN_FILE`,
+  `BUS_TASK_API_TOKEN`, and `BUS_API_TOKEN`.
+- `bus-worker` / `bus-workers` is the worker-control API client. Its API mode
+  currently uses `--token-file` or `BUS_WORKERS_API_TOKEN_FILE` for the workers
+  API bearer token and exposes non-secret credential-source fields in worker
+  status metadata.
+- `bus-api-provider-worker` / `bus-api-provider-workers` publishes and projects
+  canonical `bus.workers.*` Events. It currently accepts
+  `--events-token-file` / `BUS_API_PROVIDER_WORKERS_EVENTS_TOKEN_FILE` and
+  env-token input for the Events API.
+- `bus-integration-worker` / `bus-integration-workers` is the current worker
+  integration/service owner for worker control, scheduling, claim/start
+  helpers, lifecycle planning/execution, and worker status snapshots. It
+  already carries non-secret `credential_source_kind` and
+  `credential_source_label` metadata from selected remote/profile config, but
+  service Events credentials still need the same token-file/source precedence
+  and diagnostics as the rest of the path.
+- `bus-integration-task` is now the task service/provider. It consumes
+  canonical `bus.task.*.request` Events, stores task state, and emits accepted
+  worker assignment requests. It does not own worker launchers, App Server
+  control, model selection, containers, VMs, remote transport, repositories, or
+  worktree materialization. It still needs service-token handling that matches
+  the credential-source contract for its Events API client.
+- `bus-integration-ssh-runner` owns generic SSH script execution and already
+  has managed-service token-file support through `--api-token-file` /
+  `BUS_API_TOKEN_FILE` before inherited `BUS_API_TOKEN`.
+
+Historical names such as `bus-integration-dev-task`, `bus dev task`,
+`bus dev work`, `bus.dev.task.*`, `bus.work.*`, and singular
+`bus.worker.*` should be treated as compatibility or historical evidence only.
+New goal work should use `bus-task`, `bus-workers`,
+`bus-api-provider-workers`, `bus-integration-workers`, canonical
+`bus.task.*`, and canonical `bus.workers.*` where those surfaces exist.
+
+## Open Work Needed Now
+
+The old credential-source work should be treated as a baseline, not as current
+acceptance. The current implementation still needs these product slices:
+
+- Normalize task and worker API client credential lookup so file-backed sources
+  and configured safe sources beat inherited env tokens consistently, with
+  empty-file and locally detectable expiry diagnostics where the token format
+  supports it.
+- Normalize Events service credential lookup in `bus-integration-task`,
+  `bus-api-provider-workers`, and `bus-integration-workers` so explicit
+  token-file or deployment credential-source configuration beats
+  `BUS_API_TOKEN`, with source-labelled diagnostics.
+- Decide which credential-source kinds each service can resolve locally
+  (`token-file`, deployment-secret, user-config key, OS credential label) and
+  fail early for unsupported selected kinds instead of silently falling back to
+  a global token.
+- Preserve ssh-docker boundaries: remote-side token-file references and
+  deployment secret labels must not be opened or serialized by the local task
+  or worker API client.
+- Carry only non-secret credential-source kind/label metadata through
+  `bus.task.*`, `bus.workers.*`, worker status snapshots, relay status, and API
+  responses. Token values, JWT fragments, and private token-file paths must be
+  excluded from Events and logs.
+- Add focused tests for stale inherited env tokens, missing/empty/unreadable
+  token files, expired JWTs where locally detectable, unsupported selected
+  credential-source kinds, and safe redaction.
+- Run one end-to-end current-path proof using two configured remotes or
+  environments with different credential sources while the inherited
+  `BUS_API_TOKEN` is intentionally stale. The proof must cover task creation or
+  assignment through `bus-task`, worker create/status/control through
+  `bus-workers` / `bus-api-provider-workers`, Events relay/sync boundaries,
+  and worker lifecycle/status through `bus-integration-workers`, without manual
+  shell token export as the normal path.
+
+## Dependencies
+
+This goal depends on the current task/worker ownership being stable enough for
+the proof to mean something:
+
+- Finish or explicitly scope the current `bus-task` task API client contract so
+  the proof uses the new task surface rather than reviving `bus dev task`.
+- Finish or explicitly scope the `bus-integration-workers` service-loop and
+  lifecycle path enough to start or plan workers from `bus.workers.*` Events.
+- Use the service-owned Events relay goal for normal local-to-remote and
+  remote-to-local evidence movement; manual export/import or ad hoc sync loops
+  are recovery paths, not acceptance proof.
+
+The goal can be implemented in parallel with broader worker lifecycle work only
+when the slices are module-owned and independently testable. A service-profile
+or remote-worker proof that starts a worker without this credential-source
+proof must record the credential handling as incomplete.
+
+## Historical Baseline
+
+The original credential-source conversation implemented an earlier version of
+this goal for the then-current development task path. The requested historical
+end state was:
 
 - Controller commands, remote Events sync/relay, and worker runtime processes
   select credentials from explicit remote configuration or token files as the
@@ -19,51 +161,8 @@ The requested end state was:
 - Task Events, logs, task payloads, and diagnostics do not leak token values,
   JWT fragments, or token-file references.
 
-This handoff exists so a later conversation can resume from the completed
-state without relying on chat history.
-
-## 2026-05-30 Review Addendum
-
-This file was reviewed against the neighboring goal files and the current Bus
-module checkouts on 2026-05-30. The credential-source goal remains a completed
-historical goal, but some implementation owners named below are now historical.
-
-Current adjacent goals and the root `PLAN.md` use `bus-integration-task`,
-`bus-task`, `bus.task.*`, and future worker/task ownership for new work.
-Earlier handoffs, including this one, still mention `bus-integration-dev-task`,
-`bus-dev task`, and `bus-dev work` in places because that was the active shape
-when the credential-source work was completed. In the current checkout,
-`bus-integration-dev-task` is no longer a present submodule, and `bus-dev`
-redirects `bus dev task` to `bus task` while reporting `bus dev work` as
-removed. Treat references to those old command/module names below as historical
-evidence, not as the path for new implementation.
-
-The current affected implementation surfaces are:
-
-- `bus-remote`, for non-secret `credential_source` metadata and validation;
-- `bus-task`, for the migrated controller/task command path that resolves
-  selected remote credential sources, configured token files, user/config token
-  files, local Compose token files, and inherited `BUS_API_TOKEN` fallback;
-- `bus-events`, for sync/relay token-file boundaries and safe credential-source
-  labels;
-- `bus-integration-task`, for worker runtime `--events-token-file` /
-  `BUS_EVENTS_TOKEN_FILE` precedence before inherited `BUS_API_TOKEN`;
-- `bus-integration-ssh-runner`, for managed SSH runner `--api-token-file` /
-  `BUS_API_TOKEN_FILE` precedence before inherited `BUS_API_TOKEN`.
-
-Dependency for future work: before using this handoff as acceptance evidence
-for a new remote-worker or service deployment implementation, first finish or
-create a focused `bus-task` controller credential-source proof that matches the
-old `bus-dev` proof: two configured remotes with distinct credential sources,
-stale inherited `BUS_API_TOKEN`, ssh-docker remote-side token-file refs not
-opened locally, sync argument construction preserving token-file boundaries,
-and no token or token-file reference leakage into task Events. That dependency
-exists because the old `bus-dev` controller proof no longer covers the current
-user-facing `bus task` path by itself.
-
-No product implementation worktree or feature branch was created for this
-review. The operator requested review-only work and allowed this goal file to
-be updated in the main checkout.
+The rest of this handoff preserves the old completion evidence so future work
+can reuse it without mistaking it for current-path acceptance.
 
 ## Operator Direction Captured
 
@@ -81,7 +180,7 @@ During this goal the operator tightened the execution model:
 The operator later asked for this handoff to be written locally on this system,
 not on dev-hg. This file was therefore authored in the local checkout.
 
-## Final Status
+## Historical Final Status
 
 The goal was completed and the root `PLAN.md` credential-source coordination
 item was checked off.
@@ -120,7 +219,7 @@ A  scripts/prune-submodules.sh
 That file predated this goal work and was deliberately left untouched and out
 of the credential-source commits.
 
-## Important Remote State
+## Historical Remote State
 
 The dev-hg checkout at `coding-agent@dev.hg.fi:~/git/busdk/busdk` was used as
 a verification workspace. Because the local commits were not pushed during the
@@ -136,7 +235,7 @@ is reconciled intentionally. Do not reset or clean it without operator
 approval. Prefer pushing/fetching the completed local commits or making a
 deliberate cleanup plan.
 
-## What Changed
+## Historical Changes
 
 ### Remote Metadata And Non-Secret Credential References
 
@@ -287,7 +386,7 @@ go -C bus-integration-ssh-runner test ./...
 
 run in Docker and on dev-hg.
 
-## Verification Performed
+## Historical Verification Performed
 
 All implementation verification was run either inside Docker or on
 `coding-agent@dev.hg.fi`.
@@ -386,7 +485,7 @@ BUS_LINT_WORKER_SAFE=1 \
 
 It reported all files clean.
 
-## Completion Audit
+## Historical Completion Audit
 
 The completion audit checked the root objective against current implementation
 evidence:
@@ -412,7 +511,7 @@ evidence:
 The goal was marked complete with the goal tracker. Tracker output reported
 `993346` tokens used and about 1 hour 57 minutes elapsed.
 
-## What To Watch Next
+## Historical Watch Items
 
 1. Reconcile dev-hg dirty verification changes intentionally before using that
    checkout for unrelated work.
