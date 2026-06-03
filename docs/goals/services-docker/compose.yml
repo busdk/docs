@@ -1,0 +1,67 @@
+name: bus-services-docker-goal
+
+services:
+  bus-services:
+    image: ${BUS_SERVICES_IMAGE:-ghcr.io/busdk/bus-services-runtime:dev}
+    entrypoint:
+      - /usr/local/bin/bus
+    command:
+      - services
+      - up
+      - --file
+      - /etc/bus/services.yml
+      - --profile-dir
+      - /etc/bus/profiles
+      - --state-dir
+      - /var/lib/bus/services
+      - --foreground
+      - --all
+    stop_signal: SIGTERM
+    stop_grace_period: 30s
+    init: false
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      BUS_CONFIG_DIR: /etc/bus/config
+      BUS_SERVICES_CONTAINER: "1"
+      BUS_SERVICES_LOG_DIR: /var/log/bus
+      BUS_SERVICES_STATE_DIR: /var/lib/bus/services
+    volumes:
+      - ./services.yml:/etc/bus/services.yml:ro
+      - ./profiles:/etc/bus/profiles:ro
+      - ./config:/etc/bus/config:ro
+      - bus-services-state:/var/lib/bus/services
+      - bus-services-run:/run/bus
+      - bus-services-logs:/var/log/bus
+      - bus-services-data:/var/lib/bus/data
+    tmpfs:
+      - /tmp
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8090:8090"
+    healthcheck:
+      test:
+        - CMD
+        - /usr/local/bin/bus
+        - services
+        - ps
+        - --file
+        - /etc/bus/services.yml
+        - --state-dir
+        - /var/lib/bus/services
+        - --format
+        - json
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+volumes:
+  bus-services-state:
+  bus-services-run:
+  bus-services-logs:
+  bus-services-data:
