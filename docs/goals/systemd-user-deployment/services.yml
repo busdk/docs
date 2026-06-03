@@ -1,0 +1,102 @@
+version: "0"
+
+default_services:
+  - worker-host
+
+groups:
+  worker-host:
+    name: Worker host services
+    services:
+      - events
+      - services-runtime
+      - task-scheduler
+      - workers
+
+services:
+  events:
+    service_kind: bus.api.events
+    runtime:
+      kind: native
+      provider: bus
+      command:
+        - bus
+        - events
+        - serve
+      env:
+        - name: BUS_CONFIG_DIR
+          description: Bus user config root.
+          value_from: process_env:BUS_CONFIG_DIR
+          default: /workspace/tmp/systemd-services-goal/config
+        - name: BUS_EVENTS_TOKEN_FILE
+          description: Events API token file.
+          value_from: process_env:BUS_EVENTS_TOKEN_FILE
+          default: /workspace/tmp/systemd-services-goal/config/tokens/events.token
+      ports:
+        - name: events
+          host: 127.0.0.1
+          target: 8081
+          published: 8081
+
+  services-runtime:
+    service_kind: bus.integration.services
+    depends_on:
+      - events
+    runtime:
+      kind: native
+      provider: bus
+      command:
+        - bus-integration-services
+        - serve
+        - --file
+        - /workspace/docs/docs/goals/systemd-user-deployment/services.yml
+      env:
+        - name: BUS_EVENTS_URL
+          description: Events API URL used by service lifecycle integration.
+          value_from: process_env:BUS_EVENTS_URL
+          default: http://127.0.0.1:8081
+        - name: BUS_EVENTS_TOKEN_FILE
+          description: Events API token file.
+          value_from: process_env:BUS_EVENTS_TOKEN_FILE
+          default: /workspace/tmp/systemd-services-goal/config/tokens/events.token
+
+  task-scheduler:
+    service_kind: bus.integration.task
+    depends_on:
+      - events
+    runtime:
+      kind: native
+      provider: bus
+      command:
+        - bus-integration-task
+        - --scheduler
+      env:
+        - name: BUS_EVENTS_URL
+          description: Events API URL used by the task scheduler.
+          value_from: process_env:BUS_EVENTS_URL
+          default: http://127.0.0.1:8081
+        - name: BUS_EVENTS_TOKEN_FILE
+          description: Events API token file.
+          value_from: process_env:BUS_EVENTS_TOKEN_FILE
+          default: /workspace/tmp/systemd-services-goal/config/tokens/events.token
+
+  workers:
+    service_kind: bus.integration.workers
+    depends_on:
+      - events
+      - services-runtime
+    runtime:
+      kind: native
+      provider: bus
+      command:
+        - bus-integration-workers
+        - --lifecycle
+        - appserver-plan
+      env:
+        - name: BUS_EVENTS_URL
+          description: Events API URL used by worker integration.
+          value_from: process_env:BUS_EVENTS_URL
+          default: http://127.0.0.1:8081
+        - name: BUS_EVENTS_TOKEN_FILE
+          description: Events API token file.
+          value_from: process_env:BUS_EVENTS_TOKEN_FILE
+          default: /workspace/tmp/systemd-services-goal/config/tokens/events.token

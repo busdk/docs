@@ -1,0 +1,32 @@
+name: bus-systemd-services-goal
+
+services:
+  bus-services-systemd:
+    image: ${BUS_SYSTEMD_SERVICES_GO_IMAGE:-golang:1.26.3}
+    working_dir: /workspace
+    command:
+      - sh
+      - -ec
+      - |
+        export PATH="/workspace/.busdk-tools/bin:/workspace/bus/bin:/workspace/bus-services/bin:/workspace/bus-integration-services/bin:$PATH"
+        if [ -x /workspace/bus/bin/bus ]; then
+          BUS_DISPATCH=/workspace/bus/bin/bus
+        else
+          BUS_DISPATCH="go -C /workspace/bus run ./cmd/bus"
+        fi
+        exec $BUS_DISPATCH services up --file /workspace/docs/docs/goals/systemd-user-deployment/services.yml --foreground --systemd-notify
+    environment:
+      BUS_CONFIG_DIR: /workspace/tmp/systemd-services-goal/config
+      BUS_SERVICES_STATE_DIR: /workspace/tmp/systemd-services-goal/state
+      BUS_SERVICES_LOG_DIR: /workspace/tmp/systemd-services-goal/logs
+      BUS_INTEGRATION_SERVICES_BIN: /workspace/bus-integration-services/bin/bus-integration-services
+      BUS_EVENTS_URL: http://127.0.0.1:8081
+      BUS_EVENTS_TOKEN_FILE: /workspace/tmp/systemd-services-goal/config/tokens/events.token
+      BUS_SYSTEMD_NOTIFY_MODE: compose-fixture
+    volumes:
+      - ../../../../:/workspace
+      - bus-systemd-services-goal-state:/workspace/tmp/systemd-services-goal
+    stop_grace_period: 30s
+
+volumes:
+  bus-systemd-services-goal-state:
