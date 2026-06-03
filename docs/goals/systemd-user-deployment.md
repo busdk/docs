@@ -364,7 +364,7 @@ This goal depends on and reinforces several adjacent remote-worker goals.
 The user-systemd profile should eventually start or depend on the
 service-owned scheduler that consumes queued task work and launches Codex App
 Server workers up to configured capacity. That scheduler is described
-separately in `docs/goals/service-owned-task-scheduler.md`, but the current
+separately in `service-owned-task-scheduler.md`, but the current
 module owner is `bus-integration-task` with worker-side behavior moving into
 `bus-integration-worker`.
 
@@ -415,7 +415,7 @@ SSH sync loops, or `bus-dev --sync-now` as the normal path.
 The service profile is only useful if the remote has the right source,
 submodule pins, installed binaries, images, units, and config files. The
 remote freshness command is described separately in
-`docs/goals/remote-freshness-command.md`.
+`remote-freshness-command.md`.
 
 The intended relationship is:
 
@@ -433,7 +433,7 @@ volumes, and host ports that can collide with the existing root
 `compose.yaml`. The example fixture for this goal lives at:
 
 ```text
-docs/goals/systemd-user-deployment/compose.yml
+docs/docs/goals/systemd-user-deployment/compose.yml
 ```
 
 It uses a distinct Compose project name and is only a development harness for

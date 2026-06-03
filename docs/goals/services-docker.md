@@ -37,7 +37,7 @@ path without reconstructing the architecture from chat history.
 The operator forked this from the systemd goal and asked for a new goal file:
 
 ```text
-docs/goals/services-docker.md
+docs/docs/goals/services-docker.md
 ```
 
 The requested implementation target is support for executing:
@@ -209,7 +209,7 @@ missing source config does not prevent cleanup of already-started processes.
 This branch includes a starter Compose file:
 
 ```text
-docs/goals/services-docker/compose.yml
+docs/docs/goals/services-docker/compose.yml
 ```
 
 The file is intentionally a goal fixture rather than completed product proof.
@@ -218,8 +218,8 @@ stack/profile/config paths, persistent state/data/log volumes, and a foreground
 `bus services up` command. A future implementation should be able to run:
 
 ```bash
-docker compose -f docs/goals/services-docker/compose.yml config
-docker compose -f docs/goals/services-docker/compose.yml up
+docker compose -f docs/docs/goals/services-docker/compose.yml config
+docker compose -f docs/docs/goals/services-docker/compose.yml up
 ```
 
 against an image that implements this goal.
@@ -229,7 +229,7 @@ against an image that implements this goal.
 ### Systemd User Deployment
 
 This Docker goal is the container-packaging sibling of
-`docs/goals/systemd-user-deployment.md`. Both goals want the same operator
+`systemd-user-deployment.md`. Both goals want the same operator
 outcome: one named service profile, or a very small number of explicit service
 surfaces, starts the required Bus infrastructure without manually launching
 each handler.
@@ -338,7 +338,7 @@ Minimum live proof on `coding-agent@dev.hg.fi`:
 - create a remote worktree and feature branch for the proof;
 - record Docker and Compose versions;
 - build or select the Bus services runtime image;
-- run `docker compose -f docs/goals/services-docker/compose.yml up`;
+- run `docker compose -f docs/docs/goals/services-docker/compose.yml up`;
 - confirm the container command is `bus services up`;
 - confirm at least two Bus child services start inside the container;
 - confirm `bus services ps --format json` reports running services;
@@ -372,7 +372,7 @@ bus-integration-services/bin/bus-integration-services serve --help
 Check the Compose fixture:
 
 ```bash
-docker compose -f docs/goals/services-docker/compose.yml config
+docker compose -f docs/docs/goals/services-docker/compose.yml config
 ```
 
 Run live proof only after implementation and deterministic tests pass:
