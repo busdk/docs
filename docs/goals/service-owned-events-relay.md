@@ -526,16 +526,34 @@ binary set.
 
 ### Current Remaining Work After Live Proof
 
-This goal is not accepted complete yet. The live relay MVP proof succeeded, but
-the implementation still needs branch review, promotion, and a clean proof from
-accepted branches. The dependent feature work currently spans
-`bus-integration-ssh-runner`, `bus-remote`, `bus-integration-services`,
-`bus-services`, `bus-integration-events`, `bus-operator-token`,
-`bus-api-provider-auth`, `bus-operator-deploy`, and dispatcher/provider
-freshness for `bus-api` plus Events provider modules.
+This goal is not accepted complete yet. The live relay MVP proof succeeded and
+the implementation branch set has now been promoted to module primary branches,
+but the final accepted-branch proof still needs to rerun from the promoted
+release. The dependent work spans `bus-integration-ssh-runner`, `bus-remote`,
+`bus-integration-services`, `bus-services`, `bus-integration-events`,
+`bus-operator-token`, `bus-api-provider-auth`, `bus-operator-deploy`, and
+dispatcher/provider freshness for `bus-api` plus Events provider modules.
 
-The current local feature branch bill of materials after the 2026-06-03 commit
-and verification pass is:
+The promoted release state after the 2026-06-03 promotion is:
+
+- BusDK `main` commit `f80322ff9f37c2ec97fd95f227c47afb77a291ab`.
+- Local BusDK checkout:
+  `/Users/jhh/git/busdk/agent-supervisor/projects/busdk`.
+- dev.hg.fi BusDK checkout:
+  `/home/coding-agent/coding-agent/git/busdk/busdk`.
+- Both checkouts are clean at `f80322ff`.
+- Both checkouts have a rebuilt dispatcher-visible `dist-bin` containing
+  `bus`, `bus-api`, `bus-services`, `bus-integration-services`,
+  `bus-integration-events`, `bus-operator-token`, `bus-api-provider-auth`, and
+  `bus-api-provider-events`.
+- dev.hg.fi installed the bundle through promoted `bus-operator-deploy worker
+  dev setup --events-relay-tool-bundle --tool-bin-dir ./dist-bin
+  --tool-smoke-command 'bus services --help' --remote-timeout-seconds 900` from
+  the primary checkout; the helper reported clean source state, final commit
+  `f80322ff9f37c2ec97fd95f227c47afb77a291ab`, rebuilt tools, passed smoke, and
+  `stale=false`.
+
+The feature branch bill of materials that was promoted to primary branches is:
 
 - `bus-integration-ssh-runner` branch `codex/ssh-runner-tunnel`, commit
   `4366694`, for reusable OpenSSH local-forward support and clarified runner
@@ -552,7 +570,8 @@ and verification pass is:
 - `bus-integration-events` branch `codex/integration-events-relay-service`,
   commit `9023892`, for the new relay integration service skeleton, named
   remote consumption path, portable BusDK sibling replacements, and clearer
-  credential setup docs.
+  credential setup docs. Promotion to `main` required merge commit `6bcff61`
+  because the skeleton branch and relay branch both added scaffold files.
 - `bus-operator-token` branch `codex/events-relay-token-issuer`, commit
   `606ef55`, for tolerant relay issuer signing flags before `issue`.
 - `bus-api-provider-auth` branch `codex/internal-token-ttl`, commit
@@ -627,16 +646,16 @@ of local feature-worktree names, and `bus-operator-deploy` needed to resolve a
 relative `--tool-bin-dir` from the checkout root before exporting `GOBIN` for
 module-local `go install` commands.
 
-Before this goal can be closed, the remote freshness/install path should
-remain part of the accepted branch set, including `bus-api`, but the pinned
-proof now shows the scripted install path can reproduce the dispatcher-visible
-tool bundle without hand-composing a temporary source tree. The Services profile
-fix for `HOME` and `SSH_AUTH_SOCK` still must be reviewed and accepted because
-the live proof showed SSH auth fails without it even when operator-shell SSH
-works. The `bus-remote` SSH-issued credential timing metadata and the
-`bus-integration-events` named-remote consumption of that metadata must also be
-accepted together so the 24-hour token lifetime and refresh-before behavior are
-represented in config and relay status.
+Before this goal can be closed, the same local-to-dev.hg.fi proof should be
+rerun from BusDK `main` `f80322ff` or a later accepted release commit. The
+remote freshness/install path is now part of the promoted branch set, including
+`bus-api`, and the scripted install path has reproduced the dispatcher-visible
+tool bundle without hand-composing a temporary source tree. The promoted
+Services profile includes `HOME` and `SSH_AUTH_SOCK` forwarding because the live
+proof showed SSH auth fails without it even when operator-shell SSH works. The
+promoted `bus-remote` SSH-issued credential timing metadata and
+`bus-integration-events` named-remote consumption of that metadata represent the
+24-hour token lifetime and refresh-before behavior in config and relay status.
 
 The next proof should re-run the same local-to-dev.hg.fi scenario from accepted
 branches or approved submodule pins. It should still use `bus services up` on
@@ -780,9 +799,9 @@ This goal is complete only when all of these are true:
   `coding-agent@dev.hg.fi`, without manual export/import files.
 - The current `bus task` remote status/start paths can consume relay status
   instead of requiring `--sync-now` as the primary operator path.
-- A later full remote-worker proof shows local task creation, service relay to
-  remote, remote worker evidence, relay back to local, and local status/stats
-  without manual import/export.
+- Follow-on remote-worker proof, outside the relay MVP close condition, shows
+  local task creation, service relay to remote, remote worker evidence, relay
+  back to local, and local status/stats without manual import/export.
 - Any remaining manual SSH sync, import/export, or `--sync-now` usage is
   documented as bootstrap/recovery only.
 
@@ -878,10 +897,13 @@ a precise relay/scheduler failure.
 
 ## Current State At Handoff
 
-The relay goal is defined and prioritized, and implementation lanes are active
-in isolated worktrees.
+The relay goal is defined and prioritized. The implementation lanes listed
+below were originally developed in isolated worktrees and have now been promoted
+to module primary branches as part of BusDK `main`
+`f80322ff9f37c2ec97fd95f227c47afb77a291ab`. The lane entries remain here as
+provenance for the promoted release.
 
-Active implementation lanes:
+Promoted implementation lanes:
 
 - owning module: `bus-integration-ssh-runner`
 - branch: `codex/ssh-runner-tunnel`
@@ -1021,14 +1043,10 @@ Active implementation lanes:
   remote auth provider internal token endpoint, or use `--local` for explicit
   offline HS256 signing when that host owns the deployment signing secret. This
   branch participated in the 2026-06-03 live local-to-dev.hg.fi Services proof
-  through the temporary composed source tree and binary set. It still needs
-  review, acceptance, and the same proof rerun from accepted branches or
-  approved submodule pins rather than temporary proof directories.
-  This branch now has a worktree-local dependency on the
-  `bus-remote`
-  `codex/events-relay-remote-metadata` branch in addition to the
-  `bus-integration-ssh-runner` tunnel branch. It still needs accepted/pinned
-  dependent branches before promotion.
+  through the temporary composed source tree and binary set, and was promoted to
+  module `main` as part of BusDK release `f80322ff`. The remaining proof is to
+  rerun the same route from that promoted release rather than the temporary
+  proof directory.
 - owning module: `bus-operator-token`
 - branch: `codex/events-relay-token-issuer`
 - worktree:
@@ -1049,13 +1067,12 @@ Active implementation lanes:
   `--hs256-secret-file` before `issue` for SSH issuer command strings, so a
   frozen route command does not fail health solely because local signing inputs
   were placed near `--format` rather than after `issue events-relay`. This
-  branch is verified branch-locally with a
-  temporary Go workspace
-  because the isolated worktree cannot resolve the module's normal relative
-  `../bus-help` replacement on its own. The 2026-06-03 live proof used explicit
-  `--local` mode with a temporary HS256 secret file on dev.hg.fi. The accepted
-  deployment path still needs either provider-backed issuer configuration with
-  a remote internal key or an explicitly approved local signing secret path.
+  branch was verified branch-locally with a temporary Go workspace and promoted
+  to module `main` as part of BusDK release `f80322ff`. The 2026-06-03 live
+  proof used explicit `--local` mode with a temporary HS256 secret file on
+  dev.hg.fi. The promoted-release proof still needs to choose and record the
+  actual issuer mode for that run: provider-backed issuer configuration with a
+  remote internal key, or an explicitly approved local signing secret path.
 - owning module: `bus-api-provider-auth`
 - branch: `codex/internal-token-ttl`
 - worktree:
@@ -1069,7 +1086,9 @@ Active implementation lanes:
   `bus operator token issue events-relay` path request the relay's configured
   24 hour default when the deployment explicitly raises the internal-token
   maximum to that value, while keeping the provider as the lifetime policy
-  owner. It still needs branch acceptance and live dev.hg.fi proof.
+  owner. This branch was promoted to module `main` as part of BusDK release
+  `f80322ff`; what remains is proof of the selected issuer mode during the
+  promoted-release local-to-dev.hg.fi rerun.
 - owning module: `bus-operator-deploy`
 - branch: `codex/worker-dev-tool-install`
 - worktree:
@@ -1222,8 +1241,9 @@ Active implementation lanes:
   proves `bus task start --environment dev-hg --relay-status-file ...`, proves
   `bus task stats --all` against an active relay route, and proves a
   wrong-route relay status snapshot blocks `start` before the API request.
-- merge policy: keep changes on the feature branch/worktree until operator
-  review accepts the work
+- merge status: promoted to module `main` as part of BusDK release
+  `f80322ff9f37c2ec97fd95f227c47afb77a291ab`; future task-surface relay changes
+  should still start isolated until separately accepted
 
 Root `PLAN.md` now contains a high-priority service-owned Events relay section.
 `bus-events/PLAN.md` now contains an unchecked implementation item for deploying
@@ -1256,18 +1276,19 @@ Historical pre-proof dev.hg.fi readiness probe on 2026-06-03:
   `bus services --help` or `bus services --version` for dispatcher visibility
   before running a real `bus services up`.
 
-Freshness dependency status: the dev.hg.fi proof checkout at
-`/home/coding-agent/coding-agent/git/busdk/worktrees/service-owned-events-relay-proof`
-now uses BusDK proof branch `codex/service-owned-events-relay-proof` commit
-`c4c85bd`, and `bus-operator-deploy worker dev setup
---events-relay-tool-bundle --tool-bin-dir ./dist-bin --tool-smoke-command
-'bus services --help' --remote-timeout-seconds 900` rebuilt the full
-dispatcher-visible bundle there. The installed bundle includes `bus`, `bus-api`,
-`bus-services`, `bus-integration-services`, `bus-integration-events`,
-`bus-operator-token`, `bus-api-provider-auth`, and `bus-api-provider-events`.
-The helper reported clean source state, non-stale final commit, rebuilt tools,
-and passed smoke. The next accepted-branch proof can start from this scripted
-freshness shape instead of hand-composing a temporary source tree.
+Freshness dependency status: the same scripted freshness path has now been
+proven from the dev.hg.fi primary BusDK checkout at
+`/home/coding-agent/coding-agent/git/busdk/busdk`, release commit
+`f80322ff9f37c2ec97fd95f227c47afb77a291ab`. `bus-operator-deploy worker dev
+setup --events-relay-tool-bundle --tool-bin-dir ./dist-bin
+--tool-smoke-command 'bus services --help' --remote-timeout-seconds 900`
+rebuilt the full dispatcher-visible bundle there. The installed bundle includes
+`bus`, `bus-api`, `bus-services`, `bus-integration-services`,
+`bus-integration-events`, `bus-operator-token`, `bus-api-provider-auth`, and
+`bus-api-provider-events`. The helper reported clean source state, non-stale
+final commit, rebuilt tools, and passed smoke. The local supervisor BusDK
+checkout is also clean at `f80322ff` and has the same bundle installed in
+`/Users/jhh/git/busdk/agent-supervisor/projects/busdk/dist-bin`.
 
 Local branch-composition proof on 2026-06-03:
 
@@ -1303,5 +1324,6 @@ remote-to-local evidence-shaped Event, and optionally run a `bus task status`
 check that consumes the relay status snapshot. The later follow-on sequence is
 to layer in service-owned scheduler and full remote worker evidence.
 
-Keep feature branch changes isolated until operator acceptance; promote to main
-branches only when explicitly confirmed.
+Rerun the accepted-branch proof from BusDK `main`
+`f80322ff9f37c2ec97fd95f227c47afb77a291ab` or a later accepted release commit;
+new follow-up work should still start isolated until separately accepted.
