@@ -1755,21 +1755,37 @@ Verification from this slice:
 
 This is not MVP acceptance. The following exact work remains:
 
-1. Write and run same-release e2e/freshness proof that local and
-   `coding-agent@dev.hg.fi` are on the same BusDK `develop` commit, affected
-   `dist-bin/*` tools are rebuilt/installed, and both normal
-   `bus services up` stacks start cleanly.
-2. Write and run a local `bus task` e2e that creates a real Events-backed task
+Same-release freshness for this slice was completed after the local
+worker-replay fix:
+
+- local BusDK and `coding-agent@dev.hg.fi` were both updated to BusDK
+  `develop` commit `97f1c9e`;
+- both checkouts have matching relevant submodule pins:
+  `bus-api` `02b39ae`, `bus-api-provider-worker` `7ab4cc7`,
+  `bus-integration-services` `46e1289`, and docs `bc60f0d`;
+- affected root `dist-bin` tools were rebuilt on both systems:
+  `bus-api`, `bus-integration-services`, and `bus-api-provider-workers`;
+- local `bus services up --file services.yml` restarted cleanly, and local
+  `bus workers --api-url http://127.0.0.1:8090/local/v1 --token-file
+  .bus/tokens/local-events.jwt --format json list` returned eight workers;
+- dev.hg.fi `bus services up --file services.yml` restarted cleanly, and
+  `bus services ps --file services.yml` reported `postgres`, `events`,
+  `tasks`, `repos`, `workers`, `api`, and `events-relay` running from the same
+  checkout.
+
+The following exact work remains:
+
+1. Write and run a local `bus task` e2e that creates a real Events-backed task
    through the accepted task CLI and reads it back through normal task
    surfaces.
-3. Write and run a local `bus workers` e2e that creates or selects a worker for
+2. Write and run a local `bus workers` e2e that creates or selects a worker for
    `dev-hg` using environment metadata and ordinary worker API Events.
-4. Write and run the live two-system e2e where the dev.hg.fi worker service
+3. Write and run the live two-system e2e where the dev.hg.fi worker service
    consumes relayed task/worker Events and claims or starts the task without
    task/worker clients owning synchronization logic.
-5. Extend that live e2e to assert remote claim, running/progress,
+4. Extend that live e2e to assert remote claim, running/progress,
    message/log-or-attach, and terminal evidence is visible locally through
    `bus task` and `bus workers`.
-6. Write and run restart/resume e2e for the real task/worker route so a
+5. Write and run restart/resume e2e for the real task/worker route so a
    Services or relay restart does not duplicate worker claims, replay
    unrelated history into active state, or lose task/worker evidence.
