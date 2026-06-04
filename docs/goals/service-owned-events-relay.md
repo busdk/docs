@@ -1091,6 +1091,32 @@ Current `develop` audit on 2026-06-04:
   claim/progress/log/terminal evidence returning through standard Bus Events
   API flow.
 
+Implementation update later on 2026-06-04:
+
+- `bus-integration-events` has a local implementation slice for
+  `--remote auto`: it derives route pairs from configured `bus-remote` entries
+  that carry `events_relay` metadata and treats no configured relay remotes as
+  a healthy no-op plan rather than a stack failure.
+- The `bus-events-relay` Services profile has non-secret defaults for the local
+  environment id, local Events URL, local token-file reference, SSH
+  local-forward URL, status file, and MVP task/worker Event names. It no
+  longer requires a fixed shared state-file default, so auto-derived route
+  pairs can keep per-pair durable cursor state.
+- Root `services.yml` includes a generic `events-relay` service in
+  `default_services` and in the infrastructure group. It depends on the local
+  Events API and does not embed a dev.hg.fi route, SSH target, remote Events
+  URL, token value, or remote token-file path.
+- Focused source checks passed for this slice:
+  `go test ./cmd/bus-integration-events ./pkg/eventrelay`,
+  `go test ./pkg/services`, `go test ./cmd/bus-services`, source
+  `bus services stack validate --file ../services.yml`, source
+  `bus services stack plan --file ../services.yml --format text`, and
+  `git diff --check` for the touched files.
+- This is not MVP acceptance. The installed `dist-bin` bundle is still stale
+  for this slice, root `bus services up` has not yet been rerun with rebuilt
+  binaries, dev.hg.fi has not yet been refreshed to the same `develop` state,
+  and the five-step local task/dev.hg.fi worker flow remains unproven.
+
 The implementation lanes listed below were originally developed in isolated
 worktrees and promoted to module primary branches as part of BusDK `main`
 `562237e17bbc08aa0ae16e1ce6675a1f152715a8`. The lane entries remain here as
