@@ -1057,13 +1057,46 @@ a precise relay/scheduler failure.
 
 ## Current State At Handoff
 
-The relay goal is defined and prioritized. The implementation lanes listed
-below were originally developed in isolated worktrees and have now been promoted
-to module primary branches as part of BusDK `main`
+The relay goal is active and not accepted. The operator corrected the thread on
+2026-06-04 after a documentation/refinement task was incorrectly closed as if
+it represented the product goal. This document is the living goal record and
+must stay current while implementation work proceeds.
+
+Current `develop` audit on 2026-06-04:
+
+- Root `services.yml` starts `postgres`, `events`, `repos`, `workers`, `tasks`,
+  and `api`, but it does not yet declare an `events-relay` service. The
+  normal project stack therefore cannot yet prove that `bus services up`
+  starts background relay from durable `bus-remote` metadata.
+- `bus-services` has a `bus-events-relay` profile and tests for Services-owned
+  relay startup, including the `bus-integration-events --events-relay-service`
+  command shape, state file, status file, healthcheck, and remote metadata
+  snapshot behavior.
+- `bus-integration-events` owns the background relay module and already has
+  route-pair ownership, SSH candidate, credential-source, cursor, status, and
+  health machinery from the previous relay capability work.
+- The installed local `dist-bin` bundle is not sufficient evidence for the
+  current MVP. At audit time, `dist-bin/bus workers --help` exposes the
+  product worker create/assign/status/messages/logs/attach surface, but
+  `dist-bin/bus task --help` exposes the older task surface and does not show
+  the previously prototyped `stats --all`/relay preflight shape.
+- The `bus-task` `develop` checkout is at `71864eb` and currently owns the
+  ordinary Events-backed task thread surface, not worker launch or relay sync.
+  Any missing task status/statistics/preflight features needed for the MVP
+  remain implementation work, but `bus-task` must still not own SSH transport,
+  import/export loops, cursoring, dedupe, or route-pair selection.
+- The five-step MVP remains unproven on `develop`: start local services,
+  create the task locally, create/select the dev.hg.fi worker locally,
+  instruct that worker locally, then monitor the remote execution locally with
+  claim/progress/log/terminal evidence returning through standard Bus Events
+  API flow.
+
+The implementation lanes listed below were originally developed in isolated
+worktrees and promoted to module primary branches as part of BusDK `main`
 `562237e17bbc08aa0ae16e1ce6675a1f152715a8`. The lane entries remain here as
 provenance for the historical release. They are not current acceptance status:
 the active integration branch is `develop`, and the stronger MVP in this file
-must be proven there.
+must be implemented and proven there.
 
 Promoted implementation lanes:
 
