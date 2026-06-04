@@ -1719,3 +1719,57 @@ ordinary Bus Events API requests with environment metadata; the relay and
 Events infrastructure should make the remote route behave like the same
 logical Events system from their perspective. New follow-up work should still
 start isolated until separately accepted.
+
+## Current State Update 2026-06-04 19:00 EEST
+
+The remaining MVP work should be driven by automated e2e or regression tests
+where practical, not by manual proof notes alone. A completed local regression
+slice restored the normal local worker API surface:
+
+- `bus-api-provider-worker` request-aware bounded projection refresh now skips
+  malformed historical worker evidence during read-side replay while keeping
+  strict `ApplyWorkerEvent` behavior for normal projection application.
+- The new regression covers the live failure shape: a historical proof Event
+  named `bus.workers.status.snapshot` with route metadata but no worker id,
+  followed by a valid dev-hg worker status snapshot.
+- `bus-api` was rebuilt with the replaced provider source into root
+  `dist-bin/bus-api`.
+- After clearing stale checkout-owned `bus-api serve` processes and starting
+  the normal local stack with `bus services up --file services.yml`, this
+  command succeeded:
+
+```sh
+bus workers \
+  --api-url http://127.0.0.1:8090/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  --format json \
+  list
+```
+
+Verification from this slice:
+
+- `go test ./...` in `bus-api-provider-worker` passed.
+- `go test ./...` in `bus-api` passed.
+- the local `bus workers ... list` command above returned eight worker
+  records from the normal Services stack.
+
+This is not MVP acceptance. The following exact work remains:
+
+1. Write and run same-release e2e/freshness proof that local and
+   `coding-agent@dev.hg.fi` are on the same BusDK `develop` commit, affected
+   `dist-bin/*` tools are rebuilt/installed, and both normal
+   `bus services up` stacks start cleanly.
+2. Write and run a local `bus task` e2e that creates a real Events-backed task
+   through the accepted task CLI and reads it back through normal task
+   surfaces.
+3. Write and run a local `bus workers` e2e that creates or selects a worker for
+   `dev-hg` using environment metadata and ordinary worker API Events.
+4. Write and run the live two-system e2e where the dev.hg.fi worker service
+   consumes relayed task/worker Events and claims or starts the task without
+   task/worker clients owning synchronization logic.
+5. Extend that live e2e to assert remote claim, running/progress,
+   message/log-or-attach, and terminal evidence is visible locally through
+   `bus task` and `bus workers`.
+6. Write and run restart/resume e2e for the real task/worker route so a
+   Services or relay restart does not duplicate worker claims, replay
+   unrelated history into active state, or lose task/worker evidence.
