@@ -650,7 +650,11 @@ The promoted proof kept the same deterministic route design:
 - remote `ssh-issued-token` credential source;
 - requested token lifetime 86400 seconds;
 - refresh-before window 3600 seconds;
-- streamed event names `bus.task.created,bus.task.status.snapshot`.
+- an explicit diagnostic Event-name narrowing used by that historical proof.
+
+That last point was not the intended product routing contract. The relay route
+must move Events because their routing metadata targets the peer environment,
+not because their Event names are present in a relay allowlist.
 
 The first verification probe used a dev.hg.fi token with the wrong account
 subject and correctly could not see the relayed Event in the remote Events API.
