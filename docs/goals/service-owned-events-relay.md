@@ -293,8 +293,8 @@ operator-visible ownership must remain local:
 
 ```bash
 bus services up
-bus task new @bus-module "Do real product work on dev.hg.fi"
-bus workers create --environment dev-hg --profile codex-spark --runner-provider codex-direct
+bus task create --title "Do real product work on dev.hg.fi" --body "Run this from the dev.hg.fi worker lane."
+bus workers create --label "dev-hg spark" --type agent --environment dev-hg --profile codex-spark --runner-provider codex-direct
 bus workers assign <worker-id> <task-ref> --environment dev-hg
 bus workers status <worker-id> --environment dev-hg
 bus task status <task-ref>
@@ -972,7 +972,7 @@ Start with these files:
 5. `bus-events/README.md`
 6. `bus-events/internal/cli/relay_config.go`
 7. `bus-task/PLAN.md`
-8. `bus-task/run/sync.go`
+8. `bus-task/run/run.go`
 9. `bus-integration-task/PLAN.md`
 10. `bus-remote/PLAN.md`
 11. `bus-operator-deploy/PLAN.md`
@@ -1112,10 +1112,18 @@ Implementation update later on 2026-06-04:
   `bus services stack validate --file ../services.yml`, source
   `bus services stack plan --file ../services.yml --format text`, and
   `git diff --check` for the touched files.
+- A temporary source-built binary proof also passed without touching committed
+  `dist-bin`: `/private/tmp/bus-relay-auto-bin/bus-services stack validate
+  --file services.yml` reported `OK services stack 7 services`, stack plan
+  included `events-relay`, and `/private/tmp/bus-relay-auto-bin/
+  bus-integration-events --remote auto ... --once --format json` returned a
+  healthy zero-route plan.
 - This is not MVP acceptance. The installed `dist-bin` bundle is still stale
-  for this slice, root `bus services up` has not yet been rerun with rebuilt
-  binaries, dev.hg.fi has not yet been refreshed to the same `develop` state,
-  and the five-step local task/dev.hg.fi worker flow remains unproven.
+  for this slice, the local checkout currently has no configured
+  `events_relay` remote route for auto mode to activate, root `bus services
+  up` has not yet been rerun with rebuilt binaries, dev.hg.fi has not yet been
+  refreshed to the same `develop` state, and the five-step local task/dev.hg.fi
+  worker flow remains unproven.
 
 The implementation lanes listed below were originally developed in isolated
 worktrees and promoted to module primary branches as part of BusDK `main`
