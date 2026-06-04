@@ -298,11 +298,10 @@ Accepted evidence so far:
   canonical create Events whose worker id is unsafe before adding them to the
   control catalog.
 - The workers API provider now accepts the documented optional `labels`
-  create payload field, validates it as bounded non-secret string metadata,
+  create payload field, validates it as bounded structured string metadata,
   and passes it through on the canonical create Event. It also validates
-  worker ids, environment ids, and message ids on control/message paths, and
-  rejects secret-looking operator message text before it is published to
-  Events.
+  worker ids, environment ids, and message ids on control/message paths without
+  rejecting operator text because it mentions or carries secret-like values.
 - Worker labels now survive the local worker projection path instead of being
   create-only write data: `bus-integration-workers` carries labels in worker
   snapshots and replay hydration, and `bus-api-provider-workers` parses,
@@ -879,7 +878,7 @@ carry at most 32 label keys and 64 metadata keys. Later snapshots replace the
 stored value for the same key and must not preserve a removed key unless the
 projection owner explicitly documents tombstone behavior.
 
-Validation must fail closed and publish or return a bounded non-secret error
+Validation must fail closed and publish or return a bounded structural error
 instead of guessing. Invalid create/control requests should not be silently
 normalized into a different worker:
 
@@ -889,16 +888,14 @@ normalized into a different worker:
   `id`, because any operator-facing id generation must happen before Event
   publication;
 - reject `type` values outside `human`, `automaton`, and `agent`;
-- reject `profile` values with whitespace, `@`, `#`, or secret-looking
-  content;
+- reject `profile` values with whitespace, `@`, or `#`;
 - reject `capability_tags`, `eligible_environments`, and `group_ids` that do
   not match the normalized identifier rules, and reject duplicates after
   normalization instead of preserving ambiguous values;
-- reject `worker_home_ref` values with whitespace, absolute secret-looking
-  paths, token-like content, or references outside the accepted
-  integration-owned worker identity namespace;
+- reject `worker_home_ref` values with whitespace or references outside the
+  accepted integration-owned worker identity namespace;
 - reject `labels` or `metadata` with invalid keys, non-string values, values
-  over the documented size limit, too many keys, or secret-looking content;
+  over the documented size limit, or too many keys;
 - reject unsupported `runner_kind` / `runner_provider` pairs with a bounded
   failed worker snapshot or controller error, rather than falling back to a
   different runner;
@@ -906,7 +903,7 @@ normalized into a different worker:
   runner, such as a direct runner request that requires a container image as
   its execution source.
 - reject message requests without a target worker id, without bounded text, or
-  with text that is too large or secret-looking for the Events channel.
+  with text that is too large for the Events channel.
 
 Allowed `status` values for the first product slice are `creating`, `running`,
 `paused`, `stopping`, `stopped`, `failed`, and `unknown`. Allowed
@@ -1032,7 +1029,8 @@ publishes canonical `bus.workers.*` Events, validates create/control/message
 requests, generates UUID worker ids when omitted, preserves projected create,
 list, show, status, logs, attach, and message fields, refreshes one-worker
 projections from bounded recipient-scoped Events replay, and redacts
-secret-looking metadata from text/operator paths.
+secret values only at logging/output boundaries instead of rejecting worker
+communication based on content heuristics.
 
 Generic Events API addressing evidence is covered by the
 `bus-events-contract` and `bus-api-provider-events` tests. Events support

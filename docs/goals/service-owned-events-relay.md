@@ -1103,7 +1103,7 @@ Current `develop` audit on 2026-06-04:
   Any missing task status/statistics/preflight features needed for the MVP
   remain implementation work, but `bus-task` must still not own SSH transport,
   import/export loops, cursoring, dedupe, or route-pair selection.
-- The five-step MVP remains unproven on `develop`: start local services,
+- The five-step MVP is still incomplete on `develop`: start local services,
   create the task locally, create/select the dev.hg.fi worker locally,
   instruct that worker locally, then monitor the remote execution locally with
   claim/progress/log/terminal evidence returning through standard Bus Events
@@ -1141,7 +1141,7 @@ Implementation update later on 2026-06-04:
   `events_relay` remote route for auto mode to activate, root `bus services
   up` has not yet been rerun with rebuilt binaries, dev.hg.fi has not yet been
   refreshed to the same `develop` state, and the five-step local task/dev.hg.fi
-  worker flow remains unproven.
+  worker flow remains incomplete.
 
 Develop continuation later on 2026-06-04:
 
@@ -1240,22 +1240,19 @@ Develop continuation after the first 12:00 stack attempts on 2026-06-04:
   `b1d9495` pins the relay-service environment-id fix and the
   `bus-operator-deploy` tool-bundle correction, but it still needs to be
   transferred/installed on dev.hg.fi before another full proof attempt.
-- The next normal dev.hg.fi `bus services up` attempt uncovered a path-shaping
-  question: the root `repos`, `tasks`, and `workers` profiles currently start
-  the shared `bus integration --provider ...` host, but the pinned
-  `bus-integration` command does not currently compile against the checked-out
-  module set, while the standalone `bus-integration-repos`,
-  `bus-integration-task`, and `bus-integration-workers` binaries are already
-  present. The fastest likely MVP path is to switch the Services profiles to
-  those standalone binaries, but this is an operator-relevant architecture
-  choice and should be confirmed before spending more implementation time.
-- Two other MVP-shaping decisions remain open and should be answered before
-  deeper work: whether the live proof may use SSH-backed local HS256 signing
-  from dev.hg.fi's private `.env` for remote Events tokens, or must finish the
-  provider-backed internal-key issuer first; and whether `direct-exec` Codex on
-  dev.hg.fi is acceptable for the first remote-worker proof, or the proof must
-  use an App Server/container runner.
-- The five-step local task/dev.hg.fi worker flow remains unproven: both normal
+- The intended integration runtime is the shared `bus integration --provider
+  ...` host. If that command does not compile or host `task`, `workers`, or
+  `repos` from the checked-out module set, fix the shared integration host
+  rather than changing the normal product path to standalone
+  `bus-integration-*` binaries.
+- The accepted remote worker proof path is Codex App Server. Direct-exec Codex
+  is legacy and must not be accepted as the MVP proof path unless the operator
+  explicitly changes that decision.
+- The first remote Events credential is allowed to bootstrap over the existing
+  SSH trust path to dev.hg.fi, because the local system cannot know remote
+  secrets in advance. After bootstrap, refresh may use HTTP provider APIs when
+  the scoped credential path exists.
+- The five-step local task/dev.hg.fi worker flow remains incomplete: both normal
   stacks must start, local-owned relay health must pass, a local task must be
   created, a dev.hg.fi worker must be created or selected locally, that worker
   must execute on dev.hg.fi, and claim/progress/log/terminal evidence must be
@@ -1801,3 +1798,61 @@ This is not MVP acceptance. The following exact work remains:
 4. Write and run restart/resume e2e for the real task/worker route so a
    Services or relay restart does not duplicate worker claims, replay
    unrelated history into active state, or lose task/worker evidence.
+
+## Current State Update 2026-06-04 20:00 EEST
+
+The next concrete local-worker defect was the worker provider's validation-time
+secret heuristic. `bus-api-provider-worker` had been rejecting worker create
+prompts and operator messages when text looked secret-like, including false
+positives such as the model string `gpt-5.3-codex-spark` because it contains
+`sk-`. That was the wrong boundary for Bus workers: local and isolated worker
+environments may intentionally discuss or carry secret values. Secret safety
+belongs at logging, memo, diagnostics, and public-output boundaries, not as an
+API rejection rule for worker communication.
+
+The worker provider has been updated so prompts, messages, labels, metadata,
+profile values, worker ids, environment ids, and worker-home refs are validated
+for structure only: size limits, UTF-8, identifier syntax, namespace rules,
+and runner compatibility. The old `valueLooksSecret` rejection function and
+the remaining `secret-looking content` validation errors were removed from the
+worker/provider/API path. `bus-api-provider-worker/AGENTS.md` now records this
+boundary explicitly, and the workers goal text was updated so future work does
+not reintroduce heuristic payload rejection.
+
+The same implementation slice also fixes the relay-addressing defect found in
+the local worker create flow. The workers API now accepts a local environment
+id from `BUS_WORKERS_ENVIRONMENT_ID` or `BUS_ENVIRONMENT_ID` and stamps
+`bus.origin.environment.id` plus `bus.origin.system.id` on worker request
+Events before preserving the target worker environment as
+`bus.environment.id`, `bus.destination.environment.id`, and
+`bus.sync.target.ids`. This prevents the Events relay from classifying a
+locally-created dev-hg worker request as remote-origin simply because the
+target worker environment is `dev-hg`.
+
+Verification completed in this slice:
+
+- `go test ./...` in `bus-api-provider-worker` passed.
+- `go test ./...` in `bus-api` passed.
+- A focused source search found no remaining `valueLooksSecret` or
+  `secret-looking content` rejection strings in the affected
+  `bus-api-provider-worker`, `bus-worker`, `bus-integration-worker`, or
+  `bus-api` paths.
+- `make clean build install` completed for the BusDK superproject from the
+  current `develop` checkout.
+- Local `bus services down --file services.yml` followed by
+  `bus services up --file services.yml` restarted the normal seven-service
+  stack: `postgres`, `events`, `tasks`, `repos`, `workers`, `api`, and
+  `events-relay`.
+- Live local `bus workers ... create` through
+  `http://127.0.0.1:8090/local/v1` accepted a prompt containing
+  `gpt-5.3-codex-spark` and harmless token-like placeholder text, returning
+  worker `local-secret-text-check-20260604-2006` in `creating` state.
+- Live local `bus workers ... message` accepted operator text with the same
+  token-like placeholder once the required `--environment local-dev` argument
+  was supplied. The verification worker was then stopped.
+
+This still does not close the remote-worker MVP. The next exact work item is a
+local `bus workers` e2e that asserts origin/destination metadata on create and
+message Events, followed by the live local-to-dev.hg.fi worker e2e where the
+remote worker service consumes the relayed Events and sends claim/progress/log
+or attach/terminal evidence back through the background relay.
