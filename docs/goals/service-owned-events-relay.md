@@ -1850,6 +1850,13 @@ Verification completed in this slice:
 - Live local `bus workers ... message` accepted operator text with the same
   token-like placeholder once the required `--environment local-dev` argument
   was supplied. The verification worker was then stopped.
+- The worker/API/docs changes were committed and pushed on `develop`, then
+  BusDK `develop` was pushed at `3fdfd8e`.
+- dev.hg.fi was fast-forwarded to BusDK `3fdfd8e` with submodule pins
+  `bus-api` `3689fbb`, `bus-api-provider-worker` `0162e9f`, and docs
+  `95ca728`. `make clean build install` completed on dev.hg.fi, and its
+  normal seven-service stack was restarted with `bus services up --file
+  services.yml`.
 
 This still does not close the remote-worker MVP. The next exact work item is a
 local `bus workers` e2e that asserts origin/destination metadata on create and
