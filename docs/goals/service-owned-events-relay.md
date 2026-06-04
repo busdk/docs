@@ -1863,3 +1863,140 @@ local `bus workers` e2e that asserts origin/destination metadata on create and
 message Events, followed by the live local-to-dev.hg.fi worker e2e where the
 remote worker service consumes the relayed Events and sends claim/progress/log
 or attach/terminal evidence back through the background relay.
+
+## Current State Update 2026-06-04 22:30 EEST
+
+The manual live remote-worker path has now reached the intended MVP shape on
+the normal Services stack, after two worker-integration fixes were promoted to
+`develop`.
+
+First, `bus-integration-worker` commit `a8eb289` made worker control handling
+tolerate out-of-order request Events. Assign and message requests can now
+upsert a placeholder worker when they arrive before the create request, and the
+later create request merges with that placeholder instead of erasing it. The
+same slice made lifecycle failure publishing durable before acknowledging the
+consumer event, so a launch failure does not poison the consumer cursor.
+`go test ./...` passed in the feature worktree and again in the primary
+`bus-integration-worker` checkout. BusDK pinned that change at `0ec9abc`.
+
+Second, `bus-integration-worker` commit `ae9a5a2` fixed the return path for
+worker response Events. Remote worker status/message responses now target the
+request origin environment when the response is produced by another
+environment, and stale destination metadata is cleared for local-only
+responses. `go test ./...` passed in the feature worktree and in the primary
+checkout. BusDK pinned that change at `fce0895`.
+
+After the fixes, local and `coding-agent@dev.hg.fi` were both refreshed to
+BusDK `fce0895`, `bus-integration` was rebuilt into `dist-bin` on both
+systems, and both systems ran the normal root `services.yml` stack with
+`postgres`, `events`, `tasks`, `repos`, `workers`, `api`, and `events-relay`.
+
+The successful live proof used local task `task-0fae28bf931d`, local-created
+dev.hg.fi worker `dev-hg-relay-mvp-20260604-2210`, and message
+`msg-20260604-2221`. The local operator created the task through `bus task`,
+created the worker through `bus workers` targeting `dev-hg`, and sent a worker
+message locally. The remote dev.hg.fi worker service consumed the worker
+control Events and produced response/status evidence from environment
+`dev-hg` addressed back to `local-dev`.
+
+Concrete returned evidence:
+
+- remote Events row `283` was `bus.workers.message.response` for
+  `msg-20260604-2221`, with origin `dev-hg` and destination `local-dev`;
+- remote Events row `284` was `bus.workers.status.snapshot` with status
+  `running`, origin `dev-hg`, and destination `local-dev`;
+- local Events rows `370` and `371` imported those same remote message/status
+  facts into the local Events API;
+- local `bus workers messages dev-hg-relay-mvp-20260604-2210 --environment
+  dev-hg` showed the accepted worker-to-operator response;
+- local `bus workers status dev-hg-relay-mvp-20260604-2210` showed the remote
+  worker running with active task `task-0fae28bf931d`, model
+  `gpt-5.3-codex-spark`, App Server URL, worktree path, and logs path;
+- local `bus workers logs` and `bus workers attach` returned the remote
+  runtime paths and App Server connection metadata;
+- after local `bus workers stop`, local Events row `381` imported the remote
+  terminal `bus.workers.status.snapshot` with status and lifecycle phase
+  `stopped`.
+
+This establishes the manual MVP flow through the standard Bus Events API and
+background relay rather than task/worker clients owning synchronization logic.
+It also leaves three exact engineering items before the goal should be closed:
+
+1. Add automated e2e or regression coverage for the worker-relay path so
+   local-dev worker control Events, dev-hg response/status evidence, and
+   terminal evidence are checked by tests rather than only by manual proof.
+2. Add restart/resume coverage for the same route, including no duplicate
+   worker claims and no loss of task/worker evidence after Services or relay
+   restart.
+3. Fix or regression-cover Services native process health so a defunct worker
+   process is not reported as a healthy running service merely because
+   `signal(0)` succeeds.
+
+Two local supervisor-worker lanes were opened for those remaining items:
+`task-a645d55cc1f2` / worker `local-relay-e2e-tests-20260604` for hermetic
+relay-worker test coverage, and `task-9af421bc0a11` / worker
+`local-services-health-20260604` for Services process health.
+
+## Current State Update 2026-06-04 23:45 EEST
+
+The local supervisor-worker substrate is now usable again for BusDK module
+work on `develop`, and part of the remaining automated relay coverage has
+landed.
+
+Accepted and pinned fixes in this slice:
+
+- `bus-integration-worker` `2ab1628` materializes the assigned module from a
+  canonical local checkout when a generated product worktree contains only an
+  uninitialized submodule placeholder. This lets local App Server workers edit
+  module code without fetching private submodules from GitHub.
+- `bus-integration-worker` `25ebdd5` passes the product worktree itself as a
+  Codex App Server `--add-dir` root and logs bounded message diagnostics
+  including worker id, operation, cwd, cwd status, and App Server URL
+  presence. This makes worker-turn failures easier to diagnose without
+  exposing prompt text or credentials.
+- `bus-worker` `50c5660` documents `--environment` and `--environment-id` in
+  the `bus workers` help and README for API-backed lifecycle and observation
+  commands: `message`, `messages`, `status`, `logs`, `attach`, `pause`,
+  `resume`, `stop`, and `assign`.
+- `bus-integration-worker` `1841f3e` materializes replaced sibling modules
+  such as `bus-events` and `bus-remote` from canonical local checkouts when
+  generated product worktrees contain non-git sibling placeholders.
+- `bus-integration-events` `ea2f083` adds hermetic relay regression coverage
+  for sync-target metadata routing, passive owner selection, and bidirectional
+  cursor resume. The tests assert that relay routing uses addressing metadata
+  rather than event-name filters.
+
+Verification completed in this slice:
+
+- `go test ./pkg/workersintegration` and `go test ./...` passed for
+  `bus-integration-worker` after the App Server root fix and again after the
+  sibling materialization fix.
+- `make test` passed for `bus-worker` after the CLI help/docs change.
+- `make test` passed for `bus-integration-events` after the relay regression
+  tests.
+- Fresh local App Server worker `local-worker-help-docs-20260604d` completed
+  a delegated `bus-worker` change through the normal `bus workers message`
+  surface and returned response evidence locally.
+- Fresh local App Server worker `local-relay-e2e-events-20260604b` completed
+  a delegated `bus-integration-events` test change after assigned and sibling
+  module materialization were fixed.
+- The normal local dispatcher help now shows the environment flags for worker
+  lifecycle/observation commands.
+- BusDK `develop` pinned the first batch at `9c73e95` and the relay coverage
+  plus sibling-materialization batch at `a4de0c4`.
+
+This advances the automated evidence, but the goal is still open. Remaining
+work before closeout:
+
+1. Push/refresh the accepted module and BusDK `develop` commits on both local
+   and `coding-agent@dev.hg.fi`, then rebuild/install the same release on both
+   systems.
+2. Run the full live local-to-dev.hg.fi remote-worker flow again from the
+   refreshed release and record exact task id, worker id, route id, local and
+   remote commits, and returned task/worker evidence.
+3. Add or accept coverage that specifically exercises the worker-relay path
+   end to end, including local worker control Events, remote response/status
+   evidence, terminal evidence, and restart/resume behavior with no duplicate
+   worker claims.
+4. Close or explicitly defer any Services process-health follow-up that still
+   affects whether `bus services ps` can be trusted during the proof.
