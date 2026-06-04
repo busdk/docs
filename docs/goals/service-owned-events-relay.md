@@ -1130,7 +1130,7 @@ Develop continuation later on 2026-06-04:
 - The local `dev-hg` `bus-remote` entry now carries non-secret relay metadata:
   route pair `local_dev_hg_events`, relay owner `local-dev`, and an
   `ssh-issued-token` credential source using the actual dispatcher command
-  `bus operator-token --format json issue events-relay` with a requested
+  `bus operator-token --format json --local issue events-relay` with a requested
   86400 second lifetime and 3600 second refresh-before window.
 - `bus-services` now refreshes a stack-local Events JWT from the configured
   local Events signing secret during `up` and writes it to the durable
@@ -1204,10 +1204,44 @@ Develop continuation at 12:00 on 2026-06-04:
   `PATH="$PWD/dist-bin:$PATH" BUS_INTEGRATION_SERVICES_BIN="$PWD/dist-bin/bus-integration-services" bus services stack validate --file services.yml`
   reported `OK services stack 7 services`. A non-secret issuer smoke with
   token stdout redirected to `/dev/null` reported `issuer_ok`.
-- This is still not MVP acceptance. The new issuer-env change must be committed
-  and installed into dev.hg.fi `dist-bin`, both normal stacks must be started
-  with `bus services up`, and the five-step local task/dev.hg.fi worker proof
-  remains to be run and recorded.
+- This is still not MVP acceptance. The issuer-env change has been committed in
+  `bus-integration-events` and installed into dev.hg.fi `dist-bin`; subsequent
+  startup work found additional root-stack gaps before the full proof could run.
+
+Develop continuation after the first 12:00 stack attempts on 2026-06-04:
+
+- The BusDK `develop` line now includes local commits for the first remote
+  startup blockers found by running the normal dev.hg.fi stack: `bus-services`
+  passes `BUS_ENVIRONMENT_ID` into the relay process so dev.hg.fi can evaluate
+  itself as the passive side of the `local_dev_hg_events` route pair, and the
+  native Postgres profile uses `/tmp` as the Unix socket directory so an
+  unprivileged process-level stack does not attempt to write socket locks under
+  `/var/run/postgresql`.
+- dev.hg.fi has been fast-forwarded as far as BusDK `f8f2894` during this
+  sequence and validates `services.yml`. The later local BusDK root commit
+  `b1d9495` pins the relay-service environment-id fix and the
+  `bus-operator-deploy` tool-bundle correction, but it still needs to be
+  transferred/installed on dev.hg.fi before another full proof attempt.
+- The next normal dev.hg.fi `bus services up` attempt uncovered a path-shaping
+  question: the root `repos`, `tasks`, and `workers` profiles currently start
+  the shared `bus integration --provider ...` host, but the pinned
+  `bus-integration` command does not currently compile against the checked-out
+  module set, while the standalone `bus-integration-repos`,
+  `bus-integration-task`, and `bus-integration-workers` binaries are already
+  present. The fastest likely MVP path is to switch the Services profiles to
+  those standalone binaries, but this is an operator-relevant architecture
+  choice and should be confirmed before spending more implementation time.
+- Two other MVP-shaping decisions remain open and should be answered before
+  deeper work: whether the live proof may use SSH-backed local HS256 signing
+  from dev.hg.fi's private `.env` for remote Events tokens, or must finish the
+  provider-backed internal-key issuer first; and whether `direct-exec` Codex on
+  dev.hg.fi is acceptable for the first remote-worker proof, or the proof must
+  use an App Server/container runner.
+- The five-step local task/dev.hg.fi worker flow remains unproven: both normal
+  stacks must start, local-owned relay health must pass, a local task must be
+  created, a dev.hg.fi worker must be created or selected locally, that worker
+  must execute on dev.hg.fi, and claim/progress/log/terminal evidence must be
+  monitored locally through the normal Bus Events API surfaces.
 
 The implementation lanes listed below were originally developed in isolated
 worktrees and promoted to module primary branches as part of BusDK `main`
