@@ -1758,8 +1758,8 @@ This is not MVP acceptance. The following exact work remains:
 Same-release freshness for this slice was completed after the local
 worker-replay fix:
 
-- local BusDK and `coding-agent@dev.hg.fi` were both updated to BusDK
-  `develop` commit `2670ccb`;
+- local BusDK and `coding-agent@dev.hg.fi` were both updated to the same BusDK
+  `develop` release before continuing the remote-worker proof;
 - both checkouts have matching relevant submodule pins:
   `bus-api` `02b39ae`, `bus-api-provider-worker` `7ab4cc7`,
   `bus-integration-services` `46e1289`, and docs `bc60f0d`;
