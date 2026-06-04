@@ -1759,13 +1759,15 @@ Same-release freshness for this slice was completed after the local
 worker-replay fix:
 
 - local BusDK and `coding-agent@dev.hg.fi` were both updated to BusDK
-  `develop` commit `97f1c9e`;
+  `develop` commit `2670ccb`;
 - both checkouts have matching relevant submodule pins:
   `bus-api` `02b39ae`, `bus-api-provider-worker` `7ab4cc7`,
   `bus-integration-services` `46e1289`, and docs `bc60f0d`;
 - affected root `dist-bin` tools were rebuilt on both systems:
   `bus-api`, `bus-integration-services`, and `bus-api-provider-workers`;
-- local `bus services up --file services.yml` restarted cleanly, and local
+- local `bus services up --file services.yml` restarted cleanly after stopping
+  a stale checkout-owned Postgres postmaster left from an earlier state-file
+  mismatch, and local
   `bus workers --api-url http://127.0.0.1:8090/local/v1 --token-file
   .bus/tokens/local-events.jwt --format json list` returned eight workers;
 - dev.hg.fi `bus services up --file services.yml` restarted cleanly, and
