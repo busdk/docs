@@ -242,7 +242,7 @@ opening a private SSH implementation in the relay module. The local-owned
 relay may use SSH to run a Bus-owned remote auth/operator command, or an
 equivalent Bus token-exchange surface, that mints a short-lived token scoped
 for the dev.hg.fi Events route. The current implementation path for that
-issuer is `bus operator token --format json issue events-relay` running on the
+issuer is `bus operator-token --format json issue events-relay` running on the
 SSH target. Provider-backed mode should call the remote auth provider internal
 token endpoint using a remote-side internal key or equivalent service
 credential. Explicit local/offline signing is acceptable only when that remote
@@ -1065,9 +1065,9 @@ must stay current while implementation work proceeds.
 Current `develop` audit on 2026-06-04:
 
 - Root `services.yml` starts `postgres`, `events`, `repos`, `workers`, `tasks`,
-  and `api`, but it does not yet declare an `events-relay` service. The
-  normal project stack therefore cannot yet prove that `bus services up`
-  starts background relay from durable `bus-remote` metadata.
+  `api`, and `events-relay` in the default stack. The relay entry is generic:
+  remote route identity and SSH target come from `bus-remote`, not
+  `services.yml`.
 - `bus-services` has a `bus-events-relay` profile and tests for Services-owned
   relay startup, including the `bus-integration-events --events-relay-service`
   command shape, state file, status file, healthcheck, and remote metadata
@@ -1124,6 +1124,52 @@ Implementation update later on 2026-06-04:
   up` has not yet been rerun with rebuilt binaries, dev.hg.fi has not yet been
   refreshed to the same `develop` state, and the five-step local task/dev.hg.fi
   worker flow remains unproven.
+
+Develop continuation later on 2026-06-04:
+
+- The local `dev-hg` `bus-remote` entry now carries non-secret relay metadata:
+  route pair `local_dev_hg_events`, relay owner `local-dev`, and an
+  `ssh-issued-token` credential source using the actual dispatcher command
+  `bus operator-token --format json issue events-relay` with a requested
+  86400 second lifetime and 3600 second refresh-before window.
+- `bus-services` now refreshes a stack-local Events JWT from the configured
+  local Events signing secret during `up` and writes it to the durable
+  `.bus/tokens/local-events.jwt` runtime path. The relay profile default now
+  points at `{env:BUS_SERVICES_BUS_DIR}/tokens/local-events.jwt`, so the
+  frozen Services working directory no longer turns the token-file reference
+  into `.bus/services/config-snapshot/.bus/tokens/...`.
+- `bus-integration-events` now carries the selected remote candidate's
+  `remote_workdir` from `bus-remote` and prepends `<remote_workdir>/dist-bin`
+  for SSH-issued token commands. This lets noninteractive SSH resolve the
+  remote Bus dispatcher/tools without embedding dev.hg.fi paths in
+  `services.yml`.
+- `bus-integration-services` now freezes fresh stack config for a new
+  `up`/`serve` attempt instead of silently reusing an old failed-run snapshot.
+  This matters because `.bus/remote/config.json` is intentionally runtime
+  configuration outside normal committed source and must be recopied after
+  local remote metadata changes.
+- Focused checks passed after these fixes:
+  `go test ./...` in `bus-services`, `go test ./...` in
+  `bus-integration-services`, and `go test ./...` in
+  `bus-integration-events`.
+- A local root-stack proof still has not accepted the goal. Rebuilt local
+  binaries start `postgres`, `events`, `repos`, `tasks`, `workers`, and `api`
+  successfully after cleaning stale PIDs and ports, but the overall
+  `bus services up` readiness fails because the `events-relay` healthcheck is
+  correctly unhealthy while dev.hg.fi cannot issue the remote Events token.
+- The current live blocker is dev.hg.fi freshness and issuer setup. SSH
+  inventory on 2026-06-04 found the remote primary checkout still on
+  `main...origin/main`, with a stale `dist-bin` containing only older tools
+  such as `bus-dev`, `bus-integration-task`, `bus-lint`, and `bus-notes`.
+  A non-secret issuer diagnostic with stdout discarded showed
+  `bus operator-token --format json issue events-relay` exists only after the
+  tool bundle is installed and then fails without a remote provider internal
+  key: `missing --internal-key-file or BUS_OPERATOR_INTERNAL_KEY`.
+- Next implementation work must put dev.hg.fi on the same accepted `develop`
+  release and install the same Services/relay/auth tool bundle there, then
+  configure the remote issuer through owned Bus secret/config state. The relay
+  must keep failing closed until that remote issuer can mint a scoped Events
+  token without printing or persisting token values.
 
 The implementation lanes listed below were originally developed in isolated
 worktrees and promoted to module primary branches as part of BusDK `main`
@@ -1267,7 +1313,7 @@ Promoted implementation lanes:
   Events, and they cannot accidentally reuse a stale healthy snapshot from a
   different route. The expected remote
   issuer command is now
-  a `bus operator token --format json issue events-relay` command, owned by
+  a `bus operator-token --format json issue events-relay` command, owned by
   the `bus-operator-token` implementation lane below. The issuer may call the
   remote auth provider internal token endpoint, or use `--local` for explicit
   offline HS256 signing when that host owns the deployment signing secret. This
@@ -1280,7 +1326,7 @@ Promoted implementation lanes:
 - worktree:
   `/Users/jhh/git/busdk/agent-supervisor/projects/busdk/tmp/worktrees/bus-operator-token-events-relay-issuer`
 - scope: adds the canonical SSH-invoked relay issuer command,
-  `bus operator token --format json issue events-relay`. The preset emits the
+  `bus operator-token --format json issue events-relay`. The preset emits the
   bounded JSON envelope consumed by `ssh-issued-token` credential sources,
   defaults the audience to `ai.hg.fi/api`, defaults the scope to
   `task:send task:read`, chooses the subject from
@@ -1310,7 +1356,7 @@ Promoted implementation lanes:
   positive requested lifetime only when it is no longer than
   `BUS_AUTH_INTERNAL_TOKEN_TTL_SECONDS`, and rejects over-limit requests rather
   than silently issuing a longer token. This lets the provider-backed
-  `bus operator token issue events-relay` path request the relay's configured
+  `bus operator-token issue events-relay` path request the relay's configured
   24 hour default when the deployment explicitly raises the internal-token
   maximum to that value, while keeping the provider as the lifetime policy
   owner. This branch was promoted to module `main` as part of BusDK release
