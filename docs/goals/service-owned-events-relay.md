@@ -331,6 +331,19 @@ The service should handle these flows:
 - restart resumes from durable checkpoints rather than replaying old unrelated
   history
 
+Relay routing must be based on Event addressing metadata, not the Event name.
+The intended model is closer to mail routing than topic whitelisting:
+`bus.origin.environment.id` and `bus.environment.id` describe where the Event
+comes from or currently exists, while `bus.destination.environment.id` and the
+existing multi-target `bus.sync.target.ids` identify which environment should
+receive it. The relay may expose event-name narrowing only as an explicit
+diagnostic, test, or recovery control. It must not decide that task snapshots,
+worker progress, Notes operations, or other future Events are in or out of a
+remote route based on their subject/name. Broadcast/subscription routing should
+be added as owned Events API and `bus-integration-events` behavior when the
+subscription model is defined, so ordinary task and worker clients only stamp
+the correct non-secret routing properties.
+
 ## What Needs To Be Built
 
 ### Service Configuration
@@ -343,7 +356,8 @@ Define a deployable route configuration shape. Each route needs at least:
 - stable destination environment id
 - origin system id when useful
 - token-file or credential-source references for each side
-- event filters
+- destination/subscription addressing metadata and optional diagnostic
+  narrowing controls
 - durable state-file path
 - iteration bounds
 - retry/backoff policy
@@ -1099,7 +1113,7 @@ Implementation update later on 2026-06-04:
   a healthy no-op plan rather than a stack failure.
 - The `bus-events-relay` Services profile has non-secret defaults for the local
   environment id, local Events URL, local token-file reference, SSH
-  local-forward URL, status file, and MVP task/worker Event names. It no
+  local-forward URL, and status file. It no
   longer requires a fixed shared state-file default, so auto-derived route
   pairs can keep per-pair durable cursor state.
 - Root `services.yml` includes a generic `events-relay` service in
@@ -1338,12 +1352,13 @@ Promoted implementation lanes:
   recovery and tests. Missing owner metadata fails closed, and the generated
   route-pair id is canonical for the two environment ids when the remote does
   not pin one, so reciprocal declarations can converge on the same pair. This
-  branch now also carries explicit `eventNames` route-pair filters and
+  branch now also carries explicit `eventNames` route-pair narrowing and
   `--event-names` / `BUS_EVENTS_RELAY_EVENT_NAMES` support for named remotes,
-  so the real scoped Events API can authorize bounded streams by name instead
-  of requiring a broad wildcard listener. This was an important compatibility
-  gap that the earlier fake Events API e2e did not expose. This foreground
-  service path now fails closed without `--status-file` or
+  but that support is diagnostic/test-only and is not the routing contract.
+  The relay route itself must remain address-metadata based so future
+  task/worker/Notes Events move when they target the peer environment without
+  every Event name being added to a relay allowlist. This foreground service
+  path now fails closed without `--status-file` or
   `BUS_EVENTS_RELAY_STATUS_FILE`, so a Services-managed relay always has a
   persisted health/status snapshot for readiness checks instead of failing
   later during startup. Plans and persisted status snapshots now include safe
@@ -1503,7 +1518,7 @@ Promoted implementation lanes:
   `bus-events-relay` profile through `bus-services stack up`, puts a fake
   `bus-integration-events` executable on the service `PATH`, and verifies that
   the foreground relay command and `--health` command receive the expected
-  named remote, event-name filter, and status-file arguments. That e2e now also creates a temporary
+  named remote and status-file arguments. That e2e now also creates a temporary
   `.bus/remote/config.json`, proves the relay process runs from the frozen
   `config-snapshot` working directory, and proves the frozen remote config is
   visible there. It no longer overrides the relay `state_file` or `status_file`
@@ -1512,7 +1527,7 @@ Promoted implementation lanes:
   inside the frozen config snapshot. The branch now adds a stronger opt-in e2e
   that uses the real `bus-integration-events` binary, fake local and remote
   Events APIs, token-file local auth, an `ssh-issued-token` remote credential
-  source, explicit event-name stream filters, a stale parent `BUS_API_TOKEN`,
+  source, addressed relay metadata, a stale parent `BUS_API_TOKEN`,
   and a fake `ssh` executable that implements both the runner-style local TCP
   forward and the bounded SSH token issuer.
   That proof starts the relay through `bus-services stack up`, waits for one
@@ -1667,6 +1682,31 @@ Local branch-composition proof on 2026-06-03:
   `bus-operator-token --help` all succeed.
 - The same proof showed `bus services up --help` exits with an unknown flag,
   so it must not be used as the freshness smoke command.
+
+Implementation update on 2026-06-04 after the addressing correction:
+
+- The relay architecture must not be described as an Event-name relay stream.
+  Event names remain useful for normal Events API subscribers and optional
+  relay diagnostics, but the service-owned relay route is addressed by Event
+  metadata. `bus-integration-events` now treats
+  `bus.destination.environment.id` as a first-class destination address and
+  continues to support the older comma-separated `bus.sync.target.ids`
+  metadata used by existing task-shaped proofs.
+- The default Services relay profile and Services e2e fixtures no longer bake
+  task/worker Event-name allowlists into the happy path. The relay service is
+  expected to see addressed Events and decide movement from destination/source
+  metadata plus per-destination sync state.
+- `bus-api-provider-events` has an Events relay scope for service-owned
+  nameless stream access, and `bus-services` refreshes local service tokens
+  that predate that scope. The latest local/remote proof attempt still found
+  stale dispatcher binaries in `dist-bin/bus`, so the next proof step is to
+  rebuild/install the dispatcher on both local and dev.hg.fi, restart both
+  `bus services up` stacks, and verify the refreshed service token includes
+  `events:relay` before claiming relay movement works live.
+- This goal is still not accepted. The lower-level addressed relay slices and
+  source tests are useful, but the required MVP remains the real local
+  `bus task` / `bus worker` flow through dev.hg.fi with claim/progress/log or
+  attach/terminal evidence returning over the background Events relay.
 
 The next useful thread should start by checking current Git state, then make
 the service-owned scheduler and full remote worker evidence work through the
