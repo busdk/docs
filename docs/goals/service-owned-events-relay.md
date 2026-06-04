@@ -1171,6 +1171,44 @@ Develop continuation later on 2026-06-04:
   must keep failing closed until that remote issuer can mint a scoped Events
   token without printing or persisting token values.
 
+Develop continuation at 12:00 on 2026-06-04:
+
+- dev.hg.fi now has the local BusDK `develop` superproject ref
+  `db695ea` transferred over SSH and checked out in
+  `/home/coding-agent/coding-agent/git/busdk/busdk`; the local-ahead
+  `bus-services`, `bus-integration-services`, `bus-integration-events`, and
+  `docs` `develop` refs were transferred to the matching remote submodule
+  repositories before `git submodule update --init --recursive`.
+- dev.hg.fi `dist-bin` was rebuilt from the `develop` checkout for the
+  Services/relay/task/worker proof bundle: `bus`, `bus-api`, `bus-services`,
+  `bus-integration-services`, `bus-integration-events`, `bus-operator-token`,
+  `bus-api-provider-auth`, `bus-api-provider-events`, `bus-task`,
+  `bus-worker`/`bus-workers`, `bus-api-provider-workers`,
+  `bus-integration-task`, `bus-integration-workers`,
+  `bus-integration-repos`, and `bus-remote`. The dispatcher-visible smoke
+  checks `bus services --help`, `bus task --help`, and `bus workers --help`
+  passed on the remote host.
+- dev.hg.fi now has a private runtime `.env` with a generated local Events
+  signing secret, a generated local API token, Postgres 16 native-process
+  settings on port 55432, and `dev-hg` task/worker environment settings. Token
+  values and signing secrets were not printed or recorded.
+- The remote issuer path is now the owned Bus local-signing mode:
+  `bus operator-token --format json --local issue events-relay`. The SSH issuer
+  script in `bus-integration-events` now enters the remote Bus workdir,
+  prepends its `dist-bin`, sources the remote private `.env` when present, and
+  maps `BUS_EVENTS_JWT_SECRET` to `BUS_AUTH_HS256_SECRET` only for the remote
+  issuer process when no separate local-signing secret is configured. This
+  avoids embedding a secret file path in `services.yml` or the `bus-remote`
+  route declaration.
+- Remote validation now passes:
+  `PATH="$PWD/dist-bin:$PATH" BUS_INTEGRATION_SERVICES_BIN="$PWD/dist-bin/bus-integration-services" bus services stack validate --file services.yml`
+  reported `OK services stack 7 services`. A non-secret issuer smoke with
+  token stdout redirected to `/dev/null` reported `issuer_ok`.
+- This is still not MVP acceptance. The new issuer-env change must be committed
+  and installed into dev.hg.fi `dist-bin`, both normal stacks must be started
+  with `bus services up`, and the five-step local task/dev.hg.fi worker proof
+  remains to be run and recorded.
+
 The implementation lanes listed below were originally developed in isolated
 worktrees and promoted to module primary branches as part of BusDK `main`
 `562237e17bbc08aa0ae16e1ce6675a1f152715a8`. The lane entries remain here as
