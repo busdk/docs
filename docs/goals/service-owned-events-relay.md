@@ -2000,3 +2000,163 @@ work before closeout:
    worker claims.
 4. Close or explicitly defer any Services process-health follow-up that still
    affects whether `bus services ps` can be trusted during the proof.
+
+## Current State Update 2026-06-05 03:55 EEST
+
+The full live local-to-dev.hg.fi remote-worker flow has now succeeded from the
+normal `develop` line and normal root `services.yml` stacks on both systems.
+Local and `coding-agent@dev.hg.fi` were both running BusDK `develop`
+`e91589af` for the proof, with the affected worker/task/relay binaries rebuilt
+into dispatcher-visible `dist-bin` on both systems. A later supervision-only
+BusDK guidance commit `8612977` updates this goal's operating guidance; it did
+not change the proof binaries.
+
+The proof used the normal service stack on both systems:
+
+- local checkout:
+  `/Users/jhh/git/busdk/agent-supervisor/projects/busdk`;
+- remote checkout:
+  `/home/coding-agent/coding-agent/git/busdk/busdk`;
+- local environment id `local-dev`;
+- remote environment id `dev-hg`;
+- route pair `local_dev_hg_events`;
+- both stacks reported `postgres`, `events`, `tasks`, `repos`, `workers`,
+  `api`, and `events-relay` running from `bus services ps --file services.yml`.
+
+The exact accepted proof artifacts are:
+
+- task ref `task-f6f1416002a3`;
+- worker id `dev-hg-relay-mvp-terminal-20260605-034730`;
+- worker branch `codex/dev-hg-relay-mvp-terminal-20260605-034730`;
+- worker environment `dev-hg`;
+- worker model `gpt-5.3-codex-spark`;
+- message id `msg-relay-terminal-20260605-034730`;
+- App Server thread id `019e9541-4206-76c0-828c-53a85e13c58e`;
+- App Server turn id `019e9541-42ff-7a91-9f72-904a06cd0d22`;
+- terminal Event id `evt_1780620545346253915`.
+
+The local operator created the task with the current `bus task` surface:
+
+```sh
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus task \
+  --api-url http://127.0.0.1:8081/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  --format json \
+  new @dev-hg \
+  "Terminal evidence relay MVP proof 20260605-034730: dev.hg.fi App Server worker should reply once and close this task through bus.task.closed returned by the Bus Events relay."
+```
+
+The local operator created the dev.hg.fi worker through the current
+`bus workers` surface:
+
+```sh
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+  --api-url http://127.0.0.1:8090/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  --format json \
+  create \
+  --id dev-hg-relay-mvp-terminal-20260605-034730 \
+  --label "dev.hg.fi relay MVP terminal 20260605-034730" \
+  --type agent \
+  --profile codex-spark \
+  --capability relay-mvp \
+  --environment dev-hg \
+  --eligible-environment dev-hg \
+  --model gpt-5.3-codex-spark \
+  --module busdk \
+  --branch codex/dev-hg-relay-mvp-terminal-20260605-034730 \
+  --runner-kind direct \
+  --runner-provider codex-direct \
+  --sandbox workspace-write \
+  --task-ref task-f6f1416002a3
+```
+
+After the created worker reached the remote App Server lifecycle, it was
+resumed and messaged locally with terminal task evidence requested:
+
+```sh
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+  --api-url http://127.0.0.1:8090/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  --format json \
+  message dev-hg-relay-mvp-terminal-20260605-034730 \
+  --environment dev-hg \
+  --message-id msg-relay-terminal-20260605-034730 \
+  --task-ref task-f6f1416002a3 \
+  --close-task-on-response \
+  --text "Please reply with exactly one sentence: dev.hg.fi App Server worker completed task-f6f1416002a3 and closed it through the Bus Events relay."
+```
+
+The worker response returned locally through `bus workers messages` with
+`delivery=app_server` and text:
+
+```text
+dev.hg.fi App Server worker completed task-f6f1416002a3 and closed it through the Bus Events relay.
+```
+
+Both local and remote task status then reported the task closed with the same
+last Event id:
+
+```json
+{
+  "task_ref": "task-f6f1416002a3",
+  "status": "closed",
+  "recipient": "dev-hg",
+  "last_event_id": "evt_1780620545346253915"
+}
+```
+
+`bus task show task-f6f1416002a3` on both local and dev.hg.fi replayed the same
+three task-thread facts: local task creation, remote worker task message, and
+remote worker task close. The terminal close Event was `bus.task.closed` with
+origin metadata `bus.origin.environment.id=dev-hg`,
+destination metadata `bus.destination.environment.id=local-dev`,
+`bus.task.ref=task-f6f1416002a3`, correlation id
+`msg-relay-terminal-20260605-034730`, and payload status `closed`. This keeps
+task/worker clients on the normal Events API flow; relay synchronization still
+belongs to the Events/relay infrastructure.
+
+Restart/resume behavior was checked by stopping both normal service stacks
+with `bus services down --file services.yml`, starting both again with
+`bus services up --file services.yml --all`, then checking service health,
+task status, and `bus.task.closed` replay on both sides. Both systems returned
+to seven running services. The task remained closed, and the terminal close
+Event replayed as the same single Event id
+`evt_1780620545346253915`; no duplicate terminal task evidence was observed.
+
+The proof worker was then stopped cleanly:
+
+```sh
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+  --api-url http://127.0.0.1:8090/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  --format json \
+  stop dev-hg-relay-mvp-terminal-20260605-034730 \
+  --environment dev-hg \
+  --reason "terminal relay proof complete"
+```
+
+Local and remote `bus workers status` both reported the worker `stopped` with
+`last_error=""`.
+
+The live MVP flow is now accepted as working for the local operator path:
+local task creation, local dev.hg.fi worker creation/control, remote App
+Server execution on dev.hg.fi, returned worker message evidence, terminal task
+evidence, and restart/resume stability all work through the normal Events API
+and background relay services.
+
+Remaining closeout work is now documentation and test hardening rather than
+manual proof discovery:
+
+1. Add or accept one automated e2e/regression that exercises the worker-relay
+   path through ordinary worker control Events, remote response/status
+   evidence, terminal task evidence, and restart/resume idempotency. Existing
+   relay regression coverage already covers metadata routing, passive owner
+   selection, and bidirectional cursor resume; this remaining test should bind
+   those relay guarantees to the worker/task proof shape above.
+2. Update any neighboring goal/status files that still say the live
+   same-release remote-worker flow has not happened.
+3. Keep the Services process-health follow-up open only if current source
+   still misreports dead native processes under normal, unsandboxed operation.
+   During this proof, unsandboxed `bus services ps --file services.yml` gave
+   correct running/stopped results before and after restart.
