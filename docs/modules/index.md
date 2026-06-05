@@ -33,6 +33,8 @@ If you need architectural background on why modules are independent and how they
 
 For cross-module capability scanning, use the [BusDK module feature table](./features). It aggregates feature rows from each module repository `FEATURES.md` and shows user-visible capability, interface type, evidence, coverage, and maturity in one table.
 
+For a compact map of the repositories themselves, use the [BusDK repository inventory](./repository-inventory). It groups the tracked Git repositories by system layer and summarizes each repository's purpose, usual use case, and direct internal BusDK dependencies.
+
 ### Data files and paths
 
 Workspace datasets use documented paths, usually conventional names at the workspace root such as `accounts.csv`, `periods.csv`, and `datapackage.json`. Use the module command or API documented for that dataset when you need to read, validate, or update it; this keeps path resolution, schema validation, and business rules consistent. The design allows future configuration of paths, for example in a data package, so end users can customize where data is stored without breaking how other tools discover it. [`bus-files`](./bus-files) is the deliberate exception in this list: it is a filesystem-facing parser/finder surface for local evidence files and does not start from a canonical workspace dataset.

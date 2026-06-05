@@ -103,6 +103,8 @@
       url: /modules/
     - label: Module capabilities
       url: /modules/features
+    - label: Repository inventory
+      url: /modules/repository-inventory
     - label: aiz
       url: /modules/aiz
     - label: bus
