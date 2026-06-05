@@ -1031,7 +1031,7 @@ git -C bus-integration-events log --oneline -1
 go -C bus-integration-events test ./pkg/eventrelay
 go -C bus-integration-events test ./...
 git -C docs diff --check -- docs/goals/service-owned-events-relay.md
-bus lint docs/goals/service-owned-events-relay.md
+bus lint docs/docs/goals/service-owned-events-relay.md
 ```
 
 ## Known Boundaries

@@ -48,7 +48,7 @@ Use these as orientation, not as proof that the goal is finished.
 
 - `PLAN.md` describes the active H100 goal as the smallest real repeatable
   offload loop.
-- `docs/goals/service-owned-events-relay.md` records the accepted
+- `docs/docs/goals/service-owned-events-relay.md` records the accepted
   local-to-dev.hg.fi service-owned Events relay MVP proof from 2026-06-05:
   normal `bus services up` stacks on both systems, local task and dev.hg.fi
   worker creation/control from the local side, remote App Server execution,
