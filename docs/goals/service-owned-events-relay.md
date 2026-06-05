@@ -2184,6 +2184,98 @@ go test ./pkg/eventrelay
 go test ./...
 ```
 
+## Current State Update 2026-06-05 04:55 EEST
+
+The accepted relay MVP and its closeout evidence are now pushed on `develop`
+and refreshed on both systems. The BusDK superproject commit is `07dc736e` on
+local and `coding-agent@dev.hg.fi`; the relevant pinned submodules are:
+
+- `bus-integration-events` `4b7cd2b` including the worker-relay regression and
+  relay debugging guidance;
+- `docs` `4c89c2a` including this relay MVP closeout and neighboring goal
+  status updates;
+- `bus-integration-worker` `5b60b13` with App Server worker diagnostic
+  guidance;
+- `bus-api-provider-worker` `405f051` with the worker message content
+  validation guidance.
+
+Both normal root `services.yml` stacks are running from the current
+`develop` release. Local unsandboxed `bus services ps --file services.yml` and
+remote `ssh coding-agent@dev.hg.fi '... bus services ps --file services.yml'`
+both reported these seven services running: `postgres`, `events`, `tasks`,
+`repos`, `workers`, `api`, and `events-relay`.
+
+The current-release verification reran the accepted proof queries rather than
+only relying on old notes:
+
+```sh
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus task \
+  --api-url http://127.0.0.1:8081/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  status task-f6f1416002a3
+
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus task \
+  --api-url http://127.0.0.1:8081/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  show task-f6f1416002a3
+
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+  --api-url http://127.0.0.1:8090/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  status dev-hg-relay-mvp-terminal-20260605-034730 --environment dev-hg
+
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+  --api-url http://127.0.0.1:8090/local/v1 \
+  --token-file .bus/tokens/local-events.jwt \
+  messages dev-hg-relay-mvp-terminal-20260605-034730 --environment dev-hg
+```
+
+The local task status returned `closed` with terminal Event id
+`evt_1780620545346253915`. Local and remote task replay both showed the same
+three task-thread Events: the local task creation, the dev.hg.fi worker task
+message, and the dev.hg.fi worker task close. Local worker status showed
+worker `dev-hg-relay-mvp-terminal-20260605-034730` in environment `dev-hg`,
+`status=stopped`, model `gpt-5.3-codex-spark`, active task
+`task-f6f1416002a3`, App Server URL `ws://127.0.0.1:19100`, and the expected
+App Server worktree/log paths. Local worker messages showed one responded
+message, `msg-relay-terminal-20260605-034730`, with
+`delivery=app_server`, App Server thread id
+`019e9541-4206-76c0-828c-53a85e13c58e`, and turn id
+`019e9541-42ff-7a91-9f72-904a06cd0d22`.
+
+The terminal `bus.task.closed` envelope was also re-exported from the local
+Events API. Its metadata preserved `bus.origin.environment.id=dev-hg`,
+`bus.destination.environment.id=local-dev`,
+`bus.recipient.id=dev-hg-relay-mvp-terminal-20260605-034730`,
+`bus.task.ref=task-f6f1416002a3`, correlation id
+`msg-relay-terminal-20260605-034730`, and synced state for the route. Its
+payload preserved `status=closed`, `task_ref`, `worker_id`, and `message_id`.
+
+Relay status on local reported a healthy active route pair
+`local_dev_hg_events` from `local-dev` to `dev-hg`, selected SSH candidate
+`coding-agent@dev.hg.fi`, token-file local credential source
+`local-events-token-file`, SSH-issued remote credential source
+`remote-events-ssh-issued-token`, and 24-hour requested remote token lifetime.
+Relay status on dev.hg.fi reported a healthy passive/no-active-route state for
+the same stack, so there is no competing reciprocal relay loop.
+
+The current closeout checks passed:
+
+```sh
+go test ./pkg/eventrelay
+go test ./...
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus lint \
+  docs/docs/goals/service-owned-events-relay.md \
+  docs/docs/goals/remote-worker-lane-handoff.md \
+  docs/docs/goals/trustworthy-remote-worker-lane.md \
+  docs/docs/goals/deterministic-task-evidence-remote-worker-lane.md
+```
+
+The MVP described by this goal is complete. Follow-on work should now be
+tracked in the neighboring remote-worker lane goals rather than reopening this
+relay MVP, unless a future regression breaks the accepted local-to-dev.hg.fi
+operator flow above.
+
 Both commands passed in `bus-integration-events` after the regression was
 promoted to the module `develop` checkout. The earlier live proof plus this
 regression now cover the MVP's required local operator flow, metadata-addressed
