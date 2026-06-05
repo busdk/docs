@@ -132,8 +132,11 @@ legacy partial rather than quietly treated as accepted progress.
 
 ## Recommended Implementation Order
 
-1. Finish the service-owned Events relay first. It is the gating dependency for
-   routine remote task routing and return evidence.
+1. Build on the accepted service-owned Events relay MVP. The 2026-06-05
+   local-to-dev-hg proof and `bus-integration-events` regression cover
+   routine remote task routing and returned worker/task terminal evidence for
+   the MVP path, so deterministic task evidence work should use that relay as
+   its baseline instead of reopening relay proof as unknown.
 2. Complete the `bus-integration-task` attempt evidence envelope across success,
    no-change, failed, blocked, startup failure, timeout, exact-ref refusal,
    stale-task refusal, and remote-launch failure paths.
@@ -165,8 +168,9 @@ The smallest credible end-to-end proof is:
 5. Worker attaches any patch/log/evidence artifacts through task Events.
 6. Relay brings remote-origin evidence back locally without manual
    export/import.
-7. `bus dev task show --format json`, `task monitor`, `work status`, and
-   `work stats --all` show enough evidence to review the attempt.
+7. `bus dev task show --format json`, `bus dev task monitor`,
+   `bus dev work status`, and `bus dev work stats --all` show enough evidence
+   to review the attempt.
 8. Supervisor extracts artifacts if needed, runs validation, promotes or
    rejects the branch, and records the final closeout state.
 
@@ -191,10 +195,11 @@ smoke, visible task or Notes evidence must be exported before restart.
 
 ## Where To Restart
 
-Start a future thread by checking the current state rather than assuming this
-handoff is still complete:
+Start a future thread from the BusDK superproject root by checking the current
+state rather than assuming this handoff is still complete:
 
 ```sh
+cd <your-busdk-superproject-root>
 git status --short
 git -C docs status --short --untracked-files=all
 sed -n '1,260p' PLAN.md
@@ -204,10 +209,11 @@ sed -n '80,160p' bus-events/PLAN.md
 sed -n '1,140p' bus-operator-deploy/PLAN.md
 ```
 
-Then choose the highest-leverage unblocked implementation lane. As of this
-handoff, the best default is the service-owned Events relay, because it gates
-remote task routing, durable return evidence, and trustworthy dev-hg/H100
-proof.
+Then choose the highest-leverage unblocked implementation lane. As of the
+2026-06-05 relay MVP closeout, the best default is deterministic task evidence:
+use the accepted service-owned Events relay as the baseline route, then make
+remote attempts report enough structured terminal evidence for local review,
+promotion, and repeat proof.
 
 ## Current Dirty-State Note
 

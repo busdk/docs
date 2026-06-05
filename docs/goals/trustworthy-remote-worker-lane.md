@@ -301,13 +301,22 @@ Already completed or largely proven:
 - Notes contracts, FileStore, BusData adapter, and API-backed CLI foundation.
 - H100 local-model write smokes that proved H100 can run model-backed workers and produce commits under controlled scripts.
 
+Accepted after the 2026-06-05 relay MVP closeout:
+
+- Service-owned Events relay deployment and live local-to-dev.hg.fi remote
+  proof for the MVP operator flow. The accepted proof created a task locally,
+  created and controlled a dev.hg.fi worker locally, ran that worker on
+  dev.hg.fi through the App Server path, returned worker/task terminal
+  evidence locally, and survived Services restart without duplicate terminal
+  evidence. `bus-integration-events` also has hermetic regression coverage for
+  the worker/task relay proof shape.
+
 Still open:
 
 - Service-owned scheduler as the normal remote App Server launch path.
 - Exact-ref guard before App Server startup.
 - App Server-only lane across local/dev-hg/H100/UpCloud.
 - Model/profile switch semantics on retry and guidance.
-- Service-owned Events relay deployment and live remote proof.
 - Durable Events backend and memory restart/export guard.
 - Notes-over-Events production projection and origin-aware queries.
 - User-systemd combined runtime profile.
@@ -316,9 +325,11 @@ Still open:
 
 ## Suggested Next Thread Start
 
-Start by inspecting current state rather than relying on this handoff alone:
+Start by inspecting current state from the BusDK superproject root rather than
+relying on this handoff alone:
 
 ```sh
+cd <your-busdk-superproject-root>
 git status --short
 sed -n '1,360p' PLAN.md
 sed -n '1,280p' bus-integration-task/PLAN.md
@@ -330,12 +341,12 @@ sed -n '1,220p' bus-dev/PLAN.md
 Then pick one implementation slice. The highest-leverage order is:
 
 1. Restore/prove the local Events API and durable Events/storage gate.
-2. Finish service-owned Events relay deployment/status.
-3. Implement the service-owned task scheduler and exact-ref worker guard.
-4. Wire status/monitor to scheduler-owned state.
-5. Prove App Server-only worker execution and model/profile retry behavior.
-6. Add user-systemd combined runtime profile and remote refresh command.
-7. Prove a real remote product task, review/promote locally, then repeat after freshness/readiness automation.
+2. Use the accepted service-owned Events relay MVP as the baseline route and
+   finish the service-owned task scheduler plus exact-ref worker guard.
+3. Wire status/monitor to scheduler-owned state.
+4. Prove App Server-only worker execution and model/profile retry behavior.
+5. Add user-systemd combined runtime profile and remote refresh command.
+6. Prove a real remote product task, review/promote locally, then repeat after freshness/readiness automation.
 
 If the next thread only has time for one scoped worker task, start with either
 the `bus-events` durable/local Events gate or the `bus-integration-task`

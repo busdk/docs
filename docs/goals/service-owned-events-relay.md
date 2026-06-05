@@ -2,8 +2,17 @@
 
 ## Goal
 
-This goal is to make Events synchronization between local and remote BusDK
-development systems a normal service-owned capability.
+Status on 2026-06-05: the local-dev to dev-hg service-owned Events relay MVP is
+accepted on `develop`. The accepted proof used normal `bus services up` stacks
+on both systems, local `bus task` and `bus workers` commands, remote App Server
+execution on `coding-agent@dev.hg.fi`, returned worker/task terminal evidence,
+and restart/resume without duplicate terminal evidence. The current remaining
+work belongs to neighboring remote-worker lane goals such as scheduler
+hardening, deterministic attempt evidence, Notes/artifact transfer, and
+freshness automation.
+
+This goal made Events synchronization between local and remote BusDK
+development systems a normal service-owned capability for that MVP route.
 
 The intended end state is that local-to-remote development work does not depend
 on a supervisor manually running `bus events export`, `bus events import`,
@@ -276,7 +285,7 @@ may remain supported fallback or emergency sources, but using them for final
 live acceptance should be an explicit operator decision.
 
 The historical
-`docs/docs/goals/remote-credential-source-selection.md` handoff remains useful
+`docs/goals/remote-credential-source-selection.md` handoff remains useful
 baseline evidence for explicit source precedence, fail-closed diagnostics, and
 token redaction. Treat it as baseline coverage, not as acceptance proof for
 this route. It does not implement SSH-issued relay credentials, issuer
@@ -825,7 +834,7 @@ New follow-up work should still start isolated until separately accepted.
 
 ### Accepted Local Workers MVP
 
-`docs/docs/goals/workers.md` is accepted only for local native Services plus
+`docs/goals/workers.md` is accepted only for local native Services plus
 local sandboxed Codex Spark workers. It does not complete remote worker
 operation. Any unfinished work where worker create/control/message/status
 Events must cross environment boundaries belongs to this relay goal and the
@@ -897,7 +906,14 @@ remote does not appear ready.
 
 ## Acceptance Criteria
 
-This goal is complete only when all of these are true:
+Status on 2026-06-05: the local-dev to dev-hg relay MVP is accepted. The live
+proof and `bus-integration-events` regression recorded below satisfy the
+criteria in this section for the MVP route. Broader remote-worker lane work,
+such as scheduler hardening, deterministic attempt evidence, Notes/artifact
+transfer, and freshness automation, belongs to the neighboring goals linked
+above.
+
+This goal was complete only when all of these were true:
 
 - `bus-integration-events` owns the dedicated background Events relay service
   path, or the goal explicitly chooses the embedded Bus Events API worker path
@@ -994,7 +1010,7 @@ Start with these files:
 9. `bus-integration-task/PLAN.md`
 10. `bus-remote/PLAN.md`
 11. `bus-operator-deploy/PLAN.md`
-12. `docs/docs/goals/remote-credential-source-selection.md`
+12. `docs/goals/remote-credential-source-selection.md`
 13. `bus-dev/PLAN.md`
 14. `logs/20260527-17-agent-memo.md`
 15. `logs/20260529-14-agent-memo.md`
@@ -1002,32 +1018,20 @@ Start with these files:
 Use the current worktree and current remote state as authoritative. The memo
 files are supporting context, not proof by themselves.
 
-## Suggested First Commands
+## Current Verification Commands
 
-Run these commands from the BusDK superproject root. Inspect the current plan
-and dirty state:
+Run these commands from the BusDK superproject root when checking the automated
+closeout regression or this goal file. The live proof commands and Event ids
+are recorded in the 2026-06-05 03:55 EEST section below.
 
 ```bash
+cd <your-busdk-superproject-root>
 git status --short
-git -C bus-events status --short
-git -C bus-task status --short
-rg -n "High-Priority Service-Owned Events Relay Goal|Deploy service-owned Events relay|bus events relay|--sync-now|state-file|credential_source|token-file" PLAN.md bus-events/PLAN.md bus-events bus-task bus-remote
-```
-
-Inspect the current relay command and tests:
-
-```bash
-make -C bus-events build
-go -C bus-events test ./...
-bus-events/bin/bus-events --help
-bus-events/bin/bus-events relay --help
-```
-
-If only this handoff file is changed, run:
-
-```bash
+git -C bus-integration-events log --oneline -1
+go -C bus-integration-events test ./pkg/eventrelay
+go -C bus-integration-events test ./...
 git -C docs diff --check -- docs/goals/service-owned-events-relay.md
-bus lint docs/docs/goals/service-owned-events-relay.md
+bus lint docs/goals/service-owned-events-relay.md
 ```
 
 ## Known Boundaries
@@ -1050,10 +1054,10 @@ restart resume, and the local-to-`coding-agent@dev.hg.fi` SSH route. The
 accepted-release proof repeated that same Services-owned route from promoted
 BusDK `main` release `562237e17bbc08aa0ae16e1ce6675a1f152715a8`.
 After the 2026-06-04 correction, those `main` proofs are historical capability
-evidence only. Current integration and acceptance work should use `develop`,
-and this goal is not accepted until the normal `develop` stack proves the full
-local operator flow with a locally-created task, a locally-created or selected
-dev.hg.fi worker, remote worker execution, and local task/worker monitoring.
+evidence only. Current integration and acceptance work uses `develop`. The
+normal `develop` stack later proved the full local operator flow with a
+locally-created task, a locally-created dev.hg.fi worker, remote worker
+execution, and local task/worker monitoring in the 2026-06-05 updates below.
 
 Do not implement the production MVP by running `bus events relay` as a CLI loop
 under Services. The CLI may wrap, exercise, or recover the same relay engine,
@@ -1073,12 +1077,13 @@ Do not call a Docker container, a queued SSH request, or a stale process an
 active worker lane unless task Events show claim/progress/terminal evidence or
 a precise relay/scheduler failure.
 
-## Current State At Handoff
+## Historical State At 2026-06-04 Handoff
 
-The relay goal is active and not accepted. The operator corrected the thread on
-2026-06-04 after a documentation/refinement task was incorrectly closed as if
-it represented the product goal. This document is the living goal record and
-must stay current while implementation work proceeds.
+At this point the relay goal was active and not accepted. The operator
+corrected the thread on 2026-06-04 after a documentation/refinement task was
+incorrectly closed as if it represented the product goal. This document remains
+the living goal record, and the 2026-06-05 updates below supersede this
+handoff state.
 
 Current `develop` audit on 2026-06-04:
 
@@ -1699,23 +1704,17 @@ Implementation update on 2026-06-04 after the addressing correction:
   metadata plus per-destination sync state.
 - `bus-api-provider-events` has an Events relay scope for service-owned
   nameless stream access, and `bus-services` refreshes local service tokens
-  that predate that scope. The latest local/remote proof attempt still found
-  stale dispatcher binaries in `dist-bin/bus`, so the next proof step is to
-  rebuild/install the dispatcher on both local and dev.hg.fi, restart both
-  `bus services up` stacks, and verify the refreshed service token includes
-  `events:relay` before claiming relay movement works live.
-- This goal is still not accepted. The lower-level addressed relay slices and
-  source tests are useful, but the required MVP remains the real local
-  `bus task` / `bus worker` flow through dev.hg.fi with claim/progress/log or
-  attach/terminal evidence returning over the background Events relay.
+  that predate that scope. At this 2026-06-04 point, stale dispatcher binaries
+  still prevented accepting the live route. The 2026-06-05 updates below
+  supersede this note: both systems were refreshed to the same `develop`
+  release, the live local task/dev.hg.fi worker flow succeeded, and automated
+  worker-relay regression coverage was added.
 
-The next useful thread should start by checking current Git state, then make
-the service-owned scheduler and full remote worker evidence work through the
-same relay path as part of the MVP. Task and worker clients should keep using
-ordinary Bus Events API requests with environment metadata; the relay and
-Events infrastructure should make the remote route behave like the same
-logical Events system from their perspective. New follow-up work should still
-start isolated until separately accepted.
+Follow-on threads should build on the accepted relay path. Task and worker
+clients should keep using ordinary Bus Events API requests with environment
+metadata; scheduler, deterministic evidence, artifact, Notes, and freshness
+work should use the relay as the same logical Events system rather than adding
+client-owned synchronization.
 
 ## Current State Update 2026-06-04 19:00 EEST
 
@@ -1985,21 +1984,14 @@ Verification completed in this slice:
 - BusDK `develop` pinned the first batch at `9c73e95` and the relay coverage
   plus sibling-materialization batch at `a4de0c4`.
 
-This advances the automated evidence, but the goal is still open. Remaining
-work before closeout:
-
-1. Push/refresh the accepted module and BusDK `develop` commits on both local
-   and `coding-agent@dev.hg.fi`, then rebuild/install the same release on both
-   systems.
-2. Run the full live local-to-dev.hg.fi remote-worker flow again from the
-   refreshed release and record exact task id, worker id, route id, local and
-   remote commits, and returned task/worker evidence.
-3. Add or accept coverage that specifically exercises the worker-relay path
-   end to end, including local worker control Events, remote response/status
-   evidence, terminal evidence, and restart/resume behavior with no duplicate
-   worker claims.
-4. Close or explicitly defer any Services process-health follow-up that still
-   affects whether `bus services ps` can be trusted during the proof.
+This advanced the automated evidence, but at 2026-06-04 23:45 EEST the goal
+was still open. The closeout items from that moment were later resolved or
+deferred in the 2026-06-05 updates below: both systems were refreshed to the
+same `develop` release, the full live local-to-dev.hg.fi remote-worker flow was
+rerun and recorded, worker-relay regression coverage was added, and the
+Services process-health follow-up was narrowed to broader hardening because
+normal unsandboxed `bus services ps` behaved correctly during the accepted
+proof.
 
 ## Current State Update 2026-06-05 03:55 EEST
 
@@ -2160,3 +2152,44 @@ manual proof discovery:
    still misreports dead native processes under normal, unsandboxed operation.
    During this proof, unsandboxed `bus services ps --file services.yml` gave
    correct running/stopped results before and after restart.
+
+## Current State Update 2026-06-05 04:20 EEST
+
+The remaining automated regression requirement for the relay MVP is now
+satisfied on `develop` by `bus-integration-events` commit `6aa7b3b`
+(`Add worker relay proof regression`). The regression is hermetic and lives in
+`pkg/eventrelay/engine_test.go` as
+`TestRunnerRunOnceRelaysWorkerTaskProofAndDoesNotDuplicateTerminalEvidence`.
+It models the accepted proof shape without live SSH, Docker, or task/worker
+sync code:
+
+- local `bus.task.created`, `bus.workers.create.request`, and
+  `bus.workers.message.request` Events addressed to `dev-hg` are forwarded to
+  the remote side;
+- remote `bus.workers.message.response`,
+  `bus.workers.status.snapshot`, `bus.task.message`, and `bus.task.closed`
+  Events addressed back to `local-dev` are imported locally;
+- the terminal `bus.task.closed` Event preserves route/task identity through
+  `bus.origin.environment.id=dev-hg`,
+  `bus.destination.environment.id=local-dev`, `bus.task.ref`,
+  `bus.recipient.id`, correlation id, and payload fields
+  `task_ref`, `worker_id`, `message_id`, and `status=closed`;
+- a second `RunOnce` against the durable cursor state does not duplicate the
+  terminal task evidence.
+
+Verification for this closeout slice:
+
+```sh
+go test ./pkg/eventrelay
+go test ./...
+```
+
+Both commands passed in `bus-integration-events` after the regression was
+promoted to the module `develop` checkout. The earlier live proof plus this
+regression now cover the MVP's required local operator flow, metadata-addressed
+relay movement, worker/task terminal evidence, and restart/resume idempotency.
+
+The Services process-health follow-up remains a broader Services hardening
+item, not an open relay MVP acceptance item. During the accepted proof,
+unsandboxed `bus services ps --file services.yml` correctly reported
+running/stopped state before and after restart on both local and dev.hg.fi.

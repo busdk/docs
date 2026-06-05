@@ -9,12 +9,20 @@ environment, and the environment can run the work without manual SSH repair,
 manual token swapping, ad hoc import/export loops, scp side channels, or
 post-hoc Git reconstruction.
 
+Environment names in this handoff are Bus environment or remote-profile labels:
+`dev-hg` is the `coding-agent@dev.hg.fi` worker environment, H100 refers to the
+configured GPU worker environment/profile family, and `local` means the local
+supervisor/control environment.
+
 The intended happy path is:
 
 ```bash
-bus dev work --remote dev-hg start @some-module "Do real product work"
-bus dev work --environment h100-weekend start @some-module "Do real product work"
+bus dev work --remote dev-hg start @bus-integration-task "Do real product work"
+bus dev work --environment h100-weekend start @bus-integration-task "Do real product work"
 ```
+
+`@bus-integration-task` is an example module target. Replace it with the BusDK
+module or task recipient that owns the actual implementation work.
 
 That should create a local task, relay it to the remote Events service, let a
 service-owned scheduler start an App Server worker, have that worker claim only
@@ -40,13 +48,16 @@ Use these as orientation, not as proof that the goal is finished.
 
 - `PLAN.md` describes the active H100 goal as the smallest real repeatable
   offload loop.
-- `bus-events/PLAN.md` has a completed local/testable `bus events relay` slice
-  with loop/service mode, durable state file support, counters, and token file
-  references. Live dev-hg/H100 proof still remains.
+- `docs/goals/service-owned-events-relay.md` records the accepted
+  local-to-dev.hg.fi service-owned Events relay MVP proof from 2026-06-05:
+  normal `bus services up` stacks on both systems, local task and dev.hg.fi
+  worker creation/control from the local side, remote App Server execution,
+  returned worker/task terminal evidence, restart/resume stability, and a
+  hermetic worker-relay regression in `bus-integration-events`.
 - `bus-dev/PLAN.md` includes the local-supervisor to remote Events sync slice,
   remote status visibility, first-class task attachment work, and the refined
   worker stats/recovery-analysis item.
-- `bus-integration-dev-task/PLAN.md` still owns the App Server end-to-end
+- `bus-integration-task/PLAN.md` still owns the App Server end-to-end
   remote/local model lane and the intended-ref guard for workers.
 - `bus-operator-deploy/PLAN.md` includes user-systemd deployment work, the
   still-open single-runtime service profile, and the remote freshness command.
@@ -63,22 +74,23 @@ status may have moved since this handoff was written.
 This is high priority. Normal task flow should use a bounded relay service
 rather than a manual import/export loop.
 
-Needed work:
+Accepted MVP state:
 
-- Deploy `bus events relay` as a systemd, Compose, or combined integration
-  service for local-to-remote and remote-to-local routes.
-- Configure routes declaratively with local Events URL, destination URL,
-  environment/source IDs, token-file or credential-source references, durable
-  state file paths, and filters.
-- Expose health and status: last success, cursors, forwarded/imported/skipped
-  counts, pending counts, target IDs, last error, credential labels, and
-  truncated-pending indicators.
-- Make `bus-dev` rely on relay health for normal work. `--sync-now` should be
-  bootstrap or recovery, not the default operating loop.
-- Prevent replay storms and loops with durable checkpoints, idempotency,
-  locking, bounded iterations, and backoff.
-- Prove live flow on dev-hg or H100: local task, relay forward, remote worker
-  execution, relay import of terminal evidence, relay restart, and repeat.
+- The local-to-dev.hg.fi service-owned Events relay route is accepted for the
+  current remote-worker MVP path. The proof used normal root `services.yml`
+  stacks and ordinary `bus task` / `bus workers` commands from the local
+  operator environment.
+- Relay routing is metadata-addressed, not based on event-name allowlists.
+- Restart/resume kept the terminal task Event single and preserved closed task
+  state.
+- Hermetic regression coverage in `bus-integration-events` binds the worker
+  control Events, remote worker response/status evidence, terminal
+  `bus.task.closed` evidence, and cursor idempotency together.
+
+Remaining remote-lane work should build on that accepted relay, not reopen it
+as an unknown. The next lane-level work is scheduler ownership, deterministic
+attempt evidence, artifact/Notes transfer, freshness/readiness automation, and
+repeatable real-product task execution after those pieces are refreshed.
 
 ### Service-Owned Task Scheduler
 
@@ -255,9 +267,12 @@ Needed work:
 
 ## Priority Order
 
+Accepted relay baseline:
+
+- Service-owned Events relay live proof for the local-dev to dev-hg MVP route.
+
 P0/gating:
 
-- Service-owned Events relay live proof.
 - Worker intended-ref guard.
 - Durable Events storage or memory pre-restart export guard.
 
@@ -313,18 +328,20 @@ environment can prove this loop more than once:
 
 ## First Commands For A New Thread
 
+Run from the BusDK superproject root:
+
 ```bash
+cd <your-busdk-superproject-root>
 git status --short
 git -C bus-dev status --short
 git -C bus-events status --short
-git -C bus-integration-dev-task status --short
+git -C bus-integration-task status --short
 git -C bus-operator-deploy status --short
-git -C logs status --short
-sed -n '33,104p' PLAN.md
-sed -n '89,140p' bus-events/PLAN.md
-sed -n '101,220p' bus-integration-dev-task/PLAN.md
-sed -n '95,132p' bus-operator-deploy/PLAN.md
-sed -n '300,380p' bus-dev/PLAN.md
+rg -n "H100|remote worker|service-owned|scheduler|freshness" PLAN.md
+rg -n "Events relay|cursor|route|status" bus-events/PLAN.md
+rg -n "App Server|exact|evidence|scheduler" bus-integration-task/PLAN.md
+rg -n "freshness|tool|remote|setup" bus-operator-deploy/PLAN.md
+rg -n "stats|status|monitor|remote" bus-dev/PLAN.md
 ```
 
 ## Done Means
