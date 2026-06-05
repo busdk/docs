@@ -27,7 +27,7 @@ Task Evidence Goal`, and `Durable Task And Notes Evidence Goal`.
 Module ownership has shifted while this goal was being refined. Earlier
 discussion and some historical notes used `bus-integration-dev-task` and
 `bus.dev.task.*`. The current tracker increasingly uses `bus-integration-task`,
-`bus.task.*`, and future `bus task` / `bus worker` ownership. A future thread
+`bus.task.*`, and future `bus task` / `bus workers` ownership. A future thread
 should inspect current `PLAN.md` files before implementing and should use the
 current names in code and docs.
 
