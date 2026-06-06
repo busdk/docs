@@ -828,6 +828,16 @@ Implementation and proof work should use Bus Workers and worker-owned
 worktrees/branches. The supervisor may maintain this goal, project guidance,
 and coordination artifacts, but product code should be assigned to workers.
 
+Current implementation dependency:
+
+- Bus direct worker Git preparation in `bus-integration-worker` must become
+  non-interactive for local worker dispatch. During the first
+  `bus-agent-runtime` follow-up dispatch, direct lifecycle Git commands dropped
+  process-level `GIT_TERMINAL_PROMPT`, `GIT_ASKPASS`, `SSH_ASKPASS`, and Git
+  URL rewrite environment, then hung on the operator SSH key passphrase before
+  publishing worker status. This must be fixed before local Bus Workers can
+  reliably materialize the `bus-agent-runtime` implementation worktrees.
+
 Testing environments:
 
 - local supervisor checkout for goal, plan, and narrow coordination updates;
