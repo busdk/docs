@@ -16,6 +16,8 @@
       url: /design-goals/
     - label: Cost summary
       url: /implementation/cost-summary
+    - label: Artifact builder feature gap
+      url: /implementation/conversational-artifact-builder-feature-gap
     - label: Go peer review guide
       url: /implementation/go-peer-review-guide
       children:
@@ -68,6 +70,10 @@
       url: /reports/
     - label: Development retrospective, 2026-05-20 to 2026-05-27
       url: /reports/2026-05-20-27-development-retrospective
+    - label: AI Product Stack Setup feature gaps
+      url: /reports/ai-product-stack-setup-feature-gaps
+    - label: AI portal supervised runs provider phases
+      url: /reports/ai-portal-supervised-runs-provider-phases
 
 - title: Workflows
   links:

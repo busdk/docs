@@ -16,6 +16,11 @@ Go review topics, including
 [service boundaries](./go-peer-review-guide/http-and-service-boundaries), and
 [LLM finding patterns](./go-peer-review-guide/llm-finding-patterns).
 
+[Conversational artifact builder feature gap](./conversational-artifact-builder-feature-gap)
+identifies the exact BusDK product features needed to turn a public chat
+request into a paid, verified web or binary artifact without exposing source
+code.
+
 [Bus project cost summary](./cost-summary), [BusDK source package pricing](./module-pricing), and [FSL modules](./fsl-modules) provide project-cost and source-access context.
 
 <!-- busdk-docs-nav start -->

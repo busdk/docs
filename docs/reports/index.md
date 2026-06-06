@@ -14,6 +14,19 @@ project learned from the work.
 reviews remote worker environments, GPU worker environments, task automation,
 service readiness, and release-preparation work from the last development week.
 
+[Agent worker operations feature gap review](./2026-06-06-agent-worker-operations-feature-gap)
+reviews the existing BusDK worker modules and identifies the software features
+needed for a commercially credible supervised Codex worker operations package.
+
+[AI Product Stack Setup feature gaps](./ai-product-stack-setup-feature-gaps)
+identifies the exact product proof, setup, diagnostics, billing, Codex, service
+lifecycle, and worker lifecycle features needed to make the BusDK AI Product
+Stack Setup package commercially credible.
+
+[AI portal supervised runs provider phases](./ai-portal-supervised-runs-provider-phases)
+defines the portal and provider module work needed to add paid supervised runs
+to the existing AI chat module under subscription and usage limits.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../testing/index">Testing</a></span>
