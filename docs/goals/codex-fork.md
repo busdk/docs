@@ -835,7 +835,9 @@ Testing environments:
   specifically needs that environment;
 - Upcloud host `dev@ai.hg.fi` for testing the actual `bus-agent-runtime`
   codebase with local GPU providers after Bus tools and the local services
-  setup are updated there.
+  setup are updated there. This proof target is the Bus-owned runtime and
+  provider behavior, not merely Bus worker orchestration or worker
+  infrastructure.
 
 ## Open Questions
 
