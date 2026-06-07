@@ -837,6 +837,12 @@ Current implementation dependency:
   URL rewrite environment, then hung on the operator SSH key passphrase before
   publishing worker status. This must be fixed before local Bus Workers can
   reliably materialize the `bus-agent-runtime` implementation worktrees.
+- The default local Workers API must publish status through Events with a valid
+  service token or refreshed process state. As of 2026-06-07, `bus workers
+  list --api-url http://127.0.0.1:8090/local/v1 --environment local-dev`
+  returns `publish_failed: publish worker event: events API status 401`, even
+  when the CLI uses the local Events token file. This must be repaired before
+  the normal `8090` worker path can be used for further runtime dispatch.
 
 Testing environments:
 
