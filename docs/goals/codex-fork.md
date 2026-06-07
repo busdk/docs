@@ -828,6 +828,19 @@ Implementation and proof work should use Bus Workers and worker-owned
 worktrees/branches. The supervisor may maintain this goal, project guidance,
 and coordination artifacts, but product code should be assigned to workers.
 
+Current coordination publication state:
+
+- Shared `develop` branch pushes remain unmerged/unpushed unless the operator
+  explicitly approves publishing shared branches.
+- The cleanup and setup commits are available remotely on non-shared review
+  branches: `docs` at `codex/runtime-cleanup-docs-20260607`,
+  `bus-agent-runtime` at
+  `codex/runtime-cleanup-bus-agent-runtime-20260607`, BusDK at
+  `codex/runtime-cleanup-busdk-20260607`, and the supervisor root at
+  `codex/runtime-cleanup-supervisor-20260607`.
+- The published review branches preserve nested pointer order: leaf repos
+  first, BusDK second, supervisor root last.
+
 Current implementation dependency:
 
 - Bus direct worker Git preparation in `bus-integration-worker` must become
