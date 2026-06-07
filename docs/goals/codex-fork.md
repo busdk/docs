@@ -840,6 +840,9 @@ Current coordination publication state:
   `codex/runtime-cleanup-supervisor-20260607`.
 - The published review branches preserve nested pointer order: leaf repos
   first, BusDK second, supervisor root last.
+- Promotion PRs are open in the same order: `busdk/docs#1`,
+  `busdk/bus-agent-runtime#2`, `busdk/busdk#5`, and
+  `busdk/agent-supervisor#1`.
 
 Current implementation dependency:
 
