@@ -9,6 +9,30 @@ item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
 that were used when those entries were completed.
 
+## Current Goal: Bus Agent Runtime Workers
+
+`docs/docs/goals/bus-agent-runtime-workers.md` owns the public cross-module
+goal for making `bus-agent-runtime` available through `bus workers` as
+`runner_kind=direct` / `runner_provider=bus-agent-runtime` beside the existing
+Codex providers.
+
+- [ ] Keep the Bus-owned runtime worker goal and public docs aligned with the
+  implementation modules.
+  - Goal: the goal file, module docs, and public user-facing docs must reflect
+    the accepted provider contract, self-hosted GPU defaulting behavior,
+    configuration boundary, and non-goals.
+  - Scope:
+    - keep implementation work tracked in the owning module `PLAN.md` files
+      while this module owns the public goal and final user documentation
+    - document that `bus-agent-runtime` is an additional provider, not a
+      replacement for explicit `codex-direct`
+    - avoid exposing secrets, raw provider URLs with credentials, token-file
+      paths, private host paths, or ChatGPT subscription flows
+    - update the public docs only after implementation behavior is verified
+  - Verification: goal checklist reconciled against module `PLAN.md` files,
+    changed Markdown linted with the available docs checks, and product-path
+    proof linked or summarized without sensitive values.
+
 - [x] UI roadmap GX/Go example audit: review `docs/docs/ui/` for remaining
   YAML/JSON examples or declarative-template wording that conflicts with the
   current GX/Go, React-like component direction. Preserve JSON only where it is
