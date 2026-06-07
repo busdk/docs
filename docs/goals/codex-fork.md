@@ -843,11 +843,11 @@ Testing environments:
 - local supervisor checkout for goal, plan, and narrow coordination updates;
 - existing remote Docker/workload host `coding-agent@dev.hg.fi` when the task
   specifically needs that environment;
-- Upcloud host `dev@ai.hg.fi` for testing the actual `bus-agent-runtime`
-  codebase with local GPU providers after Bus tools and the local services
-  setup are updated there. This proof target is the Bus-owned runtime and
-  provider behavior, not merely Bus worker orchestration or worker
-  infrastructure.
+- Upcloud host `dev@ai.hg.fi` for runtime/provider proof of the actual
+  `bus-agent-runtime` codebase against local GPU providers after Bus tools and
+  the local services setup are updated there. This host is not the target for
+  proving Bus worker orchestration, worker creation, or worker-infrastructure
+  repairs.
 
 ## Open Questions
 
