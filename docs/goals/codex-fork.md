@@ -842,7 +842,10 @@ Current coordination publication state:
   first, BusDK second, supervisor root last.
 - Promotion PRs are open in the same order: `busdk/docs#1`,
   `busdk/bus-agent-runtime#2`, `busdk/busdk#5`, and
-  `busdk/agent-supervisor#1`.
+  `busdk/agent-supervisor#1`. As of 2026-06-07, GitHub reports docs,
+  `bus-agent-runtime`, and BusDK PRs as mergeable/clean; the supervisor PR
+  mergeability is still unknown, and no CI checks are reported on these cleanup
+  branches.
 
 Current implementation dependency:
 
