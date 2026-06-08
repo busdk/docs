@@ -71,6 +71,54 @@ Future container or VM runners remain owned by
 `docs/goals/worker-runner-providers.md`. This goal is about making the
 Bus-owned runtime usable by the existing workers product path first.
 
+### Request, Status, And CLI Contract
+
+The explicit provider-selection request contract is:
+
+- `runner_kind=direct`
+- `runner_provider=bus-agent-runtime`
+
+`bus workers create` must accept the same fields through CLI flags and API
+payloads:
+
+```bash
+bus workers create \
+  --type agent \
+  --profile <profile> \
+  --runner-kind direct \
+  --runner-provider bus-agent-runtime \
+  --model <local-or-openai-compatible-model> \
+  --task-ref <task-ref> \
+  --environment <environment-id>
+```
+
+The canonical worker create Event payload must carry `runner_kind` and
+`runner_provider` as public selection fields. It may carry model/profile/task
+metadata, but it must not carry provider-private API keys, token file paths,
+raw provider URLs with credentials, host-private filesystem paths, or full
+environment dumps.
+
+`bus workers status`, status snapshot Events, and API projections must show the
+selected public runner fields:
+
+- `runner_kind`
+- `runner_provider`
+- `runtime_ref`
+- `worktree_ref`
+- `logs_ref`
+- `worktree_path`
+- `logs_path`
+- `lifecycle_phase`
+- `last_error`
+
+Status output may include sanitized provider/runtime metadata such as provider
+kind, model id, non-secret capability labels, or credential-source labels. It
+must redact or omit secrets and host-private provider details.
+
+`bus workers message`, `logs`, `attach`, and `stop` must route by worker id and
+the persisted runner kind/provider. They must not require the caller to resend
+provider-private launch configuration after worker creation.
+
 ## Defaulting Behavior
 
 Self-hosted GPU environments should default to:
@@ -89,6 +137,23 @@ worker path and must not inherit Bus-owned runtime defaults.
 Unsupported or incomplete provider configuration must fail with bounded,
 non-secret diagnostics that name the missing configuration and the selected
 runner kind/provider.
+
+The defaulting order is:
+
+1. An explicit request value wins. `runner_provider=codex-direct` always stays
+   on the Codex direct lifecycle, and `runner_provider=bus-agent-runtime` always
+   selects the Bus-owned runtime lifecycle.
+2. If the request omits `runner_kind`, the worker service may default it to
+   `direct` only for direct-runtime-capable profiles.
+3. If the request omits `runner_provider` and the selected environment
+   advertises a complete Bus-owned local provider configuration, self-hosted
+   profiles should default to `bus-agent-runtime`.
+4. If the request omits `runner_provider` and no complete Bus-owned local
+   provider configuration is present, existing Codex-capable profiles retain
+   their current `codex-direct` behavior.
+5. If both Codex and Bus-owned runtime defaults are possible, the environment
+   or service profile must choose one explicitly so scheduler behavior is
+   deterministic.
 
 ## Dependencies
 
@@ -128,9 +193,9 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 ### Contract And CLI
 
-- [ ] Define the exact `bus workers` request, status, and CLI contract for
+- [x] Define the exact `bus workers` request, status, and CLI contract for
   selecting `runner_provider=bus-agent-runtime`.
-- [ ] Define self-hosted GPU defaulting semantics separately from explicit
+- [x] Define self-hosted GPU defaulting semantics separately from explicit
   provider selection.
 - [x] Update `bus-worker` CLI help, flags, and output so users can explicitly
   select either provider and can see which provider was selected.
