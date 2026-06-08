@@ -199,8 +199,13 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   provider selection.
 - [x] Update `bus-worker` CLI help, flags, and output so users can explicitly
   select either provider and can see which provider was selected.
-- [ ] Add or update CLI/API examples for explicit `codex-direct` and
+- [x] Add or update CLI/API examples for explicit `codex-direct` and
   `bus-agent-runtime` selection after the product path is verified.
+  - Evidence, 2026-06-08: `bus-worker` primary `develop` commits `fef9318`
+    and `b0a74d8` add README API JSON examples for both providers after the
+    local product proofs. The examples use the actual API fields
+    `environment_id` and `capability_tags`; help/README grep checks and
+    `git diff --check HEAD~2..HEAD` passed in `bus-worker`.
 
 ### `bus-agent-runtime`
 
@@ -253,19 +258,32 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 ### Product Proof
 
-- [ ] Add product-path proof for `bus workers create` using
+- [x] Add product-path proof for `bus workers create` using
   `runner_provider=bus-agent-runtime`.
-- [ ] Add product-path proof for `bus workers status` showing selected runner
+- [x] Add product-path proof for `bus workers status` showing selected runner
   kind/provider and safe runtime metadata.
-- [ ] Add product-path proof for `bus workers message` reaching
+- [x] Add product-path proof for `bus workers message` reaching
   `bus-agent-runtime` and returning through the workers path.
-- [ ] Add product-path proof for `bus workers logs`.
-- [ ] Add product-path proof for `bus workers attach`.
-- [ ] Add product-path proof for `bus workers stop`.
+- [x] Add product-path proof for `bus workers logs`.
+- [x] Add product-path proof for `bus workers attach`.
+- [x] Add product-path proof for `bus workers stop`.
+  - Evidence, 2026-06-08: after promoting `bus-integration-worker` `c12e7d6`
+    and BusDK pointer `1b800c9`, local Services ran worker
+    `runtime-product-proof-20260608e` through
+    `runner_kind=direct` / `runner_provider=bus-agent-runtime`. Product CLI
+    proof covered `create`, `status`, `message`, `messages`, `logs`, `attach`,
+    and `stop`; final status was `stopped` with empty `last_error`.
 - [ ] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
   and record sanitized evidence.
-- [ ] Keep the existing Codex worker tests and at least one explicit
+- [x] Keep the existing Codex worker tests and at least one explicit
   `codex-direct` product-path proof passing.
+  - Evidence, 2026-06-08: `go test ./...` passed in
+    `bus-integration-worker`, and local Services proof worker
+    `runtime-codex-direct-proof-20260608a` ran explicitly through
+    `runner_kind=direct` / `runner_provider=codex-direct`. Product CLI proof
+    covered `create`, `status`, `message`, `messages`, `logs`, `attach`, and
+    `stop`; the worker replied `Acknowledged.` and final status was `stopped`
+    with empty `last_error`.
 
 ### Documentation And Promotion
 
