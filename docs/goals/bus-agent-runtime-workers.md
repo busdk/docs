@@ -231,7 +231,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   `codex-direct` and `bus-agent-runtime`.
 - [x] Add and gate bounded diagnostics/redaction for command flags, token
   sources, service instance ids, worker ids, and runtime metadata.
-- [ ] Add and gate `bus-agent-runtime` logging and attach routing with the same
+- [x] Add and gate `bus-agent-runtime` logging and attach routing with the same
   user-facing semantics as existing direct workers.
 - [ ] Add and gate stop behavior for clean runtime quit, timeout fallback, and
   orphan prevention.
