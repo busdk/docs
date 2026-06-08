@@ -229,7 +229,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   cannot race with late runtime requests.
 - [x] Add and gate provider-neutral validation and failure mapping for
   `codex-direct` and `bus-agent-runtime`.
-- [ ] Add and gate bounded diagnostics/redaction for command flags, token
+- [x] Add and gate bounded diagnostics/redaction for command flags, token
   sources, service instance ids, worker ids, and runtime metadata.
 - [ ] Add and gate `bus-agent-runtime` logging and attach routing with the same
   user-facing semantics as existing direct workers.
