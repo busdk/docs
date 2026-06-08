@@ -238,14 +238,17 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 ### Service Configuration And Defaults
 
-- [ ] Add self-hosted GPU worker service configuration that can select the
-  local model provider without embedding secrets or host-private paths in
-  public worker requests.
-- [ ] Add tests for self-hosted defaulting when valid local model provider
-  configuration is present.
-- [ ] Add tests for unsupported or incomplete provider configuration with
+- [x] Add self-hosted GPU worker service configuration that can select
+  `runner_provider=bus-agent-runtime` through a bounded service/profile default
+  without embedding secrets or host-private paths in public worker requests.
+- [ ] Add automatic environment/local-provider discovery so valid local model
+  provider configuration can select the Bus-owned runtime default without
+  hard-coded host names.
+- [x] Add tests for self-hosted defaulting when configured local provider
+  metadata is present.
+- [x] Add tests for unsupported or incomplete provider configuration with
   bounded non-secret diagnostics.
-- [ ] Keep explicit `runner_provider=codex-direct` from inheriting Bus-owned
+- [x] Keep explicit `runner_provider=codex-direct` from inheriting Bus-owned
   runtime defaults.
 
 ### Product Proof
