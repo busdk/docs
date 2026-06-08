@@ -292,7 +292,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     `runner_kind=direct` / `runner_provider=bus-agent-runtime`. Product CLI
     proof covered `create`, `status`, `message`, `messages`, `logs`, `attach`,
     and `stop`; final status was `stopped` with empty `last_error`.
-- [ ] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
+- [x] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
   and record sanitized evidence.
   - [x] Implement provider-backed `bus-agent-runtime` worker messaging so the
     `bus workers message` product path invokes the configured local model and
@@ -306,9 +306,19 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     `bus-agent-runtime`, `go test ./pkg/workersintegration
     ./cmd/bus-integration-workers` in `bus-integration-worker`, and
     `git diff --check` for the affected diffs.
-  - Evidence gap, 2026-06-08: the implementation is promoted locally, but the
-    H100 product-path proof still has to run on `coding-agent@ai.hg.fi` with
-    the local GPU provider and model `gemma4:31b`.
+  - Evidence, 2026-06-08: `coding-agent@ai.hg.fi` was synced to BusDK
+    `develop` `89fb158` with `bus-agent-runtime` `71082ec`,
+    `bus-integration-worker` `30d0318`, and docs `e1846a0`. The host reported
+    `NVIDIA H100 80GB HBM3` and Ollama model `gemma4:31b`. A temporary
+    memory-backed Services proof stack created worker
+    `h100-runtime-proof-20260608a` without explicit `runner_provider`; status
+    selected `runner_kind=direct` / `runner_provider=bus-agent-runtime`.
+    `bus workers message` returned text through runtime
+    `bus-agent-runtime:h100-runtime-proof-20260608a` with metadata
+    `delivery=provider_chat_completion`, `operation=chat_completion`,
+    `provider_kind=ollama-compatible`, `provider_name=ollama-compatible`,
+    model `gemma4:31b`, and usage request count `1`. The worker stopped cleanly
+    with empty `last_error`.
 - [x] Keep the existing Codex worker tests and at least one explicit
   `codex-direct` product-path proof passing.
   - Evidence, 2026-06-08: `go test ./...` passed in
@@ -329,6 +339,11 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     `71082ec`, `bus-integration-worker` at `30d0318`, `docs` at `ab86627`,
     and BusDK superproject at `12d30cd`.
 - [ ] Sync the updated branches to the configured development environments.
+  - Partial evidence, 2026-06-08: `coding-agent@ai.hg.fi` is synced to
+    `develop` `89fb158` with fresh `bus` and `bus-agent-runtime` binaries in
+    `~/bin`, and the temporary proof stack was stopped. `coding-agent@dev.hg.fi`
+    remains unsynced because its SSH route is unreachable; `ssh -G` maps it to
+    `rp1.nor.fi:22054`, and connection attempts fail before authentication.
 
 ## Acceptance Criteria
 
