@@ -141,15 +141,15 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 - [ ] Add the worker-serving entrypoint or adapter required by the workers
   lifecycle.
-- [ ] Gate the adapter with deterministic tests, `git diff --check`, and
+- [x] Gate the adapter with deterministic tests, `git diff --check`, and
   focused `bus lint` on the final promoted `develop` checkout.
-- [ ] Cover runtime adapter redaction for prompts, metadata, API keys, token
+- [x] Cover runtime adapter redaction for prompts, metadata, API keys, token
   file labels, provider URLs, and host-private paths.
 - [ ] Cover runtime storage/checkpoint behavior so snapshots and event streams
   are captured consistently under concurrent updates.
-- [ ] Cover git helper path handling for normal relative paths, deleted tracked
+- [x] Cover git helper path handling for normal relative paths, deleted tracked
   paths, path traversal, symlinks, and bounded output.
-- [ ] Cover shell/process lifecycle behavior for normal completion, timeout,
+- [x] Cover shell/process lifecycle behavior for normal completion, timeout,
   cancellation, output drain, and cleanup.
 
 ### `bus-integration-worker`
