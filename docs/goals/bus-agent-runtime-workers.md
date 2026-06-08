@@ -160,7 +160,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   scheduler-once paths use bounded contexts and cannot hang indefinitely.
 - [x] Add and gate scheduler claim status handling for reopened tasks,
   including `open`, `ready`, and unsupported statuses.
-- [ ] Add and gate runtime quit goroutine drain/cancel behavior so stop cleanup
+- [x] Add and gate runtime quit goroutine drain/cancel behavior so stop cleanup
   cannot race with late runtime requests.
 - [ ] Add and gate provider-neutral validation and failure mapping for
   `codex-direct` and `bus-agent-runtime`.
