@@ -126,35 +126,84 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 ## Implementation Checklist
 
+### Contract And CLI
+
 - [ ] Define the exact `bus workers` request, status, and CLI contract for
-  selecting `runner_provider=bus-agent-runtime` and for self-hosted GPU
-  defaulting.
-- [ ] Add the `bus-agent-runtime` worker-serving entrypoint or adapter required
-  by the workers lifecycle.
-- [ ] Add a `bus-integration-worker` lifecycle provider for launching,
-  supervising, messaging, logging, attaching to, and stopping
-  `bus-agent-runtime` workers.
-- [ ] Add provider selection, defaulting, validation, failure mapping, and
-  bounded diagnostics for `codex-direct` and `bus-agent-runtime`.
+  selecting `runner_provider=bus-agent-runtime`.
+- [ ] Define self-hosted GPU defaulting semantics separately from explicit
+  provider selection.
+- [x] Update `bus-worker` CLI help, flags, and output so users can explicitly
+  select either provider and can see which provider was selected.
+- [ ] Add or update CLI/API examples for explicit `codex-direct` and
+  `bus-agent-runtime` selection after the product path is verified.
+
+### `bus-agent-runtime`
+
+- [ ] Add the worker-serving entrypoint or adapter required by the workers
+  lifecycle.
+- [ ] Gate the adapter with deterministic tests, `git diff --check`, and
+  focused `bus lint` on the final promoted `develop` checkout.
+- [ ] Cover runtime adapter redaction for prompts, metadata, API keys, token
+  file labels, provider URLs, and host-private paths.
+- [ ] Cover runtime storage/checkpoint behavior so snapshots and event streams
+  are captured consistently under concurrent updates.
+- [ ] Cover git helper path handling for normal relative paths, deleted tracked
+  paths, path traversal, symlinks, and bounded output.
+- [ ] Cover shell/process lifecycle behavior for normal completion, timeout,
+  cancellation, output drain, and cleanup.
+
+### `bus-integration-worker`
+
+- [x] Add and gate lifecycle session cleanup, replacement, bounded stderr, and
+  wait-result safety for `bus-agent-runtime` worker sessions.
+- [ ] Add and gate command startup hardening so Events replay/hydration and
+  scheduler-once paths use bounded contexts and cannot hang indefinitely.
+- [ ] Add and gate scheduler claim status handling for reopened tasks,
+  including `open`, `ready`, and unsupported statuses.
+- [ ] Add and gate provider-neutral validation and failure mapping for
+  `codex-direct` and `bus-agent-runtime`.
+- [ ] Add and gate bounded diagnostics/redaction for command flags, token
+  sources, service instance ids, worker ids, and runtime metadata.
+- [ ] Add and gate `bus-agent-runtime` logging and attach routing with the same
+  user-facing semantics as existing direct workers.
+- [ ] Add and gate stop behavior for clean runtime quit, timeout fallback, and
+  orphan prevention.
+
+### Service Configuration And Defaults
+
 - [ ] Add self-hosted GPU worker service configuration that can select the
   local model provider without embedding secrets or host-private paths in
   public worker requests.
-- [x] Update `bus-worker` CLI help, flags, and output so users can explicitly
-  select either provider and can see which provider was selected.
-- [ ] Add tests for provider selection, self-hosted defaulting, unsupported
-  provider errors, lifecycle status mapping, message handling, logs/attach
-  behavior, stop behavior, and redaction.
-- [ ] Add product-path integration proof for `bus workers create`, `status`,
-  `message`, `logs`, `attach`, and `stop` using `bus-agent-runtime`.
+- [ ] Add tests for self-hosted defaulting when valid local model provider
+  configuration is present.
+- [ ] Add tests for unsupported or incomplete provider configuration with
+  bounded non-secret diagnostics.
+- [ ] Keep explicit `runner_provider=codex-direct` from inheriting Bus-owned
+  runtime defaults.
+
+### Product Proof
+
+- [ ] Add product-path proof for `bus workers create` using
+  `runner_provider=bus-agent-runtime`.
+- [ ] Add product-path proof for `bus workers status` showing selected runner
+  kind/provider and safe runtime metadata.
+- [ ] Add product-path proof for `bus workers message` reaching
+  `bus-agent-runtime` and returning through the workers path.
+- [ ] Add product-path proof for `bus workers logs`.
+- [ ] Add product-path proof for `bus workers attach`.
+- [ ] Add product-path proof for `bus workers stop`.
 - [ ] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
   and record sanitized evidence.
 - [ ] Keep the existing Codex worker tests and at least one explicit
   `codex-direct` product-path proof passing.
+
+### Documentation And Promotion
+
 - [ ] Update public docs after implementation so the Bus-owned runtime scope,
   defaults, configuration, and non-goals are clear.
 - [ ] Promote accepted implementation branches to the relevant module
-  `develop` branches and sync the updated branches to the configured
-  development environments.
+  `develop` branches.
+- [ ] Sync the updated branches to the configured development environments.
 
 ## Acceptance Criteria
 
