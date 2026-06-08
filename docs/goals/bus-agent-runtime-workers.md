@@ -227,7 +227,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   including `open`, `ready`, and unsupported statuses.
 - [x] Add and gate runtime quit goroutine drain/cancel behavior so stop cleanup
   cannot race with late runtime requests.
-- [ ] Add and gate provider-neutral validation and failure mapping for
+- [x] Add and gate provider-neutral validation and failure mapping for
   `codex-direct` and `bus-agent-runtime`.
 - [ ] Add and gate bounded diagnostics/redaction for command flags, token
   sources, service instance ids, worker ids, and runtime metadata.

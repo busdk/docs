@@ -868,7 +868,7 @@ Testing environments:
 - local supervisor checkout for goal, plan, and narrow coordination updates;
 - existing remote Docker/workload host `coding-agent@dev.hg.fi` when the task
   specifically needs that environment;
-- Upcloud host `dev@ai.hg.fi` for runtime/provider proof of the actual
+- Upcloud host `coding-agent@ai.hg.fi` for runtime/provider proof of the actual
   `bus-agent-runtime` codebase against local GPU providers after Bus tools and
   the local services setup are updated there. This host is not the target for
   proving Bus worker orchestration, worker creation, or worker-infrastructure
@@ -879,7 +879,7 @@ Testing environments:
 - Which App Server request and event surfaces must be byte-for-byte compatible
   in the first `bus-agent-runtime` slice?
 - Which local GPU provider stack should be the first required proof on
-  `dev@ai.hg.fi`?
+  `coding-agent@ai.hg.fi`?
 - Which skills, memories, web, image, and connector behaviors are currently
   exercised by Bus App Server launch paths and therefore need first-pass
   compatibility?
