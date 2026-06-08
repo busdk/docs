@@ -345,11 +345,13 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     `71082ec`, `bus-integration-worker` at `6237595`, docs at `eed7406`,
     and BusDK superproject at `2ba8f4a`.
 - [ ] Sync the updated branches to the configured development environments.
-  - Partial evidence, 2026-06-08: `coding-agent@ai.hg.fi` is synced to
-    `develop` `2ba8f4a` with fresh `bus` and `bus-agent-runtime` binaries in
-    `~/bin`, and the temporary proof stack was stopped. `coding-agent@dev.hg.fi`
-    remains unsynced because its SSH route is unreachable; `ssh -G` maps it to
-    `rp1.nor.fi:22054`, and connection attempts fail before authentication.
+  - Partial evidence, 2026-06-09: `coding-agent@ai.hg.fi` is synced to
+    `develop` `540b7b8` with `bus-integration-worker` `6401968` and docs
+    `2208172`; the last changes were documentation/goal updates, so no binary
+    rebuild was needed there. `coding-agent@dev.hg.fi` remains unsynced because
+    its SSH route is unreachable; `ssh -G` maps it to `rp1.nor.fi:22054`, and
+    the current connection attempt fails before authentication with
+    `No route to host`.
 
 ## Acceptance Criteria
 
