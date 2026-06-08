@@ -344,17 +344,21 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   - Evidence, 2026-06-08: pushed `develop` for `bus-agent-runtime` at
     `71082ec`, `bus-integration-worker` at `6237595`, docs at `eed7406`,
     and BusDK superproject at `2ba8f4a`.
-- [ ] Sync the updated branches to the configured development environments.
-  - Partial evidence, 2026-06-09: `coding-agent@ai.hg.fi` is synced to
-    the accepted implementation and proof commits, including
-    `bus-agent-runtime` `71082ec` and `bus-integration-worker` `6401968`; the
-    remaining updates after that were documentation/goal evidence only, so no
-    binary rebuild was needed there. `coding-agent@dev.hg.fi` remains unsynced
-    because the configured SSH alias route is unusable: `ssh -G` maps it to
-    `rp1.nor.fi:22054`, and that connection fails before authentication with
-    `No route to host`. A diagnostic direct-host probe to `dev.hg.fi:22`
-    reached an OpenSSH server, but the `coding-agent` account did not accept
-    the public key available to this session, so it is not a viable sync path.
+- [x] Sync the updated branches to the configured development environments.
+  - Evidence, 2026-06-09: `coding-agent@ai.hg.fi` is synced to the accepted
+    implementation and proof commits, including `bus-agent-runtime` `71082ec`
+    and `bus-integration-worker` `6401968`. `coding-agent@dev.hg.fi` became
+    reachable again through the configured SSH alias route, was fast-forwarded
+    from stale BusDK/module tips to the same accepted `develop` implementation
+    commits, and its checked-out submodules were cleaned to the superproject
+    pins. The dev host rebuilt and installed the refreshed `bus`,
+    `bus-services`, `bus-integration-services`, `bus-worker`,
+    `bus-integration-worker`, and `bus-agent-runtime` binaries under
+    `/home/coding-agent/coding-agent/.local/bin`; `bus-agent-runtime --version`
+    reported commit `71082ec`. The dev Bus Services stack was restarted with
+    those binaries and `bus services ps --file services.yml` reported
+    `postgres`, `events`, `tasks`, `repos`, `workers`, `api`, and
+    `events-relay` running.
 
 ## Acceptance Criteria
 
