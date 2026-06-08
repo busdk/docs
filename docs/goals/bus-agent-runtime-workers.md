@@ -13,22 +13,23 @@ local model provider such as an Ollama or OpenAI-compatible endpoint.
 
 ## Current State
 
-`bus-agent-runtime` now has a completed local-provider runtime goal and a prior
-H100 validation proof for the runtime module itself, including a local GPU
-provider proof with `gemma4:31b`. This goal still needs a separate `bus
-workers` product-path H100 proof showing that worker messages routed through
-`runner_provider=bus-agent-runtime` invoke the configured local provider.
+`bus-agent-runtime` now has a completed local-provider runtime goal, a prior
+H100 validation proof for the runtime module itself, and a `bus workers`
+product-path H100 proof on `coding-agent@ai.hg.fi` with `gemma4:31b`.
 
-The current `bus workers` service path is still Codex-specific:
+The bridge between the completed runtime surface and the worker product path is
+implemented on the promoted `develop` branches:
 
-- the direct worker profile uses Codex App Server configuration;
-- `bus-integration-worker` owns Codex-specific direct lifecycle launch,
-  messaging, model/profile fields, and status projection;
-- the current `bus-agent-runtime` CLI is a packaged runtime entrypoint, but it
-  is not yet a worker-serving entrypoint that `bus workers` can launch and
-  supervise as a runtime provider.
+- direct workers can explicitly select either `codex-direct` or
+  `bus-agent-runtime`;
+- self-hosted local model configuration can default omitted direct provider
+  requests to `bus-agent-runtime`;
+- `bus workers` create, status, message, logs, attach, and stop have product
+  proof coverage for the Bus-owned runtime, and explicit `codex-direct`
+  behavior remains covered.
 
-This goal owns the bridge between those two completed surfaces.
+The remaining closeout work is environment sync for the configured development
+hosts.
 
 ## Affected Modules
 
@@ -331,16 +332,21 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 ### Documentation And Promotion
 
-- [ ] Update public docs after implementation so the Bus-owned runtime scope,
+- [x] Update public docs after implementation so the Bus-owned runtime scope,
   defaults, configuration, and non-goals are clear.
+  - Evidence, 2026-06-09: public module docs now cover the Bus-owned runtime
+    scope and non-goals in `bus-agent-runtime/README.md`, user-facing
+    explicit/defaulted provider workflows in `bus-worker/README.md`, and
+    service-level defaulting/configuration knobs in
+    `bus-integration-worker/README.md`.
 - [x] Promote accepted implementation branches to the relevant module
   `develop` branches.
   - Evidence, 2026-06-08: pushed `develop` for `bus-agent-runtime` at
-    `71082ec`, `bus-integration-worker` at `30d0318`, `docs` at `ab86627`,
-    and BusDK superproject at `12d30cd`.
+    `71082ec`, `bus-integration-worker` at `6237595`, docs at `eed7406`,
+    and BusDK superproject at `2ba8f4a`.
 - [ ] Sync the updated branches to the configured development environments.
   - Partial evidence, 2026-06-08: `coding-agent@ai.hg.fi` is synced to
-    `develop` `89fb158` with fresh `bus` and `bus-agent-runtime` binaries in
+    `develop` `2ba8f4a` with fresh `bus` and `bus-agent-runtime` binaries in
     `~/bin`, and the temporary proof stack was stopped. `coding-agent@dev.hg.fi`
     remains unsynced because its SSH route is unreachable; `ssh -G` maps it to
     `rp1.nor.fi:22054`, and connection attempts fail before authentication.
