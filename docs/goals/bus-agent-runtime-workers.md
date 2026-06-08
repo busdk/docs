@@ -323,8 +323,11 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 - [ ] Update public docs after implementation so the Bus-owned runtime scope,
   defaults, configuration, and non-goals are clear.
-- [ ] Promote accepted implementation branches to the relevant module
+- [x] Promote accepted implementation branches to the relevant module
   `develop` branches.
+  - Evidence, 2026-06-08: pushed `develop` for `bus-agent-runtime` at
+    `71082ec`, `bus-integration-worker` at `30d0318`, `docs` at `ab86627`,
+    and BusDK superproject at `12d30cd`.
 - [ ] Sync the updated branches to the configured development environments.
 
 ## Acceptance Criteria
