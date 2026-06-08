@@ -13,8 +13,11 @@ local model provider such as an Ollama or OpenAI-compatible endpoint.
 
 ## Current State
 
-`bus-agent-runtime` now has a completed local-provider runtime goal and H100
-validation proof, including a local GPU provider proof with `gemma4:31b`.
+`bus-agent-runtime` now has a completed local-provider runtime goal and a prior
+H100 validation proof for the runtime module itself, including a local GPU
+provider proof with `gemma4:31b`. This goal still needs a separate `bus
+workers` product-path H100 proof showing that worker messages routed through
+`runner_provider=bus-agent-runtime` invoke the configured local provider.
 
 The current `bus workers` service path is still Codex-specific:
 
@@ -291,6 +294,16 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     and `stop`; final status was `stopped` with empty `last_error`.
 - [ ] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
   and record sanitized evidence.
+  - [ ] Implement provider-backed `bus-agent-runtime` worker messaging so the
+    `bus workers message` product path invokes the configured local model and
+    returns model-generated text instead of only recording operator guidance.
+    Evidence must show provider/model metadata without secrets.
+  - Evidence gap, 2026-06-08: H100 host setup reached synced promoted code,
+    fresh installed binaries, H100 GPU, Ollama, and model `gemma4:31b`, but
+    code review showed `BusAgentRuntimeLifecycle.MessageWorker` only calls
+    `session.emitProgress`, while `bus-agent-runtime worker` exposes no
+    lifecycle method that calls a model provider. Therefore the H100 proof
+    cannot yet honestly prove local GPU model consumption through `bus workers`.
 - [x] Keep the existing Codex worker tests and at least one explicit
   `codex-direct` product-path proof passing.
   - Evidence, 2026-06-08: `go test ./...` passed in
