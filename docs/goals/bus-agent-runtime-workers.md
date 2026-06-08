@@ -346,12 +346,14 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     and BusDK superproject at `2ba8f4a`.
 - [ ] Sync the updated branches to the configured development environments.
   - Partial evidence, 2026-06-09: `coding-agent@ai.hg.fi` is synced to
-    `develop` `540b7b8` with `bus-integration-worker` `6401968` and docs
-    `2208172`; the last changes were documentation/goal updates, so no binary
+    `develop` `8d83ea4` with `bus-integration-worker` `6401968` and docs
+    `bbdbf9e`; the last changes were documentation/goal updates, so no binary
     rebuild was needed there. `coding-agent@dev.hg.fi` remains unsynced because
-    its SSH route is unreachable; `ssh -G` maps it to `rp1.nor.fi:22054`, and
-    the current connection attempt fails before authentication with
-    `No route to host`.
+    the configured SSH alias route is unusable: `ssh -G` maps it to
+    `rp1.nor.fi:22054`, and that connection fails before authentication with
+    `No route to host`. A diagnostic direct-host probe to `dev.hg.fi:22`
+    reached an OpenSSH server, but the `coding-agent` account did not accept
+    the public key available to this session, so it is not a viable sync path.
 
 ## Acceptance Criteria
 
