@@ -156,10 +156,12 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 - [x] Add and gate lifecycle session cleanup, replacement, bounded stderr, and
   wait-result safety for `bus-agent-runtime` worker sessions.
-- [ ] Add and gate command startup hardening so Events replay/hydration and
+- [x] Add and gate command startup hardening so Events replay/hydration and
   scheduler-once paths use bounded contexts and cannot hang indefinitely.
-- [ ] Add and gate scheduler claim status handling for reopened tasks,
+- [x] Add and gate scheduler claim status handling for reopened tasks,
   including `open`, `ready`, and unsupported statuses.
+- [ ] Add and gate runtime quit goroutine drain/cancel behavior so stop cleanup
+  cannot race with late runtime requests.
 - [ ] Add and gate provider-neutral validation and failure mapping for
   `codex-direct` and `bus-agent-runtime`.
 - [ ] Add and gate bounded diagnostics/redaction for command flags, token
