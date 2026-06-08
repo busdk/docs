@@ -139,7 +139,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 - [ ] Add self-hosted GPU worker service configuration that can select the
   local model provider without embedding secrets or host-private paths in
   public worker requests.
-- [ ] Update `bus-worker` CLI help, flags, and output so users can explicitly
+- [x] Update `bus-worker` CLI help, flags, and output so users can explicitly
   select either provider and can see which provider was selected.
 - [ ] Add tests for provider selection, self-hosted defaulting, unsupported
   provider errors, lifecycle status mapping, message handling, logs/attach
