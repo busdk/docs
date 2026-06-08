@@ -253,9 +253,18 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 - [x] Add self-hosted GPU worker service configuration that can select
   `runner_provider=bus-agent-runtime` through a bounded service/profile default
   without embedding secrets or host-private paths in public worker requests.
-- [ ] Add automatic environment/local-provider discovery so valid local model
+- [x] Add automatic environment/local-provider discovery so valid local model
   provider configuration can select the Bus-owned runtime default without
   hard-coded host names.
+  - Evidence, 2026-06-08: `bus-integration-worker` promoted commits
+    `66cde4e` and `947e1df` add hermetic direct default-provider discovery.
+    Explicit `BUS_WORKERS_DIRECT_DEFAULT_PROVIDER` still wins; otherwise
+    `BUS_AGENT_CODEX_LOCAL_MODEL` or canonical Bus preferences
+    `bus-agent.codex_local_model` selects `bus-agent-runtime`; empty config
+    remains `codex-direct`; invalid local model ids fail closed. Primary
+    checkout gates passed: `go test ./pkg/workersintegration`,
+    `go test ./cmd/bus-integration-workers`, `git diff --check HEAD~2..HEAD`,
+    and a forbidden-import scan for `bus-agent/agent`/`bus-preferences`.
 - [x] Add tests for self-hosted defaulting when configured local provider
   metadata is present.
 - [x] Add tests for unsupported or incomplete provider configuration with
