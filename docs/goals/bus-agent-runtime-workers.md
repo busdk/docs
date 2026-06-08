@@ -209,8 +209,15 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
 
 ### `bus-agent-runtime`
 
-- [ ] Add the worker-serving entrypoint or adapter required by the workers
+- [x] Add the worker-serving entrypoint or adapter required by the workers
   lifecycle.
+  - Evidence, 2026-06-08: `bus-agent-runtime` primary `develop` commit
+    `34d1ec9` passes `make ci` after the lifecycle vet repair; the gate covered
+    fmt-check, `go vet`, `go test ./...`, build, e2e, cross-compile, and
+    license scan, with Docker integration skipped on this macOS host because
+    Docker is not installed. Product proof `runtime-product-proof-20260608e`
+    verified the workers lifecycle path for create/status/message/logs/attach
+    and stop.
 - [x] Gate the adapter with deterministic tests, `git diff --check`, and
   focused `bus lint` on the final promoted `develop` checkout.
 - [x] Cover runtime adapter redaction for prompts, metadata, API keys, token
