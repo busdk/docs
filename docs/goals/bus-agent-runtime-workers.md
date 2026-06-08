@@ -145,7 +145,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   focused `bus lint` on the final promoted `develop` checkout.
 - [x] Cover runtime adapter redaction for prompts, metadata, API keys, token
   file labels, provider URLs, and host-private paths.
-- [ ] Cover runtime storage/checkpoint behavior so snapshots and event streams
+- [x] Cover runtime storage/checkpoint behavior so snapshots and event streams
   are captured consistently under concurrent updates.
 - [x] Cover git helper path handling for normal relative paths, deleted tracked
   paths, path traversal, symlinks, and bounded output.
