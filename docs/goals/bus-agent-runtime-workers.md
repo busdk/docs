@@ -233,7 +233,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   sources, service instance ids, worker ids, and runtime metadata.
 - [x] Add and gate `bus-agent-runtime` logging and attach routing with the same
   user-facing semantics as existing direct workers.
-- [ ] Add and gate stop behavior for clean runtime quit, timeout fallback, and
+- [x] Add and gate stop behavior for clean runtime quit, timeout fallback, and
   orphan prevention.
 
 ### Service Configuration And Defaults
