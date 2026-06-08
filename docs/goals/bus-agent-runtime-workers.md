@@ -294,16 +294,21 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     and `stop`; final status was `stopped` with empty `last_error`.
 - [ ] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
   and record sanitized evidence.
-  - [ ] Implement provider-backed `bus-agent-runtime` worker messaging so the
+  - [x] Implement provider-backed `bus-agent-runtime` worker messaging so the
     `bus workers message` product path invokes the configured local model and
     returns model-generated text instead of only recording operator guidance.
     Evidence must show provider/model metadata without secrets.
-  - Evidence gap, 2026-06-08: H100 host setup reached synced promoted code,
-    fresh installed binaries, H100 GPU, Ollama, and model `gemma4:31b`, but
-    code review showed `BusAgentRuntimeLifecycle.MessageWorker` only calls
-    `session.emitProgress`, while `bus-agent-runtime worker` exposes no
-    lifecycle method that calls a model provider. Therefore the H100 proof
-    cannot yet honestly prove local GPU model consumption through `bus workers`.
+  - Evidence, 2026-06-08: reviewed and promoted `bus-agent-runtime` commit
+    `71082ec` and `bus-integration-worker` commit `ec9463c`. The runtime
+    lifecycle now exposes provider-backed `message`, and the integration
+    lifecycle projects safe provider/model/usage metadata from
+    `bus.workers.message.response`. Promoted checks passed: `go test ./...` in
+    `bus-agent-runtime`, `go test ./pkg/workersintegration
+    ./cmd/bus-integration-workers` in `bus-integration-worker`, and
+    `git diff --check` for the affected diffs.
+  - Evidence gap, 2026-06-08: the implementation is promoted locally, but the
+    H100 product-path proof still has to run on `coding-agent@ai.hg.fi` with
+    the local GPU provider and model `gemma4:31b`.
 - [x] Keep the existing Codex worker tests and at least one explicit
   `codex-direct` product-path proof passing.
   - Evidence, 2026-06-08: `go test ./...` passed in
