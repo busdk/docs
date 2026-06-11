@@ -435,9 +435,10 @@ domain modules or API providers.
 
 - `bus-task`: generic bidirectional task threads over Bus Events. Use it for
   task creation, replies, and task-thread coordination. Deps: `bus-events`.
-- `bus-work`: durable work streams over Bus Events, including create, claim,
-  watch, reply, and finish flows. Deps: `bus-events`, `bus-help`,
-  `bus-remote`.
+- `bus-work`: deprecated generic work streams over Bus Events, including
+  create, claim, watch, reply, and finish flows. Keep it only for historical
+  `bus.work.*` compatibility; current task and worker workflows use
+  `bus-task` and `bus-worker`. Deps: `bus-events`, `bus-help`, `bus-remote`.
 - `bus-worker`: CLI client for creating, controlling, observing, and attaching
   to Bus-managed workers. Deps: none declared.
 - `bus-repos`: shared Go client and API contract package for repository
