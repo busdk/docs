@@ -1,37 +1,24 @@
 ---
 title: bus-work
-description: "bus-work is a deprecated generic Bus Events-backed work-stream command; new task/thread and worker orchestration belongs in bus-task and bus-worker."
+description: "bus-work is a deprecated historical module; its old command implementation has been removed and new task/thread and worker orchestration belongs in bus-task and bus-worker."
 ---
 
-## `bus-work` — deprecated generic work streams
+## `bus-work` — removed historical work-stream command
 
-`bus-work` provides the older generic `bus work ...` CLI for durable work
-streams over Bus Events. It can create work, claim the next item, show or watch
-stream events, append messages, and close, fail, or block work through
-`bus.work.*` events.
+`bus-work` is a deprecated historical module. The old `bus work ...` command
+implementation has been removed from the module checkout because current BusDK
+task/worker flows do not use it.
 
-This module is deprecated. It is implemented and tested, but current BusDK
-task/worker flows do not use it. Use [`bus-task`](./bus-task) for current
-bidirectional task threads, messages, attachments, task lifecycle, worker
-metadata, and multi-remote task launch. Use [`bus-worker`](./bus-worker) and
-the `bus workers ...` command family for durable worker identity, status, logs,
-attach, pause/resume, assignment, and environment-aware worker control.
+Use [`bus-task`](./bus-task) for current bidirectional task threads, messages,
+attachments, task lifecycle, worker metadata, and multi-remote task launch. Use
+[`bus-worker`](./bus-worker) and the `bus workers ...` command family for
+durable worker identity, status, logs, attach, pause/resume, assignment, and
+environment-aware worker control.
 
-Keep `bus-work` only for old clients or tests that still need the historical
-generic executor-independent `bus.work.*` queue protocol. Do not add new agent
-launch, worker identity, worker profile, attachment, or multi-remote
-orchestration features here unless the product direction is explicitly
-reopened.
-
-Typical compatibility commands:
-
-```bash
-bus work new @worker-a "Review this document"
-bus work --remote localhost next --json
-bus work show 123
-bus work say 123.1 "Use the attached statement."
-bus work close 123.1 "Done."
-```
+The removed command implemented a generic executor-independent `bus.work.*`
+queue protocol. That code remains available in Git history if an audit or
+restoration task needs it. The Events API may keep `bus.work.*` authorization
+compatibility separately while old external usage is audited.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
