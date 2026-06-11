@@ -1,17 +1,36 @@
 ---
 title: bus-work
-description: "bus-work is a historical skeleton for an earlier generic work-stream command; new task/thread and worker orchestration lives in bus-task."
+description: "bus-work is the older generic Bus Events-backed work-stream command; new task/thread and worker orchestration belongs in bus-task and bus-worker."
 ---
 
-## `bus-work` — historical skeleton
+## `bus-work` — generic work streams
 
-`bus-work` was started as a generic durable work-stream module. That direction
-is currently superseded by [`bus-task`](./bus-task), whose `bus task` interface
-more clearly describes bidirectional agentic task threads with messages,
-status, attachments, worker metadata, and multi-remote worker launch control.
+`bus-work` provides the older generic `bus work ...` CLI for durable work
+streams over Bus Events. It can create work, claim the next item, show or watch
+stream events, append messages, and close, fail, or block work through
+`bus.work.*` events.
 
-Do not build new task/thread or worker orchestration features in `bus-work` for
-now. Use `bus-task`.
+This module is implemented, but it is no longer the primary BusDK surface for
+new task-thread or worker-orchestration workflows. Use [`bus-task`](./bus-task)
+for current bidirectional task threads, messages, attachments, task lifecycle,
+worker metadata, and multi-remote task launch. Use [`bus-worker`](./bus-worker)
+and the `bus workers ...` command family for durable worker identity, status,
+logs, attach, pause/resume, assignment, and environment-aware worker control.
+
+Keep `bus-work` for compatibility or for generic executor-independent
+`bus.work.*` queue semantics. Do not add new agent launch, worker identity,
+worker profile, attachment, or multi-remote orchestration features here unless
+the product direction is explicitly reopened.
+
+Typical compatibility commands:
+
+```bash
+bus work new @worker-a "Review this document"
+bus work --remote localhost next --json
+bus work show 123
+bus work say 123.1 "Use the attached statement."
+bus work close 123.1 "Done."
+```
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
