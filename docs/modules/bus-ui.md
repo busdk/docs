@@ -44,6 +44,38 @@ The focused UI framework references describe the public contracts for
 [shells](../ui/v0.2.6/shells), and
 [terminal panes](../ui/fc-015-terminal-io/terminal-output).
 
+### Portal-family adoption readiness
+
+`bus-ui` owns the shared readiness contract for `bus-portal-*` modules before
+they move to final compiled `.gx` roots and the shared `MountedApp` testkit
+path. Product policy stays outside `bus-ui`: accounting copy and evidence
+rules, auth session and CSRF behavior, Notes permission and Markdown safety,
+provider routes, DTO projection, and authorization decisions remain in the
+owning module or provider.
+
+The pre-final bridge pattern is:
+
+- keep deterministic render seams that can later be replaced one shell at a
+  time
+- keep module-owned action and resource registries explicit while using shared
+  `bus-ui` validation, result, resource, and logging contracts
+- declare WASM assets and runtime configuration through the portal host/module
+  metadata instead of hidden module-local script behavior
+- cover fake-provider success and failure paths for action/resource dispatch
+- prove mounted runtime behavior with shared `MountApp` / `MountedApp` and
+  `uikittest` harnesses before accepting compiled-root handoff
+
+The current module-owned readiness plans are:
+
+- `bus-portal-accounting/PLAN.md`
+- `bus-portal-auth/PLAN.md`
+- `bus-portal-notes/PLAN.md`
+
+Final compiled-root migration for those modules should wait until the shared
+`MountedApp` / testkit path and `bus-portal` host metadata handoff prove
+module metadata, declared assets, public runtime config, provider-origin CSP,
+teardown, rerender, and hook-state continuity.
+
 ### Commands
 
 `css` writes the embedded shared CSS bundle to stdout. Use shell redirection or
