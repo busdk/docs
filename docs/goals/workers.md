@@ -14,12 +14,14 @@ assignable, and observable through the local API/controller service and local
 worker integration service.
 
 The first acceptance scope is local sandboxed Codex workers only. A Codex
-worker runs through the `direct` / `codex-direct` runner on the selected local
-worker environment, using Codex sandboxing, Bus-managed Git worktrees and
-branches, isolated `CODEX_HOME`, logs, scratch paths, and non-secret runtime
-metadata. Remote worker environments, cross-environment relay, container
-runners, and VM runners are adjacent goals, not acceptance requirements for
-this first workers goal.
+worker uses the public `appserver` / `codex-appserver` runner pair on the
+selected local worker environment, with Codex sandboxing, Bus-managed Git
+worktrees and branches, isolated `CODEX_HOME`, logs, scratch paths, and
+non-secret runtime metadata. The implementation may run the App Server as a
+host process inside the worker environment, but callers should not depend on
+that private lifecycle detail. Remote worker environments, cross-environment
+relay, container runners, and VM runners are adjacent goals, not acceptance
+requirements for this first workers goal.
 
 The first proof model for Codex/App Server workers is the raw model id:
 
@@ -163,6 +165,11 @@ Supporting Bus modules are touched only through their boundaries:
 - `bus-task`, `bus-api-provider-task`, and `bus-integration-task` own task UX,
   task Events, and scheduler/claim behavior. They may address a worker by the
   canonical workers contract, but should not import runner-provider mechanics.
+- `bus-api-provider-workers` owns the worker API boundary: it validates worker
+  requests, publishes canonical `bus.workers.*` Events, and serves bounded
+  worker projections. `bus-integration-workers` owns the actual worker claim,
+  routing, launch, lifecycle transition, and runtime delivery behavior for the
+  selected environment.
 
 ## Current Status
 
@@ -175,8 +182,8 @@ through commit `971e287` (`Group Bus service profiles by role`), adds a
 top-level `services.yml` and public `profiles/` layout that can start the local
 PostgreSQL-backed Events API, repos integration, workers integration, and
 `bus-api` gateway needed for local Codex Spark workers. The accepted direction
-remains the Initial MVP User Story above: a real long-running `direct` /
-`codex-direct` Codex App Server/runtime instance, using
+remains the Initial MVP User Story above: a real long-running `appserver` /
+`codex-appserver` Codex App Server/runtime instance, using
 `gpt-5.3-codex-spark` for the first proof, this environment's Codex runtime and
 sandbox, an `agents/worker` branch/worktree, and bidirectional guidance through
 `bus-worker` / `bus-workers`.
@@ -215,18 +222,18 @@ Accepted evidence so far:
   generic and free of private worker-module coupling.
 - `bus-api-provider-workers` must remain an API/controller and projection
   surface, not the durable identity owner.
-- Local CLI/API/provider/Event request shaping, direct runner planning,
+- Local CLI/API/provider/Event request shaping, App Server runner planning,
   host-process execution scaffolding, status projection, stop/logs/attach
   guidance, and the first `bus.workers.message.*` guidance Event path exist on
   the isolated feature branches.
-- Direct App Server WebSocket message delivery plumbing exists for
-  `direct-exec`, including bounded no-text/error evidence and idempotent
-  worker-message projection when Events are replayed.
+- App Server WebSocket message delivery plumbing exists for the local
+  host-process implementation, including bounded no-text/error evidence and
+  idempotent worker-message projection when Events are replayed.
 - The local product path now has a passing combined real-Codex proof for the
   first MVP lifecycle: `bus-workers create` can omit `--id`, the workers API
   provider generates a UUID identity, the request selects
-  `gpt-5.3-codex-spark`, the direct runner starts a long-running
-  `direct` / `codex-direct` Codex App Server with sandboxing, the worker
+  `gpt-5.3-codex-spark`, the App Server runner starts a long-running
+  `appserver` / `codex-appserver` Codex App Server with sandboxing, the worker
   reaches `running`/`ready`, accepts task guidance through
   `bus-workers message`, returns projected assistant response evidence through
   `bus-workers messages`, exposes logs/attach evidence through the product
@@ -609,21 +616,23 @@ control Codex/App Server. They are replaceable implementation details behind
 `bus-integration-workers`, not separate product APIs that every caller needs to
 understand.
 
-The first accepted stable worker control surface must support the `direct`
+The first accepted stable worker control surface must support the `appserver`
 runner kind. It should reserve the same canonical request/status fields for
 later container and VM providers so those providers can be added without
 changing worker callers:
 
-- `direct`: run Codex directly on the selected environment with no Docker,
-  Podman, VM, or nested virtualization. Isolation comes from the Bus-managed
-  worktree and implementation branch, a worker-specific `CODEX_HOME`, logs and
-  scratch directories, the configured Codex sandbox, and the host user's normal
-  toolchain such as `git`, `go`, `make`, Bus binaries, and module-local test
-  scripts. This is the preferred first runner for local macOS proof and for
-  environments where virtualization is unavailable or unnecessary. The product
-  worktree is the primary Codex workspace; worker identity, logs, and scratch
-  paths are additional writable roots, and each live direct worker needs a
-  deterministic non-conflicting local endpoint or session reference.
+- `appserver`: run a Codex App Server worker in the selected environment. The
+  first local implementation may run that App Server as a host process with no
+  Docker, Podman, VM, or nested virtualization. Isolation comes from the
+  Bus-managed worktree and implementation branch, a worker-specific
+  `CODEX_HOME`, logs and scratch directories, the configured Codex sandbox,
+  and the host user's normal toolchain such as `git`, `go`, `make`, Bus
+  binaries, and module-local test scripts. This is the preferred first runner
+  for local macOS proof and for environments where virtualization is
+  unavailable or unnecessary. The product worktree is the primary Codex
+  workspace; worker identity, logs, and scratch paths are additional writable
+  roots, and each live App Server worker needs a deterministic non-conflicting
+  local endpoint or session reference.
 - `container`: future runner kind for Codex inside a container. The workers
   integration should
   delegate container mechanics to `bus-integration-containers` or a stable
@@ -660,19 +669,20 @@ image refs, socket paths, or host process command templates should stay in
 provider configuration and bounded metadata.
 
 Provider implementations may live in `bus-integration-workers` when they are
-small and direct, or delegate to another integration module when that module
-owns the lower-level runtime. In particular, the container provider should
-delegate container lifecycle mechanics to `bus-integration-containers` or a
-stable container integration boundary, while the direct provider should own
-host process/session launch and worker-local filesystem preparation. A later
-VM provider should plug into the same registry without changing the worker
-Event contract.
+small host-process adapters, or delegate to another integration module when
+that module owns the lower-level runtime. In particular, the container
+provider should delegate container lifecycle mechanics to
+`bus-integration-containers` or a stable container integration boundary, while
+the Codex App Server provider should own host process/session launch and
+worker-local filesystem preparation. A later VM provider should plug into the
+same registry without changing the worker Event contract.
 
 Provider acceptance is staged. The first accepted implementation should prove
-`direct` / `codex-direct` through command-backed host execution and the normal
-worker API/Event path. The same registry and status contract must already make
-room for additional providers, but `container`, `docker`, `podman`, or `vm`
-must not be reported as working merely because the request fields exist. Until
+`appserver` / `codex-appserver` through command-backed host execution and the
+normal worker API/Event path. The same registry and status contract must
+already make room for additional providers, but `container`, `docker`,
+`podman`, or `vm` must not be reported as working merely because the request
+fields exist. Until
 the owning provider is registered and tested, unsupported runner
 kind/provider pairs should fail closed with a bounded lifecycle error and a
 non-secret failure snapshot. The later container acceptance slice should add a
@@ -740,6 +750,9 @@ The first interoperable payload contract must include these names and fields:
   `prompt_file`, `prompt`, `worker_home_ref`, and `task_ref`; optional string
   arrays `capability_tags`, `eligible_environments`, and `group_ids`;
   optional object field `labels`.
+  `task_ref` on a worker create request is worker association evidence for the
+  selected worker environment. It is not a task-thread launch command and does
+  not move task ownership into the workers provider.
   Operator-facing create input may omit `id`; in that case the API/provider or
   identity owner must generate a UUID before publishing the canonical
   `bus.workers.create.request` Event, include that generated `id` in the
@@ -776,7 +789,7 @@ The first interoperable payload contract must include these names and fields:
   promoted local product-path proof covers stop for the first accepted MVP:
   the operator can request stop through `bus workers`, the request is published
   through the Workers API/Event path, `bus-integration-workers` stops the
-  direct runner, and projected status reaches `stopped`.
+  Codex App Server runner, and projected status reaches `stopped`.
 - `bus.workers.assign.request`: required string fields `id` and `task_ref`;
   optional string fields `environment_id`, `assignment_id`, and `reason`.
 - `bus.workers.message.request`: required string fields `id` and `text`;
@@ -791,11 +804,11 @@ The first interoperable payload contract must include these names and fields:
 - `bus.workers.message.response`: required string fields `environment_id`,
   `id`, `message_id`, and `status`; optional string fields `worker_id`,
   `direction`, `role`, `text`, and `runtime_ref`; optional object field
-  `metadata` for bounded non-secret delivery evidence. The direct exec
-  provider should report App Server delivery evidence such as delivery method,
-  operation (`turn/start` or `turn/steer`), thread id, turn id, and endpoint
-  reference, while keeping the App Server protocol details private to
-  `bus-agent` and `bus-integration-workers`. If the App Server turn completes,
+  `metadata` for bounded non-secret delivery evidence. The Codex App Server
+  provider should report delivery evidence such as delivery method, operation
+  (`turn/start` or `turn/steer`), thread id, turn id, and endpoint reference,
+  while keeping the App Server protocol details private to `bus-agent` and
+  `bus-integration-workers`. If the App Server turn completes,
   interrupts, exits, or reaches the configured evidence timeout without
   assistant text, the response should distinguish completed/no-text evidence
   from failed runtime evidence and include only a bounded redacted diagnostic
@@ -857,12 +870,13 @@ Event is published.
 `environment_id` on response/snapshot Events means the reporting environment.
 Absent optional runner/runtime fields mean the integration provider uses the
 selected environment's configured defaults.
-The first worker contract reserves `direct` and `container` runner kinds, with
-`vm` reserved for a later runner. Reservation is not the same as execution
-support: an environment may accept only the providers it has registered, and
-unsupported kind/provider pairs must fail closed rather than falling back to a
-different runner. `runner_provider` is a non-secret provider id such as
-`codex-direct`, `docker`, `podman`, or a later VM provider id. Redaction rule:
+The first worker contract reserves `appserver` and `container` runner kinds,
+with `vm` reserved for a later runner. Reservation is not the same as
+execution support: an environment may accept only the providers it has
+registered, and unsupported kind/provider pairs must fail closed rather than
+falling back to a different runner. `runner_provider` is a non-secret provider
+id such as `codex-appserver`, `docker`, `podman`, or a later VM provider id.
+Redaction rule:
 tokens, credential values, raw auth paths, private prompt contents, absolute
 secret file paths, and unbounded command output must not appear in Events or
 projections.
@@ -900,8 +914,8 @@ normalized into a different worker:
   failed worker snapshot or controller error, rather than falling back to a
   different runner;
 - reject provider-specific fields that are incompatible with the selected
-  runner, such as a direct runner request that requires a container image as
-  its execution source.
+  runner, such as a Codex App Server request that requires a container image
+  as its execution source.
 - reject message requests without a target worker id, without bounded text, or
   with text that is too large for the Events channel.
 
@@ -943,14 +957,21 @@ Workers may be assigned explicitly through `bus workers assign <worker>
 <task-ref>` when the operator is controlling a specific worker, or through
 `bus task ...` when the operator is assigning from the task/thread side.
 `bus-task` remains the owner of task/thread UX and task status. Both paths
-should map to the same worker assignment event once they cross the API/Event
-boundary. The first local sandboxed Codex worker version does not need workers
-to auto-pick approved tasks. It does need bidirectional communication so the
-operator or task-side UI can provide task details to the selected long-running
-worker and receive enough response, status, logs, or attach evidence to keep
-guiding it. Idle workers may claim an approved available task only after the
-task and service-owned scheduler goals have accepted the canonical
-claimability, queue, capacity, and scheduler-owned status contracts.
+should map to `bus.workers.assign.request` once they cross the API/Event
+boundary. A worker create request may include `task_ref` only as association
+evidence for the worker service; it is not a task-thread launch command. The
+first local sandboxed Codex worker version does not need workers to auto-pick
+approved tasks. It does need bidirectional communication so the operator or
+task-side UI can provide task details to the selected long-running worker and
+receive enough response, status, logs, or attach evidence to keep guiding it.
+Idle workers may claim an approved available task only after the task and
+service-owned scheduler goals have accepted the canonical claimability, queue,
+capacity, and scheduler-owned status contracts.
+
+Public Codex App Server workers use `runner_kind=appserver` and
+`runner_provider=codex-appserver`. Older direct-runner names are compatibility
+or internal lifecycle details and should not be expanded in the public worker
+API surface.
 
 ## Accepted Criteria And Evidence Map
 
@@ -967,7 +988,7 @@ these criteria:
   UUID;
 - the integration provider consumes those Events and controls real local
   worker lifecycle through a runner-provider interface;
-- the `direct` runner kind can be selected and executed through canonical
+- the `appserver` runner kind can be selected and executed through canonical
   request fields without changing the user-facing worker CLI, worker API
   provider, task modules, or event names;
 - the worker contract leaves container runner behavior to
@@ -981,7 +1002,7 @@ these criteria:
 - pause/resume/assign/stop create observable state transitions;
 - at least one local sandboxed Codex worker is created, controlled, observed,
   and stopped through the product path using `gpt-5.3-codex-spark`,
-  `direct` / `codex-direct`, an isolated product worktree and branch,
+  `appserver` / `codex-appserver`, an isolated product worktree and branch,
   worker identity worktree, isolated `CODEX_HOME`, logs, scratch paths,
   bounded non-secret runtime metadata, Codex sandbox settings, and a live
   App Server/session endpoint or logical attach reference that can be used for
@@ -1046,10 +1067,11 @@ Integration-provider and runner-interface evidence is covered by
 hydrates from create/status Events, consumes create/pause/resume/assign/stop/
 message requests, emits status/message/list evidence with generic addressing
 metadata, supports generated service-instance UUIDs without configuration, and
-routes execution through provider interfaces so the first `direct` /
-`codex-direct` provider does not force container or VM assumptions on callers.
+routes execution through provider interfaces so the first `appserver` /
+`codex-appserver` provider does not force container or VM assumptions on
+callers.
 
-Direct local Codex runner evidence is covered by direct lifecycle tests and the
+Local Codex App Server runner evidence is covered by lifecycle tests and the
 gated real-Codex product e2e. The runner creates isolated product and worker
 identity worktrees, derives the worker identity branch from the configurable
 branch prefix defaulting to `worker/`, seeds isolated `CODEX_HOME` from the
@@ -1221,13 +1243,14 @@ adjacent goals rather than acceptance requirements here. The accepted worker is
 a real long-running Codex App Server runtime using this environment's Codex
 runtime and sandbox with the raw model id `gpt-5.3-codex-spark`.
 
-### Direct Runner And Product Path
+### Codex App Server Runner And Product Path
 
-The first accepted runner is `direct` / `codex-direct`. It creates isolated
-product and worker-identity worktrees, derives the worker identity branch from
-the worker UUID, seeds isolated `CODEX_HOME`, starts a sandboxed Codex App
-Server, accepts operator guidance through `bus workers message`, exposes
-response/status/logs/attach evidence, and stops through the product path.
+The first accepted public runner pair is `appserver` / `codex-appserver`. It
+creates isolated product and worker-identity worktrees, derives the worker
+identity branch from the worker UUID, seeds isolated `CODEX_HOME`, starts a
+sandboxed Codex App Server, accepts operator guidance through
+`bus workers message`, exposes response/status/logs/attach evidence, and stops
+through the product path.
 
 ### Events And Repos Proof
 
