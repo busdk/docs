@@ -5,7 +5,15 @@ description: End-user guide to BusDK module CLIs for AI product hosting, runtime
 
 ## How to read the module pages
 
-This section explains what each BusDK module is for, when you usually use it, and which command to try first. Command names follow [CLI command naming](../cli/command-naming). Most pages show a short synopsis and a few practical examples first; for the full flag list, run the command-form help for the module, such as `bus api --help`, `bus api provider llm --help`, or `bus operator stripe --help`. The adjacent `aiz` tool uses its own `aiz --help` command.
+This section is the deep command/module reference under the product
+documentation. Start with [BusDK product documentation](../products/) when you
+are deciding which product line fits your work, then use these pages for exact
+commands, flags, examples, and module ownership. Command names follow [CLI
+command naming](../cli/command-naming). Most pages show a short synopsis and a
+few practical examples first; for the full flag list, run the command-form help
+for the module, such as `bus api --help`, `bus api provider llm --help`, or
+`bus operator stripe --help`. The adjacent `aiz` tool uses its own `aiz --help`
+command.
 
 The adjacent [aiz](./aiz) toolchain is documented here too. It is not
 dispatched through `bus`, but it follows the same deterministic CLI style for
@@ -13,7 +21,16 @@ single-file `.aiz` compression and offline restore with `unaiz`.
 
 ## If you are building or operating an AI product
 
-BusDK's AI product surface is a set of cooperating modules rather than one monolithic server. Start with [bus-api](./bus-api) for the API host, [bus-auth](./bus-auth) and [bus-api-provider-auth](./bus-api-provider-auth) for login and scoped tokens, [bus-api-provider-llm](./bus-api-provider-llm) for OpenAI-compatible model proxying, [bus-api-provider-vm](./bus-api-provider-vm) and [bus-api-provider-containers](./bus-api-provider-containers) for runtime status and container runs, and [bus-events](./bus-events) with [bus-api-provider-events](./bus-api-provider-events) for request/reply and replayed event streams.
+The product-level entry point is [Bus AI Platform](../products/ai-platform).
+Its module surface is a set of cooperating modules rather than one monolithic
+server. Start with [bus-api](./bus-api) for the API host, [bus-auth](./bus-auth)
+and [bus-api-provider-auth](./bus-api-provider-auth) for login and scoped
+tokens, [bus-api-provider-llm](./bus-api-provider-llm) for OpenAI-compatible
+model proxying, [bus-api-provider-vm](./bus-api-provider-vm) and
+[bus-api-provider-containers](./bus-api-provider-containers) for runtime status
+and container runs, and [bus-events](./bus-events) with
+[bus-api-provider-events](./bus-api-provider-events) for request/reply and
+replayed event streams.
 
 Operational product controls are split into focused modules. [bus-billing](./bus-billing), [bus-api-provider-billing](./bus-api-provider-billing), [bus-integration-billing](./bus-integration-billing), [bus-integration-stripe](./bus-integration-stripe), [bus-integration-usage](./bus-integration-usage), and the `bus operator` family cover entitlement, checkout, usage export, internal catalog work, service-token operations, and deployment automation. Deployment-specific work uses [bus operator deploy](./bus-operator-deploy) as a controller over focused cloud, database, node, and inference modules: [bus operator cloud](./bus-operator-cloud), [bus operator database](./bus-operator-database), [bus operator node](./bus-operator-node), and [bus operator inference](./bus-operator-inference). Runtime-specific work uses [bus-integration-containers](./bus-integration-containers), [bus-integration-upcloud](./bus-integration-upcloud), [bus-integration-docker](./bus-integration-docker), [bus-integration-ssh-runner](./bus-integration-ssh-runner), [bus-vm](./bus-vm), and [bus-containers](./bus-containers).
 
@@ -49,7 +66,7 @@ Accounting domain modules are [`bus ledger`](./bus-ledger), [`bus accounts`](./b
 
 Reporting, quality, and filing modules are [`bus reports`](./bus-reports), [`bus replay`](./bus-replay), [`bus validate`](./bus-validate), [`bus vat`](./bus-vat), [`bus pdf`](./bus-pdf), [`bus filing`](./bus-filing), [`bus filing prh`](./bus-filing-prh), and [`bus filing vero`](./bus-filing-vero).
 
-All current top-level modules in this superproject have matching end-user pages under this reference section, including supporting modules that are less often part of the first accounting workflow pass such as [`bus auth`](./bus-auth), [`bus billing`](./bus-billing), [`bus chat`](./bus-chat), [`bus containers`](./bus-containers), [`bus events`](./bus-events), [`bus gateway`](./bus-gateway), [`bus gx`](./bus-gx), [`bus inspection`](./bus-inspection), [`bus operator`](./bus-operator), [`bus portal`](./bus-portal), [`bus preferences`](./bus-preferences), [`bus remote`](./bus-remote), [`bus shell`](./bus-shell), [`bus status`](./bus-status), [`bus ui`](./bus-ui), [`bus vm`](./bus-vm), and retired historical modules such as [`bus work`](./bus-work).
+All current top-level modules in this superproject have matching end-user pages under this reference section, including supporting modules that are less often part of the first accounting workflow pass such as [`bus auth`](./bus-auth), [`bus billing`](./bus-billing), [`bus chat`](./bus-chat), [`bus containers`](./bus-containers), [`bus events`](./bus-events), [`bus gateway`](./bus-gateway), [`bus gx`](./bus-gx), [`bus inspection`](./bus-inspection), [`bus operator`](./bus-operator), [`bus portal`](./bus-portal), [`bus preferences`](./bus-preferences), [`bus remote`](./bus-remote), [`bus shell`](./bus-shell), [`bus status`](./bus-status), [`bus top`](./bus-top), [`bus ui`](./bus-ui), [`bus vm`](./bus-vm), and retired historical modules such as [`bus work`](./bus-work).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

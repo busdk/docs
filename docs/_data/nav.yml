@@ -2,6 +2,27 @@
 # Used by _includes/sidebar.html and the home page card grid.
 # Optional nested levels: set children as arrays of {label, url, children}.
 
+- title: Products
+  links:
+    - label: Product documentation
+      url: /products/
+    - label: Bus Agentic Development
+      url: /products/agents
+    - label: Bus AI Platform
+      url: /products/ai-platform
+    - label: Bus Books
+      url: /products/books
+    - label: Bus Inspection
+      url: /products/inspection
+    - label: Bus GX/UI Library
+      url: /products/gx-ui
+    - label: Bus Top
+      url: /products/top
+    - label: Bus Services
+      url: /products/services
+    - label: Supporting platform
+      url: /products/platform
+
 - title: Get started
   links:
     - label: Overview
@@ -173,6 +194,8 @@
       url: /modules/bus-operator-stripe
     - label: bus operator token
       url: /modules/bus-operator-token
+    - label: bus top
+      url: /modules/bus-top
     - label: bus sheets
       url: /modules/bus-sheets
     - label: bus dev
