@@ -20,7 +20,7 @@ product-path H100 proof on `coding-agent@ai.hg.fi` with `gemma4:31b`.
 The bridge between the completed runtime surface and the worker product path is
 implemented on the promoted `develop` branches:
 
-- direct workers can explicitly select either `codex-direct` or
+- appserver workers can explicitly select either `codex-direct` or
   `bus-agent-runtime`;
 - self-hosted local model configuration can default omitted direct provider
   requests to `bus-agent-runtime`;
@@ -64,7 +64,7 @@ The first implementation should use the existing runner kind/provider contract:
 | Runner kind | Runner provider | Purpose |
 | --- | --- | --- |
 | `direct` | `codex-direct` | Existing Codex App Server direct worker path. |
-| `direct` | `bus-agent-runtime` | New Bus-owned local worker runtime path. |
+| `appserver` | `bus-agent-runtime` | New Bus-owned local worker runtime path. |
 
 The `bus-agent-runtime` provider id is intentionally descriptive of the module
 boundary. It must not use `codex` in its name because it is not a Codex
@@ -79,7 +79,7 @@ Bus-owned runtime usable by the existing workers product path first.
 
 The explicit provider-selection request contract is:
 
-- `runner_kind=direct`
+- `runner_kind=appserver`
 - `runner_provider=bus-agent-runtime`
 
 `bus workers create` must accept the same fields through CLI flags and API
@@ -127,7 +127,7 @@ provider-private launch configuration after worker creation.
 
 Self-hosted GPU environments should default to:
 
-- `runner_kind=direct`
+- `runner_kind=appserver`
 - `runner_provider=bus-agent-runtime`
 
 when the worker service can discover valid local model provider configuration.
@@ -290,7 +290,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
   - Evidence, 2026-06-08: after promoting `bus-integration-worker` `c12e7d6`
     and BusDK pointer `1b800c9`, local Services ran worker
     `runtime-product-proof-20260608e` through
-    `runner_kind=direct` / `runner_provider=bus-agent-runtime`. Product CLI
+    `runner_kind=appserver` / `runner_provider=bus-agent-runtime`. Product CLI
     proof covered `create`, `status`, `message`, `messages`, `logs`, `attach`,
     and `stop`; final status was `stopped` with empty `last_error`.
 - [x] Add H100 proof on `coding-agent@ai.hg.fi` with a local GPU model provider
@@ -313,7 +313,7 @@ output, worker status snapshots, logs, docs examples, or proof artifacts.
     `NVIDIA H100 80GB HBM3` and Ollama model `gemma4:31b`. A temporary
     memory-backed Services proof stack created worker
     `h100-runtime-proof-20260608a` without explicit `runner_provider`; status
-    selected `runner_kind=direct` / `runner_provider=bus-agent-runtime`.
+    selected `runner_kind=appserver` / `runner_provider=bus-agent-runtime`.
     `bus workers message` returned text through runtime
     `bus-agent-runtime:h100-runtime-proof-20260608a` with metadata
     `delivery=provider_chat_completion`, `operation=chat_completion`,
