@@ -2,8 +2,10 @@
 
 ## Goal
 
-Finish the local Bus task/thread MVP on top of the accepted Bus Events,
-workers, and services stack.
+This page records the local Bus task/thread MVP on top of the accepted Bus
+Events, workers, and services stack. The implementation has been promoted to
+primary module checkouts; this goal now preserves the accepted ownership
+boundaries, operating constraints, and acceptance evidence.
 
 A Bus task is a bidirectional communication thread backed by the Bus Events
 API. Task modules should let operators and supervisors create tasks, list
@@ -19,7 +21,7 @@ business logic and persistence.
 ## Current Baseline
 
 This goal was refreshed on 2026-06-02 after the local workers goal was
-accepted in `docs/docs/goals/workers.md`.
+accepted in [`workers.md`](workers.md).
 
 Accepted baseline:
 
@@ -33,6 +35,9 @@ Accepted baseline:
 - `bus-integration-worker` accepts `bus.workers.message.request` with an
   optional `task_ref` and delivers supervisor guidance to the live worker when
   runtime delivery is configured.
+- Worker create requests may carry `task_ref` only as association evidence for
+  the selected worker environment. A worker create request is not a task-thread
+  launch command and does not move task ownership into the workers provider.
 - `bus-integration-repos` owns local branch and worktree materialization used
   by worker execution.
 - `bus-api-provider-events` already protects canonical `bus.task.*` names with
@@ -100,6 +105,14 @@ Events from the API provider and emits task response/status/history Events.
 Worker identity, model choice, worker lifecycle, runtime delivery, Codex App
 Server communication, and `active_task_ref` handling belong to the worker
 module family.
+
+`bus-api-provider-workers` validates worker requests, publishes canonical
+`bus.workers.*` Events, and serves bounded worker projections.
+`bus-integration-workers` owns worker claim, routing, launch, lifecycle
+transition, and runtime delivery. Task modules may link a task to a worker
+through the worker API or `bus.workers.assign.request`, but they must not
+launch workers, select runner providers, or store worker runtime state as task
+state.
 
 Task project data is represented as Git worktrees. Repository checkout, branch
 creation, worktree materialization, dirty-state detection, locking, cleanup,
@@ -208,6 +221,8 @@ The expected MVP path is:
   `task_ref`;
 - worker responses and status snapshots remain worker-owned evidence, while
   task messages and task status remain task-owned history.
+- worker create `task_ref`, when present, is only worker association evidence;
+  it is not a task-thread launch command.
 
 The implementation may choose whether `bus-integration-task` calls the worker
 provider/API, emits worker request Events, or coordinates both task-side and
@@ -241,9 +256,11 @@ reference through the accepted worker path.
 10. Prove parallel same-repository task execution by showing distinct
    worker/repos-owned worktree references for distinct task refs.
 
-Before product-code work begins, create feature worktrees and branches for the
-affected modules and record their branch names and locations in this goal. No
-module merge or promotion should happen until the operator confirms the work.
+Historical implementation setup: feature worktrees and branches were created
+for the affected modules and recorded here before promotion. Future task work
+should use fresh worker-owned branches and worktrees for new implementation
+slices, and no module merge or promotion should happen until the operator
+confirms that new work.
 
 Current implementation isolation and promotion:
 
@@ -286,7 +303,7 @@ promoted to the primary module checkouts. Final completion worktrees:
   `worktrees/tasks-completion/bus-api-provider-task`, promoted commit
   `8ed8441` (`Document current task API provider surface`).
 
-Current implementation status in the `codex/tasks-mvp` feature worktrees:
+Current implementation status in the promoted primary checkouts:
 
 - `bus-events` defines the shared task request, response, status snapshot,
   message, assignment, view, and error contract under canonical `bus.task.*`
@@ -376,7 +393,7 @@ Completed dependency:
   is the baseline for worker creation, model selection, worker identity,
   worker messaging, and worker-owned task assignment.
 
-Active dependencies for implementation:
+Current operating constraints:
 
 - Use the existing Bus Events API and `bus-events` canonical task helpers.
 - Match the worker/repos request-response-snapshot architecture instead of
