@@ -40,8 +40,10 @@ modeled locally. Every H100 failure pattern that affects autonomous execution
 must first be converted into a local fake-provider or hermetic integration
 regression in the owning module.
 
-The final H100 proof is allowed only after these local gates pass on the
-promoted branches:
+This thread's current acceptance path is local-only. The final H100 proof is a
+deferred infrastructure proof, not a prerequisite for closing the local
+runtime/workers implementation review. It is allowed only after these local
+gates pass on the promoted branches:
 
 - `bus-agent-runtime` fake-provider regressions cover repeated successful
   mutation tools, malformed or redundant shell calls, missing verification
@@ -51,8 +53,8 @@ promoted branches:
   autonomous-loop regressions for the H100 trace shapes.
 - `bus-integration-worker` worker create-to-run tests pass for prompt
   hydration, runner projection, and failure evidence projection.
-- The BusDK superproject pins the accepted module tips before any paid H100
-  proof is launched.
+- The BusDK superproject pins the accepted module tips before any remote or
+  paid proof is launched.
 
 ## Affected Modules
 
@@ -402,5 +404,8 @@ receive a model response through the workers product path.
 `bus workers logs`, `attach`, and `stop` work for the Bus-owned runtime with
 the same user-facing semantics as other accepted direct workers.
 
-Automated tests pass in the affected modules, and the H100 product-path proof
-demonstrates a local GPU model worker running through `bus-agent-runtime`.
+Automated tests pass in the affected modules, and local fake-provider or
+hermetic integration tests demonstrate the `bus-agent-runtime` worker path
+without a real H100 system. A later H100 run may be used as an infrastructure
+confidence proof, but it must not be used to discover basic runtime/model-loop
+bugs that should have local regressions first.
