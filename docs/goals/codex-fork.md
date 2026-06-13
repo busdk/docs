@@ -165,19 +165,21 @@ one vague "port Codex" task.
    storage, rollout tracing, auth, updater/release behavior, and platform
    packaging. This is a large product rewrite, not a small port.
 
-The selected first implementation slice is now a Bus-owned Go runtime module,
+The selected implementation line is now a Bus-owned Go runtime module,
 `bus-agent-runtime`, that keeps current upstream Codex integrations intact.
-This is narrower than a full Codex rewrite: it targets the headless worker
-path, local GPU providers, OpenAI API-compatible providers, Bus worker
-orchestration, policy, tool execution, and evidence recording. Remaining
-decisions should focus on exact compatibility behavior, local-provider proof,
-release boundaries, and which App Server extension behaviors must be supported
-in the first slice.
+This is not a reduced local runner: it targets behavioral parity with the
+headless Codex App Server worker-runtime feature surface, implemented again in
+Go for local GPU providers, OpenAI API-compatible providers, Bus worker
+orchestration, policy, tool execution, extensions, evidence, and closeout
+behavior. Remaining decisions should focus on exact compatibility behavior,
+local-provider proof, release boundaries, and which upstream features are
+non-headless or credential-specific non-goals.
 
 ## What Would Actually Need Rewriting In Go
 
-For Bus worker operations, we do not need to rewrite all of Codex. The first
-Bus-owned Go target should be a headless runtime subset:
+For Bus worker operations, we do not need to rewrite all user interfaces of
+Codex. The Bus-owned Go target should be the headless App Server worker
+runtime feature set:
 
 1. App Server protocol client/server compatibility.
    Recreate the JSON-RPC methods, event stream, turn lifecycle, thread start,
@@ -215,14 +217,14 @@ Bus-owned Go target should be a headless runtime subset:
    inspectable and replayable. This maps to `thread-store`, `state`, `rollout`,
    and `rollout-trace`, but Bus can choose a smaller schema.
 
-The first Bus runtime can defer or avoid:
+The first Bus runtime can defer or avoid only features outside the headless App
+Server worker-runtime surface:
 
 - full TUI parity;
 - desktop app behavior;
-- all extension/plugin surfaces;
-- all MCP/client/server features beyond what Bus workers use;
-- image generation, web search, memories, skills, and connectors unless Bus
-  explicitly needs those through Codex rather than native Bus tools;
+- TUI, desktop app, and marketplace UX that are not exercised by the App
+  Server worker path;
+- MCP/client/server features not reachable from the App Server worker runtime;
 - Windows sandboxing if first Bus worker targets are macOS/Linux only;
 - npm wrapper and upstream release packaging UX;
 - exact upstream CLI flags and terminal UI behavior.
@@ -655,14 +657,13 @@ For the first Bus-compatible runtime, prefer:
   limit/login surfaces rather than scraping or reverse-engineering private
   ChatGPT behavior.
 
-Anything beyond that, such as full TUI parity, desktop app behavior, all
-plugin marketplace behavior, all provider integrations, and all upstream UX
-features, should be classified as full-parity work and not mixed into a first
-Bus-owned slice. Do not drop skills, memories, or extension-tool compatibility
-from the first slice merely because they live under upstream extension crates:
-upstream App Server wires those extension registries into normal thread
-runtime, and current Bus App Server launch paths do not explicitly disable
-them.
+Anything beyond that, such as full TUI parity, desktop app behavior, plugin
+marketplace UX, managed ChatGPT subscription login/logout, and upstream UI
+features, should be classified outside this headless runtime parity target.
+Do not drop skills, memories, or extension-tool compatibility merely because
+they live under upstream extension crates: upstream App Server wires those
+extension registries into normal thread runtime, and current Bus App Server
+launch paths do not explicitly disable them.
 
 ## Affected Bus Modules
 
@@ -673,7 +674,8 @@ Primary modules for a feasibility investigation:
   provider/runtime agnostic where possible.
 - `bus-integration-codex`: owns provider-specific behavior for the actual
   upstream Codex product behind Bus Events. Keep this module for current and
-  future Codex integrations; do not put the Bus-owned Go subset here.
+  future Codex integrations; do not put the Bus-owned Go runtime
+  implementation here.
 - `bus-integration-worker`: owns worker lifecycle, App Server launch, worker
   profiles, sandbox wiring, writable roots, and worker status. It is the main
   Bus consumer that would feel a Codex fork or Go rewrite.
@@ -703,10 +705,10 @@ Likely supporting modules:
 
 Candidate new module:
 
-- `bus-agent-runtime`: a possible Bus-owned, open source Go module for the
-  headless App Server-compatible subset. The module name intentionally avoids
-  `codex`; `codex` remains reserved for modules that integrate with the actual
-  upstream Codex product.
+- `bus-agent-runtime`: a Bus-owned, open source Go module for the headless
+  Codex App Server worker-runtime feature surface. The module name
+  intentionally avoids `codex`; `codex` remains reserved for modules that
+  integrate with the actual upstream Codex product.
 
 Modules that should not own the fork:
 
@@ -805,24 +807,26 @@ slice and must be worker-owned and isolated:
 
 - create or use a Bus Worker-owned worktree and feature branch;
 - do not import upstream Codex into an existing Bus module casually;
-- do not name a Bus-owned subset module with `codex`, because that is not a
-  Bus trademark and should identify upstream Codex integration only;
+- do not name a Bus-owned Go runtime implementation module with `codex`,
+  because that is not a Bus trademark and should identify upstream Codex
+  integration only;
 - do not rewrite product code from the supervisor checkout;
 - keep early worker tasks small enough to prove concrete behaviors with
   automated unit and integration tests.
 
 ## Implementation Direction
 
-The operator approved starting the Bus-owned Go subset as
+The operator approved starting the Bus-owned Go implementation as
 `bus-agent-runtime`. This module should be open source and Apache-2.0
 compatible. It is not a replacement for current upstream Codex integrations;
 modules with `codex` in their names remain reserved for the actual OpenAI
 Codex product integration.
 
-The initial implementation target is a single Go Bus module that can run as a
-worker runtime compatible with the App Server flows Bus uses. It should focus
-on local GPU providers and OpenAI API-compatible providers, with no ChatGPT
-subscription login/logout or private subscription scraping.
+The implementation target is a single Go Bus module that can run as the
+headless App Server-compatible worker runtime Bus uses. It should reach
+behavioral parity with the Codex App Server worker experience for local GPU
+providers and OpenAI API-compatible providers, with no ChatGPT subscription
+login/logout or private subscription scraping.
 
 Implementation and proof work should use Bus Workers and worker-owned
 worktrees/branches. The supervisor may maintain this goal, project guidance,
@@ -877,7 +881,7 @@ Testing environments:
 ## Open Questions
 
 - Which App Server request and event surfaces must be byte-for-byte compatible
-  in the first `bus-agent-runtime` slice?
+  for `bus-agent-runtime` parity?
 - Which local GPU provider stack should be the first required proof on
   `coding-agent@ai.hg.fi`?
 - Which skills, memories, web, image, and connector behaviors are currently
@@ -895,7 +899,7 @@ The feasibility goal is defined and the first implementation direction is now
 
 The current evidence says upstream Codex is open source, Apache-2.0 licensed,
 and overwhelmingly Rust. A single Bus submodule that wraps upstream Codex is
-plausible but creates ongoing fork/build maintenance. A full Go rewrite is a
-large product effort. The selected next step is a Bus-owned Go subset in
-`bus-agent-runtime`, with current upstream Codex integrations preserved in
-Codex-named integration modules.
+plausible but creates ongoing fork/build maintenance. The selected direction is
+a Bus-owned Go implementation of the headless Codex App Server worker-runtime
+feature surface in `bus-agent-runtime`, with current upstream Codex
+integrations preserved in Codex-named integration modules.

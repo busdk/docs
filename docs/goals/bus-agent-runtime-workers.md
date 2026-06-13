@@ -136,8 +136,11 @@ local gates pass on the promoted branches:
 
 `bus-agent-runtime` should provide the worker-serving runtime surface needed by
 the worker lifecycle. This may be a CLI subcommand, a library adapter, or both,
-but it must support the App Server-compatible worker protocol surface required
-for create, message, status, logs, attach, and stop flows.
+but it must support the headless Codex App Server worker-runtime feature
+surface required for create, autonomous work, message, status, logs, attach,
+stop, tool execution, approvals, evidence, and closeout flows. Missing behavior
+from the existing Codex App Server worker path is a `bus-agent-runtime` parity
+gap unless it is explicitly documented as a non-goal.
 
 `bus-integration-worker` should add a provider-neutral lifecycle implementation
 for the Bus-owned runtime. The existing Codex direct lifecycle should remain in
@@ -282,10 +285,11 @@ repair path are known.
 
 When a worker-side issue appears only on `bus-agent-runtime`, compare the
 exact request, runtime response status, delivery metadata, task reference,
-closeout flag, and status snapshot with the existing Codex worker path before
-patching integration behavior. If Codex has a compatible runtime feature that
-`bus-agent-runtime` lacks, fix the missing runtime feature in
-`bus-agent-runtime`; do not hide it with worker-projection special cases.
+closeout flag, tool/evidence trace, and status snapshot with the existing Codex
+App Server worker path before patching integration behavior. If Codex App
+Server has a compatible runtime feature that `bus-agent-runtime` lacks, fix
+the missing runtime feature in `bus-agent-runtime`; do not hide it with
+worker-projection special cases.
 
 ## Non-Goals
 
