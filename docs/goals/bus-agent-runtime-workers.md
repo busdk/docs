@@ -28,9 +28,9 @@ implemented on the promoted `develop` branches:
   proof coverage for the Bus-owned runtime, and explicit `codex-direct`
   behavior remains covered.
 
-The remaining closeout work is autonomous create-only real-work execution:
-`bus workers create` must start `bus-agent-runtime` work from the task body
-alone, without a manual `bus workers message`, and the runtime must complete a
+The autonomous create-only closeout proof is now complete:
+`bus workers create` can start `bus-agent-runtime` work from the task body
+alone, without a manual `bus workers message`, and the runtime can complete a
 real backlog item with verification evidence and a worker-branch commit.
 
 This does not relax the Codex-compatible steering contract. A
@@ -39,6 +39,76 @@ This does not relax the Codex-compatible steering contract. A
 App Server workers. Create-only autonomous execution is an additional Bus
 product path, not a replacement for interactive worker guidance.
 
+## Completion Audit
+
+As of 2026-06-13, the `bus-agent-runtime` workers goal is implemented and
+locally closed from the runtime-compatibility perspective:
+
+- explicit `runner_kind=appserver` / `runner_provider=bus-agent-runtime`
+  selection is supported through `bus workers`;
+- self-hosted local-provider defaulting can select `bus-agent-runtime` without
+  replacing explicit Codex requests;
+- create, status, message, logs, attach, and stop have product-path proof for
+  `bus-agent-runtime`;
+- `bus workers message` remains a supported steering path and returns provider
+  responses through the worker lifecycle;
+- create-only autonomous execution from task body alone has a real H100 proof
+  with completion evidence and a worker-branch commit;
+- explicit Codex worker behavior remains covered and must not be replaced.
+
+The remaining unchecked items in `bus-integration-worker/PLAN.md` and
+`bus-worker/PLAN.md` are broader worker-platform roadmap work unless a future
+root-cause comparison proves that one of them hides a missing
+`bus-agent-runtime` Codex-compatible runtime feature. Those broader items
+should not keep this runtime-provider goal open by default.
+
+## Architecture Review
+
+The current implementation works, but the architecture is more coupled than it
+should be. `bus-integration-worker` has a generic `WorkerLifecycle` and
+`RunnerSelectingLifecycle`, which is the right direction, but too much provider
+detail still sits below that boundary:
+
+- Codex/App Server and `bus-agent-runtime` launch, status, message, logs,
+  attach, workspace, and failure semantics are implemented as concrete
+  lifecycle types inside `bus-integration-worker`.
+- The command setup knows provider-specific flags, defaults, command paths,
+  workspace materializers, evidence timeouts, and runtime command arguments.
+- Some worker projection code still has to reason about delivery/status shapes
+  that come from concrete runtimes, such as App Server `delivered` versus
+  runtime `responded`.
+- `bus-agent-runtime` reuses some direct-Codex workspace/materialization
+  helpers, which made it easy to inherit assumptions such as base refs,
+  module-root checks, and runner-kind vocabulary.
+
+The fastest way to finish this goal is not to fix every broader worker-platform
+rough edge now. The runtime provider is already usable and proven. The correct
+follow-up is a small decoupling goal that introduces a stable worker-runtime
+adapter contract and moves provider mechanics behind it.
+
+The target shape should be:
+
+- `bus-integration-worker` owns worker Events, catalog/status projection,
+  runner selection, and generic lifecycle orchestration.
+- Runtime adapters expose one provider-neutral interface for start, start-task,
+  message/steer, status, snapshot, logs, attach, stop, and cleanup.
+- Codex App Server and `bus-agent-runtime` each implement that adapter behind
+  their owning boundary. `bus-integration-worker` should not need to know
+  whether a worker is backed by Codex WebSocket/App Server transport or
+  `bus-agent-runtime` stdio JSON-RPC beyond selecting an adapter by public
+  runner kind/provider.
+- Workspace materialization and process/container launch should be separated
+  from runtime protocol semantics, so runtime parity bugs are not mixed with
+  scheduler, claim, Docker, or worktree setup work.
+- Tests should run the same contract test suite against both the Codex adapter
+  and the `bus-agent-runtime` adapter. Any behavioral difference must be
+  either an explicit Bus extension or a bug in the runtime/adapter that differs.
+
+This decoupling is a follow-up architecture cleanup. It should not be treated
+as required to close the current `bus-agent-runtime` workers goal unless a
+new root-cause audit finds that the missing adapter boundary is causing a
+specific unimplemented Codex-compatible runtime feature.
+
 ## Unit-First Gate
 
 Do not spend H100 time to rediscover runtime/model-loop failures that can be
@@ -46,10 +116,10 @@ modeled locally. Every H100 failure pattern that affects autonomous execution
 must first be converted into a local fake-provider or hermetic integration
 regression in the owning module.
 
-This thread's current acceptance path is local-only. The final H100 proof is a
-deferred infrastructure proof, not a prerequisite for closing the local
-runtime/workers implementation review. It is allowed only after these local
-gates pass on the promoted branches:
+This thread's current acceptance path is local-first. Future H100 proof should
+be treated as infrastructure regression proof, not as the first place to
+discover Bus-owned runtime/model-loop bugs. It is allowed only after these
+local gates pass on the promoted branches:
 
 - `bus-agent-runtime` fake-provider regressions cover repeated successful
   mutation tools, malformed or redundant shell calls, missing verification
