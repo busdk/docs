@@ -17,8 +17,8 @@ worker, evidence, a review decision, and a path to reopen or accept the result.
 1. Read the [task workflow notes](../goals/tasks) to understand task threads.
 2. Read the [worker workflow notes](../goals/workers) to understand worker
    creation, control, and review.
-3. Read [Bus Agent Runtime workers](../goals/bus-agent-runtime-workers) when
-   evaluating the lightweight Bus-owned runtime direction.
+3. Read [Codex fork and Bus agent runtime parity](../goals/codex-fork) when
+   evaluating the Bus-owned runtime direction.
 4. Use [repository workspaces](../goals/repos), [remote worker lane](../goals/trustworthy-remote-worker-lane),
    and [MCP/repository modules](../modules/bus-mcp) when work needs external
    capability exposure or remote capacity.

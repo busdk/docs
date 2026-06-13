@@ -14,10 +14,11 @@ runtime expansion, especially:
   stable container integration boundary;
 - Codex workers running directly inside VMs through the VM platform boundary.
 
-The Bus-owned `bus-agent-runtime` direct worker provider is tracked separately
-in `docs/goals/bus-agent-runtime-workers.md`. That goal covers a new direct
-host-process LLM runtime provider for self-hosted GPU environments, not a
-container or VM runner and not a Codex replacement.
+The Bus-owned `bus-agent-runtime` provider is tracked separately in
+`docs/goals/codex-fork.md`. That goal covers the Bus-owned Go implementation
+of the headless Codex App Server worker-runtime surface for self-hosted and
+OpenAI API-compatible environments, not a container or VM runner and not a
+Codex product replacement.
 
 ## Scope
 

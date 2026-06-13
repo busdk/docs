@@ -878,6 +878,172 @@ Testing environments:
   proving Bus worker orchestration, worker creation, or worker-infrastructure
   repairs.
 
+## Consolidated Worker Goal
+
+The former `docs/docs/goals/bus-agent-runtime-workers.md` goal is folded into
+this handoff and removed. Its useful content is preserved here:
+
+- `bus-agent-runtime` is available through `bus workers` as a first-class
+  runtime provider beside the existing Codex worker integrations.
+- Existing Codex integrations such as `codex-direct`, Codex App Server
+  workers, and Codex-named modules remain intact.
+- Self-hosted local-model environments can default to the Bus-owned runtime
+  when local provider configuration is present, while explicit Codex requests
+  stay on Codex.
+- The public runner contract is:
+  - `runner_kind=appserver`
+  - `runner_provider=bus-agent-runtime`
+- `bus workers create`, `status`, `message`, `logs`, `attach`, and `stop`
+  have product-path proof for the Bus-owned runtime.
+- Create-only autonomous execution from task body alone was proven previously
+  on H100/Gemma and then converted into local regression work. H100 use is now
+  paused by operator instruction and must not be used again until explicitly
+  reopened.
+- The completed worker-provider bridge is not a replacement for the remaining
+  parity work. The remaining goal is App Server-compatible behavior, not merely
+  "can be launched by Bus workers."
+
+The old worker goal also captured an architecture conclusion that remains
+important: `bus-integration-worker` should not know runtime internals beyond a
+provider-neutral adapter contract. Workspace materialization and process
+launch should be separated from runtime protocol semantics, and the same
+contract tests should run against Codex App Server and `bus-agent-runtime`.
+
+## Current Upstream Source Review
+
+Reviewed upstream checkout:
+
+```text
+https://github.com/openai/codex
+commit 0fed449
+```
+
+The shallow checkout contains 92 Rust crates under `codex-rs`. The worker
+parity review should focus on these upstream areas:
+
+- `app-server`, `app-server-protocol`, `app-server-transport`, and
+  `app-server-client`: JSON-RPC request/response/notification contracts,
+  connection handling, app-server request processors, and generated schema
+  fixtures.
+- `core`, `protocol`, `codex-api`, `model-provider`, `backend-client`, and
+  provider crates: turn engine, provider streaming, usage/rate-limit metadata,
+  unauthorized recovery, Responses HTTP/WebSocket behavior, compaction, and
+  rollout/event mapping.
+- `exec`, `exec-server`, `apply-patch`, `file-system`, `file-search`,
+  `git-utils`, `shell-command`, and `tools`: shell/process execution, patch
+  application, file and search operations, git metadata, output deltas, and
+  tool-call/result shapes.
+- `sandboxing`, `linux-sandbox`, `windows-sandbox-rs`, `execpolicy`, and
+  related safety modules: permission profiles, approval routing, writable
+  roots, network policy, and platform sandbox behavior.
+- `thread-store`, `state`, `rollout`, `rollout-trace`, `message-history`, and
+  `context-fragments`: persistent thread/turn/item state, replay, attach/log
+  reconstruction, and compaction.
+- `skills`, `core-skills`, `core-plugins`, `codex-mcp`, `mcp-server`,
+  `rmcp-client`, `connectors`, `plugin`, and app/plugin protocol files:
+  extension surfaces that may be part of the headless App Server runtime when
+  Bus launches Codex with those capabilities enabled.
+
+The exported App Server request surface includes thread lifecycle
+(`thread/start`, `thread/resume`, `thread/fork`, `thread/read`, history and
+turn listing), turn lifecycle (`turn/start`, `turn/steer`, `turn/interrupt`),
+filesystem methods, command and process execution (`command/exec`,
+`command/exec/write`, `command/exec/terminate`, `process/spawn`,
+`process/writeStdin`, `process/kill`), skills/plugins/apps, MCP resource/tool
+calls, model and permission profile listing, config/account requests, review,
+realtime, remote control, and Windows sandbox setup.
+
+The worker-required subset is smaller than the full App Server surface, but it
+is not a toy runner. At minimum Bus parity must cover thread/turn lifecycle,
+model streaming, user/operator steering, tool calls, approvals, sandbox
+policy, filesystem/code-editing operations, attach/log/status events,
+interrupt/stop behavior, persistence/replay, provider usage metadata, and
+failure diagnostics. Anything beyond that can be a non-goal only if Bus
+workers do not currently exercise it and the goal says so explicitly.
+
+## Current Unfinished Work
+
+This is the current handoff board for later development. It reflects the last
+two weeks of memos, the folded worker goal, the delegated local investigations,
+and the upstream Codex source review. Product implementation is intentionally
+paused for now.
+
+### `bus-agent-runtime`
+
+Open work belongs in `bus-agent-runtime/PLAN.md` under Codex App Server parity:
+
+- build and maintain a Codex App Server parity matrix for the headless worker
+  runtime;
+- import or generate App Server protocol/schema fixtures from upstream Codex;
+- fix autonomous closeout state so stale dirty-worktree observations do not
+  force turn-limit failures after the tree is clean;
+- make terminal completion converge like Codex App Server for no-change,
+  docs-only, code-edit, failed-check, and already-clean tasks;
+- complete tool schema/tool-result parity for file/search/shell/patch/git,
+  approval, lifecycle, background process, and output truncation behavior;
+- complete context and extension parity for Bus-enabled skills, memories,
+  configured extension directories, and explicit disabled web/image results;
+- complete streaming, attach, logs, status, and failure projection parity;
+- complete approval, sandbox, interruption, and process cleanup parity;
+- complete model-streaming and turn-session parity around provider retries,
+  unauthorized recovery for supported auth modes, compaction, and per-turn
+  state;
+- defer H100 Gemma real-work proof until the operator reopens H100 access, and
+  use local/fake/provider regressions first.
+
+### `bus-integration-worker`
+
+Open work belongs in `bus-integration-worker/PLAN.md`:
+
+- publish a provider-neutral worker runtime adapter contract and run the same
+  contract tests against Codex App Server and `bus-agent-runtime`;
+- fix worker message visibility after catalog hydration misses so live workers
+  do not disappear as `messages 0` or fallback to `delivery=recorded` because
+  of split-brain service state;
+- move autonomous closeout commit execution to a Bus-owned host closeout
+  boundary, because App Server sandbox metadata writes have repeatedly failed
+  on `.git/rebase-apply` and `.git/index.lock`;
+- fix stale runtime-session projection after worker service restart, so old
+  `bus-agent-runtime` workers with no live process cannot remain visible as
+  `running`/`ready`;
+- ensure worker lifecycle request consumers do not replay historical create
+  requests into live runtime processes after service restart;
+- keep broader worker-platform roadmap items separate unless a parity
+  comparison proves they hide a runtime compatibility bug.
+
+### `bus-worker`
+
+The runtime-provider CLI work is complete. The remaining active-work
+projection item in `bus-worker/PLAN.md` is broader worker identity/status
+roadmap work unless a future parity audit proves it hides a missing
+Codex-compatible runtime behavior.
+
+## Threads Reviewed And Archived
+
+Related threads reviewed during this consolidation:
+
+- `019eb6b9-ded2-76c1-87be-36b703d301ea`, H100 self-hosted proof and
+  regression thread. It closed the former worker-provider goal with local
+  verification and recorded that remaining work is broader/parity work.
+- `019eb6b9-2464-7bb3-814b-34a865c0b4c2`, B create-to-run flow. It promoted
+  the accepted prompt hydration and projection hardening work, then separated
+  the strict B gate from broader runtime parity.
+- `019ec1af-87cd-7961-9f31-5de307877d42`, worker message visibility
+  investigation. It produced a root-cause report for catalog hydration and
+  split-brain message visibility.
+- `019ec1af-5fc7-7313-bd6e-eedf2213f068`, App Server Git closeout
+  investigation. It produced a root-cause report for sandbox Git metadata
+  failures and recommended host-side closeout.
+- `019ebd91-7446-7c22-a9b4-ee86e9c2fade`, direct-edit audit. It identified
+  an earlier thread that edited the primary runtime checkout directly; that
+  work has since been reconciled or superseded on `develop`.
+- `019ec021-b901-7e81-8369-d7b617086862`, dirty-worktree/submodule branch
+  repair. It fixed branch posture and recorded the durable `busdk.com`
+  submodule update policy.
+
+Archive all of the above related threads after this document is committed,
+leaving this parent goal thread as the active handoff.
+
 ## Open Questions
 
 - Which App Server request and event surfaces must be byte-for-byte compatible

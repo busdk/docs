@@ -9,12 +9,13 @@ item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
 that were used when those entries were completed.
 
-## Current Goal: Bus Agent Runtime Workers
+## Current Goal: Codex Fork / Bus Agent Runtime Parity
 
-`docs/docs/goals/bus-agent-runtime-workers.md` owns the public cross-module
-goal for making `bus-agent-runtime` available through `bus workers` as
-`runner_kind=direct` / `runner_provider=bus-agent-runtime` beside the existing
-Codex providers.
+`docs/docs/goals/codex-fork.md` owns the public cross-module goal for the
+Bus-owned Go implementation of the headless Codex App Server worker-runtime
+surface. The completed worker-provider bridge made `bus-agent-runtime`
+available through `bus workers` as `runner_kind=appserver` /
+`runner_provider=bus-agent-runtime` beside the existing Codex providers.
 
 - [ ] Keep the Bus-owned runtime worker goal and public docs aligned with the
   implementation modules.
