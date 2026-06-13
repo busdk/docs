@@ -28,8 +28,31 @@ implemented on the promoted `develop` branches:
   proof coverage for the Bus-owned runtime, and explicit `codex-direct`
   behavior remains covered.
 
-The remaining closeout work is environment sync for the configured development
-hosts.
+The remaining closeout work is autonomous create-only real-work execution:
+`bus workers create` must start `bus-agent-runtime` work from the task body
+alone, without a manual `bus workers message`, and the runtime must complete a
+real backlog item with verification evidence and a worker-branch commit.
+
+## Unit-First Gate
+
+Do not spend H100 time to rediscover runtime/model-loop failures that can be
+modeled locally. Every H100 failure pattern that affects autonomous execution
+must first be converted into a local fake-provider or hermetic integration
+regression in the owning module.
+
+The final H100 proof is allowed only after these local gates pass on the
+promoted branches:
+
+- `bus-agent-runtime` fake-provider regressions cover repeated successful
+  mutation tools, malformed or redundant shell calls, missing verification
+  after dirty worktrees, missing `lifecycle.complete`, and outside-root context
+  artifact access.
+- `bus-agent-runtime` full automated tests pass, including the focused
+  autonomous-loop regressions for the H100 trace shapes.
+- `bus-integration-worker` worker create-to-run tests pass for prompt
+  hydration, runner projection, and failure evidence projection.
+- The BusDK superproject pins the accepted module tips before any paid H100
+  proof is launched.
 
 ## Affected Modules
 
@@ -89,7 +112,7 @@ payloads:
 bus workers create \
   --type agent \
   --profile <profile> \
-  --runner-kind direct \
+  --runner-kind appserver \
   --runner-provider bus-agent-runtime \
   --model <local-or-openai-compatible-model> \
   --task-ref <task-ref> \
