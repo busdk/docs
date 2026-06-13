@@ -968,48 +968,56 @@ two weeks of memos, the folded worker goal, the delegated local investigations,
 and the upstream Codex source review. Product implementation is intentionally
 paused for now.
 
+Exact checked-in backlog count as of 2026-06-14:
+
+- Goal-critical work: 106 unchecked PLAN checkboxes across 15 feature sets.
+- `bus-agent-runtime`: 10 feature-set checkboxes plus 62 incremental subitems.
+- `bus-integration-worker` runtime focus: 5 feature-set checkboxes plus 29
+  incremental subitems.
+- Adjacent non-blocking worker-platform roadmap: 6 unchecked top-level
+  checkboxes, consisting of 5 older `bus-integration-worker` platform items
+  and 1 `bus-worker` active-work projection item. These are not required to
+  finish this Codex-fork parity goal unless a parity audit proves one hides a
+  missing App Server-compatible runtime behavior.
+
+The intended architecture is decoupled: `bus-agent-runtime` owns the
+App Server-compatible runtime behavior, protocol fixtures, tool/context/model
+semantics, and runtime closeout evidence. `bus-integration-worker` owns the
+provider-neutral adapter contract, worker lifecycle orchestration, host-side
+closeout boundary, and worker-visible projections. CLI/API modules should
+consume those projections rather than encode runtime-specific behavior.
+
 ### `bus-agent-runtime`
 
 Open work belongs in `bus-agent-runtime/PLAN.md` under Codex App Server parity:
 
-- build and maintain a Codex App Server parity matrix for the headless worker
-  runtime;
-- import or generate App Server protocol/schema fixtures from upstream Codex;
-- fix autonomous closeout state so stale dirty-worktree observations do not
-  force turn-limit failures after the tree is clean;
-- make terminal completion converge like Codex App Server for no-change,
-  docs-only, code-edit, failed-check, and already-clean tasks;
-- complete tool schema/tool-result parity for file/search/shell/patch/git,
-  approval, lifecycle, background process, and output truncation behavior;
-- complete context and extension parity for Bus-enabled skills, memories,
-  configured extension directories, and explicit disabled web/image results;
-- complete streaming, attach, logs, status, and failure projection parity;
-- complete approval, sandbox, interruption, and process cleanup parity;
-- complete model-streaming and turn-session parity around provider retries,
-  unauthorized recovery for supported auth modes, compaction, and per-turn
-  state;
-- defer H100 Gemma real-work proof until the operator reopens H100 access, and
-  use local/fake/provider regressions first.
+- parity inventory and classification: 5 subitems;
+- upstream protocol/schema fixtures: 5 subitems;
+- model streaming and turn-session parity: 7 subitems;
+- stale dirty-worktree closeout state: 5 subitems;
+- terminal completion convergence: 6 subitems;
+- tool schema and tool-result parity: 9 subitems;
+- context and extension parity: 7 subitems;
+- streaming, attach, logs, and status parity: 7 subitems;
+- approval, sandbox, interruption, and process cleanup parity: 7 subitems;
+- deferred H100 real-work proof gate: 4 subitems.
 
 ### `bus-integration-worker`
 
 Open work belongs in `bus-integration-worker/PLAN.md`:
 
-- publish a provider-neutral worker runtime adapter contract and run the same
-  contract tests against Codex App Server and `bus-agent-runtime`;
-- fix worker message visibility after catalog hydration misses so live workers
-  do not disappear as `messages 0` or fallback to `delivery=recorded` because
-  of split-brain service state;
-- move autonomous closeout commit execution to a Bus-owned host closeout
-  boundary, because App Server sandbox metadata writes have repeatedly failed
-  on `.git/rebase-apply` and `.git/index.lock`;
-- fix stale runtime-session projection after worker service restart, so old
-  `bus-agent-runtime` workers with no live process cannot remain visible as
-  `running`/`ready`;
-- ensure worker lifecycle request consumers do not replay historical create
-  requests into live runtime processes after service restart;
-- keep broader worker-platform roadmap items separate unless a parity
-  comparison proves they hide a runtime compatibility bug.
+- provider-neutral runtime adapter contract: 8 subitems;
+- worker message visibility after hydration misses: 5 subitems;
+- host-side autonomous closeout boundary: 6 subitems;
+- stale runtime-session projection after service restart: 4 subitems;
+- lifecycle request replay prevention: 5 subitems.
+
+Broader worker-platform items in the same module remain separate: manual
+Codex App Server container productization, stable worker claim contract,
+worker-start ownership, atomic claim/capacity orchestration, and
+worker-owned service-loop productization. Do not count those as
+Codex-fork parity blockers unless a later root-cause comparison ties one to
+missing runtime-provider behavior.
 
 ### `bus-worker`
 
