@@ -33,6 +33,12 @@ The remaining closeout work is autonomous create-only real-work execution:
 alone, without a manual `bus workers message`, and the runtime must complete a
 real backlog item with verification evidence and a worker-branch commit.
 
+This does not relax the Codex-compatible steering contract. A
+`bus-agent-runtime` worker must remain operator/supervisor steerable through
+`bus workers message`, with the same user-facing semantics as existing Codex
+App Server workers. Create-only autonomous execution is an additional Bus
+product path, not a replacement for interactive worker guidance.
+
 ## Unit-First Gate
 
 Do not spend H100 time to rediscover runtime/model-loop failures that can be
@@ -203,6 +209,13 @@ bugs are found while implementing this goal, those bugs should be diagnosed to
 root cause and fixed or delegated in their owning module. Do not mark this goal
 blocked until the failing component, exact error, decisive diagnostic, and
 repair path are known.
+
+When a worker-side issue appears only on `bus-agent-runtime`, compare the
+exact request, runtime response status, delivery metadata, task reference,
+closeout flag, and status snapshot with the existing Codex worker path before
+patching integration behavior. If Codex has a compatible runtime feature that
+`bus-agent-runtime` lacks, fix the missing runtime feature in
+`bus-agent-runtime`; do not hide it with worker-projection special cases.
 
 ## Non-Goals
 
