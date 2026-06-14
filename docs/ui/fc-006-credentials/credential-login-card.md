@@ -6,9 +6,8 @@ description: Shared BusDK UI credential card props and callbacks.
 ## Purpose
 
 `ui.CredentialLoginCard` renders a reusable credential entry card for
-email/password, token, or one-time-code sign-in. `CredentialLoginCardChecked`
-remains the compatibility helper for callers that still need the historical
-string-returning path.
+email/password, token, or one-time-code sign-in. Render the returned node with
+`ui.RenderHTML` at the page boundary.
 
 ## Inputs
 
@@ -127,9 +126,11 @@ the provider request outside `bus-ui`.
 
 ## Rendering Terms
 
-`CredentialLoginCardChecked` fails before render when required labels are
-missing, the card id is unsafe, the form method is not POST, the action or
-target is unsafe, or an action token is invalid. Submit action tokens come from
+## Legacy compatibility
+
+The compatibility helper fails before render when required labels are missing,
+the card id is unsafe, the form method is not POST, the action or target is
+unsafe, or an action token is invalid. Submit action tokens come from
 `SubmitAction` first, then `FormAttrs["data-ui-action"]`; request action
 tokens come from `RequestAction`, then `Request.Control.Action`, then
 `Request.Attrs["data-ui-action"]`. A valid token is a non-empty string using

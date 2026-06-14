@@ -86,10 +86,10 @@ Catalog and tooling:
 The catalog groups entries as concepts, components, runtime helpers, or tools
 and marks each entry as implemented, external, or compatibility-only. It records
 the public docs path and the package symbols that back implemented entries:
-current node-first surfaces use `ui`, `assistantui`, `terminalui`, or
-`uiportal`, while compatibility-only entries may still point at `pkg/uikit`
-internals. JSON output is limited to catalog metadata; public component
-examples remain Go or `.gx`.
+current node-first surfaces use `ui`, `assistantui`, `terminalui`, `uiportal`,
+or `uicatalog`, while compatibility-only entries may still point at
+`pkg/uikit` internals during migration. JSON output is limited to catalog
+metadata; public component examples remain Go or `.gx`.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

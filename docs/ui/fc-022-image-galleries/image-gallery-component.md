@@ -6,16 +6,16 @@ description: Dedicated BusDK UI reference for ImageGallery.
 ## Purpose
 
 `ui.ImageGallery` is the preferred linked image gallery API for actual visual
-content that users inspect. `ImageGalleryChecked` remains available as a
-compatibility wrapper for callers that still need diagnostics.
+content that users inspect. Render the returned node with `ui.RenderHTML` at
+the page boundary.
 
-When every item passes validation, `ImageGalleryChecked` returns
-`ImageGalleryResult` with rendered `HTML`, the accepted `Items`, no diagnostics,
-and a nil error. When one or more items fail item validation, it returns partial
-safe gallery HTML for the accepted items, includes diagnostic entries for the
-omitted items, and returns `ErrImageGalleryItemRejected`. Invalid allowlist
-origins or unsafe root attributes fail before rendering and return an empty
-result with the corresponding error.
+When every item passes validation, the component returns `ImageGalleryResult`
+with rendered `HTML`, the accepted `Items`, no diagnostics, and a nil error.
+When one or more items fail item validation, it returns partial safe gallery
+HTML for the accepted items, includes diagnostic entries for the omitted
+items, and returns `ErrImageGalleryItemRejected`. Invalid allowlist origins or
+unsafe root attributes fail before rendering and return an empty result with
+the corresponding error.
 
 ## Inputs
 
@@ -59,6 +59,11 @@ func renderInvoiceGallery() (string, error) {
 
 `ImageItem` is an alias for `ImageGalleryItem` from the public `ui` facade.
 
+## Legacy compatibility
+
+`ImageGalleryChecked` remains available for callers that still need the
+historical checked helper and diagnostics.
+
 ## Runtime Terms
 
 `Src` and `Href` values must be root-relative same-origin paths such as
@@ -78,9 +83,9 @@ external URLs, and `PathClass` names the rejected URL class such as `missing`,
 `relative`, `traversal`, `external-scheme`, `credentials`, or
 `unlisted-origin`.
 
-`ImageGalleryChecked` does not name or call a resolver. The host or controller
-resolves provider paths first, then passes only resolved safe URLs in
-`ImageGalleryItem.Src` and `ImageGalleryItem.Href`.
+The compatibility helper does not name or call a resolver. The host or
+controller resolves provider paths first, then passes only resolved safe URLs
+in `ImageGalleryItem.Src` and `ImageGalleryItem.Href`.
 
 Accepted examples: `/preview/a.png` and
 `https://media.example.com/invoices/a.png` when that exact origin is allowlisted.

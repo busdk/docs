@@ -186,23 +186,28 @@ machine-readable JSON form for docs-owned catalog generation.
 - [`BrowserOpen`](../fc-008-assets-host-tools/browser-open) - Open local app URL.
 - [`WASM app acceptance`](../v0.1.11/wasm-app) - Trusted Go WebAssembly app acceptance path.
 
-The catalog API remains a tooling helper in `pkg/uikit`:
+The catalog API is provided by the small `pkg/uicatalog` metadata helper and
+the `uicatalog.Catalog` shape used by adjacent UI tooling:
 
 ```go
 package catalogui
 
-import (
-	"os"
+import "github.com/busdk/bus-ui/pkg/uicatalog"
 
-	"github.com/busdk/bus-ui/pkg/uikit"
-)
+var catalog = uicatalog.Catalog{
+	Entries: []uicatalog.Entry{
+		{ID: "credential-login-card", Name: "CredentialLoginCard", Package: "pkg/ui"},
+	},
+}
 
-var catalog = uikit.ComponentCatalog()
-
-func writeCatalogJSON() error {
-	return uikit.WriteComponentCatalog(os.Stdout, "json")
+func hasReference(name string) bool {
+	return catalog.HasReference(name)
 }
 ```
+
+Legacy migration status: `pkg/uikit` still owns the full machine-generated
+component catalog export helpers, but that helper is an internal bridge rather
+than the normal docs-facing API.
 
 The JSON output is justified here because it is machine-readable tooling
 metadata, not component or template markup. The schema version is

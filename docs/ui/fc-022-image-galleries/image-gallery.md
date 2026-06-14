@@ -12,8 +12,7 @@ description: BusDK UI library linked image gallery contract.
 
 [`ImageGallery`](./image-gallery-component) renders linked image items with
 safe URLs and explicit alt labels. Unsafe URLs and unsafe root or item
-attributes are rejected before render. `ImageGalleryChecked` remains a
-compatibility wrapper for callers that do not need diagnostics.
+attributes are rejected before render.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
@@ -59,6 +58,11 @@ gallery.
 ## Consequence
 
 Image display stays focused on safe media presentation.
+
+## Legacy compatibility
+
+`ImageGalleryChecked` remains available for callers that still need the
+historical checked helper and diagnostics.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

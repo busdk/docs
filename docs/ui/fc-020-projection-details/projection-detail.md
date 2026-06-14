@@ -45,7 +45,7 @@ The table names the exported Go fields shown above.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `Title` | yes | Non-empty public-safe string. Missing title makes `ProjectionDetailChecked` return `ErrProjectionDetailTitleRequired` without HTML; unsafe title returns `ErrProjectionDetailUnsafeTitle` with a title diagnostic. Preferred rendering uses `ui.ProjectionDetail` plus `ui.RenderHTML`. |
+| `Title` | yes | Non-empty public-safe string. Missing title fails closed before render; unsafe title returns a title diagnostic. Preferred rendering uses `ui.ProjectionDetail` plus `ui.RenderHTML`. |
 | `Summary` | no | Public-safe string; unsafe summaries are omitted with diagnostics. |
 | `Fields` | no | Public-safe label/value rows. `Value` is already formatted by the controller. |
 | `Evidence` | no | `[]ProjectionEvidenceAction`. Each action has a stable `ID`, public-safe `Label`, `Operation` of `open`, `download`, or `preview`, and a host-authorized `URL`. `Filename` is required for `download`. `MediaType` is required for `preview` and must be `application/pdf`, `image/png`, `image/jpeg`, or `text/plain`. |
@@ -87,9 +87,13 @@ var diagnostic = ui.ProjectionDetailDiagnostic{
 ```
 
 The product view model owns which fields are visible and how evidence relates
-to the product workflow. The checked helper remains the compatibility path for
-callers that still need diagnostics; `ui.ProjectionDetail` plus
-`ui.RenderHTML` is the current-facing node-first path.
+to the product workflow. `ui.ProjectionDetail` plus `ui.RenderHTML` is the
+current-facing node-first path.
+
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper and diagnostics.
 
 ## Consequence
 

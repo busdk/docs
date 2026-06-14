@@ -55,6 +55,11 @@ external-origin allowlists, and storage policy before URLs reach the props.
 Evidence preview makes authorized content inspectable without trusting arbitrary
 remote content.
 
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper.
+
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-index"><a href="../">UI framework index</a></span>

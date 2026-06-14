@@ -6,9 +6,8 @@ description: Shared BusDK UI provider error props and validation.
 ## Purpose
 
 `ui.ProviderError` renders a public-safe provider failure returned from a
-callback, resource request, or background effect. `ProviderErrorChecked` and
-`ProviderErrorHTML` remain as compatibility helpers for callers that still need
-the historical checked or string-returning paths.
+callback, resource request, or background effect. Render the returned node with
+`ui.RenderHTML` at the boundary.
 
 ## Inputs
 
@@ -67,6 +66,11 @@ func UploadError() (string, error) {
 	}))
 }
 ```
+
+## Legacy compatibility
+
+The compatibility helpers remain available for callers that still need the
+historical checked or string-returning paths.
 
 `ProviderErrorFromResult` projects a public-safe provider-error `Result` into
 render props. `RedactProviderErrorText` and `RedactProviderRequestID` are

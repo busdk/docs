@@ -8,8 +8,7 @@ description: Dedicated BusDK UI reference for ProjectionDetail.
 `ProjectionDetail` renders one already-projected public detail with optional
 evidence actions. It is generic evidence UI, not a ledger or accounting policy
 engine. The preferred public path is `ui.ProjectionDetail` plus
-`ui.RenderHTML`; `ProjectionDetailChecked` remains the compatibility helper
-for callers that still need diagnostics.
+`ui.RenderHTML`.
 
 ## Inputs
 
@@ -73,6 +72,11 @@ func ReceiptDetail(url string) (string, error) {
 }
 ```
 {% endraw %}
+
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper and diagnostics.
 
 ## Runtime Terms
 

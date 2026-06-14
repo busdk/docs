@@ -11,11 +11,10 @@ description: BusDK UI library evidence open and download link contract.
 ## Contract
 
 [`EvidenceLink`](./evidence-link) renders authorized open or download links.
-Preferred rendering uses `ui.EvidenceLink` plus `ui.RenderHTML`. Missing URLs
-and resolver denial reasons render disabled text without an active `href`.
-External HTTPS URLs are accepted only as already resolved host input; host
-runtime configuration and named resolvers own exact origin policy before the
-URL reaches this component.
+Missing URLs and resolver denial reasons render disabled text without an active
+`href`. External HTTPS URLs are accepted only as already resolved host input;
+host runtime configuration and named resolvers own exact origin policy before
+the URL reaches this component.
 
 Link labels are public-safe text supplied by the product view model.
 
@@ -48,6 +47,11 @@ if err != nil {
 ## Consequence
 
 Evidence links expose authorized movement without exposing storage paths.
+
+## Legacy compatibility
+
+The checked helper remains available for callers that still need the
+historical string-returning path.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

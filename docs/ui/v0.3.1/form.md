@@ -20,17 +20,15 @@ component.
 | `method` | yes | GET or POST | Native method. |
 | `onSubmit` | yes | `func()` or `func(gx.SubmitEvent)` | Submit callback. The form controller calls it after a submitter click or enter-submit passes native form rules. `gx.SubmitEvent` carries form id, submitter id/name/value, dataset values, and explicit prevent-default state from [typed event payloads](../v0.1.15/typed-event-payloads). |
 | `bodyNodes` | yes | node list | Preferred form body composition path. |
-| `bodyHTML` | no | string | Compatibility escape hatch for trusted legacy body markup. |
 
 ## Boundary
 
 Enter-submit works without local JavaScript. Same-origin paths, HTTP methods,
 and external-origin allowlists belong to the receiving resource or navigation
 entry, not the form component. Submit events identify the form source and
-submitter; app controllers decide what model or form state to read. `BodyNodes`
-is the preferred node-first composition path; `BodyHTML` remains only for
-trusted compatibility fragments. When you need HTML, render the node through
-the public `pkg/ui` boundary.
+submitter; app controllers decide what model or form state to read.
+`BodyNodes` is the preferred node-first composition path. When you need HTML,
+render the node through the public `pkg/ui` boundary.
 
 ## Example
 
@@ -82,6 +80,11 @@ renderer-generated tree path. Resource and navigation helpers called by the
 callback must accept only same-origin paths or host-allowlisted `https:` URLs
 and must reject `javascript:`, `data:`, path traversal, and credential-bearing
 URLs.
+
+## Legacy compatibility
+
+`BodyHTML` remains available only for trusted migration fragments that still
+need to bridge old string markup into the node-first form shell.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

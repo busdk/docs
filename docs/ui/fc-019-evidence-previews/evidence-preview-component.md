@@ -5,9 +5,10 @@ description: Dedicated BusDK UI reference for EvidencePreview.
 
 ## Purpose
 
-`EvidencePreview` renders one checked inline evidence preview or a public-safe
+`EvidencePreview` renders one inline evidence preview or a public-safe
 fallback. It consumes an already-authorized preview URL, optional open/download
 URLs, provider-verified metadata, and a public title.
+Render the returned node with `ui.RenderHTML` at the page boundary.
 
 ## Inputs
 
@@ -47,6 +48,11 @@ func InvoicePreview(previewURL string) (string, error) {
 	}))
 }
 ```
+
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper.
 
 ## Runtime Terms
 

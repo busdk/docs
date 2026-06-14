@@ -8,7 +8,8 @@ description: Dedicated BusDK UI reference for EvidenceLink.
 `EvidenceLink` renders one node-first evidence open or download control. It
 accepts an already-authorized href from the product view model, validates that
 the href is safe to place in an anchor, and renders disabled public text when
-the href is missing or the resolver supplied a denial reason.
+the href is missing or the resolver supplied a denial reason. Render the node
+with `ui.RenderHTML` at the page boundary.
 
 ## Inputs
 
@@ -53,6 +54,11 @@ func InvoiceDownload(invoiceDownloadURL string) (string, error) {
 
 `invoiceDownloadURL` is produced by `EvidenceURLResolver`, `ResolveEvidenceURL`,
 or a host-owned evidence adapter before the link renders.
+
+## Legacy compatibility
+
+`EvidenceLinkChecked` remains available for callers that still need the
+historical string-returning helper.
 
 ## Runtime Terms
 
