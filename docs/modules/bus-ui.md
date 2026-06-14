@@ -18,6 +18,12 @@ core controls, shared CSS tokens, generic authentication surfaces, generic form
 surfaces, shared download/link actions, reusable summary and metric cards,
 generic timeline and gallery renderers, and generic AI interface components.
 
+The public surface is node-first: reusable components build `gx.Node` trees,
+checked helpers validate public inputs before render, and HTML output happens
+through the shared render boundary or explicitly named HTML adapters. The
+`Checked` and silent string helpers remain compatibility and migration
+vocabulary rather than the preferred authoring shape.
+
 Current implemented UI roadmap milestone: **FC-011 Assistant composer and
 attachments**.
 

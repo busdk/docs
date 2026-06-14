@@ -5,31 +5,46 @@ description: Dedicated BusDK UI reference for Panel.
 
 ## Purpose
 
-`Panel` is a shell/layout component. Bounded titled work surface. Use for focused regions such as forms, settings, and detail views.
+`Panel` is a node-first shell/layout component. Use it for bounded titled work
+surfaces such as forms, settings, and detail views.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `title` | yes | string or Go value | Escaped title. |
-| `children` | yes | node list | Panel body. |
-| `events` | no | `EventBar` item array or placement/items object | Default placement is header; set `placement: footer` for footer events. Items use EventBar shape. |
+| `bodyNodes` | yes | node list | Preferred panel body composition path. |
+| `actionNodes` | no | node list | Optional action row. |
+| `footerNodes` | no | node list | Optional footer content. |
+| `bodyHTML` | no | string | Compatibility escape hatch for trusted legacy body markup. |
+| `actionsHTML` | no | string | Compatibility escape hatch for trusted legacy action markup. |
+| `footerHTML` | no | string | Compatibility escape hatch for trusted legacy footer markup. |
 | `attrs` | no | safe attribute map | Allows `id`, `class`, `data-*`, and `aria-*`; event handlers, inline style, and unsafe URL attributes are rejected. User attrs merge after framework attrs except protected classes are preserved. |
 
 ## Boundary
 
-Title and body render in stable order.
+The preferred path is typed `gx.Node` composition through `BodyNodes`,
+`ActionNodes`, and `FooterNodes`. The compatibility HTML fields remain only for
+trusted fragments that are already rendered elsewhere.
 
 ## Example
 
-```gx
+```go
 package reviewui
 
-var draftPanel = (
-  <Panel title="Draft">
-    <p>Ready to review</p>
-  </Panel>
+import (
+	gx "github.com/busdk/bus-gx/pkg/gx"
+	"github.com/busdk/bus-ui/pkg/ui"
 )
+
+func draftPanel() (string, error) {
+	return ui.PanelChecked(ui.PanelProps{
+		Title: "Draft",
+		BodyNodes: []gx.Node{
+			gx.Element("p", nil, gx.Text("Ready to review")),
+		},
+	})
+}
 ```
 
 ## Runtime Terms

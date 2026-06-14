@@ -13,7 +13,8 @@ message.
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
 | `label` | yes | string | Visible label; empty labels fail validation. |
-| `children` | yes | one control node | Input/select/textarea. |
+| `renderControlNode` | yes | node callback | Preferred typed control composition path. |
+| `bodyHTML` | no | string | Compatibility escape hatch for trusted legacy control markup. |
 | `hint` | no | string | Help text associated through `aria-describedby`; omitted renders no hint. |
 | `error` | no | string | Validation error associated through `aria-describedby` and marks the control invalid. |
 
@@ -22,17 +23,32 @@ message.
 `Field` associates the label with the child control automatically when the
 child has `name` and no `id`; otherwise it uses the child `id`. A child with
 neither `id` nor `name` fails validation because the label would be inaccessible.
+`RenderControlNode` is the preferred node-first path; `BodyHTML` remains only
+for trusted compatibility fragments.
 
 ## Example
 
-```gx
+```go
 package notesui
 
-var searchField = (
-  <Field label="Search">
-    <TextInput name="q"></TextInput>
-  </Field>
+import (
+	gx "github.com/busdk/bus-gx/pkg/gx"
+	"github.com/busdk/bus-ui/pkg/ui"
 )
+
+func searchField() (gx.Node, error) {
+	return ui.FieldNodeChecked(ui.FieldProps{
+		Label:       "Search",
+		ControlID:   "q",
+		ControlName: "q",
+		RenderControlNode: func(attrs map[string]string) (gx.Node, error) {
+			return ui.TextInputNodeChecked(ui.TextInputProps{
+				Name:  "q",
+				Attrs: attrs,
+			})
+		},
+	})
+}
 ```
 
 <!-- busdk-docs-nav start -->

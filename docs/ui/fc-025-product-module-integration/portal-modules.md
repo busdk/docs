@@ -71,7 +71,9 @@ func renderReportsPage(ctx portal.UIRenderContext) uikit.Node {
 
 When a module still has legacy string HTML during migration, keep that adapter
 small and feed it only trusted or sanitized fragments. New framework pages
-should use typed Go components and `.gx` source over `BodyHTML` assembly.
+should use typed Go components and `.gx` source over `BodyNodes` assembly, and
+any required HTML-only boundary should stay in a narrow, explicitly named
+adapter.
 
 GX source can wrap the same shape with typed props when a module page is written
 as `.gx`. Data still arrives as ordinary Go values.

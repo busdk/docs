@@ -7,7 +7,9 @@ description: Dedicated BusDK UI reference for Input.
 
 `Input` is the generic typed input component. Use it when no named helper fits,
 and pair visible inputs with a `Field` label or an explicit accessible label
-supplied by the surrounding form.
+supplied by the surrounding form. The preferred node-first path is
+`InputNodeChecked` inside `FieldProps.RenderControlNode`; `Input` remains the
+compatibility wrapper.
 
 ## Inputs
 
@@ -25,7 +27,9 @@ supplied by the surrounding form.
 
 This patch covers scalar form controls. Bare visible inputs must have an
 accessible name through `Field` or `labelledBy`; hidden inputs do not need a
-visible label.
+visible label. `InputNodeChecked` and `TextInputNodeChecked` are the typed
+composition entry points when the surrounding component wants a `gx.Node`
+tree.
 
 ## Example
 

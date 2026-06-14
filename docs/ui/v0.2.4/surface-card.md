@@ -5,16 +5,19 @@ description: Dedicated BusDK UI reference for SurfaceCard.
 
 ## Purpose
 
-`SurfaceCard` is a card surface component for repeated records or compact
-grouped facts. It is not a page, portal, or app shell.
+`SurfaceCard` is a node-first card surface component for repeated records or
+compact grouped facts. It is not a page, portal, or app shell.
 
 ## Inputs
 
 | Field | Required | Type | Behavior |
 | --- | --- | --- | --- |
-| `children` | yes | node list | Card body. |
-| `header` | no | slot node | Optional header. |
-| `footer` | no | slot node | Optional footer. |
+| `headerNodes` | no | node list | Optional header content. |
+| `bodyNodes` | yes | node list | Card body. |
+| `footerNodes` | no | node list | Optional footer content. |
+| `headerHTML` | no | string | Compatibility escape hatch for trusted legacy header markup. |
+| `bodyHTML` | no | string | Compatibility escape hatch for trusted legacy body markup. |
+| `footerHTML` | no | string | Compatibility escape hatch for trusted legacy footer markup. |
 
 ## Boundary
 
@@ -22,18 +25,26 @@ grouped facts. It is not a page, portal, or app shell.
 `StatusPill`, text, form fields, and small event rows. Do not nest page or app
 shells inside it, including `AppShell`, `PortalShell`, `SidebarShell`,
 `SplitLayout`, or another `SurfaceCard`; use those as surrounding layout
-instead.
+instead. The preferred path is typed `gx.Node` composition, while the HTML
+fields remain compatibility adapters for trusted fragments.
 
 ## Example
 
-```gx
+```go
 package evidenceui
 
-var evidenceCard = (
-  <SurfaceCard>
-    <p>Evidence note</p>
-  </SurfaceCard>
+import (
+	gx "github.com/busdk/bus-gx/pkg/gx"
+	"github.com/busdk/bus-ui/pkg/ui"
 )
+
+func evidenceCard() (string, error) {
+	return ui.SurfaceCardChecked(ui.SurfaceCardProps{
+		BodyNodes: []gx.Node{
+			gx.Element("p", nil, gx.Text("Evidence note")),
+		},
+	})
+}
 ```
 
 <!-- busdk-docs-nav start -->

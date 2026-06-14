@@ -9,6 +9,16 @@ item explicitly names a superproject command such as `make -C docs quality`.
 Older checked entries may preserve the superproject-relative paths and commands
 that were used when those entries were completed.
 
+- [x] Refresh the public UI reference pages to describe node-first `gx.Node`
+  composition, validation-first checked helpers, and explicit HTML adapter
+  boundaries.
+  - Scope: `docs/modules/bus-ui.md` and the GX/UI reference pages under
+    `docs/ui/**` that still foreground legacy body/checked wording.
+  - Acceptance: the touched pages describe `gx.Node` composition as the
+    normal component shape, keep `Checked`/string helpers framed as
+    compatibility vocabulary, and still pass the local markdown and link
+    checks.
+
 ## Current Goal: Codex Fork / Bus Agent Runtime Parity
 
 `docs/docs/goals/codex-fork.md` owns the public cross-module goal for the
