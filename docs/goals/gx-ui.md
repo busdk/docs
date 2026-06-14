@@ -1,0 +1,361 @@
+# GX/UI Node-First Refactor Handoff
+
+## Goal
+
+This goal tracks the GX/UI architecture refactor that moves BusDK frontend
+code away from string-first UI composition and toward typed Go/GX render
+trees.
+
+The target architecture is:
+
+> `bus-gx` owns the source syntax, compiler, render tree, safe HTML rendering,
+> browser/runtime primitives, and low-level tests. `bus-ui` owns reusable
+> component families, public UI facades, compatibility adapters, CSS hooks,
+> mount/runtime helpers, portal integration surfaces, and UI test harnesses.
+> Product modules compose typed `gx.Node` trees through public facade packages
+> and serialize only at explicit render edges.
+
+The preferred public component APIs are simple names such as `ui.Name`,
+`assistantui.Name`, `terminalui.Name`, and `uiportal.Name`. They should return
+`gx.Node` or typed values that carry `gx.Node` fields. String serialization
+belongs at explicit boundaries such as `ui.RenderHTML(...)` or
+`gx.RenderHTML(...)`.
+
+This handoff exists so another conversation can continue the refactor without
+reconstructing the June 2026 remote supervisor memos, Codex threads, and
+worktree state from scratch.
+
+## Why This Matters
+
+The original UI-library work mixed several architectural eras:
+
+- low-level GX source and render-tree work in `bus-gx`;
+- reusable but string-first helpers in `bus-ui/pkg/uikit`;
+- package facades that often exposed `Checked` or `NodeChecked` helper names;
+- product modules that inserted pre-rendered strings through `BodyHTML`,
+  `HeadHTML`, `MainHTML`, slot replacement, `strings.Replace`, or
+  post-render insertion;
+- docs and website pages that taught old compatibility helpers as if they
+  were the current API.
+
+That made the UI stack harder to reason about. A component could appear to be
+node-first while internally rendering string HTML and parsing or wrapping it
+back into a node-shaped value. Product modules also had to understand too much
+about shell internals, raw HTML slots, runtime script insertion, and uikit
+compatibility surfaces.
+
+The refactor goal is a decoupled architecture:
+
+- `bus-gx` provides typed, safe primitives.
+- `bus-ui` provides public reusable UI components and runtime facades.
+- product modules use public UI facades, not `pkg/uikit` internals.
+- HTML strings are produced only at explicit render boundaries.
+- compatibility wrappers remain only as deprecated migration aliases or
+  clearly named `...HTML` string-boundary helpers.
+
+## Definition Of Done
+
+The active/default product and documentation paths should not use these as the
+normal architecture:
+
+- `pkg/uikit` imports in product/adopter modules;
+- `*Checked` or `*NodeChecked` as preferred public/default APIs;
+- string-returning component APIs where a node-first facade should exist;
+- `BodyHTML`, `HeadHTML`, or `MainHTML` as normal shell slots;
+- broad raw HTML helpers such as `ui.Unsafe`, `ui.VRaw`, or direct downstream
+  `gx.TrustedMarkdownHTML` use;
+- parser bridges that convert rendered component HTML back into nodes;
+- slot replacement, `strings.Replace`, or post-render insertion for normal
+  composition;
+- public docs that teach compatibility helpers as the primary API.
+
+Compatibility code may remain when it is explicitly deprecated, tested as
+legacy behavior, and not used by current product/default docs as the normal
+path.
+
+Before calling the goal complete, run a fresh audit across at least:
+
+```bash
+git grep -nE 'pkg/uikit|Checked|NodeChecked|BodyHTML|HeadHTML|MainHTML|ui\.Unsafe|ui\.VRaw|TrustedMarkdownHTML|strings\.Replace|slot|post-render' \
+  -- bus-ui bus-portal bus-portal-auth bus-portal-ai bus-portal-accounting bus-portal-notes docs busdk.com
+```
+
+Then classify every hit as one of:
+
+- accepted compatibility/deprecated API;
+- internal test coverage for compatibility;
+- vendor or generated content to ignore;
+- stale docs;
+- active code that still needs refactoring.
+
+## Module Ownership
+
+`bus-gx` owns:
+
+- GX source syntax and compiler behavior;
+- intrinsic element allowlists and safe attributes;
+- render-tree types;
+- HTML rendering;
+- low-level trusted leaf boundaries;
+- browser/runtime primitives and low-level test utilities.
+
+`bus-ui` owns:
+
+- reusable components in `pkg/ui`;
+- public assistant, terminal, and portal facades;
+- compatibility adapters;
+- CSS hooks;
+- mount/runtime helpers;
+- portal integration surfaces;
+- UI test harnesses and docs for reusable components.
+
+Product modules own product-specific routing, authorization, provider
+behavior, business object semantics, billing, model execution, secrets, and
+product-specific handlers. They should compose UI through `bus-ui` facades
+instead of depending on `pkg/uikit` or raw shell slots.
+
+## Evidence Sources
+
+The main remote Codex thread for this goal is:
+
+```text
+019eb0e6-b207-7c30-9998-d7d16214e9a6
+```
+
+The exact short `UI library` Codex threads from June 12 are archived fork or
+worker lanes. They are part of the history, but they are not the full
+supervisor story.
+
+On `nor-agent`, useful Codex state is split across:
+
+- `~/.codex/state_5.sqlite` for thread metadata;
+- `~/.codex/logs_2.sqlite` for low-level streaming telemetry;
+- `~/.codex/sessions/**/rollout-*.jsonl` for practical transcript content.
+
+The final June 14 worker wave around `019ec74*` had transcript JSONL files
+even when the state DB query did not return matching thread rows. Use both
+SQLite and session JSONL files when reconstructing context.
+
+Remote supervisor memos under:
+
+```text
+~/git/busdk/agent-supervisor/logs/
+```
+
+are the most compact source for accepted/promoted state, rejected worker
+attempts, and branch/worktree meaning.
+
+## Accepted Architecture Work
+
+The June 2026 remote memos record these accepted phases as already promoted
+into canonical module `develop` branches:
+
+- `bus-gx` document/head intrinsics for `html`, `head`, `body`, `title`,
+  `meta`, and `link`;
+- `bus-gx` description-list intrinsics for semantic `dl`, `dt`, and `dd`;
+- `bus-gx` form `enctype` support for multipart upload forms;
+- `bus-gx` safe typed script-node support;
+- `bus-gx` trusted markdown/article HTML leaf support with corrected raw
+  literal tests;
+- `bus-ui` node-first shell/navigation/status facades;
+- `bus-ui` node-first form/control facades;
+- `bus-ui` node-first data/evidence/display facades, including later
+  ProjectionDetail support after the `bus-gx` `dl` intrinsic unblocker;
+- `bus-ui` assistant and terminal node-first facades;
+- `bus-ui` AppShell and terminal architecture promotion;
+- `bus-ui` typed deferred script/head helpers;
+- `bus-ui` trusted markdown/article public boundary;
+- `bus-ui` `SubmitControl` node-first facade;
+- `bus-portal` node-first framework and portal shell adoption;
+- `bus-portal-auth` typed deferred script adoption;
+- `bus-portal-ai` render composition and typed script/head adoption;
+- `bus-portal-accounting` node-first render path adoption;
+- `bus-portal-notes` trusted reader and review-panel node-first cleanup;
+- docs and SDD notes for deferred script/head-node behavior.
+
+The remote conflict repair on 2026-06-14 pushed the current canonical state:
+
+- `bus-ui develop` at `2a7beda`;
+- `bus-portal-notes develop` at `0a01711`;
+- `docs develop` at `dd55b02`;
+- `sdd develop` at `e0b190d`;
+- BusDK superproject `develop` at `3e09443`;
+- remote supervisor `nor-develop` at `e604168`.
+
+The stale `bus-ui` rebase conflict was resolved by aborting the duplicate
+rebase. `bus-ui` was then clean on `develop`, `git diff --check
+origin/develop..HEAD` passed, `/usr/local/go/bin/go test ./...` passed, and
+`git push origin develop` advanced the remote from `c0c6d08` to `2a7beda`.
+
+## Final Audit Wave
+
+The final June 14 audit found remaining old-architecture residue and split it
+into focused workers:
+
+- `019ec74a-f07c-7832-9cf2-fe6fa5f81a7b`, `AI portal private NodeChecked
+  cleanup`: created `/private/tmp/bus-portal-ai-nodechecked-cleanup` on
+  `codex/ai-portal-private-nodechecked-cleanup`, verified the hits were
+  private helper names, but applied no code before hitting the usage limit.
+- `019ec74b-2005-7453-9ff8-9352c209efb5`, `Notes review raw UI cleanup`:
+  created `/private/tmp/bus-portal-notes-review-raw-cleanup` on
+  `codex/notes-review-raw-cleanup`, changed
+  `notes_reader_review_render.go`, passed `gofmt`, `git diff --check`, and a
+  banned-added-line scan, but its module test run hit surrounding baseline
+  compile errors and it reported accidental canonical checkout dirt before
+  the path correction.
+- `019ec74b-51dd-7270-9e35-e09b92e85be6`, `Notes shell slot replacement
+  cleanup`: produced a broader in-progress
+  `/private/tmp/bus-portal-notes-shell-slots` worktree. The shell paths moved
+  toward typed GX node composition, `bus gx fmt --check` and `git diff
+  --check` had passed, but tests still failed on a missing `ResultPanel`
+  marker and the worker hit the usage limit before committing.
+- `019ec74b-7ec8-7591-98b6-0935fd8bf891`, `Adopter tests remove uikit
+  imports`: identified remaining test imports and missing public
+  runtime/resource-client facades, but did not create a patch before the
+  usage limit.
+- `019ec74b-ee6b-72d3-b074-a65c63729ef8`, `Assistant UI public API cleanup`:
+  produced commit `402cfa9` in
+  `/private/tmp/bus-ui-assistantui-api-cleanup`, passed focused/full tests and
+  `git diff --check`, and remains a real review/promotion candidate unless a
+  later canonical change supersedes it.
+- `019ec74c-1af5-7910-b80f-8676de101989`, `UI portal shell API cleanup`:
+  created no files, no tests, and no commit before the usage limit.
+- `019ec74c-517e-7373-8edd-8abfbf7585ed`, `GX UI docs old API cleanup`:
+  changed no files before the usage limit. It reported remaining public docs
+  hits in `busdk.com/docs/gx-ui/**`, `docs/docs/products/gx-ui.md`,
+  `docs/docs/modules/bus-ui.md`, and some Bus UI leaf pages. Vendor hits under
+  `sdd/vendor/**` should be ignored.
+
+## Current Remote Git State
+
+After the 2026-06-14 cleanup audit, many old contained or patch-equivalent
+branches were removed from `nor-agent`. The cleanup intentionally used only:
+
+- non-force `git worktree remove` for clean, contained worktrees;
+- non-force `git branch -d` for contained local branches;
+- `git branch -D` only after `git log --cherry-pick --right-only --no-merges
+  develop...branch` showed no unique patches.
+
+The filtered submodule state dropped substantially:
+
+- `docs` no longer showed UI branch/worktree residue.
+- `bus-gx` no longer showed UI branch/worktree residue.
+- `bus-portal` no longer showed UI branch/worktree residue.
+- `bus-ui` dropped from 27 worktrees and 31 branches to 6 worktrees and
+  5 branches.
+
+Remaining state is not routine pruning; it needs review or archival decisions.
+
+### Remaining `bus-ui` Items
+
+- `codex/assistantui-public-api-cleanup` at `402cfa9`, clean worktree
+  `/private/tmp/bus-ui-assistantui-api-cleanup`, one unique commit. This is a
+  likely review/promotion candidate.
+- `codex/ui-script-helper` at `eee1516`, clean worktree
+  `/private/tmp/bus-ui-script-helper`, but the diff is very large and appears
+  stale relative to later canonical refactors. Review before deleting.
+- `codex/ui-data-evidence` at `252f8a5`, no worktree, one unique old facade
+  commit. Check whether it is superseded by canonical data/evidence work.
+- `codex/node-first-surface-status`, dirty `/private/tmp/bus-ui`, contained
+  branch with uncommitted scratch changes in `pkg/ui`, `pkg/uikit`, and
+  `pkg/uiportal`.
+- `codex/terminalui-node-first`, dirty
+  `/private/tmp/bus-ui-terminalui-node-first`, contained branch with an
+  untracked `.gocache/` only during the last audit.
+
+### Remaining Website Docs Items
+
+`busdk.com` is still checked out on `codex/gx-ui-node-first-docs`, clean and
+two commits ahead of its `develop`. It changes many `docs/gx-ui/**` pages to
+teach node-first public APIs. This should be reviewed and either promoted or
+rebased into `develop`.
+
+Other old `busdk.com` branches still have unique docs commits and no worktree:
+
+- `codex/busdkcom-nodefirst-docs`;
+- `codex/busui-form-doc-pages`;
+- `codex/gx-ui-all-component-nav`;
+- `codex/remove-gxui-inline-continue`;
+- `codex/ui-data-evidence`;
+- `codex/ui-shell-navigation-status-examples`.
+
+Do not delete these until the website docs branch is reviewed; some may be
+older slices already represented by `codex/gx-ui-node-first-docs`, while
+others may contain unique docs improvements.
+
+### Remaining Portal Adopter Items
+
+These branches have real diffs and should be reviewed against canonical
+`develop` before deletion:
+
+- `bus-portal-auth/codex/bus-portal-auth-node-first`;
+- `bus-portal-ai/codex/bus-portal-ai-node-first-ui`;
+- `bus-portal-ai/codex/bus-portal-ai-ui-render-refactor`;
+- `bus-portal-accounting/codex/bus-portal-accounting-node-first`;
+- `bus-portal-notes/codex/bus-portal-notes-node-first`;
+- `bus-portal-notes/codex/notes-review-raw-cleanup`.
+
+Several of these look like rejected or superseded worker attempts because
+their diffs include stale `go.mod` replace changes, pre-final architecture
+patterns, or changes that later canonical commits may already have replaced.
+Make a recorded decision branch by branch.
+
+### Remaining BusDK Root Items
+
+The BusDK root still has several old non-contained superproject pin branches
+with unique commits, plus dirty contained evidence worktrees. They mostly
+record old docs/site pointer states. Review them after the module branches are
+classified so pointer branches can be deleted with confidence.
+
+Two dirty Bus worker runtime product worktrees contain old uncommitted
+`bus-ui/pkg/uikit` assistant-workbench changes from the pre-node-first line.
+They are likely evidence, not current promotion candidates, and should be
+archived or explicitly discarded only after review.
+
+`agents/worker` shows many `worker/*` branches and worktrees, but these are
+worker identity checkouts at the shared `Initialize worker identity` commit.
+Remote `AGENTS.md` says worker identity checkouts under
+`.bus/services/workers/runtime/*/worker-identity` are durable supervisor
+evidence, not disposable scratch. Do not prune those as part of this GX/UI
+cleanup unless the operator approves a separate retention-policy task.
+
+## Next Work Queue
+
+The next supervisor should proceed in this order:
+
+1. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
+   If it still matches the desired API direction, rerun focused/full tests,
+   promote into `bus-ui develop`, push, and pin BusDK.
+2. Review `busdk.com/codex/gx-ui-node-first-docs`.
+   Decide whether to promote it as the current website docs cleanup, then
+   delete or archive older website branches that become superseded.
+3. Re-audit canonical code and docs for the definition-of-done patterns.
+   Use the audit to decide whether `uiportal`, adopter tests, and docs cleanup
+   need fresh focused workers.
+4. Review remaining adopter branches in `bus-portal-auth`,
+   `bus-portal-ai`, `bus-portal-accounting`, and `bus-portal-notes`.
+   Promote only branches that still improve the current canonical state;
+   otherwise record them as superseded/rejected and remove their worktrees.
+5. Classify dirty evidence worktrees:
+   `/private/tmp/bus-ui`, `/private/tmp/bus-ui-terminalui-node-first`,
+   `/private/tmp/bus-portal-notes-review-raw-cleanup`, and the two dirty Bus
+   runtime product worktrees. Archive useful diffs before deletion.
+6. Only after module state is settled, prune old BusDK root pointer branches
+   whose target module commits are promoted, superseded, or intentionally
+   discarded.
+
+## Safety Rules For Continuation
+
+Do not edit product code in the primary checkout as a supervisor shortcut.
+Use workers or isolated module worktrees for implementation. Direct edits to
+goal docs, memos, and coordination artifacts are acceptable supervisor work.
+
+When committing nested repository work, commit in this order:
+
+1. owning module, such as `docs`, `bus-ui`, `busdk.com`, or an adopter module;
+2. BusDK superproject submodule pointer;
+3. supervisor root `projects/busdk` pointer when it changes.
+
+Do not remove dirty worktrees or worker identity checkouts without explicit
+review. Use `git worktree remove` and `git worktree prune`, not ad hoc
+filesystem deletion, for reviewed clean worktrees.
