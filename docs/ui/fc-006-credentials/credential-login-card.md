@@ -54,7 +54,7 @@ package loginui
 import (
 	"context"
 
-	"github.com/busdk/bus-ui/pkg/uikit"
+	"github.com/busdk/bus-ui/pkg/ui"
 )
 
 type CredentialState interface {
@@ -76,7 +76,7 @@ var authClient AuthClient
 var loginErrors ErrorSink
 var requestContext func(sourceID string) context.Context
 
-func requestOTP(event uikit.CredentialRequestEvent) {
+func requestOTP(event ui.CredentialRequestEvent) {
 	ctx := requestContext(event.SourceID)
 	username := loginState.Username(event.SourceID)
 	if err := authClient.SendCode(ctx, username); err != nil {
@@ -84,7 +84,7 @@ func requestOTP(event uikit.CredentialRequestEvent) {
 	}
 }
 
-func verifyOTP(event uikit.CredentialSubmitEvent) {
+func verifyOTP(event ui.CredentialSubmitEvent) {
 	ctx := requestContext(event.SourceID)
 	username := loginState.Username(event.SourceID)
 	secret := loginState.Secret(event.SourceID)
@@ -94,7 +94,7 @@ func verifyOTP(event uikit.CredentialSubmitEvent) {
 }
 
 func OTPLoginCard() (string, error) {
-	return uikit.CredentialLoginCardChecked(uikit.CredentialLoginCardProps{
+	return ui.CredentialLoginCardChecked(ui.CredentialLoginCardProps{
 		ID:                   "otp-login",
 		Title:                "Sign in",
 		Copy:                 "Use your work email and one-time code.",
@@ -104,12 +104,12 @@ func OTPLoginCard() (string, error) {
 		RequestLabel:         "Send one-time code",
 		UsernameLabel:        "Email",
 		UsernameName:         "email",
-		UsernameType:         string(uikit.InputTypeEmail),
+		UsernameType:         string(ui.InputTypeEmail),
 		UsernameAutocomplete: "email",
 		PasswordLabel:        "One-time code",
 		PasswordName:         "code",
 		PasswordAutocomplete: "one-time-code",
-		Submit: uikit.ButtonProps{
+		Submit: ui.ButtonProps{
 			Label: "Continue",
 		},
 	})
