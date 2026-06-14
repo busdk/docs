@@ -5,9 +5,10 @@ description: Shared BusDK UI provider error props and validation.
 
 ## Purpose
 
-`ProviderErrorChecked` renders a public-safe provider failure returned from a
-callback, resource request, or background effect. `ProviderErrorHTML` is the
-string-returning compatibility helper for callers that need fail-closed markup.
+`ui.ProviderError` renders a public-safe provider failure returned from a
+callback, resource request, or background effect. `ProviderErrorChecked` and
+`ProviderErrorHTML` remain as compatibility helpers for callers that still need
+the historical checked or string-returning paths.
 
 ## Inputs
 
@@ -50,20 +51,20 @@ storage, and product-specific error meaning stay outside `bus-ui`.
 ```go
 package notesui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
 func UploadError() (string, error) {
-	return uikit.ProviderErrorChecked(uikit.ProviderErrorProps{
+	return ui.RenderHTML(ui.ProviderError(ui.ProviderErrorProps{
 		Title:     "Upload failed",
 		Summary:   "Access denied",
 		Status:    403,
 		RequestID: "req-123",
 		RetryLabel: "Try again",
-		Retry: uikit.ControlProps{
+		Retry: ui.ControlProps{
 			Action:   "provider.retry",
 			SourceID: "upload",
 		},
-	})
+	}))
 }
 ```
 

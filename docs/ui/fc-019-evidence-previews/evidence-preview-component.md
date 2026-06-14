@@ -37,14 +37,14 @@ outside `bus-ui`.
 ```go
 package evidenceui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
 func InvoicePreview(previewURL string) (string, error) {
-	return uikit.EvidencePreviewChecked(uikit.EvidencePreviewProps{
+	return ui.RenderHTML(ui.EvidencePreview(ui.EvidencePreviewProps{
 		PreviewURL:  previewURL,
 		Title:       "Invoice 2026-04",
 		ContentType: "application/pdf",
-	})
+	}))
 }
 ```
 

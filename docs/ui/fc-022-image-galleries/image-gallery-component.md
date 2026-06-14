@@ -5,10 +5,9 @@ description: Dedicated BusDK UI reference for ImageGallery.
 
 ## Purpose
 
-`ImageGalleryChecked` is the preferred linked image gallery API for actual
-visual content that users inspect. It returns safe rendered HTML plus
-diagnostics for rejected items. `ImageGallery` remains available as a
-compatibility wrapper that returns only rendered HTML.
+`ui.ImageGallery` is the preferred linked image gallery API for actual visual
+content that users inspect. `ImageGalleryChecked` remains available as a
+compatibility wrapper for callers that still need diagnostics.
 
 When every item passes validation, `ImageGalleryChecked` returns
 `ImageGalleryResult` with rendered `HTML`, the accepted `Items`, no diagnostics,
@@ -38,9 +37,9 @@ and path resolution remain host-owned boundaries.
 ```go
 package mediaui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
-var invoicePages = []uikit.ImageItem{
+var invoicePages = []ui.ImageItem{
 	{Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
 	{
 		Src:     "https://media.example.com/invoices/2026-05/a.png",
@@ -50,16 +49,15 @@ var invoicePages = []uikit.ImageItem{
 	},
 }
 
-func renderInvoiceGallery() (uikit.ImageGalleryResult, error) {
-	return uikit.ImageGalleryChecked(uikit.ImageGalleryProps{
+func renderInvoiceGallery() (string, error) {
+	return ui.RenderHTML(ui.ImageGallery(ui.ImageGalleryProps{
 		Items:        invoicePages,
 		ImageOrigins: []string{"https://media.example.com"},
-	})
+	}))
 }
 ```
 
-`ImageItem` is an alias for `ImageGalleryItem` from
-`github.com/busdk/bus-ui/pkg/uikit`.
+`ImageItem` is an alias for `ImageGalleryItem` from the public `ui` facade.
 
 ## Runtime Terms
 

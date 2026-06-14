@@ -14,8 +14,9 @@ shared credential surface without moving authentication authority into
 
 [`CredentialLoginCard`](./credential-login-card) renders escaped public copy,
 a required username field, a required secret field, a native POST form, a
-submit button, and an optional secondary request-code button. Checked rendering
-uses `CredentialLoginCardProps` and `CredentialLoginCardChecked`.
+submit button, and an optional secondary request-code button. Preferred
+rendering uses `ui.CredentialLoginCard` plus `ui.RenderHTML`; the checked
+helper remains available for compatibility.
 
 Credential callbacks are identity-only. `CredentialSubmitEvent` carries source
 and submit routing metadata; `CredentialRequestEvent` identifies a secondary

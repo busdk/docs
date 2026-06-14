@@ -10,9 +10,9 @@ description: BusDK UI library linked image gallery contract.
 
 ## Contract
 
-[`ImageGalleryChecked`](./image-gallery-component) renders linked image items
-with safe URLs and explicit alt labels. Unsafe URLs and unsafe root or item
-attributes are rejected before render. `ImageGallery` remains a string-returning
+[`ImageGallery`](./image-gallery-component) renders linked image items with
+safe URLs and explicit alt labels. Unsafe URLs and unsafe root or item
+attributes are rejected before render. `ImageGalleryChecked` remains a
 compatibility wrapper for callers that do not need diagnostics.
 
 | Field | Required | Behavior |
@@ -35,18 +35,18 @@ attribute diagnostic without rendering the item.
 ```go
 package mediaui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
-var pages = []uikit.ImageGalleryItem{
+var pages = []ui.ImageGalleryItem{
 	{Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
 }
 
-func renderInvoicePages() (uikit.ImageGalleryResult, error) {
-	return uikit.ImageGalleryChecked(uikit.ImageGalleryProps{
+func renderInvoicePages() (string, error) {
+	return ui.RenderHTML(ui.ImageGallery(ui.ImageGalleryProps{
 		Items:        pages,
 		ImageOrigins: []string{"https://media.example.com"},
 		Attrs:        map[string]string{"aria-label": "Invoice page previews"},
-	})
+	}))
 }
 ```
 

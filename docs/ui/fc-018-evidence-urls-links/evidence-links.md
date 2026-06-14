@@ -10,11 +10,12 @@ description: BusDK UI library evidence open and download link contract.
 
 ## Contract
 
-[`EvidenceLink`](./evidence-link) renders authorized open or
-download links. Missing URLs and resolver denial reasons render disabled text
-without an active `href`. External HTTPS URLs are accepted only as already
-resolved host input; host runtime configuration and named resolvers own exact
-origin policy before the URL reaches this component.
+[`EvidenceLink`](./evidence-link) renders authorized open or download links.
+Preferred rendering uses `ui.EvidenceLink` plus `ui.RenderHTML`. Missing URLs
+and resolver denial reasons render disabled text without an active `href`.
+External HTTPS URLs are accepted only as already resolved host input; host
+runtime configuration and named resolvers own exact origin policy before the
+URL reaches this component.
 
 Link labels are public-safe text supplied by the product view model.
 
@@ -33,12 +34,12 @@ URLs render disabled text with public-safe reason copy. The provider/controller
 supplies `href`; the component does not authorize documents.
 
 ```go
-html, err := uikit.EvidenceLinkChecked(uikit.EvidenceLinkProps{
+html, err := ui.RenderHTML(ui.EvidenceLink(ui.EvidenceLinkProps{
 	Href:      resolved.URL,
 	Label:     "Open receipt 2026-04-18",
-	Operation: uikit.EvidenceOperationOpen,
+	Operation: ui.EvidenceOperationOpen,
 	Target:    "_blank",
-})
+}))
 if err != nil {
 	return "", err
 }

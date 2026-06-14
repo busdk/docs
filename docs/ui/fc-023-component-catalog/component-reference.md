@@ -186,7 +186,7 @@ machine-readable JSON form for docs-owned catalog generation.
 - [`BrowserOpen`](../fc-008-assets-host-tools/browser-open) - Open local app URL.
 - [`WASM app acceptance`](../v0.1.11/wasm-app) - Trusted Go WebAssembly app acceptance path.
 
-The catalog API is Go-first:
+The catalog API remains a tooling helper in `pkg/uikit`:
 
 ```go
 package catalogui

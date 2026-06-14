@@ -7,7 +7,9 @@ description: Dedicated BusDK UI reference for ProjectionDetail.
 
 `ProjectionDetail` renders one already-projected public detail with optional
 evidence actions. It is generic evidence UI, not a ledger or accounting policy
-engine.
+engine. The preferred public path is `ui.ProjectionDetail` plus
+`ui.RenderHTML`; `ProjectionDetailChecked` remains the compatibility helper
+for callers that still need diagnostics.
 
 ## Inputs
 
@@ -50,24 +52,24 @@ unsupported preview media render unavailable evidence actions.
 ```go
 package evidenceui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
-func ReceiptDetail(url string) (uikit.ProjectionDetailResult, error) {
-	return uikit.ProjectionDetailChecked(uikit.ProjectionDetailProps{
+func ReceiptDetail(url string) (string, error) {
+	return ui.RenderHTML(ui.ProjectionDetail(ui.ProjectionDetailProps{
 		Title:   "Receipt 2026-04-18",
 		Summary: "Matched to expense report ER-2026-0418.",
-		Fields: []uikit.ProjectionField{
+		Fields: []ui.ProjectionField{
 			{Label: "Vendor", Value: "Helsinki Office Supplies"},
 			{Label: "Total", Value: "EUR 42.80"},
 		},
-		Evidence: []uikit.ProjectionEvidenceAction{{
+		Evidence: []ui.ProjectionEvidenceAction{{
 			ID:        "receipt-2026-04-18",
 			Label:     "Preview receipt",
-			Operation: string(uikit.EvidenceOperationPreview),
+			Operation: string(ui.EvidenceOperationPreview),
 			URL:       url,
 			MediaType: "application/pdf",
 		}},
-	})
+	}))
 }
 ```
 {% endraw %}
@@ -78,8 +80,9 @@ func ReceiptDetail(url string) (uikit.ProjectionDetailResult, error) {
 
 `ProjectionDetailChecked` returns `ProjectionDetailResult` with rendered HTML
 and `ProjectionDetailDiagnostic` entries for non-fatal omissions. The
-compatibility `ProjectionDetail` helper returns an empty node when required
-props fail validation.
+compatibility helper remains available for callers that still need the checked
+result shape, while `ui.ProjectionDetail` plus `ui.RenderHTML` is the preferred
+node-first path.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

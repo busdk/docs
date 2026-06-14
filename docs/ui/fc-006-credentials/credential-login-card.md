@@ -5,9 +5,10 @@ description: Shared BusDK UI credential card props and callbacks.
 
 ## Purpose
 
-`CredentialLoginCardChecked` renders a reusable credential entry card for
-email/password, token, or one-time-code sign-in. `CredentialLoginCard` remains
-the string-returning compatibility wrapper for existing callers.
+`ui.CredentialLoginCard` renders a reusable credential entry card for
+email/password, token, or one-time-code sign-in. `CredentialLoginCardChecked`
+remains the compatibility helper for callers that still need the historical
+string-returning path.
 
 ## Inputs
 
@@ -94,7 +95,7 @@ func verifyOTP(event ui.CredentialSubmitEvent) {
 }
 
 func OTPLoginCard() (string, error) {
-	return ui.CredentialLoginCardChecked(ui.CredentialLoginCardProps{
+	node, err := ui.CredentialLoginCard(ui.CredentialLoginCardProps{
 		ID:                   "otp-login",
 		Title:                "Sign in",
 		Copy:                 "Use your work email and one-time code.",
@@ -113,6 +114,10 @@ func OTPLoginCard() (string, error) {
 			Label: "Continue",
 		},
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 
@@ -128,9 +133,8 @@ target is unsafe, or an action token is invalid. Submit action tokens come from
 `SubmitAction` first, then `FormAttrs["data-ui-action"]`; request action
 tokens come from `RequestAction`, then `Request.Control.Action`, then
 `Request.Attrs["data-ui-action"]`. A valid token is a non-empty string using
-letters, digits, `-`, `_`, `.`, `/`, or `:`. The compatibility
-`CredentialLoginCard` wrapper keeps historical defaults for callers that still
-need a string-only render path.
+letters, digits, `-`, `_`, `.`, `/`, or `:`. The compatibility helper keeps
+historical defaults for callers that still need a string-only render path.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
