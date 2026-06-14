@@ -24,7 +24,8 @@ message.
 child has `name` and no `id`; otherwise it uses the child `id`. A child with
 neither `id` nor `name` fails validation because the label would be inaccessible.
 `RenderControlNode` is the preferred node-first path; `BodyHTML` remains only
-for trusted compatibility fragments.
+for trusted compatibility fragments. When you need HTML, render the resulting
+node through the public `pkg/ui` boundary.
 
 ## Example
 
@@ -32,22 +33,26 @@ for trusted compatibility fragments.
 package notesui
 
 import (
-	gx "github.com/busdk/bus-gx/pkg/gx"
 	"github.com/busdk/bus-ui/pkg/ui"
 )
 
-func searchField() (gx.Node, error) {
-	return ui.FieldNodeChecked(ui.FieldProps{
+func searchField() (string, error) {
+	node, err := ui.Field(ui.FieldProps{
 		Label:       "Search",
 		ControlID:   "q",
 		ControlName: "q",
-		RenderControlNode: func(attrs map[string]string) (gx.Node, error) {
-			return ui.TextInputNodeChecked(ui.TextInputProps{
-				Name:  "q",
+		RenderControlNode: func(attrs map[string]string) (ui.GxNode, error) {
+			return ui.Input(ui.InputProps{
+				Type: ui.InputTypeSearch,
+				Name: "q",
 				Attrs: attrs,
 			})
 		},
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 

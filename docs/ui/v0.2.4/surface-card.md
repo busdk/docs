@@ -5,8 +5,8 @@ description: Dedicated BusDK UI reference for SurfaceCard.
 
 ## Purpose
 
-`SurfaceCard` is a node-first card surface component for repeated records or
-compact grouped facts. It is not a page, portal, or app shell.
+`SurfaceCard` is the public node-first card surface component for repeated
+records or compact grouped facts. It is not a page, portal, or app shell.
 
 ## Inputs
 
@@ -26,7 +26,8 @@ compact grouped facts. It is not a page, portal, or app shell.
 shells inside it, including `AppShell`, `PortalShell`, `SidebarShell`,
 `SplitLayout`, or another `SurfaceCard`; use those as surrounding layout
 instead. The preferred path is typed `gx.Node` composition, while the HTML
-fields remain compatibility adapters for trusted fragments.
+fields remain compatibility adapters for trusted fragments. When a caller
+needs HTML, render the node through the public `pkg/ui` boundary.
 
 ## Example
 
@@ -39,11 +40,15 @@ import (
 )
 
 func evidenceCard() (string, error) {
-	return ui.SurfaceCardChecked(ui.SurfaceCardProps{
+	node, err := ui.SurfaceCard(ui.SurfaceCardProps{
 		BodyNodes: []gx.Node{
 			gx.Element("p", nil, gx.Text("Evidence note")),
 		},
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 

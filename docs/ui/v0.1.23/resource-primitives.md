@@ -8,7 +8,9 @@ description: BusDK UI v0.1.23 Go resource clients for API calls, uploads, stream
 `v0.1.23` adds Go/WASM-first resource primitives to the reusable runtime
 packages inside `bus-ui`. A resource client resolves safe host paths, attaches
 approved request helpers, executes requests, decodes responses, and maps
-provider failures into public UI result values.
+provider failures into public UI result values. The public `pkg/ui` facade
+composes higher-level surfaces through `ui.RenderHTML`; these lower-level
+transport helpers sit underneath that boundary.
 
 ```go
 import (

@@ -5,8 +5,8 @@ description: Dedicated BusDK UI reference for FilterToolbar.
 
 ## Purpose
 
-`FilterToolbar` is a node-first navigation/event/form component. Use it as a
-compact filter surface above tables and lists.
+`FilterToolbar` is the public node-first navigation/event/form component. Use
+it as a compact filter surface above tables and lists.
 
 ## Inputs
 
@@ -21,7 +21,8 @@ compact filter surface above tables and lists.
 ## Boundary
 
 Toolbar wraps without changing field names. The preferred path is typed field
-composition; `BodyHTML` remains only for trusted compatibility fragments.
+composition; `BodyHTML` remains only for trusted compatibility fragments. When
+you need HTML, render the resulting node through the public `pkg/ui` boundary.
 
 ## Example
 
@@ -30,26 +31,32 @@ package notesui
 
 import (
 	gx "github.com/busdk/bus-gx/pkg/gx"
-	uikit "github.com/busdk/bus-ui/pkg/uikit"
+	"github.com/busdk/bus-ui/pkg/ui"
 )
 
 func noteFilters() (string, error) {
-	return uikit.FilterToolbarChecked(uikit.FilterToolbarProps{
+	node, err := ui.FilterToolbar(ui.FilterToolbarProps{
 		SourceID: "note-filters",
-		Fields: []uikit.FieldProps{
+		Fields: []ui.FieldProps{
 			{
 				Label:       "Search",
 				ControlID:   "query",
 				ControlName: "query",
 				RenderControlNode: func(attrs map[string]string) (gx.Node, error) {
-					return uikit.TextInputNodeChecked(uikit.TextInputProps{
-						Name:  "query",
+					return ui.Input(ui.InputProps{
+						Type: ui.InputTypeSearch,
+						Name: "query",
 						Attrs: attrs,
 					})
 				},
 			},
 		},
+		OnSubmit: func(event ui.FormSubmitEvent) {},
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 
