@@ -5,8 +5,8 @@ description: Dedicated BusDK UI reference for Form.
 
 ## Purpose
 
-`Form` is a node-first navigation/event/form component. Use it for native
-submit behavior while routing the submit through a runtime event.
+`Form` is the public node-first navigation/event/form component. Use it for
+native submit behavior while routing the submit through a runtime event.
 
 In templates, `<Form>` invokes this component. Lowercase `<form>` remains a
 safe HTML-compatible element; reusable Bus UI behavior belongs in the uppercase
@@ -29,7 +29,8 @@ and external-origin allowlists belong to the receiving resource or navigation
 entry, not the form component. Submit events identify the form source and
 submitter; app controllers decide what model or form state to read. `BodyNodes`
 is the preferred node-first composition path; `BodyHTML` remains only for
-trusted compatibility fragments.
+trusted compatibility fragments. When you need HTML, render the node through
+the public `pkg/ui` boundary.
 
 ## Example
 
@@ -42,13 +43,33 @@ import (
 )
 
 func noteForm() (string, error) {
-	return ui.FormChecked(ui.FormProps{
+	field, err := ui.Field(ui.FieldProps{
+		Label:       "Title",
+		ControlID:   "note-title",
+		ControlName: "title",
+		RenderControlNode: func(attrs map[string]string) (ui.GxNode, error) {
+			return ui.Input(ui.InputProps{
+				Type:  ui.InputTypeText,
+				Name:  "title",
+				Attrs: attrs,
+			})
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	node, err := ui.Form(ui.FormProps{
 		SourceID: "note-editor",
 		Method:   ui.FormMethodPost,
 		BodyNodes: []gx.Node{
+			field,
 			gx.Element("button", gx.Props{"type": "submit", "variant": "primary"}, gx.Text("Save")),
 		},
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 

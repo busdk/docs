@@ -5,11 +5,11 @@ description: Dedicated BusDK UI reference for Input.
 
 ## Purpose
 
-`Input` is the generic typed input component. Use it when no named helper fits,
-and pair visible inputs with a `Field` label or an explicit accessible label
-supplied by the surrounding form. The preferred node-first path is
-`InputNodeChecked` inside `FieldProps.RenderControlNode`; `Input` remains the
-compatibility wrapper.
+`Input` is the public generic typed input component. Use it when no named
+helper fits, and pair visible inputs with a `Field` label or an explicit
+accessible label supplied by the surrounding form. The preferred node-first
+path is `ui.Input` inside `FieldProps.RenderControlNode`; string-returning
+wrappers remain compatibility adapters.
 
 ## Inputs
 
@@ -27,9 +27,10 @@ compatibility wrapper.
 
 This patch covers scalar form controls. Bare visible inputs must have an
 accessible name through `Field` or `labelledBy`; hidden inputs do not need a
-visible label. `InputNodeChecked` and `TextInputNodeChecked` are the typed
-composition entry points when the surrounding component wants a `gx.Node`
-tree.
+visible label. The implementation still uses `InputNodeChecked` and
+`TextInputNodeChecked` underneath, but the public `pkg/ui` facade exposes
+`ui.Input` as the node-first entry point and `ui.RenderHTML` for the render
+boundary.
 
 ## Example
 
@@ -53,6 +54,37 @@ func IncludeArchivedField(includeArchived bool, toggleArchived func()) gx.Node {
       <Input type="checkbox" name="include_archived" value="yes" checked={includeArchived} onChange={toggleArchived}></Input>
     </Field>
   )
+}
+```
+
+Node-first public callers can use the same shape through `pkg/ui`:
+
+```go
+package notesui
+
+import (
+	"github.com/busdk/bus-ui/pkg/ui"
+)
+
+func quantityField(quantity string, setQuantity func(string)) (string, error) {
+	node, err := ui.Field(ui.FieldProps{
+		Label:       "Quantity",
+		ControlID:   "quantity",
+		ControlName: "quantity",
+		RenderControlNode: func(attrs map[string]string) (ui.GxNode, error) {
+			return ui.Input(ui.InputProps{
+				Type:  ui.InputTypeNumber,
+				Name:  "quantity",
+				Value: quantity,
+				OnInput: setQuantity,
+				Attrs: attrs,
+			})
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 

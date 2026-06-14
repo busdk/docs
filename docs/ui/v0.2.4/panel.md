@@ -5,8 +5,8 @@ description: Dedicated BusDK UI reference for Panel.
 
 ## Purpose
 
-`Panel` is a node-first shell/layout component. Use it for bounded titled work
-surfaces such as forms, settings, and detail views.
+`Panel` is the public node-first shell/layout component. Use it for bounded
+titled work surfaces such as forms, settings, and detail views.
 
 ## Inputs
 
@@ -25,7 +25,8 @@ surfaces such as forms, settings, and detail views.
 
 The preferred path is typed `gx.Node` composition through `BodyNodes`,
 `ActionNodes`, and `FooterNodes`. The compatibility HTML fields remain only for
-trusted fragments that are already rendered elsewhere.
+trusted fragments that are already rendered elsewhere. When you need HTML,
+render the node through the public `pkg/ui` boundary.
 
 ## Example
 
@@ -38,12 +39,16 @@ import (
 )
 
 func draftPanel() (string, error) {
-	return ui.PanelChecked(ui.PanelProps{
+	node, err := ui.Panel(ui.PanelProps{
 		Title: "Draft",
 		BodyNodes: []gx.Node{
 			gx.Element("p", nil, gx.Text("Ready to review")),
 		},
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 ```
 

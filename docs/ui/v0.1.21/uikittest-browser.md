@@ -5,10 +5,10 @@ description: BusDK UI v0.1.21 fixture mounting and fake browser helpers for Go W
 
 ## Contract
 
-`v0.1.21` extends `pkg/uikit/uikittest` with browser-parity helpers. Product
-modules can mount a fixture, dispatch typed callbacks, and compare server,
-WASM, and pure-renderer behavior without making every state transition an e2e
-test.
+`v0.1.21` extends the deterministic UI test helpers with browser-parity
+fixtures. Product modules can mount a fixture, dispatch typed callbacks, and
+compare server, WASM, and pure-renderer behavior without making every state
+transition an e2e test.
 
 ```go
 func TestMountedCounter(t *testing.T) {

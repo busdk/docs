@@ -5,9 +5,9 @@ description: BusDK UI v0.1.20 deterministic renderer helpers for GX and Bus UI c
 
 ## Contract
 
-`v0.1.20` starts `pkg/uikit/uikittest` with deterministic renderer helpers for
-pure Go component tests. The helpers render GX nodes, normalize attributes,
-compare trees, and produce compact diffs that point to the failing element.
+`v0.1.20` adds deterministic renderer helpers for pure Go component tests.
+The helpers render GX nodes, normalize attributes, compare trees, and produce
+compact diffs that point to the failing element.
 
 ```go
 func TestCounter(t *testing.T) {
