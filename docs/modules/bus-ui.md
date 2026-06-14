@@ -72,6 +72,8 @@ The pre-final bridge pattern is:
   time
 - keep module-owned action and resource registries explicit while using shared
   `bus-ui` validation, result, resource, and logging contracts
+- compose deferred runtime scripts through `ui.ShellDeferredScript` and
+  `AppShell.HeadNodes` instead of post-render script insertion
 - declare WASM assets and runtime configuration through the portal host/module
   metadata instead of hidden module-local script behavior
 - cover fake-provider success and failure paths for action/resource dispatch
