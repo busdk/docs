@@ -25,6 +25,9 @@ Use `bus-ui` when a BusDK frontend needs shared presentation pieces instead of
 module-local markup. Stable exported surfaces include form controls, buttons,
 cards, tables, shells, shared CSS, assistant panels, terminal panes, evidence
 surfaces, browser/WASM helpers, VDOM mounting, and compiled template helpers.
+The preferred public `pkg/ui` facade also re-exports `Fragment` and
+`RenderHTML` so callers can compose `gx.Node` trees at the page boundary while
+keeping the older string helpers available for compatibility.
 
 For assistant frontends, `bus-ui` keeps generic panel rendering, message
 formatting, model selection, approval cards, activity status, close guards, and
