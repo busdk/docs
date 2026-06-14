@@ -26,21 +26,21 @@ active content.
 | Prop | Required | Behavior |
 | --- | --- | --- |
 | `PreviewURL` | yes for inline preview | Authorized URL string; omitted renders fallback. |
-| `OpenURL` | no | Checked URL for the Open control. Omitted defaults to `PreviewURL`; missing, denied, or unsafe URLs render the control disabled. |
-| `DownloadURL` | no | Checked URL for the Download control. Omitted defaults to `PreviewURL`; missing, denied, or unsafe URLs render the control disabled. |
+| `OpenURL` | no | Safe URL for the Open control. Omitted defaults to `PreviewURL`; missing, denied, or unsafe URLs render the control disabled. |
+| `DownloadURL` | no | Safe URL for the Download control. Omitted defaults to `PreviewURL`; missing, denied, or unsafe URLs render the control disabled. |
 | `Title` | yes | Public-safe preview title. |
 | `ContentType` | yes for inline preview | Provider-verified MIME type. |
 | `ContentDisposition` | no | `attachment` and unsafe filenames block inline preview. |
 | `Reason` | no | Public-safe resolver denial reason. |
 
 ```go
-html, err := uikit.EvidencePreviewChecked(uikit.EvidencePreviewProps{
+html, err := ui.RenderHTML(ui.EvidencePreview(ui.EvidencePreviewProps{
 	PreviewURL:  resolved.URL,
 	OpenURL:     resolved.URL,
 	DownloadURL: resolved.URL,
 	Title:       "Receipt 2026-04-18",
 	ContentType: resolved.ContentType,
-})
+}))
 if err != nil {
 	return "", err
 }
@@ -54,6 +54,11 @@ external-origin allowlists, and storage policy before URLs reach the props.
 
 Evidence preview makes authorized content inspectable without trusting arbitrary
 remote content.
+
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

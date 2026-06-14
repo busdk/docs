@@ -59,7 +59,7 @@ runtime. Its output must be deterministic for the same inputs so module tests
 can compare server HTML directly.
 
 ```go
-func renderReportsPage(ctx portal.UIRenderContext) uikit.Node {
+func renderReportsPage(ctx portal.UIRenderContext) gx.Node {
     props := ReportsPageProps{
         Host: uiportal.HostContextFromPortal(ctx.HostContext),
         Rows: reportRows(ctx),
@@ -69,11 +69,10 @@ func renderReportsPage(ctx portal.UIRenderContext) uikit.Node {
 }
 ```
 
-When a module still has legacy string HTML during migration, keep that adapter
-small and feed it only trusted or sanitized fragments. New framework pages
-should use typed Go components and `.gx` source over `BodyNodes` assembly, and
-any required HTML-only boundary should stay in a narrow, explicitly named
-adapter.
+When a module needs an HTML boundary, render the returned node with
+`uiportal.RenderHTML`, `assistantui.RenderHTML`, `terminalui.RenderHTML`, or
+`ui.RenderHTML` at the page edge. New framework pages should use typed Go
+components and `.gx` source over `BodyNodes` assembly.
 
 GX source can wrap the same shape with typed props when a module page is written
 as `.gx`. Data still arrives as ordinary Go values.

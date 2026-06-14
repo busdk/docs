@@ -6,8 +6,9 @@ description: Dedicated BusDK UI reference for DropZone.
 ## Purpose
 
 `DropZone` is a shared intake surface for files, local paths, or trusted staged
-upload tokens. Use it where a product module needs upload, import, evidence, or
-attachment intake without giving the component ownership of storage policy.
+upload tokens. Use the public `ui.DropZone` node-first helper where a product
+module needs upload, import, evidence, or attachment intake without giving the
+component ownership of storage policy.
 
 ## Inputs
 
@@ -35,8 +36,9 @@ single-source-handle rule, but the event handler must still enforce file count,
 content, authorization, upload, and storage rules.
 
 `InputHTML`, `ActionsHTML`, and `ErrorHTML` are raw HTML insertion points for
-trusted Bus UI output. Do not pass user-controlled strings into those fields;
-escape user text before composing the trusted markup.
+trusted Bus UI output and remain a compatibility boundary for host-owned
+markup. Do not pass user-controlled strings into those fields; escape user text
+before composing the trusted markup.
 
 Drop adapters and controllers use these Go shapes:
 
@@ -118,10 +120,10 @@ the same source and policy values through ordinary Go lexical scope.
 ```go
 package intakeui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
-func renderReceiptDrop() string {
-	return uikit.DropZone(uikit.DropZoneProps{
+func renderReceiptDrop() (string, error) {
+	node, err := ui.DropZone(ui.DropZoneProps{
 		ID:            "receipt-drop",
 		SourcePath:    "/DropZone[0]",
 		Title:         "Drop receipts",
@@ -129,13 +131,17 @@ func renderReceiptDrop() string {
 		AcceptedTypes: []string{"application/pdf", ".csv"},
 		MaxBytes:      10 << 20,
 	})
+	if err != nil {
+		return "", err
+	}
+	return ui.RenderHTML(node)
 }
 
-func acceptReceiptDrop(items []uikit.DropItem) uikit.DropAcceptResult {
-	return uikit.AcceptDropItems(
-		uikit.DropSource{ID: "receipt-drop", Path: "/DropZone[0]"},
+func acceptReceiptDrop(items []ui.DropItem) ui.DropAcceptResult {
+	return ui.AcceptDropItems(
+		ui.DropSource{ID: "receipt-drop", Path: "/DropZone[0]"},
 		items,
-		uikit.DropPolicy{
+		ui.DropPolicy{
 			AcceptedTypes: []string{"application/pdf", ".csv"},
 			MaxBytes:      10 << 20,
 		},

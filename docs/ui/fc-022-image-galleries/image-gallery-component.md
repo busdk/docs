@@ -5,18 +5,17 @@ description: Dedicated BusDK UI reference for ImageGallery.
 
 ## Purpose
 
-`ImageGalleryChecked` is the preferred linked image gallery API for actual
-visual content that users inspect. It returns safe rendered HTML plus
-diagnostics for rejected items. `ImageGallery` remains available as a
-compatibility wrapper that returns only rendered HTML.
+`ui.ImageGallery` is the preferred linked image gallery API for actual visual
+content that users inspect. Render the returned node with `ui.RenderHTML` at
+the page boundary.
 
-When every item passes validation, `ImageGalleryChecked` returns
-`ImageGalleryResult` with rendered `HTML`, the accepted `Items`, no diagnostics,
-and a nil error. When one or more items fail item validation, it returns partial
-safe gallery HTML for the accepted items, includes diagnostic entries for the
-omitted items, and returns `ErrImageGalleryItemRejected`. Invalid allowlist
-origins or unsafe root attributes fail before rendering and return an empty
-result with the corresponding error.
+When every item passes validation, the component returns `ImageGalleryResult`
+with rendered `HTML`, the accepted `Items`, no diagnostics, and a nil error.
+When one or more items fail item validation, it returns partial safe gallery
+HTML for the accepted items, includes diagnostic entries for the omitted
+items, and returns `ErrImageGalleryItemRejected`. Invalid allowlist origins or
+unsafe root attributes fail before rendering and return an empty result with
+the corresponding error.
 
 ## Inputs
 
@@ -38,9 +37,9 @@ and path resolution remain host-owned boundaries.
 ```go
 package mediaui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
-var invoicePages = []uikit.ImageItem{
+var invoicePages = []ui.ImageItem{
 	{Src: "/preview/a.png", Alt: "Invoice page 1", Caption: "Page 1"},
 	{
 		Src:     "https://media.example.com/invoices/2026-05/a.png",
@@ -50,16 +49,20 @@ var invoicePages = []uikit.ImageItem{
 	},
 }
 
-func renderInvoiceGallery() (uikit.ImageGalleryResult, error) {
-	return uikit.ImageGalleryChecked(uikit.ImageGalleryProps{
+func renderInvoiceGallery() (string, error) {
+	return ui.RenderHTML(ui.ImageGallery(ui.ImageGalleryProps{
 		Items:        invoicePages,
 		ImageOrigins: []string{"https://media.example.com"},
-	})
+	}))
 }
 ```
 
-`ImageItem` is an alias for `ImageGalleryItem` from
-`github.com/busdk/bus-ui/pkg/uikit`.
+`ImageItem` is an alias for `ImageGalleryItem` from the public `ui` facade.
+
+## Legacy compatibility
+
+`ImageGalleryChecked` remains available for callers that still need the
+historical checked helper and diagnostics.
 
 ## Runtime Terms
 
@@ -80,9 +83,9 @@ external URLs, and `PathClass` names the rejected URL class such as `missing`,
 `relative`, `traversal`, `external-scheme`, `credentials`, or
 `unlisted-origin`.
 
-`ImageGalleryChecked` does not name or call a resolver. The host or controller
-resolves provider paths first, then passes only resolved safe URLs in
-`ImageGalleryItem.Src` and `ImageGalleryItem.Href`.
+The compatibility helper does not name or call a resolver. The host or
+controller resolves provider paths first, then passes only resolved safe URLs
+in `ImageGalleryItem.Src` and `ImageGalleryItem.Href`.
 
 Accepted examples: `/preview/a.png` and
 `https://media.example.com/invoices/a.png` when that exact origin is allowlisted.

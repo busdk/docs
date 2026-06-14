@@ -8,8 +8,7 @@ description: Dedicated BusDK UI reference for Input.
 `Input` is the public generic typed input component. Use it when no named
 helper fits, and pair visible inputs with a `Field` label or an explicit
 accessible label supplied by the surrounding form. The preferred node-first
-path is `ui.Input` inside `FieldProps.RenderControlNode`; string-returning
-wrappers remain compatibility adapters.
+path is `ui.Input` inside `FieldProps.RenderControlNode`.
 
 ## Inputs
 
@@ -27,10 +26,8 @@ wrappers remain compatibility adapters.
 
 This patch covers scalar form controls. Bare visible inputs must have an
 accessible name through `Field` or `labelledBy`; hidden inputs do not need a
-visible label. The implementation still uses `InputNodeChecked` and
-`TextInputNodeChecked` underneath, but the public `pkg/ui` facade exposes
-`ui.Input` as the node-first entry point and `ui.RenderHTML` for the render
-boundary.
+visible label. The public `pkg/ui` facade exposes `ui.Input` as the node-first
+entry point and `ui.RenderHTML` for the render boundary.
 
 ## Example
 
@@ -44,7 +41,7 @@ func QuantityField(quantity string, setQuantity func(string)) gx.Node {
 }
 ```
 
-Checked controls use the same component with explicit `checked` state. A simple
+Checkbox and radio controls use the same component with explicit `checked` state. A simple
 toggle callback is acceptable when the parent component owns the previous state:
 
 ```gx
@@ -87,6 +84,11 @@ func quantityField(quantity string, setQuantity func(string)) (string, error) {
 	return ui.RenderHTML(node)
 }
 ```
+
+## Legacy compatibility
+
+The older `InputNodeChecked` and `TextInputNodeChecked` helpers remain
+available for migration, but they are no longer the preferred public path.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

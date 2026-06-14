@@ -11,7 +11,7 @@ provider data into public-safe facts.
 
 ## Contract
 
-`ProviderErrorChecked` renders `ProviderErrorProps` after validation. Missing
+Preferred rendering uses `ui.ProviderError` plus `ui.RenderHTML`. Missing
 titles, invalid status values, unsafe request ids, invalid field paths,
 duplicate field projections, and unsafe text fail before render.
 
@@ -38,7 +38,11 @@ into safe title, summary, code, status, request id, controls, and field
 validation before rendering.
 
 ```go
-safeError := uikit.ProviderErrorProps{
+package notesui
+
+import "github.com/busdk/bus-ui/pkg/ui"
+
+safeError := ui.ProviderErrorProps{
 	Title:     "Could not save note",
 	Summary:   "Check the title and try again.",
 	Code:      "validation.failed",
@@ -48,7 +52,7 @@ safeError := uikit.ProviderErrorProps{
 		"title": "Title is required.",
 	},
 	RetryLabel: "Try again",
-	Retry: uikit.ControlProps{
+	Retry: ui.ControlProps{
 		Action:   "provider.retry",
 		SourceID: "note-save",
 	},
@@ -58,7 +62,7 @@ safeError := uikit.ProviderErrorProps{
 This raw payload is rejected:
 
 ```go
-unsafeError := uikit.ProviderErrorProps{
+unsafeError := ui.ProviderErrorProps{
 	Title:   "SQL failed",
 	Summary: "token=secret SELECT * FROM customers",
 }
@@ -67,6 +71,11 @@ unsafeError := uikit.ProviderErrorProps{
 ## Consequence
 
 Users see actionable errors without exposing provider internals or credentials.
+
+## Legacy compatibility
+
+The compatibility helpers remain available for callers that still need the
+historical checked or string-returning paths.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">

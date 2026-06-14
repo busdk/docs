@@ -14,7 +14,6 @@ message.
 | --- | --- | --- | --- |
 | `label` | yes | string | Visible label; empty labels fail validation. |
 | `renderControlNode` | yes | node callback | Preferred typed control composition path. |
-| `bodyHTML` | no | string | Compatibility escape hatch for trusted legacy control markup. |
 | `hint` | no | string | Help text associated through `aria-describedby`; omitted renders no hint. |
 | `error` | no | string | Validation error associated through `aria-describedby` and marks the control invalid. |
 
@@ -22,10 +21,9 @@ message.
 
 `Field` associates the label with the child control automatically when the
 child has `name` and no `id`; otherwise it uses the child `id`. A child with
-neither `id` nor `name` fails validation because the label would be inaccessible.
-`RenderControlNode` is the preferred node-first path; `BodyHTML` remains only
-for trusted compatibility fragments. When you need HTML, render the resulting
-node through the public `pkg/ui` boundary.
+neither `id` nor `name` fails validation because the label would be
+inaccessible. `RenderControlNode` is the preferred node-first path. When you
+need HTML, render the resulting node through the public `pkg/ui` boundary.
 
 ## Example
 
@@ -66,3 +64,8 @@ func searchField() (string, error) {
 
 - UI component reference
 - [bus-ui module reference](../../modules/bus-ui)
+
+## Legacy compatibility
+
+`BodyHTML` remains available only for trusted migration fragments that still
+need to bridge old string markup into the node-first field shell.

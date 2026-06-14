@@ -18,11 +18,10 @@ core controls, shared CSS tokens, generic authentication surfaces, generic form
 surfaces, shared download/link actions, reusable summary and metric cards,
 generic timeline and gallery renderers, and generic AI interface components.
 
-The public surface is node-first: reusable components build `gx.Node` trees,
-checked helpers validate public inputs before render, and HTML output happens
-through the shared render boundary or explicitly named HTML adapters. The
-`Checked` and silent string helpers remain compatibility and migration
-vocabulary rather than the preferred authoring shape.
+The public surface is node-first: reusable components build `gx.Node` trees
+and HTML output happens through explicit render boundaries such as
+`ui.RenderHTML`, `assistantui.RenderHTML`, `terminalui.RenderHTML`,
+`uiportal.RenderHTML`, or `gx.RenderHTML`.
 
 Current implemented UI roadmap milestone: **FC-011 Assistant composer and
 attachments**.
@@ -31,19 +30,18 @@ Use `bus-ui` when a BusDK frontend needs shared presentation pieces instead of
 module-local markup. Stable exported surfaces include form controls, buttons,
 cards, tables, shells, shared CSS, assistant panels, terminal panes, evidence
 surfaces, browser/WASM helpers, VDOM mounting, and compiled template helpers.
-The preferred public `pkg/ui` facade also re-exports `Fragment` and
-`RenderHTML` so callers can compose `gx.Node` trees at the page boundary while
-keeping the older string helpers available for compatibility.
+The preferred public `pkg/ui` facade re-exports `Fragment` and `RenderHTML`
+for page-boundary composition. `pkg/assistantui`, `pkg/terminalui`, and
+`pkg/uiportal` provide the owner-package facades for assistant, terminal, and
+portal shells respectively.
 
 For assistant frontends, `bus-ui` keeps generic panel rendering, message
 formatting, model selection, approval cards, activity status, close guards, and
-drop handling out of product modules. FC-011 adds checked assistant draft
-primitives: `AIComposerChecked` renders controlled draft input with source-only
-send and interrupt callbacks, `AIAttachmentListChecked` renders approved
-attachment chips with callback-gated controls, and
-`ApplyAIAttachmentStateEventChecked` applies host-owned attachment state
-changes. Browser file access, upload policy, authorization, provider transfer,
-and product-specific behavior stay in the owning module.
+drop handling out of product modules. FC-011 uses the public
+`assistantui.AIComposer` and `assistantui.AIAttachmentList` facades for draft
+input and approved attachment chips, with `assistantui.RenderHTML` as the
+render boundary. Browser file access, upload policy, authorization, provider
+transfer, and product-specific behavior stay in the owning module.
 
 The focused UI framework references describe the public contracts for
 [assistant panels](../ui/fc-009-assistant-workbench-shell/assistant-panel),
@@ -52,6 +50,12 @@ The focused UI framework references describe the public contracts for
 [forms](../ui/v0.3.1/forms),
 [shells](../ui/v0.2.6/shells), and
 [terminal panes](../ui/fc-015-terminal-io/terminal-output).
+
+## Migration status
+
+Legacy checked and string-returning helpers remain in the compatibility
+packages for older call sites, but new documentation should treat them as
+retained internals rather than preferred APIs.
 
 ### Portal-family adoption readiness
 

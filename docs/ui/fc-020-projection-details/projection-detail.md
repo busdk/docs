@@ -45,7 +45,7 @@ The table names the exported Go fields shown above.
 
 | Field | Required | Behavior |
 | --- | --- | --- |
-| `Title` | yes | Non-empty public-safe string. Missing title makes `ProjectionDetailChecked` return `ErrProjectionDetailTitleRequired` without HTML; unsafe title returns `ErrProjectionDetailUnsafeTitle` with a title diagnostic. |
+| `Title` | yes | Non-empty public-safe string. Missing title fails closed before render; unsafe title returns a title diagnostic. Preferred rendering uses `ui.ProjectionDetail` plus `ui.RenderHTML`. |
 | `Summary` | no | Public-safe string; unsafe summaries are omitted with diagnostics. |
 | `Fields` | no | Public-safe label/value rows. `Value` is already formatted by the controller. |
 | `Evidence` | no | `[]ProjectionEvidenceAction`. Each action has a stable `ID`, public-safe `Label`, `Operation` of `open`, `download`, or `preview`, and a host-authorized `URL`. `Filename` is required for `download`. `MediaType` is required for `preview` and must be `application/pdf`, `image/png`, `image/jpeg`, or `text/plain`. |
@@ -78,7 +78,7 @@ evidence actions render as unavailable links. The checked helper still renders
 the remaining safe detail and returns diagnostics with the result:
 
 ```go
-var diagnostic = uikit.ProjectionDetailDiagnostic{
+var diagnostic = ui.ProjectionDetailDiagnostic{
 	Type:      "validation",
 	Component: "ProjectionDetail",
 	Field:     "fields[0].value",
@@ -87,7 +87,13 @@ var diagnostic = uikit.ProjectionDetailDiagnostic{
 ```
 
 The product view model owns which fields are visible and how evidence relates
-to the product workflow.
+to the product workflow. `ui.ProjectionDetail` plus `ui.RenderHTML` is the
+current-facing node-first path.
+
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper and diagnostics.
 
 ## Consequence
 

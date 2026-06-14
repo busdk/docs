@@ -15,14 +15,13 @@ it as a compact filter surface above tables and lists.
 | `SourceID` | recommended for events | string | Stable source id included in submit and reset events. If omitted, the renderer uses the component tree path as the source. |
 | `onSubmit` | yes | callback | Runs when the toolbar form is submitted. The event identifies the toolbar source; the app controller decides what filter state to read. |
 | `fields` | yes | `Field` props array | Preferred node-first field composition path. |
-| `bodyHTML` | no | string | Compatibility escape hatch for trusted legacy toolbar markup. |
 | `reset` | no | callback | Omitted hides reset. When present, the handler should clear filter state, and the UI may also clear local draft inputs after success. |
 
 ## Boundary
 
 Toolbar wraps without changing field names. The preferred path is typed field
-composition; `BodyHTML` remains only for trusted compatibility fragments. When
-you need HTML, render the resulting node through the public `pkg/ui` boundary.
+composition. When you need HTML, render the resulting node through the public
+`pkg/ui` boundary.
 
 ## Example
 
@@ -74,3 +73,8 @@ func noteFilters() (string, error) {
 
 - UI component reference
 - [bus-ui module reference](../../modules/bus-ui)
+
+## Legacy compatibility
+
+`BodyHTML` remains available only for trusted migration fragments that still
+need to bridge old string markup into the node-first toolbar shell.

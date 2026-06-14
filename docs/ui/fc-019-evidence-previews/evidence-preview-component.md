@@ -5,9 +5,10 @@ description: Dedicated BusDK UI reference for EvidencePreview.
 
 ## Purpose
 
-`EvidencePreview` renders one checked inline evidence preview or a public-safe
+`EvidencePreview` renders one inline evidence preview or a public-safe
 fallback. It consumes an already-authorized preview URL, optional open/download
 URLs, provider-verified metadata, and a public title.
+Render the returned node with `ui.RenderHTML` at the page boundary.
 
 ## Inputs
 
@@ -37,16 +38,21 @@ outside `bus-ui`.
 ```go
 package evidenceui
 
-import "github.com/busdk/bus-ui/pkg/uikit"
+import "github.com/busdk/bus-ui/pkg/ui"
 
 func InvoicePreview(previewURL string) (string, error) {
-	return uikit.EvidencePreviewChecked(uikit.EvidencePreviewProps{
+	return ui.RenderHTML(ui.EvidencePreview(ui.EvidencePreviewProps{
 		PreviewURL:  previewURL,
 		Title:       "Invoice 2026-04",
 		ContentType: "application/pdf",
-	})
+	}))
 }
 ```
+
+## Legacy compatibility
+
+The compatibility helper remains available for callers that still need the
+historical checked helper.
 
 ## Runtime Terms
 
