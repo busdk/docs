@@ -274,7 +274,8 @@ not matrix-advanced until `pkg/ui/data_evidence.go` no longer imports
 Known child slices are:
 
 - tables: dense table and text table types, checked/string/node helpers, and
-  generated/adapter render helpers;
+  generated/adapter render helpers; accepted in `bus-ui` `4db9621`
+  (`task-c3b890074557`);
 - records: record list and summary item types, checked/string/node helpers,
   and generated/adapter render helpers;
 - evidence: evidence link and evidence preview helpers;
@@ -289,6 +290,20 @@ false-active after no hard-gate/table/diff evidence. Worker
 table/record source map, but was stopped after the implementation turn produced
 no diff. Next dispatch should split tighter, starting with a table-only slice,
 before any implementation model escalation.
+
+Table-only child implementation: `bus-ui` `4db9621`
+(`task-c3b890074557`; worker
+`gx-ui-core-ui-data-evidence-tables-only-spark-20260616a`) accepted the dense
+and text table subset. The worker moved table types, node-first helpers, and
+compiled table render support into `pkg/ui`, removed table `uikit` aliases from
+`pkg/ui/data_evidence.go` and `pkg/ui/ui.go`, and preserved the public
+node-first behavior expected by `pkg/ui` tests. Primary `bus-ui` verification:
+`go test ./pkg/ui`, `go test ./...`, `git diff --check HEAD~1..HEAD`, and the
+scoped table-symbol `uikit` audit all passed. The parent
+`pkg/ui/data_evidence.go` row remains active because records, evidence
+links/previews, projection/provider, timeline, and image gallery children still
+need to move before the deletion probe can advance beyond this compiler
+blocker.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
