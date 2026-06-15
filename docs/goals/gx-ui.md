@@ -1151,9 +1151,12 @@ Core facade work now split by completed probes:
   facade for render props, panel render path, model/event catalogs, and the AI
   panel client script, is accepted through `task-ad933078fd5d`. Critical
   Slice B, public DTO/helper parity for thread/status/poll/history/message/
-  event behavior, is accepted through `task-cac06aa451fc`. Critical Slice C
-  remains pending: canonical
-  terminal DTO ownership/alias strategy. Slice D is non-critical contract
+  event behavior, is accepted through `task-cac06aa451fc`. Critical Slice C,
+  canonical terminal DTO ownership/alias strategy, is accepted as a no-change
+  decision through `task-b042d7fd4405`: terminal/session/event/approval DTOs
+  are canonically owned by `terminalruntime` and surfaced through
+  `terminalui`, while AI thread-isolation DTOs remain surfaced through
+  `assistantui`. Slice D is non-critical contract
   hardening and migration docs for token/action registry behavior. The
   completed Factory probe still leaves a concrete decision on ACP/status plus
   Go diagnostics DTO parity if those wire types should no longer depend on
