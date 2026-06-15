@@ -332,6 +332,45 @@ records/summary, projection/provider, timeline, and image gallery children
 still need to move before the deletion probe can advance beyond this compiler
 blocker.
 
+Timeline child attempt:
+`gx-ui-core-ui-data-evidence-timeline-only-spark-20260616a`
+(`task-f912eb9d264e`) materialized a populated `bus-ui` module checkout at
+`0f86ae9`, but produced no assistant hard-gate/source-map output and no diff
+after the initial prompt plus one exact patch-target nudge. It was closed
+no-diff/superseded. The timeline child remains unfinished and should be
+relaunched with a tighter supervisor-planned patch target before any
+implementation model escalation.
+
+Timeline retry:
+`gx-ui-core-ui-data-evidence-timeline-only-spark-20260616b`
+(`task-004ed7d427ba`) also materialized `bus-ui` at `0f86ae9`, but stayed
+clean and produced no assistant hard-gate/source-map output or diff; its logs
+showed tool/path and regex errors. It was closed no-diff/superseded. Timeline
+remains unfinished; the next attempt should avoid globs/regex-heavy discovery
+or first diagnose the worker command path.
+
+Image gallery child attempt:
+`gx-ui-core-ui-data-evidence-gallery-only-spark-20260616a`
+(`task-48782bcc6e1a`) materialized `bus-ui` at `0f86ae9`, but stayed clean and
+produced no assistant hard-gate/source-map output or diff after the initial
+prompt plus one exact patch-target nudge. Its App Server logs showed duplicate
+`workdir` tool argument and missing-file tool-router errors. The image gallery
+child remains unfinished. More same-shape implementation workers should be
+parked until the local App Server worker execution path is diagnosed or a
+different patch-applying runtime is selected.
+
+Image gallery alternate-runtime attempt:
+`task-6219bd0a2c51` tried to keep the same already-scoped gallery patch target
+while changing execution path. `codex-direct` was rejected by the local Workers
+API as an unsupported runner pair. `bus-agent-runtime` with `--prompt-file`
+failed before materialization because the prompt file was not in its allowed
+roots. `bus-agent-runtime` with inline prompt materialized `bus-ui` at
+`0f86ae9`, but routed `gpt-5.3-codex-spark` to the local
+OpenAI-compatible endpoint `127.0.0.1:11434`, which refused the connection.
+No patch was produced. The image gallery child remains unfinished; the next
+action is worker execution/config diagnosis or a known patch-applying runtime,
+not another same-shape product worker.
+
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
 
