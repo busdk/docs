@@ -516,6 +516,28 @@ production ownership further:
   outside stylesheet URL strings. Notes tests still use `uikit`/`uikittest`,
   but the immediate adopter DoD is production cleanup plus focused tests.
 
+A follow-up local `2026-06-15 13:29 EEST` file-level audit found the same
+active production residue, plus expected test-only and stylesheet URL hits.
+The active production files still needing adopter cleanup are:
+
+- `bus-portal-ai/pkg/aiportal/actions.go`;
+- `bus-portal-ai/pkg/aiportal/terminal_runtime.go`;
+- `bus-portal-ai/pkg/aiportal/wasm_runtime_js.go`;
+- `bus-portal/internal/cli/flags.go`;
+- `bus-portal/internal/run/run.go`;
+- `bus-portal/internal/server/logging.go`;
+- `bus-portal/internal/server/server.go`;
+- `bus-portal/internal/ui/wasm/app.go`;
+- `bus-portal/internal/ui/wasm/launcher.go`;
+- `bus-portal-notes/runtime_reducer.go`;
+- `bus-portal-notes/runtime.go`;
+- `bus-portal-notes/view_models.go`.
+
+`bus-portal/pkg/portal/contract.go` still contains the
+`assets/uikit.css` URL string and is not itself an architecture blocker.
+Notes render/runtime tests still import `uikit` or `uikittest`; migrate them
+only after the production path and core facades are settled.
+
 Post-reset worker guidance should keep the core slices separate:
 
 - For `task-646c27a30fb6`, own only `bus-ui/pkg/terminalui/**` plus focused
@@ -601,9 +623,12 @@ before then:
 1. Verify individual status for the five live workers, not only bulk list:
    `gx-ui-terminal-runtime-facade-spark-20260615a`,
    `gx-ui-runtime-facade-spark-20260615a`,
-   `gx-ui-ai-uikit-spark-20260615b`,
+   `gx-ui-ai-uikit-spark-20260615c`,
    `gx-ui-portal-uikit-spark-20260615b`, and
    `gx-ui-notes-runtime-spark-20260615a`.
+   The dirty AI retry `gx-ui-ai-uikit-spark-20260615b` is stopped by
+   individual status and should be treated as preserved evidence even if a
+   stale bulk `workers list` projection still shows it as running.
 2. Message the two core `bus-ui` workers first:
    - terminal runtime facade worker on `task-646c27a30fb6`;
    - UI helper facade worker on `task-84d0842bbbff`.
