@@ -787,6 +787,27 @@ accepted Notes patch uses typed `ui.SubmitState("...")` literals for those
 states. Treat exporting those constants as a small core follow-up, not as a
 reason to reject the production import cleanup.
 
+## 2026-06-15 14:35 Core Facade Polish Acceptance
+
+The small core `pkg/ui` facade polish gap is now accepted locally:
+
+- worker `gx-ui-ui-facade-polish-mini-20260615a`, task `task-6ae19b0f6440`;
+- worker commit `b4204108aadc560acdd0808d99fe149437e31cc6`;
+- promoted primary `bus-ui` commit `c0d42e1`, `Add pkg/ui facade parity
+  aliases`;
+- BusDK pin commit `6543e3b`, `Pin ui facade parity aliases`;
+- exported aliases: `ui.DOMAttrUIAction`, `ui.SubmitStateWorking`,
+  `ui.SubmitStateSuccess`, `ui.SubmitStateError`, and
+  `ui.CSSBundleCSSChecked`;
+- verification on promoted primary: `git diff --check HEAD~1..HEAD`,
+  `go test ./pkg/ui -count=1`, and `go test ./... -count=1`.
+
+Portal and AI adopter workers should now replace local workarounds with these
+public facades before their cleanup branches are accepted. In particular,
+Portal should call `ui.CSSBundleCSSChecked(ui.CSSBundleOptions{})` directly
+instead of unwrapping `ui.CSSBundleChecked` output, and AI should use
+`ui.DOMAttrUIAction` instead of local `"data-ui-action"` literals.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
