@@ -282,7 +282,8 @@ Known child slices are:
   `0f86ae9` (`task-53e82acad2c3`);
 - projection/provider: projection detail and provider error helpers;
 - timeline: timeline types, checked/string/node helpers;
-- image gallery: image gallery types, validation, checked/string/node helpers.
+- image gallery: image gallery types, validation, checked/string/node helpers;
+  accepted in `bus-ui` `ca10596` (`task-96efd1e7f76e`).
 
 Worker `gx-ui-core-ui-data-evidence-spark-20260616a` was stopped as
 false-active after no hard-gate/table/diff evidence. Worker
@@ -328,9 +329,22 @@ expected by `pkg/ui` tests. Primary `bus-ui` verification: `go test ./pkg/ui`,
 data-evidence evidence-symbol `uikit` audit all passed. The broader
 `shell_evidence_facade.go` resolver aliases remain out of scope for this
 parent blocker. The parent `pkg/ui/data_evidence.go` row remains active because
-records/summary, projection/provider, timeline, and image gallery children
-still need to move before the deletion probe can advance beyond this compiler
-blocker.
+records/summary, projection/provider, and timeline children still need to move
+before the deletion probe can advance beyond this compiler blocker.
+
+Image-gallery child implementation: `bus-ui` `ca10596`
+(`task-96efd1e7f76e`; worker
+`gx-ui-core-ui-data-evidence-image-gallery-only-spark-20260616c`) accepted the
+FC-022 image-gallery subset. The worker moved image-gallery types,
+diagnostics, validation, string render helpers, and node-first helpers into
+`pkg/ui`, removed image-gallery `uikit` aliases from
+`pkg/ui/data_evidence.go` and `pkg/ui/ui.go`, and preserved the public
+node-first behavior expected by `pkg/ui` tests. Primary `bus-ui`
+verification: `go test ./pkg/ui`, `go test ./...`,
+`git diff --check HEAD~1..HEAD`, and the scoped image-gallery alias audit all
+passed. The parent `pkg/ui/data_evidence.go` row remains active because
+records/summary, projection/provider, and timeline children still need to move
+before the deletion probe can advance beyond this compiler blocker.
 
 Timeline child attempt:
 `gx-ui-core-ui-data-evidence-timeline-only-spark-20260616a`
