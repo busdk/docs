@@ -538,6 +538,38 @@ The active production files still needing adopter cleanup are:
 Notes render/runtime tests still import `uikit` or `uikittest`; migrate them
 only after the production path and core facades are settled.
 
+A broader pre-reset DoD-pattern audit at `2026-06-15 13:38 EEST` added these
+post-core cleanup candidates:
+
+- Adopter tests still import or call `pkg/uikit`/`uikittest` in
+  `bus-portal` (`internal/server/server_test.go`, `pkg/portal/framework_test.go`,
+  `module_test.go`, `uiportal_test.go`), `bus-portal-auth`
+  (`browser_client_test.go`, `e2e_fake_provider_test.go`, `module_test.go`,
+  `mountedapp_test.go`), `bus-portal-ai` (`actions_test.go`,
+  `mountedapp_test.go`, `terminal_runtime_test.go`, `ui_prep_artifact_test.go`),
+  `bus-portal-accounting` (`module_test.go`, `mountedapp_test.go`), and
+  `bus-portal-notes` (`notes_filter_toolbar_render_test.go`,
+  `notes_page_surfaces_render_test.go`, `render_gx_test.go`, `runtime_test.go`).
+  Treat these as a separate test-harness migration wave after production
+  adopter cleanup.
+- `bus-portal-accounting/pkg/accountingportal/wasm_app_js.go` still uses
+  public `ui.ErrorBannerChecked` and `ui.StatusPillChecked` in production
+  WASM rendering. This is not a direct `pkg/uikit` import, but it should be
+  converted to the plain node-first `pkg/ui` helpers plus an explicit render
+  boundary after the immediate `pkg/uikit` production imports are gone.
+- Public docs still need a final post-API audit. `busdk.com/PLAN.md` keeps
+  open GX/UI website items to replace primary `*Checked` examples and stop
+  teaching `pkg/uikit` as the long-term path; `docs/docs/ui/**` still contains
+  older versioned pages that mention `pkg/uikit`, `BodyHTML`, and checked
+  helpers. Some are legitimate migration/history notes, but they need a
+  final classification pass after code APIs settle.
+- `bus-ui` itself still contains many `*Checked`, `*NodeChecked`, `BodyHTML`,
+  and `pkg/uikit` references. Current accepted architecture treats those as
+  internal implementation, deprecated migration wrappers, or compatibility
+  tests unless a public/default API or current docs page teaches them as the
+  preferred path. Do not spend adopter-worker time removing internal
+  compatibility coverage before the product modules are clean.
+
 Post-reset worker guidance should keep the core slices separate:
 
 - For `task-646c27a30fb6`, own only `bus-ui/pkg/terminalui/**` plus focused
