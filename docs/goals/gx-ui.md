@@ -10,7 +10,7 @@ The target architecture is:
 
 > `bus-gx` owns the source syntax, compiler, render tree, safe HTML rendering,
 > browser/runtime primitives, and low-level tests. `bus-ui` owns reusable
-> component families, public UI facades, compatibility adapters, CSS hooks,
+> component families, public UI facades, CSS hooks,
 > mount/runtime helpers, portal integration surfaces, and UI test harnesses.
 > Product modules compose typed `gx.Node` trees through public facade packages
 > and serialize only at explicit render edges.
@@ -50,8 +50,11 @@ The refactor goal is a decoupled architecture:
 - `bus-ui` provides public reusable UI components and runtime facades.
 - product modules use public UI facades, not `pkg/uikit` internals.
 - HTML strings are produced only at explicit render boundaries.
-- compatibility wrappers remain only as deprecated migration aliases or
-  clearly named `...HTML` string-boundary helpers.
+- `pkg/uikit` is removed as a product/backing implementation layer; behavior
+  moves into public node-first packages or deliberate non-compatibility
+  internal packages.
+- string boundaries remain only where intentionally part of the new design,
+  such as clearly named `...HTML` helpers.
 
 ## Definition Of Done
 
@@ -69,9 +72,22 @@ normal architecture:
   composition;
 - public docs that teach compatibility helpers as the primary API.
 
-Compatibility code may remain when it is explicitly deprecated, tested as
-legacy behavior, and not used by current product/default docs as the normal
-path.
+Compatibility code should not remain merely for unpublished/internal-only
+backward compatibility. `pkg/uikit`, `*Checked` compatibility wrappers, and old
+string-first aliases are deletion targets unless a specific behavior is moved
+into the new public architecture or a deliberate internal implementation
+package with a non-compatibility purpose.
+
+Use a throwaway deletion/build-exclusion probe as the authoritative inventory
+truth gate before treating the goal as nearly complete: remove or build-exclude
+`bus-ui/pkg/uikit` and `bus-ui/pkg/uikit/uikittest`, run `go test ./...` in
+`bus-ui`, then run `go test ./...` across every `go.mod` user of
+`github.com/busdk/bus-ui` or `github.com/busdk/bus-gx`. Convert compiler
+failures into tasks split by owner: core `bus-ui` implementation still backed
+by `uikit`, adopter imports/usages, test harness replacement, docs/examples or
+catalog residue, and genuinely deferred/out-of-scope items. Do not promote the
+deletion probe until all required replacement tasks are accepted and the full
+dependency-user matrix passes.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
@@ -83,8 +99,8 @@ git grep -nE 'pkg/uikit|Checked|NodeChecked|BodyHTML|HeadHTML|MainHTML|ui\.Unsaf
 
 Then classify every hit as one of:
 
-- accepted compatibility/deprecated API;
-- internal test coverage for compatibility;
+- intentional new public/internal implementation;
+- test harness that still needs replacement;
 - vendor or generated content to ignore;
 - stale docs;
 - active code that still needs refactoring.
