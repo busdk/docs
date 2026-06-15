@@ -278,7 +278,8 @@ Known child slices are:
   (`task-c3b890074557`);
 - records: record list and summary item types, checked/string/node helpers,
   and generated/adapter render helpers;
-- evidence: evidence link and evidence preview helpers;
+- evidence: evidence link and evidence preview helpers; accepted in `bus-ui`
+  `0f86ae9` (`task-53e82acad2c3`);
 - projection/provider: projection detail and provider error helpers;
 - timeline: timeline types, checked/string/node helpers;
 - image gallery: image gallery types, validation, checked/string/node helpers.
@@ -314,6 +315,22 @@ patch-target nudge. It was parked and the task was closed no-diff/superseded.
 The records/summary child remains unfinished. Next records action should be a
 tighter supervisor-planned patch target or relaunch, not implementation model
 escalation, unless a simplified patch still fails from reasoning complexity.
+
+Evidence child implementation: `bus-ui` `0f86ae9`
+(`task-53e82acad2c3`; worker
+`gx-ui-core-ui-data-evidence-evidence-only-spark-20260616a`) accepted the
+FC-018 evidence link and FC-019 evidence preview subset. The worker moved
+evidence types/constants, link and preview checked helpers, node-first helpers,
+and preview policy helpers into `pkg/ui`, removed evidence `uikit` aliases from
+`pkg/ui/data_evidence.go`, and preserved the public node-first behavior
+expected by `pkg/ui` tests. Primary `bus-ui` verification: `go test ./pkg/ui`,
+`go test ./...`, `git diff --check HEAD~1..HEAD`, and the scoped
+data-evidence evidence-symbol `uikit` audit all passed. The broader
+`shell_evidence_facade.go` resolver aliases remain out of scope for this
+parent blocker. The parent `pkg/ui/data_evidence.go` row remains active because
+records/summary, projection/provider, timeline, and image gallery children
+still need to move before the deletion probe can advance beyond this compiler
+blocker.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
