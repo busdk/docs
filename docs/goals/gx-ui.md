@@ -570,7 +570,16 @@ post-core cleanup candidates:
   preferred path. Do not spend adopter-worker time removing internal
   compatibility coverage before the product modules are clean.
 
-Post-reset worker guidance should keep the core slices separate:
+Current core worker guidance should keep the core slices separate. At
+`2026-06-15 13:46 EEST`, the operator approved switching the two core lanes to
+`gpt-5.4-mini` instead of waiting for the `gpt-5.3-codex-spark` quota reset.
+The active core workers are now
+`gx-ui-terminal-runtime-facade-mini-20260615a` for `task-646c27a30fb6` and
+`gx-ui-runtime-facade-mini-20260615a` for `task-84d0842bbbff`. The previous
+Spark core workers are superseded evidence unless a later supervisor
+explicitly reopens them.
+
+Keep the core slices separate:
 
 - For `task-646c27a30fb6`, own only `bus-ui/pkg/terminalui/**` plus focused
   `bus-ui` docs/features/tests needed by module guidance. The
@@ -613,11 +622,18 @@ Post-reset worker guidance should keep the core slices separate:
 - Only after those facades are accepted and pinned should AI, Portal, and
   Notes adopter workers continue production import cleanup.
 
-Local Spark workers were started for those two core facade slices, but several
-new App Server workers began accepting messages and then completing turns
-without any assistant response or diff. A Bus infrastructure task was opened as
-`task-4eb87d0bfa61` to diagnose the local-dev App Server worker turn delivery
-or session/tool-path failure before more product worker dispatch is trusted.
+The Mini workers reached `running`/`ready` with clean worker-owned worktrees,
+but create-time prompts did not appear as recorded worker messages. The
+supervisor therefore sent explicit `bus workers message` start instructions to
+both Mini workers after recording exact product-worktree guardrails in their
+task threads. Continue by verifying actual assistant responses, diffs, commits,
+and tests before treating either lane as accepted.
+
+Earlier local Spark workers for those two core facade slices had accepted
+messages and then completed turns without any assistant response or diff. A
+Bus infrastructure task was opened as `task-4eb87d0bfa61` to diagnose the
+local-dev App Server worker turn delivery or session/tool-path failure if the
+same symptom reappears.
 Follow-up diagnosis found the immediate cause in the affected workers'
 Codex session logs: each silent turn reached `GPT-5.3-Codex-Spark`
 rate-limit telemetry with `primary.used_percent=100.0` and no assistant
