@@ -387,6 +387,34 @@ Spark retry workers were then launched on new branches with narrower
 instructions: keep code compiling, do not hide `uikit` behind local wrappers,
 and document exact missing public facades instead of forcing broken rewrites.
 
+A later audit showed the clean AI/Portal retry lanes still need additional
+core `bus-ui` public facade work before adopter cleanup can finish cleanly:
+
+- `pkg/terminalui` needs a complete terminal/container runtime facade for
+  stream result/transport/request/reader, resource client, lifecycle, and
+  error symbols so `bus-portal-ai` can leave `pkg/uikit` without importing or
+  mixing `terminalruntime` internals incorrectly.
+- `pkg/ui` needs public runtime/server/CLI/WASM helper facades for Portal
+  helpers such as global CLI flag parsing, immediate/serve output writers,
+  browser open, token/static/server helpers, client log/server logger helpers,
+  and JS/WASM helpers such as document/location/API URL/gateway client/mount
+  helpers.
+
+Local Spark workers were started for those two core facade slices, but several
+new App Server workers began accepting messages and then completing turns
+without any assistant response or diff. A Bus infrastructure task was opened as
+`task-4eb87d0bfa61` to diagnose the local-dev App Server worker turn delivery
+or session/tool-path failure before more product worker dispatch is trusted.
+Follow-up diagnosis found the immediate cause in the affected workers'
+Codex session logs: each silent turn reached `GPT-5.3-Codex-Spark`
+rate-limit telemetry with `primary.used_percent=100.0` and no assistant
+message. The local 5-hour Spark bucket reset shown in the session was
+`2026-06-15 16:20:50 EEST`. The worker-infra task remains useful for making
+this surface as an actionable rate-limit failure instead of a misleading
+"completed without assistant response" status, but GX/UI product workers should
+not be expected to make progress on `gpt-5.3-codex-spark` until capacity is
+available again or the operator approves a different model.
+
 The first terminalui, Notes, and Auth workers accidentally touched primary
 checkout paths. The Auth worker also committed two changes on primary
 `bus-portal-auth/develop` before detection. The leaked patches were preserved
@@ -402,26 +430,33 @@ The next supervisor should proceed in this order:
 
 1. Continue and review the active adopter cleanup workers for
    `bus-portal-ai` and `bus-portal`. Auth and Accounting are accepted locally;
-   AI and Portal are clean retry workers after rejected compile-broken/wrapper-
-   only attempts.
-2. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
+   AI and Portal remain unfinished after rejected compile-broken/wrapper-only
+   attempts.
+2. Finish the newly identified core `bus-ui` facade dependencies:
+   `pkg/terminalui` terminal/container runtime aliases and `pkg/ui`
+   runtime/server/CLI/WASM helper facades.
+3. Resume Spark worker turns after the `GPT-5.3-Codex-Spark` primary bucket
+   resets, or after the operator approves a different model. Keep
+   `task-4eb87d0bfa61` open as an infrastructure cleanup item to project
+   quota/no-assistant turns as actionable failures.
+4. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
    If it still matches the desired API direction, rerun focused/full tests,
    promote into `bus-ui develop`, push, and pin BusDK.
-3. Review `busdk.com/codex/gx-ui-node-first-docs`.
+5. Review `busdk.com/codex/gx-ui-node-first-docs`.
    Decide whether to promote it as the current website docs cleanup, then
    delete or archive older website branches that become superseded.
-4. Re-audit canonical code and docs for the definition-of-done patterns.
+6. Re-audit canonical code and docs for the definition-of-done patterns.
    Use the audit to decide whether `uiportal`, adopter tests, and docs cleanup
    need fresh focused workers.
-5. Review remaining adopter branches in `bus-portal-auth`,
+7. Review remaining adopter branches in `bus-portal-auth`,
    `bus-portal-ai`, `bus-portal-accounting`, and `bus-portal-notes`.
    Promote only branches that still improve the current canonical state;
    otherwise record them as superseded/rejected and remove their worktrees.
-6. Classify dirty evidence worktrees:
+8. Classify dirty evidence worktrees:
    `/private/tmp/bus-ui`, `/private/tmp/bus-ui-terminalui-node-first`,
    `/private/tmp/bus-portal-notes-review-raw-cleanup`, and the two dirty Bus
    runtime product worktrees. Archive useful diffs before deletion.
-7. Only after module state is settled, prune old BusDK root pointer branches
+9. Only after module state is settled, prune old BusDK root pointer branches
    whose target module commits are promoted, superseded, or intentionally
    discarded.
 
