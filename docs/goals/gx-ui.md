@@ -893,6 +893,47 @@ remaining production `pkg/uikit`/`uikit.` references from
 `pkg/aiportal/wasm_runtime_js.go`, with tests preserving terminal path
 normalization, resource kind/base behavior, and container run projections.
 
+## 2026-06-15 16:10 Core Result Parity And AI Probe Gate
+
+The core `pkg/terminalui` result-parity blocker is now accepted locally:
+
+- worker `gx-ui-terminalui-result-parity-mini-20260615a`, task
+  `task-ad726c335fb7`;
+- worker commit `032ec840ac8d6d73f521bfde5e4cd1ebfa41f0f9`;
+- promoted primary `bus-ui` commit `2244b59`, `Add terminalui result facade
+  parity`;
+- exported public terminal facade surface: `ResultKind`,
+  `ResultKindSuccess`, `ResultKindValidationError`,
+  `ResultKindProviderError`, `ResultKindNavigate`, `ResultKindNoop`,
+  `FieldError`, `Success`, `ValidationError`, `ProviderError`, and
+  `Navigate`;
+- verification on promoted primary: `git diff --check HEAD~1..HEAD`,
+  `go test ./pkg/terminalui -count=1`, `go test ./pkg/terminalruntime
+  -count=1`, and `go test ./... -count=1`;
+- `bus lint pkg/terminalui/terminalui.go
+  pkg/terminalui/terminalui_runtime_facade_test.go` reported the test file
+  clean and one pre-existing `RenderHTML` error-swallowing finding in
+  `pkg/terminalui/terminalui.go`, unchanged from the previous commit and not
+  part of the result-parity acceptance.
+
+Before resuming AI terminal/container implementation, run a bounded facade
+parity probe against exactly:
+
+- `bus-portal-ai/pkg/aiportal/terminal_runtime.go`;
+- `bus-portal-ai/pkg/aiportal/wasm_runtime_js.go`;
+- `bus-portal-ai/pkg/aiportal/terminal_runtime_test.go`.
+
+The probe must list every remaining `uikit`, `terminalruntime`, terminal
+request/result/effect/client, and test-fake symbol needed by the migration and
+classify each symbol as one of: public `terminalui` equivalent exists; public
+`ui` equivalent exists; explicit adapter needed in adopter; or missing public
+core facade. Do not resume implementation until the table has no missing
+public core facade entries, or until those entries are split into narrow
+`bus-ui` parity tasks. The active worker
+`gx-ui-ai-terminal-container-mini-20260615h` has unaccepted edits from before
+this result-parity patch, including a reflection bridge; that diff should be
+reworked or discarded by the worker after a fresh-base preflight, not promoted.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
