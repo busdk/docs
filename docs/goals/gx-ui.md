@@ -280,7 +280,11 @@ Known child slices are:
   and generated/adapter render helpers;
 - evidence: evidence link and evidence preview helpers; accepted in `bus-ui`
   `0f86ae9` (`task-53e82acad2c3`);
-- projection/provider: projection detail and provider error helpers;
+- provider error: FC-007 public-safe provider error types, validation,
+  redaction, checked/string/node helpers, and compiled render support;
+- projection detail: FC-020 projection detail types, diagnostics, checked
+  result, preview media policy, checked/string/node helpers, and compiled
+  render support;
 - timeline: timeline types, checked/string/node helpers;
 - image gallery: image gallery types, validation, checked/string/node helpers;
   accepted in `bus-ui` `ca10596` (`task-96efd1e7f76e`).
@@ -343,8 +347,18 @@ node-first behavior expected by `pkg/ui` tests. Primary `bus-ui`
 verification: `go test ./pkg/ui`, `go test ./...`,
 `git diff --check HEAD~1..HEAD`, and the scoped image-gallery alias audit all
 passed. The parent `pkg/ui/data_evidence.go` row remains active because
-records/summary, projection/provider, and timeline children still need to move
-before the deletion probe can advance beyond this compiler blocker.
+records/summary, provider error, projection detail, and timeline children still
+need to move before the deletion probe can advance beyond this compiler
+blocker.
+
+Projection/provider broad attempt:
+`gx-ui-core-ui-data-evidence-projection-provider-spark-20260616a`
+(`task-13b3df79049f`) materialized a populated `bus-ui` module checkout at
+`ca10596` and produced session JSONL source-map evidence, but remained clean
+after one exact patch-target nudge and repeated wrong-path tool calls. It was
+stopped as false-active implementation work. The former projection/provider
+row is split into provider-error and projection-detail children; provider-error
+should run first as the smaller direct-file implementation slice.
 
 Timeline child attempt:
 `gx-ui-core-ui-data-evidence-timeline-only-spark-20260616a`
