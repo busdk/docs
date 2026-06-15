@@ -365,6 +365,20 @@ Accepted tasks for action/resource, TerminalUI, UIPortal, Accounting retry,
 Auth retry, and Notes shell cleanup were already closed. The open GX/UI board
 is now limited to actual unfinished work plus the Notes runtime task.
 
+At `2026-06-15 13:15 EEST`, the five remaining open GX/UI task threads were
+seeded with post-reset supervisor guidance:
+
+- `task-646c27a30fb6`: exact `pkg/terminalui` runtime facade scope and DoD.
+- `task-84d0842bbbff`: exact `pkg/ui` CLI/server/WASM helper facade scope and
+  DoD.
+- `task-25bee17f4cd1`: AI cleanup must wait for accepted/pinned core facades
+  and must not import `pkg/terminalruntime` or hide `pkg/uikit` behind local
+  aliases.
+- `task-62c09a117f80`: Portal cleanup must wait for the accepted/pinned
+  `pkg/ui` helper facade and must not use local wrapper files to hide `uikit`.
+- `task-fe70fd4546fd`: Notes runtime cleanup should dispatch after the core
+  `pkg/ui` facade is sufficient and should stay production-focused.
+
 The intentionally remaining live GX/UI product workers after this cleanup are:
 
 - `gx-ui-terminal-runtime-facade-spark-20260615a`
