@@ -1,31 +1,41 @@
-# Services Docker Single-Image Deployment Goal
+# Services Docker Bus Runtime Image Goal
 
 ## Goal
 
-Implement Docker support for running the repository's full Bus services stack
-from one Ubuntu-based container image.
+Implement Docker support for running the repository's Bus services stack from
+one Ubuntu-based Bus runtime image.
 
 The required product result is a single Docker image that contains the working
-`services.yml` from this BusDK repository, the profile directories referenced
-by that stack, PostgreSQL, and every Bus service binary needed by the stack.
-The container entrypoint runs:
+Bus `services.yml` from this BusDK repository, the profile directories
+referenced by that stack, and every Bus service binary needed by the stack. The
+Bus container entrypoint runs:
 
 ```bash
 bus services up
 ```
 
-inside the container. `bus services` is the supervisor for PostgreSQL and all
-Bus services in that same container.
+inside the container. `bus services` is the supervisor for Bus-related
+processes in that container.
 
-The image must use Bus binary release artifacts only. It must not contain the
-BusDK source tree, module checkouts, `.git` directories, Go source, or a Go
-toolchain in the runtime image.
+Standard non-Bus dependency containers are allowed. In particular, PostgreSQL
+and Mailhog may run as normal Docker images beside the Bus runtime image when
+that is the clearer local-development or deployment shape. A stricter variant
+where PostgreSQL is also launched by `bus services` inside the Bus container is
+still valid, but it is no longer the only acceptable shape.
+
+The image must use Bus binary release artifacts for Bus binaries. It must not
+build Bus from a source checkout baked into the image. For worker-capable
+profiles, the image may and should include the developer/runtime tools required
+to execute local-style workers, including a Go toolchain and related task
+execution tools. BusDK source checkouts and worker task worktrees should be
+created or mounted at runtime, not baked into the image.
 
 This goal is the Docker packaging sibling of
 `systemd-user-deployment.md`, but it is not blocked by that goal. The systemd
-goal installs Bus services onto a host supervisor. This goal packages the full
-working stack into one container image and uses Docker or Compose only as the
-outer lifecycle boundary.
+goal installs Bus services onto a host supervisor. This goal packages the
+Bus-related runtime into one container image and uses Docker or Compose as the
+outer lifecycle boundary for that Bus container and any standard dependency
+containers.
 
 ## Operator Direction Captured
 
@@ -40,8 +50,10 @@ this goal:
 
 - build one Docker image from an Ubuntu base image;
 - include the repository's full working `services.yml`;
-- include all services referenced by that stack in the same container,
-  including PostgreSQL;
+- include Bus services referenced by that stack in the same Bus runtime
+  container;
+- allow standard dependency services such as PostgreSQL and Mailhog to run as
+  separate Docker images when the stack is configured for that shape;
 - run the stack with `bus services`;
 - use Bus binary release artifacts, not source builds, inside the runtime
   image;
@@ -49,6 +61,27 @@ this goal:
 - use Docker proof on `coding-agent@dev.hg.fi`;
 - use worker-owned Git worktrees and feature branches before making
   implementation changes.
+
+2026-06-14 operator refinement:
+
+- the preferred shape is not "every process in one container at all costs";
+- almost all Bus-related processes should be inside a single Ubuntu Bus runtime
+  image;
+- PostgreSQL may be either a `postgres/native` service inside that image or a
+  separate standard PostgreSQL Docker container;
+- Mailhog should remain a standard dependency container when needed.
+
+2026-06-14 worker-runtime refinement:
+
+- the Bus runtime image must also be able to run Bus workers similarly to the
+  current local Services stack;
+- worker-capable profiles therefore require a tools layer, including Go, Git,
+  shell/build tooling, and any configured worker runner dependencies;
+- the no-source rule means no BusDK source checkout is baked into the image,
+  not that worker task worktrees or mounted project checkouts are forbidden at
+  runtime;
+- worker state, task checkouts, tool caches, Codex/App Server state, and logs
+  must live under explicit mounted writable volumes.
 
 An earlier docs-only review/update pass used this local coordination branch and
 worktree:
@@ -91,9 +124,12 @@ bus/tasks/local
 bus/api/local
 ```
 
-The Docker image must therefore prove the complete repository stack, including
-PostgreSQL and the Bus API/events/repos/workers/tasks/relay services, unless
-the repository `services.yml` itself changes.
+The Docker image must therefore prove the complete Bus stack for the selected
+profile. If the selected Docker profile keeps `postgres/native`, proof includes
+PostgreSQL inside the Bus container. If the selected Docker profile uses a
+standard PostgreSQL sidecar, proof includes the Bus container using that
+sidecar through explicit DSN/config without splitting Bus services across
+multiple Bus containers.
 
 ## Target Image Contract
 
@@ -101,18 +137,28 @@ The implementation must create a runtime image with this shape:
 
 - base image: a pinned supported Ubuntu LTS tag or digest, such as
   `ubuntu:24.04` plus the resolved image digest in proof output;
-- PostgreSQL server and client installed in the image from Ubuntu packages or
-  another explicit release package source;
+- PostgreSQL server and client installed in the image when using the bundled
+  `postgres/native` profile, or PostgreSQL client/readiness tooling plus
+  explicit DSN/config when using a standard PostgreSQL sidecar;
 - the Bus dispatcher and all Bus service binaries installed from verified Bus
   binary release artifacts;
+- a worker tools layer for profiles that run workers, including Go, Git,
+  shell/build tools, CA certificates, SSH/client utilities when needed, and any
+  configured worker runner dependencies such as Codex/App Server support;
 - the repository `services.yml` copied into the image at
   `/opt/bus/services.yml`;
 - the repository profile tree copied into the image at `/opt/bus/profiles`;
-- no BusDK source checkout, module checkout, `.git` directory, Go source tree,
-  or Go compiler in the runtime filesystem;
+- no BusDK source checkout, module checkout, `.git` directory, or Go source
+  tree baked into the image. A Go compiler and worker tooling are allowed when
+  the image is built for worker-capable profiles;
 - runtime state under `/var/lib/bus/services`;
+- worker state and task worktrees under `/var/lib/bus/workers` or another
+  explicit mounted writable path;
+- tool caches under explicit mounted writable paths, such as `/var/cache/bus`,
+  rather than scattered through implicit home-directory state;
 - PostgreSQL data under `/var/lib/postgresql/data` or another explicit mounted
-  data directory;
+  data directory when PostgreSQL is bundled; otherwise PostgreSQL state belongs
+  to the sidecar's own Docker volume;
 - logs under `/var/log/bus`;
 - transient runtime files under `/run/bus` and `/tmp`;
 - no raw credentials, provider tokens, private keys, broad `.env` files, or
@@ -159,31 +205,50 @@ If the repository cannot yet produce the needed release bundle, implement that
 release packaging first as a dependency of this goal. Do not satisfy this goal
 by copying local build outputs from a dirty source tree into the runtime image.
 
-## Source Exclusion Requirement
+## Source And Tooling Requirement
 
-The runtime image must not contain source code. Minimum checks:
+The runtime image must not contain baked BusDK source code, module checkouts,
+or `.git` directories. Worker-capable images may contain Go and other tooling,
+but source and task worktrees must be mounted or created at runtime.
+
+Minimum baked-source exclusion check:
 
 ```bash
 docker run --rm "$BUS_SERVICES_IMAGE" sh -lc \
   'found="$(find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o \
-    \( -name .git -o -name "*.go" -o -name go.mod -o -name go.sum \) -print -quit)"; \
+    -path /var/lib/bus/workers -prune -o \
+    \( -name .git -o -name go.mod -o -name go.sum \) -print -quit)"; \
     test -z "$found"'
-
-docker run --rm "$BUS_SERVICES_IMAGE" sh -lc '! command -v go'
 ```
 
-The exact checks may be refined to avoid scanning virtual filesystems, but the
-proof must demonstrate that the runtime image is not a disguised source
-checkout.
+Minimum worker-tooling check for worker-capable profiles:
+
+```bash
+docker run --rm "$BUS_SERVICES_IMAGE" sh -lc \
+  'go version && git --version && bus workers --help >/dev/null'
+```
+
+The exact checks may be refined to avoid scanning virtual filesystems and
+declared runtime volumes, but the proof must demonstrate that the image is not
+a disguised source checkout and that the worker tools are intentionally present.
 
 ## Required Runtime Behavior
 
 `bus services up` inside Docker must:
 
 - load the baked `/opt/bus/services.yml` and `/opt/bus/profiles`;
-- start PostgreSQL as the `postgres/native` service inside the same container;
-- initialize or reuse the mounted PostgreSQL data directory safely;
+- either start PostgreSQL as the `postgres/native` service inside the same
+  container, or connect to a standard PostgreSQL sidecar through explicit
+  service config;
+- initialize or reuse PostgreSQL state safely for the selected bundled or
+  sidecar mode;
 - start the Bus services in dependency order;
+- start and supervise Bus worker services when the selected profile includes
+  them;
+- provide worker processes with the configured Go/toolchain/runtime dependencies
+  without requiring Bus source to be baked into the image;
+- create, mount, or reuse task worktrees and worker homes under explicit
+  writable volumes;
 - freeze the resolved stack into the state directory before starting children;
 - keep only explicitly declared environment variables for child processes;
 - keep token values out of command arguments, status output, logs, and frozen
@@ -197,9 +262,10 @@ checkout.
   state without secrets;
 - allow `bus services down` to use the frozen stack when available.
 
-PostgreSQL must be treated as a first-class service in the stack, not as a
-sidecar Compose service. Compose may provide volumes, environment references,
-ports, and health checks, but not the database process.
+PostgreSQL must be treated explicitly in the stack contract. It may be a
+first-class `postgres/native` process supervised by `bus services`, or it may
+be a standard Docker sidecar dependency with clear DSN/config, health, and
+volume ownership. It must not become an implicit hidden dependency.
 
 ## Compose Fixture
 
@@ -223,14 +289,17 @@ same product contract, and both must parse successfully.
 
 Both Compose paths must model the final product contract:
 
-- one service container;
-- one image containing the full repository stack;
+- one Bus service container;
+- one image containing the Bus runtime stack;
+- optional standard dependency containers, such as PostgreSQL or Mailhog, when
+  the selected profile uses them;
 - no bind mount for `services.yml`;
 - no bind mount for `profiles`;
-- persistent volumes for Bus service state, PostgreSQL data, runtime files,
-  and logs. A single `/var/lib/bus` runtime volume is acceptable when it
-  contains the service state, PostgreSQL data, token files, and worker runtime
-  state;
+- persistent volumes for Bus service state, runtime files, and logs, plus
+  PostgreSQL data when PostgreSQL is bundled in the Bus container. If
+  PostgreSQL is a sidecar, its data belongs to the sidecar volume;
+- persistent volumes for worker homes, task worktrees, tool caches, and any
+  App Server or Codex state required by the selected worker profile;
 - an entrypoint or command that invokes `bus services up` against
   `/opt/bus/services.yml` and `/opt/bus/profiles`;
 - a health check based on `bus services ps --format json`;
@@ -269,6 +338,9 @@ Supporting or profile-owned modules:
 - `bus-integration-repos`, `bus-integration-worker`, and
   `bus-integration-task`: local service behavior started by the repository
   profiles.
+- `bus-agent`, worker runner modules, and Codex/App Server integration modules:
+  worker process launch, sandbox/tool policy, model/runtime configuration,
+  writable roots, and task worktree lifecycle inside the Bus runtime container.
 - `bus-integration-docker` or `bus-integration-containers`: only if the image
   build or future nested container runtime integration needs module-owned
   Docker mechanics.
@@ -521,7 +593,7 @@ Supervisor review has independently verified:
   /opt/bus/profiles --state-dir /var/lib/bus/services --format json` reports
   all seven services running while the container is up and all seven services
   exited after Docker stop;
-- source/toolchain exclusion checks pass for the runtime image;
+- baked-source exclusion checks pass for the runtime image;
 - cleanup removed the proof containers and `bus-services-proof` volumes.
 - commit `163f7879` fixes the previously reopened release workflow and root
   Compose profile gaps by passing `RELEASE_VERSION` and `RELEASE_SHA256` to
@@ -622,16 +694,19 @@ The worker moved generated `release-artifacts/` and `dist-bin/` out of the
 worktree to `/tmp/task-d3a8df35767f-artifacts/` and committed the final
 `bus-integration-services` assertion plus the superproject gitlinks.
 
-The implementation and proof branch is review-accepted for this goal's product
-contract, but it is not merged, promoted, or released. Do not merge or promote
-it without operator confirmation.
+The implementation and proof branch is review-accepted for the earlier bundled
+PostgreSQL runtime slice, but it does not complete the refined worker-capable
+goal. Do not promote it as final goal completion without adding and proving the
+worker-capable local Compose shape described below.
 
 ## Requirement Audit
 
-Current audit result: the worker branch satisfies the product and proof
-requirements for the single-container Docker runtime, but the goal is not
-complete in the main line because the accepted branch has not been merged,
-promoted, or released.
+Current audit result: the worker branch satisfies the earlier, stricter bundled
+PostgreSQL Bus runtime image proof, but the refined goal is not complete. The
+2026-06-14 target adds two requirements that are not yet proved in the main
+line: a worker-capable Bus runtime image with Go/tooling and a preferred local
+Compose shape that may use PostgreSQL and Mailhog as standard dependency
+containers.
 
 Verified satisfied on worker branch `codex/services-docker-proof-fix-20260606i`:
 
@@ -641,8 +716,9 @@ Verified satisfied on worker branch `codex/services-docker-proof-fix-20260606i`:
 - full repository `services.yml` stack: proved by live `bus services ps
   --format json` reporting all seven stack services, `postgres`, `events`,
   `tasks`, `repos`, `workers`, `api`, and `events-relay`;
-- PostgreSQL in the same container, not a Compose sidecar: proved by process
-  inspection and the `postgres/native` service status in the same container;
+- PostgreSQL bundled-mode proof: process inspection and the `postgres/native`
+  service status proved PostgreSQL in the same container. This is stricter than
+  the refined contract, which also permits a standard PostgreSQL sidecar;
 - Bus Services as supervisor: proved by the container command path
   `/usr/local/bin/bus services up --file /opt/bus/services.yml --profile-dir
   /opt/bus/profiles --state-dir /var/lib/bus/services --foreground --all`;
@@ -650,8 +726,9 @@ Verified satisfied on worker branch `codex/services-docker-proof-fix-20260606i`:
   `busdk-v0.0.80+task.d3a8df35767f-Linux-amd64.tar.gz`, checksum
   `c6c668fe247062bb8c93970d31f65b138e63ba8ad8a82a98235e0413abbbc406`, image
   labels, and in-container binary version output;
-- no source/runtime toolchain payload: proved by source/toolchain exclusion
-  checks recorded in supervisor review;
+- no baked source payload: proved by baked-source exclusion checks recorded in
+  supervisor review. The worker-capable refinement intentionally adds Go and
+  runner tools for local worker execution;
 - root Compose implementation profile and docs Compose fixture: both parse and
   have live proof against the single-image contract;
 - foreground and Docker stop behavior: proved by Docker stop leaving the
@@ -667,44 +744,55 @@ Verified satisfied on worker branch `codex/services-docker-proof-fix-20260606i`:
   `codex/services-docker-proof-fix-20260606i`, and its worker-owned worktree on
   `coding-agent@dev.hg.fi`.
 
-Remaining completion step:
+Remaining completion steps:
 
-- operator confirmation is required before merging, promoting, or releasing
-  the review-accepted worker branch and submodule pins.
+- implement or adapt the accepted Bus runtime image work into the current
+  checkout as a worker-capable image flavor with Go/Git/runner tooling;
+- add or update the root Compose profile so Bus services and worker services
+  run in one Bus runtime container, while PostgreSQL and Mailhog may run as
+  standard dependency containers;
+- prove the worker-capable profile can run the Bus services stack and execute a
+  small local-style worker task using mounted/created task worktrees rather than
+  source baked into the image;
+- after review acceptance, merge, promote, or release the worker-capable branch
+  and affected submodule pins with operator confirmation.
 
-Promotion checklist after operator confirmation:
+Promotion criteria for the refined goal:
 
-1. Recheck the worker-owned superproject and affected module worktrees are
-   clean:
+1. Use a worker-owned implementation branch and worktree for the worker-capable
+   Docker profile.
+
+2. Reuse or adapt the accepted bundled-runtime commits as needed, but do not
+   treat branch `codex/services-docker-proof-fix-20260606i` as final promotion
+   until the worker-capable requirements are implemented and proved.
+
+3. Recheck the worker-owned superproject and affected module worktrees are
+   clean before review:
 
    ```bash
    git status --short --branch
    git -C bus status --short --branch
    git -C bus-services status --short --branch
    git -C bus-integration-services status --short --branch
+   git -C bus-integration-worker status --short --branch
+   git -C bus-agent status --short --branch
    ```
 
-2. Push or otherwise make reviewable the accepted local worker branch refs
-   before merging. Current worker-local refs are:
+4. Push or otherwise make reviewable the accepted worker-capable branch refs
+   before merging.
 
-   ```text
-   busdk superproject:       codex/services-docker-proof-fix-20260606i -> 3af5f8ac
-   bus:                      codex/services-docker-proof-fix-20260606i -> b1ed66d
-   bus-services:             codex/services-docker-proof-fix-20260606i -> 323d991
-   bus-integration-services: codex/services-docker-proof-fix-20260606i -> 5995871
-   ```
+5. Promote in dependency order: merge or fast-forward affected module branches
+   first, then update and merge the BusDK superproject pin, then update any
+   outer supervisor submodule pointer if required by the repository hierarchy.
 
-3. Promote in dependency order: merge or fast-forward the affected module
-   branches first, then update and merge the BusDK superproject pin commit
-   `3af5f8ac`, then update any outer supervisor submodule pointer if required
-   by the repository hierarchy.
-
-4. Rerun the goal-level smoke after promotion using the promoted branch or
+6. Rerun the goal-level smoke after promotion using the promoted branch or
    release image: Compose config for both fixtures, image release-label check,
-   seven-service healthy baseline, source/toolchain exclusion, Docker stop
-   status, required-service degraded-health check, and Docker resource cleanup.
+   seven-service healthy baseline, baked-source exclusion, worker-tooling
+   version checks, Docker stop status, required-service degraded-health check,
+   worker task execution proof, restart/durability proof, and Docker resource
+   cleanup.
 
-5. Only after those promoted-state checks pass, mark this goal complete.
+7. Only after those promoted-state checks pass, mark this goal complete.
 
 ## Completed Implementation Slices
 
@@ -715,17 +803,17 @@ planned for this goal:
    including the dispatcher, `bus-services`, `bus-integration-services`, and
    service binaries required by the current profiles.
 
-2. Ubuntu single-image runtime packaging that installs PostgreSQL, copies
-   verified Bus release binaries, copies `services.yml`, copies `profiles/`,
-   sets runtime directories, and defines the `bus services up` entrypoint.
+2. Ubuntu Bus runtime image packaging that copies verified Bus release
+   binaries, copies `services.yml`, copies `profiles/`, sets runtime
+   directories, and defines the `bus services up` entrypoint. The accepted
+   proof image also installs PostgreSQL for bundled `postgres/native` mode.
 
 3. Foreground Services behavior for container execution, including state-dir
    support, required-service degraded status, JSON healthcheck behavior, Docker
    stop handling, and status after shutdown.
 
-4. Container-safe `postgres/native` runtime behavior that starts PostgreSQL in
-   the same container and uses mounted state/data paths rather than host
-   systemd.
+4. Container-safe PostgreSQL handling for bundled `postgres/native` mode, with
+   the refined goal also allowing a standard PostgreSQL sidecar profile.
 
 5. Deterministic image and fixture checks for release checksum identity, source
    exclusion, binary identity, stack/profile presence, and Compose config
@@ -736,13 +824,57 @@ planned for this goal:
    stop, required-service degraded-health behavior, secret-safety scan, and
    Docker resource cleanup.
 
+## Revised Implementation Plan
+
+The next implementation pass should produce the refined, worker-capable local
+Docker shape:
+
+1. Define a Bus runtime image flavor for local Services and workers. It should
+   still install Bus binaries from release artifacts, but it should also include
+   the tools needed by local worker execution: Go, Git, shell/build tools,
+   CA certificates, SSH/client utilities when configured, and Codex/App Server
+   runner dependencies.
+
+2. Keep BusDK source out of the image. The image may contain baked
+   `services.yml`, profiles, release metadata, entrypoint scripts, and tools.
+   Project source, module checkouts, task branches, and worker identity
+   repositories must be mounted or created at runtime under explicit writable
+   volumes.
+
+3. Add or update a root Compose profile that uses one Bus runtime service for
+   Bus processes and worker services, plus standard dependency containers for
+   PostgreSQL and Mailhog when selected. The profile should not split Bus
+   services into separate Compose services.
+
+4. Define the worker volume layout. At minimum, the Compose profile should name
+   persistent paths for `/var/lib/bus`, worker homes, task worktrees, logs,
+   scratch space, and tool caches. The worker runtime must not depend on hidden
+   container-layer state that disappears on restart.
+
+5. Define credential and socket handling for workers. Tokens, SSH keys, Docker
+   socket access, model credentials, and provider credentials must be mounted or
+   injected explicitly, with status/log output proving only presence or labels,
+   never secret values.
+
+6. Prove the Bus runtime image can run the local worker profile: start the
+   Compose project, verify Bus API/events/tasks/repos/workers surfaces are up,
+   submit or claim a small worker task, prove the worker can create/use a
+   runtime worktree and run the expected Go/tool command, then stop and restart
+   the Compose project and verify durable worker state.
+
+7. Keep the bundled-PostgreSQL proof as a valid stricter variant, but do not
+   require it for the preferred local Compose shape when PostgreSQL is a
+   standard sidecar.
+
 ## Verification Requirements
 
 Minimum deterministic coverage:
 
 - Dockerfile or image build definition uses a pinned Ubuntu base image;
 - build consumes verified Bus binary release artifacts;
-- runtime image does not contain source code, `.git`, or the Go toolchain;
+- runtime image does not contain baked source code or `.git` directories;
+- worker-capable runtime image includes and reports the expected Go/toolchain
+  and worker runner versions;
 - runtime image contains `/opt/bus/services.yml`;
 - runtime image contains `/opt/bus/profiles`;
 - baked stack matches the repository `services.yml` used for the release;
@@ -751,13 +883,19 @@ Minimum deterministic coverage:
 - `docker compose -f compose.yaml --profile services-runtime config` succeeds
   for the implementation/CI fixture;
 - `bus services up` stays in the foreground when used as the container command;
-- PostgreSQL starts inside the same container and uses the mounted data volume;
+- PostgreSQL is explicitly configured for the selected profile: either bundled
+  inside the Bus container with mounted data, or provided by a standard
+  PostgreSQL sidecar with explicit DSN/config and its own data volume;
 - Bus services start in dependency order from the baked stack;
 - `bus services ps --format json` reports all required services;
 - Docker health check fails on required-service failure;
 - `SIGTERM` from Docker stop causes graceful shutdown;
 - stale pid/status files do not claim running services after shutdown;
-- logs and frozen stack state do not contain secrets.
+- logs and frozen stack state do not contain secrets;
+- worker task worktrees, worker homes, and tool caches live under declared
+  writable volumes;
+- at least one worker proof exercises the image's Go/toolchain path without
+  relying on source baked into the image.
 
 Minimum live proof on `coding-agent@dev.hg.fi`:
 
@@ -772,14 +910,22 @@ Minimum live proof on `coding-agent@dev.hg.fi`:
   for goal completion unless the docs fixture is also run or explicitly updated
   to the same contract and then run;
 - confirm the container command is `bus services up`;
-- confirm PostgreSQL and all Bus services from repository `services.yml` run
-  as processes inside the same container;
+- confirm all Bus services from repository `services.yml` run as processes
+  inside the Bus runtime container;
+- confirm PostgreSQL behavior for the selected profile: inside the Bus
+  container for bundled mode, or as a standard sidecar reached through explicit
+  DSN/config for sidecar mode;
 - confirm `bus version` reports the expected binary release identity;
-- confirm no source checkout, `.git`, Go source files, or Go toolchain exist
-  in the runtime container;
+- confirm no source checkout, `.git`, or Go source files are baked into the
+  image layers. For worker-capable images, confirm the Go/toolchain and runner
+  dependencies exist intentionally and report their versions;
 - confirm `bus services ps --format json` reports running required services;
+- confirm the worker service can create/use a task worktree under a mounted
+  worker volume and run an expected Go/tool command;
 - stop the Compose project through Docker;
 - confirm child processes are stopped and status is clean;
+- restart the Compose project and verify worker state/worktree paths remain
+  coherent;
 - record every manual workaround as a defect or follow-up.
 
 ## Suggested Commands For A Future Implementation Thread
@@ -828,10 +974,13 @@ The active implementation lane is `services-docker-proof-fix-20260606i` on
 `coding-agent@dev.hg.fi`, task `task-d3a8df35767f`, branch
 `codex/services-docker-proof-fix-20260606i`, with a worker-owned worktree under
 `.bus/services/workers/runtime/services-docker-proof-fix-20260606i/product-worktree`.
-The worker has proved a single Ubuntu image running the full repository
-`services.yml` stack with PostgreSQL and Bus services in one container, using a
-checksum-verified release artifact whose `bus` and `bus-services` binaries
-report `v0.0.80+task.d3a8df35767f`.
+The worker has proved the stricter bundled variant: a single Ubuntu image
+running the full repository `services.yml` stack with PostgreSQL and Bus
+services in one container, using a checksum-verified release artifact whose
+`bus` and `bus-services` binaries report `v0.0.80+task.d3a8df35767f`. The
+2026-06-14 refined target also permits PostgreSQL and Mailhog as standard
+dependency containers while keeping Bus-related processes in one Bus runtime
+image.
 
 The previously open release workflow, root Compose alignment, and live
 docs-fixture proof gaps are resolved on the worker branch. A stricter
