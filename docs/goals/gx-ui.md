@@ -541,24 +541,42 @@ only after the production path and core facades are settled.
 Post-reset worker guidance should keep the core slices separate:
 
 - For `task-646c27a30fb6`, own only `bus-ui/pkg/terminalui/**` plus focused
-  `bus-ui` docs/features/tests needed by module guidance. Re-export or wrap
-  the terminalruntime public runtime contracts needed by AI: `ResourceKind`,
-  `ResourceMethod`, `ResourceClient`, `ResultResourceClient`,
-  `ValidateResource*`, `NormalizeResourceRequest`,
-  `TerminalInputResourceRequest`, `TerminalResizeResourceRequest`,
-  `TerminalCloseResourceRequest`, `ContainerRunLifecycle` constants,
-  `ValidateContainerRunRequest`, `ContainerRunResourceRequest`,
-  `ParseContainerRunArgsJSON`, `TerminalStreamRequest`,
-  `TerminalStreamReader`, `TerminalStreamTransport`,
-  `TerminalStreamLifecycle` constants, `TerminalStreamResult`, stream errors,
-  `DecodeTerminalSSEEvent`, and AI terminal event/session builders. Do not
+  `bus-ui` docs/features/tests needed by module guidance. The
+  `2026-06-15 13:35 EEST` source audit found that `pkg/terminalui` already
+  exposes the terminal input/resize/close request builders,
+  container-run request/effect builders, terminal stream effect builder, SSE
+  decoder, and AI terminal event/session builders. The remaining facade gap is
+  the public names downstream AI still uses directly from `pkg/uikit`:
+  `ResourceKind`, `ResourceMethod`, `ResourceClient`, `ResultResourceClient`,
+  `NormalizeResourceRequest`, `ValidateResourceRequest`,
+  `ValidateResourcePath`, `ValidateResourceBase`,
+  `TerminalStreamRequest`, `TerminalStreamReader`,
+  `TerminalStreamTransport`, `TerminalStreamLifecycle`,
+  `TerminalStreamResult`, the `TerminalStreamLifecycle*` constants,
+  `ContainerRunLifecycle`, the `ContainerRunLifecycle*` constants, and the
+  shared terminal/container errors such as `ErrTerminalStreamSessionRequired`,
+  `ErrTerminalStreamTransportRequired`, `ErrTerminalStreamReaderRequired`,
+  `ErrTerminalStreamAborted`, `ErrTerminalStreamReconnect`,
+  `ErrTerminalStreamDecode`, `ErrTerminalRuntimeInvalidDimensions`,
+  `ErrContainerRunProfileRequired`, and `ErrContainerRunArgsInvalid`. Do not
   change `bus-portal-ai` in this worker.
 - For `task-84d0842bbbff`, own only `bus-ui/pkg/ui/**` plus focused
   `bus-ui` docs/features/tests needed by module guidance. Re-export or wrap
-  the public helper contracts needed by Portal from `pkg/uikit`: global CLI
-  flags and output writers, browser open, capability-token/static/content-type
-  helpers, server logger/client-log helpers, browser globals, runtime API URL
-  helpers, browser resource fetch, gateway client, and mount helpers. Avoid a
+  the public helper contracts needed by Portal from `pkg/uikit`: `GlobalCLIFlags`,
+  `ParseGlobalCLIFlags`, `ValidateGlobalCLIFlags`,
+  `WriteImmediateCLIOutput`, `ResolveServeOutputWriter`, `OpenURLInBrowser`,
+  browser-open types/errors/helpers, capability-token/static/content-type
+  helpers (`GenerateCapabilityToken`, `ListenTCP`, `TokenURLFromListener`,
+  `TokenPathSuffix`, `ServeStaticWithIndexFallback`, `ContentTypeForName`),
+  server logger/client-log helpers (`ServerLogger`, `ServerLoggerOptions`,
+  `ClientLogHandler`, `ServeClientLogAPI`), browser globals
+  (`GlobalDocument`, `GlobalLocation` and any existing accessor types needed
+  by tests), runtime API URL helpers (`ResolveAPIURL`, and WASM `APIURL` if
+  needed), gateway client helpers (`URLResolver`, `GatewayClient`,
+  `HTTPGatewayClient`, `NewHTTPGatewayClient`), WASM DOM/mount helpers
+  (`ViewMountOptions`, `MountHTMLWithScrollPreservation`,
+  `BindOnClickBySelector`, `ClosestElement`, `DOMAttributeString`), and the
+  empty-state render helper needed by Portal launcher error fallback. Avoid a
   module-local Portal wrapper layer.
 - Only after those facades are accepted and pinned should AI, Portal, and
   Notes adopter workers continue production import cleanup.
