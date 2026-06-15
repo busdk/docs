@@ -357,6 +357,14 @@ as active immediately afterward. Until that projection mismatch is fixed or
 catches up, treat individual worker status as the lifecycle source of truth and
 do not prune from `prune-report` output alone.
 
+At `2026-06-15 13:13 EEST`, the two remaining open superseded task threads
+were closed: `task-1a7b83afdf83` (Accounting first attempt, superseded by
+accepted `task-48bad54789fe`/`e5eac44`) and `task-4b5c8c140b68` (Auth first
+attempt/leak evidence, superseded by accepted `task-25f66a4e0036`/`edad787`).
+Accepted tasks for action/resource, TerminalUI, UIPortal, Accounting retry,
+Auth retry, and Notes shell cleanup were already closed. The open GX/UI board
+is now limited to actual unfinished work plus the Notes runtime task.
+
 The intentionally remaining live GX/UI product workers after this cleanup are:
 
 - `gx-ui-terminal-runtime-facade-spark-20260615a`
