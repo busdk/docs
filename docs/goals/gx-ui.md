@@ -118,7 +118,7 @@ only adopter imports:
 | `bus-ui` | `bus-portal-accounting` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
 | `bus-ui` | `bus-portal-auth` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | active | post-browser deletion rerun `task-73873cbf5a10` proves the new first core blocker is `pkg/ui/ai_upload_facade.go:3:8`; next slice should stay narrow and not pull in JS/WASM drop helpers until the deletion probe names them |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix pending | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); post-AI-upload deletion rerun must be repeated from a hydrated BusDK/bus-ui substrate because `task-2830eedeed16` only proved worker materialization/hydration failure |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -217,6 +217,27 @@ SHAs. With `pkg/uikit` and `pkg/uikit/uikittest` moved out of the build,
 is now `pkg/ui/ai_upload_facade.go:3:8` importing
 `github.com/busdk/bus-ui/pkg/uikit`. The worker restored the throwaway
 deletion state and left its worktree clean.
+
+AI upload core implementation: `bus-ui` `8540b422`
+(`task-d07e3b6f8355`, worker
+`gx-ui-core-ui-ai-upload-module-spark-20260616c`) accepted the AI upload slice.
+It moved `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response handling,
+JSON error extraction, raw-body fallback, logging, and focused behavior tests
+into `pkg/ui`, removing the `pkg/uikit` alias dependency without adding a
+compatibility wrapper. Worker and supervisor evidence: `go test ./pkg/ui`,
+`go test ./...`, `git diff --check`, and scoped no-`pkg/uikit`/`uikit.` audit
+for `pkg/ui/ai_upload_facade.go` and `pkg/ui/ai_upload_facade_test.go`.
+
+Post-AI-upload deletion rerun status: `task-2830eedeed16`, worker
+`gx-ui-uikit-deletion-rerun-after-ai-upload-spark-20260616a`, did not produce a
+valid compiler matrix. It proved the BusDK worktree was pinned at `b1fe2bf`,
+but the required submodules were uninitialized placeholders and GitHub SSH
+hydration failed. Treat this as a worker materialization/local-reference
+hydration issue, not a product compiler row. Active follow-up
+`task-4b39fa3069a7` must rerun the post-AI-upload deletion probe only on a
+hydrated BusDK/bus-ui substrate or repair the materialization path first. Do
+not start adopter implementation from the post-AI-upload state until that
+truth gate names the next matrix row.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
