@@ -1055,11 +1055,11 @@ The remaining production inventory is:
 
 | Module family | Files/symbol patterns | Production vs test/docs | App-readiness criticality | Expected public facade | Behavior invariants | Milestone status | Probe/task refs |
 |---|---|---|---|---|---|---|---|
-| `bus-factory` | `internal/serve/ai_thread_isolation.go`, `ai_acp_status.go`, `ai.go`, `business_view.go`, `browser_runtime.go`, `server.go`, `ai_go_diagnostics.go`, `internal/run/run.go`; production direct `pkg/uikit` imports and `uikit.` calls. | Production normal path. | App-readiness follow-up, especially AI assistant and server/runtime paths. | `pkg/ui` for CLI/server/browser runtime/business primitives and CSS helpers; `assistantui` for isolation/panel render surfaces; `terminalui` for terminal session snapshots; missing public core facade for AI panel client script/default model catalog, event/model catalog helpers, and possibly ACP/status + Go diagnostics DTOs if those must leave `pkg/uikit`. | CLI output, token/static URL behavior, AI thread/session DTO shape, browser runtime action/resource semantics, generated HTML boundary behavior, asset URL strings, provider path/status values. | Probe completed. Ready implementation slices: CLI/server helper swap, browser runtime request/action swap, business view rewrite to public primitives, terminal-session adapter swap, and isolation adapter rewrite. Full cleanup waits on assistant/AI facade parity for shared script/model catalog and status/diagnostic/event helpers. | `task-41453d68fdbb`, replacement worker `gx-ui-factory-uikit-probe-mini-20260615b`. Spark worker `gx-ui-factory-uikit-probe-spark-20260615a` failed without an accepted table and was stopped. |
+| `bus-factory` | `internal/serve/ai_thread_isolation.go`, `ai_acp_status.go`, `ai.go`, `business_view.go`, `browser_runtime.go`, `server.go`, `ai_go_diagnostics.go`, `internal/run/run.go`; production direct `pkg/uikit` imports and `uikit.` calls. | Production normal path. | App-readiness follow-up, especially AI assistant and server/runtime paths. | `pkg/ui` for CLI/server/browser runtime/business primitives and CSS helpers; `assistantui` for isolation/panel render surfaces; `terminalui` for terminal session snapshots; shared script/model/event/panel-render helpers now partly covered by `bus-ui` `de62c59`/`76a58af`; possibly missing public ACP/status + Go diagnostics DTOs if those must leave `pkg/uikit`. | CLI output, token/static URL behavior, AI thread/session DTO shape, browser runtime action/resource semantics, generated HTML boundary behavior, asset URL strings, provider path/status values. | Probe completed. Ready implementation slices: CLI/server helper swap, browser runtime request/action swap, business view rewrite to public primitives, terminal-session adapter swap, isolation adapter rewrite, and AI panel script/model/event/render-props swap against the accepted assistantui facade. Full cleanup still needs a narrow decision/probe for ACP/status and Go diagnostics DTO ownership. | `task-41453d68fdbb`, replacement worker `gx-ui-factory-uikit-probe-mini-20260615b`. Spark worker `gx-ui-factory-uikit-probe-spark-20260615a` failed without an accepted table and was stopped. Core AI Slice A accepted via `task-ad933078fd5d`. |
 | `bus-gateway` | `internal/run/admin.go`, `internal/run/run.go`, `internal/server/service_manager.go`, `admin_cli.go`, `bootstrap.go`, `server.go`, `internal/ui/view.go`; production direct `pkg/uikit` imports and `uikit.` calls. | Production normal path. | App-readiness follow-up for gateway CLI/server/UI shell. | `pkg/ui` for CLI/server/static/token/logging, node-first UI primitives, and now CSS/icon helper parity from `bus-ui` `7fb0b0b`. | CLI output, serve writer/browser-open behavior, token generation and token URL/path suffix behavior, static/index fallback, client-log API behavior, TCP listener behavior, immediate admin output, UI render boundaries. | Probe completed. Narrow CLI/server swaps are ready; UI cleanup should use the accepted CSS/icon facade instead of direct `pkg/uikit` imports. | `task-f9b8df62aa16`, worker `gx-ui-gateway-uikit-probe-spark-20260615a`; core unblocker `task-d1f1d1b26dd5` accepted as `bus-ui` `7fb0b0b`. |
-| `bus-inspection` | `internal/run/run.go`, `internal/cli/flags.go`, `internal/server/server.go`, `internal/ui/wasm/view.go`, `internal/ui/wasm/app.go`; production direct `pkg/uikit` imports and many WASM/view `uikit.` calls. | Production normal path. | App-readiness follow-up for inspection CLI/server/WASM app. | `pkg/ui` for already-exported CLI/server/browser/global/mount helpers and CSS/icon helper parity from `bus-ui` `7fb0b0b`; additional `pkg/ui` facade parity needed for runtime mount, callback lifecycle, file/dropzone upload, DOM error host, split/projection/route helpers, and `MessageBubble`. | CLI flag validation, immediate/serve output, browser-open, token/static/client-log behavior, JS/WASM document/location/gateway/action/resource behavior, drag/drop upload, render boundaries, form submit serialization, scroll preservation. | Probe completed. CLI/server swaps are narrow-ready; full WASM/view cleanup waits on the split core facade tasks from `task-c359cfa15ffa`. | `task-430c894ddc6d`, worker `gx-ui-inspection-uikit-probe-spark-20260615a`; core WASM probe `task-c359cfa15ffa`. |
-| `bus-ledger` | `internal/run/run.go`, `internal/server/ai_thread_isolation.go`, `ai.go`, `ai_runtime_config.go`, `logging.go`, `server.go`, and many `internal/ui/wasm/*` files including control helpers, app context, ledger controller, split root, list/detail/line panels, projection presenter, and resize helpers. | Production normal path. | High app-readiness follow-up because ledger has broad AI/projection/WASM rendering contracts. | `pkg/ui` for narrow CLI/server/logging/status surfaces; missing public core facades for AI isolation/model/catalog helpers, AI/projection query/render runtime, split lifecycle/resize, WASM event/drop/error/disposal helpers, parsing/formatting/route helpers, and some table/status/detail presenter helpers. | CLI output, token/static/client-log behavior, AI isolation and event/model catalog semantics, projection list/detail route and evidence action IDs, split pane state/resize, render runtime/recovery, numeric parsing/formatting, row/link/icon behavior. | Probe completed. Only small CLI/server/status-surface slices are ready; broad migration is blocked by several core facade parity tasks that should be split before implementation. | `task-9df1a15c7232`, worker `gx-ui-ledger-uikit-probe-spark-20260615a`. |
-| `bus-chat` | `internal/serve/ai.go`, `ai_workspace_locks.go`, `ai_appserver.go`, `server.go`, `internal/run/run.go`, `internal/cli/flags.go`; production direct `pkg/uikit` imports and AI/server `uikit.` calls. | Production normal path. | App-readiness follow-up for chat CLI/server/AI panel and wire DTOs. | `pkg/ui` for CLI/server helpers and CSS/icon helper parity from `bus-ui` `7fb0b0b`; `terminalui` covers some terminal DTOs; missing public assistant/AI facade for AI panel client script, thread isolation helpers, event/model catalog helpers, chat/status/poll/history DTOs, panel render props/rendering, and message buffer/history behavior. | CLI output, token-gated server routing, `/assets/uikit.css`, AI panel client script contract, lock/isolation payload shape, event filtering/model candidates, `/v1/ai/*` JSON fields, persisted `ai-state.json`, prompt/message normalization. | Probe completed. Narrow CLI/server helper slice is ready; broad AI cleanup waits on split assistant/AI facade tasks from `task-f3a1a044b53a`. | `task-068f261597cf`, worker `gx-ui-chat-uikit-probe-spark-20260615a`; core AI probe `task-f3a1a044b53a`. |
+| `bus-inspection` | `internal/run/run.go`, `internal/cli/flags.go`, `internal/server/server.go`, `internal/ui/wasm/view.go`, `internal/ui/wasm/app.go`; production direct `pkg/uikit` imports and many WASM/view `uikit.` calls. | Production normal path. | App-readiness follow-up for inspection CLI/server/WASM app. | `pkg/ui` for already-exported CLI/server/browser/global/mount helpers, CSS/icon helper parity from `bus-ui` `7fb0b0b`, and runtime mount/callback lifecycle/DOM error-host parity from `bus-ui` `72c9537`; still missing public facade parity for file/dropzone upload, split/projection/route helpers, and `MessageBubble`. | CLI flag validation, immediate/serve output, browser-open, token/static/client-log behavior, JS/WASM document/location/gateway/action/resource behavior, drag/drop upload, render boundaries, form submit serialization, scroll preservation. | Probe completed. CLI/server swaps and runtime/mount/error-host swaps are narrow-ready; full WASM/view cleanup still waits on remaining split core facade tasks from `task-c359cfa15ffa`. | `task-430c894ddc6d`, worker `gx-ui-inspection-uikit-probe-spark-20260615a`; core WASM probe `task-c359cfa15ffa`; WASM Slice 1.1 accepted via `task-5f133b387382`. |
+| `bus-ledger` | `internal/run/run.go`, `internal/server/ai_thread_isolation.go`, `ai.go`, `ai_runtime_config.go`, `logging.go`, `server.go`, and many `internal/ui/wasm/*` files including control helpers, app context, ledger controller, split root, list/detail/line panels, projection presenter, and resize helpers. | Production normal path. | High app-readiness follow-up because ledger has broad AI/projection/WASM rendering contracts. | `pkg/ui` for narrow CLI/server/logging/status surfaces and runtime/error/disposal parity from `bus-ui` `72c9537`; `assistantui` shared script/model/event/render-props/panel render helpers from `bus-ui` `de62c59`/`76a58af`; still missing public core facades for broader AI/projection query/render runtime, split lifecycle/resize, file/drop helpers, parsing/formatting/route helpers, and some table/status/detail presenter helpers. | CLI output, token/static/client-log behavior, AI isolation and event/model catalog semantics, projection list/detail route and evidence action IDs, split pane state/resize, render runtime/recovery, numeric parsing/formatting, row/link/icon behavior. | Probe completed. Small CLI/server/status slices, AI Slice A swaps, and runtime/mount/error-host swaps are ready to implement against accepted facades; broad projection/WASM migration remains blocked by remaining core facade parity slices. | `task-9df1a15c7232`, worker `gx-ui-ledger-uikit-probe-spark-20260615a`; core AI Slice A accepted via `task-ad933078fd5d`; core WASM Slice 1.1 accepted via `task-5f133b387382`. |
+| `bus-chat` | `internal/serve/ai.go`, `ai_workspace_locks.go`, `ai_appserver.go`, `server.go`, `internal/run/run.go`, `internal/cli/flags.go`; production direct `pkg/uikit` imports and AI/server `uikit.` calls. | Production normal path. | App-readiness follow-up for chat CLI/server/AI panel and wire DTOs. | `pkg/ui` for CLI/server helpers and CSS/icon helper parity from `bus-ui` `7fb0b0b`; `terminalui` covers some terminal DTOs; `assistantui` now covers AI panel client script, event/model catalog helpers, and panel render props/rendering via `bus-ui` `de62c59`/`76a58af`; still missing or undecided public facade for broader thread/status/poll/history DTOs and message buffer/history behavior. | CLI output, token-gated server routing, `/assets/uikit.css`, AI panel client script contract, lock/isolation payload shape, event filtering/model candidates, `/v1/ai/*` JSON fields, persisted `ai-state.json`, prompt/message normalization. | Probe completed. Narrow CLI/server helper slice and AI panel script/model/event/render-props swaps are ready; broad AI cleanup still waits on DTO/helper parity from `task-f3a1a044b53a`. | `task-068f261597cf`, worker `gx-ui-chat-uikit-probe-spark-20260615a`; core AI probe `task-f3a1a044b53a`; core AI Slice A accepted via `task-ad933078fd5d`. |
 
 Backlog/ETA language must now be tied to this inventory. After each accepted
 lane, refresh the repo-wide production audit before saying GX/UI cleanup is
@@ -1079,28 +1079,51 @@ Accepted core parity:
   `IconLinePath`, `IconPortalPath`). Supervisor verification on the primary
   `bus-ui` checkout: `git diff --check HEAD~1..HEAD`,
   `go test ./pkg/ui -count=1`, and `go test ./... -count=1`.
+- `task-5f133b387382`, worker
+  `gx-ui-core-wasm-runtime-lifecycle-spark-20260615a`: accepted and promoted
+  from worker commit `6b39b8d1c502a2194a3369a4c527d47374ed21fd` as primary
+  `bus-ui` commit `72c9537` (`ui: add slice 1.1 public runtime/mount
+  facade`). It adds public `pkg/ui` runtime mount, mounted app, GX root,
+  DOM error banner, error-dismiss action, disposer, event target,
+  event-listener, and callback retention facade parity. Supervisor
+  verification on the primary `bus-ui` checkout: `git diff --check
+  HEAD~1..HEAD`, `go test ./pkg/ui -count=1`, and `go test ./... -count=1`.
+- `task-ad933078fd5d`, worker
+  `gx-ui-core-ai-control-plane-spark-20260615a`: accepted and promoted from
+  worker commits `dc6b57d424e362e146a9535a6ee9ca373b54bb87` plus correction
+  commit `ca61e3e` as primary `bus-ui` commits `de62c59` and `76a58af`
+  (`assistantui: add control-plane AI helper facade aliases` and
+  `assistantui: make AI panel facade node first`). It adds public
+  `assistantui` control-plane parity for AI panel client script, default
+  model options, event/method helpers, model extraction, panel render props,
+  core panel DTO aliases, js/wasm panel-prop building, node-first
+  `RenderAIPanel`, and explicit string boundary `RenderAIPanelHTML`.
+  Supervisor review rejected the first string-returning render facade and
+  required node-first API shape before acceptance. Supervisor verification on
+  the primary `bus-ui` checkout: `git diff --check HEAD~2..HEAD`,
+  `go test ./pkg/assistantui -count=1`, and `go test ./... -count=1`.
 
 Core facade work now split by completed probes:
 
 - `task-f3a1a044b53a`, core assistant/AI facade probe: accepted as a
-  read-only table. Critical Slice A is a public `assistantui` control-plane
-  facade for render props, panel render path, thread isolation, model/event
-  catalogs, and the AI panel client script. Critical Slice B is public
-  DTO/helper parity for thread/status/poll/history/message/event behavior.
-  Critical Slice C is canonical terminal DTO ownership/alias strategy.
-  Slice D is non-critical contract hardening and migration docs for
-  token/action registry behavior. The completed Factory probe adds a concrete
-  requirement for public `AIPanelClientScriptMust`,
-  `DefaultAICodexModelOptions`, `IsKnownAIEventMethod`,
-  `ExtractAIModelCandidates`, and possibly ACP/status plus Go diagnostics DTO
-  parity if those wire types should no longer depend on `pkg/uikit`.
+  read-only table. Critical Slice A, public `assistantui` control-plane
+  facade for render props, panel render path, model/event catalogs, and the AI
+  panel client script, is accepted through `task-ad933078fd5d`. Critical
+  Slice B remains pending: public DTO/helper parity for thread/status/poll/
+  history/message/event behavior. Critical Slice C remains pending: canonical
+  terminal DTO ownership/alias strategy. Slice D is non-critical contract
+  hardening and migration docs for token/action registry behavior. The
+  completed Factory probe still leaves a concrete decision on ACP/status plus
+  Go diagnostics DTO parity if those wire types should no longer depend on
+  `pkg/uikit`.
 - `task-c359cfa15ffa`, core WASM/runtime/form/table facade probe: accepted as
-  a read-only table. Critical Slice 1.1 is `pkg/ui` runtime mount, callback
-  lifecycle, and DOM error-host facade parity. Critical Slice 1.2 is WASM file
-  I/O/dropzone/multipart facade parity. Critical Slice 1.3 is split runtime,
-  projection-list, and related layout facade parity. Deferred cleanup is
-  broader route/parse/format helper exports plus `MessageBubble` parity once
-  the active runtime slices prove exact adopter needs.
+  a read-only table. Critical Slice 1.1, `pkg/ui` runtime mount, callback
+  lifecycle, and DOM error-host facade parity, is accepted through
+  `task-5f133b387382`. Critical Slice 1.2 remains pending: WASM file I/O/
+  dropzone/multipart facade parity. Critical Slice 1.3 remains pending: split
+  runtime, projection-list, and related layout facade parity. Deferred cleanup
+  is broader route/parse/format helper exports plus `MessageBubble` parity
+  once the active runtime slices prove exact adopter needs.
 
 ## Safety Rules For Continuation
 
