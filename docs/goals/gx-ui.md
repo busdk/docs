@@ -319,28 +319,79 @@ Remote `AGENTS.md` says worker identity checkouts under
 evidence, not disposable scratch. Do not prune those as part of this GX/UI
 cleanup unless the operator approves a separate retention-policy task.
 
+## 2026-06-15 Local Supervisor Update
+
+The local re-audit found that adopter cleanup is blocked by a missing
+`bus-ui/pkg/ui` public action/resource facade. Product modules such as
+`bus-portal-auth`, `bus-portal-accounting`, and `bus-portal-ai` still need
+action state, resource request/result, browser/WASM fetch, multipart upload,
+and result-helper primitives that are currently available only through
+`pkg/uikit` or only partially exposed through `pkg/ui`.
+
+This is now the first core-library dependency before claiming adopter modules
+are off `pkg/uikit`:
+
+- expose the stable action/resource runtime surface through `pkg/ui` without
+  requiring Go 1.23 generic type aliases;
+- avoid name conflicts with existing UI component facades such as
+  `ui.ProviderError`;
+- include missing constants/helpers already needed by adopters, such as
+  `ResourceMethodPost`, `ResourceMethodUpload`, `ButtonGhost`, action state
+  and `RunAction`, resource clients/results, multipart payloads, and WASM
+  resource fetch helpers;
+- prove the facade with focused `pkg/ui` tests before rebasing adopter
+  cleanup workers.
+
+Local Spark workers were started for these current slices:
+
+- `bus-ui` terminalui public node-first API;
+- `bus-ui` uiportal public node-first API;
+- `bus-ui` `pkg/ui` action/resource facade;
+- `bus-portal-notes` shell/page slot replacement;
+- `bus-portal-auth` active `pkg/uikit` import cleanup;
+- `bus-portal-accounting` active `pkg/uikit` import cleanup.
+
+The first terminalui, Notes, and Auth workers accidentally touched primary
+checkout paths. The Auth worker also committed two changes on primary
+`bus-portal-auth/develop` before detection. The leaked patches were preserved
+as supervisor coordination artifacts, a backup branch was kept for the Auth
+leak, and the primary module checkouts were restored clean. Continuation
+workers must receive the exact worker product-worktree path and must verify
+they are editing inside `.bus/services/workers/runtime/<worker>/product-worktree`
+before any product edit.
+
 ## Next Work Queue
 
 The next supervisor should proceed in this order:
 
-1. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
+1. Finish and accept the core `bus-ui/pkg/ui` action/resource facade, then
+   rebase or rerun adopter cleanup workers against it.
+2. Finish the current `bus-ui` terminalui and uiportal public API cleanup
+   slices, keeping compatibility helpers deprecated and non-default.
+3. Finish the current `bus-portal-notes` shell/page slot cleanup so active
+   render paths no longer use `strings.Replace` slot insertion or broad
+   `ui.Unsafe`.
+4. Resume adopter cleanup for `bus-portal-auth`,
+   `bus-portal-accounting`, `bus-portal-ai`, and `bus-portal` once the core
+   facade exists.
+5. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
    If it still matches the desired API direction, rerun focused/full tests,
    promote into `bus-ui develop`, push, and pin BusDK.
-2. Review `busdk.com/codex/gx-ui-node-first-docs`.
+6. Review `busdk.com/codex/gx-ui-node-first-docs`.
    Decide whether to promote it as the current website docs cleanup, then
    delete or archive older website branches that become superseded.
-3. Re-audit canonical code and docs for the definition-of-done patterns.
+7. Re-audit canonical code and docs for the definition-of-done patterns.
    Use the audit to decide whether `uiportal`, adopter tests, and docs cleanup
    need fresh focused workers.
-4. Review remaining adopter branches in `bus-portal-auth`,
+8. Review remaining adopter branches in `bus-portal-auth`,
    `bus-portal-ai`, `bus-portal-accounting`, and `bus-portal-notes`.
    Promote only branches that still improve the current canonical state;
    otherwise record them as superseded/rejected and remove their worktrees.
-5. Classify dirty evidence worktrees:
+9. Classify dirty evidence worktrees:
    `/private/tmp/bus-ui`, `/private/tmp/bus-ui-terminalui-node-first`,
    `/private/tmp/bus-portal-notes-review-raw-cleanup`, and the two dirty Bus
    runtime product worktrees. Archive useful diffs before deletion.
-6. Only after module state is settled, prune old BusDK root pointer branches
+10. Only after module state is settled, prune old BusDK root pointer branches
    whose target module commits are promoted, superseded, or intentionally
    discarded.
 
