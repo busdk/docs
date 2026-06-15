@@ -305,6 +305,16 @@ links/previews, projection/provider, timeline, and image gallery children still
 need to move before the deletion probe can advance beyond this compiler
 blocker.
 
+Records child attempt: worker
+`gx-ui-core-ui-data-evidence-records-only-spark-20260616a`
+(`task-4c21e99ba4d1`) proved the populated `bus-ui` module root at
+`4db9621` and produced a records/summary source map, but produced no
+implementation diff after the implementation proceed plus one exact
+patch-target nudge. It was parked and the task was closed no-diff/superseded.
+The records/summary child remains unfinished. Next records action should be a
+tighter supervisor-planned patch target or relaunch, not implementation model
+escalation, unless a simplified patch still fails from reasoning complexity.
+
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
 
