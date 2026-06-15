@@ -401,6 +401,52 @@ core `bus-ui` public facade work before adopter cleanup can finish cleanly:
   of the accepted shell/page slot cleanup and is now tracked separately as
   `task-fe70fd4546fd`.
 
+The local `2026-06-15 13:00 EEST` source re-audit narrowed the remaining
+production ownership further:
+
+- `bus-portal-ai/pkg/aiportal/actions.go` should move action/resource/result
+  usage to the public `pkg/ui` facade that already exists.
+- `bus-portal-ai/pkg/aiportal/terminal_runtime.go` and
+  `bus-portal-ai/pkg/aiportal/wasm_runtime_js.go` still depend on terminal and
+  container stream/resource types and helpers through `pkg/uikit`; they should
+  wait for the `pkg/terminalui` runtime facade instead of importing
+  `pkg/terminalruntime` directly.
+- `bus-portal/internal/cli/flags.go`, `internal/run/run.go`,
+  `internal/server/server.go`, `internal/server/logging.go`,
+  `internal/ui/wasm/app.go`, and `internal/ui/wasm/launcher.go` still depend on
+  `pkg/uikit` for CLI, server/static/token, logging, browser-open, runtime URL,
+  gateway, global document/location, and mount helpers; they should migrate to
+  `pkg/ui` only after those helpers are public there.
+- `bus-portal-notes/runtime_reducer.go`, `runtime.go`, and `view_models.go`
+  remain the only Notes production files with active `pkg/uikit` dependencies
+  outside stylesheet URL strings. Notes tests still use `uikit`/`uikittest`,
+  but the immediate adopter DoD is production cleanup plus focused tests.
+
+Post-reset worker guidance should keep the core slices separate:
+
+- For `task-646c27a30fb6`, own only `bus-ui/pkg/terminalui/**` plus focused
+  `bus-ui` docs/features/tests needed by module guidance. Re-export or wrap
+  the terminalruntime public runtime contracts needed by AI: `ResourceKind`,
+  `ResourceMethod`, `ResourceClient`, `ResultResourceClient`,
+  `ValidateResource*`, `NormalizeResourceRequest`,
+  `TerminalInputResourceRequest`, `TerminalResizeResourceRequest`,
+  `TerminalCloseResourceRequest`, `ContainerRunLifecycle` constants,
+  `ValidateContainerRunRequest`, `ContainerRunResourceRequest`,
+  `ParseContainerRunArgsJSON`, `TerminalStreamRequest`,
+  `TerminalStreamReader`, `TerminalStreamTransport`,
+  `TerminalStreamLifecycle` constants, `TerminalStreamResult`, stream errors,
+  `DecodeTerminalSSEEvent`, and AI terminal event/session builders. Do not
+  change `bus-portal-ai` in this worker.
+- For `task-84d0842bbbff`, own only `bus-ui/pkg/ui/**` plus focused
+  `bus-ui` docs/features/tests needed by module guidance. Re-export or wrap
+  the public helper contracts needed by Portal from `pkg/uikit`: global CLI
+  flags and output writers, browser open, capability-token/static/content-type
+  helpers, server logger/client-log helpers, browser globals, runtime API URL
+  helpers, browser resource fetch, gateway client, and mount helpers. Avoid a
+  module-local Portal wrapper layer.
+- Only after those facades are accepted and pinned should AI, Portal, and
+  Notes adopter workers continue production import cleanup.
+
 Local Spark workers were started for those two core facade slices, but several
 new App Server workers began accepting messages and then completing turns
 without any assistant response or diff. A Bus infrastructure task was opened as
