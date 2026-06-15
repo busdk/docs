@@ -760,6 +760,33 @@ before then:
    Spark quota/no-assistant turns and until bulk list/prune projections agree
    with individual worker lifecycle status after stops.
 
+## 2026-06-15 14:25 Local Acceptance Update
+
+The operator approved using `gpt-5.4-mini` for the remaining GX/UI work. The
+supervisor replaced the stale adopter Spark lanes with Mini workers on the
+accepted BusDK `50bbbb2` / `bus-ui` `12e5cdf` base.
+
+The Notes runtime adopter cleanup is now accepted locally:
+
+- worker `gx-ui-notes-runtime-mini-20260615a`, task `task-fe70fd4546fd`;
+- worker commit `c46f1e31c239cc568ee2179a32497e66f56b4cab`;
+- promoted primary `bus-portal-notes` commit `ab71e8b`, `notes portal: use ui
+  facade in runtime`;
+- scoped files: `runtime.go`, `runtime_reducer.go`, and `view_models.go`;
+- verification on promoted primary: `git diff --check HEAD~1..HEAD`, scoped
+  production `pkg/uikit`/`uikit.` search with no hits, and `go test ./...`.
+
+This removes active production `pkg/uikit` dependencies from the immediate
+Notes runtime/reducer/view-model scope. Notes test-harness `uikit` usage
+remains part of the later test migration wave.
+
+During review, the Notes worker surfaced a small remaining `pkg/ui` facade
+polish gap: `pkg/ui` exposes `SubmitState` and `SubmitStateIdle`, but not
+`SubmitStateWorking`, `SubmitStateSuccess`, or `SubmitStateError`, so the
+accepted Notes patch uses typed `ui.SubmitState("...")` literals for those
+states. Treat exporting those constants as a small core follow-up, not as a
+reason to reject the production import cleanup.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
