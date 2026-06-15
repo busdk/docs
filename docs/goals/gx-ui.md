@@ -965,6 +965,80 @@ adapter implementation; adopter tests must continue to assert the old
 `Done()`/reconnect behavior rather than weakening expectations around the
 public facade.
 
+## 2026-06-15 18:20 Final AI Terminal/Container Cleanup Accepted
+
+The final AI terminal/container adopter cleanup is now accepted, promoted, and
+the task thread is closed:
+
+- worker `gx-ui-ai-terminal-runtime-onefile-spark-20260615o`, task
+  `task-25bee17f4cd1`;
+- worker commit `ee8650c33fbf98a8a2a6d037f3ec105f82cd3716`,
+  `Migrate AI terminal runtime to public UI facades`;
+- promoted primary `bus-portal-ai` commit
+  `2f4f8068b490254599236b5188bc9cfeac984411`;
+- BusDK pin commit `9f0a2e7dd17ff37c296db32e22b3cf4364886b91`;
+- supervisor pointer commit `0e229d51cfb53a766e943f059e89e1ea5d5270ea`.
+
+The accepted patch removes the final scoped production `pkg/uikit` dependency
+from `bus-portal-ai/pkg/aiportal/terminal_runtime.go` and
+`bus-portal-ai/pkg/aiportal/wasm_runtime_js.go` by using public `pkg/ui` for
+generic action/resource/browser helpers and public `pkg/terminalui` for
+terminal/container stream and effect types. The scoped tests in
+`terminal_runtime_test.go` now use public `ui` and `terminalui` types.
+
+The adopter keeps the accepted provider behavior while using the new public
+facades:
+
+- terminal create/input/resize/close paths remain under `/sessions`;
+- terminal stream behavior continues to protect `Done()` close/abort and
+  reconnect attempt invariants from the core stream-parity patch;
+- container run requests remain `POST /api/v1/containers/runs`;
+- the public terminal facade's current `/container/run` helper output is
+  adapted in the adopter before provider prefixing, rather than changing the
+  provider contract or importing `pkg/terminalruntime` directly.
+
+Acceptance checks on the promoted primary module passed:
+
+- `git diff --check HEAD~1..HEAD`;
+- scoped no-legacy audit for `pkg/uikit`, `uikit.`, and `terminalruntime` in
+  `terminal_runtime.go`, `terminal_runtime_test.go`, and
+  `wasm_runtime_js.go`;
+- production-only `pkg/aiportal` audit has no direct `pkg/uikit` or `uikit.`
+  hits outside tests and accepted asset URL strings;
+- `go test ./pkg/aiportal -count=1`;
+- `go test ./... -count=1`.
+
+WASM proof has a named verifier-host exception. On the supervisor host,
+`/usr/local/go/bin/go` reports `go version go1.26.3 darwin/arm64`, and
+`GOOS=js GOARCH=wasm go env GOROOT GOOS GOARCH GOEXPERIMENT` reports
+`/usr/local/go`, `js`, `wasm`, and an empty experiment value. However,
+`GOOS=js GOARCH=wasm go list std` fails broadly across standard library
+packages, including `syscall/js`, so local WASM failure is not classified as
+product failure. Route any future WASM proof for this slice to a known-good
+worker/host/toolchain before reopening product work.
+
+After this acceptance, `bus-portal-ai/pkg/aiportal` has no production direct
+`pkg/uikit` import or `uikit.` reference. Test-only `uikit`/`uikittest` usage
+elsewhere remains classification work, not an app-readiness blocker unless a
+specific production migration depends on it.
+
+Current source audit after this promotion still finds production direct
+`pkg/uikit` imports outside the completed immediate Portal/Auth/Accounting/AI
+lanes. The remaining broad follow-up surfaces are:
+
+- `bus-factory/internal/serve` and `bus-factory/internal/run`;
+- `bus-gateway/internal/run`, `bus-gateway/internal/server`, and
+  `bus-gateway/internal/ui`;
+- `bus-inspection/internal/cli`, `bus-inspection/internal/run`,
+  `bus-inspection/internal/server`, and `bus-inspection/internal/ui/wasm`;
+- `bus-ledger/internal/run`, `bus-ledger/internal/server`, and
+  `bus-ledger/internal/ui/wasm`;
+- `bus-chat/internal/cli`, `bus-chat/internal/run`, and
+  `bus-chat/internal/serve`.
+
+Treat those as separate future slices. They are not evidence that the final AI
+terminal/container lane remains open.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
