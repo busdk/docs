@@ -282,6 +282,7 @@ Known child slices are:
   `0f86ae9` (`task-53e82acad2c3`);
 - provider error: FC-007 public-safe provider error types, validation,
   redaction, checked/string/node helpers, and compiled render support;
+  accepted in `bus-ui` `bff66d6` (`task-227713f52b65`);
 - projection detail: FC-020 projection detail types, diagnostics, checked
   result, preview media policy, checked/string/node helpers, and compiled
   render support;
@@ -347,7 +348,21 @@ node-first behavior expected by `pkg/ui` tests. Primary `bus-ui`
 verification: `go test ./pkg/ui`, `go test ./...`,
 `git diff --check HEAD~1..HEAD`, and the scoped image-gallery alias audit all
 passed. The parent `pkg/ui/data_evidence.go` row remains active because
-records/summary, provider error, projection detail, and timeline children still
+records/summary, projection detail, and timeline children still
+need to move before the deletion probe can advance beyond this compiler
+blocker.
+
+Provider-error child implementation: `bus-ui` `bff66d6`
+(`task-227713f52b65`; worker
+`gx-ui-core-ui-data-evidence-provider-error-only-spark-20260616a`) accepted the
+FC-007 provider-error subset. The worker moved public-safe provider-error
+types, validation, redaction, checked/string/node helpers, and compiled render
+support into `pkg/ui`, removed provider-error `uikit` aliases from
+`pkg/ui/data_evidence.go`, and preserved the public behavior expected by
+`pkg/ui` tests. Primary `bus-ui` verification: `go test ./pkg/ui`,
+`go test ./...`, `git diff --check HEAD~1..HEAD`, and the scoped provider
+alias audit all passed. The parent `pkg/ui/data_evidence.go` row remains
+active because records/summary, projection detail, and timeline children still
 need to move before the deletion probe can advance beyond this compiler
 blocker.
 
@@ -358,7 +373,7 @@ Projection/provider broad attempt:
 after one exact patch-target nudge and repeated wrong-path tool calls. It was
 stopped as false-active implementation work. The former projection/provider
 row is split into provider-error and projection-detail children; provider-error
-should run first as the smaller direct-file implementation slice.
+was accepted in `bus-ui` `bff66d6`, so projection detail remains unfinished.
 
 Timeline child attempt:
 `gx-ui-core-ui-data-evidence-timeline-only-spark-20260616a`
@@ -382,10 +397,10 @@ Image gallery child attempt:
 (`task-48782bcc6e1a`) materialized `bus-ui` at `0f86ae9`, but stayed clean and
 produced no assistant hard-gate/source-map output or diff after the initial
 prompt plus one exact patch-target nudge. Its App Server logs showed duplicate
-`workdir` tool argument and missing-file tool-router errors. The image gallery
-child remains unfinished. More same-shape implementation workers should be
-parked until the local App Server worker execution path is diagnosed or a
-different patch-applying runtime is selected.
+`workdir` tool argument and missing-file tool-router errors. This failed
+attempt is superseded by the accepted image-gallery child `ca10596`; more
+same-shape implementation workers should be parked when they repeat
+tool-router failures.
 
 Image gallery alternate-runtime attempt:
 `task-6219bd0a2c51` tried to keep the same already-scoped gallery patch target
@@ -395,9 +410,9 @@ failed before materialization because the prompt file was not in its allowed
 roots. `bus-agent-runtime` with inline prompt materialized `bus-ui` at
 `0f86ae9`, but routed `gpt-5.3-codex-spark` to the local
 OpenAI-compatible endpoint `127.0.0.1:11434`, which refused the connection.
-No patch was produced. The image gallery child remains unfinished; the next
-action is worker execution/config diagnosis or a known patch-applying runtime,
-not another same-shape product worker.
+No patch was produced. This failed attempt is superseded by the accepted
+image-gallery child `ca10596`; the reusable lesson is to prove the worker path
+with direct session JSONL and diff/test evidence before counting it active.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
