@@ -583,6 +583,45 @@ The next supervisor should proceed in this order:
    whose target module commits are promoted, superseded, or intentionally
    discarded.
 
+## Post-Reset Execution Runbook
+
+Use this exact order after the `gpt-5.3-codex-spark` reset at
+`2026-06-15 16:20:50 EEST` unless the operator approves a different model
+before then:
+
+1. Verify individual status for the five live workers, not only bulk list:
+   `gx-ui-terminal-runtime-facade-spark-20260615a`,
+   `gx-ui-runtime-facade-spark-20260615a`,
+   `gx-ui-ai-uikit-spark-20260615b`,
+   `gx-ui-portal-uikit-spark-20260615b`, and
+   `gx-ui-notes-runtime-spark-20260615a`.
+2. Message the two core `bus-ui` workers first:
+   - terminal runtime facade worker on `task-646c27a30fb6`;
+   - UI helper facade worker on `task-84d0842bbbff`.
+   Require each worker to restate its product worktree path under
+   `.bus/services/workers/runtime/<worker>/product-worktree`, its module root,
+   and its exact write scope before editing.
+3. Review and accept core facade output before adopter messages:
+   - inspect diffs in the worker-owned `bus-ui` worktrees;
+   - verify focused tests and `git diff --check`;
+   - run or request `bus-ui` module checks appropriate to the changed files;
+   - commit/promote accepted module commits, then pin BusDK and supervisor
+     submodule pointers before starting adopter cleanup from those facades.
+4. Message adopter workers only after the needed core facade commits are
+   accepted and pinned into the worker-visible BusDK state:
+   - AI waits for both `pkg/terminalui` and `pkg/ui`;
+   - Portal waits for `pkg/ui`;
+   - Notes waits for `pkg/ui`.
+5. Re-audit production `pkg/uikit` usage after adopter output:
+   `rg -n "github.com/busdk/bus-ui/pkg/uikit|uikit\\." --glob '*.go'
+   --glob '!**/*_test.go' bus-portal/internal bus-portal/pkg
+   bus-portal-ai/pkg bus-portal-notes/*.go`.
+   Asset URL strings such as `/assets/uikit.css` are not production API
+   imports and should not block this refactor.
+6. Keep `task-4eb87d0bfa61` open until worker projections correctly surface
+   Spark quota/no-assistant turns and until bulk list/prune projections agree
+   with individual worker lifecycle status after stops.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
