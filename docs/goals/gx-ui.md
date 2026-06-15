@@ -248,57 +248,51 @@ Remaining state is not routine pruning; it needs review or archival decisions.
 
 ### Remaining `bus-ui` Items
 
-- `codex/assistantui-public-api-cleanup` at `402cfa9`, clean worktree
-  `/private/tmp/bus-ui-assistantui-api-cleanup`, one unique commit. This is a
-  likely review/promotion candidate.
-- `codex/ui-script-helper` at `eee1516`, clean worktree
-  `/private/tmp/bus-ui-script-helper`, but the diff is very large and appears
-  stale relative to later canonical refactors. Review before deleting.
-- `codex/ui-data-evidence` at `252f8a5`, no worktree, one unique old facade
-  commit. Check whether it is superseded by canonical data/evidence work.
-- `codex/node-first-surface-status`, dirty `/private/tmp/bus-ui`, contained
-  branch with uncommitted scratch changes in `pkg/ui`, `pkg/uikit`, and
-  `pkg/uiportal`.
-- `codex/terminalui-node-first`, dirty
-  `/private/tmp/bus-ui-terminalui-node-first`, contained branch with an
-  untracked `.gocache/` only during the last audit.
+Current local re-audit at `2026-06-15 12:54 EEST` found the old branch/worktree
+items from this section no longer present in the primary `bus-ui` checkout.
+`/private/tmp/bus-ui`, `/private/tmp/bus-ui-terminalui-node-first`,
+`/private/tmp/bus-ui-assistantui-api-cleanup`, and
+`/private/tmp/bus-ui-script-helper` are gone. The primary module has only
+`develop`, `main`, origin remotes, and the accepted
+`remotes/worker/gx-ui-action-resource-facade-20260615a` ref.
+
+The previous `codex/assistantui-public-api-cleanup` item is resolved:
+`402cfa9` is already an ancestor of both local `bus-ui/develop` and
+`origin/develop`. The remaining active `bus-ui` work is not branch pruning; it
+is the two core facade tasks:
+
+- `task-646c27a30fb6`: complete the public `pkg/terminalui`
+  terminal/container runtime facade.
+- `task-84d0842bbbff`: complete the public `pkg/ui`
+  runtime/server/CLI/WASM helper facades.
 
 ### Remaining Website Docs Items
 
-`busdk.com` is still checked out on `codex/gx-ui-node-first-docs`, clean and
-two commits ahead of its `develop`. It changes many `docs/gx-ui/**` pages to
-teach node-first public APIs. This should be reviewed and either promoted or
-rebased into `develop`.
-
-Other old `busdk.com` branches still have unique docs commits and no worktree:
-
-- `codex/busdkcom-nodefirst-docs`;
-- `codex/busui-form-doc-pages`;
-- `codex/gx-ui-all-component-nav`;
-- `codex/remove-gxui-inline-continue`;
-- `codex/ui-data-evidence`;
-- `codex/ui-shell-navigation-status-examples`.
-
-Do not delete these until the website docs branch is reviewed; some may be
-older slices already represented by `codex/gx-ui-node-first-docs`, while
-others may contain unique docs improvements.
+Current local re-audit found `busdk.com` clean on `develop` with no local
+GX/UI docs branches or extra worktrees. The earlier
+`codex/gx-ui-node-first-docs` branch work is represented in `develop` and
+`origin/develop` by the current GX/UI docs commits, including `7e0a54b`
+(`Refine GX/UI docs navigation`). There is no remaining local website-docs
+promotion branch to review in this checkout.
 
 ### Remaining Portal Adopter Items
 
-These branches have real diffs and should be reviewed against canonical
-`develop` before deletion:
+The old local adopter branches listed in earlier audits are no longer present
+in the primary module checkouts. `bus-portal-ai`, `bus-portal-accounting`, and
+`bus-portal-notes` are clean on `develop` with only origin remotes. `bus-portal-auth`
+keeps one archival branch, `codex/leaked-auth-primary-20260615a`, with two
+unique pre-review commits from the earlier primary-checkout leak; accepted
+Auth cleanup is instead `edad787` on `develop`, so the leak branch is evidence,
+not a promotion candidate.
 
-- `bus-portal-auth/codex/bus-portal-auth-node-first`;
-- `bus-portal-ai/codex/bus-portal-ai-node-first-ui`;
-- `bus-portal-ai/codex/bus-portal-ai-ui-render-refactor`;
-- `bus-portal-accounting/codex/bus-portal-accounting-node-first`;
-- `bus-portal-notes/codex/bus-portal-notes-node-first`;
-- `bus-portal-notes/codex/notes-review-raw-cleanup`.
+Current adopter cleanup is therefore tracked by task/work items rather than
+old local branches:
 
-Several of these look like rejected or superseded worker attempts because
-their diffs include stale `go.mod` replace changes, pre-final architecture
-patterns, or changes that later canonical commits may already have replaced.
-Make a recorded decision branch by branch.
+- `bus-portal-ai`: active cleanup remains open as `task-25bee17f4cd1`; the
+  retry worker has a partial dirty submodule diff that is not accepted.
+- `bus-portal`: active cleanup remains open as `task-62c09a117f80`.
+- `bus-portal-notes`: runtime/reducer cleanup is tracked as
+  `task-fe70fd4546fd`.
 
 ### Remaining BusDK Root Items
 
@@ -307,10 +301,13 @@ with unique commits, plus dirty contained evidence worktrees. They mostly
 record old docs/site pointer states. Review them after the module branches are
 classified so pointer branches can be deleted with confidence.
 
-Two dirty Bus worker runtime product worktrees contain old uncommitted
-`bus-ui/pkg/uikit` assistant-workbench changes from the pre-node-first line.
-They are likely evidence, not current promotion candidates, and should be
-archived or explicitly discarded only after review.
+Several GX/UI Bus worker runtime product worktrees remain dirty under
+`.bus/services/workers/runtime/gx-ui-*/product-worktree`. Some correspond to
+accepted lanes whose commits were already cherry-picked into primary modules;
+some correspond to rejected or partial lanes, such as the dirty AI retry
+submodule diff. They are evidence/cleanup inventory, not current promotion
+candidates, and should be archived or explicitly discarded only after recorded
+classification.
 
 `agents/worker` shows many `worker/*` branches and worktrees, but these are
 worker identity checkouts at the shared `Initialize worker identity` commit.
@@ -443,26 +440,15 @@ The next supervisor should proceed in this order:
    `bus-portal-ai` and `bus-portal`. Auth and Accounting are accepted locally;
    AI and Portal remain unfinished after rejected compile-broken/wrapper-only
    attempts and should run against the completed core facades.
-4. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
-   If it still matches the desired API direction, rerun focused/full tests,
-   promote into `bus-ui develop`, push, and pin BusDK.
-5. Dispatch `task-fe70fd4546fd` for the `bus-portal-notes` runtime/reducer
+4. Dispatch `task-fe70fd4546fd` for the `bus-portal-notes` runtime/reducer
    `pkg/uikit` cleanup after the core `pkg/ui` facade is confirmed sufficient.
-6. Review `busdk.com/codex/gx-ui-node-first-docs`.
-   Decide whether to promote it as the current website docs cleanup, then
-   delete or archive older website branches that become superseded.
-7. Re-audit canonical code and docs for the definition-of-done patterns.
+5. Re-audit canonical code and docs for the definition-of-done patterns.
    Use the audit to decide whether `uiportal`, adopter tests, and docs cleanup
    need fresh focused workers.
-8. Review remaining adopter branches in `bus-portal-auth`,
-   `bus-portal-ai`, `bus-portal-accounting`, and `bus-portal-notes`.
-   Promote only branches that still improve the current canonical state;
-   otherwise record them as superseded/rejected and remove their worktrees.
-9. Classify dirty evidence worktrees:
-   `/private/tmp/bus-ui`, `/private/tmp/bus-ui-terminalui-node-first`,
-   `/private/tmp/bus-portal-notes-review-raw-cleanup`, and the two dirty Bus
-   runtime product worktrees. Archive useful diffs before deletion.
-10. Only after module state is settled, prune old BusDK root pointer branches
+6. Classify remaining evidence refs/worktrees: the Auth leak branch and the
+   dirty GX/UI Bus runtime product worktrees. Archive useful diffs before
+   deletion or explicit discard.
+7. Only after module state is settled, prune old BusDK root pointer branches
    whose target module commits are promoted, superseded, or intentionally
    discarded.
 
