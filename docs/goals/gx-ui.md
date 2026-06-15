@@ -118,7 +118,8 @@ only adopter imports:
 | `bus-ui` | `bus-portal-accounting` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
 | `bus-ui` | `bus-portal-auth` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix pending | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); post-AI-upload deletion rerun must be repeated from a hydrated BusDK/bus-ui substrate because `task-2830eedeed16` only proved worker materialization/hydration failure |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix advanced | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); hydrated post-AI-upload module probe `task-4b39fa3069a7` proved the matrix advances beyond `pkg/ui/ai_upload_facade.go` and now stops at `pkg/ui/cli_server_facade.go:8:8` |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/cli_server_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` CLI/server/browser-open helper facade still backed by `uikit` | move CLI flag/runtime helpers, server logger/client-log/static/token helpers, and browser-open URL validation/launcher selection into `pkg/ui` with focused direct behavior tests | active | next core slice; do not start adopter lanes until this is accepted and a hydrated deletion/build-exclusion probe names the next matrix state |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -238,6 +239,17 @@ hydration issue, not a product compiler row. Active follow-up
 hydrated BusDK/bus-ui substrate or repair the materialization path first. Do
 not start adopter implementation from the post-AI-upload state until that
 truth gate names the next matrix row.
+
+Hydrated post-AI-upload module probe: worker
+`gx-ui-post-ai-upload-bus-ui-module-probe-spark-20260616b`
+(`task-4b39fa3069a7`) reran the throwaway deletion/build-exclusion probe from a
+hydrated `bus-ui` module-root substrate at `bus-ui` `8540b42`. With
+`pkg/uikit` and `pkg/uikit/uikittest` moved out of the build, `go test ./...`
+proved the matrix advances beyond `pkg/ui/ai_upload_facade.go`. The first
+remaining owner-module blocker is now `pkg/ui/cli_server_facade.go:8:8`
+importing `github.com/busdk/bus-ui/pkg/uikit`, failing setup for `cmd/bus-ui`,
+examples, `pkg/terminalui`, and `pkg/ui`. The worker restored the throwaway
+deletion state and left its worktree clean.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
