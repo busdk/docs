@@ -808,6 +808,54 @@ Portal should call `ui.CSSBundleCSSChecked(ui.CSSBundleOptions{})` directly
 instead of unwrapping `ui.CSSBundleChecked` output, and AI should use
 `ui.DOMAttrUIAction` instead of local `"data-ui-action"` literals.
 
+## 2026-06-15 15:35 Adopter Acceptance Update
+
+The Portal adopter cleanup is now accepted locally:
+
+- worker `gx-ui-portal-uikit-mini-20260615a`, task `task-62c09a117f80`;
+- worker commits `f856f28278b6d12719281bdf72a2265679758de0` and
+  `10e0e45cd9aa5979a85a763f7249c840bd46bc61`;
+- promoted primary `bus-portal` commits `da62db3`, `Switch bus-portal to
+  public ui facade`, and `f001470`, `Use public ui CSS bundle helper`;
+- BusDK pin commit `423dab0`, `Pin portal ui facade cleanup`;
+- verification on promoted primary: `git diff --check HEAD~2..HEAD`, a
+  scoped production `pkg/uikit`/`uikit.` audit with only accepted
+  `/assets/uikit.css` URL/test hits, `go test ./internal/cli ./internal/run
+  ./internal/server ./pkg/portal`, and `go test ./...`.
+
+The AI adopter cleanup has been accepted in three partial slices against the
+public `pkg/ui` and `pkg/terminalui` facades:
+
+- `gx-ui-ai-actions-mini-20260615c`, task `task-25bee17f4cd1`, worker commit
+  `19064061e170348d710517776fa074869c34bf53`, promoted primary
+  `bus-portal-ai` commit `1535b38`, `Switch ai portal actions to ui facade`,
+  and BusDK pin `a5c018d`;
+- `gx-ui-ai-wasm-actions-mini-20260615d`, task `task-25bee17f4cd1`, worker
+  commits `b72781d` and `84ca48e`, promoted primary `bus-portal-ai` commits
+  `53063a4`, `Switch AI wasm actions to ui facade`, and `5815812`, `Finish
+  aiportal ui facade aliases`, and BusDK pin `bfdeef8`;
+- `gx-ui-ai-terminal-generic-mini-20260615f`, task `task-25bee17f4cd1`, worker
+  diff committed in the worker worktree as `09a4eb7`, promoted primary
+  `bus-portal-ai` commit `469cc43`, `Switch AI terminal generic runtime to ui
+  facade`, and BusDK pin `cf6af05`.
+
+Each promoted AI slice passed its promoted-primary `git diff --check` range,
+`go test ./pkg/aiportal`, and `go test ./...`. The AI task remains open only
+for terminal/container-specific helper migration in
+`pkg/aiportal/terminal_runtime.go` and the terminal sections of
+`pkg/aiportal/wasm_runtime_js.go`. Earlier broad AI retry attempts are
+rejected cautionary evidence because they broke terminal resource path
+semantics, including double-prefixed paths such as
+`/api/v1/terminal/terminal/<id>/input`.
+
+The next AI worker should be narrow: remove the remaining production
+`pkg/uikit` import from `bus-portal-ai/pkg/aiportal/terminal_runtime.go` and
+`wasm_runtime_js.go` by using public `pkg/terminalui` and `pkg/ui` symbols,
+while preserving the existing terminal resource request model and tests. Do
+not import `pkg/terminalruntime` directly, do not hide `uikit` behind a local
+alias or wrapper layer, and do not change terminal request base/path behavior
+unless the existing tests prove the change.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
