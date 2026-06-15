@@ -385,12 +385,21 @@ for `task-fe70fd4546fd` with `gpt-5.3-codex-spark`, module
 `no_initial_message=true`. Its individual status reached `running`/`ready`.
 Do not message it until the core `pkg/ui` facade is accepted and pinned.
 
+At `2026-06-15 13:25 EEST`, the dirty AI retry worker
+`gx-ui-ai-uikit-spark-20260615b` was stopped and preserved as evidence because
+its module worktree still contained the rejected partial `actions.go`,
+`terminal_runtime.go`, and `wasm_runtime_js.go` diff. A clean replacement,
+`gx-ui-ai-uikit-spark-20260615c`, was created for `task-25bee17f4cd1` with
+`no_initial_message=true` on branch `codex/gx-ui-ai-uikit-cleanup-20260615c`.
+Its individual status reached `running`/`ready`, and its `bus-portal-ai` module
+worktree is clean.
+
 The intentionally remaining live GX/UI product workers after this cleanup are:
 
 - `gx-ui-terminal-runtime-facade-spark-20260615a`
   (`task-646c27a30fb6`);
 - `gx-ui-runtime-facade-spark-20260615a` (`task-84d0842bbbff`);
-- `gx-ui-ai-uikit-spark-20260615b` (`task-25bee17f4cd1`);
+- `gx-ui-ai-uikit-spark-20260615c` (`task-25bee17f4cd1`);
 - `gx-ui-portal-uikit-spark-20260615b` (`task-62c09a117f80`);
 - `gx-ui-notes-runtime-spark-20260615a` (`task-fe70fd4546fd`).
 
