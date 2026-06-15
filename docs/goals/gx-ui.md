@@ -934,6 +934,37 @@ public core facade entries, or until those entries are split into narrow
 this result-parity patch, including a reflection bridge; that diff should be
 reworked or discarded by the worker after a fresh-base preflight, not promoted.
 
+## 2026-06-15 16:59 Core Stream Behavior Parity
+
+The core terminal stream behavior blocker is now accepted locally:
+
+- worker `gx-ui-terminalui-stream-parity-mini-20260615a`, task
+  `task-b74c66938ab3`;
+- worker commit `53c19969b23beb5bc2a08dc4ff169c51cc369573`,
+  `terminalruntime stream parity`;
+- promoted primary `bus-ui` commit `96713ab`, `terminalruntime stream parity`;
+- restored public `terminalruntime`/`terminalui` stream behavior:
+  `TerminalStreamEffect.Done()` closes on clean close, abort, and terminal
+  lifecycle completion; `MaxReconnects` and `ReconnectOnClose` preserve the
+  old `pkg/uikit` reconnect/attempt loop; `Abort` keeps abort-channel close
+  concurrency-safe; `StartEffect` preserves old synchronous validation and
+  provider-error projections for invalid stream requests and missing
+  transports;
+- focused tests now cover close/abort `Done()` behavior, recoverable open
+  error retry, EOF reconnect with incremented attempts, synchronous
+  `StartEffect` validation/error projection, and the public `pkg/terminalui`
+  facade alias exposing `Done()`;
+- verification on promoted primary: `git diff --check HEAD~1..HEAD`,
+  `go test ./pkg/terminalruntime -count=1`, `go test ./pkg/terminalui
+  -count=1`, and `go test ./... -count=1`.
+
+The AI terminal/container adopter cleanup may now resume from a fresh BusDK
+base that pins `bus-ui` at `96713ab` or later. The previous unaccepted AI
+worker diff remains useful only as a reference for explicit `ui`/`terminalui`
+adapter implementation; adopter tests must continue to assert the old
+`Done()`/reconnect behavior rather than weakening expectations around the
+public facade.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
