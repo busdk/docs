@@ -579,10 +579,28 @@ The active core workers are now
 Spark core workers are superseded evidence unless a later supervisor
 explicitly reopens them.
 
+At `2026-06-15 13:58 EEST`, the TerminalUI core lane was accepted and promoted:
+worker commit `640ca05` became primary `bus-ui` commit `74650fd`, `Add
+terminalui runtime facade exports`. It adds the public `pkg/terminalui`
+resource kind/method/client aliases, normalize/validate helpers, terminal
+stream transport/lifecycle/result aliases, container lifecycle aliases,
+shared terminal/container error sentinels, focused facade tests, and
+`FEATURES.md`/`sdd/docs/modules/bus-ui.md` documentation. Supervisor
+verification on the promoted primary checkout passed `git diff --check
+HEAD~1..HEAD`, `go test ./pkg/terminalui -count=1`, and `go test ./...`.
+
+The remaining unaccepted core lane is `task-84d0842bbbff`
+(`gx-ui-runtime-facade-mini-20260615a`) for the public `pkg/ui`
+CLI/server/browser/WASM helper facade. Keep AI, Portal, and Notes adopter
+production cleanup behind accepted and pinned core facade commits.
+
 Keep the core slices separate:
 
-- For `task-646c27a30fb6`, own only `bus-ui/pkg/terminalui/**` plus focused
-  `bus-ui` docs/features/tests needed by module guidance. The
+- For `task-646c27a30fb6`, accepted locally as `bus-ui` commit `74650fd`.
+  Follow-up adopter work may consume this public `pkg/terminalui` surface, but
+  do not reopen this lane unless review later finds a regression.
+- The accepted TerminalUI scope owned only `bus-ui/pkg/terminalui/**` plus
+  focused `bus-ui` docs/features/tests needed by module guidance. The
   `2026-06-15 13:35 EEST` source audit found that `pkg/terminalui` already
   exposes the terminal input/resize/close request builders,
   container-run request/effect builders, terminal stream effect builder, SSE
