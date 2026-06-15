@@ -124,6 +124,17 @@ only adopter imports:
 | environment | `bus-chat` | `internal/cli/flags.go` | `github.com/busdk/bus-preferences` local replace missing | deferred/out of scope | hydrate `bus-preferences`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-portal` | `cmd/bus-portal/main.go` | `github.com/busdk/bus-accounts` local replace missing | deferred/out of scope | hydrate `bus-accounts`, then rerun probe | deferred | environment hydration only |
 
+Post-CLI rerun: after `bus-ui` `c122e1e` was accepted and pinned in BusDK
+`0343706`, worker `gx-ui-uikit-deletion-rerun-after-cli-mini-20260615a`
+reran the throwaway deletion probe with `docs` `d901e71` and local
+`bus-ui` replacements `bus-gx`, `bus-help`, and `bus-update` hydrated. The
+matrix advanced past `cmd/bus-ui/run.go`: `go test ./...` no longer stops on
+the CLI/catalog/CSS path. The first core blocker is now
+`pkg/assistantui/assistantui_ai_facade.go:7:2` importing
+`github.com/busdk/bus-ui/pkg/uikit`, which fails setup for `cmd/bus-ui`,
+examples, `pkg/assistantui`, `pkg/terminalui`, `pkg/ui`, and the moved
+`uikit.disabled/uikittest` test package. No deletion diff was promoted.
+
 The current 13-slice adopter backlog is therefore provisional. It must not be
 reported as final or adopter-only until the deletion probe is rerun with the
 remaining local replace dependencies hydrated and the goal inventory is
@@ -1137,7 +1148,7 @@ summary after the next audit.
 | Slice | Scoped files | Facade dependencies | Behavior invariants | DoD checks | State |
 |---|---|---|---|---|---|
 | Core CLI/catalog/CSS uikit removal | `bus-ui/cmd/bus-ui/run.go`, `cmd/bus-ui/run_test.go`, catalog/CSS implementation files as needed | Public `pkg/ui`, `pkg/uicatalog`, or a new non-compatibility internal implementation package; must not call `pkg/uikit`. | Component catalog schema/output, CSS bundle themes/options, CLI stdout/stderr/error behavior. | Deletion-probe rerun reaches past `cmd/bus-ui`; focused command/catalog/CSS tests; `go test ./...` in `bus-ui`; no production `pkg/uikit` import in scoped core files. | Accepted in `bus-ui` `c122e1e` from worker `gx-ui-core-cli-catalog-uikit-removal-mini-20260615b`; tests reported: `go test ./cmd/bus-ui`, `go test ./...`. |
-| Core assistantui AI facade implementation | `bus-ui/pkg/assistantui/assistantui_ai_facade.go`, `assistantui_ai_facade_js.go`, related tests | Move AI DTO/helper/client-script/render behavior into `pkg/assistantui` or non-compatibility internal implementation; primary render API remains node-first with explicit HTML boundary names only where intended. | AI thread/status/event/history DTO shape, model candidate extraction, isolation path/branch names, attachment refs, client script output, panel render semantics. | Focused `go test ./pkg/assistantui`; deletion-probe rerun no longer fails downstream modules through `assistantui_ai_facade.go`; no production `pkg/uikit` import in assistantui facade files. | Active, newly exposed by deletion probe `task-e2649c2e9b54`; unblocks Notes/AI/Accounting/Auth dependency-user tests. |
+| Core assistantui AI facade implementation | `bus-ui/pkg/assistantui/assistantui_ai_facade.go`, `assistantui_ai_facade_js.go`, related tests | Move AI DTO/helper/client-script/render behavior into `pkg/assistantui` or non-compatibility internal implementation; primary render API remains node-first with explicit HTML boundary names only where intended. | AI thread/status/event/history DTO shape, model candidate extraction, isolation path/branch names, attachment refs, client script output, panel render semantics. | Focused `go test ./pkg/assistantui`; deletion-probe rerun no longer fails downstream modules through `assistantui_ai_facade.go`; no production `pkg/uikit` import in assistantui facade files. | Active, confirmed as first post-CLI deletion blocker by `task-a05ce8703450`; prior worker `gx-ui-core-assistantui-ai-facade-uikit-removal-mini-20260615b` was parked after deleting the facade API instead of moving implementation. |
 | Factory CLI run helpers | `bus-factory/internal/run/run.go` | Accepted `pkg/ui` CLI helpers (`WriteImmediateCLIOutput`, `ResolveServeOutputWriter`). | Help/version output, quiet/output routing, serve URL writer behavior, exit codes. | Scoped no-`uikit` audit, `go test ./internal/run -count=1`, `go test ./... -count=1`. | Accepted via `task-4490557f6e5a`, worker `782967f`, primary `4d8b554`. |
 | Factory server shell helpers | `bus-factory/internal/serve/server.go` | Accepted `pkg/ui` token/static/client-log/listener/CSS helpers and `assistantui` panel shell helpers. | Token URL/path suffixes, static/index fallback, client-log API, listener URL, AI panel script/render boundary. | Checked-boundary table, scoped no-`uikit` audit for file, focused server tests, full module tests. | Active, ready. |
 | Factory browser runtime/action resources | `bus-factory/internal/serve/browser_runtime.go` | Accepted public `pkg/ui` action/resource/effect facade. | Resource method/path/kind preservation, runtime API config, action result semantics. | Symbol/behavior table, focused browser-runtime tests or package tests, full module tests. | Active, ready. |
