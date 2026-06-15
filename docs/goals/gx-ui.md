@@ -309,6 +309,43 @@ submodule diff. They are evidence/cleanup inventory, not current promotion
 candidates, and should be archived or explicitly discarded only after recorded
 classification.
 
+The local `2026-06-15 13:04 EEST` `bus workers prune-report` classified all
+GX/UI runtime product worktrees as `active/refuse`; none are pruneable while
+their workers remain cataloged as active. Source inspection classified the
+current evidence like this:
+
+- Accepted/evidence-only lanes:
+  - `gx-ui-ui-action-resource-spark-20260615a` points at accepted
+    `bus-ui` commit `de5b75a`.
+  - `gx-ui-terminalui-spark-20260615b` has the same subject and stat shape as
+    accepted `bus-ui` commit `de8fdd6`; `gx-ui-terminalui-spark-20260615a`
+    is the older superseded attempt.
+  - `gx-ui-uiportal-spark-20260615a` has the same subject and stat shape as
+    accepted `bus-ui` commit `8b8ceb3`.
+  - `gx-ui-accounting-uikit-spark-20260615b` has the same subject and stat
+    shape as accepted `bus-portal-accounting` commit `e5eac44`;
+    `gx-ui-accounting-uikit-spark-20260615a` is an older narrower attempt.
+  - `gx-ui-auth-uikit-spark-20260615b` is superseded by accepted
+    `bus-portal-auth` commit `edad787`; `gx-ui-auth-uikit-spark-20260615a`
+    still contains the earlier leaked/partial uncommitted Auth diff.
+  - `gx-ui-notes-slots-spark-20260615b` is superseded by accepted
+    `bus-portal-notes` commit `727d868`; `gx-ui-notes-slots-spark-20260615a`
+    still contains the earlier uncommitted slot-replacement attempt.
+- Active unfinished lanes:
+  - `gx-ui-terminal-runtime-facade-spark-20260615a` and
+    `gx-ui-runtime-facade-spark-20260615a` are clean but produced no useful
+    assistant output before Spark quota exhaustion; they remain the core
+    post-reset priority.
+  - `gx-ui-ai-uikit-spark-20260615a` and `gx-ui-ai-uikit-spark-20260615b`
+    contain uncommitted `bus-portal-ai/pkg/aiportal/actions.go`,
+    `terminal_runtime.go`, and `wasm_runtime_js.go` diffs from rejected/partial
+    attempts. Keep as cautionary evidence until the terminal facade exists.
+  - `gx-ui-portal-uikit-spark-20260615a` contains the rejected wrapper-layer
+    Portal attempt in `internal/cli`, `internal/run`, `internal/server`, and
+    `internal/ui/wasm`; `gx-ui-portal-uikit-spark-20260615b` is the clean
+    retry lane that should continue only after the `pkg/ui` helper facade
+    lands.
+
 `agents/worker` shows many `worker/*` branches and worktrees, but these are
 worker identity checkouts at the shared `Initialize worker identity` commit.
 Remote `AGENTS.md` says worker identity checkouts under
