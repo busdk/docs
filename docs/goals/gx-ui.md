@@ -117,7 +117,8 @@ only adopter imports:
 | `bus-ui` | `bus-portal-ai` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
 | `bus-ui` | `bus-portal-accounting` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
 | `bus-ui` | `bus-portal-auth` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | accepted / matrix advanced | implementation accepted in `bus-ui` `17dddd5` (`task-6c8988b9e1cc`); post-assistantui deletion rerun `task-a1f0c7192d7f` proves `pkg/assistantui` passes and the matrix advances beyond this blocker |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | active | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`), but post-action/resource deletion rerun `task-2551cd20e12c` proves the matrix still stops at `pkg/ui/action_resource_facade.go:6:8` because browser transport aliases still import `pkg/uikit`; active follow-up `task-5d6bc8d3c941` |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | active | post-browser deletion rerun `task-73873cbf5a10` proves the new first core blocker is `pkg/ui/ai_upload_facade.go:3:8`; next slice should stay narrow and not pull in JS/WASM drop helpers until the deletion probe names them |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -191,6 +192,31 @@ the matrix still stops at `pkg/ui/action_resource_facade.go:6:8` importing
 `github.com/busdk/bus-ui/pkg/uikit`. The remaining core blocker is now the
 browser resource transport aliases/client helpers still backed by `uikit`.
 The worker restored the throwaway deletion state and left its worktree clean.
+
+Browser resource transport implementation: `bus-ui` `a798a556`
+(`task-5d6bc8d3c941`, worker
+`gx-ui-core-ui-browser-resource-transport-spark-20260615a`) accepted the
+browser transport slice. It moved browser resource client/fetch request and
+response handling, multipart payload support, provider error payload helpers,
+and navigation helpers into `pkg/ui`; deleted the remaining action resource
+facade alias files; and added focused `pkg/ui` tests. Worker and supervisor
+evidence: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, and a
+scoped touched-file audit with no `pkg/uikit` import in the new browser
+transport files. A host/toolchain `GOOS=js GOARCH=wasm go test ./pkg/ui`
+control failed because the local Go install could not resolve `syscall/js`,
+so that is recorded as environment proof gap rather than product failure.
+
+Post-browser deletion rerun: worker
+`gx-ui-uikit-deletion-rerun-after-browser-resource-mini-20260615a`
+(`task-73873cbf5a10`) reran the throwaway deletion/build-exclusion probe on
+BusDK `d928c9a`, `bus-ui` `a798a55`, and docs `6fe2449`, with local
+`bus-gx`, `bus-help`, and `bus-update` replacements hydrated at the pinned
+SHAs. With `pkg/uikit` and `pkg/uikit/uikittest` moved out of the build,
+`go test ./...` proved the matrix advances beyond
+`pkg/ui/action_resource_facade.go`. The first remaining owner-module blocker
+is now `pkg/ui/ai_upload_facade.go:3:8` importing
+`github.com/busdk/bus-ui/pkg/uikit`. The worker restored the throwaway
+deletion state and left its worktree clean.
 
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
