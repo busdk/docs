@@ -266,6 +266,30 @@ That hydrated probe proved the matrix advances beyond
 `pkg/ui/data_evidence.go:7:8` importing
 `github.com/busdk/bus-ui/pkg/uikit`.
 
+Data/evidence parent blocker: `pkg/ui/data_evidence.go` is broad enough to
+track as a parent compiler-derived blocker with explicit child implementation
+slices. Child slices count as implementation progress only; the parent row is
+not matrix-advanced until `pkg/ui/data_evidence.go` no longer imports
+`pkg/uikit` and a hydrated deletion/build-exclusion probe advances beyond it.
+Known child slices are:
+
+- tables: dense table and text table types, checked/string/node helpers, and
+  generated/adapter render helpers;
+- records: record list and summary item types, checked/string/node helpers,
+  and generated/adapter render helpers;
+- evidence: evidence link and evidence preview helpers;
+- projection/provider: projection detail and provider error helpers;
+- timeline: timeline types, checked/string/node helpers;
+- image gallery: image gallery types, validation, checked/string/node helpers.
+
+Worker `gx-ui-core-ui-data-evidence-spark-20260616a` was stopped as
+false-active after no hard-gate/table/diff evidence. Worker
+`gx-ui-core-ui-data-evidence-tables-records-spark-20260616a`
+(`task-b0e85f067b63`) proved the module-root hard gate and produced a
+table/record source map, but was stopped after the implementation turn produced
+no diff. Next dispatch should split tighter, starting with a table-only slice,
+before any implementation model escalation.
+
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
 
