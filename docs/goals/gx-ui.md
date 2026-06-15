@@ -89,6 +89,49 @@ catalog residue, and genuinely deferred/out-of-scope items. Do not promote the
 deletion probe until all required replacement tasks are accepted and the full
 dependency-user matrix passes.
 
+### 2026-06-15 Deletion Probe Rebaseline
+
+The first operational deletion/build-exclusion probe is
+`task-e2649c2e9b54`, worker
+`gx-ui-uikit-deletion-probe-mini-20260615a`, branch
+`codex/gx-ui-uikit-deletion-probe-20260615a`. It is a throwaway truth gate,
+not a product deletion branch.
+
+The probe derived the expected dependency-user denominator from `go.mod`
+imports: `bus-ui` itself plus `bus-chat`, `bus-factory`, `bus-gateway`,
+`bus-inspection`, `bus-ledger`, `bus-portal`, `bus-portal-notes`,
+`bus-portal-ai`, `bus-portal-accounting`, and `bus-portal-auth`. The initial
+worker tree needed supervisor-side hydration of accepted/pushed submodule
+pins and local `replace` dependencies before test output became meaningful.
+Future deletion probes should hydrate the owner module's local `replace` graph
+up front before interpreting `go test ./...` failures.
+
+After `bus-ui/pkg/uikit` and `bus-ui/pkg/uikit/uikittest` were made
+unavailable, the first real product failures were core `bus-ui` failures, not
+only adopter imports:
+
+| owner | module | package/file | first missing symbol/import | classification | likely replacement | active/deferred | recommended task slice |
+|---|---|---|---|---|---|---|---|
+| `bus-ui` | `bus-ui` | `cmd/bus-ui/run.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `bus-ui` implementation still backed by `uikit` | move CLI catalog/CSS behavior into public `pkg/ui`, `uicatalog`, or a non-compatibility internal implementation package | active | core CLI/catalog/CSS implementation slice |
+| `bus-ui` | `bus-portal-notes` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | rewrite AI DTO/helpers/panel render/client-script implementation into `pkg/assistantui` or a non-compatibility internal package | active | assistantui AI facade implementation slice |
+| `bus-ui` | `bus-portal-ai` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | active | assistantui AI facade implementation slice |
+| `bus-ui` | `bus-portal-accounting` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | active | assistantui AI facade implementation slice |
+| `bus-ui` | `bus-portal-auth` | `bus-ui/pkg/assistantui/assistantui_ai_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `assistantui` facade still backed by `uikit` | same assistantui rewrite | active | assistantui AI facade implementation slice |
+| environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
+| environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
+| environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
+| environment | `bus-ledger` | `internal/server/server.go` | `github.com/busdk/bus-preferences` local replace missing | deferred/out of scope | hydrate `bus-preferences`, then rerun probe | deferred | environment hydration only |
+| environment | `bus-chat` | `internal/cli/flags.go` | `github.com/busdk/bus-preferences` local replace missing | deferred/out of scope | hydrate `bus-preferences`, then rerun probe | deferred | environment hydration only |
+| environment | `bus-portal` | `cmd/bus-portal/main.go` | `github.com/busdk/bus-accounts` local replace missing | deferred/out of scope | hydrate `bus-accounts`, then rerun probe | deferred | environment hydration only |
+
+The current 13-slice adopter backlog is therefore provisional. It must not be
+reported as final or adopter-only until the deletion probe is rerun with the
+remaining local replace dependencies hydrated and the goal inventory is
+updated from the full compiler-derived matrix. Immediate critical path now
+starts with the core `bus-ui`/`assistantui` implementation slices above,
+because compatibility shims inside `pkg/ui` and `pkg/assistantui` currently
+hide real `pkg/uikit` dependencies from downstream adopter tests.
+
 Before calling the goal complete, run a fresh repository-wide audit across all
 BusDK modules that apps may use, including at least:
 
@@ -120,7 +163,9 @@ Then classify every hit as one of:
 
 - reusable components in `pkg/ui`;
 - public assistant, terminal, and portal facades;
-- compatibility adapters;
+- temporary migration adapters only while behavior is being moved out of
+  `pkg/uikit`; unpublished/internal-only compatibility is not a reason to keep
+  old packages or aliases;
 - CSS hooks;
 - mount/runtime helpers;
 - portal integration surfaces;
@@ -1091,6 +1136,8 @@ summary after the next audit.
 
 | Slice | Scoped files | Facade dependencies | Behavior invariants | DoD checks | State |
 |---|---|---|---|---|---|
+| Core CLI/catalog/CSS uikit removal | `bus-ui/cmd/bus-ui/run.go`, `cmd/bus-ui/run_test.go`, catalog/CSS implementation files as needed | Public `pkg/ui`, `pkg/uicatalog`, or a new non-compatibility internal implementation package; must not call `pkg/uikit`. | Component catalog schema/output, CSS bundle themes/options, CLI stdout/stderr/error behavior. | Deletion-probe rerun reaches past `cmd/bus-ui`; focused command/catalog/CSS tests; `go test ./...` in `bus-ui`; no production `pkg/uikit` import in scoped core files. | Active, newly exposed by deletion probe `task-e2649c2e9b54`. |
+| Core assistantui AI facade implementation | `bus-ui/pkg/assistantui/assistantui_ai_facade.go`, `assistantui_ai_facade_js.go`, related tests | Move AI DTO/helper/client-script/render behavior into `pkg/assistantui` or non-compatibility internal implementation; primary render API remains node-first with explicit HTML boundary names only where intended. | AI thread/status/event/history DTO shape, model candidate extraction, isolation path/branch names, attachment refs, client script output, panel render semantics. | Focused `go test ./pkg/assistantui`; deletion-probe rerun no longer fails downstream modules through `assistantui_ai_facade.go`; no production `pkg/uikit` import in assistantui facade files. | Active, newly exposed by deletion probe `task-e2649c2e9b54`; unblocks Notes/AI/Accounting/Auth dependency-user tests. |
 | Factory CLI run helpers | `bus-factory/internal/run/run.go` | Accepted `pkg/ui` CLI helpers (`WriteImmediateCLIOutput`, `ResolveServeOutputWriter`). | Help/version output, quiet/output routing, serve URL writer behavior, exit codes. | Scoped no-`uikit` audit, `go test ./internal/run -count=1`, `go test ./... -count=1`. | Accepted via `task-4490557f6e5a`, worker `782967f`, primary `4d8b554`. |
 | Factory server shell helpers | `bus-factory/internal/serve/server.go` | Accepted `pkg/ui` token/static/client-log/listener/CSS helpers and `assistantui` panel shell helpers. | Token URL/path suffixes, static/index fallback, client-log API, listener URL, AI panel script/render boundary. | Checked-boundary table, scoped no-`uikit` audit for file, focused server tests, full module tests. | Active, ready. |
 | Factory browser runtime/action resources | `bus-factory/internal/serve/browser_runtime.go` | Accepted public `pkg/ui` action/resource/effect facade. | Resource method/path/kind preservation, runtime API config, action result semantics. | Symbol/behavior table, focused browser-runtime tests or package tests, full module tests. | Active, ready. |
