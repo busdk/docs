@@ -1102,6 +1102,18 @@ Accepted core parity:
   required node-first API shape before acceptance. Supervisor verification on
   the primary `bus-ui` checkout: `git diff --check HEAD~2..HEAD`,
   `go test ./pkg/assistantui -count=1`, and `go test ./... -count=1`.
+- `task-cac06aa451fc`, worker
+  `gx-ui-core-ai-dto-helper-spark-20260615a`: accepted and promoted from
+  worker commit `778c5ec3f8ffc830b1faad62cc15203b3f92d6ca` as primary
+  `bus-ui` commit `963f391` (`assistantui: expose AI DTO helper facade
+  parity`). It adds public `assistantui` DTO/helper parity for AI thread
+  metadata, status, event, thread/history/poll responses, attachments, Go
+  diagnostics, turn-start context, thread items, attachment refs, working
+  thread state, thread rename, turn-start payloads, isolation branch/worktree
+  helpers, and default AI panel/conversation state. Supervisor verification on
+  the primary `bus-ui` checkout: `git diff --check HEAD~1..HEAD`,
+  `go test ./pkg/assistantui -count=1`, `go test ./pkg/uikit -count=1`, and
+  `go test ./... -count=1`.
 
 Core facade work now split by completed probes:
 
@@ -1109,8 +1121,9 @@ Core facade work now split by completed probes:
   read-only table. Critical Slice A, public `assistantui` control-plane
   facade for render props, panel render path, model/event catalogs, and the AI
   panel client script, is accepted through `task-ad933078fd5d`. Critical
-  Slice B remains pending: public DTO/helper parity for thread/status/poll/
-  history/message/event behavior. Critical Slice C remains pending: canonical
+  Slice B, public DTO/helper parity for thread/status/poll/history/message/
+  event behavior, is accepted through `task-cac06aa451fc`. Critical Slice C
+  remains pending: canonical
   terminal DTO ownership/alias strategy. Slice D is non-critical contract
   hardening and migration docs for token/action registry behavior. The
   completed Factory probe still leaves a concrete decision on ACP/status plus
