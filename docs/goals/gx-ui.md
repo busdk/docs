@@ -399,6 +399,10 @@ core `bus-ui` public facade work before adopter cleanup can finish cleanly:
   browser open, token/static/server helpers, client log/server logger helpers,
   and JS/WASM helpers such as document/location/API URL/gateway client/mount
   helpers.
+- `bus-portal-notes` still has production `pkg/uikit` dependencies in
+  `runtime_reducer.go`, `runtime.go`, and `view_models.go`. This was not part
+  of the accepted shell/page slot cleanup and is now tracked separately as
+  `task-fe70fd4546fd`.
 
 Local Spark workers were started for those two core facade slices, but several
 new App Server workers began accepting messages and then completing turns
@@ -428,35 +432,37 @@ before any product edit.
 
 The next supervisor should proceed in this order:
 
-1. Continue and review the active adopter cleanup workers for
-   `bus-portal-ai` and `bus-portal`. Auth and Accounting are accepted locally;
-   AI and Portal remain unfinished after rejected compile-broken/wrapper-only
-   attempts.
-2. Finish the newly identified core `bus-ui` facade dependencies:
+1. Finish the newly identified core `bus-ui` facade dependencies:
    `pkg/terminalui` terminal/container runtime aliases and `pkg/ui`
    runtime/server/CLI/WASM helper facades.
-3. Resume Spark worker turns after the `GPT-5.3-Codex-Spark` primary bucket
+2. Resume Spark worker turns after the `GPT-5.3-Codex-Spark` primary bucket
    resets, or after the operator approves a different model. Keep
    `task-4eb87d0bfa61` open as an infrastructure cleanup item to project
    quota/no-assistant turns as actionable failures.
+3. Continue and review the active adopter cleanup workers for
+   `bus-portal-ai` and `bus-portal`. Auth and Accounting are accepted locally;
+   AI and Portal remain unfinished after rejected compile-broken/wrapper-only
+   attempts and should run against the completed core facades.
 4. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
    If it still matches the desired API direction, rerun focused/full tests,
    promote into `bus-ui develop`, push, and pin BusDK.
-5. Review `busdk.com/codex/gx-ui-node-first-docs`.
+5. Dispatch `task-fe70fd4546fd` for the `bus-portal-notes` runtime/reducer
+   `pkg/uikit` cleanup after the core `pkg/ui` facade is confirmed sufficient.
+6. Review `busdk.com/codex/gx-ui-node-first-docs`.
    Decide whether to promote it as the current website docs cleanup, then
    delete or archive older website branches that become superseded.
-6. Re-audit canonical code and docs for the definition-of-done patterns.
+7. Re-audit canonical code and docs for the definition-of-done patterns.
    Use the audit to decide whether `uiportal`, adopter tests, and docs cleanup
    need fresh focused workers.
-7. Review remaining adopter branches in `bus-portal-auth`,
+8. Review remaining adopter branches in `bus-portal-auth`,
    `bus-portal-ai`, `bus-portal-accounting`, and `bus-portal-notes`.
    Promote only branches that still improve the current canonical state;
    otherwise record them as superseded/rejected and remove their worktrees.
-8. Classify dirty evidence worktrees:
+9. Classify dirty evidence worktrees:
    `/private/tmp/bus-ui`, `/private/tmp/bus-ui-terminalui-node-first`,
    `/private/tmp/bus-portal-notes-review-raw-cleanup`, and the two dirty Bus
    runtime product worktrees. Archive useful diffs before deletion.
-9. Only after module state is settled, prune old BusDK root pointer branches
+10. Only after module state is settled, prune old BusDK root pointer branches
    whose target module commits are promoted, superseded, or intentionally
    discarded.
 
