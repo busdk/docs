@@ -856,6 +856,43 @@ not import `pkg/terminalruntime` directly, do not hide `uikit` behind a local
 alias or wrapper layer, and do not change terminal request base/path behavior
 unless the existing tests prove the change.
 
+## 2026-06-15 15:50 Core Parity And AI Retry
+
+The core `pkg/terminalui` request-parity blocker is now accepted locally:
+
+- worker `gx-ui-terminalui-request-parity-mini-20260615a`, task
+  `task-def97c1ed2fc`;
+- worker commit `0628683f095d013d975aeb5f1bb60fcbe7c4bf42`;
+- promoted primary `bus-ui` commit `def9a2f`, `Align terminal request
+  builders with uikit contract`;
+- BusDK pin commit `cf230a7`, `Pin terminalui request parity`;
+- verification on promoted primary: `git diff --check HEAD~1..HEAD`,
+  `go test ./pkg/terminalui -count=1`, `go test ./pkg/terminalruntime
+  -count=1`, and `go test ./... -count=1`.
+
+That patch restores public `terminalui` helper parity for the accepted old
+terminal request contract: input and resize paths stay under
+`/sessions/<id>/input` and `/sessions/<id>/resize`, close stays
+`DELETE /sessions/<id>`, and container runs keep the accepted `/runs` request
+model. This was required before the AI adopter could remove its last
+production `pkg/uikit` references without changing provider paths.
+
+The AI terminal/container cleanup has been retried on the fresh core base with
+worker `gx-ui-ai-terminal-container-mini-20260615h`, task
+`task-25bee17f4cd1`, branch `codex/gx-ui-ai-terminal-container-20260615h`.
+Its preflight base is BusDK product-worktree `cf230a7`, `bus-ui` `def9a2f`,
+and `bus-portal-ai` `469cc43`. The worker initially almost diagnosed a stale
+base by checking BusDK commit `cf230a7` from the supervisor root instead of
+the Bus-managed product-worktree root; the supervisor corrected the lane and
+updated internal guidance so future fresh-base preflights name the exact repo
+root for each SHA check.
+
+The AI task remains open until this worker or a follow-up removes the
+remaining production `pkg/uikit`/`uikit.` references from
+`pkg/aiportal/terminal_runtime.go` and the terminal/container sections of
+`pkg/aiportal/wasm_runtime_js.go`, with tests preserving terminal path
+normalization, resource kind/base behavior, and container run projections.
+
 ## Safety Rules For Continuation
 
 Do not edit product code in the primary checkout as a supervisor shortcut.
