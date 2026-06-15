@@ -341,9 +341,16 @@ That core-library dependency has now been accepted locally:
 - `bus-portal-notes` `727d868`, `notes: compose shell surfaces with gx nodes`,
   removes normal-path string slot replacement from the active Notes shell/page
   composition and renders through node-first `ui.AppShell`/`ui.RenderHTML`.
+- `bus-portal-auth` `edad787`, `authportal: use ui action resource facades`,
+  removes active production `pkg/uikit` imports from requested Auth UI/runtime
+  files and verifies normal package tests plus WASM compile-only output.
+- `bus-portal-accounting` `e5eac44`, `accountingportal: use ui action
+  resource facades`, removes active production `pkg/uikit` imports from the
+  requested Accounting action/resource/browser/WASM files and verifies normal
+  package tests plus WASM compile-only output.
 
 These accepted commits are pinned by local BusDK superproject commits through
-`61f3836`. They are local until pushed.
+`8c3e154`. They are local until pushed.
 
 The public `pkg/ui` action/resource facade acceptance criteria were:
 
@@ -372,6 +379,14 @@ After the core facade landed, fresh local Spark workers were also started for:
 - `bus-portal-ai` active `pkg/uikit` import cleanup;
 - `bus-portal` active `pkg/uikit` import cleanup.
 
+The first local AI and Portal retry attempts were rejected during review. The
+AI attempt mixed `terminalui` facade aliases with `terminalruntime` internals
+and made `pkg/aiportal` compile-broken. The Portal attempt mostly moved
+`pkg/uikit` imports into local wrapper files and also failed to compile. Clean
+Spark retry workers were then launched on new branches with narrower
+instructions: keep code compiling, do not hide `uikit` behind local wrappers,
+and document exact missing public facades instead of forcing broken rewrites.
+
 The first terminalui, Notes, and Auth workers accidentally touched primary
 checkout paths. The Auth worker also committed two changes on primary
 `bus-portal-auth/develop` before detection. The leaked patches were preserved
@@ -386,10 +401,9 @@ before any product edit.
 The next supervisor should proceed in this order:
 
 1. Continue and review the active adopter cleanup workers for
-   `bus-portal-auth`, `bus-portal-accounting`, `bus-portal-ai`, and
-   `bus-portal`. Auth and Accounting already have local worker-owned diffs in
-   progress; AI and Portal workers were launched and path-verified but had not
-   produced diffs at this update.
+   `bus-portal-ai` and `bus-portal`. Auth and Accounting are accepted locally;
+   AI and Portal are clean retry workers after rejected compile-broken/wrapper-
+   only attempts.
 2. Review `bus-ui/codex/assistantui-public-api-cleanup` (`402cfa9`).
    If it still matches the desired API direction, rerun focused/full tests,
    promote into `bus-ui develop`, push, and pin BusDK.
