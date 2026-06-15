@@ -1114,6 +1114,35 @@ Accepted core parity:
   the primary `bus-ui` checkout: `git diff --check HEAD~1..HEAD`,
   `go test ./pkg/assistantui -count=1`, `go test ./pkg/uikit -count=1`, and
   `go test ./... -count=1`.
+- `task-dbef5c874510`, worker
+  `gx-ui-core-wasm-file-dropzone-spark-20260615a`: accepted and promoted from
+  worker commit `21acfda0b0703aec3ec577e48048631b0c915416` as primary
+  `bus-ui` commit `98233a3` (`ui: expose wasm AI drop upload facade parity`).
+  It adds public `pkg/ui` parity for WASM AI file/dropzone import helpers,
+  dropped file readers, AI drop controller/service types, multipart upload,
+  AI dropped-content upload/decode behavior, drop-zone handler wiring, and
+  drop-target visual state helpers. Supervisor verification on the primary
+  `bus-ui` checkout: `git diff --check HEAD~2..HEAD`,
+  `go test ./pkg/ui -count=1`, `go test ./pkg/uikit -count=1`, and
+  `go test ./... -count=1`.
+- `task-1676ddcd3333`, worker
+  `gx-ui-core-wasm-split-projection-spark-20260615a`: accepted and promoted
+  from worker commit `78610c75c597b830f457088c914917c35f14b88b` as primary
+  `bus-ui` commit `ae3f147` (`ui: expose wasm split projection facade
+  parity`). It adds public `pkg/ui` split/projection/layout parity for panel
+  and split layout state, resize helpers, projection list/detail DTOs,
+  projection query client factories, route helpers, locale formatter,
+  projection presenter, and JS split-resize wiring. Supervisor verification on
+  the primary `bus-ui` checkout: `git diff --check HEAD~2..HEAD`,
+  `go test ./pkg/ui -count=1`, `go test ./pkg/uikit -count=1`, and
+  `go test ./... -count=1`.
+
+WASM-targeted test execution remains a named supervisor-host verifier gap for
+these slices. On this host, `GOOS=js GOARCH=wasm go test ./pkg/ui -count=1`
+fails before product compilation with `package syscall/js is not in std`, and
+the control `GOOS=js GOARCH=wasm go list std` fails broadly across standard
+library packages under `/usr/local/go`. Native checks and scoped review are
+the acceptance evidence until a known-good JS/WASM verifier host is available.
 
 Core facade work now split by completed probes:
 
@@ -1132,11 +1161,12 @@ Core facade work now split by completed probes:
 - `task-c359cfa15ffa`, core WASM/runtime/form/table facade probe: accepted as
   a read-only table. Critical Slice 1.1, `pkg/ui` runtime mount, callback
   lifecycle, and DOM error-host facade parity, is accepted through
-  `task-5f133b387382`. Critical Slice 1.2 remains pending: WASM file I/O/
-  dropzone/multipart facade parity. Critical Slice 1.3 remains pending: split
-  runtime, projection-list, and related layout facade parity. Deferred cleanup
-  is broader route/parse/format helper exports plus `MessageBubble` parity
-  once the active runtime slices prove exact adopter needs.
+  `task-5f133b387382`. Critical Slice 1.2, WASM file I/O/dropzone/multipart
+  facade parity, is accepted through `task-dbef5c874510`. Critical Slice 1.3,
+  split runtime, projection-list, and related layout facade parity, is
+  accepted through `task-1676ddcd3333`. Deferred cleanup is broader
+  route/parse/format helper exports plus `MessageBubble` parity once adopter
+  work proves exact needs.
 
 ## Safety Rules For Continuation
 
