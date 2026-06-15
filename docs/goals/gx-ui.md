@@ -589,10 +589,26 @@ shared terminal/container error sentinels, focused facade tests, and
 verification on the promoted primary checkout passed `git diff --check
 HEAD~1..HEAD`, `go test ./pkg/terminalui -count=1`, and `go test ./...`.
 
-The remaining unaccepted core lane is `task-84d0842bbbff`
-(`gx-ui-runtime-facade-mini-20260615a`) for the public `pkg/ui`
-CLI/server/browser/WASM helper facade. Keep AI, Portal, and Notes adopter
-production cleanup behind accepted and pinned core facade commits.
+At `2026-06-15 14:10 EEST`, the `pkg/ui` runtime facade lane was accepted and
+promoted. Worker commits `34d9cf0` and `b95d1ac` became primary `bus-ui`
+commits `0a457ed`, `Expose public ui runtime facades`, and `12e5cdf`, `Remove
+completed ui facade plan item`. The accepted work exposes the Portal-needed
+public `pkg/ui` facade for CLI/global flag helpers, immediate/serve output
+writers, browser-open helpers, capability-token/static/listener helpers,
+server logger/client-log helpers, gateway/API URL helpers, WASM browser-global
+and mount helpers, and the Portal launcher empty-state helper, with focused
+tests plus `FEATURES.md`, `docs/docs/modules/bus-ui.md`, and
+`sdd/docs/modules/bus-ui.md` updates. Supervisor verification on the promoted
+primary checkout passed `git diff --check HEAD~2..HEAD`,
+`go test ./pkg/ui -count=1`, and `go test ./... -count=1`. A js/wasm compile
+probe could not be completed because this host's Go install currently fails
+`go list syscall/js`; the same failure reproduces on the pre-existing
+`pkg/uikit` WASM package, so treat that as a host/toolchain proof gap rather
+than a patch-specific regression.
+
+Both core facade lanes are now accepted locally and pinned in `bus-ui`.
+AI, Portal, and Notes adopter production cleanup may resume against those
+public facade commits.
 
 Keep the core slices separate:
 
@@ -619,9 +635,13 @@ Keep the core slices separate:
   `ErrTerminalStreamDecode`, `ErrTerminalRuntimeInvalidDimensions`,
   `ErrContainerRunProfileRequired`, and `ErrContainerRunArgsInvalid`. Do not
   change `bus-portal-ai` in this worker.
-- For `task-84d0842bbbff`, own only `bus-ui/pkg/ui/**` plus focused
-  `bus-ui` docs/features/tests needed by module guidance. Re-export or wrap
-  the public helper contracts needed by Portal from `pkg/uikit`: `GlobalCLIFlags`,
+- For `task-84d0842bbbff`, accepted locally as `bus-ui` commits `0a457ed` and
+  `12e5cdf`. Follow-up adopter work may consume this public `pkg/ui` surface,
+  but do not reopen this lane unless review later finds a regression.
+- The accepted `pkg/ui` scope owned only `bus-ui/pkg/ui/**` plus focused
+  `bus-ui` docs/features/tests needed by module guidance. It re-exported or
+  wrapped the public helper contracts needed by Portal from `pkg/uikit`:
+  `GlobalCLIFlags`,
   `ParseGlobalCLIFlags`, `ValidateGlobalCLIFlags`,
   `WriteImmediateCLIOutput`, `ResolveServeOutputWriter`, `OpenURLInBrowser`,
   browser-open types/errors/helpers, capability-token/static/content-type
