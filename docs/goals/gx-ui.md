@@ -346,6 +346,25 @@ current evidence like this:
     retry lane that should continue only after the `pkg/ui` helper facade
     lands.
 
+At `2026-06-15 13:08 EEST`, the stale accepted/superseded workers were stopped
+through `bus workers stop --environment local-dev` while preserving their
+worktrees and branches as evidence: Accounting `a`/`b`, Auth `a`/`b`, Notes
+shell slots `a`/`b`, TerminalUI `a`/`b`, UI action/resource, UIPortal, Portal
+first attempt, and AI first attempt. Individual `bus workers status <id>
+--environment local-dev` calls report these workers as `stopped`, but bulk
+`bus workers list` and `bus workers prune-report` still showed several of them
+as active immediately afterward. Until that projection mismatch is fixed or
+catches up, treat individual worker status as the lifecycle source of truth and
+do not prune from `prune-report` output alone.
+
+The intentionally remaining live GX/UI product workers after this cleanup are:
+
+- `gx-ui-terminal-runtime-facade-spark-20260615a`
+  (`task-646c27a30fb6`);
+- `gx-ui-runtime-facade-spark-20260615a` (`task-84d0842bbbff`);
+- `gx-ui-ai-uikit-spark-20260615b` (`task-25bee17f4cd1`);
+- `gx-ui-portal-uikit-spark-20260615b` (`task-62c09a117f80`).
+
 `agents/worker` shows many `worker/*` branches and worktrees, but these are
 worker identity checkouts at the shared `Initialize worker identity` commit.
 Remote `AGENTS.md` says worker identity checkouts under
