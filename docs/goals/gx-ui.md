@@ -120,7 +120,7 @@ only adopter imports:
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix advanced | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); hydrated post-AI-upload module probe `task-4b39fa3069a7` proved the matrix advances beyond `pkg/ui/ai_upload_facade.go` and now stops at `pkg/ui/cli_server_facade.go:8:8` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/cli_server_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` CLI/server/browser-open helper facade still backed by `uikit` | move CLI flag/runtime helpers, server logger/client-log/static/token helpers, and browser-open URL validation/launcher selection into `pkg/ui` with focused direct behavior tests | accepted / matrix advanced | implementation accepted in `bus-ui` `cad6590` (`task-b7d461e781f7`); post-CLI/server deletion rerun `task-b5a6128474d0` proved the matrix advances beyond `pkg/ui/cli_server_facade.go` and now stops at `pkg/ui/data_evidence.go:7:8` |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, record lists, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | next core slice; do not start adopter lanes until this is accepted and a hydrated deletion/build-exclusion probe names the next matrix state |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, record-list and summary helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | active parent blocker; accepted children are tables, evidence, provider error, image gallery, and records/summary surface primitives; remaining strict children are records/summary, projection detail, and timeline, followed by the hydrated deletion/build-exclusion probe; do not start adopter lanes until this is accepted and the probe names the next matrix state |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -276,6 +276,11 @@ Known child slices are:
 - tables: dense table and text table types, checked/string/node helpers, and
   generated/adapter render helpers; accepted in `bus-ui` `4db9621`
   (`task-c3b890074557`);
+- records surface primitives: minimal `pkg/ui` ownership/export surface needed
+  before records/summary can be mechanical, including `SurfaceDensity`,
+  `SurfaceTypography`, surface attr validation/helpers, and summary
+  badge/status helper ownership; accepted in `bus-ui` `5fcc7a2`
+  (`task-f50c7b42b0ba`);
 - records: record list and summary item types, checked/string/node helpers,
   and generated/adapter render helpers;
 - evidence: evidence link and evidence preview helpers; accepted in `bus-ui`
@@ -321,6 +326,23 @@ patch-target nudge. It was parked and the task was closed no-diff/superseded.
 The records/summary child remains unfinished. Next records action should be a
 tighter supervisor-planned patch target or relaunch, not implementation model
 escalation, unless a simplified patch still fails from reasoning complexity.
+
+Records/summary Mini retries:
+`gx-ui-core-ui-data-evidence-records-summary-mini-20260616a` stayed clean after
+the direct records/summary retry and one exact patch-target nudge.
+`gx-ui-core-ui-data-evidence-records-summary-mini-20260616b` passed the
+module-root hard gate and produced direct source-map evidence, but also stayed
+clean after one exact nudge. Its useful finding was a concrete prerequisite:
+records/summary needs minimal package-owned `pkg/ui` surface primitives before
+the move can be mechanical, specifically `SurfaceDensity`,
+`SurfaceTypography`, surface attr validation/helpers, and summary badge/status
+helper ownership. Count that prerequisite as an explicit core child slice next
+to records/summary, not as hidden backlog inside a broad records row. Do not
+relaunch records/summary implementation until the prerequisite has a
+direct-file patch table and either lands or is proven unnecessary by a
+supervisor-level plan. If the ownership/API shape remains ambiguous after that
+table, use a GPT-5.5 planning/source-map pass for the prerequisite only, then
+delegate the simplified implementation to the proved Mini path.
 
 Evidence child implementation: `bus-ui` `0f86ae9`
 (`task-53e82acad2c3`; worker
