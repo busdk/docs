@@ -120,7 +120,7 @@ only adopter imports:
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix advanced | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); hydrated post-AI-upload module probe `task-4b39fa3069a7` proved the matrix advances beyond `pkg/ui/ai_upload_facade.go` and now stops at `pkg/ui/cli_server_facade.go:8:8` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/cli_server_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` CLI/server/browser-open helper facade still backed by `uikit` | move CLI flag/runtime helpers, server logger/client-log/static/token helpers, and browser-open URL validation/launcher selection into `pkg/ui` with focused direct behavior tests | accepted / matrix advanced | implementation accepted in `bus-ui` `cad6590` (`task-b7d461e781f7`); post-CLI/server deletion rerun `task-b5a6128474d0` proved the matrix advances beyond `pkg/ui/cli_server_facade.go` and now stops at `pkg/ui/data_evidence.go:7:8` |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, record-list and summary helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | active parent blocker; accepted children are tables, evidence, provider error, image gallery, and records/summary surface primitives; remaining strict children are records/summary, projection detail, and timeline, followed by the hydrated deletion/build-exclusion probe; do not start adopter lanes until this is accepted and the probe names the next matrix state |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, summary-item and record-list helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | active parent blocker; accepted children are tables, evidence, provider error, image gallery, and records/summary surface primitives; remaining strict children are summary item, record list, projection detail, and timeline, followed by the hydrated deletion/build-exclusion probe; do not start adopter lanes until this is accepted and the probe names the next matrix state |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -281,8 +281,12 @@ Known child slices are:
   `SurfaceTypography`, surface attr validation/helpers, and summary
   badge/status helper ownership; accepted in `bus-ui` `5fcc7a2`
   (`task-f50c7b42b0ba`);
-- records: record list and summary item types, checked/string/node helpers,
-  and generated/adapter render helpers;
+- summary item: `SummaryItemProps`, `SummaryItemChecked`, `SummaryItem`,
+  `SummaryItemNodeChecked`, `SummaryItemNode`, and compiled summary-item
+  helpers;
+- record list: `RecordListItem`, `RecordListProps`, `RecordListItemSummary`,
+  `RecordListChecked`, `RecordList`, `RecordListNodeChecked`,
+  `RecordListNode`, and compiled record-list helpers;
 - evidence: evidence link and evidence preview helpers; accepted in `bus-ui`
   `0f86ae9` (`task-53e82acad2c3`);
 - provider error: FC-007 public-safe provider error types, validation,
@@ -343,6 +347,41 @@ direct-file patch table and either lands or is proven unnecessary by a
 supervisor-level plan. If the ownership/API shape remains ambiguous after that
 table, use a GPT-5.5 planning/source-map pass for the prerequisite only, then
 delegate the simplified implementation to the proved Mini path.
+After `5fcc7a2`, worker `gx-ui-records-summary-mini-20260616c`
+(`task-e65eff738028`) materialized on the correct base and produced real
+source-map reads, but stayed clean after one exact patch-target nudge. Split
+the remaining records/summary child into summary-item first, then record-list
+on top, rather than relaunching the broad prompt again.
+Summary-item child attempt:
+`gx-ui-summary-item-mini-20260616a` (`task-92add2acd3f1`) materialized on
+accepted base `bus-ui` `5fcc7a2`, proved real source-map reads, and received
+one exact patch-target nudge, but remained clean while resolving `gx.Node`
+versus local facade node ownership and status-pill/helper ownership. It was
+parked as no-diff implementation work. Do not relaunch summary-item
+implementation until a supervisor-owned source-map/patch-target table names
+the exact owner for node type, status-pill/helper symbols, file targets, alias
+removals, and focused tests. Use GPT-5.5 only for that planning/source-map
+step if the ownership table is not obvious, then delegate the mechanical
+implementation back to the proved Mini path.
+The owner table was written at
+`logs/worker-prompts/gx-ui-core-ui-data-evidence-summary-item-owner-table-20260616a.md`.
+Follow-up worker `gx-ui-summary-item-mini-20260616b`
+(`task-3405eea35c59`) materialized on base `bus-ui` `5fcc7a2`, acknowledged
+the owner table, and produced source-read evidence from the correct worktree,
+but remained clean after an explicit implementation-start message. It was
+stopped as no-diff. The summary-item child remains unfinished and should not be
+counted as active implementation until the next attempt either carries a
+literal patch target that can be applied mechanically or uses a different
+execution path with proof that it can write files.
+Literal patch target
+`logs/worker-prompts/gx-ui-core-ui-data-evidence-summary-item-literal-patch-mini-20260616a.md`
+was then dispatched through `gx-ui-summary-item-literal-mini-20260616a`
+(`task-1bdbf523eee1`). The worker materialized the correct base and produced
+live source-read evidence, but still left the worktree clean after repeated
+checkpoints and was stopped. Treat the remaining summary-item work as
+mechanically specified but not executed; do not spend another same-shape Mini
+retry unless the worker path first proves it can write files, or use a
+different execution path with review/promotion gates.
 
 Evidence child implementation: `bus-ui` `0f86ae9`
 (`task-53e82acad2c3`; worker
