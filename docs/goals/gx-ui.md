@@ -128,10 +128,11 @@ Counts from this rebaseline:
   factory browser-runtime `PublicRuntimeAPIConfig` gap, and the factory server
   shell `RenderAssistantShellPage` / assistant panel action-contract gaps below
   are accepted;
-- known remaining adopter/user production rows: 6 open rows below, across 3
-  modules with 25 refined production hits (`bus-factory`, `bus-inspection`,
-  `bus-ledger`); `bus-inspection/internal/ui/wasm/app.go` is accepted, leaving
-  only `bus-inspection/internal/ui/wasm/view.go` in that module;
+- known remaining adopter/user production rows: 5 open rows below, across 2
+  modules with 21 refined production hits (`bus-inspection`, `bus-ledger`);
+  `bus-factory` is now production-clean by refined audit, and
+  `bus-inspection/internal/ui/wasm/app.go` is accepted, leaving only
+  `bus-inspection/internal/ui/wasm/view.go` in that module;
 - production-clean by refined `uikit` call/import audit but still in the
   dependency denominator: `bus-gateway`, `bus-portal`,
   `bus-portal-accounting`, `bus-portal-ai`, `bus-portal-auth`,
@@ -152,9 +153,9 @@ examples/test-harness setup (`examples/completedapis/render_test.go` imports
 probe now has no `pkg/ui` owner-facade blocker; `GOOS=js GOARCH=wasm go test
 -exec=echo ./pkg/ui` is blocked only by the test-only
 `pkg/ui/split_projection_facade_test.go` `pkg/uikit` import. The compact
-static production audit after the accepted factory server-shell slice reports 0
-owner facade production files and 25 remaining production adopter files across
-the 6 open adopter rows below. Do not treat raw example/test probe failures as
+static production audit after the accepted factory AI-support slice reports 0
+owner facade production files and 21 remaining production adopter files across
+the 5 open adopter rows below. Do not treat raw example/test probe failures as
 adopter-ready production work.
 
 Known remaining core rows:
@@ -186,7 +187,7 @@ Known remaining adopter/user production rows:
 |---|---|---|---|---|
 | adopter-1 | `bus-factory` | `internal/serve/business_view.go` | replace direct node/table/panel/icon composition with public `ui` facades | accepted in `bus-factory` `c9265f7` via worker commit `6e4f870` after Spark produced no assistant response; implementation uses public `pkg/ui` HTML node helpers plus `PanelChecked`, `IconButtonChecked`, and `DenseTableChecked` to preserve existing string-render boundaries. Checks passed in worker and primary: `go test ./internal/serve`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for `business_view.go`, and compact static inventory. |
 | adopter-2 | `bus-factory` | `internal/serve/server.go`, `internal/serve/browser_runtime.go` | replace server/runtime/resource/assistant shell calls with public facades | accepted / promoted. `browser_runtime.go` accepted in `bus-factory` `efb3533` via worker commit `576fb02` after Spark produced no assistant response; selector map was `uikit` action/resource/runtime API helpers -> public `pkg/ui`, after accepted `bus-ui` public-facade repair `e6b2a7d` for `PublicRuntimeAPIConfig`. `server.go` accepted in `bus-factory` `a65cbc3` via worker commit `69c07bd`; selector map was listener/token/browser-open/static CSS/client-log/capability-token helpers -> `pkg/ui`, panel client script/render props/default models -> `pkg/assistantui`, and shell page rendering -> `pkg/ui`, after accepted public-facade repairs `bus-ui` `6856dfc` and `bbc560c`. The literal `/assets/uikit.css` route remains the stable asset URL, not a package dependency. Checks passed in worker and primary: `go test ./internal/serve -run BrowserRuntime`, `go test ./internal/serve -run 'Handler|ClientLog'`, `go test ./internal/serve`, `go test ./...`, `git diff --check`, scoped no-`uikit` audits for `browser_runtime.go` and `server.go`, and compact static inventory. |
-| adopter-3 | `bus-factory` | `internal/serve/ai.go`, `ai_thread_isolation.go`, `ai_acp_status.go`, `ai_go_diagnostics.go` | replace AI DTO/helper aliases with public `assistantui`/`ui` APIs | planning table required; likely mechanical after core rows are clean |
+| adopter-3 | `bus-factory` | `internal/serve/ai.go`, `ai_thread_isolation.go`, `ai_acp_status.go`, `ai_go_diagnostics.go` | replace AI DTO/helper aliases with public `assistantui`/`ui` APIs | accepted / promoted in `bus-factory` `b17b33b` via worker-owned exception commit `3ac5402` after Spark produced transport-only completion with no assistant response or diff. Selector map: AI DTO/status/thread/panel/isolation/ACP/diagnostics helpers -> public `assistantui`; terminal event/session adapter helpers -> public `terminalui` with a local adapter from `terminalui.AITerminalSession` to `assistantui.AITerminalSession` for panel payloads; local `isAIThreadWorking` replaces the remaining uikit-only predicate. Checks passed in worker and primary: `go test ./internal/serve -run 'AI|ACP|Diagnostics|ThreadIsolation|Poll|Terminal'`, `go test ./internal/serve`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for the four production files and updated AI tests, and compact static inventory. `bus-factory` has 0 production hits; `internal/serve/review_primitives_test.go` remains test-only because the review primitive render helpers do not yet have a public owner. |
 | adopter-4 | `bus-chat` | `internal/serve/ai.go` | replace AI chat/event/thread DTOs and terminal session helpers | accepted in `bus-chat` `959ded6` with supporting public-facade fix `bus-ui` `2bd1fbe`; selector map: AI DTO/status/poll/history/render/thread/message/approval symbols -> `assistantui`, terminal event/session folding -> `terminalui`, local adapter `assistantTerminalSession` converts terminalui session snapshots to assistantui render DTOs. Checks passed: `go test ./...` in `bus-chat`, `go test ./pkg/ui ./pkg/assistantui ./pkg/terminalui` in `bus-ui`, `git diff --check`, scoped no-`uikit` audit for touched files, and compact static inventory. |
 | adopter-5 | `bus-chat` | `internal/serve/ai_appserver.go` | replace AI event/model extraction helpers | accepted in `bus-chat` `959ded6`; `IsKnownAIEventMethod`, `ExtractAIModelCandidates`, and thread meta helpers now use `assistantui`; no missing public facade found. |
 | adopter-6 | `bus-chat` | `internal/serve/ai_workspace_locks.go` | replace AI isolation status/branch/worktree helpers | accepted in `bus-chat` `959ded6`; isolation status/state/branch/worktree helpers now use `assistantui`; scoped production and updated local test audit are clean for the touched bus-chat files. |
