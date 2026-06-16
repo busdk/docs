@@ -8,8 +8,8 @@ description: Dedicated BusDK UI reference for EvidenceURLResolver.
 `EvidenceURLResolver` is a Go helper for building safe evidence URLs.
 It joins a same-origin evidence endpoint with an escaped artifact path, or
 delegates to a host-named resolver. It does not fetch evidence, authorize a
-document, inspect the filesystem, or render UI. This page documents a
-migration surface until a public facade exists.
+document, inspect the filesystem, or render UI. This page documents the public
+`pkg/ui` evidence URL facade.
 
 ## Inputs
 
@@ -39,16 +39,11 @@ that result but does not decide provider policy.
 is the convenience form that returns only `(string, error)` and converts a
 denial reason into a typed validation error.
 
-## Migration status
-
-There is not yet a public `pkg/ui` resolver wrapper. Use the legacy helper only
-as a migration bridge from host-owned adapters.
-
 ```go
-previewURL, err := uikit.EvidenceURLResolver(uikit.EvidenceURLResolverProps{
+previewURL, err := ui.EvidenceURLResolver(ui.EvidenceURLResolverProps{
 	Endpoint:    "/api/evidence",
 	Path:        "invoices/2026 04.pdf",
-	Operation:   uikit.EvidenceOperationPreview,
+	Operation:   ui.EvidenceOperationPreview,
 	ContentType: "application/pdf",
 })
 if err != nil {

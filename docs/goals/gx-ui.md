@@ -141,8 +141,11 @@ Counts from this rebaseline:
   `bus-portal-accounting`, `bus-portal-ai`, `bus-portal-auth`,
   `bus-portal-notes`;
 - tests/docs/examples-only rows: 0 refined Go test files after the accepted
-  test-harness cleanup; 30 Markdown files still mention historical `uikit`
-  material and remain docs-only cleanup/classification work;
+  test-harness cleanup. The raw Markdown audit now reports 23 files, down from
+  30 after updating current README/reference snippets to `pkg/ui`/`pkg/uitest`;
+  the remaining raw hits are process guidance, the goal doc itself,
+  historical PLAN/FEATURES/SDD notes, and accepted `uikit.css` asset-route
+  mentions rather than code/test blockers;
 - deferred/out-of-scope rows: local replace hydration gaps listed below
   (`bus-dev`, `bus-data`, `bus-preferences`, `bus-accounts`) until a hydrated
   dependency-user matrix is rerun.
@@ -211,7 +214,7 @@ Tests/docs/examples-only rows:
 |---|---|---|---|
 | test-1 | formerly 14 refined `*_test.go` files outside `pkg/uikit` plus two `bus-ui/examples` tests | test-only parity/harness residue | accepted / current compact inventory reports 0 Go test-file hits. `bus-ui` parity tests now assert public contracts directly, adopter tests import `pkg/ui`, and examples use public `pkg/uitest`. |
 | test-2 | `bus-ui/pkg/uitest` | public test harness replacement | accepted / `pkg/uitest` owns the supported fake fetch, resource stub, mounted GX harness, and HTML assertion helpers backed by `pkg/ui`/`pkg/terminalui`; old private-only harness fixtures were not retained as compatibility API. |
-| docs-1 | 30 Markdown files with `pkg/uikit`/`uikit.` references | docs/plan residue | remaining docs-only cleanup/classification; batch after code/test deletion proof so public docs do not teach deprecated APIs. |
+| docs-1 | raw audit: 23 Markdown files with `pkg/uikit`/`uikit.` references after public-doc snippet cleanup | docs/plan/process/historical residue | non-code backlog only. Current README/reference snippets that taught old imports were updated to `pkg/ui`/`pkg/uitest`; remaining hits are historical plans/features/SDD snapshots, process guidance, the goal doc self-reference, and accepted `uikit.css` asset-route mentions. Do not count these as production/test blockers. |
 
 Automation feasibility:
 

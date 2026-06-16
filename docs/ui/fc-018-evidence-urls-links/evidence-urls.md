@@ -41,20 +41,14 @@ external evidence origins and provider-specific authorization decisions. The
 shared helper validates endpoint shape, artifact path shape, operation tokens,
 metadata, and returned href safety.
 
-## Migration status
-
-There is not yet a public `pkg/ui` wrapper for evidence URL resolution. Current
-documentation keeps the legacy `pkg/uikit` helper here as an internal migration
-surface only:
-
 ```go
-resolved, err := uikit.ResolveEvidenceURL(uikit.EvidenceURLResolverProps{
+resolved, err := ui.ResolveEvidenceURL(ui.EvidenceURLResolverProps{
 	Endpoint:  "/api/evidence",
 	Path:      "receipts/2026-04-18.pdf",
-	Operation: uikit.EvidenceOperationOpen,
+	Operation: ui.EvidenceOperationOpen,
 })
 if err != nil {
-	return uikit.EvidenceURLResult{}, err
+	return ui.EvidenceURLResult{}, err
 }
 if resolved.Reason != "" || resolved.URL == "" {
 	return resolved, nil

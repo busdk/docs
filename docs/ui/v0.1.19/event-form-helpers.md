@@ -13,28 +13,9 @@ HTML-like event names such as `onClick`, `onSubmit`, `onInput`, and
 `onChange`, while giving handlers ordinary Go access to target metadata, form
 values, files, keyboard data, focus transitions, and drag/drop items.
 
-```go
-import (
-	"github.com/busdk/bus-gx/pkg/gx"
-	"github.com/busdk/bus-ui/pkg/uikit/uievent"
-)
-
-func SaveForm(client DraftClient) func(gx.SubmitEvent) {
-	return func(event gx.SubmitEvent) {
-		event.PreventDefault()
-
-		form, err := uievent.Form(event)
-		if err != nil {
-			return
-		}
-
-		client.Save(Draft{
-			Title:     form.Value("title"),
-			Submitter: form.SubmitterName(),
-		})
-	}
-}
-```
+The original experiment lived under an internal `uikit/uievent` package. The
+current public surface keeps typed event payloads in `bus-gx` and uses
+package-owned `pkg/ui` action/form helpers for shared UI behavior.
 
 ## Helper Reference
 

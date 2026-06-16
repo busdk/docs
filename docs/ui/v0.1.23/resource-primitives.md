@@ -13,24 +13,14 @@ composes higher-level surfaces through `ui.RenderHTML`; these lower-level
 transport helpers sit underneath that boundary.
 
 ```go
-import (
-	"context"
-
-	uiresource "github.com/busdk/bus-ui/pkg/uikit/uiresource"
-	uisession "github.com/busdk/bus-ui/pkg/uikit/uisession"
-)
-
-ctx := context.Background()
-session := uisession.FromHost(hostSession)
-draft := Draft{Title: "Release notes"}
-
-client := uiresource.Client{
-	Base:    uiresource.ModuleAPI,
-	Path:    "/v1/drafts",
-	Session: session,
+req := ui.ResourceRequest{
+	Method: ui.ResourceMethodPost,
+	Base:   string(ui.RuntimeAPIBaseModule),
+	Path:   "/v1/drafts",
+	Payload: Draft{Title: "Release notes"},
 }
 
-result := uiresource.UseResource(client).PostJSON(ctx, draft)
+result := ui.RunResource(client, req, nil)
 ```
 
 Resource requests support `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, multipart
@@ -39,20 +29,17 @@ streaming is represented as a reader interface with cancellation; it does not
 make the minimal runtime a terminal protocol or general networking library.
 
 Valid resource paths are same-origin absolute paths such as `/v1/drafts`, or
-host-resolved paths such as `{Base: uiresource.PortalAPI, Path: "/v1/session"}`.
+host-resolved paths such as `{Base: ui.RuntimeAPIBasePortal, Path: "/v1/session"}`.
 Rejected paths include `javascript:alert(1)`, `data:text/html,...`,
 `https://example.test/v1/drafts` without an explicit host allowlist, empty
 paths, and paths containing `..`.
 
-Authentication comes from `uisession.RequestAuthorizer`. `Client.Session`
-implements that interface. Before dispatch, the resource client calls
-`Authorize(req uiresource.Request) (uiresource.Request, error)`, which attaches
-bearer behavior for approved API requests and CSRF behavior for same-origin
-unsafe methods.
+Authentication and CSRF behavior come from the host-owned resource client or
+browser resource transport before it dispatches the normalized `ui.ResourceRequest`.
 
-Provider failures return `uiresource.Result{State: uiresource.ProviderError}`.
-The public error fields are `Title`, `Summary`, `Status`, `RequestID`, and
-`Fields []uiresource.FieldError`. Field errors use `Path`, `Code`, and
+Provider failures return `ui.Result{Kind: ui.ResultKindProviderError}`. The
+public error fields are `Title`, `Summary`, `Status`, `RequestID`, and
+`Fields []ui.FieldError`. Field errors use `Path`, `Code`, and
 optional `Message`. Raw response bodies, tokens, stack traces, SQL, and
 credentials are never copied into the result.
 
