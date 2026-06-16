@@ -120,11 +120,10 @@ Counts from this rebaseline:
   `bus-factory`, `bus-gateway`, `bus-inspection`, `bus-ledger`,
   `bus-portal`, `bus-portal-accounting`, `bus-portal-ai`,
   `bus-portal-auth`, `bus-portal-notes`);
-- known remaining core production rows: 12 implementation/probe rows below,
-  across 7 `bus-ui/pkg/ui` production files still importing/calling
-  `pkg/uikit` (the file-level count remains unchanged because the
-  shell/navigation/status parent still imports `pkg/uikit` for the split row
-  after the accepted navigation and status-surface children);
+- known remaining core production rows: 10 implementation/probe rows below,
+  across 6 `bus-ui/pkg/ui` production files still importing/calling
+  `pkg/uikit` (the file-level count dropped after the accepted split-layout
+  child removed the `shell_navigation_status.go` parent facade);
 - known remaining adopter/user production rows: 11 rows below, across 4
   modules with refined production hits (`bus-chat`, `bus-factory`,
   `bus-inspection`, `bus-ledger`);
@@ -138,12 +137,14 @@ Counts from this rebaseline:
   (`bus-dev`, `bus-data`, `bus-preferences`, `bus-accounts`) until a hydrated
   dependency-user matrix is rerun.
 
-Current deletion sequencing probe result: with `pkg/uikit` removed in the
-throwaway `bus-ui` worktree, `go test ./...` still stops first at
-`pkg/ui/shell_navigation_status.go:8:8`. The same probe showed
+Current deletion sequencing probe result: with `pkg/uikit` moved aside in
+`/private/tmp/bus-ui-uikit-deletion-probe-core4`, `go test ./...` now advances
+past `pkg/ui/shell_navigation_status.go` and stops first at
+`pkg/ui/split_projection_facade.go:8:2`. The same probe shows
 `pkg/assistantui`, `pkg/terminalruntime`, `pkg/uiartifact`, `pkg/uicatalog`,
-and `pkg/uiportal` pass in `bus-ui`; `pkg/terminalui` is blocked because its
-tests import `pkg/ui`, which still imports `pkg/uikit`.
+and `pkg/uiportal` still pass with `pkg/uikit` unavailable. The compact static
+audit after core-3/core-4 reports 6 owner facade production files and 38
+production adopter/core files.
 
 Known remaining core rows:
 
@@ -151,8 +152,8 @@ Known remaining core rows:
 |---|---|---|---|---|
 | core-1 | `pkg/ui/navigation_primitives.go`, `pkg/ui/navigation_primitives_gx_adapter.go`, `pkg/ui/navigation_primitives_gx_generated.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/navigation_primitives.go`, `pkg/uikit/navigation_primitives_gx_adapter.go`, `pkg/uikit/navigation_primitives_gx_generated.go`, `pkg/uikit/navigation_primitives_test.go` | menu, tabs, navigation props/events/errors, href validation, dispatch helpers, `DOMAttrUIValue`, compiled GX markup and legacy trigger-HTML splice behavior | accepted / promoted in `bus-ui` `fba4f79`; worker `gx-ui-core-ui-navigation-primitives-spark-20260616a` false-actived after one exact prompt, so supervisor used the reviewed worker-owned small-chunk exception path and promoted the resulting patch. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check HEAD^`, scoped no-`uikit` audit for `pkg/ui/navigation_primitives*.go`, and scoped alias audit proving menu/tabs/navigation symbols are gone from `pkg/ui/shell_navigation_status.go` / `pkg/ui/ui.go`. |
 | core-2 | `pkg/ui/status_surfaces.go`, `pkg/ui/status_surfaces_node.go`, `pkg/ui/status_primitives_gx_adapter.go`, `pkg/ui/status_primitives_gx_generated.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/status_surfaces.go`, `pkg/uikit/status_surfaces_node.go`, `pkg/uikit/status_primitives_gx_adapter.go`, `pkg/uikit/status_primitives_gx_generated.go`, existing `pkg/ui` empty-state/provider-error helpers | loading/result/error/status validation, status constants, status-pill node and HTML parity, result-panel completed-status rejection, compiled GX markup, and node-first public `StatusPill`/`LoadingState`/`ResultPanel`/`ErrorBanner` facades | accepted / promoted in `bus-ui` `df51293`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused review instead of worker churn. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for new status files, and scoped alias audit proving status symbols are gone from `pkg/ui/shell_navigation_status.go` / `pkg/ui/ui.go`. File-level inventory remains unchanged until core-4 removes the parent import. |
-| core-3 | `pkg/ui/split_layout.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/split_layout.go`, `pkg/uikit/split_layout_gx_adapter.go` | split pane constants/state, resize math, GX adapter render behavior | mechanical Mini or small-chunk exception; keep separate from split projection |
-| core-4 | `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | already-moved shell/navigation/status files | final shell/navigation/status aliases and import removal | final shell row; run deletion probe and static audit before continuing |
+| core-3 | `pkg/ui/split_layout.go`, `pkg/ui/split_layout_gx_adapter.go`, `pkg/ui/ui.go`, `pkg/ui/split_projection_facade.go` | `pkg/uikit/split_layout.go`, `pkg/uikit/split_layout_gx_adapter.go`, existing split projection facade aliases | split pane constants/state, resize math, semantic and legacy split layout render behavior, GX adapter render behavior, node-first public `SplitLayout` facade, and value parity for split defaults | accepted / promoted in `bus-ui` `0c882f3`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused review. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for new split files, scoped alias audit proving split symbols are gone from `pkg/ui/ui.go`, `pkg/ui/shell_navigation_status.go`, and `pkg/ui/split_projection_facade.go`. |
+| core-4 | `pkg/ui/shell_navigation_status.go`, `pkg/ui/sidebar_navigation.go`, `pkg/ui/ui.go` | already-moved shell/navigation/status files | final shell/navigation/status aliases and import removal; `ErrShellNavRequired` owned by sidebar/shell package code | accepted / promoted in `bus-ui` `0c882f3`; `pkg/ui/shell_navigation_status.go` was deleted after navigation, status, split-layout, and shell error ownership moved into package-owned files. Static audit dropped to 6 owner facade production files and 38 production adopter/core files. Fresh deletion/build-exclusion probe still pending to name the next compiler-derived blocker. |
 | core-5 | `pkg/ui/html_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/uikit.go`, `pkg/uikit/html_nodes.go`, `pkg/uikit/html_builder.go`, `pkg/uikit/vdom.go` | escaping, attrs/classes, node/string behavior, element helpers, VDOM helpers | planning table recommended, then mechanical implementation |
 | core-6 | `pkg/ui/icon_css_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/assets.go`, `pkg/uikit/icons.go`, `pkg/uikit/icon_nodes.go` | CSS bundle output/options, icon constants, SVG path icon node rendering | planning table recommended; asset URL strings are not production package imports |
 | core-7 | `pkg/ui/render_runtime.go`, `pkg/ui/ui.go` | `pkg/uikit/component_hooks.go`, `pkg/uikit/mount_gx.go`, `pkg/uikit/action_dispatch.go` | render runtime hooks, `UseState`, `RenderGXNode`, generic action dispatch | planning table recommended because this is shared by tests/adopters |
@@ -160,7 +161,7 @@ Known remaining core rows:
 | core-9 | `pkg/ui/runtime_facade_js_wasm.go` | `pkg/uikit/js_events.go` or the current event-target runtime source-map | JS event target, callback retention, listener registration | implementation-ready after source path preflight; js/wasm proof may be environment-gated |
 | core-10 | `pkg/ui/wasm_facade_js_wasm.go` | `pkg/uikit/wasm/runtime DOM helper sources` from path-preflight table | global accessors, API URL, click binding, closest element, DOM attrs, scroll-preserving mount | planning table required to verify exact source files before dispatch |
 | core-11 | `pkg/ui/ai_drop_facade_js_wasm.go` | `pkg/uikit/ai_drop*`, `pkg/uikit/dropzone*`, upload/drop helpers | AI path/file drop services, JS file reader, multipart upload, drop-zone handlers, visual state | planning table required; depends on existing upload/drop primitives |
-| core-12 | `pkg/ui/split_projection_facade.go` | `pkg/uikit/app_state.go`, `pkg/uikit/projection_query*`, split layout state helpers | projection DTOs, panel layout state, route policy, generic query client behavior | planning table recommended before implementation |
+| core-12 | `pkg/ui/split_projection_facade.go` | `pkg/uikit/app_state.go`, `pkg/uikit/projection_query*`, remaining split projection helpers; split layout state helper dependency is already owned by core-3 | projection DTOs, panel layout state, route policy, generic query client behavior | active next compiler-derived blocker after the core-4 deletion probe; planning table recommended before implementation because this owns behavior-rich query/client DTOs |
 | core-13 | `pkg/ui/split_projection_facade_js_wasm.go` | `pkg/uikit/projection_list_panel.go`, `pkg/uikit/projection_detail*`, `pkg/uikit/split_controller_js.go` | locale formatting, line summary, split resize wiring, detail presenter | planning table recommended; likely coupled to Ledger adopter |
 | core-14 | `pkg/ui` owner audit and `pkg/uikit`/`pkg/uikit/uikittest` deletion probe | all accepted replacement files | no production `pkg/ui` backing import/call to `pkg/uikit`; old package is not retained as compatibility layer | final core truth gate: refined production audit clean or every remaining hit explicitly deferred, then hydrated deletion/build-exclusion probe and dependency-user matrix |
 
