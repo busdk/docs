@@ -127,8 +127,8 @@ Counts from this rebaseline:
 - known adopter-discovered public facade gaps: 0 open; `core-15` below was
   accepted after source-mapping `bus-inspection` and now unblocks the
   `bus-inspection` WASM app runtime rewrite;
-- known remaining adopter/user production rows: 8 open rows below, across 3
-  modules with 28 refined production hits (`bus-factory`, `bus-inspection`,
+- known remaining adopter/user production rows: 7 open rows below, across 3
+  modules with 27 refined production hits (`bus-factory`, `bus-inspection`,
   `bus-ledger`); `bus-inspection/internal/ui/wasm/app.go` is accepted, leaving
   only `bus-inspection/internal/ui/wasm/view.go` in that module;
 - production-clean by refined `uikit` call/import audit but still in the
@@ -180,7 +180,7 @@ Known remaining adopter/user production rows:
 
 | row | module | target files | current need | dependency/readiness |
 |---|---|---|---|---|
-| adopter-1 | `bus-factory` | `internal/serve/business_view.go` | replace direct node/table/panel/icon composition with public `ui` facades | depends on core-5, core-6, core-8, and existing table primitives |
+| adopter-1 | `bus-factory` | `internal/serve/business_view.go` | replace direct node/table/panel/icon composition with public `ui` facades | accepted in `bus-factory` `c9265f7` via worker commit `6e4f870` after Spark produced no assistant response; implementation uses public `pkg/ui` HTML node helpers plus `PanelChecked`, `IconButtonChecked`, and `DenseTableChecked` to preserve existing string-render boundaries. Checks passed in worker and primary: `go test ./internal/serve`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for `business_view.go`, and compact static inventory. |
 | adopter-2 | `bus-factory` | `internal/serve/server.go`, `internal/serve/browser_runtime.go` | replace server/runtime/resource/assistant shell calls with public facades | adapter-only after runtime/assistant/resource facades are confirmed; server helper parity must be probed |
 | adopter-3 | `bus-factory` | `internal/serve/ai.go`, `ai_thread_isolation.go`, `ai_acp_status.go`, `ai_go_diagnostics.go` | replace AI DTO/helper aliases with public `assistantui`/`ui` APIs | planning table required; likely mechanical after core rows are clean |
 | adopter-4 | `bus-chat` | `internal/serve/ai.go` | replace AI chat/event/thread DTOs and terminal session helpers | accepted in `bus-chat` `959ded6` with supporting public-facade fix `bus-ui` `2bd1fbe`; selector map: AI DTO/status/poll/history/render/thread/message/approval symbols -> `assistantui`, terminal event/session folding -> `terminalui`, local adapter `assistantTerminalSession` converts terminalui session snapshots to assistantui render DTOs. Checks passed: `go test ./...` in `bus-chat`, `go test ./pkg/ui ./pkg/assistantui ./pkg/terminalui` in `bus-ui`, `git diff --check`, scoped no-`uikit` audit for touched files, and compact static inventory. |
