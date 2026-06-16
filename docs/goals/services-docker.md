@@ -1006,3 +1006,31 @@ worktree, and the superproject is clean at commit `3af5f8ac`, pinning
 
 The branch is not merged, promoted, or released; do not merge or promote it
 without operator confirmation.
+
+2026-06-17 continuation status:
+
+- the refined worker-capable implementation work is routed as
+  `task-4d79ec2a5715`;
+- requested worker id:
+  `services-docker-worker-capable-20260617a`;
+- requested branch:
+  `codex/services-docker-worker-capable-runtime-20260617a`;
+- requested environment:
+  `dev-hg`;
+- local Events persisted the worker create request as
+  `evt_1781645118553822000` and the first message request as
+  `evt_1781645128939849000`, both targeted to `dev-hg` with pending sync
+  state;
+- the worker has not yet materialized on `dev-hg`;
+- dependency before the worker can run: restore `dev-hg` Workers API outbound
+  Events authentication. Direct inspection on `coding-agent@dev.hg.fi` showed
+  the provider process is configured with
+  `BUS_WORKERS_EVENTS_TOKEN_FILE=.bus/tokens/local-events.jwt` /
+  `BUS_EVENTS_TOKEN_FILE=.bus/tokens/local-events.jwt`, and that token expired
+  on 2026-06-13 17:26:19. Until the token is refreshed and the Workers API
+  process uses a valid Events token, direct worker reads fail with
+  `publish_failed: publish worker event: events API status 401`.
+
+Do not mark the Docker goal complete while this worker request is only queued.
+Completion still requires a materialized worker-owned worktree, implementation
+commits, the worker-capable Docker proof, supervisor review, and promotion.
