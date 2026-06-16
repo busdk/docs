@@ -120,11 +120,9 @@ Counts from this rebaseline:
   `bus-factory`, `bus-gateway`, `bus-inspection`, `bus-ledger`,
   `bus-portal`, `bus-portal-accounting`, `bus-portal-ai`,
   `bus-portal-auth`, `bus-portal-notes`);
-- known remaining core production rows: 6 implementation/probe rows below,
-  across 5 `bus-ui/pkg/ui` production files still importing/calling
-  `pkg/uikit` (the file-level count is unchanged after the accepted
-  HTML/render and icon/CSS slices because `pkg/ui/ui.go` still imports
-  `pkg/uikit` for the remaining panel/surface row);
+- known remaining core production rows: 5 implementation/probe rows below,
+  across 4 `bus-ui/pkg/ui` production files still importing/calling
+  `pkg/uikit` after the accepted surface-card slice;
 - known remaining adopter/user production rows: 11 rows below, across 4
   modules with refined production hits (`bus-chat`, `bus-factory`,
   `bus-inspection`, `bus-ledger`);
@@ -139,15 +137,16 @@ Counts from this rebaseline:
   dependency-user matrix is rerun.
 
 Current deletion sequencing probe result: with `pkg/uikit` moved aside in
-`/private/tmp/bus-ui-uikit-deletion-probe-html-runtime`, `go test ./...`
-still stops first at `pkg/ui/ui.go:9:8` after advancing past
-`pkg/ui/split_projection_facade.go`. The same probe shows `pkg/assistantui`,
-`pkg/terminalruntime`, `pkg/uiartifact`, `pkg/uicatalog`, and `pkg/uiportal`
-still pass with `pkg/uikit` unavailable. The compact static audit after the
-icon/CSS slice still reports 5 owner facade production files and 37
-production adopter/core files. Treat `pkg/ui/ui.go` as a broad parent blocker
-drained by the remaining visible core-8 row; do not report it as one
-implementation ticket.
+`/private/tmp/bus-ui-uikit-deletion-probe-surface`, `go test ./...` advances
+beyond `pkg/ui/ui.go` and now stops first in examples/test-harness setup:
+`examples/completedapis/render_test.go` imports
+`github.com/busdk/bus-ui/pkg/uikit/uikittest`, and
+`examples/testing/uikittest_example_test.go` imports
+`github.com/busdk/bus-ui/pkg/uikit`. The compact static production audit after
+the surface-card slice reports 4 owner facade production files and 36
+production adopter/core files. The remaining production core rows are the
+visible JS/WASM facades below; do not treat raw example/test probe failures as
+adopter-ready production work.
 
 Known remaining core rows:
 
@@ -160,7 +159,7 @@ Known remaining core rows:
 | core-5 | `pkg/ui/html_primitives.go`, `pkg/ui/html_nodes.go`, `pkg/ui/html_builder.go`, `pkg/ui/vdom.go`, `pkg/ui/ui.go` | `pkg/uikit/uikit.go`, `pkg/uikit/html_nodes.go`, `pkg/uikit/html_builder.go`, `pkg/uikit/vdom.go` | escaping, attrs/classes, node/string behavior, element helpers, VDOM helpers | accepted / promoted in `bus-ui` `90d4ada`; implemented with `scripts/gx-ui-symbol-family-skeleton.py`. Compile feedback proved `Node` ownership is coupled to render runtime, so this landed with core-7. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for new HTML/runtime files. |
 | core-6 | `pkg/ui/icon_css_primitives.go`, `pkg/ui/icons.go`, `pkg/ui/icon_nodes.go`, `pkg/ui/assets/uikit.css`, `pkg/ui/ui.go` | `pkg/uikit/assets.go`, `pkg/uikit/icons.go`, `pkg/uikit/icon_nodes.go`, `pkg/uikit/assets/uikit.css` | CSS bundle output/options, icon constants, SVG path icon node rendering | accepted / promoted in `bus-ui` `4ac070f`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused review. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped alias audit proving icon/CSS symbols are gone from `pkg/ui/ui.go`, and scoped no-`uikit` audit for new icon/CSS files except the literal embedded asset name `assets/uikit.css`. Hydrated deletion/build-exclusion probe from `/private/tmp/bus-ui-uikit-deletion-probe-icon-css` still stops at `pkg/ui/ui.go:9:8`, which now represents the remaining core-8 panel/surface/metric aliases. |
 | core-7 | `pkg/ui/component_hooks.go`, `pkg/ui/vdom_component_hooks.go`, `pkg/ui/mount_gx.go`, `pkg/ui/action_dispatch.go`, `pkg/ui/runtime_facade.go`, `pkg/ui/control_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/component_hooks.go`, `pkg/uikit/vdom_component_hooks.go`, `pkg/uikit/mount_gx.go`, `pkg/uikit/action_dispatch.go`; existing package-owned mounted-app/lifecycle code in `pkg/ui/runtime_facade.go` | render runtime hooks, `UseState`, `UseRef`, `UseEffect`, `UseMemo`, component/node/VDOM render helpers, GX root render errors, generic action dispatch, `ControlLogSink` ownership | accepted / promoted in `bus-ui` `90d4ada`; landed together with core-5 because `Node` and render context ownership compile as one boundary. Existing mounted-app constructors stayed in `runtime_facade.go`; copied GX helpers were trimmed to avoid duplicate constructors. |
-| core-8 | `pkg/ui/surface_card_primitives.go`, `pkg/ui/surface_card_primitives_node.go`, `pkg/ui/surface_card_primitives_gx_adapter.go`, `pkg/ui/surface_card_primitives_gx_generated.go`, `pkg/ui/data_evidence_records_surface.go`, `pkg/ui/action_controls.go`, `pkg/ui/ui.go` | `pkg/uikit/surface_primitives.go`, `pkg/uikit/surface_primitives_node.go`, `pkg/uikit/surface_primitives_gx_adapter.go`, `pkg/uikit/surface_primitives_gx_generated.go`, `pkg/uikit/control_primitives.go` for `IconActionButton` reference only | panel, surface-card, and metric-card checked HTML plus node-first behavior; typed slot ordering; legacy raw slot splicing; density/typography classes; heading validation; metric status validation; nested-surface rejection; `IconActionButton` should use the already-owned `pkg/ui/action_controls.go` implementation | implementation-ready after source preflight; use skeleton/merge only for explicit files and prune existing local helper duplicates (`SurfaceDensity`, `SurfaceTypography`, `surfaceRootAttrs`, `surfaceChildAttrs`, `surfaceGXProps`, `statusClass`, summary/record helpers). Do not blind-copy over the accepted data-evidence surface helpers. Final DoD removes the remaining `pkg/uikit` import from `pkg/ui/ui.go`, reruns `go test ./pkg/ui`, `go test ./...`, static audit, and the hydrated deletion/build-exclusion probe. |
+| core-8 | `pkg/ui/surface_card_primitives.go`, `pkg/ui/surface_card_primitives_node.go`, `pkg/ui/surface_card_primitives_gx_adapter.go`, `pkg/ui/surface_card_primitives_gx_generated.go`, `pkg/ui/data_evidence_records_surface.go`, `pkg/ui/action_controls.go`, `pkg/ui/ui.go` | `pkg/uikit/surface_primitives.go`, `pkg/uikit/surface_primitives_node.go`, `pkg/uikit/surface_primitives_gx_adapter.go`, `pkg/uikit/surface_primitives_gx_generated.go`, `pkg/uikit/control_primitives.go` for `IconActionButton` reference only | panel, surface-card, and metric-card checked HTML plus node-first behavior; typed slot ordering; legacy raw slot splicing; density/typography classes; heading validation; metric status validation; nested-surface rejection; `IconActionButton` should use the already-owned `pkg/ui/action_controls.go` implementation | accepted / promoted in `bus-ui` `7d6a3d1`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused merge/prune around accepted local surface helpers. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for surface-card files and `pkg/ui/ui.go`, static audit, and hydrated deletion/build-exclusion probe. The probe advanced beyond `pkg/ui/ui.go` and now stops at examples/test-harness imports, while static production audit names the remaining four JS/WASM owner facades. |
 | core-9 | `pkg/ui/runtime_facade_js_wasm.go` | `pkg/uikit/js_events.go` or the current event-target runtime source-map | JS event target, callback retention, listener registration | implementation-ready after source path preflight; js/wasm proof may be environment-gated |
 | core-10 | `pkg/ui/wasm_facade_js_wasm.go` | `pkg/uikit/wasm/runtime DOM helper sources` from path-preflight table | global accessors, API URL, click binding, closest element, DOM attrs, scroll-preserving mount | planning table required to verify exact source files before dispatch |
 | core-11 | `pkg/ui/ai_drop_facade_js_wasm.go` | `pkg/uikit/ai_drop*`, `pkg/uikit/dropzone*`, upload/drop helpers | AI path/file drop services, JS file reader, multipart upload, drop-zone handlers, visual state | planning table required; depends on existing upload/drop primitives |
@@ -217,12 +216,13 @@ human review plus normal tests as the acceptance gate.
 
 Quota-aware dispatch ranking:
 
-1. Finish the current compiler blocker family: core-8 panel/surface/metric
-   plus the remaining `IconActionButton` alias in `pkg/ui/ui.go`. This is a
-   mechanical source-map/skeleton candidate if the exact surface source files
-   are preflighted first.
-2. Run the hydrated deletion probe and refined static production audit again.
-3. If the probe advances into another known owner facade, prefer planning-only
+1. Keep production core first: source-map the four remaining JS/WASM owner
+   facades named by static audit (`runtime_facade_js_wasm.go`,
+   `wasm_facade_js_wasm.go`, `ai_drop_facade_js_wasm.go`, and
+   `split_projection_facade_js_wasm.go`) before adopter implementation.
+2. Use the raw deletion probe's examples/test-harness failure as a queued
+   test/docs row, not as the production sequencing denominator.
+3. If a source map advances into another known owner facade, prefer planning-only
    source-map tables for the remaining core rows before implementation. Use
    `gpt-5.5` only for hard source-map/planning ambiguity; implementation stays
    Mini/small-chunk unless a simplified patch fails for reasoning/API shape.
