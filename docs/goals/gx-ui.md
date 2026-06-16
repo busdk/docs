@@ -129,7 +129,7 @@ Counts from this rebaseline:
   shell `RenderAssistantShellPage` / assistant panel action-contract gaps below
   are accepted;
 - known remaining adopter/user production rows: 5 open rows below, across 2
-  modules with 21 refined production hits (`bus-inspection`, `bus-ledger`);
+  modules with 19 refined production hits (`bus-inspection`, `bus-ledger`);
   `bus-factory` is now production-clean by refined audit, and
   `bus-inspection/internal/ui/wasm/app.go` is accepted, leaving only
   `bus-inspection/internal/ui/wasm/view.go` in that module;
@@ -154,8 +154,9 @@ probe now has no `pkg/ui` owner-facade blocker; `GOOS=js GOARCH=wasm go test
 -exec=echo ./pkg/ui` is blocked only by the test-only
 `pkg/ui/split_projection_facade_test.go` `pkg/uikit` import. The compact
 static production audit after the accepted factory AI-support slice reports 0
-owner facade production files and 21 remaining production adopter files across
-the 5 open adopter rows below. Do not treat raw example/test probe failures as
+owner facade production files and 19 remaining production adopter files across
+the 5 open adopter rows below after the accepted ledger server runtime/logging
+slice. Do not treat raw example/test probe failures as
 adopter-ready production work.
 
 Known remaining core rows:
@@ -192,7 +193,8 @@ Known remaining adopter/user production rows:
 | adopter-5 | `bus-chat` | `internal/serve/ai_appserver.go` | replace AI event/model extraction helpers | accepted in `bus-chat` `959ded6`; `IsKnownAIEventMethod`, `ExtractAIModelCandidates`, and thread meta helpers now use `assistantui`; no missing public facade found. |
 | adopter-6 | `bus-chat` | `internal/serve/ai_workspace_locks.go` | replace AI isolation status/branch/worktree helpers | accepted in `bus-chat` `959ded6`; isolation status/state/branch/worktree helpers now use `assistantui`; scoped production and updated local test audit are clean for the touched bus-chat files. |
 | adopter-7 | `bus-inspection` | `internal/ui/wasm/app.go`, `internal/ui/wasm/view.go` | replace wasm app/view composition with public `ui` facades | split required. `app.go` accepted in `bus-inspection` `ab6463e` via worker commit `a8402a7` after Spark produced no assistant response; selector map was `uikit` runtime/scaffold/drop/error helpers -> public `pkg/ui`. Checks passed in worker and primary: `go test ./...`, `GOCACHE=/private/tmp/bus-inspection-gocache-app-primary GOOS=js GOARCH=wasm go test -exec=echo ./internal/ui/wasm`, `git diff --check`, scoped no-`uikit` audit for `app.go`, and compact static inventory. `view.go` remains the only `bus-inspection` production hit and is a separate broad component-composition rewrite that should be split by view category before implementation. |
-| adopter-8 | `bus-ledger` | `internal/server/ai*.go`, `internal/server/logging.go`, `internal/server/server.go` | replace server AI/runtime/logging helpers | planning table required; likely public `assistantui`/runtime facades |
+| adopter-8a | `bus-ledger` | `internal/server/server.go`, `internal/server/logging.go` | replace runtime/server/static/client-log/token/listener/logger helpers with public `pkg/ui` facades; keep the literal `assets/uikit.css` URL as the stable asset route, not a package dependency | accepted / promoted in `bus-ledger` `643f707`; Spark worker `gx-ui-ledger-server-runtime-spark-20260616a` false-actived with no assistant response or diff, so the reviewed worker-owned exception path produced worker commit `9baa255` and promoted it to primary. Selector table was `GenerateCapabilityToken`, `TokenPathSuffix`, `CSSMust`, `ListenTCP`, `TokenURLFromListener`, `ServeClientLogAPI`, `ClientLogHandler`, `ServeStaticWithIndexFallback`, `NewServerLogger`, and `ServerLoggerOptions` -> `ui.*`. Checks passed in worker and primary: focused `go test ./internal/server -run 'Server|Handler|ClientLog|Log|Token|Static'`, `go test ./internal/server`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for the two target files, and compact static inventory. |
+| adopter-8b | `bus-ledger` | `internal/server/ai.go`, `internal/server/ai_runtime_config.go`, `internal/server/ai_thread_isolation.go`, `internal/server/ai_test.go` | replace AI model/event/thread/isolation/session helpers with public `assistantui`/`terminalui` facades and local adapters only where package types differ | planning table mostly known from accepted bus-factory AI-support row; implementation-ready after confirming terminal session adapter shape in `ai.go` tests; DoD is focused AI/server tests, `go test ./...`, compact inventory, and scoped no-`uikit` audit for target production files plus updated AI tests |
 | adopter-9 | `bus-ledger` | `internal/ui/wasm/app.go`, `app_context.go`, `frontend_errors.go`, `ledger_controller.go` | replace WASM app runtime/action/resource helpers | depends on core-9/core-10/core-11 |
 | adopter-10 | `bus-ledger` | `internal/ui/wasm/ledger_view.go`, `view_split_root.go`, `split_resize.go` | replace split layout/root composition helpers | depends on core-3/core-12/core-13 |
 | adopter-11 | `bus-ledger` | `internal/ui/wasm/list_rows.go`, `detail_helpers.go`, `view_detail_panel.go`, `view_line_panel.go`, `view_list_panel.go`, `ledger_projection_presenter.go`, `table_status_surfaces.go` | replace ledger projection/list/detail/status surface helpers | depends on core-2, core-8, core-12, core-13 |
