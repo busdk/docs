@@ -120,7 +120,8 @@ only adopter imports:
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix advanced | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); hydrated post-AI-upload module probe `task-4b39fa3069a7` proved the matrix advances beyond `pkg/ui/ai_upload_facade.go` and now stops at `pkg/ui/cli_server_facade.go:8:8` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/cli_server_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` CLI/server/browser-open helper facade still backed by `uikit` | move CLI flag/runtime helpers, server logger/client-log/static/token helpers, and browser-open URL validation/launcher selection into `pkg/ui` with focused direct behavior tests | accepted / matrix advanced | implementation accepted in `bus-ui` `cad6590` (`task-b7d461e781f7`); post-CLI/server deletion rerun `task-b5a6128474d0` proved the matrix advances beyond `pkg/ui/cli_server_facade.go` and now stops at `pkg/ui/data_evidence.go:7:8` |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, summary-item and record-list helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | active parent blocker; all named children are accepted, with timeline accepted in `bus-ui` `8a42131`; remaining strict gate is the hydrated deletion/build-exclusion probe; do not start adopter lanes until the probe advances beyond `pkg/ui/data_evidence.go` and names the next matrix state |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, summary-item and record-list helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | accepted / matrix advanced | all named children accepted through timeline in `bus-ui` `8a42131`; hydrated deletion/build-exclusion probe `task-47b955f185b1` advanced beyond `pkg/ui/data_evidence.go` and now stops at `pkg/ui/form_controls.go:9:8` |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/form_controls.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` node-first form/control facade still backed by `uikit` | move `Form`, `Field`, `Input`, `TextArea`, `SubmitControl`, `Select`, `FileInput`, and `DropZone` node-first implementations into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | first remaining owner-module blocker from hydrated deletion/build-exclusion probe `task-47b955f185b1`; do not start adopter lanes until this lands and the next deletion probe names the matrix state |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -447,6 +448,22 @@ alias remains in `pkg/ui/data_evidence.go` or `pkg/ui/ui.go`, and
 `pkg/ui/data_evidence.go` no longer imports `pkg/uikit`. The parent
 `pkg/ui/data_evidence.go` row remains active only for the hydrated
 deletion/build-exclusion probe, which must run before any adopter refill.
+
+Post-data/evidence deletion rerun: worker
+`gx-ui-uikit-deletion-probe-mini-20260616a` (`task-47b955f185b1`) verified the
+hydrated probe substrate on `bus-ui` `8a42131`. Local replace siblings
+`bus-update`, `bus-gx`, `bus-help`, `bus-dev`, `bus-data`, `bus-preferences`,
+and `bus-accounts` were present. The worker produced hydration evidence but
+stalled before the throwaway move/test/restore step, so the supervisor ran the
+probe directly in the worker-owned worktree, moved `pkg/uikit` out of the
+build, ran `go test ./...`, and restored the tree clean. The first remaining
+setup failure is now `pkg/ui/form_controls.go:9:8` importing
+`github.com/busdk/bus-ui/pkg/uikit`, failing setup for `cmd/bus-ui`, examples,
+`pkg/terminalui`, `pkg/ui`, and the moved
+`pkg/uikit.__disabled_for_probe__/uikittest` package. This proves the matrix
+advances beyond `pkg/ui/data_evidence.go`; adopter lanes remain parked until
+the form-controls blocker lands and the next deletion probe names the matrix
+state.
 
 Evidence child implementation: `bus-ui` `0f86ae9`
 (`task-53e82acad2c3`; worker
