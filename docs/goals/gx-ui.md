@@ -140,25 +140,28 @@ Counts from this rebaseline:
   dependency denominator: `bus-gateway`, `bus-portal`,
   `bus-portal-accounting`, `bus-portal-ai`, `bus-portal-auth`,
   `bus-portal-notes`;
-- tests/docs/examples-only rows: 14 refined test files, 30 Markdown files,
-  `bus-ui/examples`, and the old `pkg/uikit/uikittest` harness package;
+- tests/docs/examples-only rows: 0 refined Go test files after the accepted
+  test-harness cleanup; 30 Markdown files still mention historical `uikit`
+  material and remain docs-only cleanup/classification work;
 - deferred/out-of-scope rows: local replace hydration gaps listed below
   (`bus-dev`, `bus-data`, `bus-preferences`, `bus-accounts`) until a hydrated
   dependency-user matrix is rerun.
 
-Current deletion sequencing probe result: with the accepted split-projection
-patch copied to `/private/tmp/bus-ui-uikit-deletion-probe-split-projection` and
-`pkg/uikit` moved outside the module, raw `go test ./...` still stops first in
-examples/test-harness setup (`examples/completedapis/render_test.go` imports
-`github.com/busdk/bus-ui/pkg/uikit/uikittest`, and
-`examples/testing/uikittest_example_test.go` imports
-`github.com/busdk/bus-ui/pkg/uikit`). The owner-package JS/WASM production
-probe now has no `pkg/ui` owner-facade blocker; `GOOS=js GOARCH=wasm go test
--exec=echo ./pkg/ui` is blocked only by the test-only
-`pkg/ui/split_projection_facade_test.go` `pkg/uikit` import. The compact
-static production audit after the accepted inspection WASM view rewrite reports
-0 owner facade production files and 0 remaining production adopter/core files.
-Do not treat raw example/test probe failures as adopter-ready production work.
+Current deletion sequencing probe result: with the current `bus-ui` package-test
+cleanup copied to the throwaway worktree
+`/private/tmp/bus-ui-uikit-final-probe-20260616b` and `pkg/uikit` moved outside
+the module, `go list ./pkg/...` lists only public packages
+(`assistantui`, `terminalruntime`, `terminalui`, `ui`, `uiartifact`,
+`uicatalog`, `uiportal`, `uitest`). Package-level deletion checks pass in
+small batches with low-space cache settings:
+`go test -vet=off -p 1 ./pkg/assistantui ./pkg/terminalruntime
+./pkg/terminalui ./pkg/ui` and
+`go test -vet=off -p 1 ./pkg/uiartifact ./pkg/uicatalog ./pkg/uiportal
+./pkg/uitest`. The compact static inventory now reports 0 owner facade
+production files, 0 production adopter/core files, and 0 refined Go test files;
+only Markdown references remain in the static `uikit` inventory. Do not treat
+Markdown references or the stable `/assets/uikit.css` asset URL as production
+package dependencies.
 
 Known remaining core rows:
 
@@ -206,10 +209,9 @@ Tests/docs/examples-only rows:
 
 | row | files | classification | DoD |
 |---|---|---|---|
-| test-1 | 25 refined `*_test.go` files outside `pkg/uikit` and examples | test-only parity/harness residue | update after corresponding production rows land; do not count as production backlog |
-| test-2 | `bus-ui/examples/completedapis`, `bus-ui/examples/testing` | example/catalog residue | update when core facade rows are clean; examples should teach public packages only |
-| test-3 | `pkg/uikit/uikittest` and tests importing it | test harness replacement | move/delete harness behavior into public test packages only after production facades are owned |
-| docs-1 | 30 Markdown files with `pkg/uikit`/`uikit.` references | docs/plan residue | batch docs cleanup after production API is stable; avoid teaching deprecated APIs |
+| test-1 | formerly 14 refined `*_test.go` files outside `pkg/uikit` plus two `bus-ui/examples` tests | test-only parity/harness residue | accepted / current compact inventory reports 0 Go test-file hits. `bus-ui` parity tests now assert public contracts directly, adopter tests import `pkg/ui`, and examples use public `pkg/uitest`. |
+| test-2 | `bus-ui/pkg/uitest` | public test harness replacement | accepted / `pkg/uitest` owns the supported fake fetch, resource stub, mounted GX harness, and HTML assertion helpers backed by `pkg/ui`/`pkg/terminalui`; old private-only harness fixtures were not retained as compatibility API. |
+| docs-1 | 30 Markdown files with `pkg/uikit`/`uikit.` references | docs/plan residue | remaining docs-only cleanup/classification; batch after code/test deletion proof so public docs do not teach deprecated APIs. |
 
 Automation feasibility:
 
