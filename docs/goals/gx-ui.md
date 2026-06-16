@@ -120,11 +120,11 @@ Counts from this rebaseline:
   `bus-factory`, `bus-gateway`, `bus-inspection`, `bus-ledger`,
   `bus-portal`, `bus-portal-accounting`, `bus-portal-ai`,
   `bus-portal-auth`, `bus-portal-notes`);
-- known remaining core production rows: 13 implementation/probe rows below,
+- known remaining core production rows: 12 implementation/probe rows below,
   across 7 `bus-ui/pkg/ui` production files still importing/calling
   `pkg/uikit` (the file-level count remains unchanged because the
-  shell/navigation/status parent still imports `pkg/uikit` for status/split
-  rows after the accepted navigation child);
+  shell/navigation/status parent still imports `pkg/uikit` for the split row
+  after the accepted navigation and status-surface children);
 - known remaining adopter/user production rows: 11 rows below, across 4
   modules with refined production hits (`bus-chat`, `bus-factory`,
   `bus-inspection`, `bus-ledger`);
@@ -150,7 +150,7 @@ Known remaining core rows:
 | row | target files | source files | behavior invariants | DoD / readiness |
 |---|---|---|---|---|
 | core-1 | `pkg/ui/navigation_primitives.go`, `pkg/ui/navigation_primitives_gx_adapter.go`, `pkg/ui/navigation_primitives_gx_generated.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/navigation_primitives.go`, `pkg/uikit/navigation_primitives_gx_adapter.go`, `pkg/uikit/navigation_primitives_gx_generated.go`, `pkg/uikit/navigation_primitives_test.go` | menu, tabs, navigation props/events/errors, href validation, dispatch helpers, `DOMAttrUIValue`, compiled GX markup and legacy trigger-HTML splice behavior | accepted / promoted in `bus-ui` `fba4f79`; worker `gx-ui-core-ui-navigation-primitives-spark-20260616a` false-actived after one exact prompt, so supervisor used the reviewed worker-owned small-chunk exception path and promoted the resulting patch. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check HEAD^`, scoped no-`uikit` audit for `pkg/ui/navigation_primitives*.go`, and scoped alias audit proving menu/tabs/navigation symbols are gone from `pkg/ui/shell_navigation_status.go` / `pkg/ui/ui.go`. |
-| core-2 | `pkg/ui/status_surfaces.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/status_surfaces.go`, `pkg/uikit/status_surfaces_node.go` | loading/result/error/status validation, status constants, node and HTML parity | mechanical Mini or small-chunk exception after core-1; drain only status-surface aliases |
+| core-2 | `pkg/ui/status_surfaces.go`, `pkg/ui/status_surfaces_node.go`, `pkg/ui/status_primitives_gx_adapter.go`, `pkg/ui/status_primitives_gx_generated.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/status_surfaces.go`, `pkg/uikit/status_surfaces_node.go`, `pkg/uikit/status_primitives_gx_adapter.go`, `pkg/uikit/status_primitives_gx_generated.go`, existing `pkg/ui` empty-state/provider-error helpers | loading/result/error/status validation, status constants, status-pill node and HTML parity, result-panel completed-status rejection, compiled GX markup, and node-first public `StatusPill`/`LoadingState`/`ResultPanel`/`ErrorBanner` facades | accepted / promoted in `bus-ui` `df51293`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused review instead of worker churn. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for new status files, and scoped alias audit proving status symbols are gone from `pkg/ui/shell_navigation_status.go` / `pkg/ui/ui.go`. File-level inventory remains unchanged until core-4 removes the parent import. |
 | core-3 | `pkg/ui/split_layout.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/split_layout.go`, `pkg/uikit/split_layout_gx_adapter.go` | split pane constants/state, resize math, GX adapter render behavior | mechanical Mini or small-chunk exception; keep separate from split projection |
 | core-4 | `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | already-moved shell/navigation/status files | final shell/navigation/status aliases and import removal | final shell row; run deletion probe and static audit before continuing |
 | core-5 | `pkg/ui/html_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/uikit.go`, `pkg/uikit/html_nodes.go`, `pkg/uikit/html_builder.go`, `pkg/uikit/vdom.go` | escaping, attrs/classes, node/string behavior, element helpers, VDOM helpers | planning table recommended, then mechanical implementation |
