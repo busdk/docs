@@ -99,6 +99,9 @@ blocker; it is not the whole backlog or ETA denominator.
 
 Inventory method:
 
+- preferred low-token refresh: from the BusDK root, run
+  `python3 scripts/gx-ui-inventory-audit.py` for compact counts or add
+  `--show-files` for bounded file lists;
 - module denominator: `rg -n "github\.com/busdk/bus-gx|github\.com/busdk/bus-ui" projects/busdk -g go.mod`;
 - refined production audit: `rg -l '"github\.com/busdk/bus-ui/pkg/uikit"|\buikit\.[A-Z_]' projects/busdk --glob '*.go' --glob '!**/*_test.go' --glob '!**/.bus/**' --glob '!**/vendor/**' --glob '!**/pkg/uikit/**' --glob '!**/examples/**'`;
 - refined test audit: same pattern over `*_test.go`, excluding `.bus`,
