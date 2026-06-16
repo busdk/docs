@@ -120,10 +120,10 @@ Counts from this rebaseline:
   `bus-factory`, `bus-gateway`, `bus-inspection`, `bus-ledger`,
   `bus-portal`, `bus-portal-accounting`, `bus-portal-ai`,
   `bus-portal-auth`, `bus-portal-notes`);
-- known remaining core production rows: 10 implementation/probe rows below,
-  across 6 `bus-ui/pkg/ui` production files still importing/calling
-  `pkg/uikit` (the file-level count dropped after the accepted split-layout
-  child removed the `shell_navigation_status.go` parent facade);
+- known remaining core production rows: 9 implementation/probe rows below,
+  across 5 `bus-ui/pkg/ui` production files still importing/calling
+  `pkg/uikit` (the file-level count dropped after the accepted split
+  projection facade moved DTO/query behavior into `pkg/ui`);
 - known remaining adopter/user production rows: 11 rows below, across 4
   modules with refined production hits (`bus-chat`, `bus-factory`,
   `bus-inspection`, `bus-ledger`);
@@ -138,13 +138,15 @@ Counts from this rebaseline:
   dependency-user matrix is rerun.
 
 Current deletion sequencing probe result: with `pkg/uikit` moved aside in
-`/private/tmp/bus-ui-uikit-deletion-probe-core4`, `go test ./...` now advances
-past `pkg/ui/shell_navigation_status.go` and stops first at
-`pkg/ui/split_projection_facade.go:8:2`. The same probe shows
-`pkg/assistantui`, `pkg/terminalruntime`, `pkg/uiartifact`, `pkg/uicatalog`,
-and `pkg/uiportal` still pass with `pkg/uikit` unavailable. The compact static
-audit after core-3/core-4 reports 6 owner facade production files and 38
-production adopter/core files.
+`/private/tmp/bus-ui-uikit-deletion-probe-split-projection`, `go test ./...`
+now advances past `pkg/ui/split_projection_facade.go` and stops first at
+`pkg/ui/ui.go:9:8`. The same probe shows `pkg/assistantui`,
+`pkg/terminalruntime`, `pkg/uiartifact`, `pkg/uicatalog`, and `pkg/uiportal`
+still pass with `pkg/uikit` unavailable. The compact static audit after
+core-12 reports 5 owner facade production files and 37 production
+adopter/core files. Treat `pkg/ui/ui.go` as a broad parent blocker drained by
+the already visible core-5 through core-8 rows; do not report it as one
+implementation ticket.
 
 Known remaining core rows:
 
@@ -161,7 +163,7 @@ Known remaining core rows:
 | core-9 | `pkg/ui/runtime_facade_js_wasm.go` | `pkg/uikit/js_events.go` or the current event-target runtime source-map | JS event target, callback retention, listener registration | implementation-ready after source path preflight; js/wasm proof may be environment-gated |
 | core-10 | `pkg/ui/wasm_facade_js_wasm.go` | `pkg/uikit/wasm/runtime DOM helper sources` from path-preflight table | global accessors, API URL, click binding, closest element, DOM attrs, scroll-preserving mount | planning table required to verify exact source files before dispatch |
 | core-11 | `pkg/ui/ai_drop_facade_js_wasm.go` | `pkg/uikit/ai_drop*`, `pkg/uikit/dropzone*`, upload/drop helpers | AI path/file drop services, JS file reader, multipart upload, drop-zone handlers, visual state | planning table required; depends on existing upload/drop primitives |
-| core-12 | `pkg/ui/split_projection_facade.go` | `pkg/uikit/app_state.go`, `pkg/uikit/projection_query*`, remaining split projection helpers; split layout state helper dependency is already owned by core-3 | projection DTOs, panel layout state, route policy, generic query client behavior | active next compiler-derived blocker after the core-4 deletion probe; planning table recommended before implementation because this owns behavior-rich query/client DTOs |
+| core-12 | `pkg/ui/split_projection_facade.go` | `pkg/uikit/app_state.go`, `pkg/uikit/app_state_reducers.go`, `pkg/uikit/projection_models.go`, `pkg/uikit/projection_query.go`, `pkg/uikit/ledger_routes.go`; split layout state helper dependency is already owned by core-3 | projection DTO JSON shape, panel layout state/defaults, panel resize reducer, route policy, route helpers, generic query client defaults, HTTP status/not-found behavior | accepted / promoted in `bus-ui` `cd4fc20`; implementation moved DTO/query/route/reducer behavior into package-owned `pkg/ui` code with behavior/JSON parity tests instead of alias identity. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for `pkg/ui/split_projection_facade.go`, and deletion probe advancement to `pkg/ui/ui.go:9:8`. |
 | core-13 | `pkg/ui/split_projection_facade_js_wasm.go` | `pkg/uikit/projection_list_panel.go`, `pkg/uikit/projection_detail*`, `pkg/uikit/split_controller_js.go` | locale formatting, line summary, split resize wiring, detail presenter | planning table recommended; likely coupled to Ledger adopter |
 | core-14 | `pkg/ui` owner audit and `pkg/uikit`/`pkg/uikit/uikittest` deletion probe | all accepted replacement files | no production `pkg/ui` backing import/call to `pkg/uikit`; old package is not retained as compatibility layer | final core truth gate: refined production audit clean or every remaining hit explicitly deferred, then hydrated deletion/build-exclusion probe and dependency-user matrix |
 
