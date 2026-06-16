@@ -93,9 +93,10 @@ next deletion-probe compiler failure alone, as the scope and ETA denominator.
 ### 2026-06-16 Full-Surface Inventory Rebaseline
 
 This section is the canonical quota-aware remaining-work inventory from the
-BusDK primary checkout after accepted `bus-ui` `04e6256` and `bus-ledger`
-`769b334`, before the BusDK/docs pin commit for those two module advances. The
-deletion/build-exclusion probe now sequences the next compiler
+BusDK primary checkout after accepted `bus-ui` `04e6256`, `bus-ledger`
+`769b334`, and `bus-inspection` `8f217a0`, before the BusDK/docs pin commit for
+the final inspection advance. The deletion/build-exclusion probe now sequences
+the next compiler
 blocker; it is not the whole backlog or ETA denominator.
 
 Inventory method:
@@ -132,11 +133,9 @@ Counts from this rebaseline:
   browser-runtime `PublicRuntimeAPIConfig` gap, and the factory server shell
   `RenderAssistantShellPage` / assistant panel action-contract gaps below are
   accepted;
-- known remaining adopter/user production rows: 1 open row below, across 1
-  module with 1 refined production hit (`bus-inspection`);
-  `bus-factory`, `bus-chat`, and `bus-ledger` are now production-clean by
-  refined audit, and `bus-inspection/internal/ui/wasm/app.go` is accepted,
-  leaving only `bus-inspection/internal/ui/wasm/view.go`;
+- known remaining adopter/user production rows: 0 open rows; `bus-factory`,
+  `bus-chat`, `bus-ledger`, and `bus-inspection` are now production-clean by
+  refined audit;
 - production-clean by refined `uikit` call/import audit but still in the
   dependency denominator: `bus-gateway`, `bus-portal`,
   `bus-portal-accounting`, `bus-portal-ai`, `bus-portal-auth`,
@@ -157,10 +156,9 @@ examples/test-harness setup (`examples/completedapis/render_test.go` imports
 probe now has no `pkg/ui` owner-facade blocker; `GOOS=js GOARCH=wasm go test
 -exec=echo ./pkg/ui` is blocked only by the test-only
 `pkg/ui/split_projection_facade_test.go` `pkg/uikit` import. The compact
-static production audit after the accepted ledger WASM public-selector rewrite
-reports 0 owner facade production files and 1 remaining production adopter file
-across the single open adopter row below. Do not treat raw example/test probe
-failures as adopter-ready production work.
+static production audit after the accepted inspection WASM view rewrite reports
+0 owner facade production files and 0 remaining production adopter/core files.
+Do not treat raw example/test probe failures as adopter-ready production work.
 
 Known remaining core rows:
 
@@ -199,7 +197,7 @@ Known remaining adopter/user production rows:
 | adopter-4 | `bus-chat` | `internal/serve/ai.go` | replace AI chat/event/thread DTOs and terminal session helpers | accepted in `bus-chat` `959ded6` with supporting public-facade fix `bus-ui` `2bd1fbe`; selector map: AI DTO/status/poll/history/render/thread/message/approval symbols -> `assistantui`, terminal event/session folding -> `terminalui`, local adapter `assistantTerminalSession` converts terminalui session snapshots to assistantui render DTOs. Checks passed: `go test ./...` in `bus-chat`, `go test ./pkg/ui ./pkg/assistantui ./pkg/terminalui` in `bus-ui`, `git diff --check`, scoped no-`uikit` audit for touched files, and compact static inventory. |
 | adopter-5 | `bus-chat` | `internal/serve/ai_appserver.go` | replace AI event/model extraction helpers | accepted in `bus-chat` `959ded6`; `IsKnownAIEventMethod`, `ExtractAIModelCandidates`, and thread meta helpers now use `assistantui`; no missing public facade found. |
 | adopter-6 | `bus-chat` | `internal/serve/ai_workspace_locks.go` | replace AI isolation status/branch/worktree helpers | accepted in `bus-chat` `959ded6`; isolation status/state/branch/worktree helpers now use `assistantui`; scoped production and updated local test audit are clean for the touched bus-chat files. |
-| adopter-7 | `bus-inspection` | `internal/ui/wasm/app.go`, `internal/ui/wasm/view.go` | replace wasm app/view composition with public `ui` facades | split required. `app.go` accepted in `bus-inspection` `ab6463e` via worker commit `a8402a7` after Spark produced no assistant response; selector map was `uikit` runtime/scaffold/drop/error helpers -> public `pkg/ui`. Checks passed in worker and primary: `go test ./...`, `GOCACHE=/private/tmp/bus-inspection-gocache-app-primary GOOS=js GOARCH=wasm go test -exec=echo ./internal/ui/wasm`, `git diff --check`, scoped no-`uikit` audit for `app.go`, and compact static inventory. `view.go` remains the only `bus-inspection` production hit and is a separate broad component-composition rewrite that should be split by view category before implementation. |
+| adopter-7 | `bus-inspection` | `internal/ui/wasm/app.go`, `internal/ui/wasm/view.go` | replace wasm app/view composition with public `ui` facades | accepted / promoted. `app.go` accepted in `bus-inspection` `ab6463e` via worker commit `a8402a7` after Spark produced no assistant response; selector map was `uikit` runtime/scaffold/drop/error helpers -> public `pkg/ui`. `view.go` accepted in `bus-inspection` `8f217a0` via worker-owned exception commit `a77990b` after Spark failed provider execution. Selector map: rendering primitives, tables, panels, buttons, forms, status, timelines, gallery, sidebar shell/nav, and icons -> public `pkg/ui`; the old topbar notice message uses public `assistantui.AIMessageHTML` because `pkg/ui` does not own a message-bubble facade. Checks passed in worker and primary: `go test -vet=off -p 1 ./...`, `GOOS=js GOARCH=wasm go test -vet=off -p 1 -exec=echo ./internal/ui/wasm`, `git diff --check`, scoped no-`uikit` audit for `internal/ui/wasm`, and compact static inventory reporting 0 production adopter/core files. |
 | adopter-8a | `bus-ledger` | `internal/server/server.go`, `internal/server/logging.go` | replace runtime/server/static/client-log/token/listener/logger helpers with public `pkg/ui` facades; keep the literal `assets/uikit.css` URL as the stable asset route, not a package dependency | accepted / promoted in `bus-ledger` `643f707`; Spark worker `gx-ui-ledger-server-runtime-spark-20260616a` false-actived with no assistant response or diff, so the reviewed worker-owned exception path produced worker commit `9baa255` and promoted it to primary. Selector table was `GenerateCapabilityToken`, `TokenPathSuffix`, `CSSMust`, `ListenTCP`, `TokenURLFromListener`, `ServeClientLogAPI`, `ClientLogHandler`, `ServeStaticWithIndexFallback`, `NewServerLogger`, and `ServerLoggerOptions` -> `ui.*`. Checks passed in worker and primary: focused `go test ./internal/server -run 'Server|Handler|ClientLog|Log|Token|Static'`, `go test ./internal/server`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for the two target files, and compact static inventory. |
 | adopter-8b | `bus-ledger` | `internal/server/ai.go`, `internal/server/ai_runtime_config.go`, `internal/server/ai_thread_isolation.go`, `internal/server/ai_test.go` | replace AI model/event/thread/isolation/session helpers with public `assistantui`/`terminalui` facades and local adapters only where package types differ | accepted / promoted in `bus-ledger` `01d5f76`; Spark worker `gx-ui-ledger-ai-support-spark-20260616a` false-actived with no assistant response or diff, so the reviewed worker-owned exception path produced worker commit `6578acb` and promoted it to primary. Selector map was model/event/thread/isolation helpers -> `assistantui` and terminal session folding -> `terminalui`. Checks passed in worker and primary: focused `go test ./internal/server -run 'AI|ThreadIsolation|Model|Terminal|Poll|Event'`, `go test ./internal/server`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for the target production files and updated AI tests, and compact static inventory. |
 | adopter-9 | `bus-ledger` | `internal/ui/wasm/app.go`, `app_context.go`, `frontend_errors.go`, `control_helpers.go`, `ledger_controller.go`, `ledger_view.go`, `view_split_root.go`, `split_resize.go`, `view_list_panel.go`, `list_rows.go`, `detail_helpers.go`, `view_detail_panel.go`, `view_line_panel.go`, `ledger_projection_presenter.go`, `table_status_surfaces.go`, plus local WASM tests | replace coupled ledger WASM runtime/scaffold/action/drop/resource/frontend-error/controller/split/projection/list/detail/status helpers with public `pkg/ui` facades and local test helpers instead of `pkg/uikit`/`pkg/uikit/uikittest` | accepted / promoted in `bus-ledger` `769b334` via worker-owned exception commit `ed3d116` after Spark failed provider execution. The selector map was production `pkg/uikit` import/selector usage across `internal/ui/wasm` -> public `pkg/ui` alias `busui`; `uikittest` imports were replaced by a test-local helper file. Checks passed in worker and primary: `GOOS=js GOARCH=wasm go test -vet=off -p 1 -exec=echo ./internal/ui/wasm`, scoped no-`uikit` audit for `internal/ui/wasm`, `git diff --check`, full `go test -vet=off -p 1 ./...` after named cache cleanup, and compact static inventory reporting 0 `bus-ledger` production hits. |
@@ -1770,7 +1768,7 @@ summary after the next audit.
 | Ledger WASM split/projection view | `bus-ledger/internal/ui/wasm/control_helpers.go`, `split_resize.go`, `view_split_root.go`, `view_list_panel.go`, `list_rows.go`, `view_detail_panel.go`, `view_line_panel.go`, `detail_helpers.go`, `ledger_projection_presenter.go`, `ledger_view.go`, `table_status_surfaces.go` | Accepted `pkg/ui` split/projection/layout, checked boundary, node primitives, icon/CSS helpers. | Split pane state/resize, route/evidence action IDs, projection list/detail DTO semantics, table/status/render boundaries. | Checked-boundary table by file group, focused tests if present, scoped no-`uikit` audit, full module tests, WASM proof or named exception. | Accepted / promoted as part of `bus-ledger` `769b334`; compact inventory reports 0 `bus-ledger` production hits. |
 | Ledger parsing/formatting/routes/MessageBubble extras | Ledger WASM helper/view files as discovered after the main WASM slices. | Unclear or deferred public ownership for parse/format route helpers, `MessageBubble`, and extra table/detail presenter cleanup. | Numeric parse/format, route/close-route behavior, message markup. | Probe DoD naming exact symbols, owner, and whether app-readiness requires them now. | Deferred/probe-needed; do not count active unless promoted to a task ref. |
 | Inspection WASM app runtime/drop cleanup | `bus-inspection/internal/ui/wasm/app.go` | Accepted `pkg/ui` runtime/mount/error-host and file/dropzone/multipart facades. | Document/location/gateway/action/resource behavior, upload bytes/content type, drop class toggling, scroll preservation, error reporting. | Symbol/behavior table, scoped no-`uikit` audit for `app.go`, native tests, WASM proof or named exception. | Accepted / promoted in `bus-inspection` `ab6463e`; only `view.go` remains in production audit. |
-| Inspection WASM view/render cleanup | `bus-inspection/internal/ui/wasm/view.go` | Accepted `pkg/ui` CSS/icon and public node/checked-boundary helpers; `MessageBubble` deferred unless critical. | Render output boundaries, form control IDs/names, table/status/panel behavior, admin/config views. | Chunked checked-boundary tables by view category, scoped no-`uikit` audit for `view.go`, native tests, WASM proof or named exception. | Active, broad; split by view category before implementation. |
+| Inspection WASM view/render cleanup | `bus-inspection/internal/ui/wasm/view.go` | Accepted `pkg/ui` CSS/icon and public node/checked-boundary helpers plus `assistantui.AIMessageHTML` for the notice message boundary. | Render output boundaries, form control IDs/names, table/status/panel behavior, admin/config views. | Chunked checked-boundary tables by view category, scoped no-`uikit` audit for `view.go`, native tests, WASM proof or named exception. | Accepted / promoted in `bus-inspection` `8f217a0`; compact inventory reports 0 production adopter/core files. |
 
 ### Core Facade Split From The Inventory
 
