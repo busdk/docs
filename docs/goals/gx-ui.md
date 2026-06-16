@@ -78,8 +78,8 @@ string-first aliases are deletion targets unless a specific behavior is moved
 into the new public architecture or a deliberate internal implementation
 package with a non-compatibility purpose.
 
-Use a throwaway deletion/build-exclusion probe as the authoritative inventory
-truth gate before treating the goal as nearly complete: remove or build-exclude
+Use a throwaway deletion/build-exclusion probe as the authoritative compiler
+sequencing gate before treating the goal as nearly complete: remove or build-exclude
 `bus-ui/pkg/uikit` and `bus-ui/pkg/uikit/uikittest`, run `go test ./...` in
 `bus-ui`, then run `go test ./...` across every `go.mod` user of
 `github.com/busdk/bus-ui` or `github.com/busdk/bus-gx`. Convert compiler
@@ -87,7 +87,137 @@ failures into tasks split by owner: core `bus-ui` implementation still backed
 by `uikit`, adopter imports/usages, test harness replacement, docs/examples or
 catalog residue, and genuinely deferred/out-of-scope items. Do not promote the
 deletion probe until all required replacement tasks are accepted and the full
-dependency-user matrix passes.
+dependency-user matrix passes. Use the full static/module inventory, not the
+next deletion-probe compiler failure alone, as the scope and ETA denominator.
+
+### 2026-06-16 Full-Surface Inventory Rebaseline
+
+This section is the canonical quota-aware remaining-work inventory from the
+BusDK primary checkout after `bus-ui` `424029e`, docs `d8f500f`, and BusDK
+`da680bc`. The deletion/build-exclusion probe now sequences the next compiler
+blocker; it is not the whole backlog or ETA denominator.
+
+Inventory method:
+
+- module denominator: `rg -n "github\.com/busdk/bus-gx|github\.com/busdk/bus-ui" projects/busdk -g go.mod`;
+- refined production audit: `rg -l '"github\.com/busdk/bus-ui/pkg/uikit"|\buikit\.[A-Z_]' projects/busdk --glob '*.go' --glob '!**/*_test.go' --glob '!**/.bus/**' --glob '!**/vendor/**' --glob '!**/pkg/uikit/**' --glob '!**/examples/**'`;
+- refined test audit: same pattern over `*_test.go`, excluding `.bus`,
+  `vendor`, `pkg/uikit`, and examples;
+- docs audit: same package/API pattern over Markdown files;
+- owner-facade audit: same pattern over `bus-ui/pkg` production files, with
+  `pkg/uikit` itself excluded;
+- deletion sequencing probe: throwaway worktree
+  `/private/tmp/bus-ui-full-surface-probe-20260616` at `bus-ui` `424029e`,
+  moved `pkg/uikit` to `pkg/uikit.disabled`, then ran
+  `GOCACHE=/private/tmp/bus-ui-gocache-full-surface-probe go test ./...`.
+
+Counts from this rebaseline:
+
+- dependency-derived modules in scope: 11 (`bus-ui`, `bus-chat`,
+  `bus-factory`, `bus-gateway`, `bus-inspection`, `bus-ledger`,
+  `bus-portal`, `bus-portal-accounting`, `bus-portal-ai`,
+  `bus-portal-auth`, `bus-portal-notes`);
+- known remaining core production rows: 14 implementation/probe rows below,
+  across 7 `bus-ui/pkg/ui` production files still importing/calling
+  `pkg/uikit`;
+- known remaining adopter/user production rows: 11 rows below, across 4
+  modules with refined production hits (`bus-chat`, `bus-factory`,
+  `bus-inspection`, `bus-ledger`);
+- production-clean by refined `uikit` call/import audit but still in the
+  dependency denominator: `bus-gateway`, `bus-portal`,
+  `bus-portal-accounting`, `bus-portal-ai`, `bus-portal-auth`,
+  `bus-portal-notes`;
+- tests/docs/examples-only rows: 29 refined test files, 30 Markdown files,
+  `bus-ui/examples`, and the old `pkg/uikit/uikittest` harness package;
+- deferred/out-of-scope rows: local replace hydration gaps listed below
+  (`bus-dev`, `bus-data`, `bus-preferences`, `bus-accounts`) until a hydrated
+  dependency-user matrix is rerun.
+
+Current deletion sequencing probe result: with `pkg/uikit` removed in the
+throwaway `bus-ui` worktree, `go test ./...` still stops first at
+`pkg/ui/shell_navigation_status.go:8:8`. The same probe showed
+`pkg/assistantui`, `pkg/terminalruntime`, `pkg/uiartifact`, `pkg/uicatalog`,
+and `pkg/uiportal` pass in `bus-ui`; `pkg/terminalui` is blocked because its
+tests import `pkg/ui`, which still imports `pkg/uikit`.
+
+Known remaining core rows:
+
+| row | target files | source files | behavior invariants | DoD / readiness |
+|---|---|---|---|---|
+| core-1 | `pkg/ui/navigation_primitives.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/navigation_primitives.go` | menu, tabs, navigation props/events/errors, href validation, `DOMAttrUIValue` | mechanical Mini or small-chunk exception; remove menu/tabs/navigation aliases and pass focused tests plus no-`uikit` audit |
+| core-2 | `pkg/ui/status_surfaces.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/status_surfaces.go`, `pkg/uikit/status_surfaces_node.go` | loading/result/error/status validation, status constants, node and HTML parity | mechanical Mini or small-chunk exception after core-1; drain only status-surface aliases |
+| core-3 | `pkg/ui/split_layout.go`, `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | `pkg/uikit/split_layout.go`, `pkg/uikit/split_layout_gx_adapter.go` | split pane constants/state, resize math, GX adapter render behavior | mechanical Mini or small-chunk exception; keep separate from split projection |
+| core-4 | `pkg/ui/shell_navigation_status.go`, `pkg/ui/ui.go` | already-moved shell/navigation/status files | final shell/navigation/status aliases and import removal | final shell row; run deletion probe and static audit before continuing |
+| core-5 | `pkg/ui/html_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/uikit.go`, `pkg/uikit/html_nodes.go`, `pkg/uikit/html_builder.go`, `pkg/uikit/vdom.go` | escaping, attrs/classes, node/string behavior, element helpers, VDOM helpers | planning table recommended, then mechanical implementation |
+| core-6 | `pkg/ui/icon_css_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/assets.go`, `pkg/uikit/icons.go`, `pkg/uikit/icon_nodes.go` | CSS bundle output/options, icon constants, SVG path icon node rendering | planning table recommended; asset URL strings are not production package imports |
+| core-7 | `pkg/ui/render_runtime.go`, `pkg/ui/ui.go` | `pkg/uikit/component_hooks.go`, `pkg/uikit/mount_gx.go`, `pkg/uikit/action_dispatch.go` | render runtime hooks, `UseState`, `RenderGXNode`, generic action dispatch | planning table recommended because this is shared by tests/adopters |
+| core-8 | `pkg/ui/surface_card_primitives.go`, `pkg/ui/ui.go` | `pkg/uikit/surface_primitives.go`, `pkg/uikit/surface_primitives_node.go`, status files as needed | panel/surface/metric card and status-pill node behavior | planning table recommended; may shrink after core-2 |
+| core-9 | `pkg/ui/runtime_facade_js_wasm.go` | `pkg/uikit/js_events.go` or the current event-target runtime source-map | JS event target, callback retention, listener registration | implementation-ready after source path preflight; js/wasm proof may be environment-gated |
+| core-10 | `pkg/ui/wasm_facade_js_wasm.go` | `pkg/uikit/wasm/runtime DOM helper sources` from path-preflight table | global accessors, API URL, click binding, closest element, DOM attrs, scroll-preserving mount | planning table required to verify exact source files before dispatch |
+| core-11 | `pkg/ui/ai_drop_facade_js_wasm.go` | `pkg/uikit/ai_drop*`, `pkg/uikit/dropzone*`, upload/drop helpers | AI path/file drop services, JS file reader, multipart upload, drop-zone handlers, visual state | planning table required; depends on existing upload/drop primitives |
+| core-12 | `pkg/ui/split_projection_facade.go` | `pkg/uikit/app_state.go`, `pkg/uikit/projection_query*`, split layout state helpers | projection DTOs, panel layout state, route policy, generic query client behavior | planning table recommended before implementation |
+| core-13 | `pkg/ui/split_projection_facade_js_wasm.go` | `pkg/uikit/projection_list_panel.go`, `pkg/uikit/projection_detail*`, `pkg/uikit/split_controller_js.go` | locale formatting, line summary, split resize wiring, detail presenter | planning table recommended; likely coupled to Ledger adopter |
+| core-14 | `pkg/ui` owner audit and `pkg/uikit`/`pkg/uikit/uikittest` deletion probe | all accepted replacement files | no production `pkg/ui` backing import/call to `pkg/uikit`; old package is not retained as compatibility layer | final core truth gate: refined production audit clean or every remaining hit explicitly deferred, then hydrated deletion/build-exclusion probe and dependency-user matrix |
+
+Known remaining adopter/user production rows:
+
+| row | module | target files | current need | dependency/readiness |
+|---|---|---|---|---|
+| adopter-1 | `bus-factory` | `internal/serve/business_view.go` | replace direct node/table/panel/icon composition with public `ui` facades | depends on core-5, core-6, core-8, and existing table primitives |
+| adopter-2 | `bus-factory` | `internal/serve/server.go`, `internal/serve/browser_runtime.go` | replace server/runtime/resource/assistant shell calls with public facades | adapter-only after runtime/assistant/resource facades are confirmed; server helper parity must be probed |
+| adopter-3 | `bus-factory` | `internal/serve/ai.go`, `ai_thread_isolation.go`, `ai_acp_status.go`, `ai_go_diagnostics.go` | replace AI DTO/helper aliases with public `assistantui`/`ui` APIs | planning table required; likely mechanical after core rows are clean |
+| adopter-4 | `bus-chat` | `internal/serve/ai.go` | replace AI chat/event/thread DTOs and terminal session helpers | planning table required; likely public `assistantui`/`terminalui` facade check first |
+| adopter-5 | `bus-chat` | `internal/serve/ai_appserver.go` | replace AI event/model extraction helpers | adapter-only if public AI helpers already exist; otherwise core facade gap |
+| adopter-6 | `bus-chat` | `internal/serve/ai_workspace_locks.go` | replace AI isolation status/branch/worktree helpers | planning table required against assistantui owned helpers |
+| adopter-7 | `bus-inspection` | `internal/ui/wasm/app.go`, `internal/ui/wasm/view.go` | replace wasm app/view composition with public `ui` facades | depends on core-5/core-6/core-10 and shell/surface rows |
+| adopter-8 | `bus-ledger` | `internal/server/ai*.go`, `internal/server/logging.go`, `internal/server/server.go` | replace server AI/runtime/logging helpers | planning table required; likely public `assistantui`/runtime facades |
+| adopter-9 | `bus-ledger` | `internal/ui/wasm/app.go`, `app_context.go`, `frontend_errors.go`, `ledger_controller.go` | replace WASM app runtime/action/resource helpers | depends on core-9/core-10/core-11 |
+| adopter-10 | `bus-ledger` | `internal/ui/wasm/ledger_view.go`, `view_split_root.go`, `split_resize.go` | replace split layout/root composition helpers | depends on core-3/core-12/core-13 |
+| adopter-11 | `bus-ledger` | `internal/ui/wasm/list_rows.go`, `detail_helpers.go`, `view_detail_panel.go`, `view_line_panel.go`, `view_list_panel.go`, `ledger_projection_presenter.go`, `table_status_surfaces.go` | replace ledger projection/list/detail/status surface helpers | depends on core-2, core-8, core-12, core-13 |
+
+Tests/docs/examples-only rows:
+
+| row | files | classification | DoD |
+|---|---|---|---|
+| test-1 | 29 refined `*_test.go` files outside `pkg/uikit` and examples | test-only parity/harness residue | update after corresponding production rows land; do not count as production backlog |
+| test-2 | `bus-ui/examples/completedapis`, `bus-ui/examples/testing` | example/catalog residue | update when core facade rows are clean; examples should teach public packages only |
+| test-3 | `pkg/uikit/uikittest` and tests importing it | test harness replacement | move/delete harness behavior into public test packages only after production facades are owned |
+| docs-1 | 30 Markdown files with `pkg/uikit`/`uikit.` references | docs/plan residue | batch docs cleanup after production API is stable; avoid teaching deprecated APIs |
+
+Automation feasibility:
+
+| work pattern / rows | classification | smallest useful tool shape | quota call |
+|---|---|---|---|
+| static inventory after every accepted slice (`core-14`, adopter/test/docs counts) | deterministic tool/codemod candidate | temporary Go or shell audit runner that emits module denominator, production/test/docs hit counts, owner-facade files, and next deletion-probe failure without source dumps | build first if more than one more inventory refresh is needed; low cost and replaces repeated manual `rg` accounting |
+| alias-block removal from facade files after a symbol family is owned (`core-1` through `core-4`, parts of `core-5` through `core-8`) | deterministic tool/codemod candidate after explicit source-map input | small Go AST/text tool that removes named type/const/var/function alias entries and drops the `pkg/uikit` import only when no references remain; always run `gofmt` and scoped audit | worth building if shell/navigation/status still repeats exception-path patches; input must be an explicit symbol list |
+| package/import rewrites from `uikit` to `ui`/`assistantui`/`terminalui` in adopters (`adopter-1` through `adopter-11`) | semi-mechanical with generated patch skeleton plus human review | AST import rewriter plus symbol allowlist that rewrites package selectors only for already-owned public symbols and emits unresolved selectors as a table | useful after core rows land; do not use before facade availability is proven |
+| moving symbol-family implementation files from `pkg/uikit` into `pkg/ui` (`core-1` through `core-3`, likely `core-5` through `core-8`) | semi-mechanical with generated patch skeleton plus human review | patch skeleton generator that copies source files to new package-owned filenames, changes package/imports, stubs local type conversions, and leaves compile errors for human/worker review | can save quota on repeated small-chunk exception work, but only after source-map rows list exact source files and symbols |
+| parity/nil-check tests after aliases become real functions (`core-1` through `core-13`) | semi-mechanical with generated patch skeleton plus human review | test skeleton generator from symbol lists: create behavior/nil/validation checks using existing neighboring tests as fixtures; never generate unknown GX intrinsic names without path preflight | useful for scaffolding, but human review keeps behavior assertions meaningful |
+| deletion probe and scoped no-`uikit` audits (`core-4`, `core-14`, final adopter gates) | deterministic tool/codemod candidate | audit runner that creates/reuses a throwaway worktree, moves `pkg/uikit`, runs bounded `go test`, and prints only setup proof, first failure, and counts | worth building before the next several probe cycles if runtime cost stays low |
+| source-map row generation from `rg`/AST/go-list output (remaining core/adopter rows) | semi-mechanical planning aid | generator that maps `uikit.Symbol` selectors to source files and markdown table rows, marking missing paths as desired-new or unresolved | useful now for planning-only rows; should not implement code by itself |
+| API ownership decisions for render runtime, WASM globals, AI drop, split projection, and Ledger/Factory behavior (`core-7`, `core-10` through `core-13`, adopters with behavior-rich helpers) | reasoning-heavy/manual | no bulk rewrite until the source-map table names owner package, behavior invariants, and facade availability | use planning/source-map review first; no model escalation for implementation until simplified patch still fails for reasoning |
+
+Minimum-token tooling plan: create at most one temporary audit/inventory runner
+before more implementation dispatch if the next manual refresh would repeat
+three or more commands. Defer patch-generation tooling until the current
+shell/navigation/status family proves that symbol-list alias removal and file
+copy skeletons will be reused across multiple rows. Do not build a large
+framework; every tool should live as a disposable local script or small Go
+command, accept explicit file/symbol inputs, print compact tables, and leave
+human review plus normal tests as the acceptance gate.
+
+Quota-aware dispatch ranking:
+
+1. Finish the current compiler blocker family: core-1, core-2, core-3, then
+   core-4. These are safe mechanical Mini or reviewed small-chunk exception
+   work because the source-map rows already exist.
+2. Run the hydrated deletion probe and refined static production audit again.
+3. If the probe advances into another known owner facade, prefer planning-only
+   source-map tables for core-5 through core-13 before implementation. Use
+   `gpt-5.5` only for hard source-map/planning ambiguity; implementation stays
+   Mini/small-chunk unless a simplified patch fails for reasoning/API shape.
+4. Keep adopter implementation parked until core owner rows are clean or the
+   fresh probe/audit explicitly scopes a row as adopter-ready.
 
 ### 2026-06-15 Deletion Probe Rebaseline
 
