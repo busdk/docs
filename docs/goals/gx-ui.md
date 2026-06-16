@@ -120,7 +120,7 @@ only adopter imports:
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/action_resource_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` browser resource transport still backed by `uikit` | move browser resource client/fetch/multipart/provider-error/navigation transport into `pkg/ui` or a non-compatibility internal implementation owned by `pkg/ui` | accepted / matrix advanced | non-browser action/resource core accepted in `bus-ui` `8f60089` (`task-230be2211c0e`); browser resource transport accepted in `bus-ui` `a798a55` (`task-5d6bc8d3c941`); post-browser deletion rerun `task-73873cbf5a10` proves the matrix advances beyond `pkg/ui/action_resource_facade.go` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/ai_upload_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` AI upload helper still backed by `uikit` | move `MultipartUploadFunc`, `AIUploadDecodeFunc`, upload response/error handling, and focused behavior tests into `pkg/ui` without uikit parity aliases | accepted / matrix advanced | implementation accepted in `bus-ui` `8540b42` (`task-d07e3b6f8355`); hydrated post-AI-upload module probe `task-4b39fa3069a7` proved the matrix advances beyond `pkg/ui/ai_upload_facade.go` and now stops at `pkg/ui/cli_server_facade.go:8:8` |
 | `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/cli_server_facade.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` CLI/server/browser-open helper facade still backed by `uikit` | move CLI flag/runtime helpers, server logger/client-log/static/token helpers, and browser-open URL validation/launcher selection into `pkg/ui` with focused direct behavior tests | accepted / matrix advanced | implementation accepted in `bus-ui` `cad6590` (`task-b7d461e781f7`); post-CLI/server deletion rerun `task-b5a6128474d0` proved the matrix advances beyond `pkg/ui/cli_server_facade.go` and now stops at `pkg/ui/data_evidence.go:7:8` |
-| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, summary-item and record-list helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | active parent blocker; accepted children are tables, evidence, provider error, image gallery, records/summary surface primitives, and summary item; remaining strict children are record list, projection detail, and timeline, followed by the hydrated deletion/build-exclusion probe; do not start adopter lanes until this is accepted and the probe names the next matrix state |
+| `bus-ui` | `bus-ui` | `bus-ui/pkg/ui/data_evidence.go` | `github.com/busdk/bus-ui/pkg/uikit` | core `pkg/ui` data/evidence facade still backed by `uikit` aliases | table-map dense/text tables, summary-item and record-list helpers, evidence links/previews, projection detail, provider error, timeline, and image gallery helpers from `pkg/uikit` into `pkg/ui` or a non-compatibility internal owner with focused direct behavior tests | active | active parent blocker; accepted children are tables, evidence, provider error, image gallery, records/summary surface primitives, summary item, and record list; remaining strict children are projection detail and timeline, followed by the hydrated deletion/build-exclusion probe; do not start adopter lanes until this is accepted and the probe names the next matrix state |
 | environment | `bus-factory` | `internal/serve/server.go` | `github.com/busdk/bus-dev` local replace missing | deferred/out of scope | hydrate `bus-dev`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-gateway` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
 | environment | `bus-inspection` | `internal/server/state_store.go` | `github.com/busdk/bus-data` local replace missing | deferred/out of scope | hydrate `bus-data`, then rerun probe | deferred | environment hydration only |
@@ -288,7 +288,9 @@ Known child slices are:
   clean/no-diff Mini implementation attempts);
 - record list: `RecordListItem`, `RecordListProps`, `RecordListItemSummary`,
   `RecordListChecked`, `RecordList`, `RecordListNodeChecked`,
-  `RecordListNode`, and compiled record-list helpers;
+  `RecordListNode`, and compiled record-list helpers; accepted in `bus-ui`
+  `28cdbca` (`task-aa9789a46524`, supervisor-reviewed worker-owned execution
+  exception after the Mini lane stayed clean/no-diff);
 - evidence: evidence link and evidence preview helpers; accepted in `bus-ui`
   `0f86ae9` (`task-53e82acad2c3`);
 - provider error: FC-007 public-safe provider error types, validation,
@@ -392,6 +394,23 @@ an unsupported generic inline tag. Summary item is accepted in `bus-ui`
 `pkg/ui/ui.go`. The parent `pkg/ui/data_evidence.go` row remains active
 because record list, projection detail, and timeline children still need to
 move before the deletion probe can advance beyond this compiler blocker.
+
+Record-list child implementation: `bus-ui` `28cdbca`
+(`task-aa9789a46524`) accepted the record-list subset. The Mini worker
+materialized the correct `bus-ui` module root at base `73e2180` and produced
+source-map evidence, but stayed clean after the exact patch-target nudge. The
+supervisor used the same narrow worker-owned execution exception, moved
+`RecordListItem`, `RecordListProps`, `RecordListItemSummary`,
+`RecordListChecked`, `RecordList`, `RecordListNodeChecked`,
+`RecordListNode`, and compiled/node record-list helpers into `pkg/ui`, and
+removed only the record-list `uikit` aliases from `pkg/ui/data_evidence.go`.
+Primary-tree verification passed with `go test ./pkg/ui`, `go test ./...`,
+`git diff --check HEAD~1 HEAD`, and scoped audits proving no
+`pkg/uikit`/`uikit.` use in the new record-list files and no record-list-backed
+`uikit` alias remains in `pkg/ui/data_evidence.go` or `pkg/ui/ui.go`. The
+parent `pkg/ui/data_evidence.go` row remains active because projection detail
+and timeline children still need to move before the deletion probe can advance
+beyond this compiler blocker.
 
 Evidence child implementation: `bus-ui` `0f86ae9`
 (`task-53e82acad2c3`; worker
