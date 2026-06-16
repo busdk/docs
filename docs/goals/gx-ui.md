@@ -124,14 +124,14 @@ Counts from this rebaseline:
   accepted for production core, with 0
   `bus-ui/pkg/ui` owner-facade production files still importing/calling
   `pkg/uikit` after the accepted split-projection WASM slice;
-- known remaining adopter/user production rows: 11 rows below, across 4
-  modules with refined production hits (`bus-chat`, `bus-factory`,
-  `bus-inspection`, `bus-ledger`);
+- known remaining adopter/user production rows: 8 rows below, across 3
+  modules with refined production hits (`bus-factory`, `bus-inspection`,
+  `bus-ledger`);
 - production-clean by refined `uikit` call/import audit but still in the
   dependency denominator: `bus-gateway`, `bus-portal`,
   `bus-portal-accounting`, `bus-portal-ai`, `bus-portal-auth`,
   `bus-portal-notes`;
-- tests/docs/examples-only rows: 26 refined test files, 30 Markdown files,
+- tests/docs/examples-only rows: 25 refined test files, 30 Markdown files,
   `bus-ui/examples`, and the old `pkg/uikit/uikittest` harness package;
 - deferred/out-of-scope rows: local replace hydration gaps listed below
   (`bus-dev`, `bus-data`, `bus-preferences`, `bus-accounts`) until a hydrated
@@ -147,9 +147,9 @@ examples/test-harness setup (`examples/completedapis/render_test.go` imports
 probe now has no `pkg/ui` owner-facade blocker; `GOOS=js GOARCH=wasm go test
 -exec=echo ./pkg/ui` is blocked only by the test-only
 `pkg/ui/split_projection_facade_test.go` `pkg/uikit` import. The compact
-static production audit after the split-projection slice reports 0 owner
-facade production files and 32 remaining production adopter files across the
-11 adopter rows below. Do not treat raw example/test probe failures as
+static production audit after the accepted bus-chat adopter slice reports 0
+owner facade production files and 29 remaining production adopter files across
+the 8 open adopter rows below. Do not treat raw example/test probe failures as
 adopter-ready production work.
 
 Known remaining core rows:
@@ -169,7 +169,7 @@ Known remaining core rows:
 | core-11 | deleted `pkg/ui/ai_drop_facade_js_wasm.go`; `pkg/ui/ai_drop_service.go`, `pkg/ui/ai_drop_service_js.go`, `pkg/ui/ai_import_core.go`, `pkg/ui/ai_import_js.go`, `pkg/ui/dropzone_adapter_js.go`, `pkg/ui/ai_drop_actions_js.go`, `pkg/ui/ai_drop_controller_js.go`, `pkg/ui/ai_dropzone_js.go`, `pkg/ui/ai_drop_state.go`, `pkg/ui/error_reporter.go`, `pkg/ui/wasm_class_js.go`, `pkg/ui/ai_wasm_logger_js.go`, focused js/wasm tests | `pkg/uikit/ai_drop_service.go`, `pkg/uikit/ai_drop_service_js.go`, `pkg/uikit/ai_import_core.go`, `pkg/uikit/ai_import_js.go`, `pkg/uikit/dropzone_adapter_js.go`, `pkg/uikit/ai_drop_actions_js.go`, `pkg/uikit/ai_drop_controller_js.go`, `pkg/uikit/ai_dropzone_js.go`, `pkg/uikit/ai_drop_state.go`, `pkg/uikit/wasm_class_js.go`, `pkg/uikit/ai_wasm_logger_js.go`; already-owned `pkg/ui` dependencies include `GlobalUint8ArrayCtor`, `GlobalDocument`, `IsInsideSelector`, `DropItem`, `DropFileMetadataReader`, and `Dispose`; canonical AI DTO/state types are sourced from `pkg/assistantui` | AI path/file drop services, JS file reader, multipart upload, generic path import, assistant attachment append/error state, drop-zone handlers, selector visual state, and compact JS logging all compile as one facade-removal boundary because the controller/zone files directly depend on those helpers | accepted / promoted in `bus-ui` `dfc25a5`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused review. Intentionally pruned overlap: the old facade alias shell was deleted instead of retained, and tests no longer import `pkg/uikit`; existing `pkg/ui` global/drop primitives were reused rather than copied. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for AI-drop files, compact static inventory, and `GOOS=js GOARCH=wasm go test -exec=echo ./pkg/ui` compile proof. A direct `GOOS=js GOARCH=wasm go test ./pkg/ui` produces `exec format error` on this host after compile because no wasm runner is configured. The owner-package deletion/build-exclusion probe advances to `pkg/ui/split_projection_facade_js_wasm.go:5:8` for production JS/WASM and `pkg/ui/split_projection_facade_test.go` for native test-only residue. |
 | core-12 | `pkg/ui/split_projection_facade.go` | `pkg/uikit/app_state.go`, `pkg/uikit/app_state_reducers.go`, `pkg/uikit/projection_models.go`, `pkg/uikit/projection_query.go`, `pkg/uikit/ledger_routes.go`; split layout state helper dependency is already owned by core-3 | projection DTO JSON shape, panel layout state/defaults, panel resize reducer, route policy, route helpers, generic query client defaults, HTTP status/not-found behavior | accepted / promoted in `bus-ui` `cd4fc20`; implementation moved DTO/query/route/reducer behavior into package-owned `pkg/ui` code with behavior/JSON parity tests instead of alias identity. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for `pkg/ui/split_projection_facade.go`, and deletion probe advancement to `pkg/ui/ui.go:9:8`. |
 | core-13 | deleted `pkg/ui/split_projection_facade_js_wasm.go`; `pkg/ui/field_formatter_js.go`, `pkg/ui/format_locale_js.go`, `pkg/ui/format_account.go`, `pkg/ui/numeric.go`, `pkg/ui/moneyfmt.go`, `pkg/ui/projection_detail_presenter_js.go`, `pkg/ui/projection_evidence_render_js.go`, `pkg/ui/wasm_split_resize_js.go`, `pkg/ui/field_keys.go`, `pkg/ui/evidence_helpers.go`, focused js/wasm tests | `pkg/uikit/field_formatter_js.go`, `pkg/uikit/format_locale_js.go`, `pkg/uikit/format_account.go`, `pkg/uikit/numeric.go`, `pkg/uikit/moneyfmt.go`, `pkg/uikit/projection_detail_presenter.go`, `pkg/uikit/projection_evidence_render.go`, `pkg/uikit/wasm_split_resize_js.go`, `pkg/uikit/field_keys.go`, `pkg/uikit/evidence_helpers.go`; already-owned `pkg/ui` dependencies include projection DTO/query types, projection detail/evidence components, icons, `ClosestElement`, `OnceDispose`, and browser globals | locale-aware field/amount/date/account formatting, numeric/currency fallback helpers, projection line summary, detail/evidence presenter nodes, and split resize JS wiring compile as one facade-removal boundary because the presenter/formatter and resize aliases share the final JS/WASM owner facade | accepted / promoted in `bus-ui` `cc4a0c4`; implemented with `scripts/gx-ui-symbol-family-skeleton.py` plus focused review. Intentionally pruned overlap: the old facade alias shell was deleted, tests no longer import `pkg/uikit`, and the copied evidence helper was reduced to only `IsEmbeddableEvidencePath` because `BuildEvidenceURLResolver` is already package-owned. Primary checks passed: `go test ./pkg/ui`, `go test ./...`, `git diff --check`, scoped no-`uikit` audit for split-projection files, compact static inventory, and `GOOS=js GOARCH=wasm go test -exec=echo ./pkg/ui`. The owner-facade production audit is now clean; deletion/build-exclusion probe blockers are test/example/adopter rows. |
-| core-14 | `pkg/ui` owner audit and `pkg/uikit`/`pkg/uikit/uikittest` deletion probe | all accepted replacement files | no production `pkg/ui` backing import/call to `pkg/uikit`; old package is not retained as compatibility layer | accepted / production core clean after `bus-ui` `cc4a0c4`; compact static audit reports 0 owner-facade production files, scoped owner audit has only the literal CSS asset path `assets/uikit.css`, and deletion/build-exclusion probe blockers are now accounted as 11 adopter production rows plus test/example/docs rows. |
+| core-14 | `pkg/ui` owner audit and `pkg/uikit`/`pkg/uikit/uikittest` deletion probe | all accepted replacement files | no production `pkg/ui` backing import/call to `pkg/uikit`; old package is not retained as compatibility layer | accepted / production core clean after `bus-ui` `cc4a0c4`; compact static audit reports 0 owner-facade production files, scoped owner audit has only the literal CSS asset path `assets/uikit.css`, and deletion/build-exclusion probe blockers are now accounted as 8 open adopter production rows plus test/example/docs rows after the accepted bus-chat adopter slice. |
 
 Known remaining adopter/user production rows:
 
@@ -178,9 +178,9 @@ Known remaining adopter/user production rows:
 | adopter-1 | `bus-factory` | `internal/serve/business_view.go` | replace direct node/table/panel/icon composition with public `ui` facades | depends on core-5, core-6, core-8, and existing table primitives |
 | adopter-2 | `bus-factory` | `internal/serve/server.go`, `internal/serve/browser_runtime.go` | replace server/runtime/resource/assistant shell calls with public facades | adapter-only after runtime/assistant/resource facades are confirmed; server helper parity must be probed |
 | adopter-3 | `bus-factory` | `internal/serve/ai.go`, `ai_thread_isolation.go`, `ai_acp_status.go`, `ai_go_diagnostics.go` | replace AI DTO/helper aliases with public `assistantui`/`ui` APIs | planning table required; likely mechanical after core rows are clean |
-| adopter-4 | `bus-chat` | `internal/serve/ai.go` | replace AI chat/event/thread DTOs and terminal session helpers | planning table required; likely public `assistantui`/`terminalui` facade check first |
-| adopter-5 | `bus-chat` | `internal/serve/ai_appserver.go` | replace AI event/model extraction helpers | adapter-only if public AI helpers already exist; otherwise core facade gap |
-| adopter-6 | `bus-chat` | `internal/serve/ai_workspace_locks.go` | replace AI isolation status/branch/worktree helpers | planning table required against assistantui owned helpers |
+| adopter-4 | `bus-chat` | `internal/serve/ai.go` | replace AI chat/event/thread DTOs and terminal session helpers | accepted in `bus-chat` `959ded6` with supporting public-facade fix `bus-ui` `2bd1fbe`; selector map: AI DTO/status/poll/history/render/thread/message/approval symbols -> `assistantui`, terminal event/session folding -> `terminalui`, local adapter `assistantTerminalSession` converts terminalui session snapshots to assistantui render DTOs. Checks passed: `go test ./...` in `bus-chat`, `go test ./pkg/ui ./pkg/assistantui ./pkg/terminalui` in `bus-ui`, `git diff --check`, scoped no-`uikit` audit for touched files, and compact static inventory. |
+| adopter-5 | `bus-chat` | `internal/serve/ai_appserver.go` | replace AI event/model extraction helpers | accepted in `bus-chat` `959ded6`; `IsKnownAIEventMethod`, `ExtractAIModelCandidates`, and thread meta helpers now use `assistantui`; no missing public facade found. |
+| adopter-6 | `bus-chat` | `internal/serve/ai_workspace_locks.go` | replace AI isolation status/branch/worktree helpers | accepted in `bus-chat` `959ded6`; isolation status/state/branch/worktree helpers now use `assistantui`; scoped production and updated local test audit are clean for the touched bus-chat files. |
 | adopter-7 | `bus-inspection` | `internal/ui/wasm/app.go`, `internal/ui/wasm/view.go` | replace wasm app/view composition with public `ui` facades | depends on core-5/core-6/core-10 and shell/surface rows |
 | adopter-8 | `bus-ledger` | `internal/server/ai*.go`, `internal/server/logging.go`, `internal/server/server.go` | replace server AI/runtime/logging helpers | planning table required; likely public `assistantui`/runtime facades |
 | adopter-9 | `bus-ledger` | `internal/ui/wasm/app.go`, `app_context.go`, `frontend_errors.go`, `ledger_controller.go` | replace WASM app runtime/action/resource helpers | depends on core-9/core-10/core-11 |
@@ -191,7 +191,7 @@ Tests/docs/examples-only rows:
 
 | row | files | classification | DoD |
 |---|---|---|---|
-| test-1 | 26 refined `*_test.go` files outside `pkg/uikit` and examples | test-only parity/harness residue | update after corresponding production rows land; do not count as production backlog |
+| test-1 | 25 refined `*_test.go` files outside `pkg/uikit` and examples | test-only parity/harness residue | update after corresponding production rows land; do not count as production backlog |
 | test-2 | `bus-ui/examples/completedapis`, `bus-ui/examples/testing` | example/catalog residue | update when core facade rows are clean; examples should teach public packages only |
 | test-3 | `pkg/uikit/uikittest` and tests importing it | test harness replacement | move/delete harness behavior into public test packages only after production facades are owned |
 | docs-1 | 30 Markdown files with `pkg/uikit`/`uikit.` references | docs/plan residue | batch docs cleanup after production API is stable; avoid teaching deprecated APIs |
