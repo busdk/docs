@@ -208,7 +208,7 @@
       url: /modules/bus-remote
     - label: bus remote-control
       url: /modules/bus-remote-control
-    - label: bus work
+    - label: bus work (retired)
       url: /modules/bus-work
     - label: bus secrets
       url: /modules/bus-secrets

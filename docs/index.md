@@ -189,7 +189,6 @@ validation, formulas, PDFs, and workspace data.
 - `bus containers` ([CLI](modules/bus-containers))
 - `bus run` ([CLI](modules/bus-run))
 - `bus agent` ([CLI](modules/bus-agent))
-- `bus work` ([CLI](modules/bus-work))
 - `bus secrets` ([CLI](modules/bus-secrets))
 - `bus dev` ([CLI](modules/bus-dev))
 - `bus update` ([CLI](modules/bus-update))

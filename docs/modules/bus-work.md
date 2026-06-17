@@ -17,8 +17,12 @@ environment-aware worker control.
 
 The removed command implemented a generic executor-independent `bus.work.*`
 queue protocol. That code remains available in Git history if an audit or
-restoration task needs it. The Events API may keep `bus.work.*` authorization
-compatibility separately while old external usage is audited.
+restoration task needs it. `bus-api-provider-events` currently retains legacy
+`bus.work.*` ACL compatibility, but old integrations should migrate to
+`bus-task`, `bus-worker`, and the canonical `bus.task.*` and `bus.workers.*`
+event namespaces. Readers can verify the current compatibility rules in the
+[bus-api-provider-events](./bus-api-provider-events) module page and the Events
+API ACL table in [Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
