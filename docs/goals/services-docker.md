@@ -1007,29 +1007,172 @@ worktree, and the superproject is clean at commit `3af5f8ac`, pinning
 The branch is not merged, promoted, or released; do not merge or promote it
 without operator confirmation.
 
-2026-06-17 continuation status:
+## 2026-06-17 Worker-Capable Continuation Packet
 
-- the refined worker-capable implementation work is routed as
-  `task-4d79ec2a5715`;
-- requested worker id:
-  `services-docker-worker-capable-20260617a`;
+This packet is the handoff for a worker or supervisor continuing the refined
+worker-capable Docker target from another environment.
+
+Current routed implementation work:
+
+- task ref: `task-4d79ec2a5715`;
+- requested worker id: `services-docker-worker-capable-20260617a`;
 - requested branch:
   `codex/services-docker-worker-capable-runtime-20260617a`;
-- requested environment:
-  `dev-hg`;
-- local Events persisted the worker create request as
-  `evt_1781645118553822000` and the first message request as
-  `evt_1781645128939849000`, both targeted to `dev-hg` with pending sync
-  state;
-- the worker has not yet materialized on `dev-hg`;
-- dependency before the worker can run: restore `dev-hg` Workers API outbound
-  Events authentication. Direct inspection on `coding-agent@dev.hg.fi` showed
-  the provider process is configured with
-  `BUS_WORKERS_EVENTS_TOKEN_FILE=.bus/tokens/local-events.jwt` /
-  `BUS_EVENTS_TOKEN_FILE=.bus/tokens/local-events.jwt`, and that token expired
-  on 2026-06-13 17:26:19. Until the token is refreshed and the Workers API
-  process uses a valid Events token, direct worker reads fail with
-  `publish_failed: publish worker event: events API status 401`.
+- requested environment: `dev-hg`;
+- requested module: BusDK superproject root, module value `busdk`;
+- requested runner: `codex-appserver`;
+- requested model/profile: `gpt-5.4` / `codex-spark`;
+- requested sandbox: `danger-full-access`, because the proof requires Docker;
+- requested capabilities: `docker`, `go`, `services`;
+- worker prompt source in the supervisor checkout:
+  `logs/worker-prompts/services-docker-worker-capable-runtime-20260617a.md`.
+
+Local Events accepted and persisted the routing requests:
+
+```text
+worker create event:  evt_1781645118553822000
+worker message event: evt_1781645128939849000
+message id:           workers-message-1781645128939327000
+task ref:             task-4d79ec2a5715
+target environment:   dev-hg
+sync state:           pending
+```
+
+The exact create request payload persisted locally:
+
+```text
+id=services-docker-worker-capable-20260617a
+label=Services Docker worker-capable runtime
+model=gpt-5.4
+branch=codex/services-docker-worker-capable-runtime-20260617a
+module=busdk
+profile=codex-spark
+sandbox=danger-full-access
+task_ref=task-4d79ec2a5715
+runner_kind=appserver
+runner_provider=codex-appserver
+environment_id=dev-hg
+capability_tags=docker,go,services
+eligible_environments=dev-hg
+```
+
+The first worker message text persisted locally:
+
+```text
+Use the task thread as the full implementation prompt. Start status-first:
+prove your worker-owned BusDK worktree, branch, Docker/Compose/Go/Git
+availability, and whether the old services-docker-proof-fix-20260606i branch
+is a useful base. Do not edit the primary checkout. Report exact blockers
+before widening scope.
+```
+
+The requested worker has not materialized yet. The concrete dependency is
+`dev-hg` Workers API outbound Events authentication, not Docker availability.
+Direct inspection on `coding-agent@dev.hg.fi` showed:
+
+```text
+docker version:        client=29.5.2 server=29.5.2
+docker compose:        5.1.4
+go version:            go1.24.6 linux/amd64
+git version:           2.43.0
+Workers API failure:   publish_failed: publish worker event: events API status 401
+token source:          .bus/tokens/local-events.jwt
+token expiry:          2026-06-13 17:26:19
+```
+
+The relevant non-secret environment keys from the `dev-hg` Workers API process
+showed the provider is configured to publish through the expired repo token:
+
+```text
+BUS_EVENTS_API_URL=http://127.0.0.1:8081/local/v1
+BUS_EVENTS_TOKEN_FILE=/home/coding-agent/coding-agent/git/busdk/busdk/.bus/tokens/local-events.jwt
+BUS_WORKERS_EVENTS_URL=http://127.0.0.1:8081/local/v1
+BUS_WORKERS_EVENTS_TOKEN_FILE=/home/coding-agent/coding-agent/git/busdk/busdk/.bus/tokens/local-events.jwt
+BUS_WORKERS_ENVIRONMENT_ID=dev-hg
+BUS_WORKERS_ENVIRONMENT_NAME=dev.hg.fi
+BUS_WORKERS_DIRECT_REPO_ROOT=/home/coding-agent/coding-agent/git/busdk/busdk
+BUS_WORKERS_DIRECT_WORKER_ROOT=.bus/services/workers/runtime
+BUS_WORKERS_DIRECT_WORKSPACE_MATERIALIZER=repos-events
+BUS_WORKERS_LIFECYCLE=appserver-exec
+```
+
+Direct `bus-events --token-file .bus/tokens/local-events.jwt` on `dev-hg`
+reported the same expiry. `BUS_API_TOKEN=local` can reach the local Events API
+for simple reads, but that does not repair the Workers API provider because the
+provider process publishes worker Events with the expired token-file source.
+
+Continuation steps:
+
+1. Restore `dev-hg` Workers API outbound Events auth. Refresh or rotate
+   `/home/coding-agent/coding-agent/git/busdk/busdk/.bus/tokens/local-events.jwt`
+   without printing the token, then restart or otherwise refresh the Workers
+   API process so it uses a valid outbound Events token.
+
+2. Confirm the provider is healthy before creating any duplicate worker:
+
+   ```bash
+   ssh coding-agent@dev.hg.fi \
+     'cd /home/coding-agent/coding-agent/git/busdk/busdk && \
+      bus-worker/bin/bus-workers --api-url http://127.0.0.1:8090/local/v1 \
+        --token-file .bus/tokens/local-events.jwt \
+        --format json list'
+   ```
+
+   If the CLI shape changes, use the installed `bus workers` equivalent, but
+   the proof must show the Workers API can publish/read worker Events without
+   `events API status 401`.
+
+3. Check whether the already queued worker request materialized:
+
+   ```bash
+   ssh coding-agent@dev.hg.fi \
+     'cd /home/coding-agent/coding-agent/git/busdk/busdk && \
+      find .bus/services/workers/runtime -maxdepth 1 -type d \
+        -name services-docker-worker-capable-20260617a -print'
+   ```
+
+   Prefer resuming or using `services-docker-worker-capable-20260617a` if it
+   appears. Do not create duplicate workers until the queued request is known
+   to be lost or rejected.
+
+4. If the queued request did not materialize after auth is restored, create a
+   fresh worker with the same task ref and a new suffixed worker id/branch.
+   Record the new worker id, branch, worktree path, and create/message event
+   ids in this section.
+
+5. Once a worker-owned worktree exists, the implementation task remains exactly
+   the worker-capable Docker support described above:
+
+   - one Ubuntu Bus runtime image for Bus-related services and workers;
+   - Bus binaries from verified release artifacts;
+   - Go/Git/build/runner tooling intentionally present for worker-capable
+     profiles;
+   - no BusDK source or `.git` baked into image layers;
+   - PostgreSQL and Mailhog allowed as standard sidecars;
+   - explicit volumes for Bus state, worker homes, task worktrees, caches,
+     logs, scratch, and Codex/App Server state;
+   - small worker task proof showing a runtime-created or mounted worktree and
+     a Go/tool command inside the image;
+   - stop/restart durability proof;
+   - supervisor review before any merge or promotion.
+
+Supervisor commits that saved this handoff:
+
+```text
+docs module:  8821d02 docs: record Services Docker worker dispatch
+BusDK root:   976ea65 docs: pin Services Docker worker dispatch
+supervisor:   99b18f4 docs: route Services Docker worker support
+```
+
+Checks run for this handoff:
+
+```bash
+bus lint projects/busdk/docs/docs/goals/services-docker.md
+git -C projects/busdk/docs diff --check -- docs/goals/services-docker.md
+git diff --check -- \
+  logs/20260617-00-agent-memo.md \
+  logs/worker-prompts/services-docker-worker-capable-runtime-20260617a.md
+```
 
 Do not mark the Docker goal complete while this worker request is only queued.
 Completion still requires a materialized worker-owned worktree, implementation
