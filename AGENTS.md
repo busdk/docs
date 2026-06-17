@@ -17,11 +17,13 @@ they are no longer the whole product scope. Keep deployment and data-control
 guidance factual and user-facing: managed Finnish cloud operation, dedicated
 deployment, and customer self-hosting are deployment models; contractual data
 processing terms are commercial/legal arrangements, not module behavior.
-Pricing pages may show generated source-package estimates, but must not
-present them as final quotes. Keep public pricing docs buyer-facing: do not
-publish internal cost-pool details, ChatGPT/Cursor/human-labour assumptions, or
-mechanics such as open-source dispatcher exclusion unless the user explicitly
-asks to expose them.
+Pricing pages may show generated source-package data, but public buyer-facing
+copy should present it as initial source-package prices we offer, with
+customer-specific offers discussed through sales. Avoid CTA wording such as
+"generated estimates" for customer-facing pricing links. Keep public pricing
+docs buyer-facing: do not publish internal cost-pool details,
+ChatGPT/Cursor/human-labour assumptions, or mechanics such as open-source
+dispatcher exclusion unless the user explicitly asks to expose them.
 
 ## Publication Boundary
 

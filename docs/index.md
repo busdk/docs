@@ -67,7 +67,7 @@ ownership.
 - [Module capabilities](modules/features)
 - [Development cost summary](implementation/cost-summary)
 - [Development retrospective, 2026-05-20 to 2026-05-27](reports/2026-05-20-27-development-retrospective)
-- [Source package estimates](implementation/module-pricing)
+- [Source package prices](implementation/module-pricing)
 - [Module CLI quickstart](modules/index)
 
 ## Use Bus AI Platform {#build-and-operate-ai-products}

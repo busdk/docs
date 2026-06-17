@@ -1,6 +1,6 @@
 ---
 title: "FAQ: Purchasing and pricing"
-description: FAQ on how to buy BusDK, subscription plans, generated source-package estimates, open-source boundaries, and contract pricing.
+description: FAQ on how to buy BusDK, subscription plans, initial source-package prices, open-source boundaries, and customer-specific offers.
 ---
 
 ## FAQ: Purchasing and pricing
@@ -23,21 +23,21 @@ Yes. The public `busdk.com` pricing section presents subscription tiers for Base
 
 Yes. Source package licensing is documented separately from subscription tiers. Source packages use [Functional Source License](https://fsl.software/) terms, with an alternative contract path for commercial licensing described in [BusDK source package pricing](../implementation/module-pricing).
 
-### Where can I see generated module-level estimates?
+### Where can I see module-level source prices?
 
-Use the BusDK docs pricing page at [BusDK source package pricing](../implementation/module-pricing), which explains base estimates, dependency-inclusive estimates, and the current generator assumptions. These numbers are estimates, not final quotes.
+Use the BusDK docs pricing page at [BusDK source package pricing](../implementation/module-pricing), which lists initial offered prices for source packages and explains base prices and dependency-inclusive prices. Customer-specific offers can still be discussed with sales.
 
-### What does “base estimate” vs “dependency-inclusive estimate” mean?
+### What does “base price” vs “dependency-inclusive price” mean?
 
-Base estimate covers only the selected module’s source release. Dependency-inclusive estimate includes that module and its dependencies as a transitive set. This pricing model is documented in [BusDK source package pricing](../implementation/module-pricing).
+Base price covers only the selected module’s source release. Dependency-inclusive price includes that module and its dependencies as a transitive set. This pricing model is documented in [BusDK source package pricing](../implementation/module-pricing).
 
 ### Are binaries and source treated the same way commercially?
 
-No. The docs distinguish between free binary try-out availability and separately purchasable source access. For purchasing decisions, rely on the current commercial statements in [busdk.com docs](https://busdk.com/docs/) and treat [BusDK source package pricing](../implementation/module-pricing) as generated estimate data.
+No. The docs distinguish between free binary try-out availability and separately purchasable source access. For purchasing decisions, rely on the current commercial statements in [busdk.com docs](https://busdk.com/docs/) and [BusDK source package pricing](../implementation/module-pricing).
 
 ### Where should I check for current commercial prices?
 
-Contact [sales@hg.fi](mailto:sales@hg.fi) for current commercial prices and contract terms. The [BusDK source package pricing](../implementation/module-pricing) page is generated from repository pricing data and includes timestamped estimate assumptions for source-package discussions.
+Contact [sales@hg.fi](mailto:sales@hg.fi) for customer-specific offers and contract terms. The [BusDK source package pricing](../implementation/module-pricing) page is generated from repository pricing data and includes timestamped initial source-package prices.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
