@@ -43,7 +43,7 @@ data-processing terms, or alternative licensing.
 ### All source packages
 
 Every module emitted by the current pricing data is listed here. That includes
-foundation modules, application modules, GX/UI modules, portal modules, API
+foundation modules, application modules, UI modules, portal modules, API
 providers, integrations, operator modules, and support modules.
 
 <table>
