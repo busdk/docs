@@ -86,6 +86,6 @@ kill, renice, or signal processes.
 
 ### Related pages
 
-- [Bus Top product docs](../products/top)
 - [bus-status](./bus-status)
-- [Bus AI Platform](../products/ai-platform)
+- [bus-api-provider-llm](./bus-api-provider-llm)
+- [AI and external service integration](../extensibility/ai-and-external-services)

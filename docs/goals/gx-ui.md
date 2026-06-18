@@ -893,7 +893,7 @@ into focused workers:
   created no files, no tests, and no commit before the usage limit.
 - `019ec74c-517e-7373-8edd-8abfbf7585ed`, `GX UI docs old API cleanup`:
   changed no files before the usage limit. It reported remaining public docs
-  hits in `busdk.com/docs/gx-ui/**`, `docs/docs/products/gx-ui.md`,
+  hits in `busdk.com/docs/gx-ui/**`, the then-existing GX/UI product docs page,
   `docs/docs/modules/bus-ui.md`, and some Bus UI leaf pages. Vendor hits under
   `sdd/vendor/**` should be ignored.
 

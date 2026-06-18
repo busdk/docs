@@ -3,43 +3,24 @@ layout: home
 show_nav_cards: false
 home_grid_blocks: true
 title: BusDK Docs
-description: Product-oriented documentation hub for BusDK product lines, supporting platform areas, and module references.
+description: Documentation hub for Bus commands, module references, architecture, workflows, and integration.
 ---
-## Start With A Product
+## Bus Documentation
 
-BusDK is a product family. Start with the product line that matches your work,
-then use the module reference when you need exact command syntax or provider
-ownership.
+Use these docs for Bus commands, module behavior, workflows, architecture,
+integration paths, and operating details. Product websites live at
+[busdk.com](https://busdk.com/).
 
-### Main product lines
+### Common entry points
 
-- [Bus Agentic Development](products/agents): semi-autonomous software
-  development with supervisor agents, worker agents, durable tasks,
-  repositories, terminals, notes, reviews, MCP, and local or SSH-accessible work
-  capacity.
-- [Bus AI Platform](products/ai-platform): self-hostable AI product
-  infrastructure with model access, inference runtime control, deployment,
-  auth, usage, billing, VM/container/terminal runtimes, and service hooks.
-- [Bus Books](products/books): auditable financial workflows for humans and
-  agentic AI over inspectable workspace data.
-- [Bus Inspection](products/inspection): local inspection reports, action
-  lists, photo evidence, customer acknowledgements, role-scoped access, and
-  snapshot exports.
-- [Bus GX/UI Library](products/gx-ui): Go-native UI components with TSX-like
-  authoring, compiled Go render roots, reusable components, runtime bridges,
-  and deterministic tests.
-- [Bus Top](products/top): friendly local process monitoring with deterministic
-  facts, process-family grouping, snapshots, host diagnosis, and optional AI
-  explanations.
-- [Bus Services](products/services): predictable project service stacks from
-  `services.yml` without requiring virtualization.
-
-### Supporting platform
-
-- [Supporting BusDK platform](products/platform)
 - [Module CLI reference](modules/index)
+- [Module capabilities](modules/features)
+- [Overview](overview/index)
+- [FAQ: what are `bus` and BusDK?](faq/index)
 - [Architecture](architecture/index)
 - [Deployment and data control](integration/deployment-and-data-control)
+- [Workflow guides](workflow/index)
+- [Bus UI and GX documentation](ui/index)
 
 ## Understand BusDK Foundations
 
@@ -70,11 +51,10 @@ ownership.
 - [Source package prices](implementation/module-pricing)
 - [Module CLI quickstart](modules/index)
 
-## Use Bus AI Platform {#build-and-operate-ai-products}
+## Build and Operate AI Services {#build-and-operate-ai-products}
 
-Bus AI Platform owns the self-hostable AI infrastructure story. Use this
-section for model APIs, inference/runtime control, deployment, auth, usage,
-billing, and service hooks.
+Use this section for model APIs, inference/runtime control, deployment, auth,
+usage, billing, and service hooks.
 
 ### Platform operations
 
@@ -94,7 +74,7 @@ billing, and service hooks.
 - `bus integration upcloud` ([CLI](modules/bus-integration-upcloud))
 - `bus integration ssh runner` ([CLI](modules/bus-integration-ssh-runner))
 
-### Product controls
+### Billing and operator controls
 
 - `bus auth` ([CLI](modules/bus-auth))
 - `bus billing` ([CLI](modules/bus-billing))
@@ -106,11 +86,10 @@ billing, and service hooks.
 - `bus integration stripe` ([CLI](modules/bus-integration-stripe))
 - `bus integration usage` ([CLI](modules/bus-integration-usage))
 
-## Use Bus Books {#follow-business-workflows}
+## Work With Books and Finance {#follow-business-workflows}
 
-Bus Books owns the accounting and financial-workflow story. Use this section
-for bookkeeping, invoices, evidence, bank, reconciliation, VAT, reports,
-validation, formulas, PDFs, and workspace data.
+Use this section for bookkeeping, invoices, evidence, bank, reconciliation,
+VAT, reports, validation, formulas, PDFs, and workspace data.
 
 ### Workflow overview
 

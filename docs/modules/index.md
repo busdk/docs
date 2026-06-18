@@ -5,13 +5,12 @@ description: End-user guide to BusDK module CLIs for AI product hosting, runtime
 
 ## How to read the module pages
 
-This section is the deep command/module reference under the product
-documentation. Start with [BusDK product documentation](../products/) when you
-are deciding which product line fits your work, then use these pages for exact
-commands, flags, examples, and module ownership. Command names follow [CLI
-command naming](../cli/command-naming). Most pages show a short synopsis and a
-few practical examples first; for the full flag list, run the command-form help
-for the module, such as `bus api --help`, `bus api provider llm --help`, or
+This section is the command and module reference for BusDK. Use these pages for
+exact commands, flags, examples, and module ownership. Product websites live at
+[busdk.com](https://busdk.com/). Command names follow [CLI command
+naming](../cli/command-naming). Most pages show a short synopsis and a few
+practical examples first; for the full flag list, run the command-form help for
+the module, such as `bus api --help`, `bus api provider llm --help`, or
 `bus operator stripe --help`. The adjacent `aiz` tool uses its own `aiz --help`
 command.
 
@@ -19,16 +18,15 @@ The adjacent [aiz](./aiz) toolchain is documented here too. It is not
 dispatched through `bus`, but it follows the same deterministic CLI style for
 single-file `.aiz` compression and offline restore with `unaiz`.
 
-## If you are building or operating an AI product
+## If you are building or operating AI services
 
-The product-level entry point is [Bus AI Platform](../products/ai-platform).
-Its module surface is a set of cooperating modules rather than one monolithic
-server. Start with [bus-api](./bus-api) for the API host, [bus-auth](./bus-auth)
-and [bus-api-provider-auth](./bus-api-provider-auth) for login and scoped
-tokens, [bus-api-provider-llm](./bus-api-provider-llm) for OpenAI-compatible
-model proxying, [bus-api-provider-vm](./bus-api-provider-vm) and
-[bus-api-provider-containers](./bus-api-provider-containers) for runtime status
-and container runs, and [bus-events](./bus-events) with
+The AI service module surface is a set of cooperating modules rather than one
+monolithic server. Start with [bus-api](./bus-api) for the API host,
+[bus-auth](./bus-auth) and [bus-api-provider-auth](./bus-api-provider-auth) for
+login and scoped tokens, [bus-api-provider-llm](./bus-api-provider-llm) for
+OpenAI-compatible model proxying, [bus-api-provider-vm](./bus-api-provider-vm)
+and [bus-api-provider-containers](./bus-api-provider-containers) for runtime
+status and container runs, and [bus-events](./bus-events) with
 [bus-api-provider-events](./bus-api-provider-events) for request/reply and
 replayed event streams.
 
