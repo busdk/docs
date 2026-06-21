@@ -851,7 +851,7 @@ bus containers --api-url "$BUS_API_BASE_URL" run --profile codex -- sh -c 'print
 Success returns a completed run response whose stdout contains
 `BUS_CONTAINER_OK`. The Events API should show a correlated SSH script request
 and response during the run. If the run fails before the runner starts, check
-container scopes and runner configuration. If it fails while waiting for SSH,
+container resources and runner configuration. If it fails while waiting for SSH,
 use the SSH readiness troubleshooting path. If cleanup fails, use the runner
 delete troubleshooting path.
 

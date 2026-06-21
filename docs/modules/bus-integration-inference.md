@@ -59,9 +59,9 @@ Submit these payloads through `POST $BUS_EVENTS_API_BASE_URL/api/v1/events` on
 [bus operator inference](./bus-operator-inference) for the operator CLI path.
 Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider base URL, for example
 `https://example.test`, and set `$BUS_EVENTS_TOKEN` to a bearer token with
-the scope required by the concrete event name. Unprotected event names use
+the resource required by the concrete event name. Unprotected event names use
 `events:send` for publishing and `events:listen` for streaming. The protected
-`bus.inference.*` namespace uses domain scopes on the default Events provider:
+`bus.inference.*` namespace uses resource access on the default Events provider:
 `inference:admin` for `install` and `model.ensure` requests and responses, and
 `inference:read` for `status` and `verify` requests and responses. When a Bus
 Events client, worker, or router command is used instead of raw `curl`, export

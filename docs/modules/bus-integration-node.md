@@ -35,11 +35,11 @@ Operators normally send these requests through `bus operator node` or the
 internal `bus-api-provider-node` route. Direct event publishers send the JSON
 payload to the Bus Events API with the matching event type, for example
 `POST /api/v1/events` on `bus-api-provider-events` with a bearer token that has
-event publish scope. Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider
+event publish resource access. Set `$BUS_EVENTS_API_BASE_URL` to the Bus Events provider
 base URL, for example `https://example.test`, and set `$BUS_API_TOKEN` to a
 normal Bus API token. Local unprotected Events API setups need `events:send` to
 publish node request events and `events:listen` to stream response events.
-Protected deployments may instead require node domain scopes such as
+Protected deployments may instead require node resources such as
 `node:admin` for bootstrap and hardening requests or `node:read` for status and
 verification requests.
 

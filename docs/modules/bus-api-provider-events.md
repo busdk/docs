@@ -13,8 +13,8 @@ adding their own public HTTP event controllers.
 Bus API providers and integrations use Events for request/reply workflows such
 as runtime wake-up, container runner work, billing status, usage export, and
 Stripe provider calls. End users may also use event APIs when the deployment
-grants the required domain scopes, but event access is still identity- and
-scope-limited.
+grants the required resource access, but event access is still identity-bound
+and resource-limited.
 
 ### Authentication
 
@@ -29,7 +29,7 @@ bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
 ```
 
 Keep that provider running in one terminal. In another terminal, mint a token
-with the narrow scopes needed by the event namespace:
+with the narrow resources needed by the event namespace:
 
 ```sh
 mkdir -p ./local
@@ -42,8 +42,8 @@ bus operator token --format token issue --local \
 ```
 
 Production deployments should use the normal auth or service-token flow and
-grant domain scopes such as `llm:proxy`, `container:run`, or `billing:read`
-instead of broad event scopes whenever the event namespace is protected.
+grant resources such as `llm:proxy`, `container:run`, or `billing:read`
+instead of broad event resources whenever the event namespace is protected.
 
 The owner identity is derived from JWT `sub`. Callers do not provide identity
 IDs for authorization.
@@ -56,7 +56,7 @@ Caller-supplied identity metadata is not trusted for authorization. Streams
 only return events the token is allowed to receive, and user tokens cannot
 subscribe to unrelated identities.
 
-Protected Bus integration events use domain scopes. VM events use `vm:read` or
+Protected Bus integration events use identities resource access. VM events use `vm:read` or
 `vm:write`; LLM execution events use `llm:proxy`; public container events use
 `container:read`, `container:run`, and `container:delete`; protected container
 runner administration events use `container:admin`; usage events use
@@ -73,13 +73,13 @@ Wildcard streams are rejected by default because the provider cannot safely
 prove that one token may receive every future protected event.
 
 Canonical task events use the protected `bus.task.*` namespace with concrete
-scopes such as `task:send`, `task:read`, `task:reply`, `task:claim`, and
+resources such as `task:send`, `task:read`, `task:reply`, `task:claim`, and
 `task:admin`. Canonical worker lifecycle and control events use
 `bus.workers.*` with `workers:read`, `workers:write`, `workers:control`, and
 `workers:admin`. Legacy generic work streams under `bus.work.*` and legacy
 development task streams under `bus.dev.task.*` remain protected compatibility
-namespaces with their existing `work:*` and `dev:task:*` scopes. Future
-deployments may further qualify these scopes by owner or repository, for
+namespaces with their existing `work:*` and `dev:task:*` resources. Future
+deployments may further qualify these resources by owner or repository, for
 example `task:claim:busdk/bus-ledger` or `workers:control:dev-hg`.
 
 The internal event backend is selectable. `memory` is non-durable and intended
@@ -109,7 +109,7 @@ Send `Content-Type: application/json` with an event envelope:
 on stream URLs with `delivery=unicast` and `group=<group>`, not in the publish
 body. Success returns `202 Accepted` or `200 OK` with acceptance metadata such
 as `accepted`, `id`, and `name`. Bad JSON or invalid event names return `400`,
-missing auth returns `401`, and missing domain scope returns `403`.
+missing auth returns `401`, and missing resource access returns `403`.
 
 Runnable local publish check:
 
@@ -171,12 +171,12 @@ underscoped authorization returns `401` or `403` before any stream is opened.
 
 Selects the event name to publish or stream.
 
-Protected Bus event names require domain scopes such as `vm:write`,
+Protected Bus event names require resource access such as `vm:write`,
 `container:run`, `billing:read`, or `usage:read`.
 Event names are dot-separated lowercase identifiers such as
 `bus.vm.status.request` or `example.ping`. Use letters, digits, hyphen,
 underscore, and dots; avoid wildcards unless the deployment explicitly enables
-admin-only broad listening. Protected namespace scope mapping is documented in
+admin-only broad listening. Protected namespace resource mapping is documented in
 the authentication section above and in
 [Bus API JWT audiences and scopes](../architecture/api-jwt-audiences-and-scopes).
 
@@ -220,7 +220,7 @@ The BusDK superproject `compose.yaml` starts this provider as `bus-events` with
 `--events-backend postgres` and `BUS_EVENTS_POSTGRES_DSN` pointing at the local
 PostgreSQL service. Other local AI Platform services reach it at
 `http://bus-events:8081`, and nginx exposes `/api/v1/events` on the local
-public API port. The shared local token scopes include the domain scopes needed
+public API port. The shared local token resources include the resources needed
 for LLM, billing, VM, container, usage, Stripe, work, and development-task
 events, so the compose stack can exercise request/reply workflows without
 enabling broad wildcard event access.
@@ -233,7 +233,7 @@ optional `BUS_EVENTS_REDIS_PASSWORD`, and optional
 `BUS_EVENTS_REDIS_PREFIX`. Select PostgreSQL with `--events-backend postgres`
 and `BUS_EVENTS_POSTGRES_DSN`. Use memory only for local development. Keep
 wildcard streaming disabled unless an explicitly trusted internal/admin
-deployment needs it and the token audience/scope policy allows it.
+deployment needs it and the token audience/resource policy allows it.
 
 The PostgreSQL backend is intentionally migration-free. It creates `bus_events`
 and `bus_event_group_cursors` when missing. Use PostgreSQL for production
@@ -245,7 +245,7 @@ that only for disposable local or test environments. PostgreSQL uses
 SQL transactions as the source of truth.
 
 Provider and integration processes should use narrow tokens with only the
-domain scopes needed for the events they send and receive. Do not log bearer
+resources needed for the events they send and receive. Do not log bearer
 tokens or event payload fields that contain provider secrets.
 
 ### Using from `.bus` files

@@ -69,7 +69,7 @@ When VM start/stop is used as internal AI runtime wake-up or platform maintenanc
 
 `events:send` is a generic public Events API scope for unprotected application event names. It is not enough to publish protected Bus platform events such as VM, container, usage, or SSH events unless the Events API is explicitly configured for broad admin compatibility.
 
-Production deployments should prefer domain scopes for protected events and should keep broad event publishing disabled for normal users.
+Production deployments should prefer identities resource access for protected events and should keep broad event publishing disabled for normal users.
 
 ### Scope `events:listen`
 
@@ -143,7 +143,7 @@ Internal APIs must still require scopes. The internal audience does not mean unr
 
 ### Scope `token:issue`
 
-`token:issue` allows a verified auth-service identity to request an API token after the identity has been approved. The auth provider must still enforce verified email, approved status, and the configured allow-list of end-user API scopes.
+`token:issue` allows a verified auth-service identity to request an API token after the identity has been approved. The auth provider must still enforce verified email, approved status, and the configured allow-list of end-user API resources.
 
 ### Scope `waitlist:read`
 
@@ -159,7 +159,7 @@ Internal APIs must still require scopes. The internal audience does not mean unr
 
 ## Events API deployment rule
 
-The Events API can serve both user-facing events and service integration events, but those are different trust zones. Public user-facing event routes may use `ai.hg.fi/api` with identity filtering and domain scopes. Service integration routes that carry `usage:*`, `ssh:run`, `container:admin`, or shared runtime control should require `ai.hg.fi/internal` or be reachable only from trusted service networks with internal tokens.
+The Events API can serve both user-facing events and service integration events, but those are different trust zones. Public user-facing event routes may use `ai.hg.fi/api` with identity filtering and identities resource access. Service integration routes that carry `usage:*`, `ssh:run`, `container:admin`, or shared runtime control should require `ai.hg.fi/internal` or be reachable only from trusted service networks with internal tokens.
 
 Do not rely on caller-supplied event metadata for ownership. The Events API must stamp the owner identity from JWT `sub` and filter streams by that same value. Domain event scopes control which names a token may publish or receive; identity filtering controls whose events the token may see.
 

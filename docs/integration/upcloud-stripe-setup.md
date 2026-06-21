@@ -11,7 +11,7 @@ Use test-mode Stripe keys and non-production UpCloud resources first. Replace ev
 
 ## Prerequisites
 
-Start from a Bus API deployment with the auth, events, billing, usage, VM, and container API providers enabled. The auth provider must issue `aud=ai.hg.fi/api` user tokens for public APIs. Workers that publish or listen through the Events API also use `aud=ai.hg.fi/api` tokens with narrow event-domain scopes, while internal service-only endpoints use `aud=ai.hg.fi/internal` tokens. Events should use Redis or PostgreSQL when requests must survive process restarts; memory is useful only for local development.
+Start from a Bus API deployment with the auth, events, billing, usage, VM, and container API providers enabled. The auth provider must issue `aud=ai.hg.fi/api` user tokens for public APIs. Workers that publish or listen through the Events API also use `aud=ai.hg.fi/api` tokens with narrow event resources, while internal service-only endpoints use `aud=ai.hg.fi/internal` tokens. Events should use Redis or PostgreSQL when requests must survive process restarts; memory is useful only for local development.
 
 Prepare durable PostgreSQL databases for auth, billing, and usage state. Billing state should survive restarts because it contains catalog data, subscription state, idempotency keys, usage export progress, and quota buckets. Usage state should survive restarts because billing export and quota accounting depend on stable usage records.
 
@@ -230,7 +230,7 @@ bus-api-provider-usage --help
 
 Keep Stripe and UpCloud credentials out of user-facing API providers. Provider-specific secrets belong in integration workers or operator-only commands. Public APIs should see Bus JWTs, provider-neutral catalog data, usage records, and entitlement decisions.
 
-Rotate service tokens before expiry, or issue worker tokens with a TTL that matches your operational rotation policy. Keep scopes narrow: the UpCloud worker needs only VM/container event scopes, the usage worker needs usage and billing-export scopes, and the billing/Stripe path needs billing scopes.
+Rotate service tokens before expiry, or issue worker tokens with a TTL that matches your operational rotation policy. Keep resources narrow: the UpCloud worker needs only VM/container event resources, the usage worker needs usage and billing-export resources, and the billing/Stripe path needs billing resources.
 
 Use PostgreSQL for production event, billing, usage, and auth state when restart tolerance matters. Destroying these databases loses queued or replayable events, catalog/subscription state, usage export progress, quota buckets, user approval state, or token revocations depending on the service.
 

@@ -12,7 +12,7 @@ setup work to integrations. It does not contain Stripe-specific code.
 Public endpoints are caller-owned only. The provider derives account identity
 from JWT `sub` and rejects caller-supplied account metadata. Internal catalog,
 cross-account status, and entitlement-check endpoints require the internal
-audience with narrow billing scopes. Error responses redact bearer tokens,
+audience with narrow billing resources. Error responses redact bearer tokens,
 Stripe secret keys, and PostgreSQL passwords.
 
 Production deployments should configure PostgreSQL catalog storage with

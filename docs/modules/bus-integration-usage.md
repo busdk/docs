@@ -73,7 +73,7 @@ usage dimensions such as storage, files, jobs, or API calls.
 
 Set the Events API service root URL and bearer token before starting the worker. The token
 is supplied through `BUS_API_TOKEN` and must be a Bus API JWT with audience
-`ai.hg.fi/api`. It must include the usage domain scopes for the events this
+`ai.hg.fi/api`. It must include the usage resources for the events this
 worker listens to and emits, such as `usage:write`, `usage:read`, and
 `usage:delete`. If that token is issued as an internal service token, set its
 TTL long enough for the worker lifetime or rotate/restart the worker before

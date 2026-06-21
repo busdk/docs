@@ -42,8 +42,8 @@ bus operator token issue --local \
   --format token > ./local/container-router.token
 ```
 
-The container scopes authorize protected `bus.containers.*` and default
-`bus.docker.*` events. The broad `events:send` and `events:listen` scopes are
+The container resources authorize protected `bus.containers.*` and default
+`bus.docker.*` events. The broad `events:send` and `events:listen` resources are
 needed only for unprotected backend prefixes such as the default `bus.podman.*`
 example below, or for custom backend prefixes without an Events API ACL rule.
 Production deployments should use the normal service-token flow, grant only the

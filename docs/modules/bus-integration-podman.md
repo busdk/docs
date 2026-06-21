@@ -35,10 +35,10 @@ BUS_EVENTS_JWT_SECRET=not-a-secret-local-development-hs256-key \
 bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
 ```
 
-Mint `BUS_API_TOKEN` with the same HS256 secret plus Events scopes. The
-container scopes in this example let the same token exercise the full router
+Mint `BUS_API_TOKEN` with the same HS256 secret plus Events resources. The
+container resources in this example let the same token exercise the full router
 and API-provider path; a standalone Podman backend on the default unprotected
-prefix only needs the Events scopes unless the deployment protects
+prefix only needs the Events resources unless the deployment protects
 `bus.podman.*` with a custom ACL:
 
 ```sh
@@ -116,13 +116,13 @@ successful run response containing `OK`; the router maps the public
 ## Events
 
 The default Events API ACL protects public `bus.containers.*` events with
-container domain scopes and leaves the backend `bus.podman.*` prefix as a
+container resources and leaves the backend `bus.podman.*` prefix as a
 deployment-local integration prefix. For the default backend prefix, listening
 uses `events:listen` and publishing uses `events:send`. If an operator adds a
-specific ACL for `bus.podman.*`, grant the domain scopes mapped by that
+specific ACL for `bus.podman.*`, grant the resources mapped by that
 deployment instead.
 
-| Direction | Event                                  | Default Events scope |
+| Direction | Event                                  | Default Events resource |
 |-----------|----------------------------------------|----------------------|
 | listens   | `bus.podman.status.request`            | `events:listen`      |
 | sends     | `bus.podman.status.response`           | `events:send`        |
