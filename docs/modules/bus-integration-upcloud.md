@@ -278,13 +278,13 @@ See [bus-auth](./bus-auth.md) for the full registration and approval flow.
 Create an approved user API token for VM-only smoke tests:
 
 ```sh
-bus auth token --scope 'vm:read vm:write'
+bus auth token --resources 'vm:read vm:write'
 ```
 
 Create an approved user API token for container-only smoke tests:
 
 ```sh
-bus auth token --scope 'container:read container:run container:delete'
+bus auth token --resources 'container:read container:run container:delete'
 ```
 
 #### UpCloud Token

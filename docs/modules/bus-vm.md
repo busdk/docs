@@ -12,7 +12,7 @@ you need the GPU runtime lifecycle state directly.
 
 Authenticate first with `bus auth`. The auth-service session must be verified
 and approved before the API token request can succeed; confirm that with
-`bus auth status`, then request a token that includes the VM status scope
+`bus auth status`, then request a token that includes the VM status resource
 enabled for your account:
 
 ```sh
@@ -20,7 +20,7 @@ export BUS_AUTH_API_URL=https://api.example.test/api/v1/auth
 bus auth login --email user@example.com
 bus auth verify --email user@example.com --otp <otp-from-email>
 bus auth status
-bus auth token --scope "vm:read"
+bus auth token --resources "vm:read"
 ```
 
 `bus auth token` saves the API token in the default Bus auth token file used by

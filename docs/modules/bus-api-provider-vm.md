@@ -21,9 +21,10 @@ backends.
 
 Requests use Bearer JWT authentication with audience `ai.hg.fi/api`.
 
-Status reads require `vm:read`. Lifecycle writes require `vm:write`.
+Status reads require access to `vm:read`. Lifecycle writes require access to
+`vm:write`.
 Send the token as `Authorization: Bearer <jwt>`. End users normally obtain the
-token with `bus auth token --scope "vm:read vm:write"` after their account is
+token with `bus auth token --resources "vm:read vm:write"` after their account is
 verified and approved; services use deployment-managed service tokens.
 
 The curl examples below target the root `compose.yaml` nginx gateway at
@@ -32,7 +33,7 @@ provider started directly on `127.0.0.1:8085`, replace the base URL with
 `http://127.0.0.1:8085`.
 
 ```sh
-bus auth token --scope "vm:read vm:write"
+bus auth token --resources "vm:read vm:write"
 TOKEN="$(cat ~/.config/bus/auth/api-token)"
 ```
 

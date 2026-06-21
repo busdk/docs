@@ -169,13 +169,13 @@ Use the [UpCloud integration runbook](../modules/bus-integration-upcloud) when y
 
 ## Enable Public User Flows
 
-After the providers and workers are running, users follow the normal auth and billing path. A user registers, verifies the OTP, waits for approval, and requests a scoped API token:
+After the providers and workers are running, users follow the normal auth and billing path. A user registers, verifies the OTP, waits for approval, and requests a resource-limited API token:
 
 ```sh
 bus auth register --email user@example.com
 bus auth login --email user@example.com
 bus auth verify --email user@example.com --otp <otp-from-provider>
-bus auth token --scope "billing:read billing:setup vm:read container:read container:run container:delete"
+bus auth token --resources "billing:read billing:setup vm:read container:read container:run container:delete"
 ```
 
 The same account then starts billing setup:

@@ -69,7 +69,7 @@ command across images.
 Direct HTTP example:
 
 ```sh
-bus auth token --scope "container:read container:run"
+bus auth token --resources "container:read container:run"
 TOKEN="$(cat ~/.config/bus/auth/api-token)"
 curl -fsS -X POST \
   -H "Authorization: Bearer $TOKEN" \
@@ -232,11 +232,11 @@ docker compose exec -T testing-agent sh -lc \
 
 ### End-User Access
 
-Approved users request a Bus API token with the container scopes their plan and
-approval policy allow:
+Approved users request a Bus API token with the container resources their plan
+and approval policy allow:
 
 ```sh
-bus auth token --scope "container:read container:run container:delete billing:read"
+bus auth token --resources "container:read container:run container:delete billing:read"
 ```
 
 The token can be used by `bus containers` and by direct HTTP clients. Billing

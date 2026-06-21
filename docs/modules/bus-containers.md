@@ -17,10 +17,10 @@ metered and limited by the account plan.
 ### Common tasks
 
 Before running container commands, authenticate with `bus auth` and request a
-token that includes the container scopes enabled for your account:
+token that includes the container resources enabled for your account:
 
 ```sh
-bus auth token --scope "container:read container:run container:delete billing:read"
+bus auth token --resources "container:read container:run container:delete billing:read"
 ```
 
 The token must be an AI Platform bearer JWT. By default, `bus auth token` saves

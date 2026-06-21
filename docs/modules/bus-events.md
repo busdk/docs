@@ -7,7 +7,7 @@ description: bus events sends and listens for Bus Events API messages using shar
 
 `bus events` is the command-line client for the Bus Events API. It can publish
 events and listen for matching events using the same `aud=ai.hg.fi/api` bearer
-JWTs as other Bus API endpoints, with the required domain scopes for each event
+JWTs as other Bus API endpoints, with required resource access for each event
 name.
 
 The same module provides the shared Go contracts for event-oriented
@@ -24,7 +24,7 @@ default token, or you can export a short-lived token for the current shell:
 
 ```bash
 export BUS_EVENTS_API_URL=https://ai.hg.fi/api/v1/events
-export BUS_API_TOKEN="$(bus auth token --scope "vm:read vm:write")"
+export BUS_API_TOKEN="$(bus auth token --resources "vm:read vm:write")"
 bus events send --name example.ping --payload '{"ok":true}'
 bus events send --name bus.vm.start.request --payload '{"runtime":"default"}'
 bus events listen --name example.ping
@@ -70,16 +70,16 @@ root is `BUS_CONFIG_DIR` when set, otherwise `$XDG_CONFIG_HOME/bus` or
 The CLI never accepts bearer tokens as command-line arguments and never
 auto-reads repository-local `.bus/` token files.
 
-Events API authorization is least-privilege and domain-scoped. The CLI does
+Events API authorization is least-privilege and resource-based. The CLI does
 not decide which event names a token may access; it passes the normal Bus API
-JWT to the provider, and the provider maps event names to scopes such as
+JWT to the provider, and the provider maps event names to resources such as
 `vm:write`, `container:run`, `billing:read`, or `usage:read`. If a token is
 missing a required scope, the provider returns `403 Forbidden` and
 `bus events` prints the bounded provider diagnostic so the operator can request
-the correct scope with
-`bus auth token --scope "<scopes>"`.
+the correct resource access with
+`bus auth token --resources "<resources>"`.
 
-End-user tokens should only be granted scopes for user-accessible events.
+End-user tokens should only be granted access to user-accessible event resources.
 Service and operator maintenance events should use internal service tokens and
 internal routes where the deployment requires service-level access.
 
