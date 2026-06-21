@@ -6,11 +6,11 @@ description: Bus auth provider verifies email ownership and issues short-lived A
 ## Auth Provider For Bus API
 
 `bus-api-provider-auth` is the authentication provider used by Bus API
-deployments that need account registration, approval, and API token issuing.
+deployments that need identity registration, approval, and API token issuing.
 Users register by email, verify email ownership with an OTP, wait for admin
 approval, and then request short-lived Bus API JWTs for services such as LLM
 hosting, billing, containers, events, and terminal access. Email is never the
-account ID, so an email change does not change the identity seen by API
+identity ID, so an email change does not change the identity seen by API
 providers or billing systems.
 
 The public flow is passwordless but approval-gated. OTP verification returns an
@@ -67,7 +67,7 @@ OTP="<code-from-hosted-email-sender>"
 bus auth verify --email user@example.com --otp "$OTP"
 ```
 
-Then an operator approves the verified account through
+Then an operator approves the verified identity through
 `bus operator auth approve` or the deployment's normal approval workflow:
 the token file must contain an auth-service admin JWT with
 `waitlist:approve` or `admin:manage`, provisioned by the deployment's operator
@@ -232,7 +232,7 @@ The console OTP provider is for local development only.
 
 Verifies the OTP and returns an auth-service token when verification succeeds.
 Send `{"email":"user@example.com","otp":"123456"}`. Success returns `200 OK`
-with a token, expiry, user UUID, verification status, and waitlist status.
+with a token, expiry, identity ID, verification status, and waitlist status.
 Wrong, expired, or reused OTPs return `401 Unauthorized` or `400 Bad Request`
 depending on the failure.
 
@@ -241,11 +241,11 @@ API token.
 
 ### `GET /api/v1/auth/status`
 
-Returns the current user's verification and approval status. Send
+Returns the current identity's verification and approval status. Send
 `Authorization: Bearer <auth-service JWT>`. Success returns `200 OK` with
-`verified`, `status`, `user_id`, and `account_id` when approved.
+`identity_id`, `status`, and `email_verified`.
 
-Use it after OTP verification to see whether the account is still waitlisted,
+Use it after OTP verification to see whether the identity is still waitlisted,
 approved, or rejected.
 
 ### `POST /api/v1/auth/token`
@@ -257,7 +257,7 @@ Issues a Bus API token for an approved user. Send
 Waitlisted, rejected, unverified, or underscoped users receive `403 Forbidden`.
 
 The provider only grants scopes allowed by `BUS_AUTH_API_USER_SCOPES` and the
-account policy.
+identity access policy.
 
 ### `POST /api/v1/auth/token/refresh`
 
@@ -276,12 +276,11 @@ session storage.
 
 ### `GET /api/v1/auth/me`
 
-Returns the current auth-service user identity and account information. Send
-`Authorization: Bearer <auth-service JWT>`. Success returns `200 OK` with user
-UUID, email, verification state, approval status, and account UUID when one is
-active.
+Returns the current auth-service identity information. Send
+`Authorization: Bearer <auth-service JWT>`. Success returns `200 OK` with the
+identity ID, audience, and scope.
 
-Email remains auth-service data. API providers use the stable account UUID.
+Email remains auth-service data. API providers use the stable identity ID.
 
 ### `GET /api/v1/auth/check`
 
@@ -291,7 +290,7 @@ Validates a bearer JWT and returns parsed claims. Send
 or revoked tokens return `401 Unauthorized`.
 
 This is a diagnostic auth-service endpoint. Domain API providers still enforce
-their own audience, scope, account ownership, and billing rules.
+their own audience, scope, identity ownership, and billing rules.
 
 ### `GET /api/v1/auth/admin/waitlist`
 
@@ -306,9 +305,9 @@ emails, verification state, status, and timestamps.
 Approves a verified waitlisted user. Send
 `Authorization: Bearer <auth-service admin JWT>` with
 `{"email":"user@example.com"}`. Requires `waitlist:approve` or
-`admin:manage`. Success returns `200 OK` with the stable `account_id`.
+`admin:manage`. Success returns `200 OK` with the stable `identity_id`.
 
-Approval creates or activates the stable account UUID used as API token `sub`.
+Approval creates or activates the stable identity ID used as API token `sub`.
 
 ### `POST /api/v1/auth/admin/reject`
 
@@ -342,9 +341,9 @@ audience returns `403 Forbidden`; malformed JSON returns `400 Bad Request`.
 Current `/auth/*`, `/me`, and `/internal/token` paths remain aliases for local
 deployments.
 
-API providers validate the JWT, read `sub` as `account_id`, check `aud` and
-`scope`, enforce their own account ownership rules, and record usage when work
-is billable. Providers should not know emails, OTPs, or auth-service user
+API providers validate the JWT, read `sub` as the caller identity ID, check
+`aud` and `scope`, enforce their own identity ownership rules, and record usage
+when work is billable. Providers should not know emails, OTPs, or auth-service
 records.
 
 ### Billing And Approval Boundary
@@ -355,7 +354,7 @@ may receive an `llm:proxy` token, but `bus-api-provider-llm` can still deny a
 request with `billing_required` or `quota_exceeded` before waking a runtime.
 
 Admin and service operations use internal-audience tokens. End-user
-`aud=ai.hg.fi/api` tokens are limited to the caller's account and approved
+`aud=ai.hg.fi/api` tokens are limited to the caller's identity and approved
 feature scopes; service maintenance and billing catalog management use separate
 internal audiences and scopes.
 

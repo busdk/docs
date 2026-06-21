@@ -9,55 +9,55 @@ Bus APIs use short-lived JWTs with explicit audiences and space-separated scopes
 
 The current Bus AI Platform audience values are `ai.hg.fi/api`, `ai.hg.fi/internal`, and `ai.hg.fi/auth`. If a deployment later renames these values, the same separation still applies: end-user API tokens must not become service or admin tokens by adding more scopes.
 
-An end-user token for `ai.hg.fi/api` represents one approved account. The JWT `sub` is the stable `account_id`, not an email address. API providers derive ownership from `sub`; callers must not be able to choose another account by sending `account_id`, email, or tenant metadata in the request body. Any billable end-user action must record usage for the same `account_id`.
+An end-user token for `ai.hg.fi/api` represents one approved identity. The JWT `sub` is the stable identity ID, not an email address. API providers derive ownership from `sub`; callers must not be able to choose another identity by sending `identity_id`, email, or tenant metadata in the request body. Any billable end-user action must record usage for the billing account associated with that identity.
 
 Service and admin operations use `ai.hg.fi/internal` or `ai.hg.fi/auth`, not normal end-user API tokens. Internal tokens are for trusted services, collectors, integrations, and operator automation. Auth-service tokens are for login status, token issuance, and waitlist administration inside the auth service.
 
 ## Audience `ai.hg.fi/api`
 
-`ai.hg.fi/api` is the public end-user API audience. A token with this audience may be accepted only by APIs that an approved end user is allowed to call. It must not authorize reading other accounts, operating shared infrastructure outside an account boundary, collecting platform-wide billing data, or performing administrator maintenance.
+`ai.hg.fi/api` is the public end-user API audience. A token with this audience may be accepted only by APIs that an approved end user is allowed to call. It must not authorize reading other identities, operating shared infrastructure outside an identity boundary, collecting platform-wide billing data, or performing administrator maintenance.
 
 The auth provider issues this audience only after email verification and admin approval. Registration and OTP verification alone do not issue paid feature access. The default approved-user API scope set is configurable, but it should remain limited to end-user features such as billing setup, AI model access, user-visible VM status, and user-owned container operations.
 
 ### Scope `billing:read`
 
-`billing:read` allows an approved account to read its own billing setup status and open a customer billing portal session. It must not expose another account's billing data, provider customer IDs, payment method details, invoices for other accounts, or platform-wide revenue data.
+`billing:read` allows an approved identity to read its own billing setup status and open a customer billing portal session. It must not expose another identity's billing data, provider customer IDs, payment method details, invoices for other accounts, or platform-wide revenue data.
 
 This scope is intentionally safe to issue before paid product entitlements are active so the CLI can guide a user to finish setup.
 
 ### Scope `billing:setup`
 
-`billing:setup` allows an approved account to create a provider-neutral billing checkout/setup session for that same account. It does not authorize LLM use, container runs, usage collection, refunds, plan changes for other accounts, or Stripe administration.
+`billing:setup` allows an approved identity to create a provider-neutral billing checkout/setup session for its billing account. It does not authorize LLM use, container runs, usage collection, refunds, plan changes for other accounts, or Stripe administration.
 
-The Billing API derives the account from JWT `sub` and hides payment-provider details behind `bus-integration-billing` and provider-specific integrations such as `bus-integration-stripe`.
+The Billing API derives the caller identity from JWT `sub` and hides payment-provider details behind `bus-integration-billing` and provider-specific integrations such as `bus-integration-stripe`.
 
 ### Scope `llm:proxy`
 
-`llm:proxy` allows an approved account to use the OpenAI-compatible `/v1/*` LLM proxy. The LLM provider validates the API audience, requires this scope, and requires `sub` to be the stable account UUID. Model execution requests record usage under that account.
+`llm:proxy` allows an approved identity to use the OpenAI-compatible `/v1/*` LLM proxy. The LLM provider validates the API audience, requires this scope, and requires `sub` to be the stable identity ID. Model execution requests record usage under the caller's billing account.
 
 `/v1/models` should normally be served from a configured catalog and should not wake GPU runtimes. Chat, completion, response, and embedding requests may wake the configured runtime before proxying and must record usage, missing-usage, failure, or abort events for billing.
 
 ### Scope `container:read`
 
-`container:read` allows an approved account to read status for containers or runs that belong to that same account. The container provider passes the account identity from JWT `sub` to the backend and filters returned status items by owner before responding.
+`container:read` allows an approved identity to read status for containers or runs that belong to that same identity. The container provider passes the identity from JWT `sub` to the backend and filters returned status items by owner before responding.
 
-This scope must not expose global runner status or another customer's run output.
+This scope must not expose global runner status or another identity's run output.
 
 ### Scope `container:run`
 
-`container:run` allows an approved account to create a user-owned container run through the public containers API. The request must be stamped with the caller's `account_id`, and the provider must record requested, finished, or failed usage events for billing.
+`container:run` allows an approved identity to create an identity-owned container run through the public containers API. The request must be stamped with the caller's `identity_id`, and the provider must record requested, finished, or failed usage events for billing.
 
-The integration that actually executes the run must preserve the owner account in its response. If the response says the run belongs to another account, the public provider must reject it.
+The integration that actually executes the run must preserve the owner identity in its response. If the response says the run belongs to another identity, the public provider must reject it.
 
 ### Scope `container:delete`
 
-`container:delete` allows an approved account to delete or cancel a container run only when that run belongs to the same account. It does not authorize deleting the shared runner VM, runner storage, or another account's run.
+`container:delete` allows an approved identity to delete or cancel a container run only when that run belongs to the same identity. It does not authorize deleting the shared runner VM, runner storage, or another identity's run.
 
 Shared runner lifecycle operations use internal tokens and the `container:admin` scope.
 
 ### Scope `vm:read`
 
-`vm:read` allows an approved account to read a user-visible VM or runtime status endpoint. This is appropriate for status that is safe to expose to end users and does not reveal another account's data, infrastructure secrets, or platform-wide capacity details.
+`vm:read` allows an approved identity to read a user-visible VM or runtime status endpoint. This is appropriate for status that is safe to expose to end users and does not reveal another identity's data, infrastructure secrets, or platform-wide capacity details.
 
 ### Scope `vm:write`
 
@@ -75,14 +75,14 @@ Production deployments should prefer domain scopes for protected events and shou
 
 `events:listen` is a generic public Events API scope for unprotected event streams. It is not enough to subscribe to protected Bus platform event names, and wildcard streams are disabled by default because one token cannot safely prove access to every future event.
 
-Event streams are account-filtered from JWT `sub`. A user listener must not receive events for another account.
+Event streams are identity-filtered from JWT `sub`. A user listener must not receive events for another identity.
 
 ### Scopes `task:send`, `task:read`, `task:reply`, `task:claim`, and `task:admin`
 
 These scopes apply to the canonical `bus.task.*` event namespace. They protect
 task creation, approval, assignment, worker claiming, task conversation,
 approval request/response, terminal status, and task administration. They
-follow account-isolation rules for stream delivery, and shared operator queues
+follow identity-isolation rules for stream delivery, and shared operator queues
 should use internal service tokens rather than end-user tokens.
 
 ### Scopes `workers:read`, `workers:write`, `workers:control`, and `workers:admin`
@@ -95,13 +95,13 @@ unknown or administrative worker operations.
 
 ### Legacy scopes `work:send`, `work:read`, `work:reply`, and `work:claim`
 
-These scopes apply to the generic `bus.work.*` event namespace. They are end-user or application scopes only when the work queue itself is account-scoped and safe for the caller. They do not imply platform administrator access.
+These scopes apply to the generic `bus.work.*` event namespace. They are end-user or application scopes only when the work queue itself is identity-scoped and safe for the caller. They do not imply platform administrator access.
 
 `work:send` creates work items, `work:read` observes work events, `work:reply` publishes worker responses, and `work:claim` claims work. Deployments that use cross-account or operator work queues should protect those queues with internal tokens instead.
 
 ### Legacy scopes `dev:task:send`, `dev:task:read`, `dev:task:reply`, and `dev:task:claim`
 
-These scopes apply to the development task event namespace `bus.dev.task.*`. They follow the same account-isolation rules as work events. They are not AI Platform customer scopes unless a deployment intentionally exposes a development task feature to that customer.
+These scopes apply to the development task event namespace `bus.dev.task.*`. They follow the same identity-isolation rules as work events. They are not AI Platform customer scopes unless a deployment intentionally exposes a development task feature to that customer.
 
 ## Audience `ai.hg.fi/internal`
 
@@ -143,7 +143,7 @@ Internal APIs must still require scopes. The internal audience does not mean unr
 
 ### Scope `token:issue`
 
-`token:issue` allows a verified auth-service user to request an API token after the account has been approved. The auth provider must still enforce verified email, approved status, and the configured allow-list of end-user API scopes.
+`token:issue` allows a verified auth-service identity to request an API token after the identity has been approved. The auth provider must still enforce verified email, approved status, and the configured allow-list of end-user API scopes.
 
 ### Scope `waitlist:read`
 
@@ -151,7 +151,7 @@ Internal APIs must still require scopes. The internal audience does not mean unr
 
 ### Scope `waitlist:approve`
 
-`waitlist:approve` allows an admin or operator to approve or reject waitlisted users. Approval activates the stable `account_id` that later appears as `sub` in API tokens.
+`waitlist:approve` allows an admin or operator to approve or reject waitlisted identities. Approval activates the stable identity ID that later appears as `sub` in API tokens.
 
 ### Scope `admin:manage`
 
@@ -159,13 +159,13 @@ Internal APIs must still require scopes. The internal audience does not mean unr
 
 ## Events API deployment rule
 
-The Events API can serve both user-facing events and service integration events, but those are different trust zones. Public user-facing event routes may use `ai.hg.fi/api` with account filtering and domain scopes. Service integration routes that carry `usage:*`, `ssh:run`, `container:admin`, or shared runtime control should require `ai.hg.fi/internal` or be reachable only from trusted service networks with internal tokens.
+The Events API can serve both user-facing events and service integration events, but those are different trust zones. Public user-facing event routes may use `ai.hg.fi/api` with identity filtering and domain scopes. Service integration routes that carry `usage:*`, `ssh:run`, `container:admin`, or shared runtime control should require `ai.hg.fi/internal` or be reachable only from trusted service networks with internal tokens.
 
-Do not rely on caller-supplied event metadata for ownership. The Events API must stamp `account_id` from JWT `sub` and filter streams by that same value. Domain event scopes control which names a token may publish or receive; account filtering controls whose events the token may see.
+Do not rely on caller-supplied event metadata for ownership. The Events API must stamp the owner identity from JWT `sub` and filter streams by that same value. Domain event scopes control which names a token may publish or receive; identity filtering controls whose events the token may see.
 
 ## Billing rule
 
-Every billable end-user action must create usage evidence tied to the caller's `account_id`. This includes LLM proxy requests, container runs, and end-user-owned VM lifecycle actions when enabled. If a provider cannot record required usage, it should fail safely instead of completing billable work without accounting.
+Every billable end-user action must create usage evidence tied to the caller's billing account or approved identity, depending on the usage provider contract. This includes LLM proxy requests, container runs, and end-user-owned VM lifecycle actions when enabled. If a provider cannot record required usage, it should fail safely instead of completing billable work without accounting.
 
 Internal collectors read and delete usage with `ai.hg.fi/internal` tokens. End users should not receive `usage:read`, `usage:delete`, or platform-wide usage event streams.
 
