@@ -14,15 +14,17 @@ Events API. A deployment can pair it with `bus-integration-upcloud` for
 UpCloud runner lifecycle work and `bus-integration-ssh-runner` for SSH script
 execution.
 
-The public API is account-isolated. The provider derives the owner account from
-the JWT `sub`; callers cannot choose an account ID in request metadata. Users
-can list, read, and delete only runs owned by their own account.
+The public API is identity-isolated. The provider derives the owner identity
+from the authenticated principal; callers cannot choose an identity ID in
+request metadata. Users can list, read, and delete only runs owned by their own
+identity.
 
 ### Authentication
 
-Public endpoints use Bearer JWT authentication with audience `ai.hg.fi/api`.
-Tokens must include `sub`, `aud`, `scope`, `iat`, and `exp` claims. The
-provider derives the account from JWT `sub`.
+Public endpoints use Bearer JWT authentication with audience `ai.hg.fi/api` or
+Bus identity API keys when the identities API is configured. JWTs must include
+`sub`, `aud`, `scope`, `iat`, and `exp` claims. The provider derives the
+identity from the authenticated principal.
 
 `container:read` allows status reads. `container:run` allows run creation.
 `container:delete` allows deleting owned runs.
@@ -32,9 +34,9 @@ Internal runner endpoints use audience `ai.hg.fi/internal` with
 
 ### `GET /api/v1/containers/status`
 
-Returns container status and runs visible to the authenticated account.
+Returns container status and runs visible to the authenticated identity.
 Success returns `200 OK` with `{"items":[...]}` where each item has `id`,
-`state`, optional `owner_account_id`, and optional `details`.
+`state`, optional `owner_identity_id`, and optional `details`.
 
 With `--backend events`, the provider sends
 `bus.containers.status.request` and waits for
@@ -78,7 +80,7 @@ curl -fsS -X POST \
 
 Successful responses include runner name, image, arguments, exit code, stdout,
 stderr, duration, and runner status.
-Success returns `200 OK` with `run_id`, `owner_account_id`, `runner_name`,
+Success returns `200 OK` with `run_id`, `owner_identity_id`, `runner_name`,
 `image`, `args`, `exit_code`, `stdout`, `stderr`, `duration_ms`, and `runtime`.
 
 With `--billing-backend events`, the provider checks `container:run`
@@ -96,9 +98,9 @@ waits for `bus.containers.run.response`.
 
 Deletes or cancels one user-owned container run when the backend supports it.
 
-Delete requests are scoped to runs owned by the account in the bearer token.
+Delete requests are scoped to runs owned by the authenticated identity.
 Infrastructure runner deletion uses the internal runner endpoint instead.
-Success returns `200 OK` with `{"deleted":true,"run_id":"...","owner_account_id":"..."}`.
+Success returns `200 OK` with `{"deleted":true,"run_id":"...","owner_identity_id":"..."}`.
 
 With `--backend events`, the provider sends
 `bus.containers.delete.request` and waits for
