@@ -23,7 +23,9 @@ token must include scope `llm:proxy`. `GET /v1/models` also requires a valid
 bearer token so the catalog is not public, but it does not check billing
 entitlement or wake the runtime.
 
-The JWT `sub` is the account UUID used for billing and usage records.
+The JWT `sub` is the Bus identity UUID used for authorization and event-backed
+runtime/execution ownership. The current usage and billing providers still
+record that value in their billing `account_id` fields.
 
 ### `GET /v1/models`
 
@@ -68,7 +70,7 @@ shape.
 
 Proxies OpenAI-compatible embedding requests.
 
-Embedding requests are authenticated and metered under the same account as
+Embedding requests are authenticated and metered under the same identity as
 other execution requests.
 
 ### `GET /readyz`
