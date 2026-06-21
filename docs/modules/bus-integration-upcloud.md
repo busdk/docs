@@ -690,7 +690,7 @@ scopes. Use `ai.hg.fi/api` for user-visible VM/container events and
 Symptom: VM, container, runner, or SSH events are denied with 403 or an
 authorization error.
 
-Check the token scopes against the requested operation:
+Check the caller identity resource access against the requested operation:
 
 - VM status requires `vm:read`.
 - VM start or stop requires `vm:write`.
@@ -700,7 +700,8 @@ Check the token scopes against the requested operation:
 - Protected runner administration requires `container:admin`.
 - SSH runner script execution requires `ssh:run` on the SSH runner side.
 
-Corrective action: request the narrowest token containing the missing scope.
+Corrective action: grant or request the narrowest identities resource access
+needed for the operation.
 
 ### Events API Unreachable
 

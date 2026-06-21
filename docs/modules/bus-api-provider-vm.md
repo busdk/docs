@@ -168,15 +168,15 @@ Default is `none`. Use `events` when usage should flow to
 not publish usage records to a shared Events API.
 
 Common errors use `{"error":{"type":"...","message":"..."}}`. Missing or
-invalid bearer tokens return `401 invalid_auth`, missing scopes return
-`401`/`403` depending gateway policy, entitlement denial returns `402`, event
-backend unavailability returns `503`, and malformed integration responses
-return `502`.
-For `GET /api/v1/vm/status`, callers should fix authentication or `vm:read` scope errors
-and retry later on backend `503`. For `POST /api/v1/vm/start` and
-`POST /api/v1/vm/stop`, callers
-also need `vm:write`; `402` means billing setup or quota action is required
-before retrying the lifecycle request.
+invalid bearer tokens return `401 invalid_auth`, missing identities resource
+access returns `403 insufficient_access`, entitlement denial returns `402`,
+event backend unavailability returns `503`, and malformed integration
+responses return `502`.
+For `GET /api/v1/vm/status`, callers should fix authentication or `vm:read`
+resource access errors and retry later on backend `503`. For
+`POST /api/v1/vm/start` and `POST /api/v1/vm/stop`, callers also need
+`vm:write`; `402` means billing setup or quota action is required before
+retrying the lifecycle request.
 
 ### Local Compose Stack
 
