@@ -20,7 +20,7 @@ obtain it through `bus operator token issue` during installation or from the
 deployment's internal secret store.
 
 Approving a user allows the auth provider to create or activate the stable
-account UUID and issue only the end-user scopes allowed by provider policy.
+identity and issue only the end-user scopes allowed by provider policy.
 Approval does not bypass billing. Paid features such as LLM access and
 containers still require billing entitlement and quota checks in their domain
 providers.

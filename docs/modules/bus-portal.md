@@ -118,7 +118,7 @@ For browser testing, set cookie `bus_portal_token` to the same JWT unless the
 deployment overrides the cookie name with `--frontend-auth-cookie`.
 
 Protected frontend mode only controls delivery of the browser app. The API
-providers still enforce account ownership, feature scopes, billing state,
+providers still enforce identity ownership, feature scopes, billing state,
 quota limits, and all business authorization.
 
 The host applies a Content Security Policy, `Referrer-Policy: no-referrer`,

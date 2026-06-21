@@ -74,7 +74,7 @@ An AI portal deployment normally provides these browser-reachable APIs:
 
 The browser origin must be allowed by the portal Content Security Policy
 `connect-src`. Each backend API still validates its own JWT audience, scopes,
-account ownership, billing entitlement, and quota state.
+identity ownership, billing entitlement, and quota state.
 
 ### Sources
 

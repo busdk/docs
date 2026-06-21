@@ -28,8 +28,8 @@ the normal Bus API token to `~/.config/bus/auth/api-token` or
 `${BUS_CONFIG_DIR}/auth/api-token`, and `bus containers` reads that file
 automatically. Use `--token-file`, `BUS_AI_TOKEN`, or `BUS_API_TOKEN` only when
 automation needs an explicit override. Literal token values are not accepted on
-the command line. The service uses the JWT `sub` account UUID as the owner and
-ignores caller-supplied account IDs.
+the command line. The service uses the authenticated identity as the owner and
+ignores caller-supplied identity or account IDs.
 
 ```bash
 bus containers status

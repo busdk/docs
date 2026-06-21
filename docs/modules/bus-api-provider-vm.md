@@ -161,7 +161,7 @@ Default is `none`; use `events` for paid VM lifecycle plans.
 Enables runtime lifecycle usage records through `bus-integration-usage`.
 
 Start and stop requests can record requested, finished, and failed lifecycle
-events with the stable account UUID.
+events with the stable billing account UUID used by usage storage.
 Default is `none`. Use `events` when usage should flow to
 `bus-integration-usage`, or `memory` for deterministic local checks that should
 not publish usage records to a shared Events API.
