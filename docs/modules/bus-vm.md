@@ -35,7 +35,7 @@ The token must be an AI Platform bearer JWT, usually obtained through
 `~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`.
 `--token-file`, `BUS_AI_TOKEN`, and `BUS_API_TOKEN` override that default.
 Literal token values are not accepted on the command line. The token subject is
-the account UUID used by the AI Platform.
+the Bus identity used by the AI Platform.
 
 ### Related APIs
 

@@ -808,7 +808,7 @@ Minimal valid shape:
 
 ### Container-Only Deployment
 
-Verify container status. This is a readiness check for account isolation and
+Verify container status. This is a readiness check for identity isolation and
 provider request/reply wiring; it does not prove runner creation, SSH dispatch,
 or cleanup:
 
@@ -816,9 +816,9 @@ or cleanup:
 bus containers --api-url "$BUS_API_BASE_URL" status --format json
 ```
 
-Success returns account-scoped JSON for the requesting account only. For this
+Success returns identity-scoped JSON for the requesting identity only. For this
 worker path, the response includes a container status collection or a
-runner/runtime status object. Runs owned by other accounts are omitted. If the
+runner/runtime status object. Runs owned by other identities are omitted. If the
 JSON only contains an `error` field, treat it as a failed verification. If it
 fails with 401 or 403, check token audience and `container:read`. If it times
 out, verify Events API reachability and that the UpCloud worker is running.
