@@ -51,8 +51,9 @@ The better version uses an exact domain type, so rounding rules are explicit.
 
 Security and access-control checks should be matrix-based, not one happy path.
 Protected APIs need coverage for no credential, malformed or wrong-audience
-credential where relevant, valid credential with insufficient scope, and valid
-credential with the exact required scope. A review should reject code that
+credential where relevant, valid credential without the required identity
+resource access, and valid credential with the exact required identity resource
+access. A review should reject code that
 treats "any valid token" as sufficient for a protected endpoint family.
 
 Example test shape:
@@ -64,8 +65,8 @@ tests := []struct {
 	want  int
 }{
 	{"no token", "", http.StatusUnauthorized},
-	{"wrong scope", tokenWith("events:read"), http.StatusForbidden},
-	{"required scope", tokenWith("billing:write"), http.StatusAccepted},
+	{"missing resource access", tokenFor("identity-a"), http.StatusForbidden},
+	{"resource access granted", tokenFor("identity-b"), http.StatusAccepted},
 }
 ```
 

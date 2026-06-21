@@ -82,14 +82,15 @@ bus portal serve --print-url \
 ```
 
 The portal accepts the JWT from `Authorization: Bearer ...` or from the
-configured cookie. Defaults are audience `ai.hg.fi/api`, scope `portal:read`,
-and cookie name `bus_portal_token`. Override them with
-`--frontend-auth-audience`, `--frontend-auth-scope`, and
+configured cookie, then checks the authenticated identity through the configured
+identities API. Defaults are audience `ai.hg.fi/api`, frontend resource
+`portal:read`, and cookie name `bus_portal_token`. Override them with
+`--frontend-auth-audience`, `--frontend-auth-resource`, and
 `--frontend-auth-cookie`.
 
 Frontend tokens use HS256 with the configured secret. They must include `sub`,
-`aud`, `scope`, `iat`, and `exp`. The configured scope is represented inside
-the space-separated `scope` claim, for example `"scope":"portal:read"`.
+`aud`, `iat`, and `exp`. The identity in `sub` must have access to the
+configured frontend resource through the identities API.
 
 For a local protected-frontend check, create a short-lived JWT with the same
 HS256 secret and pass it as either a bearer token or the configured cookie:

@@ -74,9 +74,9 @@ Events API authorization is least-privilege and resource-based. The CLI does
 not decide which event names a token may access; it passes the normal Bus API
 JWT to the provider, and the provider maps event names to resources such as
 `vm:write`, `container:run`, `billing:read`, or `usage:read`. If a token is
-missing a required scope, the provider returns `403 Forbidden` and
-`bus events` prints the bounded provider diagnostic so the operator can request
-the correct resource access with
+not backed by the required identity resource access, the provider returns
+`403 Forbidden` and `bus events` prints the bounded provider diagnostic so the
+operator can request the correct resource access with
 `bus auth token --resources "<resources>"`.
 
 End-user tokens should only be granted access to user-accessible event resources.

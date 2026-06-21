@@ -279,11 +279,12 @@ requests should require billing entitlement checks.
 Approved users request an API token with LLM scope:
 
 ```sh
-bus auth token --audience ai.hg.fi/api --scope "llm:proxy"
+bus auth token --audience ai.hg.fi/api --resources "llm:proxy"
 ```
 
-`llm:proxy` is the required scope for model execution. Add `billing:read` only
-when the same token will also call billing status or setup APIs.
+`llm:proxy` is the required identity resource for model execution. Add
+`billing:read` only when the same token will also call billing status or setup
+APIs.
 By default, `bus auth token` writes the issued API token to
 `~/.config/bus/auth/api-token` or `${BUS_CONFIG_DIR}/auth/api-token`, which the
 curl example below reads. If a deployment configures token output differently,
