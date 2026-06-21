@@ -15,16 +15,20 @@ an authenticated API surface for session creation, input, output, and cleanup.
 
 ### Authentication
 
-Terminal APIs require a Bus API JWT with audience `ai.hg.fi/api`.
-Clients send it as `Authorization: Bearer <Bus API JWT>`.
+Terminal APIs require either a Bus API JWT with audience `ai.hg.fi/api` or a
+Bus identity API key. JWT clients send `Authorization: Bearer <Bus API JWT>`.
+API-key clients send `X-Bus-API-Key: <secret>` or a non-JWT bearer value when
+the identities API is configured.
 
 Write operations require `terminal:write`. Read operations require
-`terminal:read`. Every operation is account-isolated by JWT `sub`.
+`terminal:read`. Every operation is identity-isolated by the authenticated
+principal id.
 
 JWT validation is strict: tokens must be HS256 signed, use JWT type when `typ`
 is present, include `exp`, pass issued-at/expiry checks with configured clock
 skew, match the accepted audience, and match the configured issuer when one is
-set. `none` and wrong-algorithm tokens are rejected.
+set. `none` and wrong-algorithm tokens are rejected. API-key callers are
+resolved through Bus identities and checked for binary terminal access.
 
 The local backend stores terminal session state in memory. Production
 deployments can connect this API boundary to container or SSH execution while
@@ -32,19 +36,19 @@ keeping portal clients on the authenticated terminal API.
 
 ### `POST /api/v1/terminal/sessions`
 
-Creates a terminal session for the authenticated account.
+Creates a terminal session for the authenticated identity.
 
-Use this after the user has an approved account and the portal has a valid Bus
+Use this after the user has an approved identity and the portal has a valid Bus
 API token.
 The request body may be `{}` for the default local backend. Success returns
-`201 Created` with `id`, `account_id`, `state`, optional `rows`, `cols`, and
+`201 Created` with `id`, `identity_id`, `state`, optional `rows`, `cols`, and
 initial `output`.
 
 ### `GET /api/v1/terminal/sessions/{id}`
 
 Returns metadata for one owned terminal session.
 
-The provider rejects reads for sessions owned by another account.
+The provider rejects reads for sessions owned by another identity.
 Success returns `200 OK` with the session object.
 
 ### `GET /api/v1/terminal/sessions/{id}/output`
@@ -104,11 +108,11 @@ streaming returns `500 streaming_unavailable`.
 `bus-portal-ai` calls this provider after the user has logged in through
 `bus-portal-auth`. The browser sends the Bus API token as bearer
 authorization. The terminal provider validates the token and ensures the
-session belongs to the account in JWT `sub`.
+session belongs to the authenticated principal id.
 
 Terminal access should be combined with container ownership checks when the
 terminal is attached to container-backed work. A user must not be able to read
-or write terminal sessions for another account's container.
+or write terminal sessions for another identity's container.
 
 ### Security Notes
 
