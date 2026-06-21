@@ -13,7 +13,7 @@ adding their own public HTTP event controllers.
 Bus API providers and integrations use Events for request/reply workflows such
 as runtime wake-up, container runner work, billing status, usage export, and
 Stripe provider calls. End users may also use event APIs when the deployment
-grants the required domain scopes, but event access is still account- and
+grants the required domain scopes, but event access is still identity- and
 scope-limited.
 
 ### Authentication
@@ -45,15 +45,16 @@ Production deployments should use the normal auth or service-token flow and
 grant domain scopes such as `llm:proxy`, `container:run`, or `billing:read`
 instead of broad event scopes whenever the event namespace is protected.
 
-The account is derived from JWT `sub`. Callers do not provide account IDs for
-authorization.
+The owner identity is derived from JWT `sub`. Callers do not provide identity
+IDs for authorization.
 
 Unprotected event names require `events:send` to publish and `events:listen`
 to stream.
 
-The provider stamps the event account from the JWT. Caller-supplied account
-metadata is not trusted for authorization. Streams only return events the token
-is allowed to receive, and user tokens cannot subscribe to unrelated accounts.
+The provider stamps the event owner as `identity_id` from the JWT.
+Caller-supplied identity metadata is not trusted for authorization. Streams
+only return events the token is allowed to receive, and user tokens cannot
+subscribe to unrelated identities.
 
 Protected Bus integration events use domain scopes. VM events use `vm:read` or
 `vm:write`; LLM execution events use `llm:proxy`; public container events use
@@ -92,8 +93,8 @@ same public behavior when the backend changes.
 
 Publishes one event.
 
-The provider stamps the event account from the JWT. Caller-supplied account
-metadata is not trusted for ownership or stream authorization.
+The provider stamps the event owner identity from the JWT. Caller-supplied
+identity metadata is not trusted for ownership or stream authorization.
 Send `Content-Type: application/json` with an event envelope:
 
 ```json
