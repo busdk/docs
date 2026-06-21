@@ -24,7 +24,7 @@ For the local curl checks below, first start the provider on port `8081` with
 the same HS256 secret used to mint the token:
 
 ```sh
-BUS_EVENTS_JWT_SECRET=not-a-secret-local-development-hs256-key \
+BUS_API_JWT_SECRET=not-a-secret-local-development-hs256-key \
 bus-api-provider-events --addr 127.0.0.1:8081 --events-backend memory
 ```
 
