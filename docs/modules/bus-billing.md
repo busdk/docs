@@ -51,7 +51,7 @@ After the account is approved, request a billing setup token and open the
 hosted setup page:
 
 ```sh
-bus auth token --scope "billing:read billing:setup"
+bus auth token --resources "billing:read billing:setup"
 bus billing status
 bus billing setup
 ```
@@ -60,18 +60,18 @@ After payment setup completes, request the feature token you need. For LLM API
 access this is normally:
 
 ```sh
-bus auth token --scope "llm:proxy billing:read"
+bus auth token --resources "llm:proxy billing:read"
 ```
 
-Containers use container scopes and billing checks configured by the
+Containers use container resources and billing checks configured by the
 deployment, for example:
 
 ```sh
-bus auth token --scope "container:read container:run container:delete billing:read"
+bus auth token --resources "container:read container:run container:delete billing:read"
 ```
 
-The exact scopes available to an end user are controlled by the auth provider
-and account approval policy. Registration and email verification alone do not
+The exact resources available to an end user are controlled by the auth provider
+and identity approval policy. Registration and email verification alone do not
 grant paid API access.
 
 ### Options
@@ -93,10 +93,10 @@ under the user config root, normally `~/.config/bus/auth/api-token`. If no
 token exists, request a narrow billing setup token first:
 
 ```sh
-bus auth token --scope "billing:read billing:setup"
+bus auth token --resources "billing:read billing:setup"
 ```
 
-If the token is expired or missing required billing scopes, `bus billing`
+If the token is expired or missing required billing resources, `bus billing`
 prints the same token command. If a paid feature such as LLM access returns
 `billing_required`, the CLI prints the server-provided next command, normally
 `bus billing setup`.

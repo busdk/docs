@@ -16,11 +16,12 @@ providers or billing systems.
 The public flow is passwordless but approval-gated. OTP verification returns an
 auth-service token with `aud=ai.hg.fi/auth`; it does not grant model access.
 Only an approved verified user can request a Bus API token with
-`aud=ai.hg.fi/api` and feature scopes such as `llm:proxy`.
-Approved users can request the same API-audience JWT with domain scopes such as
-`vm:read` and `container:run`, not broad event-pattern scopes. Those tokens use
+`aud=ai.hg.fi/api` and feature resources such as `llm:proxy`.
+Approved users can request the same API-audience JWT with domain resources such
+as `vm:read` and `container:run`, not broad event-pattern resources. Those tokens use
 `aud=ai.hg.fi/api` and work for both REST APIs and Events API endpoints. The
-provider only issues user API scopes allowed by `BUS_AUTH_API_USER_SCOPES`.
+provider only issues user API resources allowed by
+`BUS_AUTH_API_USER_RESOURCES`.
 
 The provider is enabled through `bus-api` as an explicit provider named `auth`.
 
@@ -49,7 +50,7 @@ The BusDK superproject root `compose.yaml` uses the same auth provider through
 `bus-api`, together with the broader local AI Platform stack. In that stack,
 nginx exposes `/api/v1/auth/*` and `/api/internal/auth/*` on
 `http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}`. The default SMTP host is
-MailHog, and `BUS_AUTH_API_USER_SCOPES` controls which feature scopes an
+MailHog, and `BUS_AUTH_API_USER_RESOURCES` controls which feature resources an
 approved local user may request.
 
 For a hosted AI Platform smoke check, use the hosted auth API and read the OTP
@@ -84,7 +85,7 @@ After approval, request the hosted API token and use it against
 `https://ai.hg.fi/v1`:
 
 ```sh
-bus auth token --scope "llm:proxy"
+bus auth token --resources "llm:proxy"
 curl -fsS -H "Authorization: Bearer $(cat ~/.config/bus/auth/api-token)" \
   https://ai.hg.fi/v1/models
 ```
@@ -98,7 +99,7 @@ environment, examples, and related documentation.
 
 Minimal hosted configuration uses a durable signing secret, PostgreSQL store,
 SMTP OTP delivery, an internal shared key for service-token issuing when used,
-and an explicit user-scope allow-list:
+and an explicit user-resource allow-list:
 
 ```sh
 BUS_AUTH_HS256_SECRET="$(cat /run/secrets/bus-auth-hs256)"
@@ -110,7 +111,7 @@ BUS_AUTH_SMTP_FROM=auth@example.test
 BUS_AUTH_SMTP_USERNAME=bus-auth
 BUS_AUTH_SMTP_PASSWORD="$(cat /run/secrets/bus-auth-smtp-password)"
 BUS_AUTH_INTERNAL_SHARED_KEY="$(cat /run/secrets/bus-auth-internal-key)"
-BUS_AUTH_API_USER_SCOPES="llm:proxy billing:read billing:setup vm:read container:read container:run"
+BUS_AUTH_API_USER_RESOURCES="llm:proxy billing:read billing:setup vm:read container:read container:run"
 ```
 
 ### `BUS_AUTH_HS256_SECRET`
@@ -189,12 +190,12 @@ back to another sender.
 
 Sets the sender address used for OTP email.
 
-### `BUS_AUTH_API_USER_SCOPES`
+### `BUS_AUTH_API_USER_RESOURCES`
 
-Sets the end-user API scopes the provider is allowed to issue after approval.
+Sets the end-user API resources the provider is allowed to issue after approval.
 The value is a space-separated list such as
 `llm:proxy billing:read vm:read container:read container:run`. If the variable
-is empty, the deployment default applies. A token request that asks for a scope
+is empty, the deployment default applies. A token request that asks for a resource
 outside this allow-list fails with a deterministic authorization error instead
 of silently widening access.
 
@@ -252,12 +253,13 @@ approved, or rejected.
 
 Issues a Bus API token for an approved user. Send
 `Authorization: Bearer <auth-service JWT>` and a JSON body such as
-`{"scope":"llm:proxy billing:read","ttl_seconds":3600}`. Success returns
-`200 OK` with the API JWT, expiry, audience `ai.hg.fi/api`, and granted scope.
-Waitlisted, rejected, unverified, or underscoped users receive `403 Forbidden`.
+`{"resources":"llm:proxy billing:read","ttl_seconds":3600}`. Success returns
+`200 OK` with the API JWT, expiry, audience `ai.hg.fi/api`, and granted
+resources. Waitlisted, rejected, unverified, or unauthorized users receive
+`403 Forbidden`.
 
-The provider only grants scopes allowed by `BUS_AUTH_API_USER_SCOPES` and the
-identity access policy.
+The provider only grants resources allowed by `BUS_AUTH_API_USER_RESOURCES`
+and the identity access policy.
 
 ### `POST /api/v1/auth/token/refresh`
 
@@ -327,13 +329,15 @@ This endpoint is separate from the public user flow and is protected by the
 configured internal shared key. Send `X-Bus-Internal-Key:
 <BUS_AUTH_INTERNAL_SHARED_KEY>` and `Content-Type: application/json`.
 
-The JSON body accepts `subject`, `audience`, and `scope`. `subject` defaults to
+The JSON body accepts `subject`, `audience`, and `resources`. `subject` defaults to
 `auth-admin` when omitted. `audience` defaults to the auth-service audience,
-usually `ai.hg.fi/auth`; set it to `ai.hg.fi/api` for scoped service tokens
-that call normal Bus APIs. `scope` is a space-separated scope list such as
+usually `ai.hg.fi/auth`; set it to `ai.hg.fi/api` for resource-bound service
+tokens that call normal Bus APIs. `resources` is a space-separated resource
+list such as
 `waitlist:read waitlist:approve` or `billing:entitlement:check`. Success
 returns `200 OK` with an access token, token type, expiry, audience, subject,
-and scope. Missing or wrong internal key, invalid subject, or an invalid
+and granted resources in the JWT `scope` claim. Missing or wrong internal key,
+invalid subject, or an invalid
 audience returns `403 Forbidden`; malformed JSON returns `400 Bad Request`.
 
 ### Compatibility Paths
@@ -348,14 +352,14 @@ records.
 
 ### Billing And Approval Boundary
 
-Approval controls whether a verified user may request feature scopes. Billing
+Approval controls whether a verified user may request feature resources. Billing
 controls whether a paid feature may start work. For example, an approved user
 may receive an `llm:proxy` token, but `bus-api-provider-llm` can still deny a
 request with `billing_required` or `quota_exceeded` before waking a runtime.
 
 Admin and service operations use internal-audience tokens. End-user
 `aud=ai.hg.fi/api` tokens are limited to the caller's identity and approved
-feature scopes; service maintenance and billing catalog management use separate
+feature resources; service maintenance and billing catalog management use separate
 internal audiences and scopes.
 
 ### Using from `.bus` files

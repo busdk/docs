@@ -14,9 +14,10 @@ Use `register` to enter the waitlist, `login` to request an OTP, `verify` to
 exchange the OTP for an auth-service JWT, `status` to check approval state, and
 `token` to request a Bus API JWT after approval. Admin users use
 `bus operator auth waitlist`, `bus operator auth approve`, and
-`bus operator auth reject` with an auth-service JWT that has waitlist scopes.
-Use `token --scope "<scopes>"` to request an approved-user API JWT with domain
-scopes such as `llm:proxy`, `billing:read`, `container:run`, or `terminal:read`.
+`bus operator auth reject` with an auth-service JWT that has waitlist resource
+access. Use `token --resources "<resources>"` to request an approved-user API
+JWT with domain resources such as `llm:proxy`, `billing:read`,
+`container:run`, or `terminal:read`.
 The same `aud=ai.hg.fi/api` token is used for REST APIs and Events API
 endpoints available to end users.
 
@@ -52,23 +53,23 @@ reads or writes the auth-service session token at a caller-selected path.
 `--timeout <duration>` sets the HTTP timeout. `--output <file>` writes command
 output to a file and `--quiet` suppresses normal output.
 
-`token --scope <scopes>` requests a space-separated API scope set.
+`token --resources <resources>` requests a space-separated API resource set.
 
 ### Paid Feature Access
 
 Registration and OTP verification do not grant paid feature access. A user must
-be approved first, then request a token with the scopes needed by the feature.
+be approved first, then request a token with the resources needed by the feature.
 Billing may still be required by the feature provider before work starts.
 
 Common examples:
 
 ```sh
-bus auth token --scope "billing:read billing:setup"
-bus auth token --scope "llm:proxy billing:read"
-bus auth token --scope "container:read container:run container:delete billing:read"
+bus auth token --resources "billing:read billing:setup"
+bus auth token --resources "llm:proxy billing:read"
+bus auth token --resources "container:read container:run container:delete billing:read"
 ```
 
-If the auth provider policy does not allow a requested scope for the account,
+If the auth provider policy does not allow a requested resource for the identity,
 the token request fails. If the token is allowed but billing is incomplete or
 quota is exhausted, the target API provider returns billing guidance.
 
@@ -100,7 +101,7 @@ export BUS_AUTH_INTERNAL_TOKEN_URL=http://127.0.0.1:8080/local-dev/v1/api/intern
 curl -fsS \
   -H 'Content-Type: application/json' \
   -H 'X-Bus-Internal-Key: not-a-secret-local-development-internal-key' \
-  -d '{"subject":"admin-user","scope":"waitlist:read waitlist:approve admin:manage"}' \
+  -d '{"subject":"admin-user","resources":"auth:waitlist:read auth:waitlist:approve"}' \
   "$BUS_AUTH_INTERNAL_TOKEN_URL" \
   | jq -r '.access_token' > ./local/admin-token
 ```
@@ -116,7 +117,7 @@ bus operator auth --api-url http://127.0.0.1:8080/local-dev/v1/modules/auth \
 After approval, request the AI Platform token:
 
 ```sh
-bus auth token --scope "llm:proxy"
+bus auth token --resources "llm:proxy"
 ```
 
 The token returned by this local compose flow is for the matching local API
@@ -131,7 +132,7 @@ The BusDK superproject root `compose.yaml` exposes the broader local AI
 Platform auth route at
 `http://127.0.0.1:${LOCAL_AI_PLATFORM_PORT:-8080}/api/v1/auth`. That stack
 shares the same MailHog-backed OTP flow and allows approved users to request
-the local feature scopes configured by `BUS_AUTH_API_USER_SCOPES`.
+the local feature resources configured by `BUS_AUTH_API_USER_RESOURCES`.
 
 Run `bus auth --help` for the full command reference. The
 help output is organized into Git-style sections covering name, synopsis,
