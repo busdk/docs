@@ -103,6 +103,27 @@
     - label: Purchasing and pricing
       url: /faq/purchasing-and-pricing
 
+- title: Bus Engine
+  links:
+    - label: Overview
+      url: /engine/
+    - label: Architecture
+      url: /engine/architecture
+    - label: Status and roadmap
+      url: /engine/status
+    - label: Software and source licensing
+      url: /engine/licensing
+    - label: FAQ
+      url: /engine/faq
+    - label: bus engine
+      url: /modules/bus-engine
+    - label: bus engine os
+      url: /modules/bus-engine-os
+    - label: bus integration engine
+      url: /modules/bus-integration-engine
+    - label: bus integration qemu
+      url: /modules/bus-integration-qemu
+
 - title: Modules
   links:
     - label: Modules overview

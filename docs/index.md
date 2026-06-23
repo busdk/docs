@@ -15,6 +15,7 @@ integration paths, and operating details. Product websites live at
 
 - [Module CLI reference](modules/index)
 - [Module capabilities](modules/features)
+- [Bus Engine](engine/index)
 - [Overview](overview/index)
 - [FAQ: what are `bus` and BusDK?](faq/index)
 - [Architecture](architecture/index)
@@ -85,6 +86,32 @@ usage, billing, and service hooks.
 - `bus integration billing` ([CLI](modules/bus-integration-billing))
 - `bus integration stripe` ([CLI](modules/bus-integration-stripe))
 - `bus integration usage` ([CLI](modules/bus-integration-usage))
+
+## Build and Maintain Linux Systems {#build-and-maintain-linux-systems}
+
+Use this section for Bus Engine, Bus Engine OS, Linux system blueprints,
+development images, artifacts, VM providers, kernel/package work, Codex App
+Server integration, target support, and release evidence.
+
+### Bus Engine
+
+- [Bus Engine overview](engine/index)
+- [Bus Engine architecture](engine/architecture)
+- [Bus Engine status and roadmap](engine/status)
+- [Bus Engine software and source licensing](engine/licensing)
+- [Bus Engine FAQ](engine/faq)
+
+### Engine modules
+
+- `bus engine` ([CLI](modules/bus-engine))
+- `bus api provider engine` ([CLI](modules/bus-api-provider-engine))
+- `bus integration engine` ([CLI](modules/bus-integration-engine))
+- `bus engine os` ([module reference](modules/bus-engine-os))
+- `bus artifacts` ([CLI](modules/bus-artifacts))
+- `bus api provider artifacts` ([CLI](modules/bus-api-provider-artifacts))
+- `bus integration artifacts` ([CLI](modules/bus-integration-artifacts))
+- `bus integration vm` ([CLI](modules/bus-integration-vm))
+- `bus integration qemu` ([CLI](modules/bus-integration-qemu))
 
 ## Work With Books and Finance {#follow-business-workflows}
 
