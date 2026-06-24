@@ -1,6 +1,6 @@
 ---
 title: "Bus Engine FAQ"
-description: Frequently asked questions about Bus Engine, Bus Engine OS, development preview status, Codex App Server, AI model fees, hardware targets, source delivery, and persistent storage.
+description: Frequently asked questions about Bus Engine, Bus Engine OS, development preview status, agent runtime, AI model fees, hardware targets, source delivery, and persistent storage.
 ---
 
 # Bus Engine FAQ
@@ -38,10 +38,9 @@ feedback.
 
 ## Is Bus Engine OS complete today?
 
-No. The current implementation includes Engine, artifact, VM, QEMU, Codex, and
-local-model integration surfaces. Native Bus Engine OS images, complete update
-and recovery workflows, and production release guarantees remain in active
-development.
+No. The current implementation includes Engine, artifact, VM, QEMU, and AI
+integration surfaces. Native Bus Engine OS images, complete update and recovery
+workflows, and production release guarantees remain in active development.
 
 ## Are AI model fees included?
 
@@ -50,11 +49,11 @@ plan explicitly says otherwise. Customers may use supported hosted providers or
 operate a compatible model inside their own infrastructure where the configured
 Bus services and policies support that deployment.
 
-## Does Bus Engine use REST to talk to Codex App Server?
+## Does Bus Engine use REST to talk to the agent runtime?
 
-No. Codex App Server uses bidirectional JSON-RPC 2.0. Bus Engine may expose its
-own HTTP APIs, but those APIs are Bus Engine APIs rather than the native Codex
-App Server protocol.
+No. [Codex App Server](https://github.com/openai/codex) uses bidirectional
+JSON-RPC 2.0. Bus Engine may expose its own HTTP APIs, but those APIs are Bus
+Engine APIs rather than the native App Server protocol.
 
 ## Can Bus Engine target physical hardware?
 
@@ -73,7 +72,7 @@ install only the modules required for that system.
 ## Is source code public?
 
 No public source-code publication is promised by default. Customer release areas
-should provide corresponding source to binary recipients for GPL, LGPL, MPL, and
+provide corresponding source to binary recipients for GPL, LGPL, MPL, and
 similar covered components at no extra charge, together with the notices and
 build materials required for the release.
 

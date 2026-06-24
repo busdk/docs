@@ -21,12 +21,11 @@ downloadable release includes GPL, LGPL, MPL, or similar covered binaries, the
 release process must provide the required corresponding source to those binary
 recipients through the same customer release area at no extra charge.
 
-The release process should avoid written source offers unless the operational
-obligations of that path have been deliberately accepted.
-
 ## Release materials
 
-A release area should be able to provide:
+A release area for GPL, LGPL, MPL, or similar covered binaries must provide the
+materials required for that release, or mark an item not applicable when the
+release does not contain that class of component:
 
 - binary artifacts;
 - checksums;

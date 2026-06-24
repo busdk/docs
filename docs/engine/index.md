@@ -39,8 +39,8 @@ The currently documented implementation includes:
 - Engine, artifact, VM, and QEMU integration workers for the local development
   runtime;
 - generic artifact catalog, fetch, verify, import, update, and mirror surfaces;
-- Codex and local-model integration modules that can participate in Bus-managed
-  AI execution paths.
+- hosted and local model integration modules that can participate in
+  Bus-managed AI execution paths.
 
 Bus Engine OS image production, complete update and recovery workflows,
 production support channels, and broader hardware validation remain active

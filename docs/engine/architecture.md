@@ -1,6 +1,6 @@
 ---
 title: "Bus Engine architecture"
-description: Bus Engine combines a Bus orchestration layer, Codex App Server, configured AI models, Linux tools, build environments, validation, blueprints, and evidence.
+description: Bus Engine combines a Bus orchestration layer, an agent runtime, configured AI models, Linux tools, build environments, validation, blueprints, and evidence.
 ---
 
 # Bus Engine architecture
@@ -13,9 +13,9 @@ Bus Engine UI / CLI / external API
         ↓
 Bus Engine orchestration, policy, and audit layer
         ↓
-Codex App Server adapter
+Agent runtime adapter
         ↓
-Codex App Server
+Agent runtime
         ↓
 Customer-selected hosted or local model provider
 
@@ -28,15 +28,21 @@ Boot and validation environment
 System blueprint and evidence
 ```
 
-Codex App Server is a separate open-source Codex agent-runtime component. Bus
-Engine supplies Linux-specific tools, system blueprints, policies, approval
-rules, inventory and inspection tools, kernel configuration tools, package and
-image builders, isolated build environments, boot and test environments,
-validation tools, logs, and evidence.
+Bus Engine currently integrates [Codex App Server](https://github.com/openai/codex)
+as a separate open-source agent-runtime component. Bus Engine supplies
+Linux-specific tools, system blueprints, policies, approval rules, inventory
+and inspection tools, kernel configuration tools, package and image builders,
+isolated build environments, boot and test environments, validation tools, logs,
+and evidence.
 
-Codex App Server uses bidirectional JSON-RPC 2.0. Bus Engine may expose its own
-HTTP APIs to user interfaces and external systems, but those APIs are not the
-native Codex App Server protocol.
+The orchestration layer invokes the Linux tools and passes their outputs back
+into the blueprint and evidence store. The agent runtime uses that evidence to
+plan the next change, while deterministic build and validation steps produce
+the artifacts and test results that the orchestration layer records.
+
+[Codex App Server](https://github.com/openai/codex) uses bidirectional JSON-RPC
+2.0. Bus Engine may expose its own HTTP APIs to user interfaces and external
+systems, but those APIs are not the native App Server protocol.
 
 ## Lifecycle
 
