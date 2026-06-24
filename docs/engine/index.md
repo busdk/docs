@@ -19,14 +19,39 @@ surfaces.
 
 ## Why Bus Engine?
 
-Use Bus Engine when the operating system itself must adapt to the workload, not
-merely host it. A conventional Linux virtual machine starts with a
-general-purpose distribution. Bus Engine maintains a versioned system blueprint
-that records kernel capabilities, packages, services, boot process, image
-construction, tests, and lifecycle policy.
+A general-purpose distribution gives a broad starting system. Bus Engine is for
+systems where the operating system itself has to be engineered around a
+workload: kernel capabilities, package definitions, services, boot files, image
+construction, update behavior, tests, and lifecycle policy.
 
-The virtualization layer provides the machine. Bus Engine provides the
-operating-system engineering lifecycle.
+In a conventional VM workflow, those decisions can drift into shell history,
+hand-edited files, package notes, and an image that becomes difficult to
+rebuild. Bus Engine keeps them in a versioned system blueprint that can be
+inspected, rebuilt, booted, tested, and revised. The virtualization layer
+provides the machine. Bus Engine provides the operating-system engineering
+lifecycle.
+
+## Example workflow
+
+A team may have an application that should become part of a small server image
+with one service, a private package, a specific kernel feature, and a boot test.
+Bus Engine is being built to support a workflow where the operator provides a
+source URL, target profile, and acceptance tests. The agent inspects the source
+and build files, determines package, service, and kernel requirements, updates
+the system blueprint, creates or changes package definitions, and asks
+deterministic tools to build the package, assemble the image, boot it, and run
+tests.
+
+Failed builds and failed boots feed back into the same loop. The agent reads
+logs and test evidence, changes the blueprint or package definition, and runs
+the controlled build again. The output is a maintained definition of how the OS
+is built and verified, plus the generated image and package artifacts.
+
+The same model applies to component fixes. When a component can legally be
+patched by the customer, Bus Engine is designed to carry that change in the
+blueprint, rebuild the affected package or image, and validate it without
+waiting for a general-purpose distribution to accept the change upstream.
+Upstreaming can still be the right long-term maintenance path.
 
 ## Current status
 

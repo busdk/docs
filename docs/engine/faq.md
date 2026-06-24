@@ -20,15 +20,38 @@ through Bus Engine. It is under active development and not yet production-ready.
 
 You can, and that is the right choice for many general-purpose systems.
 
-Bus Engine is intended for cases where installing Linux is only the beginning.
-It maintains a complete system blueprint covering the kernel, packages,
-services, boot process, image construction, tests, and lifecycle policy. Its
-integrated agent can investigate requirements, create and revise that blueprint,
-build the resulting system, diagnose failures, and maintain it as the workload
-and upstream components change.
+A general-purpose distribution gives a broad starting system. Bus Engine is
+intended for cases where the operating-system decisions are part of the product:
+kernel capabilities, package definitions, services, boot process, image
+construction, tests, update behavior, and lifecycle policy must be maintained
+together.
 
-The virtualization layer provides the machine. Bus Engine provides the
-operating-system engineering lifecycle.
+Its integrated agent can investigate requirements, create and revise the
+blueprint, build the resulting system, diagnose failures, and maintain it as the
+workload and upstream components change. The virtualization layer provides the
+machine. Bus Engine provides the operating-system engineering lifecycle.
+
+## Can Bus Engine package software from a source URL?
+
+That is a core workflow Bus Engine is being built to support. The intended flow
+is to provide a source URL, target profile, and acceptance tests. The agent
+inspects the source and build files, determines package, service, and kernel
+requirements, updates the system blueprint, creates or changes package
+definitions, and asks deterministic tools to build the package, assemble the
+image, boot it, and run tests.
+
+In the June 2026 development state, the Engine runtime control path, artifact
+catalog, local VM provider path, and QEMU integration are available. Native Bus
+Engine OS packaging, image generation, update, recovery, and the complete
+source-URL-to-system-build workflow remain active development work.
+
+## How does Bus Engine help with component fixes?
+
+When a component can legally be patched by the customer, Bus Engine is designed
+to carry that change in the system blueprint, rebuild the affected package or
+image, and validate it through the same boot and test evidence. That can let a
+team move on its own maintenance schedule while a fix is proposed upstream or
+carried as a customer-specific patch.
 
 ## What happens on 1 July 2026?
 
