@@ -1,31 +1,28 @@
 # bus-engine
 
 `bus engine` controls the managed local Linux Engine. The local profile starts a
-QEMU-backed Debian 12 guest through Bus API, Bus Events, the generic artifact
-integration, the VM integration, and the QEMU provider.
+QEMU-backed Bus Engine OS guest through Bus API, Bus Events, the generic
+artifact integration, the VM integration, and the QEMU provider.
 
-The Debian 12 Bookworm generic cloud image is part of the default Engine
-profile. Bus Engine also ships a default Debian record in
-`bus-engine/artifacts/catalog.json` for file-based catalog seeding. On first
-start, Engine asks the artifact integration to download the image from Debian
-and verify it against the Debian `SHA256SUMS` manifest. Bus Engine creates the
-default artifact catalog when the default profile starts and requests its
-configured image artifacts.
-
-Register a Bus kernel package when the selected Engine profile should use a
-custom kernel package that is not already in the artifact catalog. Prefer the
-built `linux-image-*_amd64.deb` package. The QEMU provider extracts
-`boot/vmlinuz-*` from that package into its runtime directory before starting
-the VM. The current default profile uses the `bus-engine-kernel-amd64` artifact
-id, so updating that catalog record changes the kernel package resolved for that
-profile.
+The default Engine profile references two Bus Engine OS artifact ids:
+`bus-engine-os-rootfs-aarch64` for the raw root disk and
+`bus-engine-os-kernel-aarch64` for the direct QEMU kernel image. Build those
+artifacts in `bus-engine-os`, then register the resulting files in the artifact
+catalog before starting the Engine.
 
 ```sh
-KERNEL_DEB=/path/to/linux-image-7.1.0_6_amd64.deb
-KERNEL_DIGEST="sha256:$(openssl dgst -sha256 -r "$KERNEL_DEB" | awk '{print $1}')"
+ENGINE_OS_ARTIFACTS=/path/to/bus-engine-os/build/lanes/bootstrap/images
+ROOTFS="$ENGINE_OS_ARTIFACTS/rootfs.raw"
+KERNEL="$ENGINE_OS_ARTIFACTS/Image"
+ROOTFS_DIGEST="sha256:$(openssl dgst -sha256 -r "$ROOTFS" | awk '{print $1}')"
+KERNEL_DIGEST="sha256:$(openssl dgst -sha256 -r "$KERNEL" | awk '{print $1}')"
 
-bus artifacts catalog set bus-engine-kernel-amd64 \
-  --handle "$KERNEL_DEB" \
+bus artifacts catalog set bus-engine-os-rootfs-aarch64 \
+  --handle "$ROOTFS" \
+  --digest "$ROOTFS_DIGEST"
+
+bus artifacts catalog set bus-engine-os-kernel-aarch64 \
+  --handle "$KERNEL" \
   --digest "$KERNEL_DIGEST"
 ```
 

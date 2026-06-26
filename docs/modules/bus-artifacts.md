@@ -12,11 +12,11 @@ records the local path rather than copying the artifact, so the file must remain
 accessible to later consumers.
 
 ```sh
-KERNEL_DEB=/path/to/linux-image-7.1.0_6_amd64.deb
-KERNEL_DIGEST="sha256:$(openssl dgst -sha256 -r "$KERNEL_DEB" | awk '{print $1}')"
+KERNEL=/path/to/bus-engine-os/build/lanes/bootstrap/images/Image
+KERNEL_DIGEST="sha256:$(openssl dgst -sha256 -r "$KERNEL" | awk '{print $1}')"
 
-bus artifacts catalog set bus-engine-kernel-amd64 \
-  --handle "$KERNEL_DEB" \
+bus artifacts catalog set bus-engine-os-kernel-aarch64 \
+  --handle "$KERNEL" \
   --digest "$KERNEL_DIGEST"
 ```
 
@@ -27,5 +27,5 @@ the artifact integration service.
 Confirm the record with:
 
 ```sh
-bus artifacts catalog inspect bus-engine-kernel-amd64
+bus artifacts catalog inspect bus-engine-os-kernel-aarch64
 ```
