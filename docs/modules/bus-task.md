@@ -13,7 +13,7 @@ services, and AI agents; the protocol itself is not strictly AI-related.
 Common commands:
 
 ```bash
-bus task start --profile codex-spark --model gpt-5.3-codex-spark --reasoning-effort high --sandbox write @bus-dev "Fix the scheduler"
+bus task start --profile <worker-profile> --sandbox write @bus-dev "Fix the scheduler"
 bus task new @support "Investigate this issue"
 bus task status --watch
 bus task monitor --format json
@@ -21,13 +21,17 @@ bus task say 1.1 "Use the shared storage API"
 bus task reopen --write-scope run/task.go 1.1 "Retry with this scope"
 ```
 
-Worker selection uses Bus-level names:
+Worker selection uses Bus-level names. Prefer environment-local worker
+templates in `bus workers` flows and environment-local profiles in `bus task`
+flows. Exact provider model spellings belong in the selected environment's
+worker template/profile config, not in reusable task prompts or operator
+briefs.
 
 - `--profile NAME` selects a non-secret worker profile from the selected
   remote or environment.
-- `--model MODEL` requests the provider/App Server model. Local names such as
-  `gpt-oss:120b` and hosted names such as `gpt-5.3-codex-spark` are accepted as
-  strings and interpreted by the selected backend/profile.
+- `--model MODEL` requests a provider/App Server model as a compatibility
+  override. Use it only when the selected environment intentionally exposes
+  that exact opaque model string.
 - `--reasoning-effort VALUE` requests model effort such as `high`.
 - `--sandbox read|write|full` selects the Bus worker sandbox. For Codex App
   Server, these map to Codex `read-only`, `workspace-write`, and
@@ -54,16 +58,17 @@ first-class worker-facing module/API contract that follows the normal Bus CLI
 and integration architecture. `bus-task` records assignment and claim
 references to those workers, but it does not own the worker identity lifecycle.
 
-### Codex Spark Workers
+### Codex App Server Workers
 
-For the common Spark-quota path, create a profile such as `codex-spark` in the
+For Codex App Server workers, create an environment-local profile in the
 selected remote by adding a non-secret `worker_profiles` entry to
 `.bus/remote/config.json` or the user `remote/config.json` read by
 [`bus remote`](./bus-remote). If one environment should prefer that profile by
 default, add `default_worker_profile` to the matching `environments` entry.
 Before using the profile, make sure the referenced credential label or source
 already exists on the worker host, for example the Codex ChatGPT subscription
-auth source behind `codex-chatgpt-subscription`:
+auth source behind `codex-chatgpt-subscription`. Use environment-specific
+placeholders here; do not copy provider model spellings between environments:
 
 ```json
 {
@@ -73,8 +78,8 @@ auth source behind `codex-chatgpt-subscription`:
       "kind": "bus-events",
       "url": "https://events.example.invalid",
       "worker_profiles": {
-        "codex-spark": {
-          "model": "gpt-5.3-codex-spark",
+        "codex-appserver-default": {
+          "model": "<environment-model-ref>",
           "reasoning_effort": "high",
           "auth_mode": "chatgpt-subscription",
           "credential_source": {
@@ -90,7 +95,7 @@ auth source behind `codex-chatgpt-subscription`:
       "id": "env-dev-hg-codex",
       "name": "dev-hg",
       "remote_id": "hosted-codex",
-      "default_worker_profile": "codex-spark"
+      "default_worker_profile": "codex-appserver-default"
     }
   ]
 }
@@ -102,7 +107,7 @@ boundary:
 
 ```bash
 bus task start --environment dev-hg @bus-dev "Implement the change"
-bus task start --profile codex-spark --model gpt-5.3-codex-spark --reasoning-effort high --sandbox full @bus-dev "Implement the change"
+bus task start --profile <worker-profile> --sandbox full @bus-dev "Implement the change"
 ```
 
 Then confirm the worker lane picked up the task and kept the Spark profile in
@@ -114,14 +119,14 @@ bus task monitor --format json
 ```
 
 For the common `dev-hg` SSH-Docker readiness check in this superproject, use
-the reusable operator-gated wrapper:
+the reusable operator-gated wrapper with an environment-local template id:
 
 ```bash
-scripts/test-ssh-docker-spark-smoke.sh
+scripts/test-ssh-docker-spark-smoke.sh --template <environment-template-id>
 ```
 
-The wrapper defaults to `codex-spark`, `gpt-5.3-codex-spark`,
-`chatgpt-subscription`, the pullable worker image
+The wrapper derives provider model settings from the selected worker template
+and otherwise uses `chatgpt-subscription`, the pullable worker image
 `ghcr.io/busdk/bus-integration-task:latest`, and a read-only prompt. Use
 `--image`, `--local-tag`, `--install-image`, or `--build-image` when the smoke
 should prove a specific local image or recover from remote registry pull
@@ -158,7 +163,7 @@ directly on the host through `BUS_DEV_WORKER_LAUNCHER` and
 `scripts/local-task-host-worker-launcher.sh` instead of depending on
 `docker compose run`. Its default backend is `self-test`, so it validates
 local worker claim and terminal flow deterministically before a real local
-Spark attempt with `gpt-5.3-codex-spark`.
+Codex App Server attempt with an environment-local worker template.
 
 In Codex terms, `--sandbox full` maps to `danger-full-access`; the Bus CLI uses
 the shorter worker-context name.

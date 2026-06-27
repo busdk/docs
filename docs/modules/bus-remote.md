@@ -107,13 +107,13 @@ non-secret worker selection metadata.
       "url": "https://events.example.invalid",
       "worker_defaults": {
         "agent_backend": "codex-appserver",
-        "model": "gpt-5.4",
+        "model": "<environment-model-ref>",
         "reasoning_effort": "high",
         "auth_mode": "chatgpt-subscription"
       },
       "worker_profiles": {
-        "codex-spark": {
-          "model": "gpt-5.3-codex-spark",
+        "codex-appserver-subscription": {
+          "model": "<environment-subscription-model-ref>",
           "reasoning_effort": "high",
           "auth_mode": "chatgpt-subscription",
           "credential_source": {
@@ -121,8 +121,8 @@ non-secret worker selection metadata.
             "ref": "codex-chatgpt-subscription"
           }
         },
-        "api-gpt-53": {
-          "model": "gpt-5.3-codex",
+        "codex-appserver-api": {
+          "model": "<environment-api-model-ref>",
           "reasoning_effort": "high",
           "auth_mode": "openai-api-key",
           "credential_source": {
@@ -149,10 +149,9 @@ Worker defaults and profiles let tools such as `bus task start`,
 `bus task status`, and related worker/supervisor flows select a local model
 worker, a ChatGPT subscription Codex worker, or an API-key Codex worker
 without hard-coding model names in higher-level task tooling. Model strings are
-opaque provider/App Server identifiers, so local profiles may use names like
-`gpt-oss:120b` or `gemma4:31b`, while hosted Codex profiles can use
-`gpt-5.3-codex-spark` or API model ids such as
-`gpt-5.3-codex`.
+opaque provider/App Server identifiers and may need exact environment-specific
+spelling, so reusable docs, scripts, and task briefs should reference the
+profile or worker template instead of copying raw model values.
 
 ### Using from `.bus` files
 
