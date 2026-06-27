@@ -6,24 +6,13 @@ artifact integration, the VM integration, and the QEMU provider.
 
 The default Engine profile references two Bus Engine OS artifact ids:
 `bus-engine-os-rootfs-aarch64` for the raw root disk and
-`bus-engine-os-kernel-aarch64` for the direct QEMU kernel image. Build those
-artifacts in `bus-engine-os`, then register the resulting files in the artifact
-catalog before starting the Engine.
+`bus-engine-os-kernel-aarch64` for the direct QEMU kernel image. Build and
+promote those artifacts through the delegated Bus Engine OS command before
+starting the Engine.
 
 ```sh
-ENGINE_OS_ARTIFACTS=/path/to/bus-engine-os/build/lanes/bootstrap/images
-ROOTFS="$ENGINE_OS_ARTIFACTS/rootfs.raw"
-KERNEL="$ENGINE_OS_ARTIFACTS/Image"
-ROOTFS_DIGEST="sha256:$(openssl dgst -sha256 -r "$ROOTFS" | awk '{print $1}')"
-KERNEL_DIGEST="sha256:$(openssl dgst -sha256 -r "$KERNEL" | awk '{print $1}')"
-
-bus artifacts catalog set bus-engine-os-rootfs-aarch64 \
-  --handle "$ROOTFS" \
-  --digest "$ROOTFS_DIGEST"
-
-bus artifacts catalog set bus-engine-os-kernel-aarch64 \
-  --handle "$KERNEL" \
-  --digest "$KERNEL_DIGEST"
+bus engine os build mvp --target-arch aarch64 --lane bootstrap
+bus engine os artifact promote-engine --target-arch aarch64 --lane bootstrap
 ```
 
 After local Bus services are running, for example with `bus services up`, the
