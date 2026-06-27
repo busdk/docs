@@ -11,7 +11,7 @@ promote those artifacts through the delegated Bus Engine OS command before
 starting the Engine.
 
 ```sh
-bus engine os build mvp --target-arch aarch64 --lane bootstrap
+bus engine os build image --target-arch aarch64 --lane bootstrap
 bus engine os artifact promote-engine --target-arch aarch64 --lane bootstrap
 ```
 
