@@ -29,20 +29,20 @@ bus engine os build packages openssl openssh
 List packages that are currently available to compile from source:
 
 ```sh
-bus engine os package available
-bus engine os package available --format json
+bus engine os packages
+bus engine os packages --format json
 ```
 
-List the complete recipe catalog, including planned recipe skeletons:
+List the complete recipe catalog, including planned package entries:
 
 ```sh
-bus engine os package recipes
+bus engine os packages --include-planned
 ```
 
 Inspect packages already installed in an assembled root filesystem:
 
 ```sh
-bus engine os package list --root <rootfs>
+bus engine os rootfs packages --root <rootfs>
 ```
 
 After an accepted image build, promote it to the local Bus Engine catalog and
@@ -189,23 +189,23 @@ Use the source-build availability command for the current package, version, and
 license list that is available to compile:
 
 ```sh
-bus engine os package available
-bus engine os package available --format json
+bus engine os packages
+bus engine os packages --format json
 ```
 
-The complete recipe catalog includes planned manifests that are not buildable
-yet. It prints availability status so automation can distinguish accepted
-source-build recipes from planned skeletons:
+The complete recipe catalog includes planned package entries that are not
+buildable yet. It prints availability status so automation can distinguish
+accepted source-build recipes from planned entries:
 
 ```sh
-bus engine os package recipes
-bus engine os package recipes --format json
+bus engine os packages --include-planned
+bus engine os packages --include-planned --format json
 ```
 
 Packages already installed into a built root filesystem are a separate view:
 
 ```sh
-bus engine os package list --root <rootfs>
+bus engine os rootfs packages --root <rootfs>
 ```
 
 ## Source And License Handling
