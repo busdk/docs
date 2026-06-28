@@ -31,6 +31,8 @@ List packages that are currently available to compile from source:
 ```sh
 bus engine os packages
 bus engine os packages --format json
+bus engine os packages --arch x86_64
+bus engine os packages --license GPL-3.0
 ```
 
 List the complete recipe catalog, including planned package entries:
@@ -201,6 +203,12 @@ accepted source-build recipes from planned entries:
 bus engine os packages --include-planned
 bus engine os packages --include-planned --format json
 ```
+
+Architecture variants are printed as separate rows, and filters include
+`noarch` package entries automatically. License filters match SPDX-style
+license ids inside compound expressions; for example, `--license GPL-3.0`
+matches a package declared as
+`MIT AND GPL-3.0-or-later`.
 
 Packages already installed into a built root filesystem are a separate view:
 
