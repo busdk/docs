@@ -63,7 +63,7 @@ After an accepted image build, promote it to the local Bus Engine catalog and
 start the runtime:
 
 ```sh
-bus engine os artifact promote-engine --workspace <workspace>
+bus engine os artifact promote-engine
 bus services up
 bus engine start
 bus engine status
@@ -184,13 +184,15 @@ An accepted image workspace contains a raw root disk and an architecture-specifi
 kernel image. Promote them into the local Bus Engine artifact catalog with:
 
 ```sh
-bus engine os artifact promote-engine --workspace <workspace>
+bus engine os artifact promote-engine
 ```
 
 The command copies stable local handles under `.bus/artifacts/`, calculates
 `sha256:` digests, and updates the local Bus artifact catalog records used by
-the Engine runtime. It selects the host architecture by default. Pass
-`--target-arch` only when promoting artifacts for another architecture.
+the Engine runtime. It selects the host architecture by default and can find
+the current accepted image workspace without an explicit workspace argument.
+Pass `--workspace <workspace>` only when promoting a specific build workspace.
+Pass `--target-arch` only when promoting artifacts for another architecture.
 
 The architecture-specific artifacts are:
 
