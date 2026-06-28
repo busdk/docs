@@ -34,6 +34,7 @@ bus engine os packages
 bus engine os packages --format json
 bus engine os packages --profile virtual-server
 bus engine os packages --arch x86_64
+bus engine os packages --missing-arch x86_64
 bus engine os packages --license GPL-3.0
 ```
 
@@ -222,6 +223,10 @@ Architecture variants are printed as separate rows, and filters include
 license ids inside compound expressions; for example, `--license GPL-3.0`
 matches a package declared as
 `MIT AND GPL-3.0-or-later`.
+
+Use `--missing-arch x86_64` to find package names that have a recipe for
+another architecture but no x86_64 or `noarch` recipe. This is useful when
+checking what remains to port before a profile can build on another target.
 
 Use `--arch all` or `--status all` when you only want to broaden one part of
 the default view. `--all` is the shortcut for both defaults; an explicit
