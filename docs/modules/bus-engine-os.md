@@ -1,26 +1,59 @@
 # bus-engine-os
 
-`bus-engine-os` builds Bus Engine OS images from source. It is the module that
-turns verified source manifests, package recipes, kernel configuration, image
-profiles, and validation rules into bootable Linux runtime artifacts for Bus
-Engine.
+`bus-engine-os` builds Bus Engine OS: the source-built Linux distribution used
+by Bus Engine runtime environments.
 
-The normal user path is intentionally short:
+The project is in active development. The accepted virtual-server image is
+built from verified source inputs, assembled from validated `.buspkg.tar.gz`
+package archives, and boot-tested in QEMU.
+
+## Quick Start
+
+Build an image:
 
 ```sh
 bus engine os build image
-bus engine os artifact promote-engine --workspace <workspace>
-bus services up
-bus engine start
-bus engine ssh
 ```
 
-The image command builds missing packages as part of the full image flow. Use
-the package command only when you are working on one package or a small package
-set:
+The command detects the host architecture and CPU count, creates an isolated
+build workspace, builds or restores required packages, assembles a root
+filesystem, creates QEMU image artifacts, and runs the image acceptance path.
+
+Use focused package builds only when you are working on one package or a small
+package set:
 
 ```sh
 bus engine os build packages openssl openssh
+```
+
+List packages that are currently available to compile from source:
+
+```sh
+bus engine os package available
+bus engine os package available --format json
+```
+
+List the complete recipe catalog, including planned recipe skeletons:
+
+```sh
+bus engine os package recipes
+```
+
+Inspect packages already installed in an assembled root filesystem:
+
+```sh
+bus engine os package list --root <rootfs>
+```
+
+After an accepted image build, promote it to the local Bus Engine catalog and
+start the runtime:
+
+```sh
+bus engine os artifact promote-engine --workspace <workspace>
+bus services up
+bus engine start
+bus engine status
+bus engine ssh
 ```
 
 ## Image Builds
@@ -152,12 +185,27 @@ Important runtime versions from that proof:
 | Bash | 5.3 with patch stream through `bash53-015` |
 | Readline | 8.3 with patch stream through `readline83-003` |
 
-Use the package recipe inventory command for the full current package/version
-list:
+Use the source-build availability command for the current package, version, and
+license list that is available to compile:
+
+```sh
+bus engine os package available
+bus engine os package available --format json
+```
+
+The complete recipe catalog includes planned manifests that are not buildable
+yet. It prints availability status so automation can distinguish accepted
+source-build recipes from planned skeletons:
 
 ```sh
 bus engine os package recipes
 bus engine os package recipes --format json
+```
+
+Packages already installed into a built root filesystem are a separate view:
+
+```sh
+bus engine os package list --root <rootfs>
 ```
 
 ## Source And License Handling
