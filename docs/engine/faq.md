@@ -14,7 +14,10 @@ lifecycle tooling needed to create and maintain custom Linux systems.
 ## What is Bus Engine OS?
 
 Bus Engine OS is the rolling Linux distribution being built and maintained
-through Bus Engine. It is under active development and not yet production-ready.
+through Bus Engine. Its accepted current profile is `virtual-server`, a minimal
+QEMU/KVM server image built from verified source inputs, assembled from
+validated Bus package archives, and boot-tested in QEMU. It is not yet a
+production-supported general-purpose distribution.
 
 ## Why not just install an ordinary Linux distribution in a virtual machine?
 
@@ -41,9 +44,10 @@ definitions, and asks deterministic tools to build the package, assemble the
 image, boot it, and run tests.
 
 In the June 2026 development state, the Engine runtime control path, artifact
-catalog, local VM provider path, and QEMU integration are available. Native Bus
-Engine OS packaging, image generation, update, recovery, and the complete
-source-URL-to-system-build workflow remain active development work.
+catalog, local VM provider path, QEMU integration, source-built package
+pipeline, virtual-server image generation, boot acceptance, and local artifact
+promotion are available. The complete source-URL-to-system-build workflow
+remains active development work.
 
 ## How does Bus Engine help with component fixes?
 
@@ -53,17 +57,21 @@ image, and validate it through the same boot and test evidence. That can let a
 team move on its own maintenance schedule while a fix is proposed upstream or
 carried as a customer-specific patch.
 
-## What happens on 1 July 2026?
+## How does preview access work?
 
-The public development preview is scheduled to begin on 1 July 2026. It starts
-a rolling pre-production development channel for technical evaluation and
-feedback.
+Preview users receive rolling pre-production development builds for technical
+evaluation and feedback. The preview binary lets evaluators use the Bus Engine
+OS tooling, while complete tested Linux distribution source access is limited
+to paid users under the applicable source-access terms.
 
 ## Is Bus Engine OS complete today?
 
-No. The current implementation includes Engine, artifact, VM, QEMU, and AI
-integration surfaces. Native Bus Engine OS images, complete update and recovery
-workflows, and production release guarantees remain in active development.
+It is complete enough for the accepted `virtual-server` development profile:
+the source-built package pipeline, package-built root filesystem, Linux kernel
+artifact, QEMU image artifacts, boot acceptance, OpenSSH startup, and local
+Engine SSH proof exist for that profile. Update, recovery, rollback, production
+release operations, production support guarantees, broader hardware validation,
+and the GUI profile remain development work.
 
 ## Are AI model fees included?
 
@@ -98,6 +106,11 @@ No public source-code publication is promised by default. Customer release areas
 provide corresponding source to binary recipients for GPL, LGPL, MPL, and
 similar covered components at no extra charge, together with the notices and
 build materials required for the release.
+
+The FSL-licensed preview binary tool can be used for evaluation and custom
+package/profile work. The complete tested Bus Engine OS Linux distribution
+source tree, including the accepted package catalog and profile source, is
+available to paid users under the applicable source-access terms.
 
 ## What does the 1 TB founder storage benefit include?
 

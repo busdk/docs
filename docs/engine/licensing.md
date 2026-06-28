@@ -67,7 +67,7 @@ terms must not restrict rights that the open-source component licenses preserve.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
-  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./status">Status and roadmap</a></span>
+  <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./os-configuration">Bus Engine OS configuration files</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Bus Engine</a></span>
   <span class="busdk-prev-next-item busdk-next"><a href="./faq">FAQ</a> &rarr;</span>
 </p>

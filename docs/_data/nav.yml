@@ -111,6 +111,8 @@
       url: /engine/architecture
     - label: Status and roadmap
       url: /engine/status
+    - label: Bus Engine OS configuration
+      url: /engine/os-configuration
     - label: Software and source licensing
       url: /engine/licensing
     - label: FAQ

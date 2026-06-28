@@ -10,8 +10,10 @@ build operations, isolated execution environments, validation workflows, and
 lifecycle tooling needed to create and maintain custom Linux systems.
 
 Bus Engine OS is the rolling Linux distribution being built and maintained
-through Bus Engine. It is under active development and is not yet a complete or
-production-ready Linux distribution.
+through Bus Engine. The accepted current profile is `virtual-server`, a
+source-built QEMU/KVM server image assembled from validated Bus packages and
+boot-tested in QEMU. Bus Engine OS remains a development-preview operating
+system, not a production-supported general-purpose distribution.
 
 Commercial product details live at [busdk.com/engine](https://busdk.com/engine/).
 This documentation describes the technical model, status boundaries, and module
@@ -64,25 +66,26 @@ The currently documented implementation includes:
 - Engine, artifact, VM, and QEMU integration workers for the local development
   runtime;
 - generic artifact catalog, fetch, verify, import, update, and mirror surfaces;
+- Bus Engine OS source package builds, rootfs assembly, virtual-server image
+  generation, QEMU boot acceptance, and local Engine artifact promotion;
 - hosted and local model integration modules that can participate in
   Bus-managed AI execution paths.
 
-Bus Engine OS image production, complete update and recovery workflows,
-production support channels, and broader hardware validation remain active
+Complete update and recovery workflows, rollback guarantees, production support
+channels, broader hardware validation, and GUI profile completion remain active
 development work.
 
 ## Development preview
 
-The public development preview is scheduled to begin on 1 July 2026. The first
-preview is a rolling pre-production development channel, not Bus Engine OS
-version 1.0 and not a complete distribution.
+The development preview is a rolling pre-production channel, not Bus Engine OS
+version 1.0 and not a complete production distribution.
 
 Example build labels use date-based development identifiers:
 
 | Field | Example |
 | --- | --- |
 | Product | Bus Engine OS Development |
-| Build | 2026.07.01 |
+| Build | 2026.07 |
 | Channel | development |
 | Status | pre-production |
 
@@ -90,6 +93,7 @@ Example build labels use date-based development identifiers:
 
 - [Architecture](./architecture)
 - [Status and roadmap](./status)
+- [Bus Engine OS configuration files](./os-configuration)
 - [Software and source licensing](./licensing)
 - [FAQ](./faq)
 - [bus-engine module reference](../modules/bus-engine)

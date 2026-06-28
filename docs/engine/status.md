@@ -5,9 +5,10 @@ description: Current Bus Engine implementation status, development-preview bound
 
 # Bus Engine status and roadmap
 
-Bus Engine OS is under active development. It is not yet a complete Linux
-distribution, production-ready product, generally available release, or
-production-SLA service.
+Bus Engine OS is under active development. The accepted `virtual-server`
+profile is available for technical evaluation, but Bus Engine OS is not yet a
+production-ready product, generally available release, or production-SLA
+service.
 
 ## Available now
 
@@ -21,22 +22,19 @@ Current repository evidence supports these capability labels:
 | Artifacts | `bus-artifacts`, `bus-api-provider-artifacts`, and `bus-integration-artifacts` document catalog, fetch, verify, import, update, and mirror behavior. |
 | VM provider path | `bus-integration-vm` and `bus-integration-qemu` document provider-neutral VM routing and local QEMU execution. |
 | AI integration modules | `bus-api-provider-llm`, `bus-integration-codex`, and `bus-integration-ollama` document hosted and local model integration surfaces. |
+| Bus Engine OS virtual-server image | `bus-engine-os` builds package archives, assembles the package-built root filesystem, produces QEMU artifacts, boots the accepted `virtual-server` image, and promotes local Engine artifacts. |
 
 ## In active development
 
-The active Bus Engine OS line covers source-built packages, package metadata,
-package archives, root filesystem assembly, kernel packaging, image generation,
-boot testing, update and recovery workflows, and release-material handling.
+The active Bus Engine OS line still covers update and recovery workflows,
+rollback guarantees, production release operations, persistent storage
+workflows, GUI profile completion, and release-material handling.
 
-The module has implemented many package recipes and source/license metadata
-reviews, but the complete native OS image pipeline is still unfinished.
+## Development preview channel
 
-## Planned for the public development preview
-
-The public development preview is scheduled to begin on 1 July 2026. Founding
-customers should expect rolling development builds, target-profile refinement,
-validation evidence, and feedback-driven changes as the Bus Engine OS pipeline
-matures.
+Preview users should expect rolling development builds, target-profile
+refinement, validation evidence, and feedback-driven changes as the Bus Engine
+OS pipeline matures.
 
 ## Planned later
 
@@ -58,6 +56,6 @@ arbitrary hardware.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./architecture">Architecture</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="./index">Bus Engine</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./licensing">Software and source licensing</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./os-configuration">Bus Engine OS configuration files</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->

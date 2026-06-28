@@ -3,9 +3,17 @@
 `bus-engine-os` builds Bus Engine OS: the source-built Linux distribution used
 by Bus Engine runtime environments.
 
-The project is in active development. The accepted virtual-server image is
-built from verified source inputs, assembled from validated `.buspkg.tar.gz`
-package archives, and boot-tested in QEMU.
+The FSL-licensed preview binary release is available for technical evaluation.
+It can inspect package recipes, validate source manifests, build package
+archives, assemble root filesystems, build the accepted `virtual-server` image
+path, and promote accepted artifacts into a local Bus Engine runtime. The
+complete tested Bus Engine OS Linux distribution source tree, including the
+accepted package catalog and profile source used for supported builds, is
+available to paid users under the applicable source-access terms.
+
+The accepted `virtual-server` image is built from verified source inputs,
+assembled from validated `.buspkg.tar.gz` package archives, and boot-tested in
+QEMU.
 
 ## Quick Start
 
@@ -114,6 +122,33 @@ bus engine os build packages openssl openssh
 bus engine os build packages --profile virtual-gui wayland-protocols libxkbcommon
 ```
 
+The lower-level package command can build one recipe directory directly. This
+is useful when you are creating or debugging your own package tree with the
+preview binary:
+
+```sh
+bus engine os package build \
+  --recipe packages/hello \
+  --sources-cache build/sources \
+  --work build/work/hello \
+  --out-dir build/packages
+```
+
+Use `package validate`, `package inspect`, `package cleanup-audit`, and
+`package repro` to check archives before installing them into a root filesystem:
+
+```sh
+bus engine os package validate build/packages/hello-1.0.0-1.x86_64.buspkg.tar.gz
+bus engine os package inspect build/packages/hello-1.0.0-1.x86_64.buspkg.tar.gz
+bus engine os package cleanup-audit build/packages/hello-1.0.0-1.x86_64.buspkg.tar.gz
+```
+
+The package recipe, source manifest, and profile formats are documented in
+[Bus Engine OS configuration files](../engine/os-configuration). That page
+explains `package.yml`, source manifests, profile JSON, variant recipes,
+dependency fields, and how a preview binary user can build a custom package
+tree without access to the complete tested Bus Engine OS distribution source.
+
 ## Profiles
 
 Image profiles live under `config/profiles/`. A profile selects the target
@@ -133,6 +168,15 @@ bus engine os profile lock --profile virtual-server --check config/profiles/virt
 `virtual-server` is the accepted minimal server profile. `virtual-gui` is an
 additive GUI profile under development; it must not change the accepted
 `virtual-server` package set.
+
+The accepted `virtual-server` profile is the right starting point for server
+systems. Create a new profile only when the target system needs a different
+kernel configuration, package group, service expectation, or acceptance policy.
+Keep GUI work in an additive profile such as `gui-wayfire` so it cannot alter
+the accepted server package set accidentally.
+
+For a step-by-step custom root filesystem example, see
+[Building a custom root filesystem](../engine/os-configuration#building-a-custom-root-filesystem).
 
 ## Promoting Artifacts
 
