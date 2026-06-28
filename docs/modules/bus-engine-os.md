@@ -26,19 +26,22 @@ package set:
 bus engine os build packages openssl openssh
 ```
 
-List packages that are currently available to compile from source:
+List packages that are currently available to compile from source for the
+current host architecture:
 
 ```sh
 bus engine os packages
 bus engine os packages --format json
+bus engine os packages --profile virtual-server
 bus engine os packages --arch x86_64
 bus engine os packages --license GPL-3.0
 ```
 
-List the complete recipe catalog, including planned package entries:
+List the complete recipe catalog, including all architectures and planned
+package entries:
 
 ```sh
-bus engine os packages --include-planned
+bus engine os packages --all
 ```
 
 Inspect packages already installed in an assembled root filesystem:
@@ -188,20 +191,30 @@ Important runtime versions from that proof:
 | Readline | 8.3 with patch stream through `readline83-003` |
 
 Use the source-build availability command for the current package, version, and
-license list that is available to compile:
+license list that is available to compile for the current host architecture:
 
 ```sh
 bus engine os packages
 bus engine os packages --format json
 ```
 
-The complete recipe catalog includes planned package entries that are not
-buildable yet. It prints availability status so automation can distinguish
-accepted source-build recipes from planned entries:
+Filter by image profile when you want the package set for one target without
+other feature sets. For example, this lists the selected `virtual-server`
+source packages without `gui-wayfire` additions:
 
 ```sh
-bus engine os packages --include-planned
-bus engine os packages --include-planned --format json
+bus engine os packages --profile virtual-server
+bus engine os packages --profile virtual-server --format json
+```
+
+The complete recipe catalog includes planned package entries that are not
+buildable yet and every declared architecture variant. It prints availability
+status so automation can distinguish accepted source-build recipes from planned
+entries:
+
+```sh
+bus engine os packages --all
+bus engine os packages --all --format json
 ```
 
 Architecture variants are printed as separate rows, and filters include
@@ -209,6 +222,10 @@ Architecture variants are printed as separate rows, and filters include
 license ids inside compound expressions; for example, `--license GPL-3.0`
 matches a package declared as
 `MIT AND GPL-3.0-or-later`.
+
+Use `--arch all` or `--status all` when you only want to broaden one part of
+the default view. `--all` is the shortcut for both defaults; an explicit
+`--arch` or `--status` narrows that dimension again.
 
 Packages already installed into a built root filesystem are a separate view:
 
