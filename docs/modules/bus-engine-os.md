@@ -111,7 +111,7 @@ Examples:
 ```sh
 bus engine os build packages openssl
 bus engine os build packages openssl openssh
-bus engine os build packages --profile gui-wayfire wayland-protocols libxkbcommon
+bus engine os build packages --profile virtual-gui wayland-protocols libxkbcommon
 ```
 
 ## Profiles
@@ -126,11 +126,11 @@ Useful profile commands:
 ```sh
 bus engine os profile list
 bus engine os profile resolve --profile virtual-server
-bus engine os profile diff --left virtual-server --right gui-wayfire
+bus engine os profile diff --left virtual-server --right virtual-gui
 bus engine os profile lock --profile virtual-server --check config/profiles/virtual-server.lock.json
 ```
 
-`virtual-server` is the accepted minimal server profile. `gui-wayfire` is an
+`virtual-server` is the accepted minimal server profile. `virtual-gui` is an
 additive GUI profile under development; it must not change the accepted
 `virtual-server` package set.
 
@@ -201,7 +201,7 @@ bus engine os packages --format json
 
 Filter by image profile when you want the package set for one target without
 other feature sets. For example, this lists the selected `virtual-server`
-source packages without `gui-wayfire` additions:
+source packages without `virtual-gui` additions:
 
 ```sh
 bus engine os packages --profile virtual-server
