@@ -45,7 +45,7 @@ selected workspace. Failed builds print the full log path. The common image log
 is:
 
 ```text
-build/lanes/<workspace>/logs/image-build.log
+build/workspaces/<workspace>/logs/image-build.log
 ```
 
 Use a generated workspace for normal builds. Reuse `--workspace` when you want
@@ -152,6 +152,14 @@ Important runtime versions from that proof:
 | Bash | 5.3 with patch stream through `bash53-015` |
 | Readline | 8.3 with patch stream through `readline83-003` |
 
+Use the package recipe inventory command for the full current package/version
+list:
+
+```sh
+bus engine os package recipes
+bus engine os package recipes --format json
+```
+
 ## Source And License Handling
 
 Bus Engine OS builds from declared source manifests and package recipes.
@@ -169,14 +177,14 @@ Build outputs are generated under `build/` and are not committed. Important
 outputs from an accepted image workspace include:
 
 ```text
-build/lanes/<workspace>/images/rootfs.raw
-build/lanes/<workspace>/images/rootfs.tar.gz
-build/lanes/<workspace>/images/Image
-build/lanes/<workspace>/images/bzImage
-build/lanes/<workspace>/images/qemu-artifacts.json
-build/lanes/<workspace>/images/build-provenance.json
-build/lanes/<workspace>/images/image-acceptance.json
-build/lanes/<workspace>/logs/qemu-serial.log
+build/workspaces/<workspace>/images/rootfs.raw
+build/workspaces/<workspace>/images/rootfs.tar.gz
+build/workspaces/<workspace>/images/Image
+build/workspaces/<workspace>/images/bzImage
+build/workspaces/<workspace>/images/qemu-artifacts.json
+build/workspaces/<workspace>/images/build-provenance.json
+build/workspaces/<workspace>/images/image-acceptance.json
+build/workspaces/<workspace>/logs/qemu-serial.log
 ```
 
 Only one of `Image` or `bzImage` is expected for a single architecture-specific
