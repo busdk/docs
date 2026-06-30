@@ -284,6 +284,30 @@ Packages already installed into a built root filesystem are a separate view:
 bus engine os rootfs packages --root <rootfs>
 ```
 
+## Browser Lab Static Output
+
+Use `artifact browser-lab` to write a publishable static directory for a
+browser-hosted Bus Engine OS preview:
+
+```sh
+bus engine os artifact browser-lab \
+  --out ./public/engine/browser-lab \
+  --qemu-artifact-dir ./qemu-wasm-artifacts \
+  --qemu-source-dir ../../qemu \
+  --firmware-dir ../../qemu/pc-bios \
+  --kernel ./build/workspaces/<workspace>/images/bzImage \
+  --rootfs ./build/workspaces/<workspace>/images/rootfs.raw \
+  --source-manifest manifests/source-baseline-2026.06/sources.yml \
+  --patch-manifest manifests/source-baseline-2026.06/patches.yml \
+  --package-manifest packages/linux/package.yml
+```
+
+Release automation should pass every shipped package manifest with
+`--package-manifest`. The output includes the QEMU WebAssembly runtime files,
+firmware, Bus Engine OS kernel and root filesystem, generated `index.html`,
+`browser-lab-manifest.json`, `SHA256SUMS`, license indexes, notices, and
+required source materials.
+
 ## Source And License Handling
 
 Bus Engine OS builds from declared source manifests and package recipes.
@@ -295,9 +319,8 @@ Package manifests must declare license metadata before package archives can be
 accepted. The authoritative license text for third-party components remains the
 upstream package license text distributed with the corresponding source.
 
-Before publishing a static Bus Engine OS or Browser Lab directory, generate the
-release license files and required source-material payloads into that same
-directory:
+If the runtime files are already present and you only need to refresh licensing
+output, use `artifact license-bundle`:
 
 ```sh
 bus engine os artifact license-bundle \
