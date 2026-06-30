@@ -295,6 +295,25 @@ Package manifests must declare license metadata before package archives can be
 accepted. The authoritative license text for third-party components remains the
 upstream package license text distributed with the corresponding source.
 
+Before publishing a static Bus Engine OS or Browser Lab directory, generate the
+release license files and required source-material payloads into that same
+directory:
+
+```sh
+bus engine os artifact license-bundle \
+  --out ./public/engine/browser-lab \
+  --sources-cache build/sources \
+  --qemu-source-dir ../../qemu
+```
+
+The command writes `LICENSES.txt`, `THIRD-PARTY-NOTICES.txt`,
+`SOURCE-MATERIALS.txt`, `licenses.json`, and `source-materials/`.
+`source-materials/sources/` contains only source archives and patch files for
+shipped package recipes whose recorded licenses require source delivery. QEMU
+source materials are included when `--qemu-source-dir` is used for a QEMU/WASM
+release. Permissive shipped packages remain listed in the license and notice
+indexes, but their source archives are not copied.
+
 ## Generated Outputs
 
 Build outputs are generated under `build/` and are not committed. Important
