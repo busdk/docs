@@ -119,7 +119,7 @@ Examples:
 ```sh
 bus engine os build packages openssl
 bus engine os build packages openssl openssh
-bus engine os build packages --profile virtual-gui wayland-protocols libxkbcommon
+bus engine os build packages --profile virtual-desktop wayland-protocols libxkbcommon
 ```
 
 The lower-level package command can build one recipe directory directly. This
@@ -161,19 +161,19 @@ Useful profile commands:
 ```sh
 bus engine os profile list
 bus engine os profile resolve --profile virtual-server
-bus engine os profile diff --left virtual-server --right virtual-gui
+bus engine os profile diff --left virtual-server --right virtual-desktop
 bus engine os profile lock --profile virtual-server --check config/profiles/virtual-server.lock.json
 ```
 
-`virtual-server` is the accepted minimal server profile. `virtual-gui` is an
-additive GUI profile under development; it must not change the accepted
+`virtual-server` is the accepted minimal server profile. `virtual-desktop` is
+an additive desktop profile under development; it must not change the accepted
 `virtual-server` package set.
 
 The accepted `virtual-server` profile is the right starting point for server
 systems. Create a new profile only when the target system needs a different
 kernel configuration, package group, service expectation, or acceptance policy.
-Keep GUI work in an additive profile such as `gui-wayfire` so it cannot alter
-the accepted server package set accidentally.
+Keep desktop work in an additive profile such as `virtual-desktop` so it
+cannot alter the accepted server package set accidentally.
 
 For a step-by-step custom root filesystem example, see
 [Building a custom root filesystem](../engine/os-configuration#building-a-custom-root-filesystem).
@@ -247,7 +247,7 @@ bus engine os packages --format json
 
 Filter by image profile when you want the package set for one target without
 other feature sets. For example, this lists the selected `virtual-server`
-source packages without `virtual-gui` additions:
+source packages without `virtual-desktop` additions:
 
 ```sh
 bus engine os packages --profile virtual-server
@@ -309,10 +309,13 @@ bus engine os artifact license-bundle \
 The command writes `LICENSES.txt`, `THIRD-PARTY-NOTICES.txt`,
 `SOURCE-MATERIALS.txt`, `licenses.json`, and `source-materials/`.
 `source-materials/sources/` contains only source archives and patch files for
-shipped package recipes whose recorded licenses require source delivery. QEMU
-source materials are included when `--qemu-source-dir` is used for a QEMU/WASM
-release. Permissive shipped packages remain listed in the license and notice
-indexes, but their source archives are not copied.
+shipped package recipes whose effective recorded license expression requires
+source delivery. Dual-license expressions with a non-copyleft option do not
+copy source archives unless another required license term still creates a
+source-delivery obligation. QEMU source materials are included when
+`--qemu-source-dir` is used for a QEMU/WASM release. Permissive shipped
+packages remain listed in the license and notice indexes, but their source
+archives are not copied.
 
 ## Generated Outputs
 
