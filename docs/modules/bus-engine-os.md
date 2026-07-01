@@ -284,14 +284,14 @@ Packages already installed into a built root filesystem are a separate view:
 bus engine os rootfs packages --root <rootfs>
 ```
 
-## Browser Lab Static Output
+## Browser-Hosted Static Output
 
-Use `artifact browser-lab` to write a publishable static directory for a
+Use `artifact browser-hosted` to write a publishable static directory for a
 browser-hosted Bus Engine OS preview:
 
 ```sh
-bus engine os artifact browser-lab \
-  --out ./public/engine/browser-lab \
+bus engine os artifact browser-hosted \
+  --out ./public/engine/browser-hosted \
   --qemu-artifact-dir ./qemu-wasm-artifacts \
   --qemu-source-dir ../../qemu \
   --firmware-dir ../../qemu/pc-bios \
@@ -305,7 +305,7 @@ bus engine os artifact browser-lab \
 Release automation should pass every shipped package manifest with
 `--package-manifest`. The output includes the QEMU WebAssembly runtime files,
 firmware, Bus Engine OS kernel and root filesystem, generated `index.html`,
-`browser-lab-manifest.json`, `SHA256SUMS`, license indexes, notices, and
+`browser-hosted-manifest.json`, `SHA256SUMS`, license indexes, notices, and
 required source materials.
 
 ## Source And License Handling
@@ -324,7 +324,7 @@ output, use `artifact license-bundle`:
 
 ```sh
 bus engine os artifact license-bundle \
-  --out ./public/engine/browser-lab \
+  --out ./public/engine/browser-hosted \
   --sources-cache build/sources \
   --qemu-source-dir ../../qemu
 ```
