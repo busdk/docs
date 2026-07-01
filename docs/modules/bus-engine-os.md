@@ -98,6 +98,13 @@ build/workspaces/<workspace>/logs/image-build.log
 Use a generated workspace for normal builds. Reuse `--workspace` when you want
 to resume or inspect a named workspace.
 
+For browser-hosted QEMU acceptance runs, add `bus_engine_os.heartbeat=1` to the
+kernel command line when you need fast stuck-boot diagnostics. The opt-in
+heartbeat emits `bus-engine-os-heartbeat:` serial markers until
+`multi-user.target` is active. The QEMU browser harness records those markers
+as guest liveness, but still fails boot-progress idle checks against the last
+non-heartbeat guest line.
+
 ## Package Builds
 
 Package builds produce deterministic `.buspkg.tar.gz` archives. A package
