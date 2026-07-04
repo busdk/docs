@@ -19,4 +19,5 @@ so it is discoverable and reused instead of re-researched.
 ## Index
 
 <!-- Add one line per note: - [Title](file.md) - one-line hook -->
-_(none yet)_
+- [WASM alignment & atomics](wasm-alignment-and-atomics.md) - plain loads/stores never trap on misalignment; WASM atomics require natural alignment and trap otherwise (= V8 'unaligned accesses' error)
+- [RISC-V64 atomics & alignment](riscv64-atomics-alignment.md) - RV64 A-ext atomics require natural alignment; only aligned guest atomics are safe to lower to WASM atomics, else fall back
