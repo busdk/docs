@@ -127,3 +127,34 @@ atomics). The rules above give a clean split:
 - Remember atomics do not require shared memory, so the trap we hit is an **alignment** trap, not a
   sharedness one; adding shared memory does not fix a misaligned-atomic trap. The alignment fallback
   is the actual fix.
+
+## Misapplication warning (added 2026-07-05, from a real debugging mistake)
+
+The findings above are correct but were MISAPPLIED once; do not repeat it.
+
+What happened: seeing V8's "operation does not support unaligned accesses"
+during live generated execution, we concluded "our generated (JIT-emitted)
+WASM must be emitting a trapping atomic for a guest atomic" and spent two
+failed fixes guarding generated-body atomic emission - which DOES NOT EXIST
+(the wasm64 generated-body validator rejects atomic memops outright, and the
+emitter produces only plain loads/stores).
+
+The actual lesson: this trap can originate in ANY WebAssembly code in the
+page, including the STATIC main module compiled by emscripten - C-level
+`qatomic_*` / `_Atomic` / `__atomic_*` builtins are lowered to WASM atomics,
+so ordinary C code trips this trap when its pointer is unaligned.
+
+Before attributing this error, check in order:
+1. The FUNCTION INDEX in the stack trace. A stable index across runs (e.g.
+   `wasm-function[1403]` of qemu-system-riscv64.wasm every time) is a STATIC
+   function of that module - i.e. compiled C - NOT a dynamically created
+   `WebAssembly.Module`. Generated/JIT modules are separate instances and
+   cannot appear as a stable index of the main binary.
+2. Whether the suspected emitter CAN produce the op at all: inventory the
+   emission/validation code first (grep the validator + emitter); do not fix
+   an emission path you have not proven exists.
+3. Symbolize (names/profiling-funcs build) to get the C symbol before
+   patching anything.
+
+Rule of thumb: "only atomics trap on misalignment" identifies WHAT trapped,
+never WHOSE code trapped. Attribution requires the index/symbol evidence.
