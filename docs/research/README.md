@@ -26,3 +26,4 @@ so it is discoverable and reused instead of re-researched.
 - [VM snapshot entropy reseed](vm-snapshot-entropy-reseed.md) - local kernel, QEMU, and systemd evidence for virtio-rng, random-seed hygiene, and every-resume entropy gates
 - [Bus Worker capabilities (task-11926d75e393)](bus-worker-capabilities.md) - thread tool availability, shell/web goal/MCP capabilities, and qemu.org web-access verdict
 - [wasm-store-commit-strategies.md](wasm-store-commit-strategies.md) - threads memory-model ground truth for the store-commit design: unaligned atomics trap normatively; fences publish nothing to plain readers; hybrid alignment-checked plain-store + helper + seqcst doorbell recommended (2026-07-05)
+- [Claude-backed Bus Workers backend options](claude-worker-backend.md) - no `claude app-server` exists; Agent SDK vs persistent stream-json stdio vs ModelProvider mapping, Codex concept table, auth policy, and the three integration shapes (2026-07-06)
