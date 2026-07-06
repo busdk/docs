@@ -46,3 +46,20 @@ The current architecture direction is:
 The first direct `bus-worker` binary can create/list/show workers, create/list/show
 groups, and print registered status snapshots. Live active-work telemetry and
 worker-home provisioning remain planned follow-up work.
+
+## Worker Template Summaries
+
+Worker identity templates live in the environment catalog at
+`.bus/worker/templates.json`. Each template should include a short `summary`
+for quick selection and a longer `description` for operator guidance. Operators
+should discover template ids with `bus workers template list` and inspect one
+template with `bus workers template show <template-ref>` instead of guessing
+provider model ids or composing ad hoc profile names.
+
+For deep research, treat the profile as a workflow rather than a separate
+template id: use `claude-fable-5` as the lead/synthesis worker, use
+`claude-haiku-4-5` for parallel extraction and log/source triage, use
+`claude-sonnet-5` or `codex-55` for implementation follow-through, and use
+`codex-55-high` or `claude-opus-4-8` for hard review. The source-backed
+rationale is recorded in
+[`worker-template-model-selection`](../research/worker-template-model-selection).
