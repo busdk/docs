@@ -11,13 +11,6 @@ that were used when those entries were completed.
 
 ## Current Goal: Bus Engine Product Documentation
 
-- [x] Add public Bus Engine documentation that explains Bus Engine, Bus Engine
-      OS, the development-preview status, Codex App Server integration,
-      deterministic build boundaries, target support, licensing/source delivery,
-      and implementation evidence without using commercial landing-page copy.
-- [x] Add Bus Engine to the documentation homepage and sidebar with valid links
-      to product-level docs and existing module references.
-
 ## Current Goal: Codex Fork / Bus Agent Runtime Parity
 
 `docs/docs/goals/codex-fork.md` owns the public cross-module goal for the
