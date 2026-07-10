@@ -142,6 +142,8 @@
       url: /modules/bus-init
     - label: bus config
       url: /modules/bus-config
+    - label: bus configure
+      url: /modules/bus-configure
     - label: bus data
       url: /modules/bus-data
     - label: bus api

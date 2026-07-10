@@ -53,6 +53,43 @@ execution of nested child binaries.
 
 That same rule applies to BusDK installer and package-manager flows. `bus update ...` and `bus update package ...` both delegate to `bus-update`; the dispatcher does not embed package download, package database, or installer logic itself. In a bootstrap-installed setup, this keeps `bus` as the stable entrypoint while `bus-update` handles release checks, managed executable packages, and bootstrap-root behavior.
 
+### Choose a default workspace with `BUS_PWD`
+
+Set `BUS_PWD` when you regularly launch `bus` from a parent directory but want
+commands to use a nested BusDK workspace. For example, run this once from a
+supervisor repository before a redirect is active:
+
+```bash
+bus configure BUS_PWD=projects/busdk
+```
+
+The [`bus configure`](./bus-configure) command writes `BUS_PWD` to the current
+directory's `.env`. On later invocations, the dispatcher resolves a relative
+value from that launch directory, changes into the selected workspace, loads
+the selected workspace's `.env`, and starts the module command there. Relative
+files such as `services.yml`, `datapackage.json`, and `.bus/` therefore come from
+`projects/busdk` in this example.
+
+Only `BUS_PWD` is bootstrapped from the launch directory's `.env`. Other dotenv
+values come from the selected workspace. A process environment value for
+`BUS_PWD` takes precedence over the launch-directory value. The dispatcher
+passes absolute `BUS_PWD` and `PWD` values to child commands so nested `bus`
+invocations remain in the selected workspace.
+
+Once a redirect is active, an ordinary `bus configure` command runs in the
+selected workspace and edits that workspace's `.env`. Use the dispatcher-global
+`--no-chdir` flag when you need to inspect or change the launch directory
+instead:
+
+```bash
+bus --no-chdir configure BUS_PWD
+bus --no-chdir configure BUS_PWD=projects/busdk
+```
+
+`--no-chdir` must appear before the module name because it is a dispatcher
+flag. An explicit `-C <dir>` or `--chdir <dir>` also overrides `BUS_PWD` for one
+invocation and selects that directory's `.env`.
+
 ### Busfile mode
 
 A path is treated as a busfile when:
