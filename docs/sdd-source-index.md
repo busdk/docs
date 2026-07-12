@@ -7,14 +7,23 @@ notes modules, naming, or private/public coupling.
 Primary SDD sources live in the BusDK superproject under `sdd/docs/`. Read that
 tree for cross-module and product-boundary decisions.
 
+Cross-module architecture starts at
+`sdd/docs/architecture/architecture-decision-register.md` and then continues at
+`sdd/docs/modules/<module>.md` for each owning module. These are private SDD
+source paths, not public-site links. Public goal pages and historical reports
+preserve context and evidence; they do not supersede an accepted SDD decision
+or prove current implementation status.
+
 Some modules also own local SDD trees under `<module>/sdd/docs/`. Read a
 module-local SDD when the change is confined to that module's public behavior,
 runtime contract, or migration plan.
 
 For public documentation changes, also read `docs/AGENTS.md` and
 `skills/bus-docs-quality/SKILL.md`. If stable architecture exists only in agent
-guidance, record an SDD-recipient follow-up instead of expanding root
-`AGENTS.md`.
+guidance, record the missing contract in the owning module `PLAN.md` or a Bus
+Thread addressed to the owning SDD module, then update the private SDD before
+implementation. Do not expand root `AGENTS.md` with a second copy of the
+product contract.
 
 Before adding cross-cutting platform behavior, prefer the existing lower-level
 owner over duplicating platform features in product modules. Check whether Bus
