@@ -108,8 +108,10 @@ For Bus Worker operators, "deep research" is a workflow profile rather than a
 single runnable template id. Use this split unless a task is small enough for
 one worker:
 
-1. Lead/synthesis: create one `claude-fable-5` worker. It owns the research
-   question, source quality, final findings, and "how this applies to us".
+1. Lead/synthesis: select the owner from the current risk-domain
+   recommendation. The dated local audit establishes no single generic
+   deep-research default; Fable remains evidenced for architecture,
+   supply-chain, exact-byte, and specification review.
 2. Extraction: use `claude-haiku-4-5` workers for parallel source extraction,
    log summarization, and quote/evidence collection. Because Haiku cannot
    solely own a required evidence gate (see above), any extraction result
@@ -171,6 +173,7 @@ above rather than the vendor-reported defaults.
 
 Misapplication warning: do not create a new template id such as
 `claude-deep-research` unless the corresponding worker identity repo and
-runtime policy exist. Until then, deep research is an operator workflow that
-usually starts with `claude-fable-5` and fans out to cheaper extraction
-lanes, subject to the Haiku evidence-gate restriction above.
+runtime policy exist. Until then, deep research is an operator workflow whose
+synthesis owner is selected from the current risk-domain recommendation and
+which fans out to cheaper extraction lanes, subject to the Haiku evidence-gate
+restriction above.
