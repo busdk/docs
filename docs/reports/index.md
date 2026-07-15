@@ -10,6 +10,11 @@ retrospectives, and follow-up work. Reports are written for readers who need to
 understand what changed, what was validated, what remains risky, and what the
 project learned from the work.
 
+[Bus worker model performance, June–July 2026](./2026-07-15-bus-worker-model-performance)
+evaluates each observed model and reasoning setting by work type, records the
+evidence behind its outcomes, assigns confidence to every conclusion, and
+identifies model relays that completed work more reliably than one worker alone.
+
 [Development retrospective for 2026-05-20 to 2026-05-27](./2026-05-20-27-development-retrospective)
 reviews remote worker environments, GPU worker environments, task automation,
 service readiness, and release-preparation work from the last development week.
@@ -31,7 +36,7 @@ to the existing AI chat module under subscription and usage limits.
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="../testing/index">Testing</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./2026-05-20-27-development-retrospective">Development retrospective, 2026-05-20 to 2026-05-27</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./2026-07-15-bus-worker-model-performance">Bus worker model performance, June–July 2026</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

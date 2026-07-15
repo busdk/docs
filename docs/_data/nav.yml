@@ -68,6 +68,8 @@
   links:
     - label: Project reports
       url: /reports/
+    - label: Bus worker model performance, June–July 2026
+      url: /reports/2026-07-15-bus-worker-model-performance
     - label: Development retrospective, 2026-05-20 to 2026-05-27
       url: /reports/2026-05-20-27-development-retrospective
     - label: AI Product Stack Setup feature gaps
