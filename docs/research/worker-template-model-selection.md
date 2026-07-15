@@ -31,11 +31,15 @@ universal model ranking.
   for difficult, review-driven implementation reaching push/pin/install/
   live-smoke outcomes. First green candidates still require independent
   review before acceptance.
-- **Bounded/mechanical implementation:** GPT-5.3 Codex Spark, GPT-5.4 Mini,
-  GPT-5.5 at medium reasoning, and Claude Sonnet 5 — useful only when the task
-  and acceptance gate are narrowly frozen, and only paired with independent
-  review as a required part of the configuration, not optional overhead;
-  first-pass defects and incomplete handoffs were common at this tier.
+- **Bounded/mechanical implementation:** historical GPT-5.4 Mini and GPT-5.5
+  work, often with unknown effort, and the Spark family produced useful bounded
+  work. The exact current GPT-5.4 Mini low and GPT-5.5 medium settings each
+  have 35% setting-specific support and no separately attributable accepted
+  result; try them only on narrowly frozen work with independent review, never
+  advertise them as validated defaults. Claude Sonnet 5 medium has direct
+  accepted bounded evidence. Current Spark low is a fast bounded candidate
+  with relevant but incomplete direct evidence and is never the sole
+  acceptance owner.
 - **Root-cause and architecture diagnosis:** GPT-5.6 Sol XHigh — strongest
   evidence for cross-module root-cause tracing and architecture/
   ownership-boundary design.
@@ -111,11 +115,13 @@ one worker:
    solely own a required evidence gate (see above), any extraction result
    feeding an acceptance decision needs independent confirmation from the
    lead worker or a fallback executor before it is treated as evidence.
-3. Implementation follow-through: use the bounded tier from the Current
-   Recommendation above (Spark/Mini/GPT-5.5 medium/Sonnet 5) for narrowly
-   framed practical code/documentation changes from accepted findings, with
-   independent review as part of the configuration; use GPT-5.6 Terra High
-   for complex, review-driven implementation.
+3. Implementation follow-through: historical Mini/GPT-5.5 and Spark-family
+   evidence supports narrowly framed practical code/documentation changes.
+   Exact current Mini low, GPT-5.5 medium, and Spark low may be tried only on
+   narrowly frozen work with independent review; they are not validated
+   defaults, and Spark low is never the sole acceptance owner. Sonnet medium
+   has direct accepted bounded evidence; use GPT-5.6 Terra High for complex,
+   review-driven implementation.
 4. Verification/review: match the reviewer to the risk domain per the
    Current Recommendation (Sol Max / Luna Max / Terra Max / Fable 5 / Sol
    XHigh). Do not assign Opus as a default second opinion — use it only for
