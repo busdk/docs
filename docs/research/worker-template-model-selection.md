@@ -37,7 +37,7 @@ universal model ranking.
   have 35% setting-specific support and no separately attributable accepted
   result; try them only on narrowly frozen work with independent review, never
   advertise them as validated defaults. Claude Sonnet 5 medium has direct
-  accepted bounded evidence. Current Spark low is a fast bounded candidate
+  accepted bounded evidence. Current Spark low is a bounded candidate
   with relevant but incomplete direct evidence and is never the sole
   acceptance owner.
 - **Root-cause and architecture diagnosis:** GPT-5.6 Sol XHigh — strongest
@@ -50,8 +50,8 @@ universal model ranking.
   - GPT-5.6 Terra Max: lifecycle and security-boundary review.
   - Claude Fable 5: architecture, supply-chain, and exact-byte contract
     challenge.
-- **Docs and bounded diagnosis:** GPT-5.6 Luna Low — reliable and
-  cost-appropriate for narrow documentation, source-backed infrastructure
+- **Docs and bounded diagnosis:** GPT-5.6 Luna Low — evidenced for narrow
+  documentation, source-backed infrastructure
   diagnosis, and smoke verification. No evidence supports low reasoning for
   the hardest implementation/review work.
 - **High-effort managers do not self-accept:** a GPT-5.6 Sol Ultra manager
@@ -76,12 +76,11 @@ universal model ranking.
   shared runtime, destructive cleanup, background builds, and repeated or
   standing heavy-authority assignments (e.g. default reviewer, default
   sub-supervisor, or recurring unattended lane owner).
-- **Claude Haiku 4.5 cannot solely own a required evidence gate:** its only
-  audited deterministic-verification assignment produced no command or
-  evidence before being stopped. One run is too small to characterize the
-  model broadly, but a single Haiku run must not be trusted as the sole
-  evidence source for a verification gate — pair it with an independent
-  confirmation step or a fallback executor.
+- **Claude Haiku 4.5 is an experimental, evidence-limited extraction or
+  triage trial:** its only audited deterministic-verification assignment
+  produced no command or evidence before being stopped. One run is too small
+  to characterize the model broadly. Any output requires independent
+  confirmation, and Haiku never owns required evidence.
 - **Model quality vs. execution substrate are separate axes:** the report
   explicitly separates model-quality outcomes from execution-substrate
   failures (quota exhaustion, Repos materialization, missing runtime refs,
@@ -112,11 +111,11 @@ one worker:
    recommendation. The dated local audit establishes no single generic
    deep-research default; Fable remains evidenced for architecture,
    supply-chain, exact-byte, and specification review.
-2. Extraction: use `claude-haiku-4-5` workers for parallel source extraction,
-   log summarization, and quote/evidence collection. Because Haiku cannot
-   solely own a required evidence gate (see above), any extraction result
-   feeding an acceptance decision needs independent confirmation from the
-   lead worker or a fallback executor before it is treated as evidence.
+2. Extraction/triage trial: `claude-haiku-4-5` may be assigned a low-risk,
+   experimental pass for parallel source extraction, log summarization, or
+   quote/evidence collection. Every output needs independent confirmation
+   from the lead worker or a fallback executor before it is treated as
+   evidence; Haiku never owns a required evidence gate.
 3. Implementation follow-through: historical Mini/GPT-5.5 and Spark-family
    evidence supports narrowly framed practical code/documentation changes.
    Exact current Mini low, GPT-5.5 medium, and Spark low may be tried only on
@@ -132,8 +131,9 @@ one worker:
 
 Keep the source discipline from the supervisor research loop: use approved
 authoritative domains only, save reusable findings under `docs/docs/research/`,
-and link the note from the nearest `AGENTS.md`. Do not treat a fast extraction
-worker's answer as the final synthesis unless the lead worker has reviewed it.
+and link the note from the nearest `AGENTS.md`. Do not treat an extraction
+trial's answer as the final synthesis unless the lead worker has independently
+confirmed it.
 
 ## Vendor-Reported Model Descriptions (external context, dated 2026-07-06)
 
@@ -175,5 +175,5 @@ Misapplication warning: do not create a new template id such as
 `claude-deep-research` unless the corresponding worker identity repo and
 runtime policy exist. Until then, deep research is an operator workflow whose
 synthesis owner is selected from the current risk-domain recommendation and
-which fans out to cheaper extraction lanes, subject to the Haiku evidence-gate
-restriction above.
+which may fan out to experimental extraction trials, subject to the Haiku
+evidence-gate restriction above.
