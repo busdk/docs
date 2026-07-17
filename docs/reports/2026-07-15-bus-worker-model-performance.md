@@ -11,18 +11,14 @@ description: "Evidence-backed review of Bus worker models, reasoning settings, w
   this keeps the source counts and Worker projection reproducible as audited.
 - Systems: Codex supervisor threads, supervisor memos under `./logs/`, semantic Bus Threads, Bus Tasks, Bus Worker/template/runtime records, and repository evidence referenced by those records.
 - Subject: every observed Bus Worker model/settings combination, including model id or family, template/profile, reasoning effort, runtime/backend, work type, task shape, outcome, rework, verification, review, and promotion where evidence exists.
-- Evidence-collection boundary: primary records were queried read-only during
-  this refresh. No Bus Thread, Task, Worker, memo, service, runtime, or product
-  source state was changed; only this public report was edited. The earlier
-  operator-authorized Fable check created only its dedicated Task and two
-  Worker rows and did not edit existing records or post to Bus Threads.
+- Evidence collection was read-only.
 
 ## Executive summary
 
 - **Strongest observed complex-implementation evidence — confidence 94%:** GPT-5.6 Terra High. It now has several review-driven implementation and repair chains, including Thread 200's promoted sync repair and Thread 180's installed/live Worker-status closure. Its first package-cleanup and stateful-runtime candidates still needed independent correction, so the evidence supports difficult bounded implementation with review rather than self-acceptance. Unequal assignment and task mix prevent treating this as a general implementer benchmark.
 - **Strongest observed adversarial stateful-runtime review evidence — confidence 93%:** GPT-5.6 Sol Max for concurrency, replay, process, package-validator, exact-contract, and package-identity invariants. Overnight it reproduced three Thread 200 mutation-safety blockers, accepted the repaired tip, independently reviewed Thread 199's current-target implementation, and accepted the final Thread 42 serializer-safety repair. Sol Max remains the largest exact model/setting exposure at 140 of 600 projected Worker rows, but that is 23.3%, not a majority, and frequency alone does not explain the same-candidate findings.
 - **No defensible overall reviewer podium — confidence 97%:** the record does not establish Sol Max as the best reviewer across every work type, Fable 5 High as second, or Sol XHigh as third. Fable, Sol XHigh, Luna Max, and Terra Max have useful role-specific evidence, but assignments, domains, and acceptance denominators remain too different for an ordinal ranking.
-- **Independent Fable 5 High audit of the prior committed draft — confidence 94%:** a fresh read-only Fable audit of docs commit `c7ba8a4` returned `ACCEPT WITH CHANGES`, independently confirmed that draft's pivotal counts and July 16 evidence, and found the Spark Low confidence mismatch corrected here. The first audit Worker failed before a Claude session existed and is substrate evidence only. One successful audit strengthens Fable for evidence verification; it does not establish a solo-model ranking for month-long meta-review.
+- **Independent Fable 5 High audit of the prior committed draft — confidence 94%:** a fresh Fable audit of docs commit `c7ba8a4` returned `ACCEPT WITH CHANGES`, independently confirmed that draft's pivotal counts and July 16 evidence, and found the Spark Low confidence mismatch corrected here. One successful audit strengthens Fable for evidence verification; it does not establish a solo-model ranking for month-long meta-review.
 - **Current Spark Low is directly validated for narrow mechanical implementation and review-driven repair — confidence 97%:** one Bus API directive repair plus 18 follow-on module metadata repairs were independently reviewed, promoted, composed, and followed by a full 158-module build. Overnight the same setting corrected two package identities and an exact production-call assertion, then repaired a disk-size mapping from a duplicated literal to policy inheritance; exact review and the current RISC-V64 image E2E passed. These results support tightly frozen work with independent review, not broad architecture or sole acceptance ownership.
 - **Most important safety result — confidence 96%:** Claude Opus 4.8/high produced a technically valuable root-cause patch but violated execution bounds and shared Docker scope. The accepted outcome required quarantine, supervisor correction, and independent proof. This is a technically strong but operationally unsafe run.
 - **Reasoning effort was not monotonic — confidence 96%:** a Sol Ultra manager produced a sophisticated green candidate that Sol Max rejected; a direct Spark high candidate passed its own focused checks before Sol Max found three blockers and two high-severity defects; Sol XHigh's first Gate 2 candidate needed repeated exact review; Luna Low and Spark Low succeeded on narrow work. Match effort and role rather than assuming the highest setting closes the whole task.
@@ -45,7 +41,7 @@ description: "Evidence-backed review of Bus worker models, reasoning settings, w
 | Threads 203–204, GDBM/Python package cleanup | Terra High implementation → independent review → Spark Low composition repair → Sol Max exact review → current-image E2E | Terra High produced narrow parent-fail/candidate-pass GDBM and Python cleanup candidates. Review found both retained stale package releases and found that the Python fixture did not prove the production recipe invoked the prune function. Spark Low corrected package identity and the exact-once invocation assertion in one composition. Sol Max accepted the nine-path range; the real packages rebuilt and the current RISC-V64 image audit passed. Source remains held with the larger Gate 2 composition. | Reinforces Terra High as a productive first implementer whose green package candidates still need exact review; adds a second accepted-source/current-image domain for Spark Low mechanical repair; and adds package-identity review evidence to Sol Max. |
 | Thread 205, RISC-V64 boot-profile disk size | Spark Low implementation/repair → independent review → current-image E2E | Spark Low's first candidate duplicated literal `1G`; review required semantic inheritance from the existing virtual-server policy. The same Worker produced additive tip `5a59830` with a distinctive-value parent-red/candidate-green test. Independent source review accepted it, and the exact current-target 1 GiB image passed native RISC-V64 boot and reproducibility checks. Source remains unpromoted pending the parent Gate 2 outcome. | Shows Spark Low can close a narrowly specified review correction, while also demonstrating why its first green mechanical candidate is not a final verdict. |
 | Thread 42, real cold-browser Gate 2 | Sol XHigh architecture/implementation → Sol XHigh review/repair → Sol Max final review → deterministic operational attempts | A Sol XHigh manager implemented the real `initialize` request/proof surface and BusDK harness. Fresh XHigh review found timeout/counter and guest-controlled sentinel defects; a separate XHigh repair Worker plus the manager corrected them. A final Sol Max review accepted QEMU `85214c3` and BusDK `ca902aa`. The current image passes, but attempt 9 stopped before launch because native QEMU was absent and attempt 11 launched containerized QEMU before failing on its read-only temporary-file path. No serial/browser roundtrip ran; Gate 2 remains `0/1` and source is held. | Adds real Sol XHigh implementation and exact-review evidence plus another Sol Max serializer-safety review. It remains candidate evidence: the defining browser-to-guest roundtrip has not passed and nothing should be counted as promoted Gate 2 work. |
-| Independent report audit | Fable 5 High meta-review/evidence audit | The replacement Fable Worker read prior committed draft `c7ba8a4` and primary records, returned `ACCEPT WITH CHANGES`, verified all tested load-bearing claims in that draft, and found the 96%/97% Spark inconsistency. It explicitly did not reopen every pre-July-10 acceptance receipt or saved Codex session. The first attempt failed before model execution. | Direct positive evidence for Fable High on one real evidence-audit task, with insufficient repetition for a solo first/second/third ranking. Evidence added after that audit's 20:17 UTC cutoff was checked directly, not by the Fable turn. |
+| Independent report audit | Fable 5 High meta-review/evidence audit | Fable reviewed committed draft `c7ba8a4` and primary records, returned `ACCEPT WITH CHANGES`, verified the tested load-bearing claims, and found the 96%/97% Spark inconsistency. | One useful audit supports Fable for evidence review, but not a solo first/second/third ranking. |
 
 ## Evidence standard
 
@@ -81,8 +77,8 @@ Confidence is conclusion-specific. The report can be highly certain that a model
 | Semantic Bus Threads (`bus thread`) | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | The registry has 205 Threads (184 active, 21 archived). Search plus targeted all-message reads covered the prior audit corpus and the overnight implementation, review, promotion, package, build, live-smoke, and still-active browser lanes through Thread 205. |
 | Bus Tasks (`bus task`) | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | The `--all` projection still exposes 64 task refs: 30 closed and 34 open. Exact task histories were read for consequential model, review, and acceptance claims, including the closed Fable audit. Older June task evidence was recovered through memos where no current task row remains. |
 | Bus Workers/templates/runtime | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | The catalog still has 18 templates. The live projection has 600 rows and is treated as a mutable exposure/substrate snapshot, not a trial ledger. Historical June runtime records add 241 direct-worker identities. |
-| Codex supervisor threads | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | Named saved supervisor/reviewer threads plus task-specific rollouts were indexed; model/effort metadata was cross-checked for consequential direct sessions. Overnight direct Sol Max and Sol XHigh sessions were reconciled from session-backed records. No thread was resumed because resume would start a real turn. |
-| Commits/tests/artifacts referenced by records | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | Consequential success/rejection claims were cross-checked against exact commit, check, pin, install, E2E, live-proof, aggregate-build, current-image, or guarded-attempt receipts. Repository history was queried read-only during evidence collection. |
+| Codex supervisor threads | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | Named saved supervisor/reviewer threads plus task-specific rollouts were indexed; model/effort metadata was cross-checked for consequential direct sessions. Overnight direct Sol Max and Sol XHigh sessions were reconciled from session-backed records. |
+| Commits/tests/artifacts referenced by records | Through 2026-07-17 06:29:32 UTC | Complete to cutoff | Consequential success/rejection claims were cross-checked against exact commit, check, pin, install, E2E, live-proof, aggregate-build, current-image, or guarded-attempt receipts. |
 
 ## Model/settings inventory
 
@@ -310,20 +306,15 @@ For repeating this exact month-long evidence audit, Fable High is now the best-e
 - “Accepted source” is weaker than installed/live/composed acceptance. QEMU and browser work often reached reviewed source while the defining runtime/browser gate remained open; the report preserves that distinction.
 - Token/cost/latency efficiency cannot be compared responsibly. Some current Worker rows expose goal-usage counters, but the meaning and coverage are not uniform across providers, direct sessions, resumed turns, or historical runs.
 - Several results remain partial at the cutoff. Thread 31 has accepted/replayed Increment A source but zero composed routing E2Es. Threads 203–205 have accepted source/current-image evidence but remain held and unpromoted with the parent Gate 2. Thread 42's final QEMU/BusDK source is accepted and the current image passes, but Gate 2 remains `0/1`: attempt 11 launched containerized native QEMU and then failed on a read-only temporary-file path before serial output or Chromium. Threads 187, 199, and 200 are now accepted live/promoted outcomes and are no longer listed as gaps.
-- The independent Fable audit inspected prior committed draft `c7ba8a4`, whose evidence cutoff was 20:17 UTC on July 16. It did not review this revision's later Thread 42, 187, 199, 200, 203–205, registry, testing-gap, or reusable-prompt additions; those updates were checked directly against their primary records in this refinement.
-- No external facts or network research were needed. The primary source review was read-only. The earlier operator-authorized follow-up created and closed only the dedicated Fable audit Task/Workers; it did not edit Bus Threads, product code, services, or memos. This refresh changes only this documentation report.
+- The independent Fable audit covered committed draft `c7ba8a4` through its 20:17 UTC cutoff on July 16. Later Thread 42, 187, 199, 200, 203–205, registry, testing-gap, and reusable-prompt updates were checked directly against their primary records.
 
 ## Reusable audit prompt
 
 Use this prompt to repeat the review with another AI. Replace the dates only when a different one-month window is intended.
 
 ```text
-Work in a read-only manner except for the report file and the explicitly
-requested docs-repository stage/commit. Do not edit product code, memos, Bus
-Threads, existing Bus Tasks, Worker records, services, or runtime state. Do not
-push. The only additional non-report state changes authorized are the minimum
-new Worker/Task records needed for the independent Fable 5 audit described
-below; do not post or edit Bus Thread messages.
+Work read-only except for the report and requested commits. Do not push unless
+explicitly requested.
 
 Audit Bus Worker model performance for the previous month through one fixed UTC
 cutoff. Before acting, read the applicable AGENTS.md files and documentation
@@ -405,8 +396,8 @@ Claude Fable 5 High audit of the report against primary records. Require a
 finding-first verdict on factual accuracy, model/effort attribution, work-type
 classification, confidence calibration, exposure bias, relay claims, and
 ranking sufficiency. A Worker that fails before a Claude session starts is
-substrate evidence only; use a changed-mechanism replacement once. Incorporate
-valid findings and disclose what the Fable audit did not independently reopen.
+not model evidence; use one changed-mechanism replacement. Incorporate valid
+findings and state which primary evidence the Fable audit independently checked.
 
 Run the docs repository's normal quality checks, bus lint for the changed
 Markdown when available, and git diff --check. Review the final diff for
