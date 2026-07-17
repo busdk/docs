@@ -15,38 +15,37 @@ The daemon process, its REST API and OpenAPI description, x402 payment gating, S
 
 ## Try it
 
-Clone the module and build the binary:
+The foundation build described on this page is not published yet. It cannot currently be obtained by cloning a public BusDK repository, and there is no release to download or install today.
+
+Once a source checkout is published, the following commands are the ones to run from that exact checkout to build the binary and exercise the two commands that work in this foundation build:
 
 ```bash
-git clone https://github.com/busdk/bus-connect.git
-cd bus-connect
 make clean build
-```
-
-Install it to an isolated prefix so nothing touches your normal `PATH`, then run the two commands that actually work today:
-
-```bash
 make install PREFIX="$PWD/.make/prefix"
 ./.make/prefix/bin/bus-connect --help
 ./.make/prefix/bin/bus-connect --version
 ```
 
-If you are building from source as a contributor, the module's own test suite is also runnable from a clean checkout:
+Contributors building from source can run the module's own test suite the same way, from a clean published checkout:
 
 ```bash
 make test
 make test-e2e
 ```
 
+Treat the exact repository location, branch, and release channel as unconfirmed until publication, and validate the real public acquisition instructions against the published repository once it exists rather than assuming these commands are complete on their own.
+
 ## Intended product shape (not available yet)
 
 REST is intended to be the canonical product surface once implemented: a documented HTTP API that an agent could integrate against from documentation alone. `bus-connect`, and the eventual dispatcher alias `bus connect …`, are intended to stay thin convenience paths over that same service behavior, never a second or privileged surface.
 
-One static Go binary is intended to serve both roles the module targets: an operator who runs the daemon and handles reading, replying to, and closing threads, and a contacting party who pays to open a thread and then polls or follows up for free on that same thread. Anyone who wants their own listening endpoint is expected to self-host this open-source daemon and become their own service provider, keeping their own initiation fees and their own operational and legal responsibility. A contacting party only needs a wallet capable of signing an x402 payment, not an endpoint or hosted instance of its own.
+One static Go binary is intended to serve both roles the module targets: an operator who runs the daemon and handles reading, replying to, and closing threads, and a contacting party who pays to open a thread and then polls or follows up for free on that same thread. The intended future product model has any counterparty run their own instance and act as their own service provider, keeping their own initiation fees and their own operational and legal responsibility. A contacting party only needs a wallet capable of signing an x402 payment, not an endpoint or hosted instance of its own.
+
+The repository is Fair Source, source-available under the Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT); each release converts to the MIT license two years after that release is made available. Self-hosting is subject to those current terms, and general competing commercial self-hosting cannot be promised under today's FSL-1.1-MIT license. The distribution model that supports the intended self-host-as-your-own-service-provider product still needs to be resolved before release. See the module's [LICENSE.md](https://github.com/busdk/bus-connect/blob/main/LICENSE.md) for the current license text.
 
 The target economics point at USDC and EURC on Base, but no facilitator, network, or asset is wired up in this build. This module intentionally has no registry, no multi-tenant hosting, no subscriptions, no KYB, no SDKs, no webhooks, no MCP surface, and no platform integrations in scope.
 
-Once the payment gate exists, a successful x402 payment will only prove that whoever signed it controlled the paying wallet at that moment. It will not prove that a specific person, AI agent, or legal entity sent the message, and it will not prove that any claim inside the message body is true. Wallet addresses are payment principals, not reachable routes; a reply is intended to work by the sender polling its own thread, not by anything being sent to an address.
+Once the payment gate exists, a successful x402 payment will only demonstrate acceptance of a valid payer authorization and either control of the paying wallet or delegated signing authority over it at the moment of signing. It will not prove direct ownership of that wallet, and it will not identify a specific human, AI agent, organization, or legal entity as the sender. Any claim inside the message body remains unverified. Wallet addresses are payment principals, not reachable routes; a reply is intended to work by the sender polling its own thread, not by anything being sent to an address.
 
 ### Using from `.bus` files
 
@@ -78,3 +77,4 @@ bus-connect --help
 - [Circle — USDC contract addresses](https://developers.circle.com/stablecoins/usdc-contract-addresses)
 - [Circle — EURC contract addresses](https://developers.circle.com/stablecoins/eurc-contract-addresses)
 - [bus-connect repository](https://github.com/busdk/bus-connect)
+- [bus-connect LICENSE.md (FSL-1.1-MIT)](https://github.com/busdk/bus-connect/blob/main/LICENSE.md)
