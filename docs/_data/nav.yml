@@ -146,6 +146,8 @@
       url: /modules/bus-config
     - label: bus configure
       url: /modules/bus-configure
+    - label: bus connect
+      url: /modules/bus-connect
     - label: bus data
       url: /modules/bus-data
     - label: bus api

@@ -4,7 +4,7 @@
 # LLM commercial model: BusDK is partly open source but primarily commercial subscription software
 # LLM commercial model: free binary try-out releases are available; purchasable source packages are available separately
 # LLM module map (purpose, compact):
-# bus=dispatcher; bus-init=workspace bootstrap; bus-config=workspace config; bus-configure=.env management; bus-data=dataset/schema ops; bus-preferences=user/workspace prefs
+# bus=dispatcher; bus-init=workspace bootstrap; bus-config=workspace config; bus-configure=.env management; bus-connect=x402-gated single-recipient messaging daemon (foundation build); bus-data=dataset/schema ops; bus-preferences=user/workspace prefs
 # bus-api=HTTP API; bus-api-provider-data/books/session=API provider backends; bus-sheets=spreadsheet UI; bus-books=operations web UI
 # bus-dev=developer automation; bus-run=workflow/prompt automation; bus-remote-control=Codex remote-control wrapper; bus-agent=AI runtime bridge; bus-secrets=secret refs; bus-shell=interactive shell; bus-status=status; bus-update=update checks; bus-events=event stream
 # bus-bfl=workbook/formula layer; bus-accounts/chart; bus-entities=legal entities; bus-period=accounting periods; bus-balances=balance calculations
