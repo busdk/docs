@@ -11,7 +11,11 @@ description: "Evidence-backed review of Bus worker models, reasoning settings, w
   this keeps the source counts and Worker projection reproducible as audited.
 - Systems: Codex supervisor threads, supervisor memos under `./logs/`, semantic Bus Threads, Bus Tasks, Bus Worker/template/runtime records, and repository evidence referenced by those records.
 - Subject: every observed Bus Worker model/settings combination, including model id or family, template/profile, reasoning effort, runtime/backend, work type, task shape, outcome, rework, verification, review, and promotion where evidence exists.
-- Evidence collection was read-only.
+- Evidence-collection boundary: primary records were queried read-only during
+  this refresh. No Bus Thread, Task, Worker, memo, service, runtime, or product
+  source state was changed; only this public report was edited. The earlier
+  operator-authorized Fable check created only its dedicated Task and two
+  Worker rows and did not edit existing records or post to Bus Threads.
 
 ## Executive summary
 
