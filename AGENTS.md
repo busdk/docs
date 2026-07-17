@@ -70,6 +70,9 @@ Avoid ambiguous terms like `corpus` and `state` unless explicitly defined.
 Use direct, declarative domain statements; avoid meta-commentary about the
 documentation process (for example, "this page intentionally..." or "in this
 section...").
+Keep public evidence-boundary notes to the reader-relevant constraint, such as
+"Evidence collection was read-only." Omit internal mutation inventories,
+authorization history, worker-row details, and agent-process narration.
 
 For public UI framework docs, keep human-review workflow guidance out of
 `docs/docs/ui/**`. The published pages may be organized from broad design
