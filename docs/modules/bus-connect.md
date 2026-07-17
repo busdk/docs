@@ -13,7 +13,7 @@ This is a foundation-phase build, not a working messaging daemon. The only commi
 
 The daemon process, its REST API and OpenAPI description, x402 payment gating, SQLite-backed thread storage, thread capabilities, operator actions, paid send/poll/follow-up, and discovery are not available in this build. `bus-connect` has not been released or merged into any published BusDK distribution, so no released `bus` dispatcher currently includes a `connect` command.
 
-## Try it
+## Building from source (once published)
 
 The foundation build described on this page is not published yet. It cannot currently be obtained by cloning a public BusDK repository, and there is no release to download or install today.
 
