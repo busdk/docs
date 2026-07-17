@@ -41,7 +41,7 @@ REST is intended to be the canonical product surface once implemented: a documen
 
 One static Go binary is intended to serve both roles the module targets: an operator who runs the daemon and handles reading, replying to, and closing threads, and a contacting party who pays to open a thread and then polls or follows up for free on that same thread. The intended future product model has any counterparty run their own instance and act as their own service provider, keeping their own initiation fees and their own operational and legal responsibility. A contacting party only needs a wallet capable of signing an x402 payment, not an endpoint or hosted instance of its own.
 
-The repository is Fair Source, source-available under the Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT); each release converts to the MIT license two years after that release is made available. Self-hosting is subject to those current terms, and general competing commercial self-hosting cannot be promised under today's FSL-1.1-MIT license. The distribution model that supports the intended self-host-as-your-own-service-provider product still needs to be resolved before release. See the module's [LICENSE.md](https://github.com/busdk/bus-connect/blob/main/LICENSE.md) for the current license text.
+The repository is Fair Source, source-available under the Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT); each release converts to the MIT license two years after that release is made available. Self-hosting is subject to those current terms, and general competing commercial self-hosting cannot be promised under today's FSL-1.1-MIT license. The distribution model that supports the intended self-host-as-your-own-service-provider product still needs to be resolved before release. The exact FSL-1.1-MIT license text is carried as `LICENSE.md` in the source candidate and will be available alongside the source once it is published; see the [Functional Source License](https://fsl.software/) for the general public explanation of these terms in the meantime.
 
 The target economics point at USDC and EURC on Base, but no facilitator, network, or asset is wired up in this build. This module intentionally has no registry, no multi-tenant hosting, no subscriptions, no KYB, no SDKs, no webhooks, no MCP surface, and no platform integrations in scope.
 
@@ -76,5 +76,4 @@ bus-connect --help
 - [Coinbase Developer Platform — x402 network support](https://docs.cdp.coinbase.com/x402/network-support)
 - [Circle — USDC contract addresses](https://developers.circle.com/stablecoins/usdc-contract-addresses)
 - [Circle — EURC contract addresses](https://developers.circle.com/stablecoins/eurc-contract-addresses)
-- [bus-connect repository](https://github.com/busdk/bus-connect)
-- [bus-connect LICENSE.md (FSL-1.1-MIT)](https://github.com/busdk/bus-connect/blob/main/LICENSE.md)
+- [Functional Source License (FSL-1.1-MIT)](https://fsl.software/)
