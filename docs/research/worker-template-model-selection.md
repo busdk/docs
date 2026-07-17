@@ -4,9 +4,8 @@ Question: How should Bus Worker operators choose Codex and Claude worker
 templates, and how should a deep-research workflow split work across models?
 
 Date: 2026-07-06
-Revised: 2026-07-15, to make the dated 2026-07-15 19:00 UTC local evidence the
-controlling recommendation and to move vendor-reported model descriptions
-into a separately attributed context section.
+Revised: 2026-07-17, to incorporate the report's accepted July 16–17 model
+relays and separate capability evidence from live provider limits and cost.
 
 Sources:
 - Local evidence report (controlling):
@@ -31,15 +30,16 @@ universal model ranking.
   for difficult, review-driven implementation reaching push/pin/install/
   live-smoke outcomes. First green candidates still require independent
   review before acceptance.
-- **Bounded/mechanical implementation:** historical GPT-5.4 Mini and GPT-5.5
-  work, often with unknown effort, and the Spark family produced useful bounded
-  work. The exact current GPT-5.4 Mini low and GPT-5.5 medium settings each
-  have 35% setting-specific support and no separately attributable accepted
-  result; try them only on narrowly frozen work with independent review, never
-  advertise them as validated defaults. Claude Sonnet 5 medium has direct
-  accepted bounded evidence. Current Spark low is a bounded candidate
-  with relevant but incomplete direct evidence and is never the sole
-  acceptance owner.
+- **Bounded/mechanical implementation:** current GPT-5.3 Codex Spark Low is
+  directly validated for narrowly frozen mechanical implementation and
+  review-driven repair. Nineteen metadata changes were independently reviewed,
+  promoted, composed, and followed by a full 158-module build; later package
+  identity, invocation, and disk-policy repairs reached current-image proof.
+  Spark still requires independent review and never owns final acceptance.
+  Exact current GPT-5.4 Mini Low and GPT-5.5 Medium remain evidence-limited
+  bounded trials. Claude Sonnet 5 Medium has direct accepted bounded
+  implementation, documentation/synthesis, and provider-diverse review
+  evidence.
 - **Root-cause and architecture diagnosis:** GPT-5.6 Sol XHigh — strongest
   evidence for cross-module root-cause tracing and architecture/
   ownership-boundary design.
@@ -58,10 +58,13 @@ universal model ranking.
   produced a sophisticated, green candidate that fresh independent Sol Max
   review still rejected. Higher-effort managers own decomposition and
   candidate production; a separately assigned reviewer owns the verdict.
-- **Evidence-limited settings — treat as unproven, not validated:** GPT-5.6
-  Terra Medium, GPT-5.6 Luna Medium, GPT-5.4 Mini at low reasoning, and
-  GPT-5.5 medium as a standalone current-template row each had thin or
-  unattributable evidence in the audited window.
+- **Evidence-limited settings — treat as narrow, not broad defaults:** GPT-5.6
+  Terra Medium, GPT-5.4 Mini at low reasoning, and GPT-5.5 Medium as a
+  standalone current-template row still have thin or unattributable
+  implementation evidence. GPT-5.6 Luna Medium now has one independently
+  reviewed, promoted, installed, loaded, and live-proven listener-recovery
+  implementation; use it for that bounded task shape while another domain is
+  still needed before making it a broad default.
 - **Claude Opus 4.8 is restricted, not a default second opinion or complex
   agentic coding profile:** the one audited high-reasoning Opus run produced a
   technically valuable root-cause fix but violated execution scope in a
@@ -101,6 +104,33 @@ evidence to prefer or discount a specific profile within that shape. Do not
 fall back to the vendor-described defaults below when they conflict with this
 section.
 
+## Capacity And Cost
+
+The performance report does not contain a complete cross-provider price,
+token-cost, or latency comparison. Its confidence values measure support for
+narrow quality conclusions; they are not prices or future success
+probabilities. Operators should combine the role evidence above with current
+provider limits and configured cost policy, then choose the least expensive
+available template whose evidence is sufficient for the bounded task.
+
+When OpenAI capacity is scarce, suitable new work should use Claude capacity
+first. Sonnet Medium is the first Claude choice for bounded implementation,
+documentation, synthesis, follow-through, and medium-depth provider-diverse
+review. Fable High is reserved for architecture, supply-chain, exact-byte,
+specification, and evidence-contract challenge. Haiku remains optional
+low-risk extraction/triage with independent confirmation, and Opus remains
+inside the strict read-only or externally bounded safety envelope above.
+Existing OpenAI lanes that are one deterministic step from review, promotion,
+installation, or live smoke should finish in place when restarting elsewhere
+would consume more capacity.
+
+Highest-effort profiles should not be routine defaults. Use them when the
+acceptance risk demands adversarial review, when architecture is genuinely
+ambiguous, or after a lower-cost suitable worker reached model execution and
+failed on the task's reasoning or behavior. A quota or materialization failure
+before model execution calls for provider/substrate recovery, not a stronger
+model.
+
 ## Deep-Research Profile
 
 For Bus Worker operators, "deep research" is a workflow profile rather than a
@@ -116,13 +146,13 @@ one worker:
    quote/evidence collection. Every output needs independent confirmation
    from the lead worker or a fallback executor before it is treated as
    evidence; Haiku never owns a required evidence gate.
-3. Implementation follow-through: historical Mini/GPT-5.5 and Spark-family
-   evidence supports narrowly framed practical code/documentation changes.
-   Exact current Mini low, GPT-5.5 medium, and Spark low may be tried only on
-   narrowly frozen work with independent review; they are not validated
-   defaults, and Spark low is never the sole acceptance owner. Sonnet medium
-   has direct accepted bounded evidence; use GPT-5.6 Terra High for complex,
-   review-driven implementation.
+3. Implementation follow-through: current Spark Low is validated for narrowly
+   frozen mechanical work with independent review and separate final
+   acceptance. Exact current Mini Low and GPT-5.5 Medium remain bounded trials.
+   Sonnet Medium has direct accepted bounded implementation and
+   documentation/synthesis evidence; use GPT-5.6 Terra High for complex,
+   review-driven implementation when OpenAI capacity and task complexity
+   justify it.
 4. Verification/review: match the reviewer to the risk domain per the
    Current Recommendation (Sol Max / Luna Max / Terra Max / Fable 5 / Sol
    XHigh). Do not assign Opus as a default second opinion — use it only for
