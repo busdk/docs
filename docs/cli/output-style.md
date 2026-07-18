@@ -14,8 +14,8 @@ Whichever format is selected, the answer to the user's actual question comes fir
 Human output that shows a list of records as a hierarchy uses a literal `•` followed by one space, then the row content. Each depth below the top level adds two more spaces before the `•`. The record's status, when relevant, is a plain textual `[status]` suffix, not a color or icon standing in for it:
 
 ```text
-• 219  Add bullet markers to human-readable Thread list rows [completed]
-  • 220  Hide archived Threads from default list and add --archived [completed]
+• 53  Human-readable bus thread show UX [completed]
+  • 222  Structure Thread show output with Unicode message boundaries and child list [completed]
 ```
 
 Glyphs decorate a row; they never replace the identifier, label, or status text next to them. A row must still be unambiguous if the bullet and connector characters are stripped out.
@@ -76,6 +76,8 @@ Human output is UTF-8 plain text. Commands must not depend on terminal width for
 Long flags use their full, correctly spelled canonical form (`--format`, `--chdir`, `--dry-run`) in help text and examples; commands do not invent alternate spellings for the same flag. Conflicting flags produce an actionable error naming both flags and what to do instead, for example `--quiet and --verbose cannot be combined; drop one of them`, consistent with the exit-status-2 usage-error contract in [Standard global flags](./global-flags). Help output stays short and example-driven, closer to `git add -h` than to a prose manual, per [Command structure and discoverability](./command-structure). An empty result is stated explicitly, such as `no invoices found for period 2026-03`, rather than printed as blank output that could be mistaken for an error or a hang.
 
 The bullet hierarchy shown above reflects the installed `bus thread list` behavior. Archived-record filtering, positional shorthand for addressing one record directly (for example `bus invoices <invoice-id> show` instead of a separate lookup flag), and structured `show` output are target conventions that module commands may still be adopting. Do not rely on any of them in a script unless the relevant `bus <module> <command> --help` output lists the option or behavior.
+
+Human-output changes require focused golden or fixture tests. Machine output requires separate shape and ordering tests. User-visible command changes also require updated help and documentation plus exact local CLI E2E coverage.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
