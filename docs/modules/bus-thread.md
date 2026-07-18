@@ -73,6 +73,19 @@ bus thread archive 1 --reason "review complete"
 
 Archiving does not delete the thread or its event history.
 
+## List Order and Activity
+
+Use `bus thread list --order activity[:asc|desc]` to sort by last activity.
+`activity` and `activity:asc` are least-recently-active first.
+`activity:desc` is newest-first.
+If you repeat the same `--order` term, the first term is used and later terms
+are ignored, for example `--order activity:desc --order activity`.
+Filtering is applied before ordering, and ordering is applied before `--limit`.
+
+```sh
+bus thread list --archived --order activity:desc --limit 25
+```
+
 ## Watch And Output
 
 Replay and follow one thread or a board:
