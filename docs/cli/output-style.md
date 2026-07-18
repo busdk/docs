@@ -5,7 +5,7 @@ description: BusDK CLI commands keep deterministic machine output separate from 
 
 ## CLI output style
 
-BusDK CLI commands write two different kinds of output from the same result data. Human output is meant to be read at a terminal and may use light formatting to improve scanability. Machine output, selected with [`--format`](./global-flags) values such as `json`, `tsv`, or `csv`, is meant to be parsed by scripts and other tools, so it stays deterministic, stable, and free of ANSI escape codes or presentation glyphs. As described in [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), command results always go to standard output and diagnostics always go to standard error, in both output kinds.
+BusDK CLI commands write two different kinds of output from the same result data. Human output is meant to be read at a terminal and may use light formatting to improve scanability. Machine output, selected with [`--format`](./global-flags) values such as `json`, `tsv`, or `csv`, is meant to be parsed by scripts and other tools, so it stays deterministic, stable, and free of ANSI escape codes or presentation glyphs. As described in [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), command results go to standard output by default and diagnostics go to standard error. The documented `--quiet` and `--output` exceptions suppress or redirect normal result output.
 
 Whichever format is selected, the answer to the user's actual question comes first. A `list` command's rows, a `show` command's fields, or a failed command's error message is the primary content. Labels, identifiers, statuses, ordering, empty-result wording, and error text stay concise and deterministic, consistent with the ordering and stability requirements in [Reporting and query commands](./reporting-and-queries).
 
@@ -69,13 +69,13 @@ Box-drawing characters are reserved for the hierarchy, detail, and bounded-multi
 
 ### Encoding, layout, and color
 
-Human output is UTF-8 plain text. Commands must not depend on terminal width for alignment: no fixed-width column padding that breaks when an identifier or label is longer than expected. Color, where `--color` enables it, may highlight a row or status but must never be the only way a status or result is conveyed; the textual `[status]` suffix and row content carry the meaning on their own, matching the color behavior defined in [Standard global flags](./global-flags).
+Human output is UTF-8 plain text. Commands must not depend on terminal width for alignment: no fixed-width column padding that breaks when an identifier or label is longer than expected. ANSI color, where `--color` enables it, is confined to human-facing diagnostics and help text on standard error; result rows on standard output or in `--output` remain uncolored. The textual `[status]` suffix and row content carry the meaning on their own, matching the color behavior defined in [Standard global flags](./global-flags).
 
 ### Flags, errors, and help
 
 Long flags use their full, correctly spelled canonical form (`--format`, `--chdir`, `--dry-run`) in help text and examples; commands do not invent alternate spellings for the same flag. Conflicting flags produce an actionable error naming both flags and what to do instead, for example `--quiet and --verbose cannot be combined; drop one of them`, consistent with the exit-status-2 usage-error contract in [Standard global flags](./global-flags). Help output stays short and example-driven, closer to `git add -h` than to a prose manual, per [Command structure and discoverability](./command-structure). An empty result is stated explicitly, such as `no invoices found for period 2026-03`, rather than printed as blank output that could be mistaken for an error or a hang.
 
-The bullet hierarchy shown above reflects the accepted T219 `list` output. Archived-record filtering, positional shorthand for addressing one record directly (for example `bus invoices <invoice-id> show` instead of a separate lookup flag), and structured `show` output are target conventions that module commands may still be adopting. Do not rely on any of them in a script unless the relevant `bus <module> <command> --help` output lists the option or behavior.
+The bullet hierarchy shown above reflects the installed `bus thread list` behavior. Archived-record filtering, positional shorthand for addressing one record directly (for example `bus invoices <invoice-id> show` instead of a separate lookup flag), and structured `show` output are target conventions that module commands may still be adopting. Do not rely on any of them in a script unless the relevant `bus <module> <command> --help` output lists the option or behavior.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
