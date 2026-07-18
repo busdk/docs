@@ -3,8 +3,6 @@ title: CLI output style
 description: BusDK CLI commands keep deterministic machine output separate from readable human output, using a small, consistent set of hierarchy and detail conventions.
 ---
 
-## CLI output style
-
 BusDK CLI commands write two different kinds of output from the same result data. Human output is meant to be read at a terminal and may use light formatting to improve scanability. Machine output, selected with [`--format`](./global-flags) values such as `json`, `tsv`, or `csv`, is meant to be parsed by scripts and other tools, so it stays deterministic, stable, and free of ANSI escape codes or presentation glyphs. As described in [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), command results go to standard output by default and diagnostics go to standard error. The documented `--quiet` and `--output` exceptions suppress or redirect normal result output.
 
 Whichever format is selected, the answer to the user's actual question comes first. A `list` command's rows, a `show` command's fields, or a failed command's error message is the primary content. Labels, identifiers, statuses, ordering, empty-result wording, and error text stay concise and deterministic, consistent with the ordering and stability requirements in [Reporting and query commands](./reporting-and-queries).
