@@ -9,19 +9,27 @@ Whichever format is selected, the answer to the user's actual question comes fir
 
 ## Human-readable hierarchy
 
-Human output that shows a list of records as a hierarchy uses a literal `•` followed by one space, then the row content. Each depth below the top level adds two more spaces before the `•`. The record's status, when relevant, is a plain textual `[status]` suffix, not a color or icon standing in for it:
+Human output that shows a set of records as a nested parent/child hierarchy, such as a `list` command's default view, uses box-drawing tree connectors: `├─` for every sibling except the last one at that level, and `└─` for the last sibling actually rendered. Each level below the top adds another three-column indent under its parent's connector before printing the next connector. The record's status, when relevant, is a plain textual `[status]` suffix, not a color or icon standing in for it. A parent row that also carries a computed aggregate over its own descendants, such as a completion count, appends that aggregate inside the same bracket after the status; a row with no descendants keeps the shorter status-only form and never shows a synthetic `0/0` aggregate:
 
 ```text
-• 41  Hierarchical and level-scoped bus thread list UX [completed]
-  • 219  Add bullet markers to human-readable Thread list rows [completed]
-  • 220  Hide archived Threads from default list and add --archived [completed]
+└─ #10 Launch checklist [active, 2/4 complete (50%)]
+   ├─ #11 Update changelog [completed]
+   └─ #12 Support runbook [active, 1/2 complete (50%)]
+      └─ #14 Rollback drill [deferred]
+```
+
+When a command's rows are explicitly reordered by a scriptable key such as `--order activity`, sibling adjacency no longer matches parent/child structure, so those rows drop the tree connectors and use a flat `•` bullet form instead: one `•`, one space, then the row content, keeping the same `[status]` or `[status, aggregate]` bracket:
+
+```text
+• #12  Support runbook [active, 1/2 complete (50%)] activity: 2026-03-05T00:00:00Z
+• #14  Rollback drill [deferred] activity: 2026-03-06T00:00:00Z
 ```
 
 Glyphs decorate a row; they never replace the identifier, label, or status text next to them. A row must still be unambiguous if the bullet and connector characters are stripped out.
 
 ## Detail connectors
 
-When a single record's related fields or sub-items are shown as a flat detail list rather than a nested hierarchy, use detail-list box-drawing connectors `├─` for every row except the last, and `└─` for the last row actually rendered. The `•` hierarchy bullet and the `├─`/`└─` detail connectors belong to different layouts:
+When a single record's related fields or sub-items are shown as a flat detail list rather than a nested hierarchy, use detail-list box-drawing connectors `├─` for every row except the last, and `└─` for the last row actually rendered. These connectors reuse the same characters as the nested-hierarchy connectors above but stay flat under exactly one record instead of nesting to arbitrary depth, and neither is the flat `•` bullet form used for explicitly reordered rows:
 
 ```text
 INV-2026-014  Acme Oy  [open]
@@ -74,7 +82,7 @@ Human output is UTF-8 plain text. Commands must not depend on terminal width for
 
 Long flags use their full, correctly spelled canonical form (`--format`, `--chdir`, `--dry-run`) in help text and examples; commands do not invent alternate spellings for the same flag. Conflicting flags produce an actionable error naming both flags and what to do instead, for example `--quiet and --verbose cannot be combined; drop one of them`, consistent with the exit-status-2 usage-error contract in [Standard global flags](./global-flags). Help output stays short and example-driven, closer to `git add -h` than to a prose manual, per [Command structure and discoverability](./command-structure). Empty-result behavior is deterministic per command rather than governed by one universal rule. Each command documents what its text output does when there is nothing to show; an empty text result may be intentionally silent (for example a `--quiet` scripting mode) or may state the empty condition explicitly, such as `no invoices found for period 2026-03`, but the chosen behavior must be documented and stable. Machine formats such as `json`, `tsv`, or `csv` are never silently blank: an empty result emits the format's documented empty structured value, such as `[]` for a JSON array result, and remains complete and lossless, keeping the same fields and shape a non-empty result would carry unless the command's docs describe a narrower projection for the empty case.
 
-The bullet hierarchy shown above reflects the installed `bus thread list` behavior. Archived-record filtering, positional shorthand for addressing one record directly (for example `bus invoices <invoice-id> show` instead of a separate lookup flag), and structured `show` output are target conventions that module commands may still be adopting. Do not rely on any of them in a script unless the relevant `bus <module> --help` output confirms the option or behavior; consult command-level help by name only when that exact help invocation is explicitly documented as supported by the module help or reference.
+The tree-connector and bullet forms shown above reflect the installed `bus thread list` behavior. Archived-record filtering, positional shorthand for addressing one record directly (for example `bus invoices <invoice-id> show` instead of a separate lookup flag), and structured `show` output are target conventions that module commands may still be adopting. Do not rely on any of them in a script unless the relevant `bus <module> --help` output confirms the option or behavior; consult command-level help by name only when that exact help invocation is explicitly documented as supported by the module help or reference.
 
 Human-output changes require focused golden/fixture coverage. Machine output requires separate shape and ordering coverage. User-visible command changes require help/docs updates and exact local CLI E2E coverage.
 

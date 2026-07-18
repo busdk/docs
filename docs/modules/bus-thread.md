@@ -103,6 +103,64 @@ Filtering is applied before ordering, and ordering is applied before `--limit`.
 bus thread list --archived --order activity:desc --limit 25
 ```
 
+## List Completion Progress
+
+Bus Thread computes a completion aggregate for every thread that has at least
+one descendant, and folds it into the same status marker already shown on
+that thread's `list` row. If thread 10 has four descendants and two of them
+carry the exact stored status `completed`, its row reads
+`#10 Launch checklist [active, 2/4 complete (50%)]` instead of a bare
+`[active]`. A descendant that is itself a parent aggregates only its own
+subtree, for example `#12 Support runbook [active, 1/2 complete (50%)]`.
+Threads with no descendants, such as `#11 Update changelog [completed]` or
+`#14 Rollback drill [deferred]`, keep the plain status marker and never gain
+a synthetic `0/0` aggregate.
+
+Only the exact stored metadata status `completed` counts toward the
+numerator. Every other status, including `active`, `tracking`, `deferred`,
+and `reference`, stays in the denominator without counting as done.
+
+The aggregate is calculated once over the complete replayed hierarchy, before
+`--archived` filtering, `--depth` scoping, `--order`, or `--limit` are
+applied, and the same totals then travel with each surviving parent row.
+Thread 12's other descendant, thread 13, is archived and stays hidden from
+the default view, yet it still counts toward thread 12's total: thread 12
+reads `[active, 1/2 complete (50%)]` in both the default list and the
+selected-parent header printed by `bus thread list --parent 12`:
+
+```text
+THREADS
+#12 Support runbook [active, 1/2 complete (50%)]
+└─ #14 Rollback drill [deferred]
+```
+
+Explicit ordering and limiting keep the same marker on whichever parent row
+survives:
+
+```sh
+bus thread list --parent 10 --depth 1 --order activity:desc --limit 1
+```
+
+```text
+THREADS
+• #12  Support runbook [active, 1/2 complete (50%)] activity: 2026-03-05T00:00:00Z
+```
+
+`--format json` exposes the same totals as an optional `progress` object on
+each parent thread. `completed` and `total` are integers; `percent` is the
+unrounded percentage of completed over total:
+
+```json
+{
+  "thread_id": 10,
+  "title": "Launch checklist",
+  "progress": { "completed": 2, "total": 4, "percent": 50 }
+}
+```
+
+Leaf threads omit `progress` entirely; treat a missing field, not `null` or a
+zero-valued object, as "no descendants."
+
 ## Watch And Output
 
 Replay and follow one thread or a board:
