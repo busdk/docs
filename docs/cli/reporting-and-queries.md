@@ -5,9 +5,7 @@ description: In addition to mutating commands, BusDK provides read-only query an
 
 ## Reporting and query commands
 
-This page defines the shared design contract for read-only query and reporting commands that compute balances, statuses, and summaries from workspace datasets. It is not a current command reference: the linked module CLI pages and `bus <module> <command> --help` are authoritative for implemented commands, flags, formats, and guarantees.
-
-The contract covers human-readable output, machine-readable integration, deterministic ordering, audit exports, and period-scoped reporting. Individual modules may implement these requirements incrementally; do not assume a command or output mode exists until its module reference or help output documents it.
+In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the workspace datasets. Examples include `bus accounts list`; `bus journal balance --as-of 2026-03-31`; `bus invoices list --status unpaid`; `bus vat report --period 2026-03`; and `bus budget report --year 2026`. Output is expected to be human-readable and may include tabular terminal formatting; where relevant, machine-readable output options should exist for integration with scripts and downstream analysis.
 
 Reporting outputs must be deterministic when used for auditing, exports, and automation. When a command offers a machine-readable output mode, the format, column set, and column order must be stable and documented, and record ordering must be stable and documented. Stable ordering should be based on stable identifiers and explicit sort keys (for example primary keys and dates) rather than on incidental file ordering.
 
