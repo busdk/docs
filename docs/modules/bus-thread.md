@@ -75,6 +75,23 @@ Archiving does not delete the thread or its event history.
 
 ## List Order and Activity
 
+With no `--depth`, `list` shows the complete visible thread hierarchy. Select a
+subtree by passing its parent ID positionally or with `--parent`:
+
+```sh
+bus thread list
+bus thread list 229
+bus thread list --parent 229
+bus thread list 229 --depth 0
+bus thread list --parent 229 --depth 1
+```
+
+The two parent forms produce the same text and JSON output. Selecting parent
+`229` changes the subtree root, but omitting `--depth` still shows all visible
+descendants. `--depth 0` shows only the direct level: root threads for an
+unscoped list or the selected parent's direct children. Positive depths keep
+the hierarchy bounded. Use `--roots` for a root-only list.
+
 Use `bus thread list --order activity[:asc|desc]` to sort by last activity.
 `activity` and `activity:asc` are least-recently-active first.
 `activity:desc` is newest-first.
