@@ -7,7 +7,7 @@ description: CLI tooling section of the BusDK design spec — command structure,
 
 This section is split into **single-concept** documents:
 
-These pages describe the shared CLI contract and target conventions. They do not make every command or flag available in every module; use the linked module reference and `bus <module> <command> --help` to confirm the current surface before scripting against it.
+These pages describe the shared CLI contract and target conventions. They do not make every command or flag available in every module; use the linked module reference and `bus <module> --help` to confirm the current surface before scripting against it. Name a specific command-level `--help` invocation only when the module's own `--help` output advertises that subcommand.
 
 [Extensible CLI surface and API parity](./api-parity), [Git commit conventions per operation (external Git)](./automated-git-commits), [Command structure and discoverability](./command-structure), [Standard global flags](./global-flags), and [CLI command naming](./command-naming) define command design conventions.
 
