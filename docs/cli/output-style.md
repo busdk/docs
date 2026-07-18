@@ -14,8 +14,9 @@ Whichever format is selected, the answer to the user's actual question comes fir
 Human output that shows a list of records as a hierarchy uses a literal `•` followed by one space, then the row content. Each depth below the top level adds two more spaces before the `•`. The record's status, when relevant, is a plain textual `[status]` suffix, not a color or icon standing in for it:
 
 ```text
-• 53  Human-readable bus thread show UX [completed]
-  • 222  Structure Thread show output with Unicode message boundaries and child list [completed]
+• 41  Thread list output behavior [completed]
+  • 219  Add bullet markers to human-readable Thread list rows [completed]
+  • 220  Hide archived Threads from default list and add --archived [completed]
 ```
 
 Glyphs decorate a row; they never replace the identifier, label, or status text next to them. A row must still be unambiguous if the bullet and connector characters are stripped out.
@@ -77,7 +78,7 @@ Long flags use their full, correctly spelled canonical form (`--format`, `--chdi
 
 The bullet hierarchy shown above reflects the installed `bus thread list` behavior. Archived-record filtering, positional shorthand for addressing one record directly (for example `bus invoices <invoice-id> show` instead of a separate lookup flag), and structured `show` output are target conventions that module commands may still be adopting. Do not rely on any of them in a script unless the relevant `bus <module> <command> --help` output lists the option or behavior.
 
-Human-output changes require focused golden or fixture tests. Machine output requires separate shape and ordering tests. User-visible command changes also require updated help and documentation plus exact local CLI E2E coverage.
+Human-output changes require focused golden/fixture coverage. Machine output requires separate shape and ordering coverage. User-visible command changes require help/docs updates and exact local CLI E2E coverage.
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
