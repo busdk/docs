@@ -5,23 +5,23 @@ description: In addition to mutating commands, BusDK provides read-only query an
 
 ## Reporting and query commands
 
-In addition to mutating commands, BusDK provides read-only query and reporting commands that compute balances, statuses, and summaries from the workspace datasets. Examples include `bus accounts list`; `bus journal balance --as-of 2026-03-31`; `bus invoices list --status unpaid`; `bus vat report --period 2026-03`; and `bus budget report --year 2026`. Output is expected to be human-readable and may include tabular terminal formatting; where relevant, machine-readable output options should exist for integration with scripts and downstream analysis.
+Use the current module commands for read-only queries and reports: [`bus accounts report`](../modules/bus-accounts), [`bus invoices list`](../modules/bus-invoices), [`bus vat report`](../modules/bus-vat), [`bus budget report`](../modules/bus-budget), and the broader [`bus reports`](../modules/bus-reports) family. Each module page documents its available flags, formats, ordering where documented, and prerequisites; `bus <module> <command> --help` is authoritative when the installed command differs.
 
-Reporting outputs must be deterministic when used for auditing, exports, and automation. When a command offers a machine-readable output mode, the format, column set, and column order must be stable and documented, and record ordering must be stable and documented. Stable ordering should be based on stable identifiers and explicit sort keys (for example primary keys and dates) rather than on incidental file ordering.
+The module references document deterministic formats and ordering where supported. For example, `bus reports account-balances --as-of 2026-03-31 --format csv` has a documented column shape, while report and invoice list commands document their date, identifier, and filter options. Prefer the machine-readable mode and ordering documented by the specific command rather than relying on incidental file order.
 
-Human-readable formatting is allowed to optimize terminal readability, but it must not be the only supported mode for commands that are expected to integrate into automated workflows. When a command emits structured results, it should be possible to select a machine-readable output mode that preserves standard output for the result set and uses standard error for diagnostics.
+Human-readable formatting is allowed to optimize terminal readability, but it must not be the only supported mode for commands that are expected to integrate into automated workflows. When a command emits structured results, it should be possible to select a machine-readable output mode that writes the result set to standard output by default, or to the selected output destination, and uses standard error for diagnostics.
 
-Reporting commands SHOULD support audit-trail exports and period-scoped output suitable for tax-audit packs. See [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
+For audit and period-scoped work, use the documented `bus reports evidence-pack`, `journal-coverage`, `parity`, and `journal-gap` commands. The compliance context is in [Finnish bookkeeping and tax-audit compliance](../compliance/fi-bookkeeping-and-tax-audit).
 
-For Finnish statutory financial statements, reporting commands MUST use explicit layout identifiers and one canonical account-group hierarchy rather than vague format labels or layout-specific account remapping. In BusDK this contract is defined by [bus-reports reference](../modules/bus-reports), which specifies built-in `fi-kpa-*` and `fi-pma-*` layout identifiers, comparative handling, synthetic statutory rows, and statement-level validations required for filing-readiness. The CLI reference for [bus-reports](../modules/bus-reports) documents the command-level surface (`--layout-id`, `--layout`, `--comparatives`) and points to the workspace reporting profile keys in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration).
+For Finnish statutory financial statements, the [bus-reports reference](../modules/bus-reports) documents built-in `fi-kpa-*` and `fi-pma-*` layout identifiers, comparative handling, account-group hierarchy, and statement validation. Its command reference covers `--layout-id`, `--layout`, and `--comparatives`, with workspace reporting profile keys described in [Workspace configuration (`datapackage.json` extension)](../data/workspace-configuration).
 
-For migration-quality checks, reporting includes non-opening journal coverage and related parity outputs that can be compared against source-import totals. The command workflow is documented in [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks).
+For migration-quality checks, run the documented journal-coverage, parity, and journal-gap commands against the source-import period. The workflow is documented in [Source import parity and journal gap checks](../workflow/source-import-parity-and-journal-gap-checks).
 
 <!-- busdk-docs-nav start -->
 <p class="busdk-prev-next">
   <span class="busdk-prev-next-item busdk-prev">&larr; <a href="./interactive-and-scripting-parity">Non-interactive use and scripting</a></span>
   <span class="busdk-prev-next-item busdk-index"><a href="../index">BusDK Docs</a></span>
-  <span class="busdk-prev-next-item busdk-next"><a href="./validation-and-safety-checks">Validation and safety checks</a> &rarr;</span>
+  <span class="busdk-prev-next-item busdk-next"><a href="./output-style">CLI output style</a> &rarr;</span>
 </p>
 <!-- busdk-docs-nav end -->
 

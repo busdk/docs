@@ -7,9 +7,11 @@ description: CLI tooling section of the BusDK design spec — command structure,
 
 This section is split into **single-concept** documents:
 
+These pages describe the shared CLI contract and target conventions. They do not make every command or flag available in every module; use the linked module reference and `bus <module> <command> --help` to confirm the current surface before scripting against it.
+
 [Extensible CLI surface and API parity](./api-parity), [Git commit conventions per operation (external Git)](./automated-git-commits), [Command structure and discoverability](./command-structure), [Standard global flags](./global-flags), and [CLI command naming](./command-naming) define command design conventions.
 
-[Minimum required command surface (end-to-end workflow)](./minimum-command-surface), [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), [Non-interactive use and scripting](./interactive-and-scripting-parity), and [Reporting and query commands](./reporting-and-queries) define operation behavior.
+[Minimum required command surface (end-to-end workflow)](./minimum-command-surface), [Error handling, dry-run, and diagnostics](./error-handling-dry-run-diagnostics), [Non-interactive use and scripting](./interactive-and-scripting-parity), [Reporting and query commands](./reporting-and-queries), and [CLI output style](./output-style) define operation behavior.
 
 For `.bus` usage, follow [`.bus` files — getting started step by step](./bus-script-files-getting-started), [`.bus` getting started — multiple commands together](./bus-script-files-multi-command-getting-started), and [`.bus` script files (writing and execution guide)](./bus-script-files). Installation guidance for syntax highlighting in common editors is in [Editor support for `.bus` files](./bus-editor-support). Validation policies are in [Validation and safety checks](./validation-and-safety-checks).
 
