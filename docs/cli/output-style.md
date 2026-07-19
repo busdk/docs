@@ -76,7 +76,7 @@ Box-drawing characters are reserved for the hierarchy, detail, and bounded-multi
 
 ## Encoding, layout, and color
 
-Human output is UTF-8 plain text. Commands must not depend on terminal width for alignment: no fixed-width column padding that breaks when an identifier or label is longer than expected. ANSI color, where `--color` enables it, is confined to human-facing diagnostics and help text on standard error; result rows on standard output or in `--output` remain uncolored. The textual `[status]` suffix and row content carry the meaning on their own, matching the color behavior defined in [Standard global flags](./global-flags).
+Human output is UTF-8 plain text. Commands must not depend on terminal width for alignment: no fixed-width column padding that breaks when an identifier or label is longer than expected. ANSI color is enabled by command/module rules via `--color` and `NO_COLOR`. It may apply to command result rows in explicit modes for certain commands (for example status markers and hierarchy connectors in `bus thread list`), while JSON and other structured output remains color-free. The textual `[status]` suffix and row content must remain readable and deterministic even when color is disabled, matching the mode semantics in [Standard global flags](./global-flags).
 
 ## Flags, errors, and help
 

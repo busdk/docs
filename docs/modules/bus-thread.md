@@ -175,3 +175,60 @@ Use `--format json` for scripts. The canonical event set is
 `bus.thread.created`, `bus.thread.updated`, `bus.thread.message`,
 `bus.thread.metadata.changed`, `bus.thread.linked`, and
 `bus.thread.archived`.
+
+## List and Tree Colorization
+
+`bus thread list` and `bus thread tree` support `--color auto|always|never` and
+`--no-color` (alias for `--color=never`). `--no-color`/an explicit `never` mode
+wins over an explicit `--color=always`, regardless of argument order.
+`--color auto` uses terminal detection. `always` forces ANSI color and `never` disables
+it for both commands. The `NO_COLOR` environment variable follows the same
+precedence: only `--color=auto` honors it — an explicit `--color=always` still
+emits ANSI even when `NO_COLOR` is set.
+
+In `list` output, `--color` applies to:
+
+- status markers in the row marker set (`completed`, `active`, `queued`)
+- `priority: critical`
+- the tree connector for each row in the default hierarchy view
+
+Only that row’s status marker and connector share the same color. Ancestor
+continuation bars (`│`) are intentionally not colorized.
+
+Current palette:
+
+- `active` → amber (`\x1b[93m`)
+- `queued` → cyan (`\x1b[36m`)
+- `completed` → green (`\x1b[32m`)
+- `priority: critical` → magenta (`\x1b[95m`)
+
+`done` is not colored and is not an alias of `completed`.
+
+`tree` currently does not render status markers today; `priority: critical` is the
+only colorized metadata token, and its plain `- ` prefix remains uncolored.
+
+```text
+bus thread list --color always 1
+THREADS
+└─ #9 Active root [active]
+   └─ #11 Queued branch [queued]
+      └─ #12 Completed child [completed, 1/1 complete (100%)] priority: critical
+bus thread list --color never 1
+THREADS
+└─ #9 Active root [active]
+   └─ #11 Queued branch [queued]
+      └─ #12 Completed child [completed, 1/1 complete (100%)] priority: critical
+```
+
+`priority: critical` also receives color in `tree` output.
+
+```text
+bus thread tree --color always
+- #9 Active root [priority: critical]
+  - #11 Queued branch
+    - #12 Completed child [priority: critical]
+bus thread tree --color never
+- #9 Active root [priority: critical]
+  - #11 Queued branch
+    - #12 Completed child [priority: critical]
+```
