@@ -143,7 +143,8 @@ bus thread list --parent 10 --depth 1 --order activity:desc --limit 1
 
 ```text
 THREADS
-• #12  Support runbook [active, 1/2 complete (50%)] activity: 2026-03-05T00:00:00Z
+#10 Launch checklist [active, 2/4 complete (50%)]
+  • #12  Support runbook [active, 1/2 complete (50%)] activity: 2026-03-05T00:00:00Z
 ```
 
 `--format json` exposes the same totals as an optional `progress` object on
