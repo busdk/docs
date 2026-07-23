@@ -238,4 +238,3 @@ metadata after Sources as described below.
 
 When citing authority (law, standards, guidance), link the authority directly
 with descriptive anchor text in the sentence where the claim is made.
-
