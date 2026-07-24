@@ -1,7 +1,5 @@
 # AGENTS
 
-Merged guidance from `.cursor/rules/*.mdc`.
-
 ## Audience Boundary
 
 This repository subtree (`./docs`) is for end-user documentation about how to
@@ -257,10 +255,6 @@ status.
 For workflows on this page, include only workflow name plus link to the inner
 workflow page and the readiness table. Do not inline workflow descriptions, e2e
 details, or runtime behavior.
-
-When this page's structure or behavior expectations change, update
-`.cursor/rules/development-status.mdc` in the same change so rule and page stay
-aligned.
 
 ## Interaction-driven updates
 
