@@ -1,23 +1,27 @@
 ---
 title: bus-connect — x402-gated messaging daemon
-description: "bus-connect is a self-hostable BusDK daemon intended to gate new conversation threads with x402 payments; the current build ships only CLI foundation commands."
+description: "bus-connect is a self-hostable BusDK daemon that gates new conversation threads with x402 payments; the current build runs locally only and is not yet deployable."
 ---
 
 ## Overview
 
-`bus-connect` is a small, self-hostable BusDK module intended to gate the start of a new conversation thread behind an x402 payment, then let the paying sender poll for replies and send bounded follow-ups on that same thread without paying again. Choose it when you want a single-recipient inbox that unknown senders — human or AI agent — can only reach after paying a small initiation fee, not a general-purpose messaging platform, payment gateway, or wallet.
+`bus-connect` is a small, self-hostable BusDK module that gates the start of a new conversation thread behind an x402 payment, then let the paying sender poll for replies and send bounded follow-ups on that same thread without paying again. Choose it when you want a single-recipient inbox that unknown senders — human or AI agent — can only reach after paying a small initiation fee, not a general-purpose messaging platform, payment gateway, or wallet.
 
-## Current status: foundation build only
+## Current status: local protocol build
 
-This is a foundation-phase build, not a working messaging daemon. The only committed, tested behavior is the command-line handling shown below: printing help and version text, and reporting invalid usage or an explicit "not implemented yet" diagnostic for any other command.
+The daemon works, but only against a local loopback endpoint and a local fake settlement facilitator. It refuses any non-loopback listen or facilitator URL, so it cannot reach a real payment network, and no live facilitator path has been proven.
 
-The daemon process, its REST API and OpenAPI description, x402 payment gating, SQLite-backed thread storage, thread capabilities, operator actions, paid send/poll/follow-up, and discovery are not available in this build. `bus-connect` has not been released or merged into any published BusDK distribution, so no released `bus` dispatcher currently includes a `connect` command.
+Implemented and covered by an end-to-end gate: the `serve` daemon; `create` and `get` as thin HTTP clients; an x402 v2 `402` challenge for an unpaid request; paid thread initiation; capability-scoped thread reads; bounded free follow-ups; and durable recovery when a settlement is interrupted between the external transfer and the local commit.
+
+Thread storage is provided by Bus Events conditional append, behind a store contract `bus-connect` owns. An earlier draft of this page described SQLite-backed storage; that is superseded and SQLite is not used.
+
+Not available: hosted deployment, a live facilitator, real payments, a remote operator API, an OpenAPI description, and discovery. `bus-connect` has not been released or merged into any published BusDK distribution, so no released `bus` dispatcher currently includes a `connect` command.
 
 ## Building from source (once published)
 
-The foundation build described on this page is not published yet. It cannot currently be obtained by cloning a public BusDK repository, and there is no release to download or install today.
+The build described on this page is not published yet. It cannot currently be obtained by cloning a public BusDK repository, and there is no release to download or install today. Building it also requires the sibling `bus-events` and `bus-help` module sources, because the durable conversation store depends on them.
 
-Once a source checkout is published, the following commands are the ones to run from that exact checkout to build the binary and exercise the two commands that work in this foundation build:
+Once a source checkout is published, the following commands build the binary and exercise it from that exact checkout:
 
 ```bash
 make clean build
@@ -31,13 +35,16 @@ Contributors building from source can run the module's own test suite the same w
 ```bash
 make test
 make test-e2e
+make test-protocol-e2e
 ```
+
+`make test-protocol-e2e` runs the daemon, a local fake facilitator, and the CLI end to end, including the case where a settlement is interrupted between the external transfer and the local commit. It is loopback-only and uses no network, credentials, or money.
 
 Treat the exact repository location, branch, and release channel as unconfirmed until publication, and validate the real public acquisition instructions against the published repository once it exists rather than assuming these commands are complete on their own.
 
-## Intended product shape (not available yet)
+## Product shape
 
-REST is intended to be the canonical product surface once implemented: a documented HTTP API that an agent could integrate against from documentation alone. `bus-connect`, and the eventual dispatcher alias `bus connect …`, are intended to stay thin convenience paths over that same service behavior, never a second or privileged surface.
+REST is the canonical product surface: an HTTP API that an agent could integrate against from documentation alone. `bus-connect`, and the eventual dispatcher alias `bus connect …`, are intended to stay thin convenience paths over that same service behavior, never a second or privileged surface.
 
 One static Go binary is intended to serve both roles the module targets: an operator who runs the daemon and handles reading, replying to, and closing threads, and a contacting party who pays to open a thread and then polls or follows up for free on that same thread. The intended future product model has any counterparty run their own instance and act as their own service provider, keeping their own initiation fees and their own operational and legal responsibility. A contacting party only needs a wallet capable of signing an x402 payment, not an endpoint or hosted instance of its own.
 
@@ -45,7 +52,7 @@ The repository is Fair Source, source-available under the Functional Source Lice
 
 The target economics point at USDC and EURC on Base, but no facilitator, network, or asset is wired up in this build. This module intentionally has no registry, no multi-tenant hosting, no subscriptions, no KYB, no SDKs, no webhooks, no MCP surface, and no platform integrations in scope.
 
-Once the payment gate exists, a successful x402 payment will only demonstrate acceptance of a valid payer authorization and either control of the paying wallet or delegated signing authority over it at the moment of signing. It will not prove direct ownership of that wallet, and it will not identify a specific human, AI agent, organization, or legal entity as the sender. Any claim inside the message body remains unverified. Wallet addresses are payment principals, not reachable routes; a reply is intended to work by the sender polling its own thread, not by anything being sent to an address.
+A successful x402 payment only demonstrates acceptance of a valid payer authorization and either control of the paying wallet or delegated signing authority over it at the moment of signing. It does not prove direct ownership of that wallet, and it does not identify a specific human, AI agent, organization, or legal entity as the sender. Any claim inside the message body remains unverified. Wallet addresses are payment principals, not reachable routes; a reply is intended to work by the sender polling its own thread, not by anything being sent to an address.
 
 ### Using from `.bus` files
 
