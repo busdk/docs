@@ -27,14 +27,12 @@ dispatcher exclusion unless the user explicitly asks to expose them.
 
 `./docs/docs/` is the published Jekyll source tree. Do not place `AGENTS.md`
 files anywhere under `./docs/docs/`. Keep durable agent instructions in
-non-published paths such as `./docs/AGENTS.md`. Treat the Jekyll `_config.yml`
+non-published paths such as this root `AGENTS.md`. Treat the Jekyll `_config.yml`
 exclude list as defense in depth, not as the primary reason this stays safe.
 For Bus Engine OS end-user material, keep the public module page at
-`docs/modules/bus-engine-os.md` in this docs repository, or
-`docs/docs/modules/bus-engine-os.md` from the superproject root. Keep it
-focused on user operation, command usage, profiles, artifacts, and version
+`docs/modules/bus-engine-os.md` in this docs repository. Keep it focused on user operation, command usage, profiles, artifacts, and version
 facts. Keep module boundary and implementation contract language in the SDD
-page or `bus-engine-os/AGENTS.md`.
+page or the parent checkout's `../bus-engine-os/AGENTS.md`.
 When running commands from inside this `docs` repository, published module
 pages are under `docs/modules/...`; the `docs/docs/modules/...` path is only
 correct when the current working directory is the superproject root.
@@ -223,7 +221,7 @@ Avoid generic titles, duplicate descriptions, keyword stuffing, unsupported
 claims, and missing qualifiers. Reference:
 `docs/seo-metadata-standard.md`.
 
-## File-specific rules: `implementation/development-status.md`
+## File-specific rules: `docs/implementation/development-status.md`
 
 When this docs project is part of a superproject, module source code is in
 sibling directories `../bus-{NAME}`. Use those module repos (tests, `README.md`,
