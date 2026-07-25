@@ -1,19 +1,19 @@
 ---
 title: bus-connect — x402-gated messaging daemon
-description: "bus-connect is a self-hostable BusDK daemon that gates new conversation threads with x402 payments; the current build runs locally only and is not yet deployable."
+description: "bus-connect is a self-hostable BusDK daemon that gates new conversation threads with x402 payments; only the CLI foundation is accepted, and the daemon exists as an unaccepted local candidate."
 ---
 
 ## Overview
 
 `bus-connect` is a small, self-hostable BusDK module that gates the start of a new conversation thread behind an x402 payment, then let the paying sender poll for replies and send bounded follow-ups on that same thread without paying again. Choose it when you want a single-recipient inbox that unknown senders — human or AI agent — can only reach after paying a small initiation fee, not a general-purpose messaging platform, payment gateway, or wallet.
 
-## Current status: local protocol build
+## Current status: accepted foundation, unaccepted daemon candidate
 
-The daemon works, but only against a local loopback endpoint and a local fake settlement facilitator. It refuses any non-loopback listen or facilitator URL, so it cannot reach a real payment network, and no live facilitator path has been proven.
+Only the command-line foundation is accepted: printing help and version text, and reporting invalid usage. That is the extent of reviewed, promoted behavior.
 
-Implemented and covered by an end-to-end gate: the `serve` daemon; `create` and `get` as thin HTTP clients; an x402 v2 `402` challenge for an unpaid request; paid thread initiation; capability-scoped thread reads; bounded free follow-ups; and durable recovery when a settlement is interrupted between the external transfer and the local commit.
+A daemon candidate exists on an isolated branch and passes its own tests, but it has **not** been independently reviewed, proven against a live Events endpoint, or promoted. Treat everything in this section as work in progress rather than as a feature you can use. The candidate covers the `serve` daemon, `create` and `get` as thin HTTP clients, an x402 v2 `402` challenge for an unpaid request, paid thread initiation, capability-scoped thread reads, bounded free follow-ups, and durable recovery when a settlement is interrupted between the external transfer and the local commit. It refuses any non-loopback listen or facilitator URL, so it cannot reach a real payment network, and no live facilitator path has been proven.
 
-Thread storage is provided by Bus Events conditional append, behind a store contract `bus-connect` owns. An earlier draft of this page described SQLite-backed storage; that is superseded and SQLite is not used.
+Thread storage is provided by Bus Events. What `bus-connect` requires of it is a set of behaviors rather than a particular database: an atomic conditional append, a deterministic ordered replay, persistence across an Events restart, and isolation of history and keys by authenticated identity. `bus-connect` does not choose, run, or maintain a database of its own. Earlier drafts of this page described SQLite-backed and then PostgreSQL-backed storage; both are superseded.
 
 Not available: hosted deployment, a live facilitator, real payments, a remote operator API, an OpenAPI description, and discovery. `bus-connect` has not been released or merged into any published BusDK distribution, so no released `bus` dispatcher currently includes a `connect` command.
 
