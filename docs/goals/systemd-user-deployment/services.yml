@@ -88,7 +88,7 @@ services:
       kind: native
       provider: bus
       command:
-        - bus-integration-workers
+        - bus-integration-worker
         - --lifecycle
         - appserver-plan
       env:

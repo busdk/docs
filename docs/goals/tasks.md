@@ -106,9 +106,9 @@ Worker identity, model choice, worker lifecycle, runtime delivery, Codex App
 Server communication, and `active_task_ref` handling belong to the worker
 module family.
 
-`bus-api-provider-workers` validates worker requests, publishes canonical
+`bus-api-provider-worker` validates worker requests, publishes canonical
 `bus.workers.*` Events, and serves bounded worker projections.
-`bus-integration-workers` owns worker claim, routing, launch, lifecycle
+`bus-integration-worker` owns worker claim, routing, launch, lifecycle
 transition, and runtime delivery. Task modules may link a task to a worker
 through the worker API or `bus.workers.assign.request`, but they must not
 launch workers, select runner providers, or store worker runtime state as task

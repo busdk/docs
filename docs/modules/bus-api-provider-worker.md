@@ -6,7 +6,7 @@ description: "bus-api-provider-worker will expose worker identity and worker sta
 ## `bus-api-provider-worker` — worker API provider
 
 `bus-api-provider-worker` is the current scaffold for the target plural
-`bus-api-provider-workers` API provider. The final product topology uses the
+`bus-api-provider-worker` API provider. The final product topology uses the
 plural provider name, but this checkout currently hosts the first provider
 slice while the repository/module rename remains unfinished.
 
@@ -17,7 +17,7 @@ in-process projection from returned worker Events. The standalone provider can
 listen to the Events API stream for `bus.workers.list.response` and
 `bus.workers.status.snapshot`, replay existing evidence, and then follow new
 worker responses. Those Events are the bridge toward a remote
-`bus-integration-workers` service. Durable read projections, Bus API
+`bus-integration-worker` service. Durable read projections, Bus API
 registration, and final list/show/status contracts are still unfinished.
 
 The first scaffold endpoints are:
@@ -48,4 +48,4 @@ API resources for:
 - worker-related non-secret validation rules
 
 Treat the singular module path as scaffolding until the plural
-`bus-api-provider-workers` module path is created or the checkout is renamed.
+`bus-api-provider-worker` module path is created or the checkout is renamed.

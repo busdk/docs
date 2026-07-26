@@ -22,7 +22,7 @@ Codex product replacement.
 
 ## Scope
 
-`bus-integration-workers` remains the worker lifecycle integration owner. It
+`bus-integration-worker` remains the worker lifecycle integration owner. It
 should select runner providers through the existing runner kind/provider
 interface or registry. Public callers should continue to use canonical worker
 requests, status snapshots, lifecycle phases, `runner_kind`, `runner_provider`,

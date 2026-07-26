@@ -41,5 +41,5 @@ keep product families consistent. `bus-{name}` owns the user-facing product and
 CLI, `bus-api-provider-{name}` owns API/controller integration with `bus-api`,
 and `bus-integration-{name}` owns event/integration-provider runtime behavior
 for the `bus-integration` runner. For workers-related architecture, prefer the
-plural family: `bus-worker`, `bus-api-provider-workers`, and
-`bus-integration-workers`.
+plural family: `bus-worker`, `bus-api-provider-worker`, and
+`bus-integration-worker`.

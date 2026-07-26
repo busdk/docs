@@ -6,7 +6,7 @@ description: "bus-integration-worker will project worker lifecycle and status th
 ## `bus-integration-worker` — worker integration
 
 `bus-integration-worker` is the current singular checkout scaffold for the
-target plural `bus-integration-workers` provider. It owns generic worker
+target plural `bus-integration-worker` provider. It owns generic worker
 lifecycle projection, status reconciliation, metrics/evidence plumbing, and
 other worker integration behavior that should not stay embedded inside
 task-only integration modules.
@@ -24,7 +24,7 @@ compatibility, the request payload and launcher helpers are moving under worker
 integration ownership.
 
 Current status: the module hosts reusable Go packages for worker integration
-helpers and now includes the first plural `bus-integration-workers` command
+helpers and now includes the first plural `bus-integration-worker` command
 slice. That command can consume `bus.workers.list.request` through Bus Events
 and publish this environment's correlated `bus.workers.list.response` from a
 static non-secret worker catalog. Do not treat it as a stable operator-facing
@@ -35,8 +35,8 @@ For current task-worker launch/orchestration behavior, use
 
 The first `bus.workers.*` request/response loop is:
 
-1. Local `bus-api-provider-workers` publishes `bus.workers.list.request`.
-2. Each worker environment running `bus-integration-workers` receives the
+1. Local `bus-api-provider-worker` publishes `bus.workers.list.request`.
+2. Each worker environment running `bus-integration-worker` receives the
    request.
 3. Each environment emits `bus.workers.list.response` with the original
    `correlationId`, environment identity, and a bounded worker list.

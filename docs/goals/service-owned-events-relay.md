@@ -1206,8 +1206,8 @@ Develop continuation at 12:00 on 2026-06-04:
   Services/relay/task/worker proof bundle: `bus`, `bus-api`, `bus-services`,
   `bus-integration-services`, `bus-integration-events`, `bus-operator-token`,
   `bus-api-provider-auth`, `bus-api-provider-events`, `bus-task`,
-  `bus-worker`/`bus-worker`, `bus-api-provider-workers`,
-  `bus-integration-task`, `bus-integration-workers`,
+  `bus-worker`/`bus-worker`, `bus-api-provider-worker`,
+  `bus-integration-task`, `bus-integration-worker`,
   `bus-integration-repos`, and `bus-remote`. The dispatcher-visible smoke
   checks `bus services --help`, `bus task --help`, and `bus worker --help`
   passed on the remote host.
@@ -1758,7 +1758,7 @@ worker-replay fix:
   `bus-api` `02b39ae`, `bus-api-provider-worker` `7ab4cc7`,
   `bus-integration-services` `46e1289`, and docs `bc60f0d`;
 - affected root `dist-bin` tools were rebuilt on both systems:
-  `bus-api`, `bus-integration-services`, and `bus-api-provider-workers`;
+  `bus-api`, `bus-integration-services`, and `bus-api-provider-worker`;
 - local `bus services up --file services.yml` restarted cleanly after stopping
   a stale checkout-owned Postgres postmaster left from an earlier state-file
   mismatch, and local

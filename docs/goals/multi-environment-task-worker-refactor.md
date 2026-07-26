@@ -58,7 +58,7 @@ belongs to this goal when it involves more than one environment:
   and remote Events APIs;
 - preserving environment identity in local worker projections when multiple
   environments report worker evidence;
-- ensuring that the destination environment's own `bus-integration-workers`
+- ensuring that the destination environment's own `bus-integration-worker`
   service creates and controls its workers, instead of a local process starting
   remote workers directly;
 - proving local plus remote worker status and guidance through the product
@@ -108,7 +108,7 @@ Current implementation baseline:
 - The current worker checkouts are singular scaffolds:
   `bus-worker`, `bus-api-provider-worker`, and `bus-integration-worker`. They
   already expose plural product surfaces and binaries such as
-  `bus-api-provider-workers` and `bus-integration-workers`, publish and consume
+  `bus-api-provider-worker` and `bus-integration-worker`, publish and consume
   canonical `bus.workers.*` Events, use envelope `correlationId`, preserve
   `environment_id` in projections, and include App Server lifecycle planning.
   The future plural module names remain the target architecture, but the

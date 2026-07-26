@@ -66,9 +66,9 @@ run in containers or VMs, or prove remote environment support.
 The target module family is:
 
 - `bus-worker`: user-facing product and plural CLI.
-- `bus-api-provider-workers`: local API/controller provider mounted by
+- `bus-api-provider-worker`: local API/controller provider mounted by
   `bus-api`.
-- `bus-integration-workers`: local event/integration provider that manages
+- `bus-integration-worker`: local event/integration provider that manages
   worker lifecycle in the worker environment through runner providers.
 
 The existing singular `bus-worker`, `bus-api-provider-worker`, and
@@ -76,7 +76,7 @@ The existing singular `bus-worker`, `bus-api-provider-worker`, and
 renamed, wrapped, or promoted into the plural product surface. Do not treat the
 singular names as the final user-facing architecture.
 
-Runner-provider implementations are below the `bus-integration-workers`
+Runner-provider implementations are below the `bus-integration-worker`
 boundary. The worker product/API/Event contract must not need to change when a
 new runner is added. The first known runner families are:
 
@@ -86,14 +86,14 @@ new runner is added. The first known runner families are:
 - Codex inside a VM later, without making VM concepts part of the core worker
   contract before that provider exists.
 
-`bus-integration-workers` owns the stable worker-runner interface,
+`bus-integration-worker` owns the stable worker-runner interface,
 configuration selection, lifecycle state mapping, and redaction policy.
 Runner-specific modules own provider mechanics such as container creation,
 Podman/Docker flags, VM boot/session details, or host process launch details.
-Task modules, `bus-worker`, and `bus-api-provider-workers` must not call those
+Task modules, `bus-worker`, and `bus-api-provider-worker` must not call those
 runner-specific implementation details directly.
 
-Internally, `bus-integration-workers` should use a runner-provider interface or
+Internally, `bus-integration-worker` should use a runner-provider interface or
 registry for runtime implementations. The first registered provider is local
 host-run Codex through this environment's Codex runtime and sandbox. Later
 providers, such as Docker/Podman/container Codex or VM Codex, should implement
@@ -107,7 +107,7 @@ callers of the workers integration module. Public callers may request a
 runner kind/provider and read non-secret status metadata, but they should not
 learn provider-specific construction details.
 
-The stable compatibility contract for callers of `bus-integration-workers` is
+The stable compatibility contract for callers of `bus-integration-worker` is
 canonical worker requests in and canonical worker snapshots out. Current and
 future callers should depend on create/control/list/status request structs,
 Bus Event names, lifecycle phases, runner identity fields, and bounded
@@ -122,7 +122,7 @@ task scheduler integration.
 ## Affected Bus Modules
 
 The product surfaces touched by this goal are plural: `bus-worker`,
-`bus-api-provider-workers`, and `bus-integration-workers`. The current
+`bus-api-provider-worker`, and `bus-integration-worker`. The current
 checkout names remain singular scaffolds in several places:
 `bus-worker`, `bus-api-provider-worker`, and `bus-integration-worker`.
 Implementers may continue changing those checkouts while this goal is in
@@ -143,7 +143,7 @@ Supporting Bus modules are touched only through their boundaries:
 - `bus-api` mounts the workers API provider but should not learn runner
   mechanics.
 - `bus-agent` owns reusable Codex/App Server protocol clients and host runtime
-  adapter mechanics. `bus-integration-workers` may depend on that boundary to
+  adapter mechanics. `bus-integration-worker` may depend on that boundary to
   deliver direct-runner guidance into a live App Server session, but worker
   callers must not learn App Server JSON-RPC or WebSocket details.
 - `bus-events` and `bus-api-provider-events` carry the protected
@@ -165,9 +165,9 @@ Supporting Bus modules are touched only through their boundaries:
 - `bus-task`, `bus-api-provider-task`, and `bus-integration-task` own task UX,
   task Events, and scheduler/claim behavior. They may address a worker by the
   canonical workers contract, but should not import runner-provider mechanics.
-- `bus-api-provider-workers` owns the worker API boundary: it validates worker
+- `bus-api-provider-worker` owns the worker API boundary: it validates worker
   requests, publishes canonical `bus.workers.*` Events, and serves bounded
-  worker projections. `bus-integration-workers` owns the actual worker claim,
+  worker projections. `bus-integration-worker` owns the actual worker claim,
   routing, launch, lifecycle transition, and runtime delivery behavior for the
   selected environment.
 
@@ -220,7 +220,7 @@ Accepted evidence so far:
   create/message/messages/stop lifecycle through the real dispatcher form
   `bus worker ...` against the API stub, while keeping the public dispatcher
   generic and free of private worker-module coupling.
-- `bus-api-provider-workers` must remain an API/controller and projection
+- `bus-api-provider-worker` must remain an API/controller and projection
   surface, not the durable identity owner.
 - Local CLI/API/provider/Event request shaping, App Server runner planning,
   host-process execution scaffolding, status projection, stop/logs/attach
@@ -240,10 +240,10 @@ Accepted evidence so far:
   path, and stops through the product path. The proof now runs through a real
   `bus-api-provider-events` memory backend with generated local JWT auth, not
   only the hermetic relay. This proof depends on
-  `bus-integration-workers` seeding each isolated worker `CODEX_HOME` from the
+  `bus-integration-worker` seeding each isolated worker `CODEX_HOME` from the
   configured host Codex auth/config home before App Server startup.
 - Repository/worktree ownership now has an Events-level product-path proof
-  through the repos contract: `bus-integration-workers` publishes
+  through the repos contract: `bus-integration-worker` publishes
   `bus.repos.ensure.request` for both worker workspaces, a real
   `bus-integration-repos` command backed by the repos processor/manager
   materializes them and returns safe `bus.repos.status.snapshot` evidence, and
@@ -273,7 +273,7 @@ Accepted evidence so far:
   `limit`, and `since` / `until` timestamp bounds to the Events stream, which
   gives the workers read side a concrete path to targeted projection
   hydration.
-- `bus-api-provider-workers` now has a request-aware projection refresh path.
+- `bus-api-provider-worker` now has a request-aware projection refresh path.
   Read endpoints for one worker can replay a bounded no-follow Events slice
   with `bus.recipient.id={worker_uuid}` and optional environment metadata
   before reading the projection, instead of relying only on broad worker Event
@@ -286,22 +286,22 @@ Accepted evidence so far:
   `follow=false` query parameters. The real-Codex product proof also queries
   the real Events provider directly with the generated worker UUID as
   `bus.recipient.id` and confirms status and message response replay.
-- `bus-integration-workers` startup hydration now replays canonical worker
+- `bus-integration-worker` startup hydration now replays canonical worker
   create requests as durable identity/configuration facts and status snapshots
   as lifecycle/runtime facts. The replay merge preserves non-secret create
   intent such as model, profile, runner provider, worker home reference, task
   reference, and workers-owned metadata while applying later status evidence.
 - UUID worker identity defaulting now exists in the API-backed create path:
-  callers may omit `--id`, `bus-api-provider-workers` generates the UUID and
+  callers may omit `--id`, `bus-api-provider-worker` generates the UUID and
   defaults `worker_home_ref` to `repos://workers/{worker_uuid}`, and
-  `bus-integration-workers` derives the worker identity branch from a
+  `bus-integration-worker` derives the worker identity branch from a
   configurable prefix that defaults to `worker/`.
-- `bus-api-provider-workers` now rejects malformed operator create requests
+- `bus-api-provider-worker` now rejects malformed operator create requests
   more narrowly before publishing canonical Events: invalid supplied worker
   ids, unsupported worker types, invalid profile strings, duplicate or invalid
   routing identifiers, worker-home references outside `repos://workers/`, and
   direct-runner create requests that try to carry a container image fail
-  closed with bounded API errors. `bus-integration-workers` also rejects
+  closed with bounded API errors. `bus-integration-worker` also rejects
   canonical create Events whose worker id is unsafe before adding them to the
   control catalog.
 - The workers API provider now accepts the documented optional `labels`
@@ -310,8 +310,8 @@ Accepted evidence so far:
   worker ids, environment ids, and message ids on control/message paths without
   rejecting operator text because it mentions or carries secret-like values.
 - Worker labels now survive the local worker projection path instead of being
-  create-only write data: `bus-integration-workers` carries labels in worker
-  snapshots and replay hydration, and `bus-api-provider-workers` parses,
+  create-only write data: `bus-integration-worker` carries labels in worker
+  snapshots and replay hydration, and `bus-api-provider-worker` parses,
   merges, and clones labels in its in-memory worker projection.
 - `bus-worker` / `bus-worker` API-backed create now exposes structured
   non-secret labels with repeated `--metadata-label key=value` flags, sends
@@ -355,12 +355,12 @@ Accepted evidence so far:
   so token-file-like fields do not leak into operator text logs.
 - Worker API and integration Events now use the shared `bus-events` platform
   metadata constants for environment, recipient, service kind, and service
-  instance addressing. `bus-api-provider-workers` generates a service-instance
-  UUID when the handler is built, and `bus-integration-workers` uses an
+  instance addressing. `bus-api-provider-worker` generates a service-instance
+  UUID when the handler is built, and `bus-integration-worker` uses an
   automatically generated process-local service-instance UUID when one is not
   supplied by an embedding host. Focused tests now cover both explicit
   service-instance ids and the no-configuration generated UUID path. Repos
-  ensure requests produced by `bus-integration-workers` now carry the same
+  ensure requests produced by `bus-integration-worker` now carry the same
   generic service kind and service instance metadata as worker status and
   message response Events, so provider-adjacent Events remain attributable to
   the managing service without adding worker-specific fields to the Events API.
@@ -384,7 +384,7 @@ passed 1, skipped 0)`. That run exercised the PostgreSQL provider stop/start
 step against the same DSN and replayed an Event published before restart.
 
 Container and VM runners remain extension targets behind the same internal
-`bus-integration-workers` provider interface. Remote worker hosts,
+`bus-integration-worker` provider interface. Remote worker hosts,
 multi-environment relay, remote credential-source proof, and service-owned
 Events relay are tracked by neighboring goals and are not blockers for this
 initial local sandboxed Codex worker goal.
@@ -434,7 +434,7 @@ When remote support is added, the local environment must not directly start a
 worker process in another environment. The expected remote model is Event
 routing: a local provider publishes canonical worker request Events, relay
 moves them to the destination environment, and that destination environment's
-own `bus-integration-workers` service creates, controls, observes, and reports
+own `bus-integration-worker` service creates, controls, observes, and reports
 its workers.
 Container runners likewise depend on `bus-integration-containers` or an
 equivalent stable container lifecycle boundary before a container provider can
@@ -470,7 +470,7 @@ The accepted product surface supports:
 Worker status and control state must not be stored in ad hoc local catalog
 files. `bus-worker` must not create or update an environment-specific
 `.bus/worker/config.json` identity store; it is an API client only.
-`bus-api-provider-workers` must not become the durable identity store either:
+`bus-api-provider-worker` must not become the durable identity store either:
 it is an API controller and bounded read projection over worker Events.
 `--workers-file` in the current integration command is bootstrap input for
 local development and preflight only.
@@ -480,7 +480,7 @@ lifecycle, and audit history is the canonical Bus Events API history.
 `bus.workers.*` Events record facts such as worker creation, display
 name changes, model/profile configuration changes, desired runner provider,
 sandbox policy, task assignment, desired lifecycle transitions, and status
-snapshots. `bus-integration-workers` owns applying those Events in the
+snapshots. `bus-integration-worker` owns applying those Events in the
 environment that can actually run the worker, and the service rebuilds
 its projection from Events history rather than from a private local database or
 metadata file. This keeps multi-environment sync aligned with the normal
@@ -489,8 +489,8 @@ replicate its own persistent store.
 
 Because worker identity/configuration is event-sourced, the accepted Events API
 path supports targeted projection replay through generic recipient and parent
-addressing metadata. `bus-integration-workers` and
-`bus-api-provider-workers` can request bounded ranges of Events for one worker
+addressing metadata. `bus-integration-worker` and
+`bus-api-provider-worker` can request bounded ranges of Events for one worker
 UUID instead of replaying every `bus.workers.*` Event and filtering in process.
 This is expressed as normal Events recipient querying, not worker-specific
 transport: account scope comes from the JWT, authorization can restrict visible
@@ -508,7 +508,7 @@ instance UUID, and service-managed runtime or domain resources identified by
 their own UUIDs. The simple delivery rule should be that an Event can be
 addressed to one recipient UUID without using a separate module-specific send
 API. Parent/ownership metadata then explains where that recipient currently
-belongs. In this goal, a `bus-integration-workers` service instance can be a
+belongs. In this goal, a `bus-integration-worker` service instance can be a
 recipient, and each worker under that service can also be a recipient. A
 worker can later move to another service instance or environment when the
 managing service publishes new generic ownership/parentage facts; the worker
@@ -534,7 +534,7 @@ than hand-authored config files.
 
 The configured worker identity repository remains important, but it is the
 worker-editable Git workspace, not the service metadata database.
-`bus-integration-workers` must use the repos configuration/contract to address
+`bus-integration-worker` must use the repos configuration/contract to address
 that repository, for example by a configured repos `repo_id` whose default
 deployment may point at `agents/worker`. Repos-owned Git refs, worktrees, and
 status snapshots are authoritative evidence for materialized repository state
@@ -552,7 +552,7 @@ owner when the operator does not provide one. The worker identity branch is
 derived from that UUID by joining it to a configurable branch prefix. The
 prefix defaults to `worker/`, so the normal identity branch is
 `worker/{worker_uuid}`. Because the branch rule is deterministic,
-`bus-integration-workers` can discover existing workers through
+`bus-integration-worker` can discover existing workers through
 `bus-integration-repos` by listing or planning branches in the configured
 worker identity repository under that prefix instead of maintaining a separate
 registry file. The local worker identity worktree path is derived from the UUID
@@ -584,7 +584,7 @@ worker payload semantics.
 
 Worker Events should also carry generic environment and service-instance
 provenance when it is known. For example, a status snapshot produced by
-`bus-integration-workers` should identify the reporting environment UUID, the
+`bus-integration-worker` should identify the reporting environment UUID, the
 service kind, the service instance UUID, and the worker recipient/resource UUID
 through Events-owned metadata. Those fields are not worker-only concepts: they
 describe where an Event originated, which service produced or owns the Event,
@@ -613,7 +613,7 @@ never reset or delete a worker worktree as part of normal lifecycle control.
 
 Worker runner providers are the runtime implementations that actually start and
 control Codex/App Server. They are replaceable implementation details behind
-`bus-integration-workers`, not separate product APIs that every caller needs to
+`bus-integration-worker`, not separate product APIs that every caller needs to
 understand.
 
 The first accepted stable worker control surface must support the `appserver`
@@ -651,8 +651,8 @@ status, and list should work through the same `bus.workers.*` Events for every
 runner.
 
 Adding a new runner provider must not require refactoring `bus-worker`,
-`bus-api-provider-workers`, `bus-task`, or external callers of the workers API.
-The required extension point is inside `bus-integration-workers`: an internal
+`bus-api-provider-worker`, `bus-task`, or external callers of the workers API.
+The required extension point is inside `bus-integration-worker`: an internal
 runner provider registry or equivalent interface that maps worker
 create/control requests to provider-specific lifecycle operations, redacts
 provider output, and converts provider-specific state back into the canonical
@@ -668,7 +668,7 @@ worker snapshots; provider-private config such as container driver flags, VM
 image refs, socket paths, or host process command templates should stay in
 provider configuration and bounded metadata.
 
-Provider implementations may live in `bus-integration-workers` when they are
+Provider implementations may live in `bus-integration-worker` when they are
 small host-process adapters, or delegate to another integration module when
 that module owns the lower-level runtime. In particular, the container
 provider should delegate container lifecycle mechanics to
@@ -694,10 +694,10 @@ should add its own provider behind the same interface.
 The normal path is:
 
 1. `bus worker ...` talks to local `bus-api`.
-2. `bus-api` routes to `bus-api-provider-workers`.
+2. `bus-api` routes to `bus-api-provider-worker`.
 3. The provider publishes canonical `bus.workers.*` Events and maintains a
    bounded local read projection.
-4. The selected worker environment's `bus-integration-workers` consumes those
+4. The selected worker environment's `bus-integration-worker` consumes those
    Events. In the first scope this is local; later remote support should use
    Events relay so the destination environment's own integration service
    consumes the request.
@@ -788,7 +788,7 @@ The first interoperable payload contract must include these names and fields:
   `preserve_worktree`, defaulting to `true` for the first product slice. The
   promoted local product-path proof covers stop for the first accepted MVP:
   the operator can request stop through `bus worker`, the request is published
-  through the Workers API/Event path, `bus-integration-workers` stops the
+  through the Workers API/Event path, `bus-integration-worker` stops the
   Codex App Server runner, and projected status reaches `stopped`.
 - `bus.workers.assign.request`: required string fields `id` and `task_ref`;
   optional string fields `environment_id`, `assignment_id`, and `reason`.
@@ -808,7 +808,7 @@ The first interoperable payload contract must include these names and fields:
   provider should report delivery evidence such as delivery method, operation
   (`turn/start` or `turn/steer`), thread id, turn id, and endpoint reference,
   while keeping the App Server protocol details private to `bus-agent` and
-  `bus-integration-workers`. If the App Server turn completes,
+  `bus-integration-worker`. If the App Server turn completes,
   interrupts, exits, or reaches the configured evidence timeout without
   assistant text, the response should distinguish completed/no-text evidence
   from failed runtime evidence and include only a bounded redacted diagnostic
@@ -1088,7 +1088,7 @@ not limited to projected metadata.
 Repos-owned worktree materialization evidence is covered by
 `bus-integration-repos` tests and
 `tests/e2e/071-workers-product-repos-materializer.sh`. In that proof,
-`bus-integration-workers` publishes `bus.repos.ensure.request` for both
+`bus-integration-worker` publishes `bus.repos.ensure.request` for both
 product and worker-identity workspaces, `bus-integration-repos` materializes
 the worktrees, returns repos status evidence, and the worker proceeds through
 create/message/respond/stop. The worker-side repos client uses per-request
@@ -1118,7 +1118,7 @@ isolated `CODEX_HOME`, and that text output does not expose token material.
 
 Container and VM behavior remains out of this first acceptance scope. The
 current contract keeps `runner_kind`, `runner_provider`, and provider-private
-mechanics behind `bus-integration-workers`; no Docker, Podman, container image,
+mechanics behind `bus-integration-worker`; no Docker, Podman, container image,
 or VM field is required for the `direct` local Codex product path.
 
 State-transition and environment-identity evidence is covered by focused tests
@@ -1171,7 +1171,7 @@ through create, ready status, logs/attach, bidirectional guidance, Events
 recipient replay after `bus-api` restart, and stop. A follow-up
 pre-promotion review tightened repos ensure correlation ids and reran
 `go test ./pkg/workersintegration`,
-`go test ./cmd/bus-integration-workers`,
+`go test ./cmd/bus-integration-worker`,
 `bash tests/e2e/071-workers-product-repos-materializer.sh`, and the gated real
 Codex product e2e successfully. A subsequent review also made
 `bus-integration-repos` stamp its own service kind and generated service

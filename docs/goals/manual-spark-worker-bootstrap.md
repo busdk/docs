@@ -34,7 +34,7 @@ directory. It currently starts Docker-hosted Codex App Server workers on
 with defaults for the remote BusDK superproject checkout at
 `/home/coding-agent/coding-agent/git/busdk/busdk` and worker scratch data under
 `/home/coding-agent/coding-agent/git/busdk/tmp/workers`. The product
-`bus-integration-workers` implementation already has an App Server lifecycle
+`bus-integration-worker` implementation already has an App Server lifecycle
 planner/executor surface using `BUS_WORKERS_APPSERVER_*` settings; those names
 belong to the product integration path, not the current manual script.
 
@@ -266,7 +266,7 @@ alone.
 ## Relationship To Product Workers
 
 The product workers goal should reuse this launcher shape rather than invent a
-second lifecycle model. The future `bus-integration-workers` lifecycle should
+second lifecycle model. The future `bus-integration-worker` lifecycle should
 eventually drive the same concepts through `bus.workers.*` Events:
 
 - worktree and branch creation;

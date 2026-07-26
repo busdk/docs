@@ -62,11 +62,11 @@ The current module ownership is different from the historical handoff:
   currently uses `--token-file` or `BUS_WORKERS_API_TOKEN_FILE` for the workers
   API bearer token and exposes non-secret credential-source fields in worker
   status metadata.
-- `bus-api-provider-worker` / `bus-api-provider-workers` publishes and projects
+- `bus-api-provider-worker` / `bus-api-provider-worker` publishes and projects
   canonical `bus.workers.*` Events. It currently accepts
   `--events-token-file` / `BUS_API_PROVIDER_WORKERS_EVENTS_TOKEN_FILE` and
   env-token input for the Events API.
-- `bus-integration-worker` / `bus-integration-workers` is the current worker
+- `bus-integration-worker` / `bus-integration-worker` is the current worker
   integration/service owner for worker control, scheduling, claim/start
   helpers, lifecycle planning/execution, and worker status snapshots. It
   already carries non-secret `credential_source_kind` and
@@ -87,7 +87,7 @@ Historical names such as `bus-integration-dev-task`, `bus dev task`,
 `bus dev work`, `bus.dev.task.*`, `bus.work.*`, and singular
 `bus.worker.*` should be treated as compatibility or historical evidence only.
 New goal work should use `bus-task`, `bus-worker`,
-`bus-api-provider-workers`, `bus-integration-workers`, canonical
+`bus-api-provider-worker`, `bus-integration-worker`, canonical
 `bus.task.*`, and canonical `bus.workers.*` where those surfaces exist.
 
 ## Open Work Needed Now
@@ -100,7 +100,7 @@ acceptance. The current implementation still needs these product slices:
   empty-file and locally detectable expiry diagnostics where the token format
   supports it.
 - Normalize Events service credential lookup in `bus-integration-task`,
-  `bus-api-provider-workers`, and `bus-integration-workers` so explicit
+  `bus-api-provider-worker`, and `bus-integration-worker` so explicit
   token-file or deployment credential-source configuration beats
   `BUS_API_TOKEN`, with source-labelled diagnostics.
 - Decide which credential-source kinds each service can resolve locally
@@ -121,8 +121,8 @@ acceptance. The current implementation still needs these product slices:
   environments with different credential sources while the inherited
   `BUS_API_TOKEN` is intentionally stale. The proof must cover task creation or
   assignment through `bus-task`, worker create/status/control through
-  `bus-worker` / `bus-api-provider-workers`, Events relay/sync boundaries,
-  and worker lifecycle/status through `bus-integration-workers`, without manual
+  `bus-worker` / `bus-api-provider-worker`, Events relay/sync boundaries,
+  and worker lifecycle/status through `bus-integration-worker`, without manual
   shell token export as the normal path.
 
 ## Dependencies
@@ -132,7 +132,7 @@ the proof to mean something:
 
 - Finish or explicitly scope the current `bus-task` task API client contract so
   the proof uses the new task surface rather than reviving `bus dev task`.
-- Finish or explicitly scope the `bus-integration-workers` service-loop and
+- Finish or explicitly scope the `bus-integration-worker` service-loop and
   lifecycle path enough to start or plan workers from `bus.workers.*` Events.
 - Use the service-owned Events relay goal for normal local-to-remote and
   remote-to-local evidence movement; manual export/import or ad hoc sync loops
