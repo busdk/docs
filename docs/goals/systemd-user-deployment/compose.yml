@@ -2,7 +2,7 @@ name: bus-systemd-services-goal
 
 services:
   bus-services-systemd:
-    image: ${BUS_SYSTEMD_SERVICES_GO_IMAGE:-golang:1.26.3}
+    image: ${BUS_SYSTEMD_SERVICES_GO_IMAGE:-golang:1.26.5}
     working_dir: /workspace
     command:
       - sh
