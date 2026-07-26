@@ -11,7 +11,7 @@ task/worker flows do not use it.
 
 Use [`bus-task`](./bus-task) for current bidirectional task threads, messages,
 attachments, task lifecycle, worker metadata, and multi-remote task launch. Use
-[`bus-worker`](./bus-worker) and the `bus workers ...` command family for
+[`bus-worker`](./bus-worker) and the `bus worker ...` command family for
 durable worker identity, status, logs, attach, pause/resume, assignment, and
 environment-aware worker control.
 

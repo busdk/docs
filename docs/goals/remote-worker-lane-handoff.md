@@ -78,7 +78,7 @@ Accepted MVP state:
 
 - The local-to-dev.hg.fi service-owned Events relay route is accepted for the
   current remote-worker MVP path. The proof used normal root `services.yml`
-  stacks and ordinary `bus task` / `bus workers` commands from the local
+  stacks and ordinary `bus task` / `bus worker` commands from the local
   operator environment.
 - Relay routing is metadata-addressed, not based on event-name allowlists.
 - Restart/resume kept the terminal task Event single and preserved closed task

@@ -225,7 +225,7 @@ Minimum worker-tooling check for worker-capable profiles:
 
 ```bash
 docker run --rm "$BUS_SERVICES_IMAGE" sh -lc \
-  'go version && git --version && bus workers --help >/dev/null'
+  'go version && git --version && bus worker --help >/dev/null'
 ```
 
 The exact checks may be refined to avoid scanning virtual filesystems and
@@ -525,7 +525,7 @@ or promoted; merge requires operator confirmation. Follow-up infrastructure task
 `task-91b6d590140a` was created and assigned to
 `worker-websocket-policy-20260606a` as
 `workers-message-1780739722732731619` to diagnose why accepted worker proof
-messages are not reliably visible in `bus workers messages` output or driving
+messages are not reliably visible in `bus worker messages` output or driving
 turn execution, and to identify the safest worker-owned path to resume the
 Docker proof. Because that infrastructure worker also remained on its earlier
 active task, the same diagnosis was routed to its active task as
@@ -1113,12 +1113,12 @@ Continuation steps:
    ```bash
    ssh coding-agent@dev.hg.fi \
      'cd /home/coding-agent/coding-agent/git/busdk/busdk && \
-      bus-worker/bin/bus-workers --api-url http://127.0.0.1:8090/local/v1 \
+      bus-worker/bin/bus-worker --api-url http://127.0.0.1:8090/local/v1 \
         --token-file .bus/tokens/local-events.jwt \
         --format json list'
    ```
 
-   If the CLI shape changes, use the installed `bus workers` equivalent, but
+   If the CLI shape changes, use the installed `bus worker` equivalent, but
    the proof must show the Workers API can publish/read worker Events without
    `events API status 401`.
 

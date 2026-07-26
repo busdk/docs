@@ -16,5 +16,5 @@ that were used when those entries were completed.
 `docs/docs/goals/codex-fork.md` owns the public cross-module goal for the
 Bus-owned Go implementation of the headless Codex App Server worker-runtime
 surface. The completed worker-provider bridge made `bus-agent-runtime`
-available through `bus workers` as `runner_kind=appserver` /
+available through `bus worker` as `runner_kind=appserver` /
 `runner_provider=bus-agent-runtime` beside the existing Codex providers.

@@ -222,7 +222,7 @@ proof satisfy the requirements in the PLAN entries.
 The accepted local sandboxed Codex workers MVP deliberately does not require
 workers to auto-pick tasks. It proves that an operator can create a long-running
 local `direct` / `codex-direct` Spark worker, guide it through
-`bus workers message`, observe responses/status/logs/attach evidence, and stop
+`bus worker message`, observe responses/status/logs/attach evidence, and stop
 it.
 
 The next scheduler-owned worker work belongs here, not in the

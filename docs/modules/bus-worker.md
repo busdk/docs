@@ -52,8 +52,8 @@ worker-home provisioning remain planned follow-up work.
 Worker identity templates live in the environment catalog at
 `.bus/worker/templates.json`. Each template should include a short `summary`
 for quick selection and a longer `description` for operator guidance. Operators
-should discover template ids with `bus workers template list` and inspect one
-template with `bus workers template show <template-ref>` instead of guessing
+should discover template ids with `bus worker template list` and inspect one
+template with `bus worker template show <template-ref>` instead of guessing
 provider model ids or composing ad hoc profile names.
 
 For deep research, treat the profile as a workflow rather than a separate

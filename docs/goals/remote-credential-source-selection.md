@@ -58,7 +58,7 @@ The current module ownership is different from the historical handoff:
   workers or select runtime models. Its current API credential inputs are
   `--token-file`, `BUS_TASK_API_TOKEN_FILE`, `BUS_API_TOKEN_FILE`,
   `BUS_TASK_API_TOKEN`, and `BUS_API_TOKEN`.
-- `bus-worker` / `bus-workers` is the worker-control API client. Its API mode
+- `bus-worker` / `bus-worker` is the worker-control API client. Its API mode
   currently uses `--token-file` or `BUS_WORKERS_API_TOKEN_FILE` for the workers
   API bearer token and exposes non-secret credential-source fields in worker
   status metadata.
@@ -86,7 +86,7 @@ The current module ownership is different from the historical handoff:
 Historical names such as `bus-integration-dev-task`, `bus dev task`,
 `bus dev work`, `bus.dev.task.*`, `bus.work.*`, and singular
 `bus.worker.*` should be treated as compatibility or historical evidence only.
-New goal work should use `bus-task`, `bus-workers`,
+New goal work should use `bus-task`, `bus-worker`,
 `bus-api-provider-workers`, `bus-integration-workers`, canonical
 `bus.task.*`, and canonical `bus.workers.*` where those surfaces exist.
 
@@ -121,7 +121,7 @@ acceptance. The current implementation still needs these product slices:
   environments with different credential sources while the inherited
   `BUS_API_TOKEN` is intentionally stale. The proof must cover task creation or
   assignment through `bus-task`, worker create/status/control through
-  `bus-workers` / `bus-api-provider-workers`, Events relay/sync boundaries,
+  `bus-worker` / `bus-api-provider-workers`, Events relay/sync boundaries,
   and worker lifecycle/status through `bus-integration-workers`, without manual
   shell token export as the normal path.
 

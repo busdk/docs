@@ -28,7 +28,7 @@ importing, or copying Events between environments.
 Use these focused files for work that used to be mixed into this handoff:
 
 - `docs/goals/repos.md`: Git repository, branch, and worktree operations.
-- `docs/goals/workers.md`: the `bus workers` product/API/integration
+- `docs/goals/workers.md`: the `bus worker` product/API/integration
   surface for agent worker identity and lifecycle.
 - `docs/goals/tasks.md`: completing the generic task/thread system and
   removing broken legacy task behavior.
@@ -74,7 +74,7 @@ The product architecture follows the standard Bus module family pattern:
 - `bus-integration-{name}` is the event/integration provider run by the
   integration layer.
 
-For this goal, `bus-task` owns task/thread UX and `bus-workers` owns worker UX.
+For this goal, `bus-task` owns task/thread UX and `bus-worker` owns worker UX.
 The local workers API provider publishes canonical `bus.workers.*` request
 Events, and the remote workers integration provider consumes those Events in
 the worker environment. Task lifecycle and assignment use canonical

@@ -861,7 +861,7 @@ Current implementation dependency:
   publishing worker status. This must be fixed before local Bus Workers can
   reliably materialize the `bus-agent-runtime` implementation worktrees.
 - The default local Workers API must publish status through Events with a valid
-  service token or refreshed process state. As of 2026-06-07, `bus workers
+  service token or refreshed process state. As of 2026-06-07, `bus worker
   list --api-url http://127.0.0.1:8090/local/v1 --environment local-dev`
   returns `publish_failed: publish worker event: events API status 401`, even
   when the CLI uses the local Events token file. This must be repaired before
@@ -883,7 +883,7 @@ Testing environments:
 The former `docs/docs/goals/bus-agent-runtime-workers.md` goal is folded into
 this handoff and removed. Its useful content is preserved here:
 
-- `bus-agent-runtime` is available through `bus workers` as a first-class
+- `bus-agent-runtime` is available through `bus worker` as a first-class
   runtime provider beside the existing Codex worker integrations.
 - Existing Codex integrations such as `codex-direct`, Codex App Server
   workers, and Codex-named modules remain intact.
@@ -893,7 +893,7 @@ this handoff and removed. Its useful content is preserved here:
 - The public runner contract is:
   - `runner_kind=appserver`
   - `runner_provider=bus-agent-runtime`
-- `bus workers create`, `status`, `message`, `logs`, `attach`, and `stop`
+- `bus worker create`, `status`, `message`, `logs`, `attach`, and `stop`
   have product-path proof for the Bus-owned runtime.
 - Create-only autonomous execution from task body alone was proven previously
   on H100/Gemma and then converted into local regression work. H100 use is now

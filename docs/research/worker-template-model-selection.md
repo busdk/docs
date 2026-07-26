@@ -198,7 +198,7 @@ selection and longer `description` strings for operator guidance. The exact
 model ids, runner providers, reasoning settings, and sandbox settings remain
 environment-local template policy. Worker briefs should request a capability
 or workflow profile, then select one of the active template ids discovered by
-`bus workers template list`, applying the Current Recommendation section
+`bus worker template list`, applying the Current Recommendation section
 above rather than the vendor-reported defaults.
 
 Misapplication warning: do not create a new template id such as

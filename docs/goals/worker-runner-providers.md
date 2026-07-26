@@ -92,12 +92,12 @@ A new runner provider should be accepted only when:
 
 For a container-backed Codex runner, acceptance requires a product-path proof
 that creates, observes, guides, and stops a Codex worker through
-`bus workers ...`, while the container lifecycle is delegated to the container
+`bus worker ...`, while the container lifecycle is delegated to the container
 integration boundary. The proof must show that worker callers do not construct
 Docker/Podman policy directly.
 
 For a VM-backed Codex runner, acceptance requires a product-path proof that
-creates, observes, guides, and stops a Codex worker through `bus workers ...`,
+creates, observes, guides, and stops a Codex worker through `bus worker ...`,
 while VM lifecycle is delegated to the VM boundary. The proof must show that VM
 fields are not required for the direct or container worker paths.
 

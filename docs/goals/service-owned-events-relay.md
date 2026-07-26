@@ -4,7 +4,7 @@
 
 Status on 2026-06-05: the local-dev to dev-hg service-owned Events relay MVP is
 accepted on `develop`. The accepted proof used normal `bus services up` stacks
-on both systems, local `bus task` and `bus workers` commands, remote App Server
+on both systems, local `bus task` and `bus worker` commands, remote App Server
 execution on `coding-agent@dev.hg.fi`, returned worker/task terminal evidence,
 and restart/resume without duplicate terminal evidence. The current remaining
 work belongs to neighboring remote-worker lane goals such as scheduler
@@ -147,7 +147,7 @@ The required MVP user flow is:
 1. Start Bus services locally with `bus services up`.
 2. Create a task locally with `bus task ...`.
 3. Create or select a worker for the remote `dev-hg` environment locally with
-   `bus workers ...`.
+   `bus worker ...`.
 4. Assign or instruct that remote worker to work on the locally-created task
    from the local system.
 5. Monitor and supervise the task and worker locally while the worker runs on
@@ -192,12 +192,12 @@ should demonstrate:
 - a dev.hg.fi-originated response or evidence Event is imported back locally;
 - a task is created locally through the accepted `bus task` surface;
 - a remote dev.hg.fi worker is created, selected, or confirmed locally through
-  the accepted `bus workers` surface;
+  the accepted `bus worker` surface;
 - assigning or messaging that worker locally causes the remote dev.hg.fi
   worker service to claim or act on the task;
 - remote worker claim, running, progress, message, log/attach, and terminal
   evidence is relayed back and visible locally through `bus task` and
-  `bus workers` status/monitoring commands;
+  `bus worker` status/monitoring commands;
 - the relay can stop and restart without losing cursors or replaying broad old
   history;
 - route status reports the local and remote environment ids, cursors,
@@ -303,9 +303,9 @@ operator-visible ownership must remain local:
 ```bash
 bus services up
 bus task create --title "Do real product work on dev.hg.fi" --body "Run this from the dev.hg.fi worker lane."
-bus workers create --label "dev-hg spark" --type agent --environment dev-hg --profile codex-spark --runner-provider codex-direct
-bus workers assign <worker-id> <task-ref> --environment dev-hg
-bus workers status <worker-id> --environment dev-hg
+bus worker create --label "dev-hg spark" --type agent --environment dev-hg --profile codex-spark --runner-provider codex-direct
+bus worker assign <worker-id> <task-ref> --environment dev-hg
+bus worker status <worker-id> --environment dev-hg
 bus task status <task-ref>
 bus task stats --all
 ```
@@ -314,7 +314,7 @@ The operator should not have to run a separate import/export loop. The relay
 service should already be moving eligible events between the local/controller
 Events API and the selected remote Events API.
 
-From the perspective of `bus task` and `bus workers`, this should feel like the
+From the perspective of `bus task` and `bus worker`, this should feel like the
 same standard Bus Events API flow used on a single system. Those commands
 publish and read canonical `bus.task.*` and `bus.workers.*` Events with
 environment ids, eligible environment ids, worker ids, task refs, and other
@@ -534,7 +534,7 @@ use the local supervisor machine plus `coding-agent@dev.hg.fi`:
 5. Start or verify the local-owned relay route over SSH to
    `coding-agent@dev.hg.fi`.
 6. Create a task locally through `bus task`.
-7. Create or select a dev.hg.fi worker locally through `bus workers`.
+7. Create or select a dev.hg.fi worker locally through `bus worker`.
 8. Assign or instruct the dev.hg.fi worker to work on the local task from the
    local system.
 9. Observe the relay forward the task and worker control Events to the dev.hg.fi
@@ -544,8 +544,8 @@ use the local supervisor machine plus `coding-agent@dev.hg.fi`:
     task evidence.
 12. Observe the relay import that evidence back locally.
 13. Confirm local `bus task status <task-ref>`, `bus task stats --all`,
-    `bus workers status <worker-id> --environment dev-hg`, and at least one
-    local worker monitoring surface such as `bus workers messages`, `logs`, or
+    `bus worker status <worker-id> --environment dev-hg`, and at least one
+    local worker monitoring surface such as `bus worker messages`, `logs`, or
     `attach` show the remote identity and current or terminal result.
 14. Restart the relay process or service.
 15. Repeat or continue without replaying unrelated history, duplicating worker
@@ -970,7 +970,7 @@ This goal was complete only when all of these were true:
   for route-health preflight and diagnostics instead of requiring `--sync-now`
   as the primary operator path; `bus task` must not implement its own
   synchronization/import/export loop.
-- `bus task` and `bus workers` use normal Bus Events API requests and
+- `bus task` and `bus worker` use normal Bus Events API requests and
   environment properties to create, assign, message, status, logs, and attach
   remote work. Cross-environment route ownership, cursoring, dedupe, and
   transport stay in Bus Events API/relay infrastructure, not in task or worker
@@ -979,15 +979,15 @@ This goal was complete only when all of these were true:
   becomes visible to the dev.hg.fi worker environment through the service-owned
   relay, not a manual import/export path.
 - The MVP live proof creates or selects a dev.hg.fi worker locally through
-  `bus workers`, and the worker identity/control Events are owned by the
+  `bus worker`, and the worker identity/control Events are owned by the
   remote worker environment while being observable from the local system.
 - The MVP live proof assigns or instructs that dev.hg.fi worker locally to work
   on the local task, and the remote worker service claims or starts the task
   without a manual remote handler launch.
 - Local monitoring and supervision commands prove the loop is complete:
-  `bus task status <task-ref>`, `bus task stats --all`, `bus workers status
-  <worker-id> --environment dev-hg`, and at least one of `bus workers
-  messages`, `bus workers logs`, or `bus workers attach` show remote identity,
+  `bus task status <task-ref>`, `bus task stats --all`, `bus worker status
+  <worker-id> --environment dev-hg`, and at least one of `bus worker
+  messages`, `bus worker logs`, or `bus worker attach` show remote identity,
   claim/progress/terminal evidence, and the current or final result.
 - Restart/resume proof includes the real task/worker flow: after relay or
   service restart, the route does not duplicate worker claims, replay unrelated
@@ -1099,7 +1099,7 @@ Current `develop` audit on 2026-06-04:
   route-pair ownership, SSH candidate, credential-source, cursor, status, and
   health machinery from the previous relay capability work.
 - The installed local `dist-bin` bundle is not sufficient evidence for the
-  current MVP. At audit time, `dist-bin/bus workers --help` exposes the
+  current MVP. At audit time, `dist-bin/bus worker --help` exposes the
   product worker create/assign/status/messages/logs/attach surface, but
   `dist-bin/bus task --help` exposes the older task surface and does not show
   the previously prototyped `stats --all`/relay preflight shape.
@@ -1206,10 +1206,10 @@ Develop continuation at 12:00 on 2026-06-04:
   Services/relay/task/worker proof bundle: `bus`, `bus-api`, `bus-services`,
   `bus-integration-services`, `bus-integration-events`, `bus-operator-token`,
   `bus-api-provider-auth`, `bus-api-provider-events`, `bus-task`,
-  `bus-worker`/`bus-workers`, `bus-api-provider-workers`,
+  `bus-worker`/`bus-worker`, `bus-api-provider-workers`,
   `bus-integration-task`, `bus-integration-workers`,
   `bus-integration-repos`, and `bus-remote`. The dispatcher-visible smoke
-  checks `bus services --help`, `bus task --help`, and `bus workers --help`
+  checks `bus services --help`, `bus task --help`, and `bus worker --help`
   passed on the remote host.
 - dev.hg.fi now has a private runtime `.env` with a generated local Events
   signing secret, a generated local API token, Postgres 16 native-process
@@ -1735,7 +1735,7 @@ slice restored the normal local worker API surface:
   command succeeded:
 
 ```sh
-bus workers \
+bus worker \
   --api-url http://127.0.0.1:8090/local/v1 \
   --token-file .bus/tokens/local-events.jwt \
   --format json \
@@ -1746,7 +1746,7 @@ Verification from this slice:
 
 - `go test ./...` in `bus-api-provider-worker` passed.
 - `go test ./...` in `bus-api` passed.
-- the local `bus workers ... list` command above returned eight worker
+- the local `bus worker ... list` command above returned eight worker
   records from the normal Services stack.
 
 Same-release freshness for this slice was completed after the local
@@ -1762,7 +1762,7 @@ worker-replay fix:
 - local `bus services up --file services.yml` restarted cleanly after stopping
   a stale checkout-owned Postgres postmaster left from an earlier state-file
   mismatch, and local
-  `bus workers --api-url http://127.0.0.1:8090/local/v1 --token-file
+  `bus worker --api-url http://127.0.0.1:8090/local/v1 --token-file
   .bus/tokens/local-events.jwt --format json list` returned eight workers;
 - dev.hg.fi `bus services up --file services.yml` restarted cleanly, and
   `bus services ps --file services.yml` reported `postgres`, `events`,
@@ -1786,14 +1786,14 @@ The local task CLI proof is also complete for this slice:
 
 This is not MVP acceptance. The following exact work remains:
 
-1. Write and run a local `bus workers` e2e that creates or selects a worker for
+1. Write and run a local `bus worker` e2e that creates or selects a worker for
    `dev-hg` using environment metadata and ordinary worker API Events.
 2. Write and run the live two-system e2e where the dev.hg.fi worker service
    consumes relayed task/worker Events and claims or starts the task without
    task/worker clients owning synchronization logic.
 3. Extend that live e2e to assert remote claim, running/progress,
    message/log-or-attach, and terminal evidence is visible locally through
-   `bus task` and `bus workers`.
+   `bus task` and `bus worker`.
 4. Write and run restart/resume e2e for the real task/worker route so a
    Services or relay restart does not duplicate worker claims, replay
    unrelated history into active state, or lose task/worker evidence.
@@ -1842,11 +1842,11 @@ Verification completed in this slice:
   `bus services up --file services.yml` restarted the normal seven-service
   stack: `postgres`, `events`, `tasks`, `repos`, `workers`, `api`, and
   `events-relay`.
-- Live local `bus workers ... create` through
+- Live local `bus worker ... create` through
   `http://127.0.0.1:8090/local/v1` accepted a prompt containing
   `gpt-5.3-codex-spark` and harmless token-like placeholder text, returning
   worker `local-secret-text-check-20260604-2006` in `creating` state.
-- Live local `bus workers ... message` accepted operator text with the same
+- Live local `bus worker ... message` accepted operator text with the same
   token-like placeholder once the required `--environment local-dev` argument
   was supplied. The verification worker was then stopped.
 - The worker/API/docs changes were committed and pushed on `develop`, then
@@ -1858,7 +1858,7 @@ Verification completed in this slice:
   services.yml`.
 
 This still does not close the remote-worker MVP. The next exact work item is a
-local `bus workers` e2e that asserts origin/destination metadata on create and
+local `bus worker` e2e that asserts origin/destination metadata on create and
 message Events, followed by the live local-to-dev.hg.fi worker e2e where the
 remote worker service consumes the relayed Events and sends claim/progress/log
 or attach/terminal evidence back through the background relay.
@@ -1893,7 +1893,7 @@ systems, and both systems ran the normal root `services.yml` stack with
 The successful live proof used local task `task-0fae28bf931d`, local-created
 dev.hg.fi worker `dev-hg-relay-mvp-20260604-2210`, and message
 `msg-20260604-2221`. The local operator created the task through `bus task`,
-created the worker through `bus workers` targeting `dev-hg`, and sent a worker
+created the worker through `bus worker` targeting `dev-hg`, and sent a worker
 message locally. The remote dev.hg.fi worker service consumed the worker
 control Events and produced response/status evidence from environment
 `dev-hg` addressed back to `local-dev`.
@@ -1906,14 +1906,14 @@ Concrete returned evidence:
   `running`, origin `dev-hg`, and destination `local-dev`;
 - local Events rows `370` and `371` imported those same remote message/status
   facts into the local Events API;
-- local `bus workers messages dev-hg-relay-mvp-20260604-2210 --environment
+- local `bus worker messages dev-hg-relay-mvp-20260604-2210 --environment
   dev-hg` showed the accepted worker-to-operator response;
-- local `bus workers status dev-hg-relay-mvp-20260604-2210` showed the remote
+- local `bus worker status dev-hg-relay-mvp-20260604-2210` showed the remote
   worker running with active task `task-0fae28bf931d`, model
   `gpt-5.3-codex-spark`, App Server URL, worktree path, and logs path;
-- local `bus workers logs` and `bus workers attach` returned the remote
+- local `bus worker logs` and `bus worker attach` returned the remote
   runtime paths and App Server connection metadata;
-- after local `bus workers stop`, local Events row `381` imported the remote
+- after local `bus worker stop`, local Events row `381` imported the remote
   terminal `bus.workers.status.snapshot` with status and lifecycle phase
   `stopped`.
 
@@ -1954,7 +1954,7 @@ Accepted and pinned fixes in this slice:
   presence. This makes worker-turn failures easier to diagnose without
   exposing prompt text or credentials.
 - `bus-worker` `50c5660` documents `--environment` and `--environment-id` in
-  the `bus workers` help and README for API-backed lifecycle and observation
+  the `bus worker` help and README for API-backed lifecycle and observation
   commands: `message`, `messages`, `status`, `logs`, `attach`, `pause`,
   `resume`, `stop`, and `assign`.
 - `bus-integration-worker` `1841f3e` materializes replaced sibling modules
@@ -1974,7 +1974,7 @@ Verification completed in this slice:
 - `make test` passed for `bus-integration-events` after the relay regression
   tests.
 - Fresh local App Server worker `local-worker-help-docs-20260604d` completed
-  a delegated `bus-worker` change through the normal `bus workers message`
+  a delegated `bus-worker` change through the normal `bus worker message`
   surface and returned response evidence locally.
 - Fresh local App Server worker `local-relay-e2e-events-20260604b` completed
   a delegated `bus-integration-events` test change after assigned and sibling
@@ -2039,10 +2039,10 @@ PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus task \
 ```
 
 The local operator created the dev.hg.fi worker through the current
-`bus workers` surface:
+`bus worker` surface:
 
 ```sh
-PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus worker \
   --api-url http://127.0.0.1:8090/local/v1 \
   --token-file .bus/tokens/local-events.jwt \
   --format json \
@@ -2067,7 +2067,7 @@ After the created worker reached the remote App Server lifecycle, it was
 resumed and messaged locally with terminal task evidence requested:
 
 ```sh
-PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus worker \
   --api-url http://127.0.0.1:8090/local/v1 \
   --token-file .bus/tokens/local-events.jwt \
   --format json \
@@ -2079,7 +2079,7 @@ PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
   --text "Please reply with exactly one sentence: dev.hg.fi App Server worker completed task-f6f1416002a3 and closed it through the Bus Events relay."
 ```
 
-The worker response returned locally through `bus workers messages` with
+The worker response returned locally through `bus worker messages` with
 `delivery=app_server` and text:
 
 ```text
@@ -2119,7 +2119,7 @@ Event replayed as the same single Event id
 The proof worker was then stopped cleanly:
 
 ```sh
-PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus worker \
   --api-url http://127.0.0.1:8090/local/v1 \
   --token-file .bus/tokens/local-events.jwt \
   --format json \
@@ -2128,7 +2128,7 @@ PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
   --reason "terminal relay proof complete"
 ```
 
-Local and remote `bus workers status` both reported the worker `stopped` with
+Local and remote `bus worker status` both reported the worker `stopped` with
 `last_error=""`.
 
 The live MVP flow is now accepted as working for the local operator path:
@@ -2219,12 +2219,12 @@ PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus task \
   --token-file .bus/tokens/local-events.jwt \
   show task-f6f1416002a3
 
-PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus worker \
   --api-url http://127.0.0.1:8090/local/v1 \
   --token-file .bus/tokens/local-events.jwt \
   status dev-hg-relay-mvp-terminal-20260605-034730 --environment dev-hg
 
-PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus workers \
+PATH="$PWD/dist-bin:$PATH" ./dist-bin/bus worker \
   --api-url http://127.0.0.1:8090/local/v1 \
   --token-file .bus/tokens/local-events.jwt \
   messages dev-hg-relay-mvp-terminal-20260605-034730 --environment dev-hg

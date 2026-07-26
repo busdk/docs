@@ -28,7 +28,7 @@ Accepted baseline:
 - `bus services` now starts the local native services stack for the MVP.
 - Workers can be created with different models, including raw
   `gpt-5.3-codex-spark`, through the worker product path.
-- `bus workers` already covers worker create, message, messages, status, logs,
+- `bus worker` already covers worker create, message, messages, status, logs,
   attach, and stop flows.
 - `bus-integration-worker` accepts `bus.workers.assign.request` and records
   the worker `active_task_ref`.
@@ -85,7 +85,7 @@ Current task-module state:
 `bus-task` owns the user-facing task CLI. It should expose task create, list,
 show, message, assign, status, and read/replay operations as a client of the
 task API/controller surface. It should not publish directly to every internal
-task service Event when an API/controller route exists, just as `bus workers`
+task service Event when an API/controller route exists, just as `bus worker`
 uses the worker API surface.
 
 `bus-api-provider-task` owns the task HTTP/API controller. It should validate

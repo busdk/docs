@@ -5,10 +5,10 @@
 This page is now the acceptance record for the first Bus workers MVP: local
 native Services plus local sandboxed Codex Spark workers. The accepted product
 surface creates and operates agent workers with durable identity, state,
-assignment, and non-secret runtime metadata through the `bus workers ...`
+assignment, and non-secret runtime metadata through the `bus worker ...`
 product path.
 
-The target UX is `bus workers ...`. In the accepted local scope, workers behave
+The target UX is `bus worker ...`. In the accepted local scope, workers behave
 like Bus-managed runtime resources: listable, creatable, pausable, resumable,
 assignable, and observable through the local API/controller service and local
 worker integration service.
@@ -37,9 +37,9 @@ remain configurable so later worker profiles can select different Codex models.
 
 The first MVP is deliberately small:
 
-1. The operator uses the product command `bus workers ...` to request creation
+1. The operator uses the product command `bus worker ...` to request creation
    of a worker with model `gpt-5.3-codex-spark` and the required non-secret
-   worker options. The plural `bus-workers` executable is the current product
+   worker options. The plural `bus-worker` executable is the current product
    CLI binary for this path; the singular `bus-worker` binary remains a
    compatibility scaffold while the dispatcher form settles.
 2. The system creates a UUID worker identity and records the selected model and
@@ -51,7 +51,7 @@ The first MVP is deliberately small:
 4. The system starts a Codex App Server session with sandboxing enabled, rooted
    in the worker's product worktree and with the worker identity worktree
    available as an allowed writable location.
-5. The operator uses `bus workers ...` to communicate with the worker through
+5. The operator uses `bus worker ...` to communicate with the worker through
    bidirectional messages, similar to the previous task-thread communication
    model.
 6. The worker operates on a task with live guidance from the supervisor.
@@ -65,7 +65,7 @@ run in containers or VMs, or prove remote environment support.
 
 The target module family is:
 
-- `bus-workers`: user-facing product and plural CLI.
+- `bus-worker`: user-facing product and plural CLI.
 - `bus-api-provider-workers`: local API/controller provider mounted by
   `bus-api`.
 - `bus-integration-workers`: local event/integration provider that manages
@@ -121,7 +121,7 @@ task scheduler integration.
 
 ## Affected Bus Modules
 
-The product surfaces touched by this goal are plural: `bus-workers`,
+The product surfaces touched by this goal are plural: `bus-worker`,
 `bus-api-provider-workers`, and `bus-integration-workers`. The current
 checkout names remain singular scaffolds in several places:
 `bus-worker`, `bus-api-provider-worker`, and `bus-integration-worker`.
@@ -186,7 +186,7 @@ remains the Initial MVP User Story above: a real long-running `appserver` /
 `codex-appserver` Codex App Server/runtime instance, using
 `gpt-5.3-codex-spark` for the first proof, this environment's Codex runtime and
 sandbox, an `agents/worker` branch/worktree, and bidirectional guidance through
-`bus-worker` / `bus-workers`.
+`bus-worker` / `bus-worker`.
 
 Accepted evidence so far:
 
@@ -208,17 +208,17 @@ Accepted evidence so far:
   `070-workers-product-real-codex.sh` with
   `BUS_WORKERS_REAL_CODEX_PRODUCT_E2E=1`. The real Codex proof completed with
   `real codex product e2e OK`.
-- `bus-worker` / `bus-workers` issue create, message, message-projection reads
-  through the existing `bus-workers messages` path, and stop requests for the
+- `bus-worker` / `bus-worker` issue create, message, message-projection reads
+  through the existing `bus-worker messages` path, and stop requests for the
   MVP story while remaining API-client-only. The product path has no persistent
   local worker identity store such as `.bus/worker/config.json`.
-- The `bus workers ...` dispatcher form does not require worker-specific code
+- The `bus worker ...` dispatcher form does not require worker-specific code
   in the public `bus` dispatcher. The dispatcher already resolves the first
-  word to `bus-<command>` on `PATH`; with the feature-branch `bus-workers`
-  binary on `PATH`, a smoke run of `bus workers --version` through the real
-  dispatcher reached `bus-workers dev`. The worker CLI e2e now also runs a
+  word to `bus-<command>` on `PATH`; with the feature-branch `bus-worker`
+  binary on `PATH`, a smoke run of `bus worker --version` through the real
+  dispatcher reached `bus-worker dev`. The worker CLI e2e now also runs a
   create/message/messages/stop lifecycle through the real dispatcher form
-  `bus workers ...` against the API stub, while keeping the public dispatcher
+  `bus worker ...` against the API stub, while keeping the public dispatcher
   generic and free of private worker-module coupling.
 - `bus-api-provider-workers` must remain an API/controller and projection
   surface, not the durable identity owner.
@@ -230,13 +230,13 @@ Accepted evidence so far:
   host-process implementation, including bounded no-text/error evidence and
   idempotent worker-message projection when Events are replayed.
 - The local product path now has a passing combined real-Codex proof for the
-  first MVP lifecycle: `bus-workers create` can omit `--id`, the workers API
+  first MVP lifecycle: `bus-worker create` can omit `--id`, the workers API
   provider generates a UUID identity, the request selects
   `gpt-5.3-codex-spark`, the App Server runner starts a long-running
   `appserver` / `codex-appserver` Codex App Server with sandboxing, the worker
   reaches `running`/`ready`, accepts task guidance through
-  `bus-workers message`, returns projected assistant response evidence through
-  `bus-workers messages`, exposes logs/attach evidence through the product
+  `bus-worker message`, returns projected assistant response evidence through
+  `bus-worker messages`, exposes logs/attach evidence through the product
   path, and stops through the product path. The proof now runs through a real
   `bus-api-provider-events` memory backend with generated local JWT auth, not
   only the hermetic relay. This proof depends on
@@ -313,11 +313,11 @@ Accepted evidence so far:
   create-only write data: `bus-integration-workers` carries labels in worker
   snapshots and replay hydration, and `bus-api-provider-workers` parses,
   merges, and clones labels in its in-memory worker projection.
-- `bus-worker` / `bus-workers` API-backed create now exposes structured
+- `bus-worker` / `bus-worker` API-backed create now exposes structured
   non-secret labels with repeated `--metadata-label key=value` flags, sends
   them as the canonical create payload `labels` object, and displays returned
   status labels as `label.{key}` rows. CLI help and version output now use the
-  plural `bus-workers` / `bus workers` product surface, describe the product
+  plural `bus-worker` / `bus worker` product surface, describe the product
   path as API-client-only, and keep the legacy local registry mode scoped to
   scaffold compatibility instead of claiming product ownership of
   `.bus/worker/config.json`. The `bus-worker` README no longer tells the
@@ -327,26 +327,26 @@ Accepted evidence so far:
   long-running service examples start from Events without `--workers-file`,
   while catalog files remain limited to offline preflight, `none` lifecycle,
   and legacy fixture compatibility.
-- `bus-workers list` now keeps the API provider's projected worker view
+- `bus-worker list` now keeps the API provider's projected worker view
   instead of collapsing list results to legacy identity-only rows. Text output
   includes the reporting environment id, status, lifecycle phase, active task
   ref, model, runner kind/provider, group ids, and worker-home reference; JSON
   output preserves the same projected status/view fields for supervisor
   tooling. The local scaffold list mode remains unchanged.
-- API-backed `bus-workers show` now also uses the projected worker view rather
+- API-backed `bus-worker show` now also uses the projected worker view rather
   than the legacy identity-only shape, so one-worker reads preserve
   environment id, status, lifecycle phase, active task ref, model, runner
   kind/provider, runtime/log/worktree references, labels, and bounded
   non-secret metadata consistently with `status`. The local scaffold `show`
   mode remains unchanged.
-- API-backed `bus-workers create` now preserves the workers API provider's
+- API-backed `bus-worker create` now preserves the workers API provider's
   accepted projected worker view instead of decoding the response as a
   legacy identity-only worker. Text output still begins with
   `created worker <id>` for compatibility, then reports returned non-secret
   creation facts such as status, worker-home reference, environment id, model,
   task ref, lifecycle phase, runner kind/provider, and labels when present.
   JSON output preserves the same accepted worker view for supervisor tooling.
-- API-backed `bus-workers message` and `bus-workers messages` now expose the
+- API-backed `bus-worker message` and `bus-worker messages` now expose the
   bounded message delivery metadata needed for operator proof in text mode:
   `delivery`, `operation`, `thread_id`, `turn_id`, `runtime_event`,
   `runtime_error`, and `session_backend`. Message history rows print those
@@ -411,7 +411,7 @@ blocking this accepted scope:
   create/message/respond/stop. The full [repos goal](/docs/goals/repos.md) may
   continue independently, but the local repos slice needed by workers has been
   reviewed, promoted, and included in the promoted-checkout proof.
-- Explicit `bus workers assign` can be implemented and tested before idle
+- Explicit `bus worker assign` can be implemented and tested before idle
   claiming is complete. Task-side assignment remains owned by `bus-task`; both
   entry points should publish or route to the same `bus.workers.assign.request`
   contract when the target is a specific worker.
@@ -443,7 +443,7 @@ scope.
 
 ## Accepted Worker Contract
 
-The accepted local MVP contract is that `bus workers list` calls the workers API
+The accepted local MVP contract is that `bus worker list` calls the workers API
 provider and lists visible workers from that provider's projection. It does not
 read or maintain a `bus-worker` local identity registry. The response includes
 enough information for a supervisor to understand where each worker lives and
@@ -693,7 +693,7 @@ should add its own provider behind the same interface.
 
 The normal path is:
 
-1. `bus workers ...` talks to local `bus-api`.
+1. `bus worker ...` talks to local `bus-api`.
 2. `bus-api` routes to `bus-api-provider-workers`.
 3. The provider publishes canonical `bus.workers.*` Events and maintains a
    bounded local read projection.
@@ -787,7 +787,7 @@ The first interoperable payload contract must include these names and fields:
   fields `environment_id` and `reason`; optional boolean field
   `preserve_worktree`, defaulting to `true` for the first product slice. The
   promoted local product-path proof covers stop for the first accepted MVP:
-  the operator can request stop through `bus workers`, the request is published
+  the operator can request stop through `bus worker`, the request is published
   through the Workers API/Event path, `bus-integration-workers` stops the
   Codex App Server runner, and projected status reaches `stopped`.
 - `bus.workers.assign.request`: required string fields `id` and `task_ref`;
@@ -953,7 +953,7 @@ runner selection, and projection. Runtime/provider protocol details remain in
 belong in `bus-integration-containers` or its stable container integration
 surface.
 
-Workers may be assigned explicitly through `bus workers assign <worker>
+Workers may be assigned explicitly through `bus worker assign <worker>
 <task-ref>` when the operator is controlling a specific worker, or through
 `bus task ...` when the operator is assigning from the task/thread side.
 `bus-task` remains the owner of task/thread UX and task status. Both paths
@@ -978,7 +978,7 @@ API surface.
 This goal is accepted because the promoted implementation and proof satisfy
 these criteria:
 
-- `bus workers` is the documented product CLI for worker identity and control;
+- `bus worker` is the documented product CLI for worker identity and control;
 - the local API provider publishes and projects canonical `bus.workers.*`
   requests/evidence;
 - the Events API can efficiently replay bounded environment/service/
@@ -1029,20 +1029,20 @@ Subsequent BusDK service-stack commits, through `971e287`, make the accepted
 worker use case easier to run locally with `bus services up`; they do not add a
 new first-MVP worker acceptance blocker.
 
-`bus workers` product CLI evidence is covered by `bus-worker` unit tests,
-`bash tests/e2e.sh`, README updates, plural `bus-workers` binary output, and
-the mounted `bus-api` product e2es that drive `bus-workers create`, `message`,
+`bus worker` product CLI evidence is covered by `bus-worker` unit tests,
+`bash tests/e2e.sh`, README updates, plural `bus-worker` binary output, and
+the mounted `bus-api` product e2es that drive `bus-worker create`, `message`,
 `messages`, `logs`, `attach`, `status`, and `stop`.
 
 The dispatcher path does not require worker-specific code in the public `bus`
 module. The dispatcher already resolves the first command word to a
-`bus-<command>` executable on `PATH`, so `bus workers ...` resolves to
-`bus-workers ...` when the plural worker binary is installed. This has been
+`bus-<command>` executable on `PATH`, so `bus worker ...` resolves to
+`bus-worker ...` when the plural worker binary is installed. This has been
 checked with the current `bus` dispatcher and the isolated feature
-`bus-workers` binary before promotion, and with the promoted `bus-workers`
+`bus-worker` binary before promotion, and with the promoted `bus-worker`
 binary after promotion. The worker CLI e2e now discovers the real public
 dispatcher when available and proves create/message/messages/stop through
-`bus workers ...`.
+`bus worker ...`.
 
 Canonical local API/provider/Event projection evidence is covered by
 `bus-api-provider-worker` tests and the product e2es. The API provider
@@ -1191,7 +1191,7 @@ also checked the fake Codex launch evidence for worker identity/logs/scratch
 `--add-dir` writable roots and product-worktree current working directory,
 then reran the repos-backed product e2e successfully. The worker CLI e2e was
 then tightened so it discovers the real public `bus` dispatcher when available
-and proves create/message/messages/stop through `bus workers ...`; `bash
+and proves create/message/messages/stop through `bus worker ...`; `bash
 tests/e2e.sh` passed with that dispatcher lifecycle proof. The
 `bus-api-provider-events` PostgreSQL e2e was also tightened to stop and
 restart the Events API provider against the same DSN, then replay an event
@@ -1249,7 +1249,7 @@ The first accepted public runner pair is `appserver` / `codex-appserver`. It
 creates isolated product and worker-identity worktrees, derives the worker
 identity branch from the worker UUID, seeds isolated `CODEX_HOME`, starts a
 sandboxed Codex App Server, accepts operator guidance through
-`bus workers message`, exposes response/status/logs/attach evidence, and stops
+`bus worker message`, exposes response/status/logs/attach evidence, and stops
 through the product path.
 
 ### Events And Repos Proof
@@ -1263,8 +1263,8 @@ accepted for the local worker path through `bus-integration-repos` and
 
 ### Dispatcher And Services Stack
 
-The public dispatcher form `bus workers ...` resolves to the plural
-`bus-workers` product CLI. Later local Services work added a top-level
+The public dispatcher form `bus worker ...` resolves to the plural
+`bus-worker` product CLI. Later local Services work added a top-level
 `services.yml` and `profiles/` layout that can start PostgreSQL, Events API,
 repos integration, workers integration, and `bus-api` for the accepted local
 worker use case with `bus services up`.

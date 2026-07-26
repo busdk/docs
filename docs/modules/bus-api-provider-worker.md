@@ -39,7 +39,7 @@ The scaffold keeps that view in process. It can take `environment_id` from the
 response payload or from the Bus Events environment metadata when an individual
 worker item does not include its own environment identity.
 
-It is expected to connect the future `bus-workers` ownership layer with Bus
+It is expected to connect the future `bus-worker` ownership layer with Bus
 API resources for:
 
 - configured worker identities

@@ -980,7 +980,7 @@ submodule diff. They are evidence/cleanup inventory, not current promotion
 candidates, and should be archived or explicitly discarded only after recorded
 classification.
 
-The local `2026-06-15 13:04 EEST` `bus workers prune-report` classified all
+The local `2026-06-15 13:04 EEST` `bus worker prune-report` classified all
 GX/UI runtime product worktrees as `active/refuse`; none are pruneable while
 their workers remain cataloged as active. Source inspection classified the
 current evidence like this:
@@ -1018,12 +1018,12 @@ current evidence like this:
     lands.
 
 At `2026-06-15 13:08 EEST`, the stale accepted/superseded workers were stopped
-through `bus workers stop --environment local-dev` while preserving their
+through `bus worker stop --environment local-dev` while preserving their
 worktrees and branches as evidence: Accounting `a`/`b`, Auth `a`/`b`, Notes
 shell slots `a`/`b`, TerminalUI `a`/`b`, UI action/resource, UIPortal, Portal
-first attempt, and AI first attempt. Individual `bus workers status <id>
+first attempt, and AI first attempt. Individual `bus worker status <id>
 --environment local-dev` calls report these workers as `stopped`, but bulk
-`bus workers list` and `bus workers prune-report` still showed several of them
+`bus worker list` and `bus worker prune-report` still showed several of them
 as active immediately afterward. Until that projection mismatch is fixed or
 catches up, treat individual worker status as the lifecycle source of truth and
 do not prune from `prune-report` output alone.
@@ -1333,7 +1333,7 @@ Keep the core slices separate:
 
 The Mini workers reached `running`/`ready` with clean worker-owned worktrees,
 but create-time prompts did not appear as recorded worker messages. The
-supervisor therefore sent explicit `bus workers message` start instructions to
+supervisor therefore sent explicit `bus worker message` start instructions to
 both Mini workers after recording exact product-worktree guardrails in their
 task threads. Continue by verifying actual assistant responses, diffs, commits,
 and tests before treating either lane as accepted.

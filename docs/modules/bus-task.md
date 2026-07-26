@@ -22,7 +22,7 @@ bus task reopen --write-scope run/task.go 1.1 "Retry with this scope"
 ```
 
 Worker selection uses Bus-level names. Prefer environment-local worker
-templates in `bus workers` flows and environment-local profiles in `bus task`
+templates in `bus worker` flows and environment-local profiles in `bus task`
 flows. Exact provider model spellings belong in the selected environment's
 worker template/profile config, not in reusable task prompts or operator
 briefs.

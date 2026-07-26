@@ -239,7 +239,7 @@ live process/session check agrees.
 ## Supervisor Use
 
 Use this launcher for small implementation-plus-unit-test tasks while the
-product `bus workers` control plane is incomplete. Do not ask these bootstrap
+product `bus worker` control plane is incomplete. Do not ask these bootstrap
 workers to run broad e2e or integration suites during the first parallel
 implementation phase.
 
