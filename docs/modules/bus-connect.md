@@ -13,9 +13,9 @@ Choose it when you want one published address that people with no prior relation
 
 The paid message path is complete and proven. It has passed independent review, is promoted, pinned in the BusDK superproject, installed, and covered by an installed smoke check. Its storage behavior has been proven against a real PostgreSQL-backed Bus Events backend under a dedicated least-privilege identity, including persistence across an Events service restart and isolation between identities. You can install it, run the whole service on your own machine, send paid messages through it today, and it already publishes its machine-readable terms.
 
-That covers the `serve` daemon, `create` and `get` as thin HTTP clients, an x402 v2 `402` challenge for an unpaid request, paid conversation initiation, access-scoped reads, bounded free follow-ups, the `/.well-known/x402` manifest, and durable recovery when a settlement is interrupted between the external transfer and the local commit. In that build the initiation price and the conversation limits are fixed defaults, the same for every instance.
+That covers the `serve` daemon, `create` and `get` as thin HTTP clients, an x402 v2 `402` challenge for an unpaid request, paid conversation initiation, access-scoped reads, bounded free follow-ups, the `/.well-known/x402` manifest, and durable recovery when a settlement is interrupted between the external transfer and the local commit. In that build the initiation price and the conversation limits are whatever each instance's seller configured, and the advertised values are the enforced ones.
 
-Setting your own price and limits, and the revised wording of the initiation terms, are being authored now and have not been reviewed or promoted. Both are described below and marked as such; neither is in the build you can install today.
+Setting your own price and limits, and the revised wording of the initiation terms, have passed independent review, are promoted and pinned, and are covered by an installed smoke check that ran a non-default configured instance end to end. Both are in the build you can install today.
 
 Promoted and installed is not released. It refuses any non-loopback listen or facilitator URL, so it cannot reach a real payment network, and no live facilitator path has been proven. Publishing it on the open internet and charging real money are still ahead.
 
@@ -62,7 +62,7 @@ bus-connect serve \
 
 ### Setting your price and limits
 
-**Not yet available.** This is an authored change awaiting review and promotion; the installed build prices every instance at the fixed default below. It is documented here so the intended configuration is reviewable, not because you can use it today.
+**Available in the installed build.** An installed `bus-connect` prices each instance at whatever you configure; the default below applies only when you set nothing.
 
 You set the price of reaching you and the limits a sender sees. Whatever you configure is what the `402` answer and the `/.well-known/x402` manifest advertise, and it is exactly what the service enforces.
 
@@ -149,7 +149,7 @@ All state for one instance lives in a single identity-scoped aggregate: one cond
 
 An unpaid request receives `402` with the exact terms a payer must match: protocol version, scheme, network, asset contract, decimals, atomic amount, and destination, together with the conversation limits. The same document is served at `/.well-known/x402` for discovery, so a payer reading either surface sees the same price and terms.
 
-The terms state that the charge is non-refundable and guarantees no response, so a payer knows what it is buying before it pays. Restating them as delivery and consideration of one message by the recipient, non-refundable, with no reply guaranteed, is part of the authored change described above and is not in the installed build.
+The terms state that the charge is non-refundable and guarantees no response, so a payer knows what it is buying before it pays. An installed build states all three facts: delivery and consideration of one message by the recipient, non-refundable, with no reply guaranteed, alongside the limits you configured.
 
 ```bash
 curl -s http://127.0.0.1:8402/v1/threads \
