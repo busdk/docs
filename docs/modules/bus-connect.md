@@ -9,19 +9,23 @@ description: "bus-connect runs a paid message address for one recipient: a sende
 
 Choose it when you want one published address that people with no prior relationship to you — and the software agents acting for them — can reach without an account, where the charge keeps unwanted volume uneconomic. It serves one recipient per running instance, and it adds no directory of recipients, tenancy, or wallet of its own.
 
-## Current status: accepted, not yet released
+## Current status: proven locally, not yet released
 
-The command-line foundation is promoted: printing help and version text, and reporting invalid usage.
+The paid message path is complete and proven. It has passed independent review, is promoted, pinned in the BusDK superproject, installed, and covered by an installed smoke check. Its storage behavior has been proven against a real PostgreSQL-backed Bus Events backend under a dedicated least-privilege identity, including persistence across an Events service restart and isolation between identities. You can install it, run the whole service on your own machine, send paid messages through it today, and it already publishes its machine-readable terms.
 
-The service has passed independent review, and its storage behavior has been proven against a real PostgreSQL-backed Bus Events backend under a dedicated least-privilege identity, including persistence across an Events service restart and isolation between identities. It is **not yet promoted, pinned, or installed**, so it is still not something you can obtain or run from a release. The candidate covers the `serve` daemon, `create` and `get` as thin HTTP clients, an x402 v2 `402` challenge for an unpaid request, paid conversation initiation, access-scoped reads, bounded free follow-ups, and durable recovery when a settlement is interrupted between the external transfer and the local commit. It refuses any non-loopback listen or facilitator URL, so it cannot reach a real payment network, and no live facilitator path has been proven.
+That covers the `serve` daemon, `create` and `get` as thin HTTP clients, an x402 v2 `402` challenge for an unpaid request, paid conversation initiation, access-scoped reads, bounded free follow-ups, the `/.well-known/x402` manifest, and durable recovery when a settlement is interrupted between the external transfer and the local commit. In that build the initiation price and the conversation limits are fixed defaults, the same for every instance.
 
-An operator surface does not exist yet. Reading, replying to, and closing conversations from the recipient's own side has no command and no endpoint in this build, and the transport for it remains an open decision. The routes that exist serve the paying sender: paid initiation, an access-scoped read of one conversation, and a bounded free follow-up. Everything described below is what the current build does.
+Setting your own price and limits, and the revised wording of the initiation terms, are being authored now and have not been reviewed or promoted. Both are described below and marked as such; neither is in the build you can install today.
 
-Also not available: hosted deployment, a live facilitator, real payments, an OpenAPI description, and Bazaar listing. The `/.well-known/x402` manifest is served, so machine-readable terms are published; what is missing is vendor catalog discovery, which is covered below. `bus-connect` has not been released or merged into any published BusDK distribution, so no released `bus` dispatcher currently includes a `connect` command.
+Promoted and installed is not released. It refuses any non-loopback listen or facilitator URL, so it cannot reach a real payment network, and no live facilitator path has been proven. Publishing it on the open internet and charging real money are still ahead.
+
+The recipient's own inbox does not exist yet. Listing, reading, replying to, and closing conversations from the recipient's side has no command and no endpoint in this build, and the transport for it remains an open decision. `create` and `get` are not an operator inbox: like the routes, they serve the paying sender. Everything described below is what the current build does.
+
+Also not available: hosted deployment, a live facilitator, real payments, an OpenAPI description, and Bazaar listing, which waits on live settlement. `bus-connect` has not been merged into any published BusDK distribution, so no released `bus` dispatcher currently includes a `connect` command.
 
 ## Installing
 
-Building requires Go, GNU `make`, and the sibling `bus-events` and `bus-help` module sources, because the durable conversation store depends on them. Build from a checkout that has those siblings present. There is no release to download or install today, so treat the exact repository location, branch, and release channel as unconfirmed until publication.
+Building requires Go, GNU `make`, and the sibling `bus-events` and `bus-help` module sources, because the durable conversation store depends on them. Build from a checkout that has those siblings present. There is no public release channel yet, so treat the exact repository location, branch, and release channel as unconfirmed until publication.
 
 ```bash
 cd bus-connect
@@ -55,6 +59,48 @@ bus-connect serve \
 ```
 
 `--pay-to` is the address that receives charges. It is what the price document advertises, and a payment naming a different destination is refused.
+
+### Setting your price and limits
+
+**Not yet available.** This is an authored change awaiting review and promotion; the installed build prices every instance at the fixed default below. It is documented here so the intended configuration is reviewable, not because you can use it today.
+
+You set the price of reaching you and the limits a sender sees. Whatever you configure is what the `402` answer and the `/.well-known/x402` manifest advertise, and it is exactly what the service enforces.
+
+```bash
+bus-connect serve \
+  --listen 127.0.0.1:8402 \
+  --pay-to 0x000000000000000000000000000000000000dEaD \
+  --capability-key-file ./capability.key \
+  --facilitator-url http://127.0.0.1:9402 \
+  --price-atomic 50000 \
+  --max-initial-body-bytes 8192 \
+  --max-follow-up-bytes 4096 \
+  --free-follow-ups 20 \
+  --store file --store-file ./conversations.log
+```
+
+| Flag | Meaning | Default | Range |
+|---|---|---|---|
+| `--price-atomic` | Price to open one conversation, in atomic units | `20000` | 1 to 32 digits, no leading zero |
+| `--max-initial-body-bytes` | Largest first message you accept, in decoded message bytes | `16384` | 1 to 16384 |
+| `--max-follow-up-bytes` | Largest single free follow-up you accept, in decoded message bytes | `16384` | 1 to 16384 |
+| `--free-follow-ups` | Free follow-ups allowed after the paid message | `63` | 0 to 63 |
+
+`--price-atomic` is in atomic units of the advertised asset and performs no decimal or currency conversion. USDC has six decimals, so `50000` is 0.05 USDC and `20000` is 0.02 USDC. The value is compared exactly, so a spelling like `020000` is refused when the service starts rather than becoming a price no payment can match. A price that is not a whole number above zero is refused the same way.
+
+Both byte limits count the decoded message itself, so a message of exactly the size you set is accepted. The JSON that carries it — field names, quotes, escaping, and a follow-up's idempotency key — is protocol metadata and does not eat into the limit you advertised. The request as a whole still has its own finite ceiling, so an oversized or malformed body is refused before any settlement.
+
+The three limit flags may only be lowered from their defaults, which are also their maximums. Raising them is not a configuration change: the accepted resource envelope would need fresh capacity evidence first.
+
+`--free-follow-ups` is the number a sender is promised and the number they get. The paid first message is stored as message one and does not consume the allowance, so setting `20` accepts exactly twenty free follow-ups and refuses the twenty-first.
+
+Anything invalid is refused before the service binds a port, so an instance either advertises exactly what it will enforce or does not start.
+
+Changing your price affects new conversations only. Someone who already paid at the old price keeps what they paid for: repeating that exact payment and message returns their original conversation and the same access token, even after you restart at a different price. A payment at your old price that never opened a conversation is refused like any other mismatch, and reusing an old payment for a different message is still refused as a conflict.
+
+### Running more than one instance
+
+`--instance NAME` names the Events aggregate that holds one instance's conversations; it defaults to `default`. Two instances sharing a single Events identity must use different names, or they would write into the same aggregate. Giving each instance its own Events identity is the stronger separation, described under Storage below.
 
 ### The instance key
 
@@ -101,7 +147,9 @@ All state for one instance lives in a single identity-scoped aggregate: one cond
 
 ## What a sender sees
 
-An unpaid request receives `402` with the exact terms a payer must match: protocol version, scheme, network, asset contract, decimals, atomic amount, and destination. The same document is served at `/.well-known/x402` for discovery. The terms state that the charge is non-refundable and guarantees no response, so a payer knows what it is buying before it pays.
+An unpaid request receives `402` with the exact terms a payer must match: protocol version, scheme, network, asset contract, decimals, atomic amount, and destination, together with the conversation limits. The same document is served at `/.well-known/x402` for discovery, so a payer reading either surface sees the same price and terms.
+
+The terms state that the charge is non-refundable and guarantees no response, so a payer knows what it is buying before it pays. Restating them as delivery and consideration of one message by the recipient, non-refundable, with no reply guaranteed, is part of the authored change described above and is not in the installed build.
 
 ```bash
 curl -s http://127.0.0.1:8402/v1/threads \
@@ -110,6 +158,8 @@ curl -s http://127.0.0.1:8402/v1/threads \
 ```
 
 `bus-connect` never creates a payment authorization. It holds no signer, seed, or wallet key and cannot send funds. The contacting side signs elsewhere and presents the envelope.
+
+The `amount` below must equal the `maxAmountRequired` the endpoint advertises. Anything else is refused before the facilitator is contacted.
 
 ```bash
 cat > payment.json <<'JSON'
@@ -144,6 +194,8 @@ Presenting the same payment twice returns the same conversation, the same access
 
 Sending the same free follow-up twice with one idempotency key leaves one message; reusing that key with a different body is refused instead of being silently dropped. An access token from one conversation is refused on another exactly like an unknown token, so probing cannot map which conversations exist. Access tokens travel only in `Authorization`, never appear in a URL, and never reach a log; only a keyed digest is persisted, so someone who reads your storage still cannot open a conversation.
 
+Once configuration is available, your configured price and limits are worth checking against the endpoint itself. `curl -s http://127.0.0.1:8402/.well-known/x402` shows the advertised `maxAmountRequired` and `busTerms`; both should equal what you passed to `serve`, and the manifest should be identical to the body of the `402`. Paying a different amount is refused with `payment_rejected` before the facilitator is contacted. Sending one more free follow-up than you allowed is refused after exactly that many succeed.
+
 The interrupted payment is the case worth running. Tell the facilitator to settle but withhold its answer, then pay with a fresh nonce. The request fails with `settlement_unresolved`: the money moved and the service does not know it. Nothing is marked failed, because the answer was lost while the payment stood.
 
 ```bash
@@ -158,8 +210,14 @@ Repeating the identical request reconciles into the original conversation, activ
 
 These are enforced, and the advertised terms match what is enforced.
 
-- Initial message and each follow-up: 16 KiB.
-- 64 message rows per conversation. The paid message is row one, so 63 free follow-ups.
+In the installed build these are fixed. The flags shown are the authored, not-yet-promoted way to lower them:
+
+- Initial message: 16 KiB of decoded message content, lowerable via `--max-initial-body-bytes`.
+- Each follow-up: 16 KiB of decoded message content, lowerable via `--max-follow-up-bytes`.
+- 63 free follow-ups, lowerable via `--free-follow-ups`. The paid message is message one and does not count against the allowance.
+
+These protect the deployment and are not configurable:
+
 - 100 conversations occupying admission at once.
 - 2 settlements in flight at once.
 - 2-second facilitator deadline, 5-second shutdown deadline.
@@ -176,7 +234,7 @@ The build is complete as a protocol. Hosted paid operation needs more, and none 
 
 The largest item sits outside the protocol. A settled payment tells you the money arrived and gives you a wallet address, which tells you nothing about your customer. Selling a digital service from a Finnish company into the EU means establishing, before the sale completes, whether the buyer is a business or a consumer, where they are, and how to reach them with a receipt — then charging the right VAT, validating a VAT number where one is claimed, honouring the withdrawal right that applies to consumers buying digital services, and retaining all of it. Bus already covers this through its customers, entities, VAT, VIES validation, invoices, bookkeeping, and Finnish tax filing modules, so the work is to route initiation through them. Confirm the specifics for your jurisdiction and turnover with your accountant and counsel; nothing here is legal advice.
 
-The remaining items are public exposure, since the build refuses non-loopback listen and facilitator URLs; a live facilitator path proven against the payment network with an approved live check; an operator surface for reading, replying to, and closing conversations, where the public paid endpoint must stay outside platform authentication because its callers have no account with you by design; conversation expiry and retention applied on a schedule; a durability policy for the Events backend appropriate for settled-payment records; and discovery with an OpenAPI description.
+The remaining items are public exposure, since the build refuses non-loopback listen and facilitator URLs; a live facilitator path proven against the payment network with an approved live check; a recipient inbox for listing, reading, replying to, and closing conversations, where the public paid endpoint must stay outside platform authentication because its callers have no account with you by design; conversation expiry and retention applied on a schedule; a durability policy for the Events backend appropriate for settled-payment records; and discovery with an OpenAPI description.
 
 ## Discovery
 
@@ -198,7 +256,7 @@ REST is the canonical product surface: an HTTP API that an agent could integrate
 
 One running instance serves one recipient and one payment destination. There is no registry, no other hosted tenants, no subscriptions, no KYB, no SDKs, no webhooks, no MCP surface, and no platform integrations in scope. The intended product model has any counterparty run their own instance and act as their own service provider, keeping their own charges and their own operational and legal responsibility. A contacting party needs only a wallet capable of signing an x402 payment, not an endpoint or hosted instance of its own.
 
-The repository is Fair Source, source-available under the Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT); each release converts to the MIT license two years after that release is made available. Self-hosting is subject to those current terms, and general competing commercial self-hosting cannot be promised under today's FSL-1.1-MIT license. The distribution model that supports the intended self-host-as-your-own-service-provider product still needs to be resolved before release. The exact FSL-1.1-MIT license text is carried as `LICENSE.md` in the source candidate and will be available alongside the source once it is published; see the [Functional Source License](https://fsl.software/) for the general public explanation of these terms in the meantime.
+The repository is Fair Source, source-available under the Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT); each release converts to the MIT license two years after that release is made available. Self-hosting is subject to those current terms, and general competing commercial self-hosting cannot be promised under today's FSL-1.1-MIT license. The distribution model that supports the intended self-host-as-your-own-service-provider product still needs to be resolved before release. The exact FSL-1.1-MIT license text is carried as `LICENSE.md` in the module source and will be available alongside it once it is published; see the [Functional Source License](https://fsl.software/) for the general public explanation of these terms in the meantime.
 
 ### Using from `.bus` files
 
@@ -209,7 +267,7 @@ Once `bus-connect` is composed into the `bus` dispatcher, the intended form insi
 connect --help
 ```
 
-That composed form does not exist yet. With today's standalone candidate, call the binary directly instead:
+That composed form does not exist yet. Call the binary directly instead:
 
 ```bash
 bus-connect --help
