@@ -194,7 +194,7 @@ Presenting the same payment twice returns the same conversation, the same access
 
 Sending the same free follow-up twice with one idempotency key leaves one message; reusing that key with a different body is refused instead of being silently dropped. An access token from one conversation is refused on another exactly like an unknown token, so probing cannot map which conversations exist. Access tokens travel only in `Authorization`, never appear in a URL, and never reach a log; only a keyed digest is persisted, so someone who reads your storage still cannot open a conversation.
 
-Once configuration is available, your configured price and limits are worth checking against the endpoint itself. `curl -s http://127.0.0.1:8402/.well-known/x402` shows the advertised `maxAmountRequired` and `busTerms`; both should equal what you passed to `serve`, and the manifest should be identical to the body of the `402`. Paying a different amount is refused with `payment_rejected` before the facilitator is contacted. Sending one more free follow-up than you allowed is refused after exactly that many succeed.
+Your configured price and limits are worth checking against the endpoint itself. `curl -s http://127.0.0.1:8402/.well-known/x402` shows the advertised `maxAmountRequired` and `busTerms`; both should equal what you passed to `serve`, and the manifest should be identical to the body of the `402`. Paying a different amount is refused with `payment_rejected` before the facilitator is contacted. Sending one more free follow-up than you allowed is refused after exactly that many succeed.
 
 The interrupted payment is the case worth running. Tell the facilitator to settle but withhold its answer, then pay with a fresh nonce. The request fails with `settlement_unresolved`: the money moved and the service does not know it. Nothing is marked failed, because the answer was lost while the payment stood.
 
@@ -210,7 +210,7 @@ Repeating the identical request reconciles into the original conversation, activ
 
 These are enforced, and the advertised terms match what is enforced.
 
-In the installed build these are fixed. The flags shown are the authored, not-yet-promoted way to lower them:
+These are the customer-visible defaults. The installed build accepts the flags shown to lower them, and each is also its accepted ceiling, so a flag can only lower a default and never raise it:
 
 - Initial message: 16 KiB of decoded message content, lowerable via `--max-initial-body-bytes`.
 - Each follow-up: 16 KiB of decoded message content, lowerable via `--max-follow-up-bytes`.
